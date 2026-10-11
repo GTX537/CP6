@@ -1,0 +1,952 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "COMPOSED_LOCAL_DESIGN_DERIVATIVES_NOT_OWNER_RUNTIME",
+  "result": "PASS",
+  "sources": [
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+      "derived_sha256": "0a197a8187b9c07bbe041f48c233e2a5f19df36cfa403201af4823e7eca52fd8",
+      "derived_bytes": 4020750,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-RETURN-CHILD-ALLOWANCE-QUANTITY"
+      ],
+      "operations": 131
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "source_sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+      "derived_sha256": "771b53e6bb14d77d670deeb899b47b1f93a71f026748bc81e9bb0585440a62eb",
+      "derived_bytes": 632861,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-EST-FIXTURE-POLICY-AND-TTL"
+      ],
+      "operations": 41
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_mixed_complete_public_q14.json",
+      "source_sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+      "derived_sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "derived_bytes": 21356,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28/multi_mixed_complete_public_q14.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 9
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_c06_exact_saved_200.json",
+      "source_sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+      "derived_sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "derived_bytes": 7350,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91/wn11_c06_exact_saved_200.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_complete_current_q14.json",
+      "source_sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+      "derived_sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "derived_bytes": 9046,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7/wn11_complete_current_q14.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_existing_target_c06_saved_200.json",
+      "source_sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+      "derived_sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "derived_bytes": 9249,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731/wn11_existing_target_c06_saved_200.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_public_native_lookup_binding.json",
+      "source_sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+      "derived_sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "derived_bytes": 3304,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2/multi_public_native_lookup_binding.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "source_sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+      "derived_sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "derived_bytes": 615672,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b/02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 56
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "source_sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+      "derived_sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "derived_bytes": 82325,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87/04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 9
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "source_sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+      "derived_sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "derived_bytes": 32065,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4/05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 4
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "source_sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+      "derived_sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "derived_bytes": 1505761,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 648
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "source_sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+      "derived_sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "derived_bytes": 36549,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5/13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "source_sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "derived_sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "derived_bytes": 92180,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING"
+      ],
+      "operations": 5
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "source_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "derived_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "derived_bytes": 53881,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97/9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "operations": 7
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "source_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "derived_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "derived_bytes": 46854,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228/a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "patch_bundles": [
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "operations": 9
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "source_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "derived_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "derived_bytes": 40240,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f/117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75/PLAN-ATP-WIRE.types.cs",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "derived_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "derived_bytes": 184364,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f/29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json",
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004",
+        "PLAN-IF-005"
+      ],
+      "operations": 9
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "source_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "derived_sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "derived_bytes": 624800,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "source_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "derived_sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "derived_bytes": 362972,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "source_sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "derived_sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "derived_bytes": 2420366,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "operations": 5
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/lead/CONTRACTS/CrmLeadCp20Contracts.cs",
+      "source_sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+      "derived_sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7",
+      "derived_bytes": 66793,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59/CrmLeadCp20Contracts.cs",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-LEAD-GENERATED-CS-NULLABLE"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "source_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "derived_sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "derived_bytes": 62015,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-015"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/8538042210844249__crm-inq.openapi.json",
+      "source_sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a",
+      "derived_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+      "derived_bytes": 239051,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a/8538042210844249__crm-inq.openapi.json",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "source_sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+      "derived_sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b",
+      "derived_bytes": 82951,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "source_sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+      "derived_sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850",
+      "derived_bytes": 137175,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/22/229813cf102aad92__ui-positive-cases.json",
+      "source_sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23",
+      "derived_sha256": "b5cd3840d288f191ed213e348ae2fed4d01f26c2c28812ab92d3e4ed323b989b",
+      "derived_bytes": 50018,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23/229813cf102aad92__ui-positive-cases.json",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+      "source_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "derived_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "derived_bytes": 88613,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd/PLAN-ATP-WIRE.schema.json",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+      "source_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "derived_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "derived_bytes": 25802,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7/PLAN-ATP-WIRE.types.ts",
+      "patch_bundles": [
+        "remediation/assets/core-types/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+      "source_sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+      "derived_sha256": "7f5d1e1e51b1025e1a1e60acb7a5654225b6b198e887ae18c9d477feae39f90b",
+      "derived_bytes": 17159,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369/7f5d1e1e51b1025e1a1e60acb7a5654225b6b198e887ae18c9d477feae39f90b/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+      "patch_bundles": [
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-010"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+      "source_sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+      "derived_sha256": "1f6a020db61b4551612a83ab54d8d55273025ef459363670556973e4bb022987",
+      "derived_bytes": 225103,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a/1f6a020db61b4551612a83ab54d8d55273025ef459363670556973e4bb022987/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+      "patch_bundles": [
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-010"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+      "source_sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+      "derived_sha256": "65bdd614f359b4cace97dcc583ece1e240f748c8c2888da0119d3f896c28ecc5",
+      "derived_bytes": 95755,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+      "patch_bundles": [
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-011"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+      "source_sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+      "derived_sha256": "673340180bd581a9dfffabcf18e93b6a8f2384a772a8be2b6cb51a86fe0752cc",
+      "derived_bytes": 22633,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada/f31bcf82ae23555c__API-CATALOG_R10.json",
+      "patch_bundles": [
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-029"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+      "source_sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+      "derived_sha256": "c6319172ffa25b6a06d1fef37e41bc818930b85d755c6bc7af8f5145fe195681",
+      "derived_bytes": 838552,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461/NORMATIVE-EXAMPLES.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-PR-N01-AUTHORITY-VERSION",
+        "COM-PR-N08-PREVIEW-TIMELINE"
+      ],
+      "operations": 5
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "source_sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+      "derived_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "derived_bytes": 542116,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-PROBLEM-CODE-ALIASES"
+      ],
+      "operations": 18
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+      "source_sha256": "837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768",
+      "derived_sha256": "67543b1230d63b6b199040aefcc245f2fefc887f22861a17cd639f757607a20d",
+      "derived_bytes": 6309960,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+      ],
+      "operations": 78
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+      "source_sha256": "7d27c1e1f65d9b6016ff73d96a1fad3ae8ffd253ef27fe6682fbe4674e8fc858",
+      "derived_sha256": "909754ed7a7de1745f05736085ee8cbd2f70bb59f1ccab7ba879f722b1c5380d",
+      "derived_bytes": 3778489,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/7d27c1e1f65d9b6016ff73d96a1fad3ae8ffd253ef27fe6682fbe4674e8fc858/10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "source_sha256": "8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5",
+      "derived_sha256": "58c4e539844762b1387378252813852efdd7e2a29fbc2361b424cddc80eaf010",
+      "derived_bytes": 2698403,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA"
+      ],
+      "operations": 4
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "source_sha256": "82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7",
+      "derived_sha256": "7e62da74b81430b83b7a6dea8e75e5e05f3b548749119358e9ef6f72e29e0446",
+      "derived_bytes": 3855276,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING"
+      ],
+      "operations": 10
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "source_sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+      "derived_sha256": "4087f29215dd4de47dedc4b2e7d9e34eb0dcd63a645bae8f032364b2cc8a3ac8",
+      "derived_bytes": 11046967,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "operations": 16
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+      "source_sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+      "derived_sha256": "d54b0d45f44cdbb626f3ff200ecee9e2f59aa8cc39907c202ac8367c930a7431",
+      "derived_bytes": 695232,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-006"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+      "source_sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+      "derived_sha256": "c2d4d5f82259c507f55261bbbf32538f0ab149b5999327711ae91ea54154e06b",
+      "derived_bytes": 888985,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c/c2d4d5f82259c507f55261bbbf32538f0ab149b5999327711ae91ea54154e06b/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-009"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OPENAPI.json",
+      "source_sha256": "63ebd079202536dd53ea07eb524fa32f089326c18d9229dbfc50cf4487cf7011",
+      "derived_sha256": "8ad080bb9d5d770053ebdacec5415d202e0447df2aa76da8d2f746ed35bd008e",
+      "derived_bytes": 1150820,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/63ebd079202536dd53ea07eb524fa32f089326c18d9229dbfc50cf4487cf7011/PLAN_PO_R3_CP18_OPENAPI.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-012"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+      "source_sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+      "derived_sha256": "742cafdedbecb4d7970e2264d07710f65ab4f551b07ef8d3ef62bda6b24bc350",
+      "derived_bytes": 16511911,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-013"
+      ],
+      "operations": 18
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+      "source_sha256": "6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542",
+      "derived_sha256": "e55d7fe3e930d8101ea6694b68039151d0497e68c712abd64933d50f8c17a344",
+      "derived_bytes": 733279,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542/EXC_NEW_AC_CATALOGUE.json",
+      "patch_bundles": [
+        "remediation/assets/fixtures/editorial-patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-003"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "derived_sha256": "b742a5a2d73cba80ce73d2658894de1788c5ba993d23152a113a0febc6c8fe35",
+      "derived_bytes": 488171,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-038"
+      ],
+      "operations": 11
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "source_sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+      "derived_sha256": "7f79b60270191e240e5e92097dd83610cab7426695ee5de15a8d6edce6e0572f",
+      "derived_bytes": 1437001,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "operations": 15
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "source_sha256": "dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2",
+      "derived_sha256": "a008e32600304533e7dafc9b7d34dcc927c5289fda6ce632528cf0ead8a5cffb",
+      "derived_bytes": 406690,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-042"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "source_sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+      "derived_sha256": "2e289cd50b440fb9df6b0f1974918551570ddbe0379956f11050c635b18ee9ed",
+      "derived_bytes": 747383,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-043"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "source_sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+      "derived_sha256": "c40bdd59af4c2f720773d539dea852835a5c6db595fdd675a083820b0d4605e3",
+      "derived_bytes": 448940,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-044"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "source_sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+      "derived_sha256": "272e68a41f75bd01ba5b57d0018eadbb5fbd656e1bad2d65de1b7c14e1380733",
+      "derived_bytes": 173323,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "operations": 42
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "source_sha256": "561c763d68c1f87a6ae8118e1d1e782175d0821774c597fb3e28fe9125dfc98a",
+      "derived_sha256": "68fecc754a5568f0c2ef74abe37d41031ceeceecf88db345d7107c4e1986f6f7",
+      "derived_bytes": 70437,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/561c763d68c1f87a6ae8118e1d1e782175d0821774c597fb3e28fe9125dfc98a/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-048"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "source_sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+      "derived_sha256": "987c173fea8056d6d8d237c112e3f3309e4de9c5a73a5819aa59fce9cb5e5376",
+      "derived_bytes": 166936,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-048"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99bf7b7371715a62__fixture-F03-I29-request.json",
+      "source_sha256": "99bf7b7371715a62b9400021b018431e66c603e8266ab7bddf521ab101b2e3ab",
+      "derived_sha256": "461c6d0e3357744f5c9ce5ba9afb777016ce100f0aad22dcd1fc27d9961114cc",
+      "derived_bytes": 6358,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/99bf7b7371715a62b9400021b018431e66c603e8266ab7bddf521ab101b2e3ab/99bf7b7371715a62__fixture-F03-I29-request.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c603f220fd83336d__fixture-F03-I29-response.json",
+      "source_sha256": "c603f220fd83336dedd15fec1518d111905836807131aca5eb5fe20342fc63b9",
+      "derived_sha256": "9ffb97d74a477bb083754054c12ff83f0c9e0ac16ae9d046550ff2b3440b46db",
+      "derived_bytes": 6229,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/c603f220fd83336dedd15fec1518d111905836807131aca5eb5fe20342fc63b9/c603f220fd83336d__fixture-F03-I29-response.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "operations": 4
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "source_sha256": "420ebe12bc2aec9509e781236d57baecf25b02bb23a03c3eace2fb9a82c626a5",
+      "derived_sha256": "66b565e5b553f44e83a185fc7ed9f66a5c48cbb04fe6eefad2b946b5d74c6851",
+      "derived_bytes": 28353,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/420ebe12bc2aec9509e781236d57baecf25b02bb23a03c3eace2fb9a82c626a5/420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "operations": 16
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "source_sha256": "eba9b5010c3181a3b3c1a603fcb1315dca10c96c16393ec2afdd332160812415",
+      "derived_sha256": "c157f9a06801bd05f66ca696c2be73b6a7f8e5c3b97c6b1b8f68ee71a46bb1db",
+      "derived_bytes": 39978,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/eba9b5010c3181a3b3c1a603fcb1315dca10c96c16393ec2afdd332160812415/eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "IPQC-CONT-03"
+      ],
+      "operations": 12
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "source_sha256": "9a3c4c7f7927e1bdee13915c836692e863ec4499a4fb32971105eca66a47b8f1",
+      "derived_sha256": "5f0075cd375a8258e6fb59ed8a5751090b3217566b142f67744eb9ace4a4fd68",
+      "derived_bytes": 1037345,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/9a3c4c7f7927e1bdee13915c836692e863ec4499a4fb32971105eca66a47b8f1/9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "operations": 8
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "source_sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+      "derived_sha256": "9fd03e7e6412bf814335a7495830d96d6da1686368f5d8cd1610f28159257d0f",
+      "derived_bytes": 138318,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020/27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "operations": 7
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "source_sha256": "38a6c24482eb54fc4c9e9002ce5a1c9d40b26bad47154b44b06e26f15c497428",
+      "derived_sha256": "1854032552b01c361bf85f030bb33fc12a1530c8f0791cde6ddb0416cf82784b",
+      "derived_bytes": 164488,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/38a6c24482eb54fc4c9e9002ce5a1c9d40b26bad47154b44b06e26f15c497428/38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "operations": 34
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "source_sha256": "2bf87130cde5b1fedaa86a386fc619decd1248d792f324dc14f90cd827016219",
+      "derived_sha256": "8751d43275bdd2456d0505971875f680e4ebc7fbb6886159da30a6257f4577fc",
+      "derived_bytes": 35826,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/2bf87130cde5b1fedaa86a386fc619decd1248d792f324dc14f90cd827016219/2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "operations": 1
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "source_sha256": "a044573d078160c1e806b562e38fa5438eba541d7f1ffaec6a9a45a3b172e5a6",
+      "derived_sha256": "a8e2e641a911ef25bd1829d9a5b2946a0c21933df9d009ec04d62dd17606fb75",
+      "derived_bytes": 35368,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/a044573d078160c1e806b562e38fa5438eba541d7f1ffaec6a9a45a3b172e5a6/a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "operations": 4
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "source_sha256": "67dcc3fb406be18f786ebea5054add54482647f61cf20199cf417947f8c8e240",
+      "derived_sha256": "0257464b46a32d50c6e683c3d15d62d59d2cfe0a0245aa7bf6d92fe9bb15716f",
+      "derived_bytes": 35751,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/67dcc3fb406be18f786ebea5054add54482647f61cf20199cf417947f8c8e240/67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "operations": 3
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5e/5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "source_sha256": "5e0b3a55dcdf6cd2630d3d734cb1ee3d784999eb40d222c751ef164de11082e6",
+      "derived_sha256": "a8e0c2d337db3bc11caedafe91c8c8f1963747df936cf703cb287c702484997d",
+      "derived_bytes": 31585,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/5e0b3a55dcdf6cd2630d3d734cb1ee3d784999eb40d222c751ef164de11082e6/5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "patch_bundles": [
+        "remediation/assets/operations-fixtures/bounded-patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "source_sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "derived_sha256": "0a9828a83b5e6390da8639391374fa0c27eb809adf21edf24aed3dd7a8e55e41",
+      "derived_bytes": 939328,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "patch_bundles": [
+        "remediation/assets/planning-fixtures/patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-014"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+      "source_sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+      "derived_sha256": "b637d6e227e88624e83aace4238b215ed891401a4472018babb0490a3e7bd48b",
+      "derived_bytes": 9251603,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+      "patch_bundles": [
+        "remediation/assets/planning-fixtures/patches.json"
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-015"
+      ],
+      "operations": 2
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+      "source_sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+      "derived_sha256": "cf005901ede6830bda019da70597dfdb6e5dee21538f1cbd25e928c63ce201c3",
+      "derived_bytes": 282325,
+      "local_derived_path": "D:/CP6-archives/design-revision-20261011-checks/derived/a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+      "patch_bundles": [
+        "remediation/assets/planning-fixtures/patches.json"
+      ],
+      "source_finding_ids": [
+        "OPS-IF-006",
+        "OPS-IF-007",
+        "OPS-IF-008"
+      ],
+      "operations": 3
+    }
+  ],
+  "originals_modified": false,
+  "runtime_acceptance": "NOT_RUN"
+}

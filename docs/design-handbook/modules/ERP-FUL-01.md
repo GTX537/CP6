@@ -1,5 +1,17 @@
 # ERP-FUL-01 订单履约投影与交付绩效
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-FUL-CATALOGUE-AND-CURRENT-FENCE | ADOPTION_PENDING：采用完整Sales母集合和预建空site F−1门；F−1→全部F0→owner heads，严格当前仅native同库Serializable；跨库返回UNKNOWN。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`required_materials_consolidated`。当前 v1.4 R3 核心、必要附件与准确共享来源已完成业务语义整理；重复对象/来源采用记录在册的同字节精确复用。设计接受、文书检查与真实运行状态分别记录。
 
 ## 1. 业务目的、操作者与权责

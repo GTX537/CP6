@@ -1,0 +1,111 @@
+{
+  "fixture_only": true,
+  "warning": "Static documentation values, not signed Owner evidence. Production verifier MUST reject DEMO identity. No business fixture executed.",
+  "examples": [
+    {
+      "schema": "AccountCreate",
+      "body": {
+        "displayName": "文档示例账户",
+        "departmentId": "DEMO-D",
+        "accountType": null,
+        "domains": [
+          "https://www.example.invalid/a"
+        ],
+        "region": null
+      }
+    },
+    {
+      "schema": "ReceiptQuery",
+      "body": {
+        "kind": "MAIN_REQUEST",
+        "authority": "DEMO-Main.C03",
+        "accountId": "DEMO-A",
+        "requestId": "DEMO-Q1",
+        "requestVersion": "1"
+      }
+    },
+    {
+      "schema": "MappingNotice",
+      "body": {
+        "eventId": "DEMO-E2",
+        "decision": {
+          "schemaVersion": "ACC-MAPPING-DECISION/1",
+          "scope": {
+            "mappingAuthority": "DEMO-Main.BP",
+            "scopeIdentity": "DEMO-SCOPE-1",
+            "scopeEpoch": "DEMO-EPOCH-1",
+            "organizationId": "DEMO-T",
+            "legalEntityKey": "DEMO-L",
+            "accountId": "DEMO-A",
+            "mappingPurpose": "ACCOUNT_BUSINESS_PARTNER"
+          },
+          "decision": {
+            "decisionId": "DEMO-D2",
+            "position": "2",
+            "digest": "f9a9cb8ef7c21c72e688b4f2eb294ef23abf64aca70138d8dbe2e02b55c2094f"
+          },
+          "basis": "SUCCESSOR",
+          "predecessor": {
+            "decisionId": "DEMO-D1",
+            "position": "1",
+            "digest": "5188f5cb35116eb2ce2404acca6daf615a4deab1b2f342d956bbd65031c92ad1"
+          },
+          "candidates": [
+            {
+              "ownerMappingId": "DEMO-M2a",
+              "ownerMappingRevision": "7",
+              "businessPartnerKey": "0007/BP-A",
+              "boundAccountBusinessVersion": "3",
+              "candidateDigest": "d23f4ba2f8b0794c5bf3b9df987da5798271dd963916b32cf9f51851a785b93f"
+            }
+          ],
+          "selectedCandidateDigest": "d23f4ba2f8b0794c5bf3b9df987da5798271dd963916b32cf9f51851a785b93f",
+          "decisionKind": "SELECT",
+          "coveredCandidateDigests": [
+            "d23f4ba2f8b0794c5bf3b9df987da5798271dd963916b32cf9f51851a785b93f"
+          ],
+          "coveredConflictDigests": [],
+          "completeAtWatermark": "DEMO-CUT-2",
+          "coversEntireScope": true,
+          "effectiveFrom": "2026-10-11T00:00:00Z",
+          "effectiveUntil": null,
+          "identityImpactPolicy": {
+            "owner": "DEMO_ONLY",
+            "contractId": "ACC-IDENTITY-IMPACT",
+            "contractVersion": "1",
+            "evidenceId": "binding-fields",
+            "evidenceVersion": "1",
+            "contentDigest": "5b441dbfb0763678d6c3aaf938d06cb7d74c523fd433ea019e851ccf2b7991c1"
+          },
+          "authorityProof": {
+            "owner": "DEMO_ONLY",
+            "contractId": "ACC-MAPPING-AUTHORITY-PROOF",
+            "contractVersion": "1",
+            "evidenceId": "DEMO-NOT-A-SIGNATURE",
+            "evidenceVersion": "1",
+            "contentDigest": "3902fb149cb14d6aab50dfd69b51bd8fafff79f416c95efbb3eeff365a9f1e3d"
+          }
+        }
+      }
+    },
+    {
+      "schema": "CommandReceipt",
+      "body": {
+        "locator": {
+          "operation": "ORD_CONFIRM",
+          "commandKey": "DEMO-K1"
+        },
+        "receiptId": null,
+        "outcome": "NOT_OBSERVED",
+        "scope": "ENTITY_APPLY",
+        "targetId": null,
+        "targetVersion": null,
+        "completedAt": null,
+        "canOpen": false,
+        "replayed": false,
+        "noEffectProven": false,
+        "finalityEvidence": null
+      }
+    }
+  ]
+}

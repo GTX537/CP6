@@ -1,5 +1,19 @@
 # FIN-REPORT-01 试算与财务报表
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-021 | INTENTIONAL_DIFFERENCE：仅预登记FX次期计划镜像：原period immutable post+精确次期mirror、current original REVERSED、Owner applied、mirror current有效；period fulfillment、forward current、lifecycle三轴分离。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-022 | ADOPTION_PENDING：report读完整ledger immutable forward/reverse effectiveDate+cut与opening覆盖，GL-only/manual/source-null也包含；FX取as-of历史敞口+owner全集+rates+signed credits。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-027 | INTENTIONAL_DIFFERENCE：全历史role mapping+GL-only/manual source-null入账，原reversed仍留历史；strict切口需要同native snapshot，CUT_VECTOR_ONLY必须明确诊断选择。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前完整主文、规范合读件、接口及26项AC已整理；来源资格目录结构化覆盖，不把作者旧源码阅读计作本次全文阅读。正式报表依赖的真实Owner采用未证。
 
 ## 1. 业务目的、操作者和Owner边界

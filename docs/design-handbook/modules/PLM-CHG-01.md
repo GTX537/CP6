@@ -1,5 +1,13 @@
 # PLM-CHG-01 · 工程变更、受控通知与跨 Owner 义务闭环
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本轮115项登记问题未要求修改本模块合同，复用原必要材料阅读与范围记录；不宣称重新全文阅读所有原件或运行已通过。
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。CHG 原 Target 由当前 ECM 文档承接。当前主册 5,589 行正文及三组追踪表已实读；本册整理业务设计，不把 75 个文档入口当作 75 个独立功能，不证明真实 Owner 已采用或业务测试已通过。
 
 ## 1. 目的、操作者和业务 Owner

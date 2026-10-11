@@ -1,0 +1,82 @@
+{
+  "result": "PASS_COMPILE_ONLY",
+  "dotnet_sdk": "10.0.302",
+  "typescript_version": "6.0.2",
+  "checks": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "source_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "derived_sha256": "5a2e0b41593b9877deccc758f013e32ddddc83dfdf559e345fa5c78d4558ce56",
+      "language": "C#",
+      "result": "PASS_COMPILE_ONLY",
+      "warnings": 0,
+      "scope": "isolated full revised design attachment, not application; language support helper included for C#",
+      "command": "dotnet build ContractCheck.csproj --nologo --verbosity quiet (net10.0)"
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/lead/CONTRACTS/CrmLeadCp20Contracts.cs",
+      "source_sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+      "derived_sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7",
+      "language": "C#",
+      "result": "PASS_COMPILE_ONLY",
+      "warnings": 5,
+      "scope": "isolated full revised design attachment, not application; language support helper included for C#",
+      "command": "dotnet build ContractCheck.csproj --nologo --verbosity quiet (net10.0)"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "source_sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+      "derived_sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850",
+      "language": "C#",
+      "result": "PASS_COMPILE_ONLY",
+      "warnings": 0,
+      "scope": "isolated full revised design attachment, not application; language support helper included for C#",
+      "command": "dotnet build ContractCheck.csproj --nologo --verbosity quiet (net10.0)"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "source_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "derived_sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "language": "C#",
+      "result": "PASS_COMPILE_ONLY",
+      "warnings": 0,
+      "scope": "isolated full revised design attachment, not application; language support helper included for C#",
+      "command": "dotnet build ContractCheck.csproj --nologo --verbosity quiet (net10.0)"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "source_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "derived_sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "language": "C#",
+      "result": "PASS_COMPILE_ONLY",
+      "warnings": 0,
+      "scope": "isolated full revised design attachment, not application; language support helper included for C#",
+      "command": "dotnet build ContractCheck.csproj --nologo --verbosity quiet (net10.0)"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "source_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "derived_sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "language": "TypeScript",
+      "result": "PASS_COMPILE_ONLY",
+      "warnings": 0,
+      "scope": "isolated full revised design attachment, not application; language support helper included for C#",
+      "command": "node <local typescript>/bin/tsc --noEmit --strict --target ES2022 --module ESNext --lib ES2022,DOM <derived attachment>"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "source_sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+      "derived_sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b",
+      "language": "TypeScript",
+      "result": "PASS_COMPILE_ONLY",
+      "warnings": 0,
+      "scope": "isolated full revised design attachment, not application; language support helper included for C#",
+      "command": "node <local typescript>/bin/tsc --noEmit --strict --target ES2022 --module ESNext --lib ES2022,DOM <derived attachment>"
+    }
+  ],
+  "business_runtime": "NOT_RUN",
+  "limitations": [
+    "LEAD has5 existing non-nullable initialization warnings; strict schema remains mandatory; no API/DB/serialization integration executed",
+    "Builds used installed net10.0 compiler; net8-specific build/runtime not claimed"
+  ]
+}

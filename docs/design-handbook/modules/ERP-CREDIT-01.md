@@ -1,5 +1,24 @@
 # ERP-CREDIT-01：销售贷项与售后商业处理
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE | ADOPTION_PENDING：现金退款完整current source proposal只作提议；真实5S/rights/currency/lineage原目录（含legacy/import/manual/alias/inflight/reservation/end）；新demand需原owner/node25真实source。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-CREDIT-PROBLEM-CODE-ALIASES | ARTIFACT_CONFLICT：新current-v1九个Problem的issues[].code与顶层code一致，type使用该code的小写短横URN；原HTTP status/业务fence/UI恢复策略不变，旧三元组只留冻结回放。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION | INTENTIONAL_DIFFERENCE：派生独立current-v1 C#/TS codec，锁根Problem修订后的TYPE字节SHA；NO_CHANGE可带Ref，FOUND仍需完整真实native/current来源，未证明COMPLETED保持UNKNOWN。冻结R8保原字节。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| COM-CREDIT-CURRENT-BODY-MONEY-FIELD | ARTIFACT_CONFLICT：四个public body共18 Money改为closed value/currency；保数字字符串与货币并更新MULTI lookup binding、5正文身份、Store7 canonical摘要和全部列明current消费者。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING | ARTIFACT_CONFLICT：闭合JSON+YAML尾块归一为单一OpenAPI JSON根；十块metadata保留，重复第二stage93准确命名stage94；29路由不变，C01/C02 HTTP200指向COMMITTED并返回首次201原字节。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING | ARTIFACT_CONFLICT：CURRENT03 ops72/73/74及CURRENT10对应producer统一NEW_READY；78/79旧root父键取WN14.OLD_END已保护旧plan，同期future43 OUTPUT不得充旧父。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA | ARTIFACT_CONFLICT：WN11-04两个ledger操作31 target/producer准确绑定partition_projection，并供操作23消费其实际Store receipt；操作28 C06保存响应保持独立。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING | ARTIFACT_CONFLICT：两个ledger ops68/70/71业务版本分别按ProtectedBefore+1；68/71 updated_at取同Uow事件时钟，opaque row_version仍provider-only，四CAS原子性不变。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：`core_semantics_consolidated`。已整理当前接受组合的核心业务、57 表字段入口、29 个 API、8 页及关键更正/恢复分支。外域准确 schema 与全部229本地类型已补齐；低层来源、normal/recovery 尚待按第 12 节继续合读；未达到 required_materials_consolidated。本文不授实施或运行权限。
 
 ## 1. 目的、操作者和权威边界

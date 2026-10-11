@@ -1,5 +1,21 @@
 # PUR-MATCH-01 供应商发票匹配与采购对账
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION | ADOPTION_PENDING：采用GR逐叶原Domain/有效RangeSet/当前ScopeSet和Quality，Stock/PO专业后继完整共同ResourcePlan；非前缀VOID保持当前已修设计。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION | ADOPTION_PENDING：退货实物不VOID原GR，E=100不变；PENDING_RETURN MRX禁新forward但不自动FENCE旧admission；MATCH/RETURN/manual共享OriginalObligation budget，RETURNED_RETIRED不随credit/refund消失。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-CURRENT-KNOWLEDGE-CUT | ADOPTION_PENDING：current集合是递归lineage terminal leaf的active/actual/unresolved union，非所有历史行；T15先generation失效，T16精确query/attempt/worker/CAS；新frontier必须新capture。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-H31-COMPOSITE-RESOURCES | ADOPTION_PENDING：全部warehouse祖先后location；DETAIL全局owner/key最强锁；每location metricSet含N/A取X，CONTROLLED完整metric/domain/head/occupancy/mapping/rule；一Part一Uow。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-024 | DESIGN_GAP：CorrectionAdmission独立close/query/receipt：先自身FENCED，完整plan所有book/leg及route/alias/inflight闭合；Draft保留并SEALED_UNPOSTED；Posted先恢复OwnerApply，终态保留历史轴。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 业务目的、操作者与事实权威
 
 采购/应付对账人员登记真实供应商货物发票，把每一发票行准确分配到当前GR商业实收/验收及PO商业来源，检查数量、价格、税费与授权，整票冻结唯一范围保护，再向Finance请求专业AP计划和执行。审批人员只裁决准确商业差异；恢复人员查原请求与更正工作；Finance自己创建/过账/信用，MATCH只保存请求和真实回执投影。 [原文 L11](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md:11>)、[原文 L13](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md:13>)、[原文 L15](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md:15>)、[原文 L17](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md:17>)

@@ -1,0 +1,92 @@
+{
+  "attempts": [
+    {
+      "check": "material-handoff",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "Unknown diagnostic example retained known already-applied offset set, while checker incorrectly required empty set when inputQuantity was null",
+      "fix": "Apply offset-set rule by basisKind; preserve already known offset identities in diagnostic result",
+      "followup": "PASS:10 vectors and3 continuous quantity examples; see assets/material-handoff/validation.json"
+    },
+    {
+      "check": "INQ-TypeScript",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "missing JsonObject alias and never-return function control-flow annotation produced9 strict diagnostics",
+      "fix": "explicit Record<string,unknown> alias and explicit never function variable type; unchanged strict schema",
+      "followup": "strict tsc PASS"
+    },
+    {
+      "check": "ATP-CSharp",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "JsonDocument.Parse(ReadOnlySpan<byte>) overload unavailable",
+      "fix": "copy exact bytes to byte[] for supported Parse overload",
+      "followup": "isolated compile PASS,0 warnings"
+    },
+    {
+      "check": "INQ-CSharp",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "7 empty implicit arrays have no inferred element type",
+      "fix": "Array.Empty<string>() in property-name map only",
+      "followup": "isolated compile PASS,0 warnings"
+    },
+    {
+      "check": "NCR-CP4-CSharp",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "numeric ObservationInput.Code and categorical Value incorrectly int=>null",
+      "fix": "exact SOURCE-QA-SCHEMAS ObservationInput required const-null reflected as required NullOnly",
+      "followup": "isolated compile PASS,0 warnings"
+    },
+    {
+      "check": "shared-vector-selected-schema",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "Test harness inherited root oneOf while targeting internal SpaceVersionVector",
+      "fix": "Use standalone $schema/$defs/$ref validator for selected subschema",
+      "followup": "PASS 61 fields/78 DTO paths and complete vector/candidate relation checks"
+    },
+    {
+      "check": "LEAD-acceptance-map-generator",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "AC identifier was formatted 48 instead of 048; no output published",
+      "fix": "Three-digit original AC identity format",
+      "followup": "PASS all7 exact original mappings"
+    },
+    {
+      "check": "CREDIT-current-v1-isolated-compile",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "C#5 diagnostics and TS6 diagnostics in exact derived attachments",
+      "fix": "7 exact operations incorporated in same original-source bounded successor chain",
+      "followup": "Same final byte hashes compiled PASS in isolated cache; see commercial-fixtures/codec-compile-validation.json"
+    },
+    {
+      "check": "aggregate-disposition-evidence",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "Inherited source ledger calls a C# member locator json_pointer; aggregate checker attempted JSON parsing of code",
+      "fix": "Preserve original ledger and normalize current disposition as code_member_locator; validate actual code line ranges and genuine JSON pointers separately",
+      "followup": "See final design-completion-validation.json"
+    },
+    {
+      "check": "R1-UOM-absolute-end",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "Task review independently reproduced .NET $ accepting final LF, including 128 valid characters followed by LF",
+      "fix": "Versioned ATP-STABLEID-LEXICAL/20261011-R1 successor: absolute-end Schema/TS/C# anchors and explicit DDL invalid-character exclusion; historical profile preserved",
+      "followup": "PASS: 10 vectors per JSON Schema/.NET/JS engine; two isolated attachment compiles; targeted reviewer independently repeated 10 .NET vectors. See assets/core-types/atp-stableid-validation.json"
+    },
+    {
+      "check": "R2-postcommit-output-authorization",
+      "attempt": 1,
+      "result": "FAIL",
+      "reason": "First-success C#/TS branches lacked confirmed-commit to response current authorization check",
+      "fix": "Both first-success and replay branches use commitConfirmed; fresh check after confirmed commit; no rollback after a confirmed commit; UNKNOWN retains original 503/query contract",
+      "followup": "PASS: 28 static temporal vectors and 10 mutation checks; targeted source review. See assets/finance-recovery/static-report.json; runtime races NOT_RUN"
+    }
+  ]
+}

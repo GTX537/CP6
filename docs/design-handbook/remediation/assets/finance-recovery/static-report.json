@@ -1,0 +1,409 @@
+{
+  "contract": "CP6-W2-W3-STATIC-REPORT/1",
+  "checked_at_utc": "2026-10-11T12:19:57.177081+00:00",
+  "result": "PASS_STATIC_ONLY",
+  "finding_count": 36,
+  "required_runtime_acceptance_cases": 72,
+  "runtime_acceptance_result": "NOT_RUN",
+  "schema_definitions": 44,
+  "schema_validation": "LOCAL_EXPLICIT_KEYWORD_SUBSET_AND_SELECTED_CROSS_FIELD_RULES; not general JSON Schema conformance certification",
+  "fixture_count": 42,
+  "positive_count": 11,
+  "negative_count": 31,
+  "source_files_hash_checked": 50,
+  "source_patches": [
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "PLAN-IF-010",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+      "source_sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "PLAN-IF-010",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+      "source_sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "PLAN-IF-011",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+      "source_sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    },
+    {
+      "finding": "OPS-IF-029",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+      "source_sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+      "literal_match_count": 1,
+      "in_memory_application": "PASS_STATIC_ONLY",
+      "original_modified": false
+    }
+  ],
+  "composed_patch_groups": 5,
+  "atp_recovery_and_calculation_prelude_order": "PASS_STATIC_ONLY",
+  "replay_postcommit_denial_no_rollback": "PASS_STATIC_ONLY",
+  "links_checked": 12,
+  "inv_r10_final_gate_code_set": "EXACT_MATCH",
+  "fixture_results": [
+    {
+      "id": "scope-lossless-long-id",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "scope-cross-mode",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "cross-mode scope"
+    },
+    {
+      "id": "scope-unknown-mode",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('enum', 'PROD')"
+    },
+    {
+      "id": "scope-omits-legal-alias",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "array size"
+    },
+    {
+      "id": "scope-target-too-long",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "string length"
+    },
+    {
+      "id": "scope-source-renamed",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "additional property"
+    },
+    {
+      "id": "ref-six-to-five-lossless",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "ref-original-type-dropped",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "missing property"
+    },
+    {
+      "id": "ref-target-extra-type",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "additional property"
+    },
+    {
+      "id": "ref-original-digest-reused-for-wrapper",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "target must identify new binding"
+    },
+    {
+      "id": "ref-type-whitelist-mismatch",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "unregistered ref purpose/type"
+    },
+    {
+      "id": "ref-is-not-accounting-authority",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('enum', 'GL_POST')"
+    },
+    {
+      "id": "resource-full-prefix",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "resource-old-rma-scope-first",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "required rank / ordinal ordering"
+    },
+    {
+      "id": "resource-f0-before-f-minus1",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "required rank / ordinal ordering"
+    },
+    {
+      "id": "resource-physical-alias-split",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "physical alias not coalesced"
+    },
+    {
+      "id": "resource-independent-commit",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('const', 'INNER_COMMIT')"
+    },
+    {
+      "id": "resource-unknown-edge",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "unbound edge"
+    },
+    {
+      "id": "resource-int64-overflow",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('oneOf', 0)"
+    },
+    {
+      "id": "close-request-native-match-key-version",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "close-request-forward-epoch-leak",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "additional property"
+    },
+    {
+      "id": "close-request-correction-epoch-number",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "string required"
+    },
+    {
+      "id": "close-query-original",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "query-not-observed-is-unknown",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "query-not-observed-cannot-infer",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('oneOf', 0)"
+    },
+    {
+      "id": "close-proven-no-effect",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "close-uncovered-leg",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "array size"
+    },
+    {
+      "id": "close-outstanding-late-effect",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "array size"
+    },
+    {
+      "id": "close-reopens-original",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('const', True)"
+    },
+    {
+      "id": "close-releases-obligation",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('const', True)"
+    },
+    {
+      "id": "close-enables-forward",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "('const', 'ENABLED')"
+    },
+    {
+      "id": "close-missing-other-book",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "full original plan leg set"
+    },
+    {
+      "id": "close-missing-alias-path",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "full registered path set"
+    },
+    {
+      "id": "close-retains-sealed-draft",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "close-draft-not-no-effect",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "terminal result/history mismatch"
+    },
+    {
+      "id": "close-draft-needs-disposition",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "unsealed draft"
+    },
+    {
+      "id": "close-posted-reconciled",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "close-posted-needs-owner-apply",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "unreconciled posting"
+    },
+    {
+      "id": "close-status-identity-bound",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "close-status-wrong-request",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "outer identity"
+    },
+    {
+      "id": "close-conflict-is-not-no-effect",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": true,
+      "observed_valid": true,
+      "rejection": null
+    },
+    {
+      "id": "close-conflict-false-http-success",
+      "result": "PASS_STATIC_ONLY",
+      "expected_valid": false,
+      "observed_valid": false,
+      "rejection": "problem status/code mismatch"
+    }
+  ],
+  "not_verified": [
+    "actual owner proof authenticity",
+    "full runtime alias and scope registry",
+    "all writer physical coverage",
+    "SQL/C#/TS compilation or execution",
+    "database concurrency/deadlocks",
+    "business correctness on real data",
+    "permissions and deployment adoption"
+  ],
+  "originals_modified": false,
+  "business_execution": "NOT_RUN",
+  "database_execution": "NOT_RUN",
+  "runtime_adoption": "UNPROVEN",
+  "planning_action_postcommit_authorization": {
+    "result": "PASS_STATIC_ONLY",
+    "source_branches_checked": 4,
+    "timing_vectors": 28,
+    "unsafe_patch_mutations_rejected": 10,
+    "runtime_result": "NOT_RUN"
+  }
+}

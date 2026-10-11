@@ -1,5 +1,24 @@
 # PLAN-PO-01｜计划订单、三分支转单和恢复开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-PR-CP22-NATIVE-OWNER-ADOPTION | SUPERSEDED：CP22 port14已有PR R3原生intake专业ADOPT；保原Digest结构、版本与namespace，实际实例另证。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| PLAN-IF-009 | ARTIFACT_CONFLICT：逐portion branches不以三种枚举限制三条，删除maxItems3；新contractVersion和完整contractBody SHA明确发布，closedSchemaSet原摘要不变。 | [设计](../remediation/05-planning-material-mapping.md) |
+| PLAN-IF-010 | ARTIFACT_CONFLICT：old-result分支parse后、外事务commit前补原Authorized/authenticated；confirmed后输出前再次检查时效；过期不输出，保留原receipt，不重跑业务。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| PLAN-IF-011 | ARTIFACT_CONFLICT：新success在COMMIT后返回已校验且写入CommandSlot的@LocalTerminalCanonical及Replayed=0；与replay相同一结果集一行两列，consumer只取原TerminalCanonical。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| PLAN-IF-012 | ARTIFACT_CONFLICT：PO15 OpenAPI503同步当前API登记的三个真实关闭错误，底层恢复语义不改。 | [设计](../remediation/05-planning-material-mapping.md) |
+| PLAN-IF-013 | ARTIFACT_CONFLICT：18处PlanningFactHead包装ResourceKey采用原实际Row完整主键；实际数据行保持。 | [设计](../remediation/05-planning-material-mapping.md) |
+| PLAN-IF-014 | ARTIFACT_CONFLICT：SC06 revision4 以原OwnerReceipt62的 request/result/rawresponse 为唯一证据；修正两份BodyJson及四份revision/head摘要，得到既有PayloadDigest c35ad4…；ExactTuple仍按原UTF-16LE字节哈希。 | [设计](../remediation/assets/planning-fixtures/README.md) |
+| PLAN-IF-015 | ARTIFACT_CONFLICT：CP19 step1执行键取已冻结请求及step0前驱 CP18-MAKE-579b4a48-c253-5aa9-834d-1847c3733973；完整native结果摘要07c674…；23处键和44处摘要跨后续pre/post、claim、OwnerCommand/Observation/WorkflowStep/RecoveryCheckpoint捕获全量级联。 | [设计](../remediation/assets/planning-fixtures/README.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：`required_materials_consolidated`。准确 CP22 原六 SPEC/37 AC 的功能设计及新专业接口已获根接受；17 个上游合同及独立 Core 有本次专业设计采用，实际运行注册/授权仍为0，37业务用例全部 NOT_RUN。[A:6] [A:14] 本册把跨 CP18–CP22 的有效规则合并阅读，保留全部原件与后继限定。
 
 ## 1. 目的、操作者与Owner

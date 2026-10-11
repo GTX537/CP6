@@ -1,5 +1,22 @@
 # FIN-AR-01 应收、收款与核销
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE | ADOPTION_PENDING：现金退款完整current source proposal只作提议；真实5S/rights/currency/lineage原目录（含legacy/import/manual/alias/inflight/reservation/end）；新demand需原owner/node25真实source。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION | INTENTIONAL_DIFFERENCE：派生独立current-v1 C#/TS codec，锁根Problem修订后的TYPE字节SHA；NO_CHANGE可带Ref，FOUND仍需完整真实native/current来源，未证明COMPLETED保持UNKNOWN。冻结R8保原字节。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| OPS-IF-022 | ADOPTION_PENDING：report读完整ledger immutable forward/reverse effectiveDate+cut与opening覆盖，GL-only/manual/source-null也包含；FX取as-of历史敞口+owner全集+rates+signed credits。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-026 | INTENTIONAL_DIFFERENCE：AR总体UNRESOLVED下policy-ready INVOICE可独立完成；INV独占COGS source，AR只是观察协调；不套AP整manifest完成门。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-027 | INTENTIONAL_DIFFERENCE：全历史role mapping+GL-only/manual source-null入账，原reversed仍留历史；strict切口需要同native snapshot，CUT_VECTOR_ONLY必须明确诊断选择。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-028 | ADOPTION_PENDING：真实funds/GL Posted不替代业务OA；独立receipt确认新baseline+claims+receipt same finalUow；未Apply compensation不恢复余额，已Apply allocation走inverse。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前1071行正文、1101行wire、45295行fixture全部370节点、当前18份补充材料和H31共享规范已语义整理。373成员及423准备窗口已核身份与历史/当前角色，236件固定旧代码不称全文实读。79项业务AC与Owner实际采用仍未运行。
 
 ## 1. 业务目的、操作者和Owner边界

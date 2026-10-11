@@ -1,5 +1,18 @@
 # CRM-ACC-01 客户关系账户
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-ACC-PHYSICAL-WIRE | DESIGN_GAP：New ACC v2 A01-A13 and ACC-MAPPING-DECISION/1; independent C03/seven-field preserved; complete scope/owner selection/account binding/current qualification required. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-LEAD-AC-ATOMIC-SUPERSESSION | SUPERSEDED：CP22保R3原60AC身份，AC042/048–052改同事务H02+Manifest；AC035 hiddenCount不是当前closed字段，旧Saga/202/部分成功预期不再作当前验收。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。本文整理已接受的账户功能设计；物理 API、DDL、真实 Owner 协议和运行验证尚未由本组合冻结。正文中的“必须”是设计约束，全部业务验收仍为 `NOT_RUN`。当前有效组合为 R01 + R02 + R03 + CR09 补正 + UA-20260929-A-CRM-01；不得单独把 R01 的提案或 R03 的原 C42 夹具当最终要求。[接受范围][UA13] [运行边界][UA36]
 
 ## 1. 业务目的、操作者与权威边界

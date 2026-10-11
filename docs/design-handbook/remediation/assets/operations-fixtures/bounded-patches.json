@@ -1,0 +1,1245 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "DATA_ONLY_EXPECTED_VALUE_PATCHES",
+  "patches": [
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "source_finding_ids": [
+        "OPS-IF-038"
+      ],
+      "decision": "Use native state string|null in a new pinned schema identity; preserve separate Money fields.",
+      "operations": [
+        {
+          "op": "remove_json",
+          "path": "/$defs/OutboundValueRow/properties/valueExitState/anyOf/0/$ref",
+          "before": "#/$defs/Money"
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/OutboundValueRow/properties/valueExitState/anyOf/0/maxLength",
+          "after": 40
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/OutboundValueRow/properties/valueExitState/anyOf/0/minLength",
+          "after": 1
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/OutboundValueRow/properties/valueExitState/anyOf/0/type",
+          "after": "string"
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/OutboundValueRow/properties/valueExitState/description",
+          "after": "Exact native ValueEffect.State or Work.state from this row source; independent of Money and all other axes. Null requires a missing/unknown/not-applicable source reason."
+        },
+        {
+          "op": "remove_json",
+          "path": "/$defs/ReverseExceptionRow/properties/inventoryValueState/anyOf/0/$ref",
+          "before": "#/$defs/Money"
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/ReverseExceptionRow/properties/inventoryValueState/anyOf/0/maxLength",
+          "after": 40
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/ReverseExceptionRow/properties/inventoryValueState/anyOf/0/minLength",
+          "after": 1
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/ReverseExceptionRow/properties/inventoryValueState/anyOf/0/type",
+          "after": "string"
+        },
+        {
+          "op": "add_json",
+          "path": "/$defs/ReverseExceptionRow/properties/inventoryValueState/description",
+          "after": "Exact native ValueEffect.State or Work.state from this row source; independent of Money and all other axes. Null requires a missing/unknown/not-applicable source reason."
+        },
+        {
+          "op": "replace_json",
+          "path": "/$id",
+          "before": "urn:cp6:fin-inv:r10:wire",
+          "after": "urn:cp6:fin-inv:r10:wire:operations-revision-1"
+        }
+      ],
+      "expected_derived_sha256": "b742a5a2d73cba80ce73d2658894de1788c5ba993d23152a113a0febc6c8fe35",
+      "expected_derived_bytes": 488171
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "source_sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "decision": "Exact command receipt replay; SC20 first withdrawal from original receipt layer retains null reverse-consumption, exact correction lineage and original digest domain; SQL wrapper PK equals Row.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC12/Steps/0/PersistedRows/9/Row/BindingDigest",
+          "before": "43ab6ea8b88ba0e7554fc1abe1a9b532899a22f4b88a62fb178169bb7d3d06f7",
+          "after": "7b87f069191c40e447eb327b3924e830c6a7998bd4a8b0e29dee5a3a9b261be2"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC12/Steps/3/CanonicalResponseSha256",
+          "before": "7966b7da9214c97a01a1b8b245ae9de3372c0319fe5433d8ca2344058f6022fb",
+          "after": "614a021ec45d6369c4d172e47eed9cf322673aaa22833e74c8f9f484c0ddfd97"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC12/Steps/3/CanonicalResponseUtf8",
+          "before": "{\"bindingDigest\":\"66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab\",\"receipt\":{\"bindingDigest\":\"66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab\",\"commandId\":\"d4e440f0-a4ea-5c21-92fa-7854752bce93\",\"receiptId\":\"fe22cf29-4214-5a45-9ea8-5c56e7477700\",\"resultDigest\":\"2a5409f783b55eedae7fb849ed6ed787487e3baabca35dbb09f1743b5f84d657\",\"resultRef\":{\"digest\":\"e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835\",\"id\":\"RES-EFFECT-SC12-CLEAR\",\"owner\":\"FIN-INV\",\"version\":\"1\"},\"terminalAt\":\"2026-10-01T15:25:06Z\",\"uowId\":\"98267444-fc0f-5028-b13e-b8f21f21a67f\"},\"status\":\"COMMITTED\"}",
+          "after": "{\"bindingDigest\":\"395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570\",\"receipt\":{\"bindingDigest\":\"395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570\",\"commandId\":\"d4e440f0-a4ea-5c21-92fa-7854752bce93\",\"receiptId\":\"fe22cf29-4214-5a45-9ea8-5c56e7477700\",\"resultDigest\":\"e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835\",\"resultRef\":{\"digest\":\"e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835\",\"id\":\"RES-EFFECT-SC12-CLEAR\",\"owner\":\"FIN-INV\",\"version\":\"1\"},\"terminalAt\":\"2026-10-01T15:25:06Z\",\"uowId\":\"98267444-fc0f-5028-b13e-b8f21f21a67f\"},\"status\":\"COMMITTED\"}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC12/Steps/3/Response/bindingDigest",
+          "before": "66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab",
+          "after": "395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC12/Steps/3/Response/receipt/bindingDigest",
+          "before": "66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab",
+          "after": "395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC12/Steps/3/Response/receipt/resultDigest",
+          "before": "2a5409f783b55eedae7fb849ed6ed787487e3baabca35dbb09f1743b5f84d657",
+          "after": "e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/CorrectionEffect/layerConsumptions/0/effectId",
+          "before": "2738c8a7-bfa6-5931-8dcf-69f06f749d87",
+          "after": "cb852aba-05ba-563b-afc0-32d44630941e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/CorrectionEffect/resultDigest",
+          "before": "2bf6951e77128ef05fe6938dad7635e40a419838f1b8e8880d7a3bf0b5e13f6a",
+          "after": "817fd246bf816181cd08f194fe58b14c08283ffe822a885cae119d82e3d34d03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/FinalRows/ReverseLayerConsumption/effectId",
+          "before": "2738c8a7-bfa6-5931-8dcf-69f06f749d87",
+          "after": "cb852aba-05ba-563b-afc0-32d44630941e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/FinalRows/ReverseLayerConsumption/reverseOfConsumptionId",
+          "before": "CONS-RCPT-20-ORIGINAL",
+          "after": null
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/Steps/0/PersistedRows/11/Row/ObjectDigest",
+          "before": "2bf6951e77128ef05fe6938dad7635e40a419838f1b8e8880d7a3bf0b5e13f6a",
+          "after": "817fd246bf816181cd08f194fe58b14c08283ffe822a885cae119d82e3d34d03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/Steps/0/PersistedRows/14/Row/BodyDigest",
+          "before": "2bf6951e77128ef05fe6938dad7635e40a419838f1b8e8880d7a3bf0b5e13f6a",
+          "after": "817fd246bf816181cd08f194fe58b14c08283ffe822a885cae119d82e3d34d03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/Steps/0/PersistedRows/14/Row/PayloadRef",
+          "before": "urn:sha256:2bf6951e77128ef05fe6938dad7635e40a419838f1b8e8880d7a3bf0b5e13f6a",
+          "after": "urn:sha256:817fd246bf816181cd08f194fe58b14c08283ffe822a885cae119d82e3d34d03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/Steps/0/PersistedRows/15/Row/AfterDigest",
+          "before": "2bf6951e77128ef05fe6938dad7635e40a419838f1b8e8880d7a3bf0b5e13f6a",
+          "after": "817fd246bf816181cd08f194fe58b14c08283ffe822a885cae119d82e3d34d03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/Scenarios/SC20/Steps/1/PersistedRows/2/PrimaryKey/ObjectId",
+          "before": "OWNERFACT-AP-SC20",
+          "after": "OWNERFACT-AP-SC20-RETURN"
+        }
+      ],
+      "expected_derived_sha256": "7f79b60270191e240e5e92097dd83610cab7426695ee5de15a8d6edce6e0572f",
+      "expected_derived_bytes": 1437001
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "source_sha256": "dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2",
+      "source_finding_ids": [
+        "OPS-IF-042"
+      ],
+      "decision": "R4 section11 HTTP400 is normative; schema rejection is not an executed HTTP result.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/vectors/1/why",
+          "before": "unknown root member must be 422 INVALID_FIELD with JSON Pointer",
+          "after": "unknown root member must be 400 INVALID_FIELD with JSON Pointer"
+        }
+      ],
+      "expected_derived_sha256": "a008e32600304533e7dafc9b7d34dcc927c5289fda6ce632528cf0ead8a5cffb",
+      "expected_derived_bytes": 406690
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "source_sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+      "source_finding_ids": [
+        "OPS-IF-043"
+      ],
+      "decision": "Prose follows first location40→36 and exact two Package rows; body digests and Stock quantities unchanged.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/cases/27/title",
+          "before": "同一次SHIP后容量头100到90不减未收",
+          "after": "同一次SHIP后第一地点容量头40到36不减未收"
+        },
+        {
+          "op": "replace_json",
+          "path": "/resourceSemantics/predicateResources",
+          "before": "Stock CLAIM-RANGE and OUT PACK-COVERAGE are registered exact-root-range predicate locks shared by every relevant insertion/update path, including currently empty sets. PackageAssignment locks the immutable membership/content-digest set; the concrete member Package b3000000-0000-4000-8000-000000001300 row is explicitly enlisted before ALLOW. Any additional member requires its own collected Package key. Missing registration or newly discovered unlocked members require rollback/recollect, not a hidden lock.",
+          "after": "Stock CLAIM-RANGE and OUT PACK-COVERAGE are registered exact-root-range predicate locks shared by every relevant insertion/update path, including currently empty sets. PackageAssignment locks the immutable membership/content-digest set; both concrete member Package rows b3100000-0000-4000-8000-000000001300 and b3100000-0000-4000-8000-000000002300 are explicitly enlisted before ALLOW. Any additional member requires its own collected Package key. Missing registration or newly discovered unlocked members require rollback/recollect, not a hidden lock."
+        }
+      ],
+      "expected_derived_sha256": "2e289cd50b440fb9df6b0f1974918551570ddbe0379956f11050c635b18ee9ed",
+      "expected_derived_bytes": 747383
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "source_sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+      "source_finding_ids": [
+        "OPS-IF-044"
+      ],
+      "decision": "Original locator query returns the operationId of the single committed Stock receipt/movement.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "\"operationId\": \"a1c16cf6-9a0d-576e-9653-f74581f5f917\"",
+          "after": "\"operationId\": \"72305281-7790-5c74-a80c-dc3da2e6f0d5\"",
+          "expected_count": 1
+        }
+      ],
+      "expected_derived_sha256": "c40bdd59af4c2f720773d539dea852835a5c6db595fdd675a083820b0d4605e3",
+      "expected_derived_bytes": 448940
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "source_sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+      "source_finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "decision": "Versioned independent DEMO examples with exact state projection, exclusive H30 seal, and independently hashed shipment line.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/claimDigest",
+          "before": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "after": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/claimDigest",
+          "before": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "after": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/claimDigest",
+          "before": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "after": "1e46d5e19c40b4fcc6c9c940c6f1b915120ce27fa675d2c91736aeee34de14fc"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/8/expected/disposition",
+          "before": "REQUIRED_FENCED",
+          "after": "PENDING"
+        },
+        {
+          "op": "add_json",
+          "path": "/examples/8/expected/qualification",
+          "after": "REQUIRED_FENCED"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/commandBindingRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "b4f54e4709d38ac7f8bf9952c412146f4ebb211c3091751ff911c56ac6f23776"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/commandBindingRef/id",
+          "before": "BIND-1",
+          "after": "OPS-H30-BIND-49"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/effectKeys/0",
+          "before": "RMA-1|DSP-1|EFFECT",
+          "after": "FININV|RMA-1|0-5"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/noAdditionalEffectProofRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "4293ddfdd51fb1246dc80dd653d6a353f0d89e5c08fb82d59eac26dab1ee9005"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/noAdditionalEffectProofRef/id",
+          "before": "SEAL-PROOF-1",
+          "after": "OPS-H30-PERMANENT-SEAL-49"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/receiptId",
+          "before": "a0000000-0000-4000-8000-000000000003",
+          "after": "b1000000-0000-4000-8000-000000000050"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/claimDigest",
+          "before": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "after": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/18/payload/terminalReceipt/commandBindingRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "b4f54e4709d38ac7f8bf9952c412146f4ebb211c3091751ff911c56ac6f23776"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/18/payload/terminalReceipt/commandBindingRef/id",
+          "before": "BIND-1",
+          "after": "OPS-H30-BIND-49"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/18/payload/terminalReceipt/effectKeys/0",
+          "before": "RMA-1|DSP-1|EFFECT",
+          "after": "FININV|RMA-1|0-5"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/18/payload/terminalReceipt/noAdditionalEffectProofRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "4293ddfdd51fb1246dc80dd653d6a353f0d89e5c08fb82d59eac26dab1ee9005"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/18/payload/terminalReceipt/noAdditionalEffectProofRef/id",
+          "before": "SEAL-PROOF-1",
+          "after": "OPS-H30-PERMANENT-SEAL-49"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/18/payload/terminalReceipt/receiptId",
+          "before": "a0000000-0000-4000-8000-000000000003",
+          "after": "b1000000-0000-4000-8000-000000000050"
+        }
+      ],
+      "expected_derived_sha256": "272e68a41f75bd01ba5b57d0018eadbb5fbd656e1bad2d65de1b7c14e1380733",
+      "expected_derived_bytes": 173323
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "source_sha256": "561c763d68c1f87a6ae8118e1d1e782175d0821774c597fb3e28fe9125dfc98a",
+      "source_finding_ids": [
+        "OPS-IF-048"
+      ],
+      "decision": "Explicit existing-enum D05 projection; original enums are not expanded.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/operations/26/transactionDecision",
+          "before": "validate the local qualification registration and atomically retain slice/head and Work as REQUIRED_FENCED with audit; no APPLIED transition",
+          "after": "validate local qualification; atomically retain qualification and slices as REQUIRED_FENCED, disposition head PENDING (PARTIAL only for already confirmed slices), Work/checkpoint BLOCKED, occupied claims and audit; no new APPLIED transition or Owner/Stock call"
+        }
+      ],
+      "expected_derived_sha256": "68fecc754a5568f0c2ef74abe37d41031ceeceecf88db345d7107c4e1986f6f7",
+      "expected_derived_bytes": 70437
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "source_sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+      "source_finding_ids": [
+        "OPS-IF-048"
+      ],
+      "decision": "Propagate exact D05 state mapping and matching example expectation to narrative.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "validate the local qualification registration and atomically retain slice/head and Work as REQUIRED_FENCED with audit; no APPLIED transition",
+          "after": "validate local qualification; atomically retain qualification and slices as REQUIRED_FENCED, disposition head PENDING (PARTIAL only for already confirmed slices), Work/checkpoint BLOCKED, occupied claims and audit; no new APPLIED transition or Owner/Stock call",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "\"disposition\": \"REQUIRED_FENCED\"",
+          "after": "\"disposition\": \"PENDING\", \"qualification\": \"REQUIRED_FENCED\"",
+          "expected_count": 1
+        }
+      ],
+      "expected_derived_sha256": "987c173fea8056d6d8d237c112e3f3309e4de9c5a73a5819aa59fce9cb5e5376",
+      "expected_derived_bytes": 166936
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99bf7b7371715a62__fixture-F03-I29-request.json",
+      "source_sha256": "99bf7b7371715a62b9400021b018431e66c603e8266ab7bddf521ab101b2e3ab",
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "decision": "Exact mirror of revised continuous relational fixture; includes canonical bytes and dependent digests.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/handoff/sourceRef/id",
+          "before": "OUT-TRIAL-F03",
+          "after": "OUT-QA-F03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/inputDigest",
+          "before": "7b8b505b692a1b73f2cec5e0ddd3be53fff6e078487d96385dad545d20103a91",
+          "after": "66920c0c505a91e9ee055363a8fbbf4ae841846e2274d297baac8ecb0ae582a6"
+        }
+      ],
+      "expected_derived_sha256": "461c6d0e3357744f5c9ce5ba9afb777016ce100f0aad22dcd1fc27d9961114cc",
+      "expected_derived_bytes": 6358
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c603f220fd83336d__fixture-F03-I29-response.json",
+      "source_sha256": "c603f220fd83336dedd15fec1518d111905836807131aca5eb5fe20342fc63b9",
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "decision": "Exact mirror of revised continuous relational fixture; includes canonical bytes and dependent digests.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/inputDigest",
+          "before": "7b8b505b692a1b73f2cec5e0ddd3be53fff6e078487d96385dad545d20103a91",
+          "after": "66920c0c505a91e9ee055363a8fbbf4ae841846e2274d297baac8ecb0ae582a6"
+        },
+        {
+          "op": "replace_json",
+          "path": "/result/payloadBodyJcs",
+          "before": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-TRIAL-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}",
+          "after": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-QA-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/result/payloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/terminalDigest",
+          "before": "58d3580bad881c586c0b3926f2f5775ed2b94c8708917ebded169c139b887391",
+          "after": "c1cef28729e6ce2d914a0a74e4303ace110bae618736abd6acac76a23a5d89a8"
+        }
+      ],
+      "expected_derived_sha256": "9ffb97d74a477bb083754054c12ff83f0c9e0ac16ae9d046550ff2b3440b46db",
+      "expected_derived_bytes": 6229
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "source_sha256": "420ebe12bc2aec9509e781236d57baecf25b02bb23a03c3eace2fb9a82c626a5",
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "decision": "Exact mirror of revised continuous relational fixture; includes canonical bytes and dependent digests.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/0/after/BodyDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/0/after/BodyJson",
+          "before": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-TRIAL-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}",
+          "after": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-QA-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/0/rowDigest",
+          "before": "89a4a8e54fd165cfa615413993f10912f7de878c8f215af6b4b1405f28e21033",
+          "after": "196ad6ac0946d63b126eca57c47aa2f390c2969fe41e55e962b2de743d9467c1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/1/after/PayloadBody",
+          "before": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-TRIAL-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}",
+          "after": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-QA-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/1/after/PayloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/1/rowDigest",
+          "before": "6c6f4dd56c242aabefe2f648c2d35cd539df0d405360aae0464c323b8b45b0cc",
+          "after": "38ce79af972bd3e8e43f33e66c9f3ae8c4a9d368bb2c4dba0611191565dcafe5"
+        },
+        {
+          "op": "replace_json",
+          "path": "/2/after/PayloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/2/rowDigest",
+          "before": "a14f7e70f5a5a804f02870d4ee251d09259efb5bb7d29676454d9ff1c4c6928c",
+          "after": "f3a017e27572f88623bf976f6a80cb8c2857e9fd8f9235875246941e71a8dbbb"
+        },
+        {
+          "op": "replace_json",
+          "path": "/4/after/InputDigest",
+          "before": "7b8b505b692a1b73f2cec5e0ddd3be53fff6e078487d96385dad545d20103a91",
+          "after": "66920c0c505a91e9ee055363a8fbbf4ae841846e2274d297baac8ecb0ae582a6"
+        },
+        {
+          "op": "replace_json",
+          "path": "/4/after/RequestCanonicalUtf8",
+          "before": "{\"commandId\":\"8a3b08aa-6c74-5cd0-a263-eafb2a84725a\",\"expected\":{\"decisionSequence\":\"1\",\"familyDirectoryRevision\":\"1\",\"mappingHeadRevision\":\"1\",\"observationSetRevision\":\"1\",\"resultSetRevision\":\"1\",\"sourceOwnerRevision\":\"1\",\"taskRevision\":\"4\",\"writerEpoch\":\"8\"},\"handoff\":{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-TRIAL-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}},\"inputDigest\":\"7b8b505b692a1b73f2cec5e0ddd3be53fff6e078487d96385dad545d20103a91\",\"requestKey\":\"F03-I29-09\"}",
+          "after": "{\"commandId\":\"8a3b08aa-6c74-5cd0-a263-eafb2a84725a\",\"expected\":{\"decisionSequence\":\"1\",\"familyDirectoryRevision\":\"1\",\"mappingHeadRevision\":\"1\",\"observationSetRevision\":\"1\",\"resultSetRevision\":\"1\",\"sourceOwnerRevision\":\"1\",\"taskRevision\":\"4\",\"writerEpoch\":\"8\"},\"handoff\":{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-QA-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}},\"inputDigest\":\"66920c0c505a91e9ee055363a8fbbf4ae841846e2274d297baac8ecb0ae582a6\",\"requestKey\":\"F03-I29-09\"}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/4/after/TerminalBody",
+          "before": "{\"commandId\":\"8a3b08aa-6c74-5cd0-a263-eafb2a84725a\",\"inputDigest\":\"7b8b505b692a1b73f2cec5e0ddd3be53fff6e078487d96385dad545d20103a91\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:09Z\",\"requestKey\":\"F03-I29-09\",\"result\":{\"canonicalKey\":\"F03:I29\",\"decisionRef\":null,\"deliveryId\":\"c57a46f3-0ba1-5373-89dd-7f8b8b96749b\",\"destination\":\"PLM\",\"leaseEpoch\":\"0\",\"messageId\":\"41c4b861-48c0-57e7-8b6c-2ce61701f36b\",\"payloadBodyJcs\":\"{\\\"actualBaselineRef\\\":{\\\"digest\\\":\\\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\\\",\\\"id\\\":\\\"BASELINE-F03\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"7\\\"},\\\"contentHashes\\\":[\\\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\\\"],\\\"coverageRanges\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"10\\\"}],\\\"decisionRef\\\":{\\\"digest\\\":\\\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\\\",\\\"id\\\":\\\"790f5388-6025-5077-ba72-b85d1e0838f8\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"},\\\"documentRefs\\\":[{\\\"digest\\\":\\\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\\\",\\\"id\\\":\\\"REPORT-F03\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"}],\\\"environmentRefs\\\":[{\\\"digest\\\":\\\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\\\",\\\"id\\\":\\\"ENV-F03\\\",\\\"owner\\\":\\\"QUALITY-MASTER\\\",\\\"version\\\":\\\"3\\\"}],\\\"handoffId\\\":\\\"923fb8f9-114a-51f2-8979-6dce60aec5f8\\\",\\\"methodVersionRefs\\\":[{\\\"digest\\\":\\\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\\\",\\\"id\\\":\\\"DIMENSIONAL-FULL-COUNT\\\",\\\"owner\\\":\\\"QUALITY-MASTER\\\",\\\"version\\\":\\\"4\\\"}],\\\"occurredAt\\\":\\\"2026-10-01T17:30:05Z\\\",\\\"previousRef\\\":null,\\\"qualityTaskRef\\\":{\\\"digest\\\":\\\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\\\",\\\"id\\\":\\\"d6d74197-72ce-55b8-85c1-75f5a700a15d\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"4\\\"},\\\"rawRecordRefs\\\":[{\\\"digest\\\":\\\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\\\",\\\"id\\\":\\\"F03-raw-1\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\\\",\\\"id\\\":\\\"F03-raw-2\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\\\",\\\"id\\\":\\\"F03-raw-3\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\\\",\\\"id\\\":\\\"F03-raw-4\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\\\",\\\"id\\\":\\\"F03-raw-5\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\\\",\\\"id\\\":\\\"F03-raw-6\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\\\",\\\"id\\\":\\\"F03-raw-7\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\\\",\\\"id\\\":\\\"F03-raw-8\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\\\",\\\"id\\\":\\\"F03-raw-9\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\\\",\\\"id\\\":\\\"F03-raw-10\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"}],\\\"resultSetRef\\\":{\\\"digest\\\":\\\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\\\",\\\"id\\\":\\\"ca18828e-aafc-5f37-adcd-0397a4409743\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"},\\\"revision\\\":\\\"1\\\",\\\"sampleRefs\\\":[{\\\"digest\\\":\\\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\\\",\\\"id\\\":\\\"F03-SAMPLE-1\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\\\",\\\"id\\\":\\\"F03-SAMPLE-2\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\\\",\\\"id\\\":\\\"F03-SAMPLE-3\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\\\",\\\"id\\\":\\\"F03-SAMPLE-4\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\\\",\\\"id\\\":\\\"F03-SAMPLE-5\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\\\",\\\"id\\\":\\\"F03-SAMPLE-6\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\\\",\\\"id\\\":\\\"F03-SAMPLE-7\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\\\",\\\"id\\\":\\\"F03-SAMPLE-8\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\\\",\\\"id\\\":\\\"F03-SAMPLE-9\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\\\",\\\"id\\\":\\\"F03-SAMPLE-10\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"}],\\\"schema\\\":\\\"QA-IPQC-PLM-EVIDENCE-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\\\",\\\"id\\\":\\\"OUT-TRIAL-F03\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"},\\\"testExecutionRef\\\":{\\\"digest\\\":\\\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\\\",\\\"id\\\":\\\"TEST-F03\\\",\\\"owner\\\":\\\"PLM-VER\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387\",\"payloadType\":\"PLM_RAW_EVIDENCE_HANDOFF_V1\",\"previousDeliveryRef\":null,\"protocol\":\"PLM_RAW_EVIDENCE_V1\",\"recordedAt\":\"2026-10-01T17:30:09Z\",\"registrationRef\":{\"digest\":\"ec040593ff9d28c04248d9641c49535dba6b1a1f05a582dadaa3feaafe308b45\",\"id\":\"e1701310-2d75-587f-ac22-c01bb9f29ee0\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"9\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-QA-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"PENDING\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"58d3580bad881c586c0b3926f2f5775ed2b94c8708917ebded169c139b887391\",\"terminalType\":\"FrozenDelivery\"}",
+          "after": "{\"commandId\":\"8a3b08aa-6c74-5cd0-a263-eafb2a84725a\",\"inputDigest\":\"66920c0c505a91e9ee055363a8fbbf4ae841846e2274d297baac8ecb0ae582a6\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:09Z\",\"requestKey\":\"F03-I29-09\",\"result\":{\"canonicalKey\":\"F03:I29\",\"decisionRef\":null,\"deliveryId\":\"c57a46f3-0ba1-5373-89dd-7f8b8b96749b\",\"destination\":\"PLM\",\"leaseEpoch\":\"0\",\"messageId\":\"41c4b861-48c0-57e7-8b6c-2ce61701f36b\",\"payloadBodyJcs\":\"{\\\"actualBaselineRef\\\":{\\\"digest\\\":\\\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\\\",\\\"id\\\":\\\"BASELINE-F03\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"7\\\"},\\\"contentHashes\\\":[\\\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\\\"],\\\"coverageRanges\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"10\\\"}],\\\"decisionRef\\\":{\\\"digest\\\":\\\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\\\",\\\"id\\\":\\\"790f5388-6025-5077-ba72-b85d1e0838f8\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"},\\\"documentRefs\\\":[{\\\"digest\\\":\\\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\\\",\\\"id\\\":\\\"REPORT-F03\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"}],\\\"environmentRefs\\\":[{\\\"digest\\\":\\\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\\\",\\\"id\\\":\\\"ENV-F03\\\",\\\"owner\\\":\\\"QUALITY-MASTER\\\",\\\"version\\\":\\\"3\\\"}],\\\"handoffId\\\":\\\"923fb8f9-114a-51f2-8979-6dce60aec5f8\\\",\\\"methodVersionRefs\\\":[{\\\"digest\\\":\\\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\\\",\\\"id\\\":\\\"DIMENSIONAL-FULL-COUNT\\\",\\\"owner\\\":\\\"QUALITY-MASTER\\\",\\\"version\\\":\\\"4\\\"}],\\\"occurredAt\\\":\\\"2026-10-01T17:30:05Z\\\",\\\"previousRef\\\":null,\\\"qualityTaskRef\\\":{\\\"digest\\\":\\\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\\\",\\\"id\\\":\\\"d6d74197-72ce-55b8-85c1-75f5a700a15d\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"4\\\"},\\\"rawRecordRefs\\\":[{\\\"digest\\\":\\\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\\\",\\\"id\\\":\\\"F03-raw-1\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\\\",\\\"id\\\":\\\"F03-raw-2\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\\\",\\\"id\\\":\\\"F03-raw-3\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\\\",\\\"id\\\":\\\"F03-raw-4\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\\\",\\\"id\\\":\\\"F03-raw-5\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\\\",\\\"id\\\":\\\"F03-raw-6\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\\\",\\\"id\\\":\\\"F03-raw-7\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\\\",\\\"id\\\":\\\"F03-raw-8\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\\\",\\\"id\\\":\\\"F03-raw-9\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\\\",\\\"id\\\":\\\"F03-raw-10\\\",\\\"owner\\\":\\\"PLM-DOC\\\",\\\"version\\\":\\\"1\\\"}],\\\"resultSetRef\\\":{\\\"digest\\\":\\\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\\\",\\\"id\\\":\\\"ca18828e-aafc-5f37-adcd-0397a4409743\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"},\\\"revision\\\":\\\"1\\\",\\\"sampleRefs\\\":[{\\\"digest\\\":\\\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\\\",\\\"id\\\":\\\"F03-SAMPLE-1\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\\\",\\\"id\\\":\\\"F03-SAMPLE-2\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\\\",\\\"id\\\":\\\"F03-SAMPLE-3\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\\\",\\\"id\\\":\\\"F03-SAMPLE-4\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\\\",\\\"id\\\":\\\"F03-SAMPLE-5\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\\\",\\\"id\\\":\\\"F03-SAMPLE-6\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\\\",\\\"id\\\":\\\"F03-SAMPLE-7\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\\\",\\\"id\\\":\\\"F03-SAMPLE-8\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\\\",\\\"id\\\":\\\"F03-SAMPLE-9\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"},{\\\"digest\\\":\\\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\\\",\\\"id\\\":\\\"F03-SAMPLE-10\\\",\\\"owner\\\":\\\"PLM\\\",\\\"version\\\":\\\"1\\\"}],\\\"schema\\\":\\\"QA-IPQC-PLM-EVIDENCE-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\\\",\\\"id\\\":\\\"OUT-QA-F03\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"},\\\"testExecutionRef\\\":{\\\"digest\\\":\\\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\\\",\\\"id\\\":\\\"TEST-F03\\\",\\\"owner\\\":\\\"PLM-VER\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067\",\"payloadType\":\"PLM_RAW_EVIDENCE_HANDOFF_V1\",\"previousDeliveryRef\":null,\"protocol\":\"PLM_RAW_EVIDENCE_V1\",\"recordedAt\":\"2026-10-01T17:30:09Z\",\"registrationRef\":{\"digest\":\"ec040593ff9d28c04248d9641c49535dba6b1a1f05a582dadaa3feaafe308b45\",\"id\":\"e1701310-2d75-587f-ac22-c01bb9f29ee0\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"9\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-QA-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"PENDING\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"c1cef28729e6ce2d914a0a74e4303ace110bae618736abd6acac76a23a5d89a8\",\"terminalType\":\"FrozenDelivery\"}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/4/after/TerminalBodyDigest",
+          "before": "52b6dfa693533ee5763a25df00ff6a7c2bf84242a716cb7a58355475cc9ca4a3",
+          "after": "70a401d928063c571f2f8b320db87cc1af4861795e9ebe4d3ec882bb355086a0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/4/rowDigest",
+          "before": "91f378ad731d9a6cc7b425e29c16a00faeb8cbd4c3c8fe3dea365b03ce83c7ab",
+          "after": "eef1225930a0f187a356763046eda067c60831a9c34c25db5092c8ea2992a698"
+        },
+        {
+          "op": "replace_json",
+          "path": "/5/after/AfterDigest",
+          "before": "98724bcdd61d65e389515b3333df77ba9a979d97aed0f0ecca8eb0194ce90993",
+          "after": "cc61f45a5a52fa2e7c9c0269c174b10f23f112aea4cf71fad23dbe70529ecf86"
+        },
+        {
+          "op": "replace_json",
+          "path": "/5/after/BeforeDigest",
+          "before": "c0c20a6124454c9fb8a8a409ab30602a80d1c19e79837ee3559d2f4f128f36cd",
+          "after": "b77a845488aad7c5145fc74cd5b0cfe9d11ee6b799a6432ca386e16006f7cbd5"
+        },
+        {
+          "op": "replace_json",
+          "path": "/5/rowDigest",
+          "before": "33b34e58f08d63dc1674430313675c8b1a47bc05380438445e21b61a5c322eea",
+          "after": "6ebdde11d075176bdfad370672cd8c21aa9259fd5d90964765fb878375a24db3"
+        }
+      ],
+      "expected_derived_sha256": "66b565e5b553f44e83a185fc7ed9f66a5c48cbb04fe6eefad2b946b5d74c6851",
+      "expected_derived_bytes": 28353
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "source_sha256": "eba9b5010c3181a3b3c1a603fcb1315dca10c96c16393ec2afdd332160812415",
+      "source_finding_ids": [
+        "IPQC-CONT-03"
+      ],
+      "decision": "Exact mirror of revised continuous relational fixture; includes canonical bytes and dependent digests.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/computedResponseDigest",
+          "before": "482156efc1784edddd70b3d5819e7601830e2512f3502ed5a49b03e2a9b01056",
+          "after": "582be7783096fa70a3bb97ddc220c487e7e50cef2632fecaab55de6ce8a4309e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/response/result/canonicalKey",
+          "before": "F07:I26",
+          "after": "F07:OWNER-SEQUENCE"
+        },
+        {
+          "op": "replace_json",
+          "path": "/response/result/sequence",
+          "before": "4",
+          "after": "3"
+        },
+        {
+          "op": "replace_json",
+          "path": "/response/terminalDigest",
+          "before": "79cffb58d20e6fa2d49b6063ca02fea9db2c653bad9cc0db0072aedf04a802f5",
+          "after": "416b392ac2fa74673049a4a0c261215b385b352ddde7e66a087911ed644a48eb"
+        },
+        {
+          "op": "replace_json",
+          "path": "/responseJcs",
+          "before": "{\"commandId\":\"a5992b6e-bc01-5f57-887f-c4f86bd4ad73\",\"inputDigest\":\"c474711e171e6d29a8fa516d24b597a1155e013be42677b423f81ad7befa1694\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:04Z\",\"requestKey\":\"F07-I26-04\",\"result\":{\"canonicalKey\":\"F07:I26\",\"decisionRef\":{\"digest\":\"163d84957b592e64c10c5cf0c16cb11457b159abc41e6bd49d1de3f590d992d8\",\"id\":\"5a5d4611-ba93-5406-baf6-97190e02385e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"deliveryId\":\"22a15a95-a62a-557b-9970-8adaeb4e9e02\",\"destination\":\"MES-OUTPUT\",\"leaseEpoch\":\"9\",\"messageId\":\"b692c0d4-a8f5-57e2-a612-8ea1b2087562\",\"payloadBodyJcs\":\"{\\\"accepted\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"90\\\"}],\\\"authorityRef\\\":{\\\"digest\\\":\\\"5cc1648e9ab9f142e1a27f9fe7a9ae7421a5c4306ffd7f4d19f3a3f486ceed42\\\",\\\"ref\\\":{\\\"id\\\":\\\"approver-F07\\\",\\\"owner\\\":\\\"IAM\\\",\\\"version\\\":\\\"1\\\"}},\\\"held\\\":[],\\\"occurredAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"outputRef\\\":{\\\"digest\\\":\\\"e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUTPUT-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"4\\\"}},\\\"policyRef\\\":{\\\"digest\\\":\\\"145b048ae6b37c4bcbf6d1005d2768199359a49e8211a4b28b178944c38cc66f\\\",\\\"id\\\":\\\"policy-F07\\\",\\\"owner\\\":\\\"QA-POL\\\",\\\"version\\\":\\\"7\\\"},\\\"previousRef\\\":null,\\\"recordedAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"reference\\\":{\\\"digest\\\":\\\"a544dd70a8e43e2ef328a100bc3f716fb2489f4cdab75ad60326c48817f4db6a\\\",\\\"ref\\\":{\\\"id\\\":\\\"disposition-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"rejected\\\":[{\\\"from\\\":\\\"90\\\",\\\"to\\\":\\\"100\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rework\\\":[],\\\"sampleCoverageRef\\\":{\\\"digest\\\":\\\"67bc5b5488c3655058cb18106e11528cd4c973c301a633699d396ae3cbbc37ba\\\",\\\"ref\\\":{\\\"id\\\":\\\"coverage-F07\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"schema\\\":\\\"OUT-QA-DISPOSITION-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUT-QA-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"taskRef\\\":{\\\"digest\\\":\\\"82855db4e0981f81f7c12c02dbc3368f85d8ea4ff3dedfc3e85bfede5486855e\\\",\\\"ref\\\":{\\\"id\\\":\\\"12286459-57af-55f5-a1ac-b674784ac274\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"unexamined\\\":[],\\\"unitRef\\\":{\\\"id\\\":\\\"EA\\\",\\\"owner\\\":\\\"UOM\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"38428e3a8d180952a9be921502b9c01cf41c60ba1123eb721ab69ef1dab65a19\",\"payloadType\":\"MES_OUTPUT_QUALITY_DISPOSITION_V1\",\"previousDeliveryRef\":null,\"protocol\":\"MES_OUTPUT_QUALITY_V1\",\"recordedAt\":\"2026-10-01T17:30:04Z\",\"registrationRef\":{\"digest\":\"28c6c01c525c87d8b24a509b3b1015d6e99da315696d783fd35bb212b16f7b75\",\"id\":\"a7c29053-5176-53fe-b716-027182ee3c5e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"4\",\"sourceRef\":{\"digest\":\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\",\"id\":\"OUT-QA-F07\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"UNKNOWN\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"79cffb58d20e6fa2d49b6063ca02fea9db2c653bad9cc0db0072aedf04a802f5\",\"terminalType\":\"FrozenDelivery\"}",
+          "after": "{\"commandId\":\"a5992b6e-bc01-5f57-887f-c4f86bd4ad73\",\"inputDigest\":\"c474711e171e6d29a8fa516d24b597a1155e013be42677b423f81ad7befa1694\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:04Z\",\"requestKey\":\"F07-I26-04\",\"result\":{\"canonicalKey\":\"F07:OWNER-SEQUENCE\",\"decisionRef\":{\"digest\":\"163d84957b592e64c10c5cf0c16cb11457b159abc41e6bd49d1de3f590d992d8\",\"id\":\"5a5d4611-ba93-5406-baf6-97190e02385e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"deliveryId\":\"22a15a95-a62a-557b-9970-8adaeb4e9e02\",\"destination\":\"MES-OUTPUT\",\"leaseEpoch\":\"9\",\"messageId\":\"b692c0d4-a8f5-57e2-a612-8ea1b2087562\",\"payloadBodyJcs\":\"{\\\"accepted\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"90\\\"}],\\\"authorityRef\\\":{\\\"digest\\\":\\\"5cc1648e9ab9f142e1a27f9fe7a9ae7421a5c4306ffd7f4d19f3a3f486ceed42\\\",\\\"ref\\\":{\\\"id\\\":\\\"approver-F07\\\",\\\"owner\\\":\\\"IAM\\\",\\\"version\\\":\\\"1\\\"}},\\\"held\\\":[],\\\"occurredAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"outputRef\\\":{\\\"digest\\\":\\\"e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUTPUT-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"4\\\"}},\\\"policyRef\\\":{\\\"digest\\\":\\\"145b048ae6b37c4bcbf6d1005d2768199359a49e8211a4b28b178944c38cc66f\\\",\\\"id\\\":\\\"policy-F07\\\",\\\"owner\\\":\\\"QA-POL\\\",\\\"version\\\":\\\"7\\\"},\\\"previousRef\\\":null,\\\"recordedAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"reference\\\":{\\\"digest\\\":\\\"a544dd70a8e43e2ef328a100bc3f716fb2489f4cdab75ad60326c48817f4db6a\\\",\\\"ref\\\":{\\\"id\\\":\\\"disposition-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"rejected\\\":[{\\\"from\\\":\\\"90\\\",\\\"to\\\":\\\"100\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rework\\\":[],\\\"sampleCoverageRef\\\":{\\\"digest\\\":\\\"67bc5b5488c3655058cb18106e11528cd4c973c301a633699d396ae3cbbc37ba\\\",\\\"ref\\\":{\\\"id\\\":\\\"coverage-F07\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"schema\\\":\\\"OUT-QA-DISPOSITION-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUT-QA-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"taskRef\\\":{\\\"digest\\\":\\\"82855db4e0981f81f7c12c02dbc3368f85d8ea4ff3dedfc3e85bfede5486855e\\\",\\\"ref\\\":{\\\"id\\\":\\\"12286459-57af-55f5-a1ac-b674784ac274\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"unexamined\\\":[],\\\"unitRef\\\":{\\\"id\\\":\\\"EA\\\",\\\"owner\\\":\\\"UOM\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"38428e3a8d180952a9be921502b9c01cf41c60ba1123eb721ab69ef1dab65a19\",\"payloadType\":\"MES_OUTPUT_QUALITY_DISPOSITION_V1\",\"previousDeliveryRef\":null,\"protocol\":\"MES_OUTPUT_QUALITY_V1\",\"recordedAt\":\"2026-10-01T17:30:04Z\",\"registrationRef\":{\"digest\":\"28c6c01c525c87d8b24a509b3b1015d6e99da315696d783fd35bb212b16f7b75\",\"id\":\"a7c29053-5176-53fe-b716-027182ee3c5e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"3\",\"sourceRef\":{\"digest\":\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\",\"id\":\"OUT-QA-F07\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"UNKNOWN\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"416b392ac2fa74673049a4a0c261215b385b352ddde7e66a087911ed644a48eb\",\"terminalType\":\"FrozenDelivery\"}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/stateCut/afterDigest",
+          "before": "2d231babacfaf58a629b7f90f1ac31aaef17663431e24e26f98e9c4cedb7328f",
+          "after": "ecc9899ce3ce9d11b1cffb4097bb5b1c55c109a92c958e2a8d75583732029209"
+        },
+        {
+          "op": "replace_json",
+          "path": "/stateCut/afterRows/1/row/TerminalBody",
+          "before": "{\"commandId\":\"a5992b6e-bc01-5f57-887f-c4f86bd4ad73\",\"inputDigest\":\"c474711e171e6d29a8fa516d24b597a1155e013be42677b423f81ad7befa1694\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:04Z\",\"requestKey\":\"F07-I26-04\",\"result\":{\"canonicalKey\":\"F07:I26\",\"decisionRef\":{\"digest\":\"163d84957b592e64c10c5cf0c16cb11457b159abc41e6bd49d1de3f590d992d8\",\"id\":\"5a5d4611-ba93-5406-baf6-97190e02385e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"deliveryId\":\"22a15a95-a62a-557b-9970-8adaeb4e9e02\",\"destination\":\"MES-OUTPUT\",\"leaseEpoch\":\"9\",\"messageId\":\"b692c0d4-a8f5-57e2-a612-8ea1b2087562\",\"payloadBodyJcs\":\"{\\\"accepted\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"90\\\"}],\\\"authorityRef\\\":{\\\"digest\\\":\\\"5cc1648e9ab9f142e1a27f9fe7a9ae7421a5c4306ffd7f4d19f3a3f486ceed42\\\",\\\"ref\\\":{\\\"id\\\":\\\"approver-F07\\\",\\\"owner\\\":\\\"IAM\\\",\\\"version\\\":\\\"1\\\"}},\\\"held\\\":[],\\\"occurredAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"outputRef\\\":{\\\"digest\\\":\\\"e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUTPUT-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"4\\\"}},\\\"policyRef\\\":{\\\"digest\\\":\\\"145b048ae6b37c4bcbf6d1005d2768199359a49e8211a4b28b178944c38cc66f\\\",\\\"id\\\":\\\"policy-F07\\\",\\\"owner\\\":\\\"QA-POL\\\",\\\"version\\\":\\\"7\\\"},\\\"previousRef\\\":null,\\\"recordedAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"reference\\\":{\\\"digest\\\":\\\"a544dd70a8e43e2ef328a100bc3f716fb2489f4cdab75ad60326c48817f4db6a\\\",\\\"ref\\\":{\\\"id\\\":\\\"disposition-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"rejected\\\":[{\\\"from\\\":\\\"90\\\",\\\"to\\\":\\\"100\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rework\\\":[],\\\"sampleCoverageRef\\\":{\\\"digest\\\":\\\"67bc5b5488c3655058cb18106e11528cd4c973c301a633699d396ae3cbbc37ba\\\",\\\"ref\\\":{\\\"id\\\":\\\"coverage-F07\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"schema\\\":\\\"OUT-QA-DISPOSITION-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUT-QA-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"taskRef\\\":{\\\"digest\\\":\\\"82855db4e0981f81f7c12c02dbc3368f85d8ea4ff3dedfc3e85bfede5486855e\\\",\\\"ref\\\":{\\\"id\\\":\\\"12286459-57af-55f5-a1ac-b674784ac274\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"unexamined\\\":[],\\\"unitRef\\\":{\\\"id\\\":\\\"EA\\\",\\\"owner\\\":\\\"UOM\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"38428e3a8d180952a9be921502b9c01cf41c60ba1123eb721ab69ef1dab65a19\",\"payloadType\":\"MES_OUTPUT_QUALITY_DISPOSITION_V1\",\"previousDeliveryRef\":null,\"protocol\":\"MES_OUTPUT_QUALITY_V1\",\"recordedAt\":\"2026-10-01T17:30:04Z\",\"registrationRef\":{\"digest\":\"28c6c01c525c87d8b24a509b3b1015d6e99da315696d783fd35bb212b16f7b75\",\"id\":\"a7c29053-5176-53fe-b716-027182ee3c5e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"4\",\"sourceRef\":{\"digest\":\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\",\"id\":\"OUT-QA-F07\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"UNKNOWN\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"79cffb58d20e6fa2d49b6063ca02fea9db2c653bad9cc0db0072aedf04a802f5\",\"terminalType\":\"FrozenDelivery\"}",
+          "after": "{\"commandId\":\"a5992b6e-bc01-5f57-887f-c4f86bd4ad73\",\"inputDigest\":\"c474711e171e6d29a8fa516d24b597a1155e013be42677b423f81ad7befa1694\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:04Z\",\"requestKey\":\"F07-I26-04\",\"result\":{\"canonicalKey\":\"F07:OWNER-SEQUENCE\",\"decisionRef\":{\"digest\":\"163d84957b592e64c10c5cf0c16cb11457b159abc41e6bd49d1de3f590d992d8\",\"id\":\"5a5d4611-ba93-5406-baf6-97190e02385e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"deliveryId\":\"22a15a95-a62a-557b-9970-8adaeb4e9e02\",\"destination\":\"MES-OUTPUT\",\"leaseEpoch\":\"9\",\"messageId\":\"b692c0d4-a8f5-57e2-a612-8ea1b2087562\",\"payloadBodyJcs\":\"{\\\"accepted\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"90\\\"}],\\\"authorityRef\\\":{\\\"digest\\\":\\\"5cc1648e9ab9f142e1a27f9fe7a9ae7421a5c4306ffd7f4d19f3a3f486ceed42\\\",\\\"ref\\\":{\\\"id\\\":\\\"approver-F07\\\",\\\"owner\\\":\\\"IAM\\\",\\\"version\\\":\\\"1\\\"}},\\\"held\\\":[],\\\"occurredAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"outputRef\\\":{\\\"digest\\\":\\\"e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUTPUT-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"4\\\"}},\\\"policyRef\\\":{\\\"digest\\\":\\\"145b048ae6b37c4bcbf6d1005d2768199359a49e8211a4b28b178944c38cc66f\\\",\\\"id\\\":\\\"policy-F07\\\",\\\"owner\\\":\\\"QA-POL\\\",\\\"version\\\":\\\"7\\\"},\\\"previousRef\\\":null,\\\"recordedAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"reference\\\":{\\\"digest\\\":\\\"a544dd70a8e43e2ef328a100bc3f716fb2489f4cdab75ad60326c48817f4db6a\\\",\\\"ref\\\":{\\\"id\\\":\\\"disposition-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"rejected\\\":[{\\\"from\\\":\\\"90\\\",\\\"to\\\":\\\"100\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rework\\\":[],\\\"sampleCoverageRef\\\":{\\\"digest\\\":\\\"67bc5b5488c3655058cb18106e11528cd4c973c301a633699d396ae3cbbc37ba\\\",\\\"ref\\\":{\\\"id\\\":\\\"coverage-F07\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"schema\\\":\\\"OUT-QA-DISPOSITION-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUT-QA-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"taskRef\\\":{\\\"digest\\\":\\\"82855db4e0981f81f7c12c02dbc3368f85d8ea4ff3dedfc3e85bfede5486855e\\\",\\\"ref\\\":{\\\"id\\\":\\\"12286459-57af-55f5-a1ac-b674784ac274\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"unexamined\\\":[],\\\"unitRef\\\":{\\\"id\\\":\\\"EA\\\",\\\"owner\\\":\\\"UOM\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"38428e3a8d180952a9be921502b9c01cf41c60ba1123eb721ab69ef1dab65a19\",\"payloadType\":\"MES_OUTPUT_QUALITY_DISPOSITION_V1\",\"previousDeliveryRef\":null,\"protocol\":\"MES_OUTPUT_QUALITY_V1\",\"recordedAt\":\"2026-10-01T17:30:04Z\",\"registrationRef\":{\"digest\":\"28c6c01c525c87d8b24a509b3b1015d6e99da315696d783fd35bb212b16f7b75\",\"id\":\"a7c29053-5176-53fe-b716-027182ee3c5e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"3\",\"sourceRef\":{\"digest\":\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\",\"id\":\"OUT-QA-F07\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"UNKNOWN\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"416b392ac2fa74673049a4a0c261215b385b352ddde7e66a087911ed644a48eb\",\"terminalType\":\"FrozenDelivery\"}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/stateCut/afterRows/1/row/TerminalBodyDigest",
+          "before": "482156efc1784edddd70b3d5819e7601830e2512f3502ed5a49b03e2a9b01056",
+          "after": "582be7783096fa70a3bb97ddc220c487e7e50cef2632fecaab55de6ce8a4309e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/stateCut/afterRows/1/rowDigest",
+          "before": "86f1946f6da0d32cc5344b86e0ed6dfda98f5f2cb86ec628d42f9411da52eb43",
+          "after": "1f6f6eadccf516e0c38183f0b4bd8f59f4691851d0a2b7f7b9937f788efc15ee"
+        },
+        {
+          "op": "replace_json",
+          "path": "/stateCut/writes/4/after/TerminalBody",
+          "before": "{\"commandId\":\"a5992b6e-bc01-5f57-887f-c4f86bd4ad73\",\"inputDigest\":\"c474711e171e6d29a8fa516d24b597a1155e013be42677b423f81ad7befa1694\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:04Z\",\"requestKey\":\"F07-I26-04\",\"result\":{\"canonicalKey\":\"F07:I26\",\"decisionRef\":{\"digest\":\"163d84957b592e64c10c5cf0c16cb11457b159abc41e6bd49d1de3f590d992d8\",\"id\":\"5a5d4611-ba93-5406-baf6-97190e02385e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"deliveryId\":\"22a15a95-a62a-557b-9970-8adaeb4e9e02\",\"destination\":\"MES-OUTPUT\",\"leaseEpoch\":\"9\",\"messageId\":\"b692c0d4-a8f5-57e2-a612-8ea1b2087562\",\"payloadBodyJcs\":\"{\\\"accepted\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"90\\\"}],\\\"authorityRef\\\":{\\\"digest\\\":\\\"5cc1648e9ab9f142e1a27f9fe7a9ae7421a5c4306ffd7f4d19f3a3f486ceed42\\\",\\\"ref\\\":{\\\"id\\\":\\\"approver-F07\\\",\\\"owner\\\":\\\"IAM\\\",\\\"version\\\":\\\"1\\\"}},\\\"held\\\":[],\\\"occurredAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"outputRef\\\":{\\\"digest\\\":\\\"e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUTPUT-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"4\\\"}},\\\"policyRef\\\":{\\\"digest\\\":\\\"145b048ae6b37c4bcbf6d1005d2768199359a49e8211a4b28b178944c38cc66f\\\",\\\"id\\\":\\\"policy-F07\\\",\\\"owner\\\":\\\"QA-POL\\\",\\\"version\\\":\\\"7\\\"},\\\"previousRef\\\":null,\\\"recordedAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"reference\\\":{\\\"digest\\\":\\\"a544dd70a8e43e2ef328a100bc3f716fb2489f4cdab75ad60326c48817f4db6a\\\",\\\"ref\\\":{\\\"id\\\":\\\"disposition-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"rejected\\\":[{\\\"from\\\":\\\"90\\\",\\\"to\\\":\\\"100\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rework\\\":[],\\\"sampleCoverageRef\\\":{\\\"digest\\\":\\\"67bc5b5488c3655058cb18106e11528cd4c973c301a633699d396ae3cbbc37ba\\\",\\\"ref\\\":{\\\"id\\\":\\\"coverage-F07\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"schema\\\":\\\"OUT-QA-DISPOSITION-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUT-QA-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"taskRef\\\":{\\\"digest\\\":\\\"82855db4e0981f81f7c12c02dbc3368f85d8ea4ff3dedfc3e85bfede5486855e\\\",\\\"ref\\\":{\\\"id\\\":\\\"12286459-57af-55f5-a1ac-b674784ac274\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"unexamined\\\":[],\\\"unitRef\\\":{\\\"id\\\":\\\"EA\\\",\\\"owner\\\":\\\"UOM\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"38428e3a8d180952a9be921502b9c01cf41c60ba1123eb721ab69ef1dab65a19\",\"payloadType\":\"MES_OUTPUT_QUALITY_DISPOSITION_V1\",\"previousDeliveryRef\":null,\"protocol\":\"MES_OUTPUT_QUALITY_V1\",\"recordedAt\":\"2026-10-01T17:30:04Z\",\"registrationRef\":{\"digest\":\"28c6c01c525c87d8b24a509b3b1015d6e99da315696d783fd35bb212b16f7b75\",\"id\":\"a7c29053-5176-53fe-b716-027182ee3c5e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"4\",\"sourceRef\":{\"digest\":\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\",\"id\":\"OUT-QA-F07\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"UNKNOWN\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"79cffb58d20e6fa2d49b6063ca02fea9db2c653bad9cc0db0072aedf04a802f5\",\"terminalType\":\"FrozenDelivery\"}",
+          "after": "{\"commandId\":\"a5992b6e-bc01-5f57-887f-c4f86bd4ad73\",\"inputDigest\":\"c474711e171e6d29a8fa516d24b597a1155e013be42677b423f81ad7befa1694\",\"problem\":null,\"recordedAt\":\"2026-10-01T17:30:04Z\",\"requestKey\":\"F07-I26-04\",\"result\":{\"canonicalKey\":\"F07:OWNER-SEQUENCE\",\"decisionRef\":{\"digest\":\"163d84957b592e64c10c5cf0c16cb11457b159abc41e6bd49d1de3f590d992d8\",\"id\":\"5a5d4611-ba93-5406-baf6-97190e02385e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"deliveryId\":\"22a15a95-a62a-557b-9970-8adaeb4e9e02\",\"destination\":\"MES-OUTPUT\",\"leaseEpoch\":\"9\",\"messageId\":\"b692c0d4-a8f5-57e2-a612-8ea1b2087562\",\"payloadBodyJcs\":\"{\\\"accepted\\\":[{\\\"from\\\":\\\"0\\\",\\\"to\\\":\\\"90\\\"}],\\\"authorityRef\\\":{\\\"digest\\\":\\\"5cc1648e9ab9f142e1a27f9fe7a9ae7421a5c4306ffd7f4d19f3a3f486ceed42\\\",\\\"ref\\\":{\\\"id\\\":\\\"approver-F07\\\",\\\"owner\\\":\\\"IAM\\\",\\\"version\\\":\\\"1\\\"}},\\\"held\\\":[],\\\"occurredAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"outputRef\\\":{\\\"digest\\\":\\\"e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUTPUT-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"4\\\"}},\\\"policyRef\\\":{\\\"digest\\\":\\\"145b048ae6b37c4bcbf6d1005d2768199359a49e8211a4b28b178944c38cc66f\\\",\\\"id\\\":\\\"policy-F07\\\",\\\"owner\\\":\\\"QA-POL\\\",\\\"version\\\":\\\"7\\\"},\\\"previousRef\\\":null,\\\"recordedAt\\\":\\\"2026-10-01T17:30:00Z\\\",\\\"reference\\\":{\\\"digest\\\":\\\"a544dd70a8e43e2ef328a100bc3f716fb2489f4cdab75ad60326c48817f4db6a\\\",\\\"ref\\\":{\\\"id\\\":\\\"disposition-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"rejected\\\":[{\\\"from\\\":\\\"90\\\",\\\"to\\\":\\\"100\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rework\\\":[],\\\"sampleCoverageRef\\\":{\\\"digest\\\":\\\"67bc5b5488c3655058cb18106e11528cd4c973c301a633699d396ae3cbbc37ba\\\",\\\"ref\\\":{\\\"id\\\":\\\"coverage-F07\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"schema\\\":\\\"OUT-QA-DISPOSITION-1\\\",\\\"sourceRef\\\":{\\\"digest\\\":\\\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\\\",\\\"ref\\\":{\\\"id\\\":\\\"OUT-QA-F07\\\",\\\"owner\\\":\\\"MES-OUTPUT\\\",\\\"version\\\":\\\"1\\\"}},\\\"taskRef\\\":{\\\"digest\\\":\\\"82855db4e0981f81f7c12c02dbc3368f85d8ea4ff3dedfc3e85bfede5486855e\\\",\\\"ref\\\":{\\\"id\\\":\\\"12286459-57af-55f5-a1ac-b674784ac274\\\",\\\"owner\\\":\\\"QA-IPQC\\\",\\\"version\\\":\\\"1\\\"}},\\\"unexamined\\\":[],\\\"unitRef\\\":{\\\"id\\\":\\\"EA\\\",\\\"owner\\\":\\\"UOM\\\",\\\"version\\\":\\\"1\\\"}}\",\"payloadDigest\":\"38428e3a8d180952a9be921502b9c01cf41c60ba1123eb721ab69ef1dab65a19\",\"payloadType\":\"MES_OUTPUT_QUALITY_DISPOSITION_V1\",\"previousDeliveryRef\":null,\"protocol\":\"MES_OUTPUT_QUALITY_V1\",\"recordedAt\":\"2026-10-01T17:30:04Z\",\"registrationRef\":{\"digest\":\"28c6c01c525c87d8b24a509b3b1015d6e99da315696d783fd35bb212b16f7b75\",\"id\":\"a7c29053-5176-53fe-b716-027182ee3c5e\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"sequence\":\"3\",\"sourceRef\":{\"digest\":\"288577437943a902067e1c17526a5bd872278e3b15565f0fe9c07ef0b4453f2a\",\"id\":\"OUT-QA-F07\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"state\":\"UNKNOWN\",\"terminalOwnerResultDigest\":null,\"terminalOwnerResultJcs\":null,\"terminalOwnerResultType\":null},\"state\":\"COMMITTED\",\"terminalDigest\":\"416b392ac2fa74673049a4a0c261215b385b352ddde7e66a087911ed644a48eb\",\"terminalType\":\"FrozenDelivery\"}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/stateCut/writes/4/after/TerminalBodyDigest",
+          "before": "482156efc1784edddd70b3d5819e7601830e2512f3502ed5a49b03e2a9b01056",
+          "after": "582be7783096fa70a3bb97ddc220c487e7e50cef2632fecaab55de6ce8a4309e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/stateCut/writes/4/rowDigest",
+          "before": "86f1946f6da0d32cc5344b86e0ed6dfda98f5f2cb86ec628d42f9411da52eb43",
+          "after": "1f6f6eadccf516e0c38183f0b4bd8f59f4691851d0a2b7f7b9937f788efc15ee"
+        }
+      ],
+      "expected_derived_sha256": "c157f9a06801bd05f66ca696c2be73b6a7f8e5c3b97c6b1b8f68ee71a46bb1db",
+      "expected_derived_bytes": 39978
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "source_sha256": "9a3c4c7f7927e1bdee13915c836692e863ec4499a4fb32971105eca66a47b8f1",
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "decision": "Frontend actualEvidence request/response and exact digest mirrors follow F03 I29.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/actions/17/actualEvidence/request/handoff/sourceRef/id",
+          "before": "OUT-TRIAL-F03",
+          "after": "OUT-QA-F03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/actions/17/actualEvidence/request/inputDigest",
+          "before": "7b8b505b692a1b73f2cec5e0ddd3be53fff6e078487d96385dad545d20103a91",
+          "after": "66920c0c505a91e9ee055363a8fbbf4ae841846e2274d297baac8ecb0ae582a6"
+        },
+        {
+          "op": "replace_json",
+          "path": "/actions/17/actualEvidence/response/inputDigest",
+          "before": "7b8b505b692a1b73f2cec5e0ddd3be53fff6e078487d96385dad545d20103a91",
+          "after": "66920c0c505a91e9ee055363a8fbbf4ae841846e2274d297baac8ecb0ae582a6"
+        },
+        {
+          "op": "replace_json",
+          "path": "/actions/17/actualEvidence/response/result/payloadBodyJcs",
+          "before": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-TRIAL-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}",
+          "after": "{\"actualBaselineRef\":{\"digest\":\"c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d\",\"id\":\"BASELINE-F03\",\"owner\":\"PLM\",\"version\":\"7\"},\"contentHashes\":[\"0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b\"],\"coverageRanges\":[{\"from\":\"0\",\"to\":\"10\"}],\"decisionRef\":{\"digest\":\"7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149\",\"id\":\"790f5388-6025-5077-ba72-b85d1e0838f8\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"documentRefs\":[{\"digest\":\"20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958\",\"id\":\"REPORT-F03\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"environmentRefs\":[{\"digest\":\"56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799\",\"id\":\"ENV-F03\",\"owner\":\"QUALITY-MASTER\",\"version\":\"3\"}],\"handoffId\":\"923fb8f9-114a-51f2-8979-6dce60aec5f8\",\"methodVersionRefs\":[{\"digest\":\"1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe\",\"id\":\"DIMENSIONAL-FULL-COUNT\",\"owner\":\"QUALITY-MASTER\",\"version\":\"4\"}],\"occurredAt\":\"2026-10-01T17:30:05Z\",\"previousRef\":null,\"qualityTaskRef\":{\"digest\":\"5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79\",\"id\":\"d6d74197-72ce-55b8-85c1-75f5a700a15d\",\"owner\":\"QA-IPQC\",\"version\":\"4\"},\"rawRecordRefs\":[{\"digest\":\"47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41\",\"id\":\"F03-raw-1\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df\",\"id\":\"F03-raw-2\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29\",\"id\":\"F03-raw-3\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba\",\"id\":\"F03-raw-4\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9\",\"id\":\"F03-raw-5\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1\",\"id\":\"F03-raw-6\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010\",\"id\":\"F03-raw-7\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e\",\"id\":\"F03-raw-8\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821\",\"id\":\"F03-raw-9\",\"owner\":\"PLM-DOC\",\"version\":\"1\"},{\"digest\":\"cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3\",\"id\":\"F03-raw-10\",\"owner\":\"PLM-DOC\",\"version\":\"1\"}],\"resultSetRef\":{\"digest\":\"fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f\",\"id\":\"ca18828e-aafc-5f37-adcd-0397a4409743\",\"owner\":\"QA-IPQC\",\"version\":\"1\"},\"revision\":\"1\",\"sampleRefs\":[{\"digest\":\"edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9\",\"id\":\"F03-SAMPLE-1\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f\",\"id\":\"F03-SAMPLE-2\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256\",\"id\":\"F03-SAMPLE-3\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa\",\"id\":\"F03-SAMPLE-4\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88\",\"id\":\"F03-SAMPLE-5\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a\",\"id\":\"F03-SAMPLE-6\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493\",\"id\":\"F03-SAMPLE-7\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7\",\"id\":\"F03-SAMPLE-8\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45\",\"id\":\"F03-SAMPLE-9\",\"owner\":\"PLM\",\"version\":\"1\"},{\"digest\":\"ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5\",\"id\":\"F03-SAMPLE-10\",\"owner\":\"PLM\",\"version\":\"1\"}],\"schema\":\"QA-IPQC-PLM-EVIDENCE-1\",\"sourceRef\":{\"digest\":\"8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4\",\"id\":\"OUT-QA-F03\",\"owner\":\"MES-OUTPUT\",\"version\":\"1\"},\"testExecutionRef\":{\"digest\":\"7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9\",\"id\":\"TEST-F03\",\"owner\":\"PLM-VER\",\"version\":\"1\"}}"
+        },
+        {
+          "op": "replace_json",
+          "path": "/actions/17/actualEvidence/response/result/payloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/actions/17/actualEvidence/response/terminalDigest",
+          "before": "58d3580bad881c586c0b3926f2f5775ed2b94c8708917ebded169c139b887391",
+          "after": "c1cef28729e6ce2d914a0a74e4303ace110bae618736abd6acac76a23a5d89a8"
+        },
+        {
+          "op": "replace_json",
+          "path": "/actions/17/actualEvidence/responseDigest",
+          "before": "52b6dfa693533ee5763a25df00ff6a7c2bf84242a716cb7a58355475cc9ca4a3",
+          "after": "70a401d928063c571f2f8b320db87cc1af4861795e9ebe4d3ec882bb355086a0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/actions/17/successReceipt/terminalDigest",
+          "before": "58d3580bad881c586c0b3926f2f5775ed2b94c8708917ebded169c139b887391",
+          "after": "c1cef28729e6ce2d914a0a74e4303ace110bae618736abd6acac76a23a5d89a8"
+        }
+      ],
+      "expected_derived_sha256": "5f0075cd375a8258e6fb59ed8a5751090b3217566b142f67744eb9ace4a4fd68",
+      "expected_derived_bytes": 1037345
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "source_sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "decision": "Publication body/frozen payload/sourceRefs and every payload digest follow exact F03 I29 body.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/publications/3/body/sourceRef/id",
+          "before": "OUT-TRIAL-F03",
+          "after": "OUT-QA-F03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/publications/3/frozenPayload/payloadBody/sourceRef/id",
+          "before": "OUT-TRIAL-F03",
+          "after": "OUT-QA-F03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/publications/3/frozenPayload/payloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/publications/3/frozenPayload/sourceRefs/0/id",
+          "before": "OUT-TRIAL-F03",
+          "after": "OUT-QA-F03"
+        },
+        {
+          "op": "replace_json",
+          "path": "/publications/3/payloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/publications/3/receipt/payloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        },
+        {
+          "op": "replace_json",
+          "path": "/publications/3/relationalEvidence/payloadDigest",
+          "before": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+          "after": "85bbcfb12ff3797e77ad6893dd7f47be40ff33fcd55d0ab1d9a169a787123067"
+        }
+      ],
+      "expected_derived_sha256": "9fd03e7e6412bf814335a7495830d96d6da1686368f5d8cd1610f28159257d0f",
+      "expected_derived_bytes": 138318
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "source_sha256": "38a6c24482eb54fc4c9e9002ce5a1c9d40b26bad47154b44b06e26f15c497428",
+      "source_finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "decision": "Same exact preimage repairs on duplicate RMA examples; unrelated differences retained.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/claimDigest",
+          "before": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "after": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/0/afterClaims/0/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/claimDigest",
+          "before": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "after": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/0/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/claimDigest",
+          "before": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "after": "1e46d5e19c40b4fcc6c9c940c6f1b915120ce27fa675d2c91736aeee34de14fc"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/2/claimTransactions/1/afterClaims/1/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/commandBindingRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "b4f54e4709d38ac7f8bf9952c412146f4ebb211c3091751ff911c56ac6f23776"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/commandBindingRef/id",
+          "before": "BIND-1",
+          "after": "OPS-H30-BIND-49"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/effectKeys/0",
+          "before": "RMA-1|DSP-1|EFFECT",
+          "after": "FININV|RMA-1|0-5"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/noAdditionalEffectProofRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "4293ddfdd51fb1246dc80dd653d6a353f0d89e5c08fb82d59eac26dab1ee9005"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/noAdditionalEffectProofRef/id",
+          "before": "SEAL-PROOF-1",
+          "after": "OPS-H30-PERMANENT-SEAL-49"
+        },
+        {
+          "op": "replace_json",
+          "path": "/examples/10/closedQueries/h30Sealed/terminalReceipt/receiptId",
+          "before": "a0000000-0000-4000-8000-000000000003",
+          "after": "b1000000-0000-4000-8000-000000000050"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/claimDigest",
+          "before": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "after": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/shipmentLineRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/shipmentLineRef/id",
+          "before": "SHIP-100",
+          "after": "SHIP-100-L1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceCutRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceCutRef/id",
+          "before": "CUT-1",
+          "after": "OPS-SHIP-100-L1-CUT-1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceVersionRef/digest",
+          "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        {
+          "op": "replace_json",
+          "path": "/schemaCases/positive/3/payload/coordinate/sourceVersionRef/id",
+          "before": "SHIP-100-L1-V1",
+          "after": "OPS-SHIP-100-L1-V1"
+        }
+      ],
+      "expected_derived_sha256": "1854032552b01c361bf85f030bb33fc12a1530c8f0791cde6ddb0416cf82784b",
+      "expected_derived_bytes": 164488
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "source_sha256": "2bf87130cde5b1fedaa86a386fc619decd1248d792f324dc14f90cd827016219",
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "decision": "Exact split Markdown digest/identity mirrors; machine JSON remains sole executable fixture entry.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "\"43ab6ea8b88ba0e7554fc1abe1a9b532899a22f4b88a62fb178169bb7d3d06f7\"",
+          "after": "\"7b87f069191c40e447eb327b3924e830c6a7998bd4a8b0e29dee5a3a9b261be2\"",
+          "expected_count": 1
+        }
+      ],
+      "expected_derived_sha256": "8751d43275bdd2456d0505971875f680e4ebc7fbb6886159da30a6257f4577fc",
+      "expected_derived_bytes": 35826
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "source_sha256": "a044573d078160c1e806b562e38fa5438eba541d7f1ffaec6a9a45a3b172e5a6",
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "decision": "Exact split Markdown digest/identity mirrors; machine JSON remains sole executable fixture entry.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "\"7966b7da9214c97a01a1b8b245ae9de3372c0319fe5433d8ca2344058f6022fb\"",
+          "after": "\"614a021ec45d6369c4d172e47eed9cf322673aaa22833e74c8f9f484c0ddfd97\"",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "\"{\\\"bindingDigest\\\":\\\"66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab\\\",\\\"receipt\\\":{\\\"bindingDigest\\\":\\\"66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab\\\",\\\"commandId\\\":\\\"d4e440f0-a4ea-5c21-92fa-7854752bce93\\\",\\\"receiptId\\\":\\\"fe22cf29-4214-5a45-9ea8-5c56e7477700\\\",\\\"resultDigest\\\":\\\"2a5409f783b55eedae7fb849ed6ed787487e3baabca35dbb09f1743b5f84d657\\\",\\\"resultRef\\\":{\\\"digest\\\":\\\"e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835\\\",\\\"id\\\":\\\"RES-EFFECT-SC12-CLEAR\\\",\\\"owner\\\":\\\"FIN-INV\\\",\\\"version\\\":\\\"1\\\"},\\\"terminalAt\\\":\\\"2026-10-01T15:25:06Z\\\",\\\"uowId\\\":\\\"98267444-fc0f-5028-b13e-b8f21f21a67f\\\"},\\\"status\\\":\\\"COMMITTED\\\"}\"",
+          "after": "\"{\\\"bindingDigest\\\":\\\"395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570\\\",\\\"receipt\\\":{\\\"bindingDigest\\\":\\\"395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570\\\",\\\"commandId\\\":\\\"d4e440f0-a4ea-5c21-92fa-7854752bce93\\\",\\\"receiptId\\\":\\\"fe22cf29-4214-5a45-9ea8-5c56e7477700\\\",\\\"resultDigest\\\":\\\"e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835\\\",\\\"resultRef\\\":{\\\"digest\\\":\\\"e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835\\\",\\\"id\\\":\\\"RES-EFFECT-SC12-CLEAR\\\",\\\"owner\\\":\\\"FIN-INV\\\",\\\"version\\\":\\\"1\\\"},\\\"terminalAt\\\":\\\"2026-10-01T15:25:06Z\\\",\\\"uowId\\\":\\\"98267444-fc0f-5028-b13e-b8f21f21a67f\\\"},\\\"status\\\":\\\"COMMITTED\\\"}\"",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "\"66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab\"",
+          "after": "\"395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570\"",
+          "expected_count": 2
+        },
+        {
+          "op": "replace_text",
+          "before": "\"2a5409f783b55eedae7fb849ed6ed787487e3baabca35dbb09f1743b5f84d657\"",
+          "after": "\"e3984895cc5e0fcf135abc0c1504428d23215465faaad536b7317708ef912835\"",
+          "expected_count": 1
+        }
+      ],
+      "expected_derived_sha256": "a8e2e641a911ef25bd1829d9a5b2946a0c21933df9d009ec04d62dd17606fb75",
+      "expected_derived_bytes": 35368
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "source_sha256": "67dcc3fb406be18f786ebea5054add54482647f61cf20199cf417947f8c8e240",
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "decision": "Exact split Markdown digest/identity mirrors; machine JSON remains sole executable fixture entry.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "\"2738c8a7-bfa6-5931-8dcf-69f06f749d87\"",
+          "after": "\"cb852aba-05ba-563b-afc0-32d44630941e\"",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "\"reverseOfConsumptionId\": \"CONS-RCPT-20-ORIGINAL\"",
+          "after": "\"reverseOfConsumptionId\": null",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "\"ObjectId\": \"OWNERFACT-AP-SC20\"",
+          "after": "\"ObjectId\": \"OWNERFACT-AP-SC20-RETURN\"",
+          "expected_count": 1
+        }
+      ],
+      "expected_derived_sha256": "0257464b46a32d50c6e683c3d15d62d59d2cfe0a0245aa7bf6d92fe9bb15716f",
+      "expected_derived_bytes": 35751
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5e/5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "source_sha256": "5e0b3a55dcdf6cd2630d3d734cb1ee3d784999eb40d222c751ef164de11082e6",
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "decision": "Exact split Markdown digest/identity mirrors; machine JSON remains sole executable fixture entry.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "\"2738c8a7-bfa6-5931-8dcf-69f06f749d87\"",
+          "after": "\"cb852aba-05ba-563b-afc0-32d44630941e\"",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "\"2bf6951e77128ef05fe6938dad7635e40a419838f1b8e8880d7a3bf0b5e13f6a\"",
+          "after": "\"817fd246bf816181cd08f194fe58b14c08283ffe822a885cae119d82e3d34d03\"",
+          "expected_count": 1
+        }
+      ],
+      "expected_derived_sha256": "a8e0c2d337db3bc11caedafe91c8c8f1963747df936cf703cb287c702484997d",
+      "expected_derived_bytes": 31585
+    }
+  ]
+}

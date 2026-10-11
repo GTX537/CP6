@@ -1,5 +1,17 @@
 # SPACE-PUB-01 · 源空间发布、WMS 采纳与独立 Runtime 效果
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING | DESIGN_GAP：新增SPACE/S5身份权限组合、61字段78DTO路径及完整grant-clause交集；四原Space版本与S5向量独立；每页缓存导出下载当前撤权门。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。本册六个原 SPEC 为发布预览、差异、WMS 采纳、停用、重试、来源对应。H35、SC23、DP11/12/16 保留原命名空间。生产者新协议与共同冻结门是已选定静态设计，仍待实际采用、实现和运行验收；27 AC 为 NOT_RUN。[原文P:7](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15f966e5afe3dc71__SPACE-PUB-01_完整详细设计_R2_CANDIDATE.md:7) [原文A:6](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/97/9782d6d7ebdf7b49__UA-20261008-S4-SPACE-PUB-01-R2-MD02.json:6)
 
 ## 1. 目的、操作者和业务 Owner

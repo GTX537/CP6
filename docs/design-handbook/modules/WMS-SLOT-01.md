@@ -1,5 +1,18 @@
 # WMS-SLOT-01 库位优化开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-018 | ADOPTION_PENDING：SLOT/REP NEW路线与Transfer相容，但SourceDemand Owner及全current门必须真实采用。 | [设计](../remediation/05-planning-material-mapping.md) |
+| ROOT-X3-X4-ABC-01 | INTENTIONAL_DIFFERENCE：SLOT前缀阈值和ANALYTICS末项累计阈值保独立排序/分组/算法版本。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：当前正文及X3接受/评审元数据已整理，待双方合同集中核对。[总目录](D:/CP6/docs/CP6_开发设计文档_20261010/模块目录.md)。
 
 ## 1. 目的与职责

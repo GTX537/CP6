@@ -1,5 +1,22 @@
 # INT-COM-01 · CRM 与 Main 商业交接合同
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-HO-OLD-FACTORY | SUPERSEDED：Replace Opportunity-wide uniqueness only in new single-writer adapter with exact source intent/responsibility identities; legacy remains observation and explicit migration gate. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-QTN-FACT-H07-R2 | ADOPTION_PENDING：Persist exact historical Fact/source/receipt; synchronously join current Fact before new Sales effects; I19 projections never cancel order/release allocation or assert customer revocation. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-IC-PROTECTION-ADOPTION | ADOPTION_PENDING：仅 MAIN_INTAKE_NEW_EFFECT 与 CRM_RESULT_PROJECTION 两purpose采用；durable grant不因超时自行释放；本地COMMITTED/ABORTED原终态结算，权限即时撤销独立。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-IC-ORIGINAL-TRANSPORT | INTENTIONAL_DIFFERENCE：新HO/OPP运输原封闭bytes和opaque版本；旧C03删敏感字段/int版本不可无损替代。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-IC-BOUNDED-REBUILD | ADOPTION_PENDING：固定原H/V目录、完整CRM handoff/attribution/group/conflict与Main Intake/Quote/Commercial/Resolution集合，分页代际与CAS重核；UNCHANGED只刷新checkedAt。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-S6-PRECHECKPOINT-FINALAUTH | ADOPTION_PENDING：重复/旧/同版本成功前先真事务持久化checkpoint，transport/raw与content摘要独立；Reconciliation→Published→Projection→Inbox→checkpoint；最终授权必须真实native held。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。有效正文为 **v1.0.2 R2**，SHA `5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63`，706,603 bytes / 10,758 行。2026-10-01 授权接受覆盖正文旧候选标签；六 SPEC 与原 DP04/08/10/12/13 的设计已接受。106 AC 均 NOT_RUN，12 个实际生产门均 UNPROVEN。本册写到的是已接受的设计合同，不能据此宣称已接线或业务验收通过。[A3][C83][S551]
 
 ## 1. 业务目的、操作者和 Owner 边界

@@ -1,5 +1,25 @@
 # WMS-OUT-01 出库、拣配、包装与发运
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-FUL-CATALOGUE-AND-CURRENT-FENCE | ADOPTION_PENDING：采用完整Sales母集合和预建空site F−1门；F−1→全部F0→owner heads，严格当前仅native同库Serializable；跨库返回UNKNOWN。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION | ADOPTION_PENDING：退货实物不VOID原GR，E=100不变；PENDING_RETURN MRX禁新forward但不自动FENCE旧admission；MATCH/RETURN/manual共享OriginalObligation budget，RETURNED_RETIRED不随credit/refund消失。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-CURRENT-KNOWLEDGE-CUT | ADOPTION_PENDING：current集合是递归lineage terminal leaf的active/actual/unresolved union，非所有历史行；T15先generation失效，T16精确query/attempt/worker/CAS；新frontier必须新capture。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-H31-COMPOSITE-RESOURCES | ADOPTION_PENDING：全部warehouse祖先后location；DETAIL全局owner/key最强锁；每location metricSet含N/A取X，CONTROLLED完整metric/domain/head/occupancy/mapping/rule；一Part一Uow。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-CHILD-ALLOWANCE-QUANTITY | ARTIFACT_CONFLICT：G6R07 quantity6、L2R07 quantity2、EP[11] quantity4、EP[25] quantity6；校验298摘要原像，有向依赖闭包重算127摘要，保留171未变化节点及历史附录。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| OPS-IF-003 | DESIGN_GAP：显式替代RMA §9.1在Stock组合事务中的完整取锁序（含Scope-first与source/claim/IN位置）；F−1→F0→所有Canonical→所有Scope父到子→DETAIL owner/key ordinal→终态，按注册DAG验证完整闭包。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-005 | ADOPTION_PENDING：采用F0→K1→S2→S3→E4→D5→L6→O7原序及Movement解释epoch；Stock相关更正预收全Movement F0；新鲜Stock发现cut与OUT应用集合比较。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-043 | ARTIFACT_CONFLICT：MAT MC-RCAP02 prose uses first-location40→36 and exact two b310 Package members; schema/quantity/Stock effects remain unchanged. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| OPS-IF-050 | ARTIFACT_CONFLICT：Independent hashed DEMO shipment-line evidence, version and source cut establish SHIP-100-L1, separate from SHIP-100 header; four claims regenerated and same-SKU different-line/invoice keys stay distinct. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前接受正文的全部业务规则、476个JSON/900语义节点、411个Owner payload、15个Stock canonical、136 AC、冻结依赖类型及强制共同组合已读。全部摘要和补读窗口核对仅证明静态材料一致；13个真实采用门仍UNVERIFIED，业务执行仍NOT_RUN。另有独审摘要引用的次级报告未定位，边界见§11。
 
 ## 1. 业务目的、操作者与模块边界

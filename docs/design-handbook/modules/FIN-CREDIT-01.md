@@ -1,5 +1,19 @@
 # FIN-CREDIT-01 交易信用检查
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-001 | DESIGN_GAP：完整Credit五维scope与GL五维scope经双向唯一不可变registry映射；PRODUCTION→REAL、SIMULATION→DEMO；六字段Ref原bytes及type/purpose经binding保存，五字段GL Ref引用新binding。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-002 | ARTIFACT_CONFLICT：保CREDIT原38总位/8小数合法wire；decimal(38,0)整数系数+Scale0..8无损存储，任意精度中间运算后核原输出域。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+| OPS-IF-042 | ARTIFACT_CONFLICT：MAT R4 section11 HTTP400 INVALID_FIELD is normative; update the single stale 422 vector description without claiming an executed HTTP result. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前 R4 主文、149 Schema定义、63向量、45连续案例和104AC的规范语义已整理；十二准确窗口全十八段与原fixture字节相等。306成员包已按当前规范、历史及来源分清角色。这个状态不代表全部历史源码已读，真实参数、Owner采用与业务执行仍UNPROVEN/NOT_RUN；§11保留具体原文差异。
 
 ## 1. 业务目的、操作者与边界

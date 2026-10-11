@@ -1,0 +1,854 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:shared-consumers:1.0.0",
+  "$defs": {
+    "Text": {
+      "type": "string"
+    },
+    "Hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "Uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "Seq": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "Scope": {
+      "type": "object",
+      "properties": {
+        "environmentId": {
+          "$ref": "#/$defs/Text"
+        },
+        "tenantId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "required": [
+        "environmentId",
+        "tenantId"
+      ],
+      "additionalProperties": false
+    },
+    "ContractPin": {
+      "type": "object",
+      "properties": {
+        "contractId": {
+          "$ref": "#/$defs/Text"
+        },
+        "version": {
+          "$ref": "#/$defs/Text"
+        },
+        "schemaSha256": {
+          "$ref": "#/$defs/Hash"
+        }
+      },
+      "required": [
+        "contractId",
+        "version",
+        "schemaSha256"
+      ],
+      "additionalProperties": false
+    },
+    "NativeReference": {
+      "type": "object",
+      "properties": {
+        "contract": {
+          "$ref": "#/$defs/ContractPin"
+        },
+        "canonicalReferenceBase64": {
+          "$ref": "#/$defs/Text"
+        },
+        "rawSha256": {
+          "$ref": "#/$defs/Hash"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "contract",
+        "canonicalReferenceBase64",
+        "rawSha256",
+        "byteLength"
+      ],
+      "additionalProperties": false
+    },
+    "Digest": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonicalizationVersion": {
+          "$ref": "#/$defs/Text"
+        },
+        "value": {
+          "$ref": "#/$defs/Hash"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonicalizationVersion",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "CandidateMember": {
+      "type": "object",
+      "properties": {
+        "candidateId": {
+          "$ref": "#/$defs/Text"
+        },
+        "candidateVersion": {
+          "$ref": "#/$defs/Text"
+        },
+        "technicalReference": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "originalDigest": {
+          "$ref": "#/$defs/NativeReference"
+        }
+      },
+      "required": [
+        "candidateId",
+        "candidateVersion",
+        "technicalReference",
+        "originalDigest"
+      ],
+      "additionalProperties": false
+    },
+    "CandidateAggregate": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "ITER-CANDIDATE-AGGREGATE/1"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "iterationId": {
+          "$ref": "#/$defs/Text"
+        },
+        "roundId": {
+          "$ref": "#/$defs/Text"
+        },
+        "aggregateId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "aggregateVersion": {
+          "$ref": "#/$defs/Seq"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CandidateMember"
+          },
+          "uniqueItems": true
+        },
+        "aggregateDigest": {
+          "$ref": "#/$defs/Hash"
+        }
+      },
+      "required": [
+        "schema",
+        "scope",
+        "iterationId",
+        "roundId",
+        "aggregateId",
+        "aggregateVersion",
+        "members",
+        "aggregateDigest"
+      ],
+      "additionalProperties": false
+    },
+    "IterOaBinding": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "ITER-OA-APPLICATION/1"
+        },
+        "mappingVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "ownerRegistrationRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "roundBindingId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "roundId": {
+          "$ref": "#/$defs/Text"
+        },
+        "iterationId": {
+          "$ref": "#/$defs/Text"
+        },
+        "aggregateId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "aggregateVersion": {
+          "$ref": "#/$defs/Seq"
+        },
+        "aggregateDigest": {
+          "$ref": "#/$defs/Hash"
+        },
+        "originalReviewPackageRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "reviewPackageDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "originalPolicyRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "policyVersion": {
+          "$ref": "#/$defs/Text"
+        },
+        "policyDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "technicalManifestDigest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rejectDisposition": {
+          "enum": [
+            "RETURN",
+            "REJECT"
+          ]
+        },
+        "submissionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "applicationUnit": {
+          "const": "PLM_ITER_REVIEW_DECISION"
+        },
+        "oaRoundKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "schema",
+        "mappingVersion",
+        "scope",
+        "ownerRegistrationRef",
+        "roundBindingId",
+        "roundId",
+        "iterationId",
+        "aggregateId",
+        "aggregateVersion",
+        "aggregateDigest",
+        "originalReviewPackageRef",
+        "reviewPackageDigest",
+        "originalPolicyRef",
+        "policyVersion",
+        "policyDigest",
+        "technicalManifestDigest",
+        "rejectDisposition",
+        "submissionId",
+        "applicationUnit",
+        "oaRoundKey"
+      ],
+      "additionalProperties": false
+    },
+    "RowVersion": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{11}=$"
+    },
+    "SpaceStampVersion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "securityStamp": {
+          "$ref": "#/$defs/Seq"
+        },
+        "rowVersion": {
+          "$ref": "#/$defs/RowVersion"
+        }
+      },
+      "required": [
+        "id",
+        "securityStamp",
+        "rowVersion"
+      ],
+      "additionalProperties": false
+    },
+    "SpaceGrantVersion": {
+      "type": "object",
+      "properties": {
+        "grantId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "grantVersion": {
+          "$ref": "#/$defs/Seq"
+        },
+        "grantRowVersion": {
+          "$ref": "#/$defs/RowVersion"
+        },
+        "fieldPolicyId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fieldPolicyVersion": {
+          "$ref": "#/$defs/Seq"
+        },
+        "fieldPolicyRowVersion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RowVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "grantId",
+        "grantVersion",
+        "grantRowVersion",
+        "fieldPolicyId",
+        "fieldPolicyVersion",
+        "fieldPolicyRowVersion"
+      ],
+      "additionalProperties": false
+    },
+    "SpaceVersionVector": {
+      "type": "object",
+      "properties": {
+        "organization": {
+          "$ref": "#/$defs/SpaceStampVersion"
+        },
+        "membership": {
+          "$ref": "#/$defs/SpaceStampVersion"
+        },
+        "grants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SpaceGrantVersion"
+          },
+          "uniqueItems": true
+        },
+        "grantSetMembershipRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "authorizationVersion": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "organization",
+        "membership",
+        "grants",
+        "grantSetMembershipRef",
+        "authorizationVersion"
+      ],
+      "additionalProperties": false
+    },
+    "SpaceGrantClause": {
+      "type": "object",
+      "properties": {
+        "grantId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "siteId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "resourceType": {
+          "enum": [
+            "PublishedScene",
+            "Stock",
+            "Task"
+          ]
+        },
+        "rowScopeRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "fieldPolicyRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NativeReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canExport": {
+          "type": "boolean"
+        },
+        "validFromUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validToUtc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version": {
+          "$ref": "#/$defs/Seq"
+        }
+      },
+      "required": [
+        "grantId",
+        "siteId",
+        "resourceType",
+        "rowScopeRef",
+        "fieldPolicyRef",
+        "canExport",
+        "validFromUtc",
+        "validToUtc",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "SpaceS5Binding": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "SPACE-S5-AUTHORIZATION/1"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "actorId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "siteId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "purpose": {
+          "$ref": "#/$defs/Text"
+        },
+        "s5ProviderPin": {
+          "$ref": "#/$defs/ContractPin"
+        },
+        "s5PolicyRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "s5FieldRegistryRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "s5CurrentAuthorityVector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NativeReference"
+          },
+          "uniqueItems": true
+        },
+        "spaceVersions": {
+          "$ref": "#/$defs/SpaceVersionVector"
+        },
+        "grantClauses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SpaceGrantClause"
+          },
+          "uniqueItems": true
+        },
+        "observedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntilUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "externalWriteAllowed": {
+          "const": false
+        }
+      },
+      "required": [
+        "schema",
+        "scope",
+        "actorId",
+        "organizationId",
+        "siteId",
+        "purpose",
+        "s5ProviderPin",
+        "s5PolicyRef",
+        "s5FieldRegistryRef",
+        "s5CurrentAuthorityVector",
+        "spaceVersions",
+        "grantClauses",
+        "observedAtUtc",
+        "validUntilUtc",
+        "externalWriteAllowed"
+      ],
+      "additionalProperties": false
+    },
+    "FieldDecision": {
+      "type": "object",
+      "properties": {
+        "resourceType": {
+          "enum": [
+            "PublishedScene",
+            "Stock",
+            "Task"
+          ]
+        },
+        "fieldName": {
+          "$ref": "#/$defs/Text"
+        },
+        "s5Access": {
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "spaceMasking": {
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "readAllowed": {
+          "type": "boolean"
+        },
+        "writeAllowed": {
+          "const": false
+        },
+        "dtoPaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Text"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "resourceType",
+        "fieldName",
+        "s5Access",
+        "spaceMasking",
+        "readAllowed",
+        "writeAllowed",
+        "dtoPaths"
+      ],
+      "additionalProperties": false
+    },
+    "SpaceReadDecision": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "SPACE-S5-READ-DECISION/1"
+        },
+        "outcome": {
+          "enum": [
+            "ALLOW_READ",
+            "DENY",
+            "UNAVAILABLE",
+            "STALE"
+          ]
+        },
+        "binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpaceS5Binding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fieldDecisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FieldDecision"
+          },
+          "uniqueItems": true
+        },
+        "matchedWholeGrantIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "uniqueItems": true
+        },
+        "rowScopeRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NativeReference"
+          },
+          "uniqueItems": true
+        },
+        "auditRef": {
+          "$ref": "#/$defs/NativeReference"
+        }
+      },
+      "required": [
+        "schema",
+        "outcome",
+        "binding",
+        "fieldDecisions",
+        "matchedWholeGrantIds",
+        "rowScopeRefs",
+        "auditRef"
+      ],
+      "additionalProperties": false
+    },
+    "EngInput": {
+      "type": "object",
+      "properties": {
+        "inputOccurrenceId": {
+          "$ref": "#/$defs/Text"
+        },
+        "itemRevisionRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "specRef": {
+          "$ref": "#/$defs/NativeReference"
+        }
+      },
+      "required": [
+        "inputOccurrenceId",
+        "itemRevisionRef",
+        "specRef"
+      ],
+      "additionalProperties": false
+    },
+    "EngOperation": {
+      "type": "object",
+      "properties": {
+        "operationOccurrenceId": {
+          "$ref": "#/$defs/Text"
+        },
+        "operationRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "configurationRef": {
+          "$ref": "#/$defs/NativeReference"
+        }
+      },
+      "required": [
+        "operationOccurrenceId",
+        "operationRef",
+        "configurationRef"
+      ],
+      "additionalProperties": false
+    },
+    "EngOutput": {
+      "type": "object",
+      "properties": {
+        "outputOccurrenceId": {
+          "$ref": "#/$defs/Text"
+        },
+        "productIdentity": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "itemRevisionRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "specRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "generatingOperationOccurrenceId": {
+          "$ref": "#/$defs/Text"
+        },
+        "configurationRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "inputOccurrenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Text"
+          },
+          "uniqueItems": true
+        },
+        "relationEvidence": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "generationWithoutInputBasis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NativeReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "outputOccurrenceId",
+        "productIdentity",
+        "itemRevisionRef",
+        "specRef",
+        "generatingOperationOccurrenceId",
+        "configurationRef",
+        "inputOccurrenceIds",
+        "relationEvidence",
+        "generationWithoutInputBasis"
+      ],
+      "additionalProperties": false
+    },
+    "OutputRelations": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "ENG-OUTPUT-RELATIONS/1"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "relationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "version": {
+          "$ref": "#/$defs/Seq"
+        },
+        "configurationRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EngInput"
+          },
+          "uniqueItems": true
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EngOperation"
+          },
+          "uniqueItems": true
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EngOutput"
+          },
+          "uniqueItems": true
+        },
+        "bodyDigest": {
+          "$ref": "#/$defs/Hash"
+        }
+      },
+      "required": [
+        "schema",
+        "scope",
+        "relationId",
+        "version",
+        "configurationRef",
+        "inputs",
+        "operations",
+        "outputs",
+        "bodyDigest"
+      ],
+      "additionalProperties": false
+    },
+    "BaselineOutputBinding": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "ENG-BASELINE-OUTPUT-BINDING/1"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "baselineRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "originalManifestRef": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "originalManifestDigest": {
+          "$ref": "#/$defs/NativeReference"
+        },
+        "relationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "relationVersion": {
+          "$ref": "#/$defs/Seq"
+        },
+        "relationBodyDigest": {
+          "$ref": "#/$defs/Hash"
+        },
+        "freezeCommandId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "configurationEvidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NativeReference"
+          },
+          "uniqueItems": true
+        },
+        "bodyDigest": {
+          "$ref": "#/$defs/Hash"
+        }
+      },
+      "required": [
+        "schema",
+        "scope",
+        "baselineRef",
+        "originalManifestRef",
+        "originalManifestDigest",
+        "relationId",
+        "relationVersion",
+        "relationBodyDigest",
+        "freezeCommandId",
+        "configurationEvidence",
+        "bodyDigest"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/CandidateAggregate"
+    },
+    {
+      "$ref": "#/$defs/IterOaBinding"
+    },
+    {
+      "$ref": "#/$defs/SpaceS5Binding"
+    },
+    {
+      "$ref": "#/$defs/SpaceReadDecision"
+    },
+    {
+      "$ref": "#/$defs/OutputRelations"
+    },
+    {
+      "$ref": "#/$defs/BaselineOutputBinding"
+    }
+  ]
+}

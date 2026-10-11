@@ -1,5 +1,20 @@
 # MES-MAT-01 生产领退料与消耗
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-009 | ADOPTION_PENDING：保留PENDING_BASIS_SUCCESSION与NEW_CONSUMPTION分purpose；same EXEC-BASIS-DOMAIN保护未满足义务无gap转移，旧 CLOSED_SUPERSEDED_BEFORE_EFFECT保留历史。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-012 | ADOPTION_PENDING：全部pre-source/Cost controls→FM/BP→cost heads真实sameUow；GL source完整原envelope；GL CompletionCurrent S到成本Apply，reverse writer X。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-019, PLAN-IF-001 | DESIGN_GAP：新增MAT-MRP-RESIDUAL/1由MAT Owner准确生产NET/GROSS两种表达；保完整MaterialBinding、原责任代表、抵扣覆盖并集、已抵及排除集合、仍占保护与当前cut，原RemainingBasis不改名。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-044 | ARTIFACT_CONFLICT：MES-MAT original-locator receipt query repeats the operationId in the committed Stock receipt and movement; never allocates another operation. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前正文10961行全部业务语义、133个JSON的完整基例/全部差异、强制增补1894行及7项当前组合/接受/评审已读。设计已接受；生产Owner采用、物理接线、86基础及20增补业务AC仍未运行。
 
 ## 1. 业务目的、操作者、触发和边界

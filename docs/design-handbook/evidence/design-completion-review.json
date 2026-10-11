@@ -1,0 +1,159 @@
+{
+  "scope": "One complete task-level design review, followed only by corrections and packaging rechecks. No business runtime acceptance.",
+  "reviewer": "final_design_review",
+  "base_sha": "0ed4e0e1f766273f4203ef98687f6a05632225d7",
+  "result": "PASS_NO_REMAINING_DESIGN_REVIEW_BLOCKERS",
+  "issues": [
+    {
+      "id": "R1",
+      "severity": "P2",
+      "finding": "Final LF accepted by original end anchor in UOM lexical validator",
+      "resolution": "Versioned absolute-end lexical profile across Schema, TS, C#, and DDL; original profile and historical outputs retained",
+      "evidence": "remediation/assets/core-types/atp-stableid-validation.json",
+      "targeted_review": "PASS; independent .NET 10-vector repeat and source/log SHA checks"
+    },
+    {
+      "id": "R2",
+      "severity": "P2",
+      "finding": "First-success branches lacked confirmed-commit before-output authorization check",
+      "resolution": "Both languages and both success/replay branches use commitConfirmed; check fresh authorization after confirmed commit, never rollback confirmed transaction; UNKNOWN original recovery preserved",
+      "evidence": "remediation/assets/finance-recovery/static-report.json",
+      "targeted_review": "PASS; source branches and replacement SHA, 28 static timing vectors and 10 mutation checks"
+    }
+  ],
+  "minor_corrections": [
+    "Removed stale architecture introductions saying material reading is still underway"
+  ],
+  "reviewed_areas": [
+    "115 IDs to 114 families",
+    "125 target coverage",
+    "source and successor authority",
+    "precise quantities/money/null types",
+    "physical commercial contracts",
+    "combined lock order and recovery",
+    "MATCH/AP correction cancellation",
+    "MAT/MRP conserved mapping",
+    "OA replay and withdrawal",
+    "SPACE current authorization and full grant set",
+    "ENG output identity",
+    "continuous fixture dependency hashes"
+  ],
+  "unexecuted": [
+    "Business applications",
+    "Database syntax/execution/migration",
+    "Concurrency and revocation races",
+    "Provider/consumer real adoption",
+    "End-to-end runtime",
+    "Production candidates/deployments"
+  ],
+  "static_evidence_reuse": "Existing successful local checks reused only for exact recorded inputs. ATP successor has new exact compile proof; global validator verifies composition and byte identity.",
+  "workflow_audit": {
+    "protected_main_sha": "0ed4e0e1f766273f4203ef98687f6a05632225d7",
+    "candidate_branch": "codex/design-completion-20261011",
+    "result": "SAFE_FOR_BRANCH_PUSH_AND_PR",
+    "workflows": [
+      {
+        "path": ".github/workflows/client-contract.yml",
+        "sha256": "fb633108d5d43b368d9c8a75d7d0ec81f718e119630c811334fd1bd4eb5f1454",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/crm-saas-public-contract.yml",
+        "sha256": "5174f62866dd6d84c61143074809718837086787fb886a19f085c24189d5d2c9",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/crm-v1-prd-head.yml",
+        "sha256": "9797044712711f8bc503b5b7a3b4da5755aaf6c8874a8104d30c20842a64fe6a",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/crm-v1-prd.yml",
+        "sha256": "25bb5f0e9b7626a88a71aba7a35322d7b7e51e5699c1e9c4766faa994b9c131e",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/p10-platform-audit.yml",
+        "sha256": "941ccf864b7985b1b7d2b0c3277a01845003a0e4a44a97a55481d1f8fcad1d0e",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/p10-platform-candidate.yml",
+        "sha256": "df5ab1ce8ba02338cf6705bf41ffd4f5647be445d83cefbb23606a7e48802db9",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/p10-platform-preflight.yml",
+        "sha256": "8ffd7d626a3ef0566ec2caeaf1bd00e0bb5c89d3300f6403c6079cc89e4e353f",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/p10-platform-validation.yml",
+        "sha256": "169662caca8ab9d972976c17e2ca7d14a3986fcb354ca82933097f8d776fda02",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/r2-candidate.yml",
+        "sha256": "cfea8ab19c0bb5fe3800e6ee64d06dacd5c0bcaf0446bd3c8c0c82b6cb3923f3",
+        "events": "protected v*.*.* tags only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/r2-deploy.yml",
+        "sha256": "37960838ab5c7d8565a69d29bd8137546946b8c2f5af696c2275971442f92b9f",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/r2-freeze.yml",
+        "sha256": "37ce4fb3de9d4c16e331c0864b245545efcef370d6efaeab2169e348bccb4a4e",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/space-ga-evidence.yml",
+        "sha256": "4f2904f963fefa8b87f3e8281a533255c5b76895001bd2b9c7d35570974452a2",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      },
+      {
+        "path": ".github/workflows/wms-production-sql.yml",
+        "sha256": "f44ac479f2378d9e05468a9a9b6f24e067da6ae6d475be796ffcd7661e15ed91",
+        "events": "workflow_dispatch only",
+        "matches_protected_main": true
+      }
+    ],
+    "changes_to_workflows_or_dependencies": false,
+    "artifact_dependency_review": "GitHub client-contract artifact to Azure bridge unchanged; Azure CI trigger none/pr none; downstream DEV depends on bridge success, which this documentation push cannot initiate; protected tag R2 release unchanged.",
+    "audit_attempts": [
+      {
+        "result": "HARNESS_ERROR",
+        "reason": "Raw CRLF did not match LF-only delimiter; normalized text read used for final check"
+      }
+    ],
+    "actions_runs_for_task": [],
+    "cancelled_runs": [],
+    "actions_dispatched": false,
+    "production_deployment": false
+  },
+  "packaging_followup": {
+    "result": "PASS",
+    "reason": "core.autocrlf true would otherwise change SHA-bound files across clone environments",
+    "change": "Three -text attributes restricted to new remediation tree and two exact recipe generators; no history ledger change",
+    "reviewer_result": "Targeted read-only review PASS; git check-attr confirms intended range; final ATP composition/log evidence binding inspected",
+    "staged_blob_validation": {
+      "assets": 69,
+      "recipe_generators": 2,
+      "result": "PASS_EXACT_SHA256"
+    },
+    "credential_pattern_scan": "No private key, GitHub token, or AWS access-key pattern found in task files"
+  }
+}

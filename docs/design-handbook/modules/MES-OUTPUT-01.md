@@ -1,5 +1,22 @@
 # MES-OUTPUT-01 生产产出与关闭
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-010 | ADOPTION_PENDING：E真实IdentityDomain/measurement budget在Basis/work前；Stock Canonical→Scope→E→Output grant→Stock fine→IN local，E B writer不得反向取Stock/WO。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-011 | ADOPTION_PENDING：缩量先在同allowance/source gate关闭所有可能Stock执行/aliases含空集合，禁新SP01/SP02，已POSTED/SEALED消费保留；version+1只更新净allowance。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-012 | ADOPTION_PENDING：全部pre-source/Cost controls→FM/BP→cost heads真实sameUow；GL source完整原envelope；GL CompletionCurrent S到成本Apply，reverse writer X。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-013 | INTENTIONAL_DIFFERENCE：QA-POL采购按准确source/part叶总体；制造按原完整总体，不能母单100覆盖采购40/60。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-016 | SUPERSEDED：NCR准确后继已无损采用IPQC旧SourceEnvelope、standalone和Resolution27；保原字段/摘要/Scope。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-036 | ADOPTION_PENDING：PERF必须来自原Owner槽、局部Pause和真实分窗量，不能从聚合猜分母。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前50022行主文的全部规范、204个连续JSON、373个Evidence载荷、3个Stock摘要输入均已语义读取；580节点可逆还原0差、373＋3摘要相符。强制MAT增补1894行及准确接受/复审/CURRENT均已读；109项业务AC及O-OUT01–08真实采用门仍未运行/未证。
 
 ## 1. 业务目的、操作者、触发与边界

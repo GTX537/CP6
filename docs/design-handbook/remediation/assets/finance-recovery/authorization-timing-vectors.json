@@ -1,0 +1,1550 @@
+{
+  "contract": "CP6-PLAN-010-AUTHORIZATION-TIMING/1",
+  "synthetic": true,
+  "runtime_proof": false,
+  "method": "Literal source ordering checks and abstract timing simulation only; archived C#/TypeScript is never executed.",
+  "source_checks": [
+    {
+      "language": "C#",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+      "source_sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+      "replacement_sha256": "1ea23118f1d827f9ee02b6d32fe874e04e02f43a1d9a15035f5642db888d0e37",
+      "both_branches_commit_flag_before_fresh_output_check": "PASS_STATIC_ONLY",
+      "unknown_503_original_command_selector_unchanged": "PASS_STATIC_ONLY",
+      "confirmed_denial_skips_rollback": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "TypeScript",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+      "source_sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+      "replacement_sha256": "c0a76e6897d25e1d85fbae1d62ef418cfe7e4c553e45f1b102ad3b5cc1bbc121",
+      "both_branches_commit_flag_before_fresh_output_check": "PASS_STATIC_ONLY",
+      "unknown_503_original_command_selector_unchanged": "PASS_STATIC_ONLY",
+      "confirmed_denial_skips_rollback": "PASS_STATIC_ONLY"
+    }
+  ],
+  "vectors": [
+    {
+      "id": "C#-REPLAY-valid-200",
+      "language": "C#",
+      "branch": "REPLAY",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-REPLAY-valid-202",
+      "language": "C#",
+      "branch": "REPLAY",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-REPLAY-capture-expired",
+      "language": "C#",
+      "branch": "REPLAY",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 5,
+        "precommit_tick": 6,
+        "commit_complete_tick": 7,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-REPLAY-commit-expired",
+      "language": "C#",
+      "branch": "REPLAY",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 6,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-REPLAY-commit-exact-expiry",
+      "language": "C#",
+      "branch": "REPLAY",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 5,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 5,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-REPLAY-unknown-valid",
+      "language": "C#",
+      "branch": "REPLAY",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-REPLAY-unknown-expired",
+      "language": "C#",
+      "branch": "REPLAY",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-NEW_SUCCESS-valid-200",
+      "language": "C#",
+      "branch": "NEW_SUCCESS",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-NEW_SUCCESS-valid-202",
+      "language": "C#",
+      "branch": "NEW_SUCCESS",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-NEW_SUCCESS-capture-expired",
+      "language": "C#",
+      "branch": "NEW_SUCCESS",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 5,
+        "precommit_tick": 6,
+        "commit_complete_tick": 7,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-NEW_SUCCESS-commit-expired",
+      "language": "C#",
+      "branch": "NEW_SUCCESS",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 6,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-NEW_SUCCESS-commit-exact-expiry",
+      "language": "C#",
+      "branch": "NEW_SUCCESS",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 5,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 5,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-NEW_SUCCESS-unknown-valid",
+      "language": "C#",
+      "branch": "NEW_SUCCESS",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "C#-NEW_SUCCESS-unknown-expired",
+      "language": "C#",
+      "branch": "NEW_SUCCESS",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-REPLAY-valid-200",
+      "language": "TypeScript",
+      "branch": "REPLAY",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-REPLAY-valid-202",
+      "language": "TypeScript",
+      "branch": "REPLAY",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-REPLAY-capture-expired",
+      "language": "TypeScript",
+      "branch": "REPLAY",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 5,
+        "precommit_tick": 6,
+        "commit_complete_tick": 7,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-REPLAY-commit-expired",
+      "language": "TypeScript",
+      "branch": "REPLAY",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 6,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-REPLAY-commit-exact-expiry",
+      "language": "TypeScript",
+      "branch": "REPLAY",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 5,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 5,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-REPLAY-unknown-valid",
+      "language": "TypeScript",
+      "branch": "REPLAY",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-REPLAY-unknown-expired",
+      "language": "TypeScript",
+      "branch": "REPLAY",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-NEW_SUCCESS-valid-200",
+      "language": "TypeScript",
+      "branch": "NEW_SUCCESS",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 200,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-NEW_SUCCESS-valid-202",
+      "language": "TypeScript",
+      "branch": "NEW_SUCCESS",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "observed": {
+        "status": 202,
+        "sensitive_body_returned": true,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_CANONICAL"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 3,
+          "valid": true
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-NEW_SUCCESS-capture-expired",
+      "language": "TypeScript",
+      "branch": "NEW_SUCCESS",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 5,
+        "precommit_tick": 6,
+        "commit_complete_tick": 7,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": true,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-NEW_SUCCESS-commit-expired",
+      "language": "TypeScript",
+      "branch": "NEW_SUCCESS",
+      "api": "PO13",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 6,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-NEW_SUCCESS-commit-exact-expiry",
+      "language": "TypeScript",
+      "branch": "NEW_SUCCESS",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 5,
+        "valid_to_tick": 5,
+        "commit_result": "CONFIRMED"
+      },
+      "expected": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "observed": {
+        "status": "AUTHORIZATION_DENIED",
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "NO_BODY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 5,
+          "result": "CONFIRMED"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 5,
+          "valid": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-NEW_SUCCESS-unknown-valid",
+      "language": "TypeScript",
+      "branch": "NEW_SUCCESS",
+      "api": "PO11",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 3,
+        "valid_to_tick": 4,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 3,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "TypeScript-NEW_SUCCESS-unknown-expired",
+      "language": "TypeScript",
+      "branch": "NEW_SUCCESS",
+      "api": "PO14",
+      "input": {
+        "initial_tick": 0,
+        "capture_complete_tick": 1,
+        "precommit_tick": 2,
+        "commit_complete_tick": 6,
+        "valid_to_tick": 5,
+        "commit_result": "UNKNOWN"
+      },
+      "expected": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "observed": {
+        "status": 503,
+        "sensitive_body_returned": false,
+        "rollback_invoked": false,
+        "body": "ORIGINAL_COMMAND_QUERY"
+      },
+      "trace": [
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 0,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 1,
+          "valid": true
+        },
+        {
+          "event": "AUTHORIZATION_CHECK",
+          "at_tick": 2,
+          "valid": true
+        },
+        {
+          "event": "COMMIT_RESULT",
+          "at_tick": 6,
+          "result": "UNKNOWN"
+        },
+        {
+          "event": "RECORD_COMMIT_CONFIRMED",
+          "value": false
+        }
+      ],
+      "result": "PASS_STATIC_ONLY"
+    }
+  ],
+  "negative_patch_mutations": [
+    {
+      "language": "C#",
+      "id": "missing-new-success-final-check",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "C#",
+      "id": "missing-replay-final-check",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "C#",
+      "id": "flag-recorded-after-final-check",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "C#",
+      "id": "confirmed-denial-rolls-back",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "C#",
+      "id": "unknown-final-check-overrides-503",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "TypeScript",
+      "id": "missing-new-success-final-check",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "TypeScript",
+      "id": "missing-replay-final-check",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "TypeScript",
+      "id": "flag-recorded-after-final-check",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "TypeScript",
+      "id": "confirmed-denial-rolls-back",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "language": "TypeScript",
+      "id": "unknown-final-check-overrides-503",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "result": "PASS_STATIC_ONLY"
+    }
+  ],
+  "runtime_acceptance": "NOT_RUN",
+  "actual_adoption_status": "UNPROVEN"
+}

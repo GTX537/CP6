@@ -1,0 +1,21 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "patches": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+      "source_sha256": "6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542",
+      "source_finding_ids": [
+        "PLAN-IF-003"
+      ],
+      "decision": "AC087 exact input remains readcut113; only stale prose changes",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/criteria/86/steps/0",
+          "before": "EX18_PREPARE with full two Case readcut22 immutable revisions and fresh export purpose/field grant",
+          "after": "EX18_PREPARE with full two Case readcut113 immutable revisions and fresh export purpose/field grant"
+        }
+      ]
+    }
+  ]
+}

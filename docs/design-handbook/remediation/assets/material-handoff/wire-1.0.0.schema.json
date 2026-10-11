@@ -1,0 +1,683 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:mat-mrp-residual:1.0.0",
+  "$defs": {
+    "Id": {
+      "type": "string"
+    },
+    "Version": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "Digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "Qty": {
+      "type": "string",
+      "pattern": "^[0-9]{1,13}(\\.[0-9]{1,8})?$"
+    },
+    "Ref": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/Id"
+        },
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "version": {
+          "$ref": "#/$defs/Id"
+        }
+      },
+      "required": [
+        "owner",
+        "id",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "Evidence": {
+      "type": "object",
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/Ref"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "ref",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "Quantity": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/Qty"
+        },
+        "unitRef": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "value",
+        "unitRef"
+      ],
+      "additionalProperties": false
+    },
+    "Range": {
+      "type": "object",
+      "properties": {
+        "portionId": {
+          "$ref": "#/$defs/Id"
+        },
+        "from": {
+          "$ref": "#/$defs/Qty"
+        },
+        "to": {
+          "$ref": "#/$defs/Qty"
+        }
+      },
+      "required": [
+        "portionId",
+        "from",
+        "to"
+      ],
+      "additionalProperties": false
+    },
+    "Scope": {
+      "type": "object",
+      "properties": {
+        "scopeId": {
+          "$ref": "#/$defs/Id"
+        },
+        "scopeVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "ranges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "scopeId",
+        "scopeVersion",
+        "ranges"
+      ],
+      "additionalProperties": false
+    },
+    "BasisKind": {
+      "enum": [
+        "NET_RESIDUAL",
+        "GROSS_WITH_EXPLICIT_OFFSETS"
+      ]
+    },
+    "MaterialBinding": {
+      "type": "object",
+      "properties": {
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/Id"
+        },
+        "workOrderId": {
+          "$ref": "#/$defs/Id"
+        },
+        "snapshotId": {
+          "$ref": "#/$defs/Id"
+        },
+        "materialLineId": {
+          "$ref": "#/$defs/Id"
+        },
+        "materialObligationId": {
+          "$ref": "#/$defs/Id"
+        },
+        "operationId": {
+          "$ref": "#/$defs/Id"
+        },
+        "snapshotDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "purpose": {
+          "enum": [
+            "ENGINEERING",
+            "TRIAL",
+            "PILOT",
+            "PRODUCTION"
+          ]
+        },
+        "executionScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "mbomOccurrenceRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "itemRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "siteRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "unitRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "usageBasisRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "lossRuleRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "substitutionRuleRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "transitionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceProtectionRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "rootWorkOrderId",
+        "workOrderId",
+        "snapshotId",
+        "materialLineId",
+        "materialObligationId",
+        "operationId",
+        "snapshotDigest",
+        "purpose",
+        "executionScope",
+        "mbomOccurrenceRef",
+        "itemRef",
+        "siteRef",
+        "unitRef",
+        "usageBasisRef",
+        "lossRuleRef",
+        "substitutionRuleRef",
+        "transitionRef",
+        "sourceProtectionRefs"
+      ],
+      "additionalProperties": false
+    },
+    "ResponsibilitySlice": {
+      "type": "object",
+      "properties": {
+        "shareKey": {
+          "$ref": "#/$defs/Id"
+        },
+        "sourceObligationRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "currentRepresentativeRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "grossQuantity": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "unitBasis": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "originEvidence": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "shareKey",
+        "sourceObligationRef",
+        "currentRepresentativeRef",
+        "scope",
+        "grossQuantity",
+        "unitBasis",
+        "originEvidence"
+      ],
+      "additionalProperties": false
+    },
+    "Offset": {
+      "type": "object",
+      "properties": {
+        "offsetId": {
+          "$ref": "#/$defs/Id"
+        },
+        "shareKey": {
+          "$ref": "#/$defs/Id"
+        },
+        "originalFact": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "category": {
+          "enum": [
+            "CONFIRMED_CONSUMED_NET",
+            "LINE_SIDE",
+            "RESERVED"
+          ]
+        },
+        "applicableNeedNode": {
+          "$ref": "#/$defs/Ref"
+        },
+        "qualification": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "coverageMembers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Id"
+          },
+          "uniqueItems": true
+        },
+        "supersedesOffsetIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Id"
+          },
+          "uniqueItems": true
+        },
+        "activeProtection": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "offsetId",
+        "shareKey",
+        "originalFact",
+        "scope",
+        "quantity",
+        "category",
+        "applicableNeedNode",
+        "qualification",
+        "coverageMembers",
+        "supersedesOffsetIds",
+        "activeProtection"
+      ],
+      "additionalProperties": false
+    },
+    "OffsetCoverageMember": {
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "$ref": "#/$defs/Id"
+        },
+        "shareKey": {
+          "$ref": "#/$defs/Id"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "ownershipEvidence": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "memberId",
+        "shareKey",
+        "quantity",
+        "scope",
+        "ownershipEvidence"
+      ],
+      "additionalProperties": false
+    },
+    "UnresolvedAction": {
+      "type": "object",
+      "properties": {
+        "actionId": {
+          "$ref": "#/$defs/Id"
+        },
+        "nativeKind": {
+          "$ref": "#/$defs/Id"
+        },
+        "potentialQuantity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "disjointFromRequestedScopeProof": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "actionId",
+        "nativeKind",
+        "potentialQuantity",
+        "scope",
+        "disjointFromRequestedScopeProof"
+      ],
+      "additionalProperties": false
+    },
+    "Coverage": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "UNKNOWN"
+          ]
+        },
+        "requestedScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "actualScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "cut": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "uniqueItems": true
+        },
+        "completenessProof": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingScopes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Scope"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "state",
+        "requestedScope",
+        "actualScope",
+        "cut",
+        "completenessProof",
+        "missingScopes"
+      ],
+      "additionalProperties": false
+    },
+    "ReadRequest": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "MAT-MRP-RESIDUAL-READ/1"
+        },
+        "requestKey": {
+          "$ref": "#/$defs/Id"
+        },
+        "mappingVersion": {
+          "const": "1.0.0"
+        },
+        "bindingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "expectedMaterialRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "requestedScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "asKnownCut": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "uniqueItems": true
+        },
+        "basisKind": {
+          "$ref": "#/$defs/BasisKind"
+        }
+      },
+      "required": [
+        "schema",
+        "requestKey",
+        "mappingVersion",
+        "bindingRef",
+        "expectedMaterialRevision",
+        "requestedScope",
+        "asKnownCut",
+        "basisKind"
+      ],
+      "additionalProperties": false
+    },
+    "ResidualHandoff": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "MAT-MRP-RESIDUAL/1"
+        },
+        "mappingVersion": {
+          "const": "1.0.0"
+        },
+        "captureRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "requestDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "nativeRemainingBasisRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "materialRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "binding": {
+          "$ref": "#/$defs/MaterialBinding"
+        },
+        "sourceLineageRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "needNodeRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "basisKind": {
+          "$ref": "#/$defs/BasisKind"
+        },
+        "inputQuantity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "responsibilitySlices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResponsibilitySlice"
+          },
+          "uniqueItems": true
+        },
+        "offsets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Offset"
+          },
+          "uniqueItems": true
+        },
+        "offsetCoverageMembers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OffsetCoverageMember"
+          },
+          "uniqueItems": true
+        },
+        "alreadyAppliedOffsetSet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Id"
+          },
+          "uniqueItems": true
+        },
+        "excludeFromFurtherNettingSet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Id"
+          },
+          "uniqueItems": true
+        },
+        "protectionBindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "uniqueItems": true
+        },
+        "transitionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "unresolvedActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnresolvedAction"
+          },
+          "uniqueItems": true
+        },
+        "ownerVector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "uniqueItems": true
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "knowledge": {
+          "enum": [
+            "KNOWN",
+            "PARTIAL",
+            "UNKNOWN"
+          ]
+        },
+        "canCloseMaterialResponsibility": {
+          "type": "boolean"
+        },
+        "eligibleForFormalSeal": {
+          "type": "boolean"
+        },
+        "allowedUses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "DIAGNOSTIC",
+              "FORMAL_PLANNING_INPUT"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "schema",
+        "mappingVersion",
+        "captureRef",
+        "requestDigest",
+        "nativeRemainingBasisRef",
+        "materialRevision",
+        "binding",
+        "sourceLineageRef",
+        "needNodeRef",
+        "basisKind",
+        "inputQuantity",
+        "responsibilitySlices",
+        "offsets",
+        "offsetCoverageMembers",
+        "alreadyAppliedOffsetSet",
+        "excludeFromFurtherNettingSet",
+        "protectionBindings",
+        "transitionRef",
+        "unresolvedActions",
+        "ownerVector",
+        "coverage",
+        "knowledge",
+        "canCloseMaterialResponsibility",
+        "eligibleForFormalSeal",
+        "allowedUses"
+      ],
+      "additionalProperties": false
+    },
+    "Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "INVALID_WIRE",
+            "UNAUTHENTICATED",
+            "FORBIDDEN",
+            "NOT_FOUND",
+            "REQUEST_KEY_CONFLICT",
+            "BINDING_MISMATCH",
+            "MATERIAL_REVISION_CHANGED",
+            "SCOPE_MISMATCH",
+            "OWNER_CUT_UNAVAILABLE"
+          ]
+        },
+        "traceId": {
+          "$ref": "#/$defs/Id"
+        },
+        "recovery": {
+          "enum": [
+            "FIX_REQUEST",
+            "REFRESH_AUTHORITY",
+            "NEW_CAPTURE_REQUIRED",
+            "QUERY_ORIGINAL_KEY",
+            "RETRY_SAME_READ_KEY"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "traceId",
+        "recovery"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$ref": "#/$defs/ResidualHandoff"
+}

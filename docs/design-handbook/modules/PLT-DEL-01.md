@@ -1,5 +1,17 @@
 # PLT-DEL-01 · 可靠收发、调用方事务与技术恢复
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-S6-PRECHECKPOINT-FINALAUTH | ADOPTION_PENDING：重复/旧/同版本成功前先真事务持久化checkpoint，transport/raw与content摘要独立；Reconciliation→Published→Projection→Inbox→checkpoint；最终授权必须真实native held。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。静态设计接受不升级为实现或运行接受。
 
 ## 1. 业务目的、操作者和Owner边界

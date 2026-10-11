@@ -1,0 +1,236 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "acceptance": [
+    {
+      "id": "AC-W5-COM-01-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "ClaimPrepareRequest 使用冻结 bundle 的 PR approval revision 2；两处 authorityScope/sourceBusinessVersion 从3改2，独立 acceptedWireExamples revision3不变。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-01-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-01-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "授权scope或businessVersion与冻结Grant不同，拒绝Prepare且零写。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-02-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "首次成功与同命令重放的 recordedAt 均固定11:28，落在11:20创建/11:30到期之间；三处12:08修为11:28，读取时钟不得覆盖首次事务记录。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-02-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-02-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "未消费preview到期后首次提交返回410且零写；相同已消费command只返回原成功，异command不得复用。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-03-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "G6R07 quantity6、L2R07 quantity2、EP[11] quantity4、EP[25] quantity6；校验298摘要原像，有向依赖闭包重算127摘要，保留171未变化节点及历史附录。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-03-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-03-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "任一child再次授父总量10，或任何transitive digest仍旧值，当前版夹具不可采用；不得以父范围防护豁免子数量。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-04-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "R1Q10当前撤销policy改POL2，lastProven仍POL1；8 Lookup和2 Seal依本版本显式DEMO issuedAt见证到期600秒，E71 payload/reference/消费者摘要同步。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-04-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-04-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "now>=expiresAt首次Apply拒绝且零写；旧POL1不可替代当前POL2；已提交同command重放保原结果，不延长窗口。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-05-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "新current-v1九个Problem的issues[].code与顶层code一致，type使用该code的小写短横URN；原HTTP status/业务fence/UI恢复策略不变，旧三元组只留冻结回放。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-05-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-05-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "新current-v1不接受HEAD_CHANGED内层别名；未知code保留原错误并fail closed，不按消息文本猜业务错误。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-06-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "派生独立current-v1 C#/TS codec，锁根Problem修订后的TYPE字节SHA；NO_CHANGE可带Ref，FOUND仍需完整真实native/current来源，未证明COMPLETED保持UNKNOWN。冻结R8保原字节。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-06-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-06-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "错TYPE或native schema pin拒加载；APPLIED无Ref/REJECTED带Ref拒wire；NO_CHANGE或COMPLETED传输成功不能单独建立FOUND或释放占用。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-07-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "四个public body共18 Money改为closed value/currency；保数字字符串与货币并更新MULTI lookup binding、5正文身份、Store7 canonical摘要和全部列明current消费者。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-07-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-07-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "amount别名、额外Money字段、任一旧digest/byteLength/handle/receipt摘要组合均不可进入current夹具；缺真实issuer/Store收据仍fenced。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-08-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "闭合JSON+YAML尾块归一为单一OpenAPI JSON根；十块metadata保留，重复第二stage93准确命名stage94；29路由不变，C01/C02 HTTP200指向COMMITTED并返回首次201原字节。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-08-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-08-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "重复扩展键、多根载体不可用于生成；重放重命名COMMITTED_REPLAY、重新脱敏/重建body或再次业务写均拒绝。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-09-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "CURRENT03 ops72/73/74及CURRENT10对应producer统一NEW_READY；78/79旧root父键取WN14.OLD_END已保护旧plan，同期future43 OUTPUT不得充旧父。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-09-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-09-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "错阶段current guard或用未来新plan OUTPUT充旧FK，在任何DML前拒绝；保持OLD_END先于NEW_ADMIT，opaque RV取真实OUTPUT。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-10-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "WN11-04两个ledger操作31 target/producer准确绑定partition_projection，并供操作23消费其实际Store receipt；操作28 C06保存响应保持独立。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-10-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-10-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "projection receipt不能冒充C06 saved reply receipt；31未有真实收据不得执行23，保持零新Finance派发。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "AC-W5-COM-11-P",
+      "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+      "expected": "两个ledger ops68/70/71业务版本分别按ProtectedBefore+1；68/71 updated_at取同Uow事件时钟，opaque row_version仍provider-only，四CAS原子性不变。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-11-N",
+      "scenario": "错误版本或错误preimage的有界补丁输入",
+      "expected": "必须拒绝，不能模糊套用本版本补丁。",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "result": "PASS"
+    },
+    {
+      "id": "AC-W5-COM-11-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "直接写ProtectedBefore版本、算术溢出、错旧PK/RV或任一CAS冲突均整体回滚；未知原提交仅查询同原intent，不重派Finance。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN"
+    }
+  ]
+}

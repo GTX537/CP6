@@ -1,5 +1,17 @@
 # PUR-SUB-01 委外加工、发料与成本对账
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-SUB-COST-RECEIPT-VS-ACCEPTANCE | INTENTIONAL_DIFFERENCE：Finance approved RECEIPT完整累计Q作cost，Pcum+sameM仅一次、累计舍入取delta；消耗依据独立COMMERCIAL_ACCEPTANCE_GROSS与冻结Qplan、unitUsage。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 业务目的、操作者与责任边界
 
 采购员关联准确既有委外PO行，技术/采购人员采用材料支给计划；有权仓储执行人员发料，采购按真实GR收回和QA结果观察，财务人员预览并提交累计成本，业务人员按固定单耗及商业验收量对账、显式建立调查。商业关联、物理发料/退料、供应商托管/真实消耗、成品收回/验收和成本结算各有独立事实，不能压成一个“已完成”。 [原文 L55](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md:55>)、[原文 L57](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md:57>)、[原文 L59](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md:59>)、[原文 L61](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md:61>)、[原文 L73](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md:73>)、[原文 L75](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md:75>)、[原文 L286](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md:286>)

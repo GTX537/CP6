@@ -1,5 +1,23 @@
 # ERP-QTN-01 · 正式报价与客户接受
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-OWNER-LOCK-ORDER | ADOPTION_PENDING：采用 IAM→BP（含Mapping/ReverseClaim）→EST→QTN 已登记依赖；闭包预收集、循环或遗漏 LOCK_PLAN_UNPROVEN；禁止持EST回调BP。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-EST-PRICE-COVERAGE-V2 | ADOPTION_PENDING：EST R2 v2采用整张coverage+准确coveragePolicy+最终保护，旧PRICE列不能代替；保留原估算/报价用途。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-EST-QTN-V2-DECODER | ADOPTION_PENDING：保原EstimateBasis并注册完整v2 ModelIdentity/FormulaDigest/Disclosure解码与I03/I05用途。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-QTN-FACT-H07-R2 | ADOPTION_PENDING：Persist exact historical Fact/source/receipt; synchronously join current Fact before new Sales effects; I19 projections never cancel order/release allocation or assert customer revocation. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-ORD-QTN-H07-SUCCESSOR | SUPERSEDED：Adopt exact QTN R2 I10/Allocation at actual DRAFT commit; Confirm consumes no second H/C account; immutable source quantities, bounded I11 full release. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-FSC-FACT-GUARD-EXTENSION | ADOPTION_PENDING：采用FSC R2 EST事实读与QTN关系双守卫；EST I03原Usage不扩域。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-EST-FIXTURE-POLICY-AND-TTL | ARTIFACT_CONFLICT：R1Q10当前撤销policy改POL2，lastProven仍POL1；8 Lookup和2 Seal依本版本显式DEMO issuedAt见证到期600秒，E71 payload/reference/消费者摘要同步。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`required_materials_consolidated`。有效主文为 **v1.0.3 REVIEW R2**，SHA `45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da`。D-QTN01–14 已由 UA 正式接受。核心设计、类型、44入口、存储、218 AC，以及445个JSON与全部嵌套来源/证明/准备原文已完成必要语义阅读；重复原件按准确同值复用，不称60,201行逐字重读。6项必要输入及CURRENT引用的两个补核包闭合。12个生产门保持UNPROVEN，218 AC均NOT_RUN。[U3][C271]
 
 ## 1. 业务目的、操作者和 Owner 边界

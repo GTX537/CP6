@@ -1,5 +1,21 @@
 # QA-NCR-01 不合格、返工、报废与质量工程闭环
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-004 | ADOPTION_PENDING：五类disposition逐一登记owner/route/capability/query/seal/correction；QA-NCR设计通过不构成报废/返修/转移运行授权，IN收货receipt不替代处置效果。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-016 | SUPERSEDED：NCR准确后继已无损采用IPQC旧SourceEnvelope、standalone和Resolution27；保原字段/摘要/Scope。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-017 | SUPERSEDED：R12闭合旧profile/Uow proof gap：UTF8 domain+NUL+JCS完整非digest proof、INPUT9 current generation、真实同Uow；RETURN_TO_SOURCE仍不在Finance R10 H30枚举。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| NCR-TYPE-01 | ARTIFACT_CONFLICT：原5处null-only及编译发现2处ObservationInput const-null统一required NullOnly+严格converter；不以默认0代null。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+| NCR-FIELD-01 | ARTIFACT_CONFLICT：按准确shape修5条nullable元数据；CLOSE_MAIN.priorHeadRef不可空，其余4条查询字段允许null。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。R12主文与必要类型/字段/存储/接口/事务、CP4_R1及Owner补件、全部普通数据、AC和26项准确专业设计采用语义已整理；273成员完成分层处置。该状态表示当前必要设计材料的阅读与整理闭合，不表示实际实现、运行资格或业务验收通过。
 
 ## 1. 业务目的、操作者与事实责任

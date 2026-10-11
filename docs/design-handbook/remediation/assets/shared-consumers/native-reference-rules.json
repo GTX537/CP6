@@ -1,0 +1,9 @@
+{
+  "canonicalReferenceBase64": "Exact original native reference JSON UTF8, with no reshaping; decode once and validate strict original pinned schema including duplicate-member rejection",
+  "rawSha256": "SHA256 of exact decoded bytes",
+  "byteLength": "UTF8 byte count not character count",
+  "contract": "registration must pin complete original schema and verifier; unknown pin fenced",
+  "identity": "compare complete native reference bytes under original canonical profile, not hash alone",
+  "purpose": "sidecar carrier only; does not claim original Owner signs this new wrapper",
+  "transport": "no new public endpoint; dispatch/read/apply via exact registered original Owner ports and permissions described in 07-shared-consumer-mappings.md"
+}

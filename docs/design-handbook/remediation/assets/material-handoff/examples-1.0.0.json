@@ -1,0 +1,2941 @@
+{
+  "role": "NEW_DEMO_DESIGN_VECTORS_NOT_OWNER_EVIDENCE",
+  "cases": [
+    {
+      "id": "MAT-READ-POS",
+      "schema": "ReadRequest",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL-READ/1",
+        "requestKey": "DEMO-read-1",
+        "mappingVersion": "1.0.0",
+        "bindingRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "binding",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "expectedMaterialRevision": "1",
+        "requestedScope": {
+          "scopeId": "scope-1",
+          "scopeVersion": "1",
+          "ranges": [
+            {
+              "portionId": "part-1",
+              "from": "0",
+              "to": "80"
+            }
+          ]
+        },
+        "asKnownCut": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "cut",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "basisKind": "NET_RESIDUAL"
+      },
+      "expected_document_valid": true,
+      "reason": "",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-NET-POS",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "NET_RESIDUAL",
+        "inputQuantity": {
+          "value": "60",
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          }
+        },
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [
+          "consumed-1"
+        ],
+        "excludeFromFurtherNettingSet": [
+          "cover-1"
+        ],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "COMPLETE",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": {
+            "ref": {
+              "owner": "MAT",
+              "id": "full",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "missingScopes": []
+        },
+        "knowledge": "KNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": true,
+        "allowedUses": [
+          "DIAGNOSTIC",
+          "FORMAL_PLANNING_INPUT"
+        ]
+      },
+      "expected_document_valid": true,
+      "reason": "",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-GROSS-POS",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "GROSS_WITH_EXPLICIT_OFFSETS",
+        "inputQuantity": {
+          "value": "80",
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          }
+        },
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [],
+        "excludeFromFurtherNettingSet": [
+          "cover-1"
+        ],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "COMPLETE",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": {
+            "ref": {
+              "owner": "MAT",
+              "id": "full",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "missingScopes": []
+        },
+        "knowledge": "KNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": true,
+        "allowedUses": [
+          "DIAGNOSTIC",
+          "FORMAL_PLANNING_INPUT"
+        ]
+      },
+      "expected_document_valid": true,
+      "reason": "",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-UNKNOWN-POS",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "NET_RESIDUAL",
+        "inputQuantity": null,
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [
+          "consumed-1"
+        ],
+        "excludeFromFurtherNettingSet": [
+          "cover-1"
+        ],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "UNKNOWN",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": null,
+          "missingScopes": [
+            {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            }
+          ]
+        },
+        "knowledge": "UNKNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": false,
+        "allowedUses": [
+          "DIAGNOSTIC"
+        ]
+      },
+      "expected_document_valid": true,
+      "reason": "",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-NET-WRONG",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "NET_RESIDUAL",
+        "inputQuantity": {
+          "value": "40",
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          }
+        },
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [
+          "consumed-1"
+        ],
+        "excludeFromFurtherNettingSet": [
+          "cover-1"
+        ],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "COMPLETE",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": {
+            "ref": {
+              "owner": "MAT",
+              "id": "full",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "missingScopes": []
+        },
+        "knowledge": "KNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": true,
+        "allowedUses": [
+          "DIAGNOSTIC",
+          "FORMAL_PLANNING_INPUT"
+        ]
+      },
+      "expected_document_valid": false,
+      "reason": "net must equal 80-20",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-UNKNOWN-SEAL",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "NET_RESIDUAL",
+        "inputQuantity": {
+          "value": "60",
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          }
+        },
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [
+          "consumed-1"
+        ],
+        "excludeFromFurtherNettingSet": [
+          "cover-1"
+        ],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "COMPLETE",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": {
+            "ref": {
+              "owner": "MAT",
+              "id": "full",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "missingScopes": []
+        },
+        "knowledge": "UNKNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": true,
+        "allowedUses": [
+          "DIAGNOSTIC",
+          "FORMAL_PLANNING_INPUT"
+        ]
+      },
+      "expected_document_valid": false,
+      "reason": "unknown evidence must block formal seal",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-UNIT-WRONG",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "NET_RESIDUAL",
+        "inputQuantity": {
+          "value": "60",
+          "unitRef": {
+            "owner": "MAT",
+            "id": "KG",
+            "version": "1"
+          }
+        },
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [
+          "consumed-1"
+        ],
+        "excludeFromFurtherNettingSet": [
+          "cover-1"
+        ],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "COMPLETE",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": {
+            "ref": {
+              "owner": "MAT",
+              "id": "full",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "missingScopes": []
+        },
+        "knowledge": "KNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": true,
+        "allowedUses": [
+          "DIAGNOSTIC",
+          "FORMAL_PLANNING_INPUT"
+        ]
+      },
+      "expected_document_valid": false,
+      "reason": "unit cannot be guessed",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-DOUBLE-NET",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "NET_RESIDUAL",
+        "inputQuantity": {
+          "value": "60",
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          }
+        },
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [
+          "consumed-1"
+        ],
+        "excludeFromFurtherNettingSet": [],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "COMPLETE",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": {
+            "ref": {
+              "owner": "MAT",
+              "id": "full",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "missingScopes": []
+        },
+        "knowledge": "KNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": true,
+        "allowedUses": [
+          "DIAGNOSTIC",
+          "FORMAL_PLANNING_INPUT"
+        ]
+      },
+      "expected_document_valid": false,
+      "reason": "all eligible coverage members excluded from subsequent netting",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-DUP-SHARE",
+      "schema": "ResidualHandoff",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL/1",
+        "mappingVersion": "1.0.0",
+        "captureRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "capture",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "requestDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "nativeRemainingBasisRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "remaining",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "materialRevision": "1",
+        "binding": {
+          "rootWorkOrderId": "DEMO-rootWorkOrderId",
+          "workOrderId": "DEMO-workOrderId",
+          "snapshotId": "DEMO-snapshotId",
+          "materialLineId": "DEMO-materialLineId",
+          "materialObligationId": "DEMO-materialObligationId",
+          "operationId": "DEMO-operationId",
+          "snapshotDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "purpose": "PRODUCTION",
+          "executionScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "mbomOccurrenceRef": {
+            "owner": "MAT",
+            "id": "mbomOccurrenceRef",
+            "version": "1"
+          },
+          "itemRef": {
+            "owner": "MAT",
+            "id": "itemRef",
+            "version": "1"
+          },
+          "siteRef": {
+            "owner": "MAT",
+            "id": "siteRef",
+            "version": "1"
+          },
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          },
+          "usageBasisRef": {
+            "owner": "MAT",
+            "id": "usageBasisRef",
+            "version": "1"
+          },
+          "lossRuleRef": {
+            "owner": "MAT",
+            "id": "lossRuleRef",
+            "version": "1"
+          },
+          "substitutionRuleRef": null,
+          "transitionRef": {
+            "ref": {
+              "owner": "MAT",
+              "id": "transition",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceProtectionRefs": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "protect",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ]
+        },
+        "sourceLineageRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "lineage",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "needNodeRef": {
+          "owner": "MAT",
+          "id": "need",
+          "version": "1"
+        },
+        "basisKind": "NET_RESIDUAL",
+        "inputQuantity": {
+          "value": "60",
+          "unitRef": {
+            "owner": "MAT",
+            "id": "EA",
+            "version": "1"
+          }
+        },
+        "responsibilitySlices": [
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          },
+          {
+            "shareKey": "share-1",
+            "sourceObligationRef": {
+              "owner": "MAT",
+              "id": "obligation",
+              "version": "1"
+            },
+            "currentRepresentativeRef": {
+              "owner": "MAT",
+              "id": "current",
+              "version": "1"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "grossQuantity": {
+              "value": "80",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "unitBasis": {
+              "ref": {
+                "owner": "MAT",
+                "id": "unit",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "originEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "origin",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "offsets": [
+          {
+            "offsetId": "consumed-1",
+            "shareKey": "share-1",
+            "originalFact": {
+              "ref": {
+                "owner": "MAT",
+                "id": "consumed",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "category": "CONFIRMED_CONSUMED_NET",
+            "applicableNeedNode": {
+              "owner": "MAT",
+              "id": "need",
+              "version": "1"
+            },
+            "qualification": {
+              "ref": {
+                "owner": "MAT",
+                "id": "qual",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "coverageMembers": [
+              "cover-1"
+            ],
+            "supersedesOffsetIds": [],
+            "activeProtection": [
+              {
+                "ref": {
+                  "owner": "MAT",
+                  "id": "protect",
+                  "version": "1"
+                },
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "offsetCoverageMembers": [
+          {
+            "memberId": "cover-1",
+            "shareKey": "share-1",
+            "quantity": {
+              "value": "20",
+              "unitRef": {
+                "owner": "MAT",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "scope": {
+              "scopeId": "scope-1",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "part-1",
+                  "from": "0",
+                  "to": "80"
+                }
+              ]
+            },
+            "ownershipEvidence": {
+              "ref": {
+                "owner": "MAT",
+                "id": "ownership",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "alreadyAppliedOffsetSet": [
+          "consumed-1"
+        ],
+        "excludeFromFurtherNettingSet": [
+          "cover-1"
+        ],
+        "protectionBindings": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "protect",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "transitionRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "transition",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "unresolvedActions": [],
+        "ownerVector": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "owner-head",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "coverage": {
+          "state": "COMPLETE",
+          "requestedScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "actualScope": {
+            "scopeId": "scope-1",
+            "scopeVersion": "1",
+            "ranges": [
+              {
+                "portionId": "part-1",
+                "from": "0",
+                "to": "80"
+              }
+            ]
+          },
+          "cut": [
+            {
+              "ref": {
+                "owner": "MAT",
+                "id": "cut",
+                "version": "1"
+              },
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          ],
+          "completenessProof": {
+            "ref": {
+              "owner": "MAT",
+              "id": "full",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "missingScopes": []
+        },
+        "knowledge": "KNOWN",
+        "canCloseMaterialResponsibility": false,
+        "eligibleForFormalSeal": true,
+        "allowedUses": [
+          "DIAGNOSTIC",
+          "FORMAL_PLANNING_INPUT"
+        ]
+      },
+      "expected_document_valid": false,
+      "reason": "same share cannot be counted twice",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "MAT-TENANT-OVERRIDE",
+      "schema": "ReadRequest",
+      "body": {
+        "schema": "MAT-MRP-RESIDUAL-READ/1",
+        "requestKey": "DEMO-read-1",
+        "mappingVersion": "1.0.0",
+        "bindingRef": {
+          "ref": {
+            "owner": "MAT",
+            "id": "binding",
+            "version": "1"
+          },
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "expectedMaterialRevision": "1",
+        "requestedScope": {
+          "scopeId": "scope-1",
+          "scopeVersion": "1",
+          "ranges": [
+            {
+              "portionId": "part-1",
+              "from": "0",
+              "to": "80"
+            }
+          ]
+        },
+        "asKnownCut": [
+          {
+            "ref": {
+              "owner": "MAT",
+              "id": "cut",
+              "version": "1"
+            },
+            "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "basisKind": "NET_RESIDUAL",
+        "tenantId": "body-override"
+      },
+      "expected_document_valid": false,
+      "reason": "trusted scope cannot be overridden",
+      "runtime_status": "NOT_RUN"
+    }
+  ]
+}

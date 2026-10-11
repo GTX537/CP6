@@ -1,0 +1,1555 @@
+{
+  "examples": [
+    {
+      "id": "ENG-TWO-OCCURRENCES",
+      "schema": "OutputRelations",
+      "body": {
+        "schema": "ENG-OUTPUT-RELATIONS/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "relationId": "00000000-0000-4000-8000-000000000002",
+        "version": "1",
+        "configurationRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+          "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+          "byteLength": 56
+        },
+        "inputs": [
+          {
+            "inputOccurrenceId": "input1",
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Iml0ZW1JbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "9ae145fb6b3821b04ba7c276c80e5b77a46127b0f206df72fa337f62b0eadac0",
+              "byteLength": 59
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWNJbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "bf78394d89973f856562f80e7bcc063bf5b93fd4a6108cc07c770999ccd92f87",
+              "byteLength": 59
+            }
+          }
+        ],
+        "operations": [
+          {
+            "operationOccurrenceId": "op1",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "5bc04c858f809eec39196745cf32ed481b638a352675e21d290428a46509f4f5",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          },
+          {
+            "operationOccurrenceId": "op2",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMiIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "b1befa87b7c41cebd443de327eab960eb4b4211acca75b8df8269d2df4f5de3a",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "outputOccurrenceId": "out1",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op1",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "36fcf90fe60c0d212308b9388e7aacf3631f268ee6d48c8883d25055bb78fa48",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          },
+          {
+            "outputOccurrenceId": "out2",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op2",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDIiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "de28d96d76ca35d373d243d0e6177e3a8a4d5a909ef87840064769e4a337a64a",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          }
+        ],
+        "bodyDigest": "01bebcc97614e06da8c3db28d9e34ecd6d1245980ba557f6ac6dcf836effd94c"
+      },
+      "expected_valid": true,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ENG-ABSENT-OP",
+      "schema": "OutputRelations",
+      "body": {
+        "schema": "ENG-OUTPUT-RELATIONS/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "relationId": "00000000-0000-4000-8000-000000000002",
+        "version": "1",
+        "configurationRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+          "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+          "byteLength": 56
+        },
+        "inputs": [
+          {
+            "inputOccurrenceId": "input1",
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Iml0ZW1JbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "9ae145fb6b3821b04ba7c276c80e5b77a46127b0f206df72fa337f62b0eadac0",
+              "byteLength": 59
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWNJbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "bf78394d89973f856562f80e7bcc063bf5b93fd4a6108cc07c770999ccd92f87",
+              "byteLength": 59
+            }
+          }
+        ],
+        "operations": [
+          {
+            "operationOccurrenceId": "op1",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "5bc04c858f809eec39196745cf32ed481b638a352675e21d290428a46509f4f5",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          },
+          {
+            "operationOccurrenceId": "op2",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMiIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "b1befa87b7c41cebd443de327eab960eb4b4211acca75b8df8269d2df4f5de3a",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "outputOccurrenceId": "out1",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "absent",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "36fcf90fe60c0d212308b9388e7aacf3631f268ee6d48c8883d25055bb78fa48",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          },
+          {
+            "outputOccurrenceId": "out2",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op2",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDIiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "de28d96d76ca35d373d243d0e6177e3a8a4d5a909ef87840064769e4a337a64a",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          }
+        ],
+        "bodyDigest": "4143d1355d42119a6f755ec247e99d4e4272f30bae3edb479f21e3212defb8db"
+      },
+      "expected_valid": false,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ENG-ABSENT-INPUT",
+      "schema": "OutputRelations",
+      "body": {
+        "schema": "ENG-OUTPUT-RELATIONS/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "relationId": "00000000-0000-4000-8000-000000000002",
+        "version": "1",
+        "configurationRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+          "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+          "byteLength": 56
+        },
+        "inputs": [
+          {
+            "inputOccurrenceId": "input1",
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Iml0ZW1JbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "9ae145fb6b3821b04ba7c276c80e5b77a46127b0f206df72fa337f62b0eadac0",
+              "byteLength": 59
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWNJbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "bf78394d89973f856562f80e7bcc063bf5b93fd4a6108cc07c770999ccd92f87",
+              "byteLength": 59
+            }
+          }
+        ],
+        "operations": [
+          {
+            "operationOccurrenceId": "op1",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "5bc04c858f809eec39196745cf32ed481b638a352675e21d290428a46509f4f5",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          },
+          {
+            "operationOccurrenceId": "op2",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMiIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "b1befa87b7c41cebd443de327eab960eb4b4211acca75b8df8269d2df4f5de3a",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "outputOccurrenceId": "out1",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op1",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "absent"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "36fcf90fe60c0d212308b9388e7aacf3631f268ee6d48c8883d25055bb78fa48",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          },
+          {
+            "outputOccurrenceId": "out2",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op2",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDIiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "de28d96d76ca35d373d243d0e6177e3a8a4d5a909ef87840064769e4a337a64a",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          }
+        ],
+        "bodyDigest": "233fdb304c175e6a42f80334bdc550d57a0b469e3b8a6d81b63b627cf8b5c11e"
+      },
+      "expected_valid": false,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ENG-DUP-OCCURRENCE",
+      "schema": "OutputRelations",
+      "body": {
+        "schema": "ENG-OUTPUT-RELATIONS/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "relationId": "00000000-0000-4000-8000-000000000002",
+        "version": "1",
+        "configurationRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+          "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+          "byteLength": 56
+        },
+        "inputs": [
+          {
+            "inputOccurrenceId": "input1",
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Iml0ZW1JbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "9ae145fb6b3821b04ba7c276c80e5b77a46127b0f206df72fa337f62b0eadac0",
+              "byteLength": 59
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWNJbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "bf78394d89973f856562f80e7bcc063bf5b93fd4a6108cc07c770999ccd92f87",
+              "byteLength": 59
+            }
+          }
+        ],
+        "operations": [
+          {
+            "operationOccurrenceId": "op1",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "5bc04c858f809eec39196745cf32ed481b638a352675e21d290428a46509f4f5",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          },
+          {
+            "operationOccurrenceId": "op2",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMiIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "b1befa87b7c41cebd443de327eab960eb4b4211acca75b8df8269d2df4f5de3a",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "outputOccurrenceId": "out1",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op1",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "36fcf90fe60c0d212308b9388e7aacf3631f268ee6d48c8883d25055bb78fa48",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          },
+          {
+            "outputOccurrenceId": "out1",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op2",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDIiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "de28d96d76ca35d373d243d0e6177e3a8a4d5a909ef87840064769e4a337a64a",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          }
+        ],
+        "bodyDigest": "dd5e41801143426ba8259039ddc06d24ea47a4fa84babe7bc44df6ae5e571a26"
+      },
+      "expected_valid": false,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ENG-CONFIG-DRIFT",
+      "schema": "OutputRelations",
+      "body": {
+        "schema": "ENG-OUTPUT-RELATIONS/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "relationId": "00000000-0000-4000-8000-000000000002",
+        "version": "1",
+        "configurationRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+          "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+          "byteLength": 56
+        },
+        "inputs": [
+          {
+            "inputOccurrenceId": "input1",
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Iml0ZW1JbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "9ae145fb6b3821b04ba7c276c80e5b77a46127b0f206df72fa337f62b0eadac0",
+              "byteLength": 59
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWNJbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "bf78394d89973f856562f80e7bcc063bf5b93fd4a6108cc07c770999ccd92f87",
+              "byteLength": 59
+            }
+          }
+        ],
+        "operations": [
+          {
+            "operationOccurrenceId": "op1",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "5bc04c858f809eec39196745cf32ed481b638a352675e21d290428a46509f4f5",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          },
+          {
+            "operationOccurrenceId": "op2",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMiIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "b1befa87b7c41cebd443de327eab960eb4b4211acca75b8df8269d2df4f5de3a",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "outputOccurrenceId": "out1",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op1",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzIiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "ab2226fceb0ed4e3a66d685916436bd16c1bd7f9b2cf972485b7b489fbe92dbf",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "36fcf90fe60c0d212308b9388e7aacf3631f268ee6d48c8883d25055bb78fa48",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          },
+          {
+            "outputOccurrenceId": "out2",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op2",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDIiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "de28d96d76ca35d373d243d0e6177e3a8a4d5a909ef87840064769e4a337a64a",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          }
+        ],
+        "bodyDigest": "b1873f7b5c2951e03d7bb4e19f54fd398c928ecb65f3da51a1dae548f4d913fc"
+      },
+      "expected_valid": false,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ENG-UNPROVEN-NO-INPUT",
+      "schema": "OutputRelations",
+      "body": {
+        "schema": "ENG-OUTPUT-RELATIONS/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "relationId": "00000000-0000-4000-8000-000000000002",
+        "version": "1",
+        "configurationRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+          "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+          "byteLength": 56
+        },
+        "inputs": [
+          {
+            "inputOccurrenceId": "input1",
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Iml0ZW1JbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "9ae145fb6b3821b04ba7c276c80e5b77a46127b0f206df72fa337f62b0eadac0",
+              "byteLength": 59
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWNJbjEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "bf78394d89973f856562f80e7bcc063bf5b93fd4a6108cc07c770999ccd92f87",
+              "byteLength": 59
+            }
+          }
+        ],
+        "operations": [
+          {
+            "operationOccurrenceId": "op1",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "5bc04c858f809eec39196745cf32ed481b638a352675e21d290428a46509f4f5",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          },
+          {
+            "operationOccurrenceId": "op2",
+            "operationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6Im9wMiIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "b1befa87b7c41cebd443de327eab960eb4b4211acca75b8df8269d2df4f5de3a",
+              "byteLength": 55
+            },
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "outputOccurrenceId": "out1",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op1",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "36fcf90fe60c0d212308b9388e7aacf3631f268ee6d48c8883d25055bb78fa48",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          },
+          {
+            "outputOccurrenceId": "out2",
+            "productIdentity": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNhbWUtcHJvZHVjdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "6fc008f4213cbf4f4ec466ee0898b5e33493fc93dfad1031a76e458cb0126bd2",
+              "byteLength": 64
+            },
+            "itemRevisionRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJldmlzaW9uMSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+              "rawSha256": "3a2df44d63e17acd3d3c699bfe9ac212cbdc3195c08cc5b05a85263f0b5ad9c0",
+              "byteLength": 61
+            },
+            "specRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InNwZWMxIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "0d1190240de7cc38809c1ce5fc1aebdd92acc02942c7ffeca7104019ebdef50c",
+              "byteLength": 57
+            },
+            "generatingOperationOccurrenceId": "op2",
+            "configurationRef": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+              "byteLength": 56
+            },
+            "inputOccurrenceIds": [
+              "input1"
+            ],
+            "relationEvidence": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6InJlbGF0aW9uLW91dDIiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+              "rawSha256": "de28d96d76ca35d373d243d0e6177e3a8a4d5a909ef87840064769e4a337a64a",
+              "byteLength": 65
+            },
+            "generationWithoutInputBasis": null
+          }
+        ],
+        "bodyDigest": "f2808dbc353ecb01c5144fd9714b8612631ee4d78d6c0fcdce1567aaeb1e6431"
+      },
+      "expected_valid": false,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "OA-EXACT-CANDIDATE-SET",
+      "schema": "CandidateAggregate",
+      "body": {
+        "schema": "ITER-CANDIDATE-AGGREGATE/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "iterationId": "ITER-DEMO",
+        "roundId": "ROUND-DEMO",
+        "aggregateId": "00000000-0000-4000-8000-000000000003",
+        "aggregateVersion": "1",
+        "members": [
+          {
+            "candidateId": "candidate-A",
+            "candidateVersion": "opaque1",
+            "technicalReference": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNhbmRpZGF0ZS1BIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "fc7a8b28401cf7e8b40c39a5c49c470de7aaaa63ea51dc841e071833e9584e6c",
+              "byteLength": 63
+            },
+            "originalDigest": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNhbmRpZGF0ZS1BLW9yaWdpbmFsRGlnZXN0Iiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "744cf5b85ee9da199035ee1632090f9a29351366b4a5ef4498cb4a2a11350579",
+              "byteLength": 78
+            }
+          },
+          {
+            "candidateId": "candidate-B",
+            "candidateVersion": "opaque1",
+            "technicalReference": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNhbmRpZGF0ZS1CIiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "390605573d667b9b75546c39759279d0a804aa603721cffa45be325f91b5ac1f",
+              "byteLength": 63
+            },
+            "originalDigest": {
+              "contract": {
+                "contractId": "DEMO_NATIVE_REF",
+                "version": "1",
+                "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+              },
+              "canonicalReferenceBase64": "eyJpZCI6ImNhbmRpZGF0ZS1CLW9yaWdpbmFsRGlnZXN0Iiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+              "rawSha256": "b6bdf6cbe144f5bc09fc30aa91b147a93e1b959b24251ceb6f06deeecab70cc1",
+              "byteLength": 78
+            }
+          }
+        ],
+        "aggregateDigest": "a51b6bc9145e894f1ada813b1c66512a6f66f9655e03bd4a727fe389052844ff"
+      },
+      "expected_valid": true,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "OA-COMPLETE-BINDING",
+      "schema": "IterOaBinding",
+      "body": {
+        "schema": "ITER-OA-APPLICATION/1",
+        "mappingVersion": "1.0.0",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "ownerRegistrationRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6IkRFTU8tcGxtLXJlZ2lzdHJhdGlvbiIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+          "rawSha256": "4e14a425c540f789adf0513a5461ecedbadfa95d41d654db4c40c0f3c63471f6",
+          "byteLength": 73
+        },
+        "roundBindingId": "00000000-0000-4000-8000-000000000009",
+        "roundId": "ROUND-DEMO",
+        "oaRoundKey": "ROUND-DEMO",
+        "iterationId": "ITER-DEMO",
+        "aggregateId": "00000000-0000-4000-8000-000000000003",
+        "aggregateVersion": "1",
+        "aggregateDigest": "a51b6bc9145e894f1ada813b1c66512a6f66f9655e03bd4a727fe389052844ff",
+        "originalReviewPackageRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6InBhY2thZ2UiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+          "rawSha256": "80ce565f0f16af305084f0ff3906243c3d95907e6c4c8db77aa6b035097f9171",
+          "byteLength": 59
+        },
+        "reviewPackageDigest": {
+          "algorithm": "sha256",
+          "canonicalizationVersion": "DEMO-NATIVE/1",
+          "value": "985934456009e702a7afb2feab586b8d414534cbb962df428f92c617c3f10963"
+        },
+        "originalPolicyRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6InBvbGljeSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+          "rawSha256": "615cae93a5fd6ddd8e0fc284569c75e858c88d5d9a117aa5eecc19e78d95e4b4",
+          "byteLength": 58
+        },
+        "policyVersion": "1",
+        "policyDigest": {
+          "algorithm": "sha256",
+          "canonicalizationVersion": "DEMO-NATIVE/1",
+          "value": "985934456009e702a7afb2feab586b8d414534cbb962df428f92c617c3f10963"
+        },
+        "technicalManifestDigest": null,
+        "rejectDisposition": "RETURN",
+        "submissionId": "00000000-0000-4000-8000-000000000010",
+        "applicationUnit": "PLM_ITER_REVIEW_DECISION"
+      },
+      "expected_valid": true,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-MULTI-GRANT-VECTOR",
+      "schema": "SpaceVersionVector",
+      "body": {
+        "organization": {
+          "id": "00000000-0000-4000-8000-000000000020",
+          "securityStamp": "3",
+          "rowVersion": "AAAAAAAAAAM="
+        },
+        "membership": {
+          "id": "00000000-0000-4000-8000-000000000021",
+          "securityStamp": "7",
+          "rowVersion": "AAAAAAAAAAc="
+        },
+        "authorizationVersion": "original-opaque-space-version",
+        "grantSetMembershipRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6ImNvbXBsZXRlLWdyYW50LXNldCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+          "rawSha256": "27a7afb2c11a4da896942e94f96c97e774ed02e1091c96d796f9f254495c4586",
+          "byteLength": 70
+        },
+        "grants": [
+          {
+            "grantId": "00000000-0000-4000-8000-000000000022",
+            "grantVersion": "2",
+            "grantRowVersion": "AAAAAAAAAAE=",
+            "fieldPolicyId": "00000000-0000-4000-8000-000000000030",
+            "fieldPolicyVersion": "9",
+            "fieldPolicyRowVersion": "AAAAAAAAAAk="
+          },
+          {
+            "grantId": "00000000-0000-4000-8000-000000000023",
+            "grantVersion": "8",
+            "grantRowVersion": "AAAAAAAAAAE=",
+            "fieldPolicyId": "00000000-0000-4000-8000-000000000030",
+            "fieldPolicyVersion": "9",
+            "fieldPolicyRowVersion": "AAAAAAAAAAk="
+          }
+        ]
+      },
+      "expected_valid": true,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ENG-COMPLETE-BASELINE-BINDING",
+      "schema": "BaselineOutputBinding",
+      "body": {
+        "schema": "ENG-BASELINE-OUTPUT-BINDING/1",
+        "scope": {
+          "environmentId": "DEMO",
+          "tenantId": "00000000-0000-4000-8000-000000000001"
+        },
+        "baselineRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6Im5ldy1iYXNlbGluZSIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+          "rawSha256": "c29baebb55c03302b7bfba57515fc7a593929af2ff7a69c535b499791c92c673",
+          "byteLength": 64
+        },
+        "originalManifestRef": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6Im9yaWdpbmFsLW1hbmlmZXN0Iiwib3duZXIiOiJERU1PX09XTkVSIiwidmVyc2lvbiI6Im9wYXF1ZS92MyJ9",
+          "rawSha256": "a497f8c297973dca032fc50eebe71808d6d6c29848f11ef7cb306233caf3af79",
+          "byteLength": 69
+        },
+        "originalManifestDigest": {
+          "contract": {
+            "contractId": "DEMO_NATIVE_REF",
+            "version": "1",
+            "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "canonicalReferenceBase64": "eyJpZCI6Im9yaWdpbmFsLW1hbmlmZXN0LWRpZ2VzdCIsIm93bmVyIjoiREVNT19PV05FUiIsInZlcnNpb24iOiJvcGFxdWUvdjMifQ==",
+          "rawSha256": "0733077d76048a26ebefe0396e3e4e9af802d6712e7e220013c234e47ce1720b",
+          "byteLength": 76
+        },
+        "relationId": "00000000-0000-4000-8000-000000000002",
+        "relationVersion": "1",
+        "relationBodyDigest": "01bebcc97614e06da8c3db28d9e34ecd6d1245980ba557f6ac6dcf836effd94c",
+        "freezeCommandId": "00000000-0000-4000-8000-000000000040",
+        "configurationEvidence": [
+          {
+            "contract": {
+              "contractId": "DEMO_NATIVE_REF",
+              "version": "1",
+              "schemaSha256": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "canonicalReferenceBase64": "eyJpZCI6ImNmZzEiLCJvd25lciI6IkRFTU9fT1dORVIiLCJ2ZXJzaW9uIjoib3BhcXVlL3YzIn0=",
+            "rawSha256": "6d8911da890d7679e56acf8e45ada1b8f3a3dc78ef3a1d813130f3ab56ea1d91",
+            "byteLength": 56
+          }
+        ],
+        "bodyDigest": "e9a0bbbee158958caa85d586a26202c1572c6bcb1efc676e61d01ac7ad644df8"
+      },
+      "expected_valid": true,
+      "role": "NEW_DEMO_DESIGN_VECTOR",
+      "runtime_status": "NOT_RUN"
+    }
+  ]
+}

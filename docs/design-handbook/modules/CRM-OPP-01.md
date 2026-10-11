@@ -1,5 +1,21 @@
 # CRM-OPP-01 商机、销售阶段与成交投影
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-HO-OLD-FACTORY | SUPERSEDED：Replace Opportunity-wide uniqueness only in new single-writer adapter with exact source intent/responsibility identities; legacy remains observation and explicit migration gate. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-IC-PROTECTION-ADOPTION | ADOPTION_PENDING：仅 MAIN_INTAKE_NEW_EFFECT 与 CRM_RESULT_PROJECTION 两purpose采用；durable grant不因超时自行释放；本地COMMITTED/ABORTED原终态结算，权限即时撤销独立。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-IC-ORIGINAL-TRANSPORT | INTENTIONAL_DIFFERENCE：新HO/OPP运输原封闭bytes和opaque版本；旧C03删敏感字段/int版本不可无损替代。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-IC-BOUNDED-REBUILD | ADOPTION_PENDING：固定原H/V目录、完整CRM handoff/attribution/group/conflict与Main Intake/Quote/Commercial/Resolution集合，分页代际与CAS重核；UNCHANGED只刷新checkedAt。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-LEAD-AC-ATOMIC-SUPERSESSION | SUPERSEDED：CP22保R3原60AC身份，AC042/048–052改同事务H02+Manifest；AC035 hiddenCount不是当前closed字段，旧Saga/202/部分成功预期不再作当前验收。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。当前完整设计为 v1.1.2，准确 SHA-256 `bdc91e2093023cf77ff76fc77339f215eb3ffe9ec8c6510a04ca6f605de5530f`、350401字节、3845行。主文仍保留 RECOVERY_REVIEW_CANDIDATE、DRAFT、PROPOSED 和“未经接受”的历史标签，后继 UA 已接受同一原字节及 D-OPP-01～14；这些标签不能用于撤销当前接受。54项业务验收仍 NOT_RUN。[接受范围][U9]
 
 ## 1. 目的、操作者与 Owner 边界

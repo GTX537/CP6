@@ -1,0 +1,55 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "generator": "tools/build_operations_fixture_patches.py",
+  "generator_sha256": "98296ef4680db655ce53a7663c8568678e8fdb3fef3e1f1246034250838bc90a",
+  "canonical_profile": "CP6-COMPACT-SORTED-UTF8-JSON/1",
+  "recipes": [
+    {
+      "id": "IPQC-CONTINUOUS-OPERATIONS-R1",
+      "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+      "source_sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+      "entrypoint": "ipqc",
+      "findings": [
+        "IPQC-CONT-01",
+        "IPQC-CONT-02",
+        "IPQC-CONT-03"
+      ],
+      "state_digest": "H(sorted(table,key) full [{table,key,row,rowDigest=H(row)}]); touched cut arrays are NOT the full preimage",
+      "audit_digest": "BeforeDigest=whole DB before step; AfterDigest=whole DB after business writes, before Command/Audit",
+      "response_digest": "terminalDigest=H(result) or H(problem); computedResponseDigest=H(complete response)",
+      "claims_added": 100,
+      "final_F02_rows": 1067,
+      "changed_fixtures": [
+        "F02",
+        "F03",
+        "F07"
+      ]
+    },
+    {
+      "id": "IQC-CONTINUOUS-OPERATIONS-R1",
+      "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+      "source_sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+      "entrypoint": "iqc",
+      "additional_source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+      "additional_source_sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+      "products": [
+        "IQC-CONTINUOUS-OPERATIONS-R1.json",
+        "IQC-INLINE-OPERATIONS-R1.json"
+      ],
+      "findings": [
+        "OPS-IF-045",
+        "OPS-IF-046",
+        "OPS-IF-047"
+      ],
+      "body_hash": "SHA256(UTF8 compact sorted-key JSON(body)); ref excluded",
+      "obligation_hash": "H(full slots array in original natural-key order); propagate to every dependent submission/review/decision",
+      "cascade": "Repeat body, full-slot, exact scalar-preimage and native Stock semantic hashes over bundle plus21 parsed normative JSON fences until fixed point; reject cycles/stale known ref tuples; packet/validation hash complete DraftInput",
+      "measurements_total_versions": 213,
+      "measurement_provenance_repairs": 102,
+      "changed_ref_count": 709,
+      "scope": "Independent revised DEMO world; no Owner ledger replay or production adoption; immutable source retained"
+    }
+  ],
+  "product_validation_generator_sha256": "3f111d6d018c8d960f9ccca6a5701007c27af131ee0dc25e40c237fbfb29453e",
+  "verification_reuse": "Only explicit workpart POS/NEG acceptance metadata changed. Product recipe algorithms, archived source pins and materialized product pins are unchanged; prior static-validation.json and independent-validation.json results are reused for that unchanged product scope."
+}

@@ -1,5 +1,19 @@
 # FIN-BANK-01 银行流水与对账
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-023 | ADOPTION_PENDING：保留七封闭source union（MATCH_FORWARD/CORRECTION、RETURN、PAYMENT、ALLOCATION、REVERSAL、REFUND），EffectTarget精确绑定；funds evidence为读，RECORD事实与未来GL目标分离。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-031 | INTENTIONAL_DIFFERENCE：货币component qty=abs(amount)、unitprice1需已支持currencyunit basis；UOP实际qty+未舍入rate+residual最终舍入amount；allocation按posting incidence purpose分侧。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-032 | ADOPTION_PENDING：全冲突组G原claim恢复无FREE间隙，所有maker SOD及AND capabilities；原GL current不变，不生成mirror更正；step receipt重放从apply继续。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。本域当前正文、强制规范、接受/评审及相关溯源已经语义整理；历史源码、旧版本与别域大册剩余内容另列，不随此状态声称全归档已读。真实Owner采用及业务运行仍未证明。
 
 ## 1. 业务目的、操作者和Owner边界

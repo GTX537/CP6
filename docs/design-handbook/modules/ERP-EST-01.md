@@ -1,5 +1,22 @@
 # ERP-EST-01 · 商业估算与报价计算
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-OWNER-LOCK-ORDER | ADOPTION_PENDING：采用 IAM→BP（含Mapping/ReverseClaim）→EST→QTN 已登记依赖；闭包预收集、循环或遗漏 LOCK_PLAN_UNPROVEN；禁止持EST回调BP。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-EST-PRICE-COVERAGE-V2 | ADOPTION_PENDING：EST R2 v2采用整张coverage+准确coveragePolicy+最终保护，旧PRICE列不能代替；保留原估算/报价用途。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-EST-QTN-V2-DECODER | ADOPTION_PENDING：保原EstimateBasis并注册完整v2 ModelIdentity/FormulaDigest/Disclosure解码与I03/I05用途。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-FSC-FACT-GUARD-EXTENSION | ADOPTION_PENDING：采用FSC R2 EST事实读与QTN关系双守卫；EST I03原Usage不扩域。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-PRICE-EST-UNIT-SCALE | INTENTIONAL_DIFFERENCE：保PRICE0..18与EST0..12能力差异；EST不支持的精度显式拒绝或原Owner准确版本化转换。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-EST-FIXTURE-POLICY-AND-TTL | ARTIFACT_CONFLICT：R1Q10当前撤销policy改POL2，lastProven仍POL1；8 Lookup和2 Seal依本版本显式DEMO issuedAt见证到期600秒，E71 payload/reference/消费者摘要同步。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。当前设计是 v1.0.1 基础规范与 `EST-GENERAL-R2` 的唯一组合；新材料模型采用 `EST-GENERAL/2`、`EST-CALC-2`，旧 v1 原件、算法与哈希保留。已补读基础核心规则、全部 110 AC、23 个准确字段窗口和 R2 全文；基础 15,296 行中 12,088 行连续样例仍未语义读完，因此不宣称全部必需材料已整理。设计接受不等于授权编码、实际 Owner 采用或运行验收。[C1][D7][J246]
 
 ## 1. 业务目的、操作者与责任边界

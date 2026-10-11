@@ -1,5 +1,18 @@
 # WMS-DEL-01 承运与交付证明
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-FUL-CATALOGUE-AND-CURRENT-FENCE | ADOPTION_PENDING：采用完整Sales母集合和预建空site F−1门；F−1→全部F0→owner heads，严格当前仅native同库Serializable；跨库返回UNKNOWN。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-005 | ADOPTION_PENDING：采用F0→K1→S2→S3→E4→D5→L6→O7原序及Movement解释epoch；Stock相关更正预收全Movement F0；新鲜Stock发现cut与OUT应用集合比较。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**core_semantics_consolidated**。主体规则、DTO/API、全部71项AC、147个连续演算对象和181份R-CORE已完成业务字段语义阅读，共享H31必要规范与夹具按准确SHA复用已完成阅读。用户于2026-10-11确认指定独立R3审查原文无法找回；该证据缺口保留，不再列找回任务，仍不标 required_materials_consolidated。现有材料可继续使用，真实采用与运行验证仍未完成。
 
 ## 1. 业务目的、操作者与边界

@@ -1,0 +1,26 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+  "source_sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+  "producer": "PLAN-POL",
+  "consumers": [
+    "PLAN-PO"
+  ],
+  "old_contract": {
+    "contractId": "PLAN_PO_CP18_OWNER_PROFILE",
+    "contractVersion": "1.1-proposed",
+    "contractDigest": "2f43d5f5bfe58027eccdca5552b31cb968dfca9f1bda8dba50f192b82749630a",
+    "bodySchemaDigest": "ea5c0a404afc1bdc5aac5d036e638226dd2915588f4b3a67ad69b2d5701f8f90"
+  },
+  "new_contract": {
+    "contractId": "PLAN_PO_CP18_OWNER_PROFILE",
+    "contractVersion": "1.2-design-revision-20261011",
+    "contractDigest": "af5100ec8fdfef94058f801996ab7305c97859b359f5c6cf74cd34474fa7c708",
+    "bodySchemaDigest": "ea5c0a404afc1bdc5aac5d036e638226dd2915588f4b3a67ad69b2d5701f8f90"
+  },
+  "proof": "old/new contractDigest = SHA256(canonical complete contractBody); closedSchemaSet remains exact unchanged SHA",
+  "registration_status": "UNPROVEN_REQUIRED_FENCED",
+  "historical_evidence": "old grant/provider and accepted packet stay bound to old contract, never relabelled as new authority",
+  "positive": "four distinct portion entries are representable; full allocation tuple set must match",
+  "negative": "missing/duplicate/extra allocation tuple or old provider pin rejected; no truncation to three"
+}

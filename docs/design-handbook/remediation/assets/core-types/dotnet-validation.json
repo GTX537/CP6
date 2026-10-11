@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "verification_level": "ISOLATED_DESIGN_HELPER_COMPILE_AND_RUN",
+  "command": "dotnet run --project docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.csproj --artifacts-path D:/CP6-archives/design-revision-20261011-checks/dotnet --no-launch-profile",
+  "sdk": "10.0.302",
+  "checks": 14,
+  "scope": "Only new NullOnly and exact JsonSemanticEquality helper, not archived DTO/application/database",
+  "inputs": [
+    {
+      "path": "DesignRevisionTypes.cs",
+      "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db"
+    },
+    {
+      "path": "DesignTypesCheck.cs",
+      "sha256": "44e4ceb8b1f0d4b673f4745c2508e1b55fb37cad58b84a9ef160ff9424ec93b2"
+    },
+    {
+      "path": "DesignTypesCheck.csproj",
+      "sha256": "3f32f08975e25898ed7793c09dc59a2598db7d729dd67047723221ac458c4569"
+    }
+  ],
+  "business_runtime": "NOT_RUN"
+}

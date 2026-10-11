@@ -1,0 +1,1275 @@
+{
+  "mapping_version": "1.0.0",
+  "role": "NEW_REQUIRED_CONSUMER_REGISTRATION_NOT_RUNTIME",
+  "source_files": [
+    {
+      "path": "CP6.Space.Application/SpaceExternalPortal.cs",
+      "sha256": "b3712c77e135723fe02923c2157422baa7fb6271c93b6c1955ab8184d4713f22"
+    },
+    {
+      "path": "CP6.Space.Contracts/SpaceExternalPortalContracts.cs",
+      "sha256": "de58a0c218d29928c4d7e4d328fc455ace9ac1dea3064a9b33ad19843051d649"
+    }
+  ],
+  "fields": [
+    {
+      "resource": "PublishedScene",
+      "space_field": "floor.code",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "floor.code",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].code"
+      ],
+      "export_paths": [
+        "floors[*].code"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].code"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "floor.name",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "floor.name",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].name"
+      ],
+      "export_paths": [
+        "floors[*].name"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].name"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "floor.level",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "floor.level",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].level"
+      ],
+      "export_paths": [
+        "floors[*].level"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].level"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "floor.elevation",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "floor.elevation",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].elevation"
+      ],
+      "export_paths": [
+        "floors[*].elevation"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elevation"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "floor.height",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "floor.height",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].height"
+      ],
+      "export_paths": [
+        "floors[*].height"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].height"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "floor.boundaryJson",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "floor.boundaryJson",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].boundaryJson"
+      ],
+      "export_paths": [
+        "floors[*].boundaryJson"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].boundaryJson"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "floor.coordinateSystem",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "floor.coordinateSystem",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].coordinateSystem"
+      ],
+      "export_paths": [
+        "floors[*].coordinateSystem"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].coordinateSystem"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "zone.code",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "zone.code",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].zones[*].code"
+      ],
+      "export_paths": [
+        "floors[*].zones[*].code"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].zones[*].code"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "zone.type",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "zone.type",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].zones[*].type"
+      ],
+      "export_paths": [
+        "floors[*].zones[*].type"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].zones[*].type"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "zone.polygonJson",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "zone.polygonJson",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].zones[*].polygonJson"
+      ],
+      "export_paths": [
+        "floors[*].zones[*].polygonJson"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].zones[*].polygonJson"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "zone.color",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "zone.color",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].zones[*].color"
+      ],
+      "export_paths": [
+        "floors[*].zones[*].color"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].zones[*].color"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "zone.capabilityFlags",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "zone.capabilityFlags",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].zones[*].capabilityFlags"
+      ],
+      "export_paths": [
+        "floors[*].zones[*].capabilityFlags"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].zones[*].capabilityFlags"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "aisle.code",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "aisle.code",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].aisles[*].code"
+      ],
+      "export_paths": [
+        "floors[*].aisles[*].code"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].aisles[*].code"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "aisle.polygonJson",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "aisle.polygonJson",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].aisles[*].polygonJson"
+      ],
+      "export_paths": [
+        "floors[*].aisles[*].polygonJson"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].aisles[*].polygonJson"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "aisle.centerlineJson",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "aisle.centerlineJson",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].aisles[*].centerlineJson"
+      ],
+      "export_paths": [
+        "floors[*].aisles[*].centerlineJson"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].aisles[*].centerlineJson"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "aisle.direction",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "aisle.direction",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].aisles[*].direction"
+      ],
+      "export_paths": [
+        "floors[*].aisles[*].direction"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].aisles[*].direction"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "rack.code",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "rack.code",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].racks[*].code"
+      ],
+      "export_paths": [
+        "floors[*].racks[*].code"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].racks[*].code"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "rack.templateVersionId",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "rack.templateVersionId",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].racks[*].templateVersionId"
+      ],
+      "export_paths": [
+        "floors[*].racks[*].templateVersionId"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].racks[*].templateVersionId"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "rack.position",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "rack.position",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].racks[*].x",
+        "floors[*].racks[*].y",
+        "floors[*].racks[*].z"
+      ],
+      "export_paths": [
+        "floors[*].racks[*].x",
+        "floors[*].racks[*].y",
+        "floors[*].racks[*].z"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].racks[*].x",
+        "floors[*].racks[*].y",
+        "floors[*].racks[*].z"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "rack.rotationZ",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "rack.rotationZ",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].racks[*].rotationZ"
+      ],
+      "export_paths": [
+        "floors[*].racks[*].rotationZ"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].racks[*].rotationZ"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "rack.dimensions",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "rack.dimensions",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].racks[*].width",
+        "floors[*].racks[*].depth",
+        "floors[*].racks[*].height"
+      ],
+      "export_paths": [
+        "floors[*].racks[*].width",
+        "floors[*].racks[*].depth",
+        "floors[*].racks[*].height"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].racks[*].width",
+        "floors[*].racks[*].depth",
+        "floors[*].racks[*].height"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "rackLevel.geometry",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "rackLevel.geometry",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].rackLevels[*].levelNo",
+        "floors[*].rackLevels[*].bottomZ",
+        "floors[*].rackLevels[*].clearHeight",
+        "floors[*].rackLevels[*].binCount",
+        "floors[*].rackLevels[*].depthCount",
+        "floors[*].rackLevels[*].cellWidth",
+        "floors[*].rackLevels[*].cellDepth",
+        "floors[*].rackLevels[*].beamHeight"
+      ],
+      "export_paths": [
+        "floors[*].rackLevels[*].levelNo",
+        "floors[*].rackLevels[*].bottomZ",
+        "floors[*].rackLevels[*].clearHeight",
+        "floors[*].rackLevels[*].binCount",
+        "floors[*].rackLevels[*].depthCount",
+        "floors[*].rackLevels[*].cellWidth",
+        "floors[*].rackLevels[*].cellDepth",
+        "floors[*].rackLevels[*].beamHeight"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].rackLevels[*].levelNo",
+        "floors[*].rackLevels[*].bottomZ",
+        "floors[*].rackLevels[*].clearHeight",
+        "floors[*].rackLevels[*].binCount",
+        "floors[*].rackLevels[*].depthCount",
+        "floors[*].rackLevels[*].cellWidth",
+        "floors[*].rackLevels[*].cellDepth",
+        "floors[*].rackLevels[*].beamHeight"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "rackLevel.maxLoad",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "rackLevel.maxLoad",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].rackLevels[*].maxLoad"
+      ],
+      "export_paths": [
+        "floors[*].rackLevels[*].maxLoad"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].rackLevels[*].maxLoad"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "location.code",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "location.code",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].locations[*].code"
+      ],
+      "export_paths": [
+        "floors[*].locations[*].code"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].locations[*].code"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "location.position",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "location.position",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].locations[*].columnNo",
+        "floors[*].locations[*].levelNo",
+        "floors[*].locations[*].depthNo"
+      ],
+      "export_paths": [
+        "floors[*].locations[*].columnNo",
+        "floors[*].locations[*].levelNo",
+        "floors[*].locations[*].depthNo"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].locations[*].columnNo",
+        "floors[*].locations[*].levelNo",
+        "floors[*].locations[*].depthNo"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "location.dimensions",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "location.dimensions",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].locations[*].width",
+        "floors[*].locations[*].height",
+        "floors[*].locations[*].depth"
+      ],
+      "export_paths": [
+        "floors[*].locations[*].width",
+        "floors[*].locations[*].height",
+        "floors[*].locations[*].depth"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].locations[*].width",
+        "floors[*].locations[*].height",
+        "floors[*].locations[*].depth"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "location.maxLoad",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "location.maxLoad",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].locations[*].maxLoad"
+      ],
+      "export_paths": [
+        "floors[*].locations[*].maxLoad"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].locations[*].maxLoad"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "location.externalBindingState",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "location.externalBindingState",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].locations[*].externalBindingState"
+      ],
+      "export_paths": [
+        "floors[*].locations[*].externalBindingState"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].locations[*].externalBindingState"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "element.type",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "element.type",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].elements[*].type"
+      ],
+      "export_paths": [
+        "floors[*].elements[*].type"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elements[*].type"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "element.geometryJson",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "element.geometryJson",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].elements[*].geometryJson"
+      ],
+      "export_paths": [
+        "floors[*].elements[*].geometryJson"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elements[*].geometryJson"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "element.modelAssetId",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "element.modelAssetId",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].elements[*].modelAssetId"
+      ],
+      "export_paths": [
+        "floors[*].elements[*].modelAssetId"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elements[*].modelAssetId"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "element.modelAssetScope",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "element.modelAssetScope",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].elements[*].modelAssetScope"
+      ],
+      "export_paths": [
+        "floors[*].elements[*].modelAssetScope"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elements[*].modelAssetScope"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "element.businessCode",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "element.businessCode",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].elements[*].businessCode"
+      ],
+      "export_paths": [
+        "floors[*].elements[*].businessCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elements[*].businessCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "element.linkedEntityType",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "element.linkedEntityType",
+      "kind": "Text",
+      "dto_paths": [
+        "floors[*].elements[*].linkedEntityType"
+      ],
+      "export_paths": [
+        "floors[*].elements[*].linkedEntityType"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elements[*].linkedEntityType"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "PublishedScene",
+      "space_field": "element.linkedLogicalId",
+      "s5_resource": "SPACE.PORTAL.PublishedScene",
+      "s5_field": "element.linkedLogicalId",
+      "kind": "Scalar",
+      "dto_paths": [
+        "floors[*].elements[*].linkedLogicalId"
+      ],
+      "export_paths": [
+        "floors[*].elements[*].linkedLogicalId"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "floors[*].elements[*].linkedLogicalId"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "spaceLocationCode",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "spaceLocationCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].spaceLocationCode"
+      ],
+      "export_paths": [
+        "items[*].spaceLocationCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].spaceLocationCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "wmsLocationCode",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "wmsLocationCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].wmsLocationCode"
+      ],
+      "export_paths": [
+        "items[*].wmsLocationCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].wmsLocationCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "floorCode",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "floorCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].floorCode"
+      ],
+      "export_paths": [
+        "items[*].floorCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].floorCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "floorName",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "floorName",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].floorName"
+      ],
+      "export_paths": [
+        "items[*].floorName"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].floorName"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "floorLevel",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "floorLevel",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].floorLevel"
+      ],
+      "export_paths": [
+        "items[*].floorLevel"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].floorLevel"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "physicalQuantity",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "physicalQuantity",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].physicalQuantity"
+      ],
+      "export_paths": [
+        "items[*].physicalQuantity"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].physicalQuantity"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "allocatedQuantity",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "allocatedQuantity",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].allocatedQuantity"
+      ],
+      "export_paths": [
+        "items[*].allocatedQuantity"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].allocatedQuantity"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "materialNumber",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "materialNumber",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].materialNumber"
+      ],
+      "export_paths": [
+        "items[*].materialNumber"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].materialNumber"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "lotNumber",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "lotNumber",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].lotNumber"
+      ],
+      "export_paths": [
+        "items[*].lotNumber"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].lotNumber"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "containerNumber",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "containerNumber",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].containerNumber"
+      ],
+      "export_paths": [
+        "items[*].containerNumber"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].containerNumber"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Stock",
+      "space_field": "ownerId",
+      "s5_resource": "SPACE.PORTAL.Stock",
+      "s5_field": "ownerId",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].ownerId"
+      ],
+      "export_paths": [
+        "items[*].ownerId"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].ownerId"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "taskId",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "taskId",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].taskId"
+      ],
+      "export_paths": [
+        "items[*].taskId"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].taskId"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "taskType",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "taskType",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].taskType"
+      ],
+      "export_paths": [
+        "items[*].taskType"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].taskType"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "status",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "status",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].status"
+      ],
+      "export_paths": [
+        "items[*].status"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].status"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "sequenceNo",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "sequenceNo",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].sequenceNo"
+      ],
+      "export_paths": [
+        "items[*].sequenceNo"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].sequenceNo"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "spaceLocationCode",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "spaceLocationCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].spaceLocationCode"
+      ],
+      "export_paths": [
+        "items[*].spaceLocationCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].spaceLocationCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "wmsLocationCode",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "wmsLocationCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].wmsLocationCode"
+      ],
+      "export_paths": [
+        "items[*].wmsLocationCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].wmsLocationCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "floorCode",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "floorCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].floorCode"
+      ],
+      "export_paths": [
+        "items[*].floorCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].floorCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "floorName",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "floorName",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].floorName"
+      ],
+      "export_paths": [
+        "items[*].floorName"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].floorName"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "floorLevel",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "floorLevel",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].floorLevel"
+      ],
+      "export_paths": [
+        "items[*].floorLevel"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].floorLevel"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "zoneCode",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "zoneCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].zoneCode"
+      ],
+      "export_paths": [
+        "items[*].zoneCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].zoneCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "rackLogicalId",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "rackLogicalId",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].rackLogicalId"
+      ],
+      "export_paths": [
+        "items[*].rackLogicalId"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].rackLogicalId"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "rackCode",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "rackCode",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].rackCode"
+      ],
+      "export_paths": [
+        "items[*].rackCode"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].rackCode"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "anchor",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "anchor",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].anchorXMillimeters",
+        "items[*].anchorYMillimeters",
+        "items[*].anchorZMillimeters"
+      ],
+      "export_paths": [
+        "items[*].anchorXMillimeters",
+        "items[*].anchorYMillimeters",
+        "items[*].anchorZMillimeters"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].anchorXMillimeters",
+        "items[*].anchorYMillimeters",
+        "items[*].anchorZMillimeters"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "quantity",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "quantity",
+      "kind": "Scalar",
+      "dto_paths": [
+        "items[*].quantity"
+      ],
+      "export_paths": [
+        "items[*].quantity"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].quantity"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    },
+    {
+      "resource": "Task",
+      "space_field": "materialNumber",
+      "s5_resource": "SPACE.PORTAL.Task",
+      "s5_field": "materialNumber",
+      "kind": "Text",
+      "dto_paths": [
+        "items[*].materialNumber"
+      ],
+      "export_paths": [
+        "items[*].materialNumber"
+      ],
+      "derived_search_sort_aggregate_dependencies": [
+        "items[*].materialNumber"
+      ],
+      "hidden_behavior": "omit all mapped paths and derived outputs; never emit zero/default",
+      "structural_identity_rule": "row/object read gate separately protects IDs and control metadata",
+      "actual_registration": "UNPROVEN"
+    }
+  ],
+  "structural_allowlist": {
+    "PublishedScene": [
+      "siteId",
+      "publishedVersionId",
+      "authorizationVersion",
+      "floors[*].logicalId",
+      "floors[*].zones[*].logicalId",
+      "floors[*].zones[*].floorLogicalId",
+      "floors[*].aisles[*].logicalId",
+      "floors[*].aisles[*].zoneLogicalId",
+      "floors[*].racks[*].logicalId",
+      "floors[*].racks[*].floorLogicalId",
+      "floors[*].racks[*].zoneLogicalId",
+      "floors[*].racks[*].aisleLogicalId",
+      "floors[*].rackLevels[*].logicalId",
+      "floors[*].rackLevels[*].rackLogicalId",
+      "floors[*].locations[*].logicalId",
+      "floors[*].locations[*].floorLogicalId",
+      "floors[*].locations[*].rackLogicalId",
+      "floors[*].elements[*].logicalId",
+      "floors[*].elements[*].floorLogicalId",
+      "floors[*].elements[*].parentLogicalId"
+    ],
+    "Stock": [
+      "siteId",
+      "publishedVersionId",
+      "authorizationVersion",
+      "source.observedAtUtc",
+      "source.receivedAtUtc",
+      "source.delayMilliseconds",
+      "source.isAvailable",
+      "items[*].locationLogicalId",
+      "items[*].floorLogicalId"
+    ],
+    "Task": [
+      "siteId",
+      "publishedVersionId",
+      "authorizationVersion",
+      "source.observedAtUtc",
+      "source.receivedAtUtc",
+      "source.delayMilliseconds",
+      "source.isAvailable",
+      "items[*].locationLogicalId",
+      "items[*].floorLogicalId",
+      "items[*].zoneLogicalId"
+    ]
+  },
+  "unknown_dto_member": "DENY_NEW_ROUTE_UNTIL_REGISTERED",
+  "version_rules": "S5 MIN on actual rows before defaults; resource action + exact whole clause + row scope + field intersection, external write false"
+}

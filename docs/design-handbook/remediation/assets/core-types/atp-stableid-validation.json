@@ -1,0 +1,123 @@
+{
+  "result": "PASS",
+  "scope": "10 precise vectors checked in JSON Schema/.NET/JavaScript; revised full ATP C#/TS attachment compile only",
+  "sources": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "source_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "derived_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75"
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+      "source_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "derived_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6"
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+      "source_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "derived_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5"
+    }
+  ],
+  "cases": [
+    {
+      "value": "EA",
+      "valid": true
+    },
+    {
+      "value": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "valid": true
+    },
+    {
+      "value": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "valid": false
+    },
+    {
+      "value": "EA\n",
+      "valid": false
+    },
+    {
+      "value": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "valid": false
+    },
+    {
+      "value": "EA\r\n",
+      "valid": false
+    },
+    {
+      "value": "EA ",
+      "valid": false
+    },
+    {
+      "value": "公斤",
+      "valid": false
+    },
+    {
+      "value": "",
+      "valid": false
+    },
+    {
+      "value": "0._:/-",
+      "valid": true
+    }
+  ],
+  "checks": [
+    {
+      "check": "dotnet-regex",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "D:\\CP6-archives\\design-revision-20261011-checks\\atp-stableid-r1\\lexical.ps1"
+      ],
+      "exit_code": 0,
+      "log": "D:/CP6-archives/design-revision-20261011-checks/atp-stableid-r1/dotnet-regex.log",
+      "log_sha256": "350fedf90aedf64257776072f9bad1b764d2074b0852d52d13afef28f3f326e3"
+    },
+    {
+      "check": "javascript-regex",
+      "command": [
+        "node",
+        "-e",
+        "const fs=require('fs');const p=JSON.parse(fs.readFileSync('PLAN-ATP-WIRE.schema.json','utf8')).$defs.StableId.pattern;const r=new RegExp(p,'u');for(const c of JSON.parse(fs.readFileSync('vectors.json','utf8')))if(r.test(c.value)!==c.valid)throw Error('lexical mismatch');console.log('10 JavaScript lexical vectors PASS');"
+      ],
+      "exit_code": 0,
+      "log": "D:/CP6-archives/design-revision-20261011-checks/atp-stableid-r1/javascript-regex.log",
+      "log_sha256": "64bbc938abd6baa97e415b5d4b29d3162874775dd7b491aea8b2c4ad29bddc10"
+    },
+    {
+      "check": "csharp-compile",
+      "command": [
+        "dotnet",
+        "build",
+        "ContractCheck.csproj",
+        "--nologo",
+        "--verbosity",
+        "quiet"
+      ],
+      "exit_code": 0,
+      "log": "D:/CP6-archives/design-revision-20261011-checks/atp-stableid-r1/csharp-compile.log",
+      "log_sha256": "4570967ffe95b753864e4298a4b5a04d272b56b258bb55b5ea9c3156e0ab6f58"
+    },
+    {
+      "check": "typescript-compile",
+      "command": [
+        "node",
+        "D:/CP6/cp6.web/node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--strict",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--lib",
+        "ES2022,DOM",
+        "PLAN-ATP-WIRE.types.ts"
+      ],
+      "exit_code": 0,
+      "log": "D:/CP6-archives/design-revision-20261011-checks/atp-stableid-r1/typescript-compile.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "runtime_acceptance": "NOT_RUN",
+  "old_compile_evidence": "Earlier ATP C# hash in attachment-compile-validation.json is historical; this new exact hash supersedes that attachment only"
+}

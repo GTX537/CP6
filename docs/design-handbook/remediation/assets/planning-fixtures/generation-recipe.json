@@ -1,0 +1,81 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "generator": "tools/build_planning_fixture_patches.py",
+  "generator_sha256": "978604b7a011da08d9d167c2ce778e242a2174174b5c56b4722b6c071d3d0a41",
+  "sources": {
+    "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json": {
+      "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+      "bytes": 29850195
+    },
+    "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json": {
+      "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+      "bytes": 68499646
+    },
+    "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP03_PHYSICAL_RECORD_REGISTRY.json": {
+      "sha256": "11f539437a29689431689a27d6589b485f2e5e43669a78852c2db637968dd1f2",
+      "bytes": 139492732
+    },
+    "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP03_LOCAL_RECORD_REGISTRY.json": {
+      "sha256": "b1364c8c50c1ea4cc04139b8ead0fa48170349703e88ca4a0b868f6150bdaeb4",
+      "bytes": 5603983
+    },
+    "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP03_LOCAL_UOW_LEDGER_INDEX.json": {
+      "sha256": "03c9e362bbb51cfd91be49297b81c306a5b43abdeb31bc02906f3bfcc18a97ae",
+      "bytes": 64298575
+    },
+    "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json": {
+      "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "bytes": 939328
+    },
+    "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json": {
+      "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+      "bytes": 9251120
+    },
+    "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md": {
+      "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+      "bytes": 282332
+    }
+  },
+  "sourceHandling": "READ_ONLY; never execute/import original scripts or SQL",
+  "worlds": [
+    "PREPARED",
+    "PUBLISHED",
+    "MATERIAL_OLD",
+    "MATERIAL_NEW"
+  ],
+  "uuidRecipe": "UUIDv5(NAMESPACE_URL, revision + /planning-fixtures/ + domain + / + originalIdentityOrWorld)",
+  "preimages": {
+    "native": "Entire closed native business body including nested digests; UTF8 EXC-JCS-1, no BOM/newline",
+    "graph": "Remove only top-level digest; keep all nested body/closure digests and memberRefs",
+    "assessment": "Entire private business body; no own digest member exists",
+    "impactClosure": "Remove only closure.digest",
+    "impact": "Remove only top-level digest after inserting computed closure.digest",
+    "currentManifest": "Remove only top-level bodyDigest",
+    "sourceReadPage": "Entire page.preimage; nativeUtf8 exactly this JCS, envelope adds artifactRef/trust outside hash",
+    "storedRows": "Exact canonicalBody; BodyCanonical=JCS(canonicalBody), BodyDigest=SHA256(UTF8 BodyCanonical)",
+    "sc06ExactTuple": "Exact original length-prefixed pipe string in UTF-16LE, no BOM; not JCS"
+  },
+  "package": {
+    "filename": "exc-successor.json",
+    "sha256": "817cecda3aee13ac4d9bc9e8171b87823edbb02b1aca8c6e87af1448ce4a6ebc",
+    "bytes": 56859683,
+    "serialization": "UTF8_EXC_JCS_1_NO_NEWLINE",
+    "storage": "not checked in; reconstruct from pinned local sources with --materialize"
+  },
+  "other_materialized_outputs": [
+    {
+      "filename": "sc06-successor.json",
+      "sha256": "e991393a04b00735127d1ead7151e4f16e98c05c5645eb1b9362955565e5e37f",
+      "bytes": 822473,
+      "serialization": "UTF8_EXC_JCS_1_NO_NEWLINE"
+    },
+    {
+      "filename": "cp19-successor.json",
+      "sha256": "4e0686075d1dcc11174c65593922eb9b64312f08fd852e814f9b70e230a09695",
+      "bytes": 7836205,
+      "serialization": "UTF8_EXC_JCS_1_NO_NEWLINE"
+    }
+  ],
+  "runtime": "NOT_RUN",
+  "actual_adoption_status": "UNPROVEN"
+}

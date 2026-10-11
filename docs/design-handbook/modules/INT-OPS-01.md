@@ -1,5 +1,17 @@
 # INT-OPS-01 集成异常与受控重放
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-S6-PRECHECKPOINT-FINALAUTH | ADOPTION_PENDING：重复/旧/同版本成功前先真事务持久化checkpoint，transport/raw与content摘要独立；Reconciliation→Published→Projection→Inbox→checkpoint；最终授权必须真实native held。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 业务目的、操作者与权威边界
 
 业务 Owner 的恢复操作员查询失败原件、确认原业务结果与当前资格，再申请一次保持原身份的恢复；只读支持人员看安全元数据，审计人员看获准证据，worker 只执行已记录的 Owner 命令。各接收业务 Owner 保留原队列、journal、业务事实和提交权；Platform 提供通用运输原语，不能集中转写业务数据库。 [规范 L124](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:124>)、[规范 L127](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:127>)、[规范 L128](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:128>)、[规范 L129](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:129>)、[规范 L130](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:130>)、[规范 L169](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:169>)

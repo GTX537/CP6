@@ -1,5 +1,17 @@
 # PLAN-SUP-01 供给投影与覆盖开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| PLAN-IF-002 | ADOPTION_PENDING：POL/SUP功能接受不替ATP R11准确端口；schema pin/Scope/完整来源/全部writer最终门分别登记。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：`required_materials_consolidated`。当前登记24份必需载体的业务语义、136项场景、来源和接受关系已整理；HTML镜像、PB01结构/历史进度、原预览按限定核对。完整原生视觉、真实参数、物理实现和运行验收仍独立保留。
 
 ## 1. 目的与权威

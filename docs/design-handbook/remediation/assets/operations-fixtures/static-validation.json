@@ -1,0 +1,701 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "checks": [
+    {
+      "check": "bounded-preimage:3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS038-state-positive:valueExitState",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS038-money-negative:valueExitState",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS038-state-positive:inventoryValueState",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS038-money-negative:inventoryValueState",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS039-original-binding-preimages",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS039-C09-original-receipt-exact",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS039-wrong-binding-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS040-original-digest-profile",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS040-no-invented-original-consumption",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS040-exact-consumption-identity",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS041-wrapper-equals-row-PK",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS043-exact-two-packages",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC-original-full-state-replay",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": "F02/F03/F07 all original step/full-state digests reproduce"
+    },
+    {
+      "check": "IPQC01-one-per-initial-slot",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC03-result-preimage",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC03-complete-response-preimage",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC01-final-claims",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC02-complete-alias-removal",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC03-immutable-delivery",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC03-old-response-rejected",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/fixture/examples/6/request/decision",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/6/value/request/decision",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/15/value/P80/grPayload/decision",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/15/value/P80/stockPayload",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/20/value/newFull/gr/request/decision",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/20/value/newFull/stock/request",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/20/value/CUnchanged/before/grPayload/decision",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/20/value/CUnchanged/before/stockPayload",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/20/value/CUnchanged/after/grPayload/decision",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-stock-semantic:/inline/20/value/CUnchanged/after/stockPayload",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-body-hashes",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-original-slot-order-hashes",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS046-total-measurement-versions",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS046-exact-seeds",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-all-packet-input-digests",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-all-inline-stock-semantic",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-current-context:LEAF-C-RESOLUTION@1",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-current-context:LEAF-D-RESOLUTION@1",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-current-context:E05-RESOLUTION@1",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-current-context:R2-D-RESOLUTION@1",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-revised-all-body-hashes",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-revised-all-slot-digests",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-original-policy-preserved",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-band-positives",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-old-policy-leaf-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS045-approval-sod",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS046-provenance-positive",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS046-old-provenance-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS047-batch-positive",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS047-batch-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS047-submit-closed-shape",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS047-response-complete",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IQC-all-known-reference-tuples",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": []
+    },
+    {
+      "check": "IQC-inline-known-reference-tuples",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": []
+    },
+    {
+      "check": "OPS049-native-binding",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS049-native-original-apply-request",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS049-native-H30-shape",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS049-semantic-positive",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS049-cross-effect-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS049-other-receipt-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-claim-native-schema:40000000-0000-4000-8000-000000000001",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-claim-native-schema:40000000-0000-4000-8000-000000000001",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-claim-native-schema:40000000-0000-4000-8000-000000000002",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-claim-native-schema:40000000-0000-4000-8000-000000000001",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-four-occurrences",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-distinct-line-hash",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-same-sku-other-line-distinct",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS050-other-invoice-distinct",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS048-native-apply-result",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS048-native-head",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS048-illegal-head-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "OPS048-illegal-work-negative",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "mirror-original:99bf7b7371715a62",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:99bf7b7371715a62__fixture-F03-I29-request.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:99bf7b7371715a62__fixture-F03-I29-request.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "mirror-original:c603f220fd83336d",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:c603f220fd83336d__fixture-F03-I29-response.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:c603f220fd83336d__fixture-F03-I29-response.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "mirror-original:420ebe12bc2aec95",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "mirror-original:eba9b5010c3181a3",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "IPQC-publication-body-hash",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage:5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    },
+    {
+      "check": "bounded-preimage-negative:5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": null
+    }
+  ],
+  "local_static_check_count": 115,
+  "python_version": "3.13.13",
+  "jsonschema_version": "4.26.0",
+  "business_acceptance": "NOT_RUN",
+  "executed_business_tests": 0,
+  "runtime_adoption": "UNPROVEN"
+}

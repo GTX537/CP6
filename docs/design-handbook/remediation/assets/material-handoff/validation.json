@@ -1,0 +1,80 @@
+{
+  "result": "PASS",
+  "scope": "schema and exact quantity design vectors only; no Owner execution, policy proof or authorization runtime",
+  "cases": [
+    {
+      "id": "MAT-READ-POS",
+      "expected_valid": true,
+      "result": "PASS",
+      "detected": []
+    },
+    {
+      "id": "MAT-NET-POS",
+      "expected_valid": true,
+      "result": "PASS",
+      "detected": []
+    },
+    {
+      "id": "MAT-GROSS-POS",
+      "expected_valid": true,
+      "result": "PASS",
+      "detected": []
+    },
+    {
+      "id": "MAT-UNKNOWN-POS",
+      "expected_valid": true,
+      "result": "PASS",
+      "detected": []
+    },
+    {
+      "id": "MAT-NET-WRONG",
+      "expected_valid": false,
+      "result": "PASS",
+      "detected": [
+        "basis quantity preserves mode"
+      ]
+    },
+    {
+      "id": "MAT-UNKNOWN-SEAL",
+      "expected_valid": false,
+      "result": "PASS",
+      "detected": [
+        "formal seal needs complete known evidence"
+      ]
+    },
+    {
+      "id": "MAT-UNIT-WRONG",
+      "expected_valid": false,
+      "result": "PASS",
+      "detected": [
+        "same exact unit or prior qualified conversion"
+      ]
+    },
+    {
+      "id": "MAT-DOUBLE-NET",
+      "expected_valid": false,
+      "result": "PASS",
+      "detected": [
+        "exclude every eligible physical member once"
+      ]
+    },
+    {
+      "id": "MAT-DUP-SHARE",
+      "expected_valid": false,
+      "result": "PASS",
+      "detected": [
+        "[{'shareKey': 'share-1', 'sourceObligationRef': {'owner': 'MAT', 'id': 'obligation', 'version': '1'}, 'currentRepresentativeRef': {'owner': 'MAT', 'id': 'current', 'version': '1'}, 'scope': {'scopeId': 'scope-1', 'scopeVersion': '1', 'ranges': [{'portionId': 'part-1', 'from': '0', 'to': '80'}]}, 'grossQuantity': {'value': '80', 'unitRef': {'owner': 'MAT', 'id': 'EA', 'version': '1'}}, 'unitBasis': {'ref': {'owner': 'MAT', 'id': 'unit', 'version': '1'}, 'digest': '1111111111111111111111111111111111111111111111111111111111111111'}, 'originEvidence': {'ref': {'owner': 'MAT', 'id': 'origin', 'version': '1'}, 'digest': '1111111111111111111111111111111111111111111111111111111111111111'}}, {'shareKey': 'share-1', 'sourceObligationRef': {'owner': 'MAT', 'id': 'obligation', 'version': '1'}, 'currentRepresentativeRef': {'owner': 'MAT', 'id': 'current', 'version': '1'}, 'scope': {'scopeId': 'scope-1', 'scopeVersion': '1', 'ranges': [{'portionId': 'part-1', 'from': '0', 'to': '80'}]}, 'grossQuantity': {'value': '80', 'unitRef': {'owner': 'MAT', 'id': 'EA', 'version': '1'}}, 'unitBasis': {'ref': {'owner': 'MAT', 'id': 'unit', 'version': '1'}, 'digest': '1111111111111111111111111111111111111111111111111111111111111111'}, 'originEvidence': {'ref': {'owner': 'MAT', 'id': 'origin', 'version': '1'}, 'digest': '1111111111111111111111111111111111111111111111111111111111111111'}}] has non-unique elements"
+      ]
+    },
+    {
+      "id": "MAT-TENANT-OVERRIDE",
+      "expected_valid": false,
+      "result": "PASS",
+      "detected": [
+        "Additional properties are not allowed ('tenantId' was unexpected)"
+      ]
+    }
+  ],
+  "continuous_quantity_examples": 3,
+  "runtime_acceptance": "NOT_RUN"
+}

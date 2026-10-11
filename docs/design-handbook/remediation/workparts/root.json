@@ -1,0 +1,3629 @@
+{
+  "findings": [
+    {
+      "issue_id": "DR-COM-EST-PRICE-COVERAGE-V2",
+      "source_finding_ids": [
+        "COM-EST-PRICE-COVERAGE-V2"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "sha256": "c48a0460236a9a6e596adf138379026f251fc3348098d1a42e646840a5175d2f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 326
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "sha256": "c48a0460236a9a6e596adf138379026f251fc3348098d1a42e646840a5175d2f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 335
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "sha256": "c48a0460236a9a6e596adf138379026f251fc3348098d1a42e646840a5175d2f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 339
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/33/33bce26e8b054d3b__ROOT-ACCEPTANCE.md",
+          "sha256": "33bce26e8b054d3bae6c761c87e77e9b402fb79343b962fe8053cac254ebe70c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 22
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ERP-EST-01",
+        "ERP-PRICE-01",
+        "ERP-QTN-01"
+      ],
+      "decision": "EST R2 v2采用整张coverage+准确coveragePolicy+最终保护，旧PRICE列不能代替；保留原估算/报价用途。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-EST-PRICE-COVERAGE-V2-POS",
+          "scenario": "完整coverage/policy/Scope/保护向量才允许当前v2消费",
+          "expected": "完整coverage/policy/Scope/保护向量才允许当前v2消费",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-EST-PRICE-COVERAGE-V2-NEG",
+          "scenario": "旧字段或缺政策/保护保持对应路径FENCED",
+          "expected": "旧字段或缺政策/保护保持对应路径FENCED",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-FSC-FACT-GUARD-EXTENSION",
+      "source_finding_ids": [
+        "COM-FSC-FACT-GUARD-EXTENSION"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 77
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 79
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 81
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 83
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 87
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 89
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 135
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ERP-FSC-01",
+        "ERP-EST-01",
+        "ERP-QTN-01"
+      ],
+      "decision": "采用FSC R2 EST事实读与QTN关系双守卫；EST I03原Usage不扩域。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-FSC-FACT-GUARD-EXTENSION-POS",
+          "scenario": "完整事实及关系两个当前守卫共同成立",
+          "expected": "完整事实及关系两个当前守卫共同成立",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-FSC-FACT-GUARD-EXTENSION-NEG",
+          "scenario": "只持一个守卫或拿旧I03替新用途拒绝新效果",
+          "expected": "只持一个守卫或拿旧I03替新用途拒绝新效果",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-RFQ-PR-SOURCE-STATE-ADAPTER",
+      "source_finding_ids": [
+        "COM-RFQ-PR-SOURCE-STATE-ADAPTER"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+          "sha256": "1787bb4e78ef25872d90f5897307f1259208449b9948010e274c45b21cb3a586",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1415
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+          "sha256": "1787bb4e78ef25872d90f5897307f1259208449b9948010e274c45b21cb3a586",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1409
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "sha256": "c3cf448a16a4a8fecb562e844c42da2ee0db7dbd5fbe6b094a0e695bad2e17c1",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 210
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "15edbc1dfe25be7ff9450c0c15de39a16e3141801194824bda54a35970289216",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 693
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "15edbc1dfe25be7ff9450c0c15de39a16e3141801194824bda54a35970289216",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 692
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "15edbc1dfe25be7ff9450c0c15de39a16e3141801194824bda54a35970289216",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 695
+        }
+      ],
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "PUR-RFQ-01",
+        "PUR-PR-01",
+        "PUR-PO-01"
+      ],
+      "decision": "内部EXECUTED_PENDING_LEDGER与ClaimRecord wire CONSUMED属于不同层；PR P→E和RFQ异步P→C保各自receipt推进。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-RFQ-PR-SOURCE-STATE-ADAPTER-POS",
+          "scenario": "各层只消费准确原receipt/manifest后推进本层",
+          "expected": "各层只消费准确原receipt/manifest后推进本层",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-RFQ-PR-SOURCE-STATE-ADAPTER-NEG",
+          "scenario": "运输接收不得伪装另一Owner业务已入账",
+          "expected": "运输接收不得伪装另一Owner业务已入账",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION",
+      "source_finding_ids": [
+        "COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "sha256": "cc20531bdcc61959b77b395e8baa955e65a70fef0d84f4b364c166d3cc89a3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 491
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "sha256": "cc20531bdcc61959b77b395e8baa955e65a70fef0d84f4b364c166d3cc89a3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 456
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "sha256": "cc20531bdcc61959b77b395e8baa955e65a70fef0d84f4b364c166d3cc89a3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 523
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "sha256": "cc20531bdcc61959b77b395e8baa955e65a70fef0d84f4b364c166d3cc89a3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 629
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/git-objects/ce/cef7ca5bfb22497a__SR-20260930-B-PUR-GR-MD01-FINAL.md",
+          "sha256": "9bb1f6c7face0256247b1d9c5e360d06e94e6ae9346aaa2eb4cc471dd9d4eb7e",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 20
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "PUR-GR-01",
+        "PUR-PO-01",
+        "WMS-STOCK-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "PUR-MATCH-01"
+      ],
+      "decision": "采用GR逐叶原Domain/有效RangeSet/当前ScopeSet和Quality，Stock/PO专业后继完整共同ResourcePlan；非前缀VOID保持当前已修设计。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION-POS",
+          "scenario": "准确叶范围且全参与者同事务门通过",
+          "expected": "准确叶范围且全参与者同事务门通过",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION-NEG",
+          "scenario": "无专业映射/漏叶/旧前缀简化算法不得商业验收或MATCH",
+          "expected": "无专业映射/漏叶/旧前缀简化算法不得商业验收或MATCH",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-013",
+      "source_finding_ids": [
+        "OPS-IF-013"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 127
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 163
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 669
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 690
+        }
+      ],
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "QA-POL-01",
+        "PUR-GR-01",
+        "MES-OUTPUT-01",
+        "WMS-IN-01"
+      ],
+      "decision": "QA-POL采购按准确source/part叶总体；制造按原完整总体，不能母单100覆盖采购40/60。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-013-POS",
+          "scenario": "采购40/60分别按叶选政策，制造沿原总体",
+          "expected": "采购40/60分别按叶选政策，制造沿原总体",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-013-NEG",
+          "scenario": "跨域统一数量口径或用母域政策批准叶拒绝",
+          "expected": "跨域统一数量口径或用母域政策批准叶拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-014",
+      "source_finding_ids": [
+        "OPS-IF-014"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 320
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 322
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 907
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 16090
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 16258
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 16259
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 15818
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 15906
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/98/987d02861abe82dd__SR-20261001-C-QA-IQC-MD01-INDEPENDENT-R5.md",
+          "sha256": "987d02861abe82dd9624aace4ee62471b2e8eb3d09a88db801f834f9e9bb4a93",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 37
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2e/2ef464ec62e93f91__C-QA-IQC-MD-SPEC-01_R5_FIX-MAP.md",
+          "sha256": "2ef464ec62e93f912956ca7ebc45927b58c799fd7deef6928f9f7755580e10db",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 12
+        }
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "QA-IQC-01",
+        "QA-POL-01",
+        "WMS-STOCK-01"
+      ],
+      "decision": "IQC R5已对QAP EffectLocator准确追加ORDINARY_STOCK_USE；镜像通用说明不能覆盖此有界后继。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-014-POS",
+          "scenario": "准确后继namespace/用途/locator满足原消费",
+          "expected": "准确后继namespace/用途/locator满足原消费",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-014-NEG",
+          "scenario": "仅见同名枚举而无版本化后继映射拒绝",
+          "expected": "仅见同名枚举而无版本化后继映射拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-016",
+      "source_finding_ids": [
+        "OPS-IF-016"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 577
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 581
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 583
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 585
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 587
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 593
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 597
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 614
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 620
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 622
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 630
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/389806299e2681bc__UA-20261004-A-QA-NCR-R12-ROOT-DECISION.txt",
+          "sha256": "389806299e2681bc5d2754bdac645eaa9cfdec9741825e453c8d7764962083ae",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 6
+        }
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "QA-NCR-01",
+        "QA-IPQC-01",
+        "QA-POL-01",
+        "MES-OUTPUT-01"
+      ],
+      "decision": "NCR准确后继已无损采用IPQC旧SourceEnvelope、standalone和Resolution27；保原字段/摘要/Scope。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-016-POS",
+          "scenario": "完整原包与准确映射可入本轮消费者",
+          "expected": "完整原包与准确映射可入本轮消费者",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-016-NEG",
+          "scenario": "删字段或将不同来源同名Ref强转拒绝",
+          "expected": "删字段或将不同来源同名Ref强转拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-018",
+      "source_finding_ids": [
+        "OPS-IF-018"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "sha256": "9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 133
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "sha256": "9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1307
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "sha256": "9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1319
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "sha256": "9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1355
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "sha256": "9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1379
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "ec7dcc5179f0e5844e778102c18e66e840246b68ac7dec34aaa94c505aa1ed13",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 70
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "ec7dcc5179f0e5844e778102c18e66e840246b68ac7dec34aaa94c505aa1ed13",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 74
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "ec7dcc5179f0e5844e778102c18e66e840246b68ac7dec34aaa94c505aa1ed13",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 78
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "9d108fba82cd4683ccc0075f0239f7f3e6ac60cc090672adf8080438bfca83d9",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 93
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "9d108fba82cd4683ccc0075f0239f7f3e6ac60cc090672adf8080438bfca83d9",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 95
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "9d108fba82cd4683ccc0075f0239f7f3e6ac60cc090672adf8080438bfca83d9",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 97
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "WMS-TRANSFER-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01"
+      ],
+      "decision": "SLOT/REP NEW路线与Transfer相容，但SourceDemand Owner及全current门必须真实采用。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-018-POS",
+          "scenario": "完整SourceDemand+current资格形成一次Transfer",
+          "expected": "完整SourceDemand+current资格形成一次Transfer",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-018-NEG",
+          "scenario": "相同NEW枚举或预检票据不作真实提供者许可",
+          "expected": "相同NEW枚举或预检票据不作真实提供者许可",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-035",
+      "source_finding_ids": [
+        "OPS-IF-035"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 130
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 145
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 147
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 169
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 184
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 186
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 188
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 249
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "MES-SCHED-01",
+        "MES-WO-01",
+        "MES-RES-01",
+        "MES-EXEC-01"
+      ],
+      "decision": "SCHED完整Root组、换机六阶段及参与者已设计；WO改期原白名单不扩大。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-035-POS",
+          "scenario": "全Root/六阶段当前资源资格后统一应用",
+          "expected": "全Root/六阶段当前资源资格后统一应用",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-035-NEG",
+          "scenario": "只改单条WO或向原白名单加入未授权字段拒绝",
+          "expected": "只改单条WO或向原白名单加入未授权字段拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-036",
+      "source_finding_ids": [
+        "OPS-IF-036"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 185
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 195
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 201
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 204
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 207
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 209
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 215
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 217
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 359
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "MES-PERF-01",
+        "MES-EXEC-01",
+        "MES-RES-01",
+        "MES-OUTPUT-01"
+      ],
+      "decision": "PERF必须来自原Owner槽、局部Pause和真实分窗量，不能从聚合猜分母。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-036-POS",
+          "scenario": "当前原Owner完整槽/分窗证据可发布指标",
+          "expected": "当前原Owner完整槽/分窗证据可发布指标",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-036-NEG",
+          "scenario": "缺分窗/缺真实Owner则不发布假CLOSED指标",
+          "expected": "缺分窗/缺真实Owner则不发布假CLOSED指标",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-037",
+      "source_finding_ids": [
+        "OPS-IF-037"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 238
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 240
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 244
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 246
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 248
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 250
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 252
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 258
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 260
+        }
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "MES-PERF-01"
+      ],
+      "decision": "采用PERF R2.1取消WHOLE_SHIFT必暂定；CLOSED两分母在同一发布门齐证。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-037-POS",
+          "scenario": "WHOLE_SHIFT有完整同门分母可合法CLOSED",
+          "expected": "WHOLE_SHIFT有完整同门分母可合法CLOSED",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-037-NEG",
+          "scenario": "任一分母缺失仍阻正式CLOSED，不能单独补0",
+          "expected": "任一分母缺失仍阻正式CLOSED，不能单独补0",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PLAN-IF-002",
+      "source_finding_ids": [
+        "PLAN-IF-002"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "sha256": "d4e2a2805932996e8733a3782847c66e8add8a06ae171fc3b80188a237126a6e",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 54
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "sha256": "e1aed8dc46c13a8dca0a27c547ee36b59a446b02f8ed0d72e00cba493ab8878b",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 18
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "PLAN-ATP-01",
+        "PLAN-POL-01",
+        "PLAN-SUP-01"
+      ],
+      "decision": "POL/SUP功能接受不替ATP R11准确端口；schema pin/Scope/完整来源/全部writer最终门分别登记。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-002-POS",
+          "scenario": "准确端口实例及完整连续供给与政策身份共同满足",
+          "expected": "准确端口实例及完整连续供给与政策身份共同满足",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-002-NEG",
+          "scenario": "缺Required条件保持原FENCED",
+          "expected": "缺Required条件保持原FENCED",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-MRP-MAT",
+      "source_finding_ids": [
+        "OPS-IF-019",
+        "PLAN-IF-001"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 335
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 343
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 345
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 347
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 485
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 77
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 82
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 83
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 85
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 87
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 91
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 93
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 94
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 95
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 98
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "sha256": "14e648e1342492b0239d4a4e0a77a5300e8a86156fa7d2eb24410f07eea3ca92",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 75
+        }
+      ],
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "MES-MAT-01",
+        "PLAN-MRP-01"
+      ],
+      "decision": "新增MAT-MRP-RESIDUAL/1由MAT Owner准确生产NET/GROSS两种表达；保完整MaterialBinding、原责任代表、抵扣覆盖并集、已抵及排除集合、仍占保护与当前cut，原RemainingBasis不改名。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md",
+        "remediation/assets/material-handoff/wire-1.0.0.schema.json",
+        "remediation/assets/material-handoff/ports-1.0.0.json",
+        "remediation/assets/material-handoff/examples-1.0.0.json",
+        "remediation/assets/material-handoff/validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-001-POS",
+          "scenario": "80转50+30仍80；NET40+新180−自由50=170，受限后仅Owner后继50可得180",
+          "expected": "80转50+30仍80；NET40+新180−自由50=170，受限后仅Owner后继50可得180",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-001-NEG",
+          "scenario": "旧80+新50=130、重复扣已抵20、UNKNOWN补0、模式/单位/份额相交未证一律阻正式Seal",
+          "expected": "旧80+新50=130、重复扣已抵20、UNKNOWN补0、模式/单位/份额相交未证一律阻正式Seal",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PLAN-IF-006",
+      "source_finding_ids": [
+        "PLAN-IF-006"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 44,
+          "end_line": 47,
+          "json_pointer": "/$defs/SignedDecimal"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 3642,
+          "end_line": 3644,
+          "json_pointer": "/$defs/LegacyAnchor/properties/reportedRequiredQty"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 3645,
+          "end_line": 3647,
+          "json_pointer": "/$defs/LegacyAnchor/properties/reportedAvailableQty"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 3737,
+          "end_line": 3737,
+          "json_pointer": "/$defs/LegacyAnchor/description"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 22313,
+          "end_line": 22315,
+          "json_pointer": "/$defs/StoredLegacyAnchorRecord/properties/ReportedRequiredQty"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 22316,
+          "end_line": 22318,
+          "json_pointer": "/$defs/StoredLegacyAnchorRecord/properties/ReportedAvailableQty"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 23080,
+          "end_line": 23083,
+          "json_pointer": "/$defs/DecimalQty"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 36,
+          "end_line": 39,
+          "json_pointer": "/$defs/Decimal"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0.json",
+          "sha256": "8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 22411,
+          "end_line": 22420,
+          "json_pointer": "/tables/66/columns/15"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0.json",
+          "sha256": "8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 22421,
+          "end_line": 22430,
+          "json_pointer": "/tables/66/columns/16"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0.json",
+          "sha256": "8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 22516,
+          "end_line": 22520,
+          "json_pointer": "/tables/66/checks"
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "decision": "原StoredLegacyAnchorRecord两Reported字段使用原SignedDecimal；新责任非负约束不变。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-006-POS",
+          "scenario": "历史负数原值可往返",
+          "expected": "历史负数原值可往返",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-006-NEG",
+          "scenario": "不得abs/clamp/补0",
+          "expected": "不得abs/clamp/补0",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PLAN-IF-009",
+      "source_finding_ids": [
+        "PLAN-IF-009"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+          "sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1953,
+          "json_pointer": "/ports/3/contractBody/profileSchema/properties/branches/maxItems"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+          "sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 2958,
+          "end_line": 3020,
+          "json_pointer": "/ports/3/closedSchemaSet/$defs/d_25c340d5a1bc_OwnerProfileCp18/properties/branches"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_FULL_SCHEMA_REGISTRY.json",
+          "sha256": "25edebfff5ac3452bd98686c5ea611ba1c35c58a31ca5d7b8f29a02cb06acbd3",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 6714,
+          "end_line": 6776,
+          "json_pointer": "/$defs/OwnerProfileCp18/properties/branches"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+          "sha256": "2fc131613a8433d347ca869999a5f8550daaefa0768b487f4610c67f75b4526d",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 101
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+          "sha256": "2fc131613a8433d347ca869999a5f8550daaefa0768b487f4610c67f75b4526d",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 337
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "decision": "逐portion branches不以三种枚举限制三条，删除maxItems3；新contractVersion和完整contractBody SHA明确发布，closedSchemaSet原摘要不变。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md",
+        "remediation/assets/fixtures/bounded-patches.json",
+        "remediation/assets/fixtures/owner-profile-successor-pin.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-009-POS",
+          "scenario": "四个不同portion精确匹配完整allocation集合",
+          "expected": "四个不同portion精确匹配完整allocation集合",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-009-NEG",
+          "scenario": "缺/重/多tuple或旧provider pin不得默许新版本",
+          "expected": "缺/重/多tuple或旧provider pin不得默许新版本",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PLAN-IF-012",
+      "source_finding_ids": [
+        "PLAN-IF-012"
+      ],
+      "batch": "W4",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_API_REGISTRY.json",
+          "sha256": "6b2b0bea00641fb8d86d87f5c540fc0ae6e425541fa3e529c734cfe30af3ef64",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 4118,
+          "end_line": 4130,
+          "json_pointer": "/apis/13/problems/503"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OPENAPI.json",
+          "sha256": "63ebd079202536dd53ea07eb524fa32f089326c18d9229dbfc50cf4487cf7011",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 6747,
+          "end_line": 6780,
+          "json_pointer": "/paths/~1conversions~1{conversionLegId}~1owner-steps/post/responses/503"
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "decision": "PO15 OpenAPI503同步当前API登记的三个真实关闭错误，底层恢复语义不改。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-012-POS",
+          "scenario": "三个准确错误在新OpenAPI可解析",
+          "expected": "三个准确错误在新OpenAPI可解析",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-012-NEG",
+          "scenario": "客户端不能把缺失闭包当成功或任意重试新意图",
+          "expected": "客户端不能把缺失闭包当成功或任意重试新意图",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PLAN-IF-013",
+      "source_finding_ids": [
+        "PLAN-IF-013"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 5292,
+          "json_pointer": "/worlds/0/priorNativeFactsOrClosures/0/preRows/226/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 15917,
+          "json_pointer": "/worlds/0/priorNativeFactsOrClosures/0/postRows/226/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 27213,
+          "json_pointer": "/worlds/0/public65/preRows/226/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 38227,
+          "json_pointer": "/worlds/0/public65/postRows/226/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 50047,
+          "json_pointer": "/worlds/0/machine68/preRows/226/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 61145,
+          "json_pointer": "/worlds/0/machine68/postRows/226/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 71968,
+          "json_pointer": "/worlds/1/priorNativeFactsOrClosures/0/preRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 82431,
+          "json_pointer": "/worlds/1/priorNativeFactsOrClosures/0/postRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 93188,
+          "json_pointer": "/worlds/1/priorNativeFactsOrClosures/1/preRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 103922,
+          "json_pointer": "/worlds/1/priorNativeFactsOrClosures/1/postRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 115315,
+          "json_pointer": "/worlds/1/public65/preRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 126433,
+          "json_pointer": "/worlds/1/public65/postRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 138357,
+          "json_pointer": "/worlds/1/machine68/preRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 149559,
+          "json_pointer": "/worlds/1/machine68/postRows/219/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 161804,
+          "json_pointer": "/worlds/2/public65/preRows/233/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 172896,
+          "json_pointer": "/worlds/2/public65/postRows/233/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 184794,
+          "json_pointer": "/worlds/2/machine68/preRows/233/key/ResourceKey"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 195970,
+          "json_pointer": "/worlds/2/machine68/postRows/233/key/ResourceKey"
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "decision": "18处PlanningFactHead包装ResourceKey采用原实际Row完整主键；实际数据行保持。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/05-planning-material-mapping.md",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-013-POS",
+          "scenario": "包装与实际主键完全一致",
+          "expected": "包装与实际主键完全一致",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-013-NEG",
+          "scenario": "同hash但不同原ResourceKey不得混入完整行证明",
+          "expected": "同hash但不同原ResourceKey不得混入完整行证明",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-002",
+      "source_finding_ids": [
+        "OPS-IF-002"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+          "sha256": "9442439f12ceb101fb49f469f596a529f061526d0a7b504289ef5fd3185e9349",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 537
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+          "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 245
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+          "sha256": "dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1894
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "FIN-CREDIT-01"
+      ],
+      "decision": "保CREDIT原38总位/8小数合法wire；decimal(38,0)整数系数+Scale0..8无损存储，任意精度中间运算后核原输出域。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "remediation/assets/core-types/numeric-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-002-POS",
+          "scenario": "38个9及30整数+8小数精确往返",
+          "expected": "38个9及30整数+8小数精确往返",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-002-NEG",
+          "scenario": "39位输出/指数/负零按原Schema拒绝；禁止先走decimal(38,8)",
+          "expected": "39位输出/指数/负零按原Schema拒绝；禁止先走decimal(38,8)",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-030",
+      "source_finding_ids": [
+        "OPS-IF-030"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 25
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 29
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+          "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 895
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+          "sha256": "c9d7ce48b1b68c529cf1f83db03b92cb6c9a1881c40d3792d1bacd92f42c5f41",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 36
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "decision": "INV开放整数位采用大整数文本+scale；66个有限decimal列给出准确替代，MAVG分子分母不使用decimal(76,0)，原wire和摘要字节独立保存。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "remediation/assets/core-types/numeric-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-030-POS",
+          "scenario": "90整数位+18/12小数及原合法-0.000保持精确值和原文",
+          "expected": "90整数位+18/12小数及原合法-0.000保持精确值和原文",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-030-NEG",
+          "scenario": "不得有限CAST/SUM、分母0、超小数位或静默舍入",
+          "expected": "不得有限CAST/SUM、分母0、超小数位或静默舍入",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PLAN-IF-004",
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+          "sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "json_pointer": "/$defs/Quantity/properties/uom"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+          "sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 194
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 132
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 291
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-ATP-01"
+      ],
+      "decision": "ATP单位保持完整ASCII StableId1..128；R1显式修Schema/TS/.NET末尾LF锚点歧义，五DDL列128/check；独立编译同时修准确字节Parse重载。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/bounded-patches.json",
+        "remediation/assets/core-types/attachment-compile-validation.json",
+        "remediation/assets/core-types/atp-stableid-vectors.json",
+        "remediation/assets/core-types/atp-stableid-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-004-POS",
+          "scenario": "17/128合法单位不截断，三语言完整末尾规则一致",
+          "expected": "17/128合法单位不截断，三语言完整末尾规则一致",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-004-NEG",
+          "scenario": "空/空白/中文/129字符及短或128字符后附LF/CRLF拒绝，原历史profile不重写",
+          "expected": "空/空白/中文/129字符及短或128字符后附LF/CRLF拒绝，原历史profile不重写",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-NCR-TYPE-01",
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+          "sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            1972,
+            2004
+          ],
+          "code_member_locator": "/C09FailedProblem/variants/0..2/originalQuery",
+          "locator_interpretation": "Named code member from original finding, not an RFC6901 JSON pointer; source line range remains authoritative"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+          "sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            4456,
+            4460
+          ],
+          "code_member_locator": "/IpqcFinalGuardResult/variants/1/guardRef",
+          "locator_interpretation": "Named code member from original finding, not an RFC6901 JSON pointer; source line range remains authoritative"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            18628,
+            18630
+          ],
+          "json_pointer": "/$defs/C09FailedProblem/oneOf/0/properties/originalQuery"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f0519fea751041c__SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+          "sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            52550,
+            52552
+          ],
+          "json_pointer": "/types/IpqcFinalGuardResult/oneOf/1/properties/guardRef"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+          "sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            198,
+            202
+          ]
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/93d5eabb725f756a__SOURCE-QA-SCHEMAS.json",
+          "sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            2838,
+            2840
+          ],
+          "json_pointer": "/$defs/IpqcFinalGuardResult/oneOf/1/properties/guardRef"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/93d5eabb725f756a__SOURCE-QA-SCHEMAS.json",
+          "sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+          "json_pointer": "/$defs/ObservationInput",
+          "reading": "Additional direct source check: two const-null members found by isolated attachment compilation"
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "QA-NCR-01"
+      ],
+      "decision": "原5处null-only及编译发现2处ObservationInput const-null统一required NullOnly+严格converter；不以默认0代null。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/bounded-patches.json",
+        "remediation/assets/core-types/attachment-compile-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "NCR-TYPE-01-POS",
+          "scenario": "必需成员显式null反序列化并原样输出",
+          "expected": "必需成员显式null反序列化并原样输出",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "NCR-TYPE-01-NEG",
+          "scenario": "0/数字/对象/字符串null/缺字段均拒绝",
+          "expected": "0/数字/对象/字符串null/缺字段均拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-NCR-FIELD-01",
+      "source_finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            30788,
+            30801
+          ],
+          "json_pointer": "/fields/1849"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            52882,
+            52902
+          ],
+          "json_pointer": "/fields/3338"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            52905,
+            52923
+          ],
+          "json_pointer": "/fields/3339"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            52940,
+            52958
+          ],
+          "json_pointer": "/fields/3341"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            53212,
+            53230
+          ],
+          "json_pointer": "/fields/3360"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11b9077c2ccacb39__NCR-R6-WIRE.json",
+          "sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            10820,
+            10820
+          ],
+          "json_pointer": "/$defs/MainResult"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11b9077c2ccacb39__NCR-R6-WIRE.json",
+          "sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "lines": [
+            20782,
+            20782
+          ],
+          "json_pointer": "/$defs/InitialSourceOptionQuery"
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "QA-NCR-01"
+      ],
+      "decision": "按准确shape修5条nullable元数据；CLOSE_MAIN.priorHeadRef不可空，其余4条查询字段允许null。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/bounded-patches.json",
+        "remediation/assets/core-types/attachment-compile-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "NCR-FIELD-01-POS",
+          "scenario": "准确可空值/必需非空按shape表现",
+          "expected": "准确可空值/必需非空按shape表现",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "NCR-FIELD-01-NEG",
+          "scenario": "字段元数据不授予写权限或改变Source范围",
+          "expected": "字段元数据不授予写权限或改变Source范围",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-LEAD-GENERATED-CS-NULLABLE",
+      "source_finding_ids": [
+        "COM-LEAD-GENERATED-CS-NULLABLE"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/lead/CONTRACTS/CrmLeadCp20Contracts.cs",
+          "sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 519
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/2428190864cfd501__CP20-qualification-h02.schema.json",
+          "sha256": "2428190864cfd501096d4816a4fa6dfdb4473cdea9ebb8dc2e8b27691df291e8",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 3251
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "CRM-LEAD-01"
+      ],
+      "decision": "OwnerId只改单层string?，保原UUID/unassigned/null Schema；独立编译通过。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/bounded-patches.json",
+        "remediation/assets/core-types/attachment-compile-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-LEAD-GENERATED-CS-NULLABLE-POS",
+          "scenario": "三种原允许形式不丢",
+          "expected": "三种原允许形式不丢",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-LEAD-GENERATED-CS-NULLABLE-NEG",
+          "scenario": "任意非法string仍由严格Schema拒绝",
+          "expected": "任意非法string仍由严格Schema拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-OPS-IF-015",
+      "source_finding_ids": [
+        "OPS-IF-015"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 15
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 16
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 273
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 322
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7f/7faae8212b09d21e__ACCEPTANCE.md",
+          "sha256": "7faae8212b09d21e656e386023e7380ce9c9eefff35c37c6a4832616f567ff18",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 50
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "decision": "IPQC未绑定Evidence/Uom按准确QapEvidence/QapUom成员定义修，独立TS严格编译通过。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/bounded-patches.json",
+        "remediation/assets/core-types/attachment-compile-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "OPS-IF-015-POS",
+          "scenario": "准确原证据/单位成员可编译并过原Schema",
+          "expected": "准确原证据/单位成员可编译并过原Schema",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-015-NEG",
+          "scenario": "不把任意同名Ref强转为原QAP Evidence",
+          "expected": "不把任意同名Ref强转为原QAP Evidence",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION",
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/8538042210844249__crm-inq.openapi.json",
+          "sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 4748
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+          "sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 38
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+          "sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 255
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+          "sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 100
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a6/a6c1b08abce800dd__CURRENT.json",
+          "sha256": "a6c1b08abce800dd64c4f80d5d752be057bbaf8da700f6b7ae66c1c6953cbbba",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/22/229813cf102aad92__ui-positive-cases.json",
+          "sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1642
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+          "sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 113200
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+          "sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 149244
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+          "sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 178594
+        }
+      ],
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "CRM-INQ-01"
+      ],
+      "decision": "按六组子问题修OpenAPI引用、TS事件与decoder声明、C#结构相等及空数组、隐私终态expiresAt、下载proof/ETag及长度负例前置；完整派生C#/TS独立编译，严格wire未放宽。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/bounded-patches.json",
+        "remediation/assets/fixtures/bounded-patches.json",
+        "remediation/assets/core-types/DesignRevisionTypes.cs",
+        "remediation/assets/core-types/attachment-compile-validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+          "scenario": "55引用可解析；不同对象键序算同值；终态公开字段null；合法幂等键下201/4001字符长度负例422",
+          "expected": "55引用可解析；不同对象键序算同值；终态公开字段null；合法幂等键下201/4001字符长度负例422",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+          "scenario": "boolean扩展字段仍由decoder检查，重复JSON键拒绝；旧过期proof或错误ETag不能下载/写入",
+          "expected": "boolean扩展字段仍由decoder检查，重复JSON键拒绝；旧过期proof或错误ETag不能下载/写入",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-LEAD-AC-ATOMIC-SUPERSESSION",
+      "source_finding_ids": [
+        "COM-LEAD-AC-ATOMIC-SUPERSESSION"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ae/aeda22b512c5c620__CP20-60-AC-MAPPING.json",
+          "sha256": "aeda22b512c5c6202749c23f4e11b06ae4917ac558b432ff9c05c0dd0067909e",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 2174
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f8fd4357559f8d2__AC-CATALOGUE.json",
+          "sha256": "9f8fd4357559f8d246614fe8c9b89f1948cc6afcc6f42327c96f60d2d9f5cc94",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 668
+        }
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "CRM-LEAD-01",
+        "CRM-ACC-01",
+        "CRM-CON-01",
+        "CRM-OPP-01"
+      ],
+      "decision": "CP22保R3原60AC身份，AC042/048–052改同事务H02+Manifest；AC035 hiddenCount不是当前closed字段，旧Saga/202/部分成功预期不再作当前验收。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/core-types/lead-acceptance-supersession.json"
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-LEAD-AC-ATOMIC-SUPERSESSION-POS",
+          "scenario": "完整同Uow H02/Manifest写集原子成功及原结果重放",
+          "expected": "完整同Uow H02/Manifest写集原子成功及原结果重放",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-LEAD-AC-ATOMIC-SUPERSESSION-NEG",
+          "scenario": "任一步失败整体不生新业务效果；不得返回旧202或部分Map成功",
+          "expected": "任一步失败整体不生新业务效果；不得返回旧202或部分Map成功",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PLAN-IF-003",
+      "source_finding_ids": [
+        "PLAN-IF-003"
+      ],
+      "batch": "W5",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+          "sha256": "6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "json_pointer": "/criteria/86/steps/0"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+          "sha256": "6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "json_pointer": "/criteria/86/inputAndPreconditions/specificConditions/fixedReadCut"
+        }
+      ],
+      "classification": "DOCUMENT_STALE",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "decision": "AC087步骤陈旧readcut22改为当前精确input.fixedReadCut113，保原case身份及所有权限/页约束。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/06-wire-types-and-fixtures.md",
+        "remediation/assets/fixtures/editorial-patches.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PLAN-IF-003-POS",
+          "scenario": "完整指定cut113与主文/packet一致",
+          "expected": "完整指定cut113与主文/packet一致",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-003-NEG",
+          "scenario": "不得仅换说明却混用22的实际集合",
+          "expected": "不得仅换说明却混用22的实际集合",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PE-ACT-FILE-COMMIT-MODE",
+      "source_finding_ids": [
+        "PE-ACT-FILE-COMMIT-MODE"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md",
+          "sha256": "67dc3667fb852c5672f73710b80a4af17810cd09fe03ed69cbb2c82dff8dfa91",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 525,
+          "end_line": 541
+        }
+      ],
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "CRM-ACT-01",
+        "SYS-FILE-01"
+      ],
+      "decision": "ACT仅LOCAL_AUTHORITATIVE_GUARD；通用远端租约不是已采用模式。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PE-ACT-FILE-COMMIT-MODE-POS",
+          "scenario": "准确本地最终门及同事务附件提交",
+          "expected": "准确本地最终门及同事务附件提交",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PE-ACT-FILE-COMMIT-MODE-NEG",
+          "scenario": "远端reserve-confirm不经ACT采用不得提交",
+          "expected": "远端reserve-confirm不经ACT采用不得提交",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PE-HANDOFF-NAMESPACE",
+      "source_finding_ids": [
+        "PE-HANDOFF-NAMESPACE"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/afa3c98b659bf428__afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992.html",
+          "sha256": "afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 3752,
+          "end_line": 3752
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1799cd319ae35310__03_ENG_当前阅读主册.md",
+          "sha256": "1799cd319ae35310f55906982709a48c70fe2704561dc9860174b485b1822046",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1213,
+          "end_line": 1222
+        }
+      ],
+      "classification": "DOCUMENT_STALE",
+      "targets": [
+        "PUR-RETURN-01",
+        "ENG-REV-01",
+        "PLM-REL-01"
+      ],
+      "decision": "H编号必须用来源+合同名+版本解释；采购H31与工程H41独立。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PE-HANDOFF-NAMESPACE-POS",
+          "scenario": "准确来源解析到相应规范合同",
+          "expected": "准确来源解析到相应规范合同",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PE-HANDOFF-NAMESPACE-NEG",
+          "scenario": "孤立H31/H41不得跨文档拼接",
+          "expected": "孤立H31/H41不得跨文档拼接",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PE-ENG-MULTI-OUTPUT-MANIFEST",
+      "source_finding_ids": [
+        "PE-ENG-MULTI-OUTPUT-MANIFEST"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/08/089216a4b4fea2d5__089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397.md",
+          "sha256": "089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 44,
+          "end_line": 48
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/08/089216a4b4fea2d5__089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397.md",
+          "sha256": "089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 249,
+          "end_line": 260
+        }
+      ],
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "ENG-PROD-01",
+        "ENG-REV-01",
+        "ENG-BOM-01",
+        "ENG-ROU-01",
+        "PLM-REL-01"
+      ],
+      "decision": "新增独立输出Occurrence RelationSet及BaselineOutputBinding；原单PRODUCT技术Manifest及摘要不变，同Freeze事务生成完整新绑定，旧Baseline不能事后补造。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+          "scenario": "相同产品两个生成工序保两Occurrence，输入/操作/配置及双digest完整",
+          "expected": "相同产品两个生成工序保两Occurrence，输入/操作/配置及双digest完整",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PE-ENG-MULTI-OUTPUT-MANIFEST-NEG",
+          "scenario": "缺输入/操作/配置、旧消费者只读PRODUCT或修改历史Baseline拒绝",
+          "expected": "缺输入/操作/配置、旧消费者只读PRODUCT或修改历史Baseline拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PE-ENG-TOOL-OWNER-PARTICIPANT",
+      "source_finding_ids": [
+        "PE-ENG-TOOL-OWNER-PARTICIPANT"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/760c35b523260b23__ENG-TOOL-COMPATIBILITY.md",
+          "sha256": "760c35b523260b23a59b22f6fe74838f4a207422c82ce8b7b575fbfcf127bfc2",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 144,
+          "end_line": 180
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/91/918bbd4508551b64__00_X1_R2_独立回归与完整范围静态审阅报告.md",
+          "sha256": "918bbd4508551b64470398bf65697954bff495fd37d1ef8cb5efa66e56bd0462",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 142,
+          "end_line": 153
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ENG-TOOL-01",
+        "ENG-REV-01"
+      ],
+      "decision": "X1-R2每个真实Owner native schema及HoldExact共同提交保护必须实际采用；设计正面结论不是实例。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PE-ENG-TOOL-OWNER-PARTICIPANT-POS",
+          "scenario": "全Owner当前同一实际最终点",
+          "expected": "全Owner当前同一实际最终点",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PE-ENG-TOOL-OWNER-PARTICIPANT-NEG",
+          "scenario": "缺Owner/native schema/HoldExact保持FENCED",
+          "expected": "缺Owner/native schema/HoldExact保持FENCED",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING",
+      "source_finding_ids": [
+        "PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1326,
+          "end_line": 1344
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 1368,
+          "end_line": 1407
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0cc2a482fd1dc879__OA-APP-01_业务审批绑定与回调_前后端开发Spec_v1.1.2_R2_REVIEW.md",
+          "sha256": "0cc2a482fd1dc8790f19239f5965e437948c6c9c92929f94b4e32fdd6319891c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 14,
+          "end_line": 18
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0cc2a482fd1dc879__OA-APP-01_业务审批绑定与回调_前后端开发Spec_v1.1.2_R2_REVIEW.md",
+          "sha256": "0cc2a482fd1dc8790f19239f5965e437948c6c9c92929f94b4e32fdd6319891c",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 218,
+          "end_line": 230
+        }
+      ],
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "PLM-ITER-01",
+        "OA-APP-01",
+        "PLM-VER-01"
+      ],
+      "decision": "用不可变候选全集聚合及RoundBinding映射OA2，保Subject/Package/Policy/Technical四身份与rejectDisposition；OwnerInbox/应用回执/Outbox及撤回竞争完整持久化。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING-POS",
+          "scenario": "同决定多运输一次应用；完整集合匹配且Blocking关闭才能APPROVED",
+          "expected": "同决定多运输一次应用；完整集合匹配且Blocking关闭才能APPROVED",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING-NEG",
+          "scenario": "缺reject映射、候选漂移、旧轮次迟到只拒绝/STALE，不改变新轮",
+          "expected": "缺reject映射、候选漂移、旧轮次迟到只拒绝/STALE，不改变新轮",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME",
+      "source_finding_ids": [
+        "PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 113,
+          "end_line": 165
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 173,
+          "end_line": 176
+        }
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "PLAN-EXC-01",
+        "PLM-REL-01",
+        "PLM-DEV-01",
+        "ENG-REV-01"
+      ],
+      "decision": "CP22 role15内专业设计已有准确ADOPT；总17角色、实际provider/adoption0保持，不扩旧RC1批准。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+          "scenario": "精确role15子合同范围可进入后续编码清单",
+          "expected": "精确role15子合同范围可进入后续编码清单",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG",
+          "scenario": "不得宣称18角色或运行已采用",
+          "expected": "不得宣称18角色或运行已采用",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING",
+      "source_finding_ids": [
+        "PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6f/6f8585ca3b85c6aa__SPACE_七专项兼容完整设计_R2_CANDIDATE.md",
+          "sha256": "6f8585ca3b85c6aaafb2a8eaf2dfda7ce8a3b1ae590987b3bcf19b1e3d5f4290",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 271,
+          "end_line": 283
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6f/6f8585ca3b85c6aa__SPACE_七专项兼容完整设计_R2_CANDIDATE.md",
+          "sha256": "6f8585ca3b85c6aaafb2a8eaf2dfda7ce8a3b1ae590987b3bcf19b1e3d5f4290",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 293,
+          "end_line": 299
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9e/9e3be10c13d1599c__S5_TO_S6_TENANT_IAM_CONSUMPTION_RESPONSE_v0.2.md",
+          "sha256": "9e3be10c13d1599c154020005020f85ea67271d43a9044cd2c43d00c5ce880a7",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 9,
+          "end_line": 17
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9e/9e3be10c13d1599c__S5_TO_S6_TENANT_IAM_CONSUMPTION_RESPONSE_v0.2.md",
+          "sha256": "9e3be10c13d1599c154020005020f85ea67271d43a9044cd2c43d00c5ce880a7",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 21,
+          "end_line": 29
+        }
+      ],
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "SPACE-EXT-01",
+        "SPACE-PUB-01",
+        "SPACE-OPS-01",
+        "SYS-IAM-01"
+      ],
+      "decision": "新增SPACE/S5身份权限组合、61字段78DTO路径及完整grant-clause交集；四原Space版本与S5向量独立；每页缓存导出下载当前撤权门。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING-POS",
+          "scenario": "先S5真实行MIN再默认，精确全clause+行+字段+用途共同放行",
+          "expected": "先S5真实行MIN再默认，精确全clause+行+字段+用途共同放行",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING-NEG",
+          "scenario": "外部write永远false；撤权、缺registry、拼grant、旧cursor都不放行",
+          "expected": "外部write永远false；撤权、缺registry、拼grant、旧cursor都不放行",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-EST-QTN-V2-DECODER",
+      "source_finding_ids": [
+        "COM-EST-QTN-V2-DECODER"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "sha256": "c48a0460236a9a6e596adf138379026f251fc3348098d1a42e646840a5175d2f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 459
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "sha256": "c48a0460236a9a6e596adf138379026f251fc3348098d1a42e646840a5175d2f",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 568
+        }
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ERP-EST-01",
+        "ERP-QTN-01",
+        "ERP-ORD-01"
+      ],
+      "decision": "保原EstimateBasis并注册完整v2 ModelIdentity/FormulaDigest/Disclosure解码与I03/I05用途。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-EST-QTN-V2-DECODER-POS",
+          "scenario": "完整v2由准确decoder消费",
+          "expected": "完整v2由准确decoder消费",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-EST-QTN-V2-DECODER-NEG",
+          "scenario": "旧decoder/缺披露/误用途保持拒绝",
+          "expected": "旧decoder/缺披露/误用途保持拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-IC-ORIGINAL-TRANSPORT",
+      "source_finding_ids": [
+        "COM-IC-ORIGINAL-TRANSPORT"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 252
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 355
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 359
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 363
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 369
+        }
+      ],
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "INT-COM-01",
+        "CRM-HO-01",
+        "CRM-OPP-01",
+        "ERP-ORD-01"
+      ],
+      "decision": "新HO/OPP运输原封闭bytes和opaque版本；旧C03删敏感字段/int版本不可无损替代。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-IC-ORIGINAL-TRANSPORT-POS",
+          "scenario": "按准确新路由运输原包并当前授权重放",
+          "expected": "按准确新路由运输原包并当前授权重放",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-IC-ORIGINAL-TRANSPORT-NEG",
+          "scenario": "删字段/改版/Platformcheckpoint替原Ownercut拒绝",
+          "expected": "删字段/改版/Platformcheckpoint替原Ownercut拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-PR-CP22-NATIVE-OWNER-ADOPTION",
+      "source_finding_ids": [
+        "COM-PR-CP22-NATIVE-OWNER-ADOPTION"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 89
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 96
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 97
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 98
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 99
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 100
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "sha256": "c3cf448a16a4a8fecb562e844c42da2ee0db7dbd5fbe6b094a0e695bad2e17c1",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 138
+        }
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "PUR-PR-01",
+        "PLAN-PO-01"
+      ],
+      "decision": "CP22 port14已有PR R3原生intake专业ADOPT；保原Digest结构、版本与namespace，实际实例另证。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-PR-CP22-NATIVE-OWNER-ADOPTION-POS",
+          "scenario": "完整原生包和完整namespace pin一致",
+          "expected": "完整原生包和完整namespace pin一致",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-PR-CP22-NATIVE-OWNER-ADOPTION-NEG",
+          "scenario": "仅同名字段不能开放真实Owner入口",
+          "expected": "仅同名字段不能开放真实Owner入口",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-COM-PRICE-EST-UNIT-SCALE",
+      "source_finding_ids": [
+        "COM-PRICE-EST-UNIT-SCALE"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/91/918bbd4508551b64__00_X1_R2_独立回归与完整范围静态审阅报告.md",
+          "sha256": "918bbd4508551b64470398bf65697954bff495fd37d1ef8cb5efa66e56bd0462",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 151
+        }
+      ],
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "ERP-PRICE-01",
+        "ERP-EST-01"
+      ],
+      "decision": "保PRICE0..18与EST0..12能力差异；EST不支持的精度显式拒绝或原Owner准确版本化转换。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "COM-PRICE-EST-UNIT-SCALE-POS",
+          "scenario": "scale12原值消费",
+          "expected": "scale12原值消费",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-PRICE-EST-UNIT-SCALE-NEG",
+          "scenario": "scale13不得静默截到12",
+          "expected": "scale13不得静默截到12",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "issue_id": "DR-ROOT-X3-X4-ABC-01",
+      "source_finding_ids": [
+        "ROOT-X3-X4-ABC-01"
+      ],
+      "batch": "W6",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "ec7dcc5179f0e5844e778102c18e66e840246b68ac7dec34aaa94c505aa1ed13",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 59
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "sha256": "2f90c5537845e5cb22f87039021535a4872ad2ff36bb89cc83ffbe1733e221b4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 66
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "sha256": "2f90c5537845e5cb22f87039021535a4872ad2ff36bb89cc83ffbe1733e221b4",
+          "reading": "inherited_from_pinned_finding_and_original_reading_ledger; new_integrity_check_only",
+          "line": 143
+        }
+      ],
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "WMS-SLOT-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "decision": "SLOT前缀阈值和ANALYTICS末项累计阈值保独立排序/分组/算法版本。",
+      "source_version": "Accurate pinned original combination + CP6-DESIGN-REVISION-20261011/R1 bounded successor",
+      "supersedes_scope": "Only the named discrepancy/consumer boundary; exact original bytes and historical acceptance unchanged",
+      "preserved_constraints": [
+        "No broader authority or narrower native input domain",
+        "Original business facts/receipts and raw bytes retained",
+        "Actual provider/all-writer adoption must be proven separately"
+      ],
+      "outputs": [
+        "remediation/07-shared-consumer-mappings.md",
+        "remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "remediation/assets/shared-consumers/acceptance.json",
+        "remediation/assets/shared-consumers/validation.json"
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN",
+      "dependencies": [
+        "DR-VERSION-AUTHORITY"
+      ],
+      "consumer_adoption": {
+        "required": "Provider/consumer pin, exact identity/domain mapping and current final gate must be registered before new effects; preserved historical reads use current disclosure permission",
+        "runtime_status": "UNPROVEN"
+      },
+      "acceptance": [
+        {
+          "id": "ROOT-X3-X4-ABC-01-POS",
+          "scenario": "单产品100%按SLOT A、ANALYTICS C分别正确",
+          "expected": "单产品100%按SLOT A、ANALYTICS C分别正确",
+          "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "ROOT-X3-X4-ABC-01-NEG",
+          "scenario": "同一个ABC函数跨域复用应被合同测试拒绝",
+          "expected": "同一个ABC函数跨域复用应被合同测试拒绝",
+          "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ]
+    }
+  ]
+}

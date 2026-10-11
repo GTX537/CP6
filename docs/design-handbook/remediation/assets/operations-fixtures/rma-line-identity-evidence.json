@@ -1,0 +1,639 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "NEW_SYNTHETIC_DEMO_ONLY",
+  "documents": [
+    {
+      "ref": {
+        "owner": "WMS-OUT-01",
+        "id": "SHIP-100-L1",
+        "version": "1",
+        "digest": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+      },
+      "body": {
+        "schema": "OPS-WMS-OUT-LINE-EVIDENCE-1",
+        "mode": "DEMO",
+        "shipmentRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "shipmentLineId": "SHIP-100-L1",
+        "shipmentLineVersion": "1",
+        "originalSnapshot": {
+          "shipmentRef": {
+            "owner": "WMS-OUT-01",
+            "id": "SHIP-100",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "shipmentLineId": "SHIP-100-L1",
+          "shipmentLineVersion": "1",
+          "orderRef": {
+            "owner": "ERP-ORD",
+            "id": "ORDER-100",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "orderLineId": "ORDER-100-L1",
+          "scheduleRef": {
+            "owner": "ERP-ORD",
+            "id": "SCHEDULE-100-L1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "deliveryProofRef": {
+            "owner": "WMS-DEL-01",
+            "id": "POD-100",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "invoiceLineRef": {
+            "owner": "FIN-AR-01",
+            "id": "INV-100-L1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "commercialSnapshotRef": {
+            "owner": "ERP-ORD",
+            "id": "COMM-100-L1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "productRef": {
+            "owner": "MASTER",
+            "id": "PRODUCT-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "sourceShareRanges": [
+            {
+              "from": "0",
+              "to": "20"
+            }
+          ],
+          "baseQty": {
+            "value": "20",
+            "uom": {
+              "code": "EA",
+              "version": "1"
+            }
+          },
+          "lotRefs": [],
+          "serialRefs": [],
+          "lpnRefs": []
+        },
+        "identityAuthority": "New synthetic exact WMS-OUT line evidence for this independent fixture world; no actual Owner read claimed"
+      }
+    },
+    {
+      "ref": {
+        "owner": "WMS-OUT-01",
+        "id": "OPS-SHIP-100-L1-V1",
+        "version": "1",
+        "digest": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+      },
+      "body": {
+        "schema": "OPS-WMS-OUT-LINE-VERSION-1",
+        "mode": "DEMO",
+        "lineRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100-L1",
+          "version": "1",
+          "digest": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        "sourceHeaderRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "shipmentLineVersion": "1",
+        "eligibleRanges": [
+          {
+            "from": "0",
+            "to": "20"
+          }
+        ],
+        "baseQty": {
+          "value": "20",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        }
+      }
+    },
+    {
+      "ref": {
+        "owner": "WMS-OUT-01",
+        "id": "OPS-SHIP-100-L1-CUT-1",
+        "version": "1",
+        "digest": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+      },
+      "body": {
+        "schema": "OPS-WMS-OUT-LINE-CUT-1",
+        "mode": "DEMO",
+        "lineRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100-L1",
+          "version": "1",
+          "digest": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        "sourceVersionRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-V1",
+          "version": "1",
+          "digest": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        "complete": true,
+        "eligibleRanges": [
+          {
+            "from": "0",
+            "to": "20"
+          }
+        ],
+        "invoiceLineRef": {
+          "owner": "FIN-AR-01",
+          "id": "INV-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "scheduleRef": {
+          "owner": "ERP-ORD",
+          "id": "SCHEDULE-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "observedAt": "2026-10-02T00:00:00Z"
+      }
+    }
+  ],
+  "claim_digest_profile": "OPS-RETURN-CLAIM-DIGEST-1: H(complete ReturnRangeClaim excluding only claimDigest); not silently substituted for an old unspecified digest domain",
+  "coordinate_key_fields": [
+    "sourceOwner",
+    "shipmentLineRef.owner/id",
+    "invoiceLineRef.owner/id or NONE",
+    "scheduleRef.owner/id or NONE",
+    "baseUom.code/version"
+  ],
+  "positive_claims": [
+    {
+      "claimId": "40000000-0000-4000-8000-000000000001",
+      "coordinate": {
+        "sourceOwner": "WMS-OUT-01",
+        "shipmentLineRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100-L1",
+          "version": "1",
+          "digest": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        "invoiceLineRef": {
+          "owner": "FIN-AR-01",
+          "id": "INV-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "scheduleRef": {
+          "owner": "ERP-ORD",
+          "id": "SCHEDULE-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "baseUom": {
+          "code": "EA",
+          "version": "1"
+        },
+        "sourceCutRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-CUT-1",
+          "version": "1",
+          "digest": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        "sourceVersionRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-V1",
+          "version": "1",
+          "digest": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        "eligibleRanges": [
+          {
+            "from": "0",
+            "to": "20"
+          }
+        ],
+        "eligibleQuantity": {
+          "value": "20",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        }
+      },
+      "rmaId": "50000000-0000-4000-8000-000000000001",
+      "applicationLineRef": {
+        "owner": "WMS-RMA-01",
+        "id": "APP-1-L1-V2",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "authorizationDecisionRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "claimRanges": [
+        {
+          "from": "0",
+          "to": "10"
+        }
+      ],
+      "claimedQuantity": {
+        "value": "10",
+        "uom": {
+          "code": "EA",
+          "version": "1"
+        }
+      },
+      "state": "ACTIVE_RESERVED",
+      "claimDigest": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72",
+      "predecessorClaimRef": null,
+      "successorClaimRef": null,
+      "stateAuthorityRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "validFrom": "2026-10-02T00:10:00Z",
+      "validTo": null
+    },
+    {
+      "claimId": "40000000-0000-4000-8000-000000000001",
+      "coordinate": {
+        "sourceOwner": "WMS-OUT-01",
+        "shipmentLineRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100-L1",
+          "version": "1",
+          "digest": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        "invoiceLineRef": {
+          "owner": "FIN-AR-01",
+          "id": "INV-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "scheduleRef": {
+          "owner": "ERP-ORD",
+          "id": "SCHEDULE-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "baseUom": {
+          "code": "EA",
+          "version": "1"
+        },
+        "sourceCutRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-CUT-1",
+          "version": "1",
+          "digest": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        "sourceVersionRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-V1",
+          "version": "1",
+          "digest": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        "eligibleRanges": [
+          {
+            "from": "0",
+            "to": "20"
+          }
+        ],
+        "eligibleQuantity": {
+          "value": "20",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        }
+      },
+      "rmaId": "50000000-0000-4000-8000-000000000001",
+      "applicationLineRef": {
+        "owner": "WMS-RMA-01",
+        "id": "APP-1-L1-V2",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "authorizationDecisionRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "claimRanges": [
+        {
+          "from": "0",
+          "to": "10"
+        }
+      ],
+      "claimedQuantity": {
+        "value": "10",
+        "uom": {
+          "code": "EA",
+          "version": "1"
+        }
+      },
+      "state": "ACTIVE_RESERVED",
+      "claimDigest": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72",
+      "predecessorClaimRef": null,
+      "successorClaimRef": null,
+      "stateAuthorityRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "validFrom": "2026-10-02T00:10:00Z",
+      "validTo": null
+    },
+    {
+      "claimId": "40000000-0000-4000-8000-000000000002",
+      "coordinate": {
+        "sourceOwner": "WMS-OUT-01",
+        "shipmentLineRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100-L1",
+          "version": "1",
+          "digest": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        "invoiceLineRef": {
+          "owner": "FIN-AR-01",
+          "id": "INV-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "scheduleRef": {
+          "owner": "ERP-ORD",
+          "id": "SCHEDULE-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "baseUom": {
+          "code": "EA",
+          "version": "1"
+        },
+        "sourceCutRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-CUT-1",
+          "version": "1",
+          "digest": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        "sourceVersionRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-V1",
+          "version": "1",
+          "digest": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        "eligibleRanges": [
+          {
+            "from": "0",
+            "to": "20"
+          }
+        ],
+        "eligibleQuantity": {
+          "value": "20",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        }
+      },
+      "rmaId": "50000000-0000-4000-8000-000000000001",
+      "applicationLineRef": {
+        "owner": "WMS-RMA-01",
+        "id": "APP-1-L1-V2",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "authorizationDecisionRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-2",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "claimRanges": [
+        {
+          "from": "10",
+          "to": "20"
+        }
+      ],
+      "claimedQuantity": {
+        "value": "10",
+        "uom": {
+          "code": "EA",
+          "version": "1"
+        }
+      },
+      "state": "ACTIVE_RESERVED",
+      "claimDigest": "1e46d5e19c40b4fcc6c9c940c6f1b915120ce27fa675d2c91736aeee34de14fc",
+      "predecessorClaimRef": null,
+      "successorClaimRef": null,
+      "stateAuthorityRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-2",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "validFrom": "2026-10-02T00:10:00Z",
+      "validTo": null
+    },
+    {
+      "claimId": "40000000-0000-4000-8000-000000000001",
+      "coordinate": {
+        "sourceOwner": "WMS-OUT-01",
+        "shipmentLineRef": {
+          "owner": "WMS-OUT-01",
+          "id": "SHIP-100-L1",
+          "version": "1",
+          "digest": "9fd04d6b170aaf9472500ef5a46a4fecdf609d06df33b7eba31cdba7c9a2585e"
+        },
+        "invoiceLineRef": {
+          "owner": "FIN-AR-01",
+          "id": "INV-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "scheduleRef": {
+          "owner": "ERP-ORD",
+          "id": "SCHEDULE-100-L1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "baseUom": {
+          "code": "EA",
+          "version": "1"
+        },
+        "sourceCutRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-CUT-1",
+          "version": "1",
+          "digest": "bca08439dec2194865a463aa6fc1948e2c257c9c13ad33f5a748fc523fe5efc0"
+        },
+        "sourceVersionRef": {
+          "owner": "WMS-OUT-01",
+          "id": "OPS-SHIP-100-L1-V1",
+          "version": "1",
+          "digest": "7aea8eb29ce5d7c6b8f60147afce440f83e8d3376a7969490996ba165381043a"
+        },
+        "eligibleRanges": [
+          {
+            "from": "0",
+            "to": "20"
+          }
+        ],
+        "eligibleQuantity": {
+          "value": "20",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        }
+      },
+      "rmaId": "50000000-0000-4000-8000-000000000001",
+      "applicationLineRef": {
+        "owner": "WMS-RMA-01",
+        "id": "APP-1-L1-V2",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "authorizationDecisionRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "claimRanges": [
+        {
+          "from": "0",
+          "to": "10"
+        }
+      ],
+      "claimedQuantity": {
+        "value": "10",
+        "uom": {
+          "code": "EA",
+          "version": "1"
+        }
+      },
+      "state": "ACTIVE_RESERVED",
+      "claimDigest": "e91e9a6738380b7274addfeea0b117e833a6f6f87c0e546aaa9438febcd4ed72",
+      "predecessorClaimRef": null,
+      "successorClaimRef": null,
+      "stateAuthorityRef": {
+        "owner": "WMS-RMA-01",
+        "id": "AUTH-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "validFrom": "2026-10-02T00:10:00Z",
+      "validTo": null
+    }
+  ],
+  "negative_header_as_line": {
+    "claimId": "40000000-0000-4000-8000-000000000001",
+    "coordinate": {
+      "sourceOwner": "WMS-OUT-01",
+      "shipmentLineRef": {
+        "owner": "WMS-OUT-01",
+        "id": "SHIP-100",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "invoiceLineRef": {
+        "owner": "FIN-AR-01",
+        "id": "INV-100-L1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "scheduleRef": {
+        "owner": "ERP-ORD",
+        "id": "SCHEDULE-100-L1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "baseUom": {
+        "code": "EA",
+        "version": "1"
+      },
+      "sourceCutRef": {
+        "owner": "WMS-OUT-01",
+        "id": "CUT-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "sourceVersionRef": {
+        "owner": "WMS-OUT-01",
+        "id": "SHIP-100-L1-V1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "eligibleRanges": [
+        {
+          "from": "0",
+          "to": "20"
+        }
+      ],
+      "eligibleQuantity": {
+        "value": "20",
+        "uom": {
+          "code": "EA",
+          "version": "1"
+        }
+      }
+    },
+    "rmaId": "50000000-0000-4000-8000-000000000001",
+    "applicationLineRef": {
+      "owner": "WMS-RMA-01",
+      "id": "APP-1-L1-V2",
+      "version": "1",
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "authorizationDecisionRef": {
+      "owner": "WMS-RMA-01",
+      "id": "AUTH-1",
+      "version": "1",
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "claimRanges": [
+      {
+        "from": "0",
+        "to": "10"
+      }
+    ],
+    "claimedQuantity": {
+      "value": "10",
+      "uom": {
+        "code": "EA",
+        "version": "1"
+      }
+    },
+    "state": "ACTIVE_RESERVED",
+    "claimDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "predecessorClaimRef": null,
+    "successorClaimRef": null,
+    "stateAuthorityRef": {
+      "owner": "WMS-RMA-01",
+      "id": "AUTH-1",
+      "version": "1",
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "validFrom": "2026-10-02T00:10:00Z",
+    "validTo": null
+  },
+  "remaining_opaque_refs": "Original invoice/schedule/authorization/etc shape-only DEMO references retain their original placeholders; this asset proves exact line identity and coordinate separation, not production source authority",
+  "runtime_status": "NOT_RUN"
+}

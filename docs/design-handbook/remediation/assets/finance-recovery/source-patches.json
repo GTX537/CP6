@@ -1,0 +1,106 @@
+{
+  "contract": "CP6-DESIGN-SOURCE-PATCH/1",
+  "execution": "NOT_RUN",
+  "application_semantics": "Group by source_path and original source_sha256. Verify the original once, preflight every before count, apply all non-overlapping literal replacements to one in-memory copy in listed order. Never re-check original SHA against an intermediate modified copy; never write the archive. A future adopter saves a separately versioned derivative only.",
+  "patches": [
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "  SELECT * INTO STRICT h FROM plan_atp.evaluation\n   WHERE organization_id=p_organization_id AND evaluation_id=p_evaluation_id FOR UPDATE;\n  PERFORM 1 FROM plan_atp.replay_record WHERE organization_id=h.organization_id AND evaluation_id=h.evaluation_id FOR UPDATE;",
+      "after": "  PERFORM 1 FROM plan_atp.replay_record\n   WHERE organization_id=p_organization_id AND evaluation_id=p_evaluation_id\n   ORDER BY actor_id COLLATE \"C\",delegation_key COLLATE \"C\",operation COLLATE \"C\",request_key COLLATE \"C\" FOR UPDATE;\n  IF NOT FOUND THEN RAISE EXCEPTION 'REPLAY_BINDING_MISSING' USING ERRCODE='23514'; END IF;\n  SELECT * INTO STRICT h FROM plan_atp.evaluation\n   WHERE organization_id=p_organization_id AND evaluation_id=p_evaluation_id FOR UPDATE;",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "  IF p_expected_etag_version<>2 THEN RAISE EXCEPTION 'EXPECTED_CAS_MISMATCH' USING ERRCODE='40001'; END IF;\n  PERFORM plan_atp.recover_stage_integrity(p_organization_id,p_evaluation_id);",
+      "after": "  IF p_expected_etag_version<>2 THEN RAISE EXCEPTION 'EXPECTED_CAS_MISMATCH' USING ERRCODE='40001'; END IF;\n  PERFORM 1 FROM plan_atp.replay_record\n   WHERE organization_id=p_organization_id AND evaluation_id=p_evaluation_id\n   ORDER BY actor_id COLLATE \"C\",delegation_key COLLATE \"C\",operation COLLATE \"C\",request_key COLLATE \"C\" FOR UPDATE;\n  IF NOT FOUND THEN RAISE EXCEPTION 'REPLAY_BINDING_MISSING' USING ERRCODE='23514'; END IF;\n  PERFORM 1 FROM plan_atp.evaluation\n   WHERE organization_id=p_organization_id AND evaluation_id=p_evaluation_id FOR UPDATE;\n  PERFORM plan_atp.recover_stage_integrity(p_organization_id,p_evaluation_id);",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "    RAISE EXCEPTION 'RECOVERY_IDENTITY_DIGEST_MISMATCH' USING ERRCODE='23514';\n  END IF;\n  PERFORM plan_atp.recover_integrity(p_organization_id,p_evaluation_id);",
+      "after": "    RAISE EXCEPTION 'RECOVERY_IDENTITY_DIGEST_MISMATCH' USING ERRCODE='23514';\n  END IF;\n  PERFORM 1 FROM plan_atp.replay_record\n   WHERE organization_id=p_organization_id AND evaluation_id=p_evaluation_id\n   ORDER BY actor_id COLLATE \"C\",delegation_key COLLATE \"C\",operation COLLATE \"C\",request_key COLLATE \"C\" FOR UPDATE;\n  IF NOT FOUND THEN RAISE EXCEPTION 'REPLAY_BINDING_MISSING' USING ERRCODE='23514'; END IF;\n  PERFORM 1 FROM plan_atp.evaluation\n   WHERE organization_id=p_organization_id AND evaluation_id=p_evaluation_id FOR UPDATE;\n  PERFORM plan_atp.recover_integrity(p_organization_id,p_evaluation_id);",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "     AND replay_envelope_digest=req#>>'{replay,replayEnvelopeDigest}'\n   FOR KEY SHARE;",
+      "after": "     AND replay_envelope_digest=req#>>'{replay,replayEnvelopeDigest}'\n   FOR UPDATE;",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "PLAN-IF-005",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "  SELECT r.evaluation_id,e.status INTO p_evaluation_id,p_result_state\n    FROM plan_atp.replay_record r JOIN plan_atp.evaluation e USING(organization_id,evaluation_id)\n   WHERE r.organization_id=p_organization_id AND r.actor_id=t.actor_id\n     AND r.delegation_id IS NOT DISTINCT FROM t.delegation_id\n     AND r.operation='ATP_EVALUATE' AND r.request_key=req#>>'{replay,requestKey}'\n     AND r.request_body_digest=expected_body\n     AND r.replay_envelope_digest=expected_replay\n   FOR UPDATE OF r,e;\n  IF FOUND THEN p_outcome:='REPLAY'; RETURN; END IF;",
+      "after": "  SELECT r.evaluation_id INTO p_evaluation_id\n    FROM plan_atp.replay_record r\n   WHERE r.organization_id=p_organization_id AND r.actor_id=t.actor_id\n     AND r.delegation_id IS NOT DISTINCT FROM t.delegation_id\n     AND r.operation='ATP_EVALUATE' AND r.request_key=req#>>'{replay,requestKey}'\n     AND r.request_body_digest=expected_body\n     AND r.replay_envelope_digest=expected_replay\n   FOR UPDATE;\n  IF FOUND THEN\n    SELECT e.status INTO STRICT p_result_state FROM plan_atp.evaluation e\n     WHERE e.organization_id=p_organization_id AND e.evaluation_id=p_evaluation_id FOR UPDATE;\n    p_outcome:='REPLAY'; RETURN;\n  END IF;",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "PLAN-IF-010",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+      "source_sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": " public static async Task<HttpResponseCp18> PlanningAction(string api,ReadOnlyMemory<byte> raw,IReadOnlyDictionary<string,string> path,IReadOnlyDictionary<string,string> headers,IHttpTransportCp18 p){Need(new[]{\"PO11\",\"PO12\",\"PO13\",\"PO14\"}.Contains(api),\"VALIDATION_FAILED\");var root=api==\"PO13\"?\"ConversionPreviewCommand\":api==\"PO14\"?\"ConversionStartCommand\":\"PlanCommand\";var b=BoundaryCp18.Parse(root,raw.Span);Need(path[\"plannedOrderId\"]==S(b,\"plannedOrderId\")&&Header(headers,\"Idempotency-Key\")==S(b,\"requestKey\"),\"PATH_HEADER_BODY_MISMATCH\");if(api is \"PO11\" or \"PO12\")Need(S(b,\"schema\")==(api==\"PO11\"?\"plan.po.firm/1.0\":\"plan.po.ignore/1.0\"),\"VALIDATION_FAILED\");var operation=api switch{\"PO11\"=>\"plan-po.firm\",\"PO12\"=>\"plan-po.ignore\",\"PO13\"=>\"plan-po.convert.preview\",_=>\"plan-po.convert.start\"};var a=await p.AuthorizeFresh(operation,S(b,\"plannedOrderId\"));Authorized(a,p,operation,S(b,\"plannedOrderId\"));var rd=Hash(C(b));var tx=await p.BeginSerializable();try{var rows=await Capture(tx,a);var old=Replay(rows,b,rd,api switch{\"PO11\"=>\"FIRM\",\"PO12\"=>\"IGNORE\",\"PO13\"=>\"PREVIEW\",_=>\"START_CONVERSION\"},a.PrincipalId);if(old is not null){Parse(api==\"PO13\"?\"ConversionPreview\":\"CommandOutcome\",old);var confirmed=await tx.CommitConfirmed();return new(confirmed?api==\"PO14\"?202:200:503,confirmed?old:CommitUnknown(S(b,\"commandId\")));}var now=p.NowUtc();Authorized(a,p,operation,S(b,\"plannedOrderId\"));var bundle=QualifySource(rows,OneRow(rows,\"PlannedOrder\",r=>Text(r,\"PlannedOrderId\")==S(b,\"plannedOrderId\")),p,now);var plan=api is \"PO11\" or \"PO12\"?DecisionPlan(rows,b,a,p,bundle,now,api==\"PO12\"):api==\"PO13\"?PreviewPlan(rows,b,a,p,bundle,now):StartPlan(rows,b,a,p,bundle,now);var sets=await tx.Execute(plan.Procedure,SqlBindingCp18.Bind(plan.Procedure,SqlBindingCp18.SelectExact(plan.Procedure,plan.Parameters)));Need(sets.Count==1&&sets[0].Count==1,\"SQL_RESULT_SHAPE\");var result=sets[0][0];var body=result.TryGetValue(\"TerminalCanonical\",out var terminal)?terminal:result.TryGetValue(\"OutputCanonical\",out var output)?output:result[\"ResponseCanonical\"];Need(body is string,\"SQL_TERMINAL_COLUMN\");Parse(plan.ResponseRoot,(string)body!);Authorized(a,p,operation,S(b,\"plannedOrderId\"));var commit=await tx.CommitConfirmed();return new(commit?api==\"PO14\"?202:200:503,commit?(string)body!:CommitUnknown(S(b,\"commandId\")));}catch{await tx.Rollback();throw;}}",
+      "after": " public static async Task<HttpResponseCp18> PlanningAction(string api,ReadOnlyMemory<byte> raw,IReadOnlyDictionary<string,string> path,IReadOnlyDictionary<string,string> headers,IHttpTransportCp18 p){Need(new[]{\"PO11\",\"PO12\",\"PO13\",\"PO14\"}.Contains(api),\"VALIDATION_FAILED\");var root=api==\"PO13\"?\"ConversionPreviewCommand\":api==\"PO14\"?\"ConversionStartCommand\":\"PlanCommand\";var b=BoundaryCp18.Parse(root,raw.Span);Need(path[\"plannedOrderId\"]==S(b,\"plannedOrderId\")&&Header(headers,\"Idempotency-Key\")==S(b,\"requestKey\"),\"PATH_HEADER_BODY_MISMATCH\");if(api is \"PO11\" or \"PO12\")Need(S(b,\"schema\")==(api==\"PO11\"?\"plan.po.firm/1.0\":\"plan.po.ignore/1.0\"),\"VALIDATION_FAILED\");var operation=api switch{\"PO11\"=>\"plan-po.firm\",\"PO12\"=>\"plan-po.ignore\",\"PO13\"=>\"plan-po.convert.preview\",_=>\"plan-po.convert.start\"};var a=await p.AuthorizeFresh(operation,S(b,\"plannedOrderId\"));Authorized(a,p,operation,S(b,\"plannedOrderId\"));var rd=Hash(C(b));var tx=await p.BeginSerializable();var commitConfirmed=false;try{var rows=await Capture(tx,a);var old=Replay(rows,b,rd,api switch{\"PO11\"=>\"FIRM\",\"PO12\"=>\"IGNORE\",\"PO13\"=>\"PREVIEW\",_=>\"START_CONVERSION\"},a.PrincipalId);if(old is not null){Parse(api==\"PO13\"?\"ConversionPreview\":\"CommandOutcome\",old);Authorized(a,p,operation,S(b,\"plannedOrderId\"));var confirmed=await tx.CommitConfirmed();commitConfirmed=confirmed;if(commitConfirmed)Authorized(a,p,operation,S(b,\"plannedOrderId\"));return new(confirmed?api==\"PO14\"?202:200:503,confirmed?old:CommitUnknown(S(b,\"commandId\")));}var now=p.NowUtc();Authorized(a,p,operation,S(b,\"plannedOrderId\"));var bundle=QualifySource(rows,OneRow(rows,\"PlannedOrder\",r=>Text(r,\"PlannedOrderId\")==S(b,\"plannedOrderId\")),p,now);var plan=api is \"PO11\" or \"PO12\"?DecisionPlan(rows,b,a,p,bundle,now,api==\"PO12\"):api==\"PO13\"?PreviewPlan(rows,b,a,p,bundle,now):StartPlan(rows,b,a,p,bundle,now);var sets=await tx.Execute(plan.Procedure,SqlBindingCp18.Bind(plan.Procedure,SqlBindingCp18.SelectExact(plan.Procedure,plan.Parameters)));Need(sets.Count==1&&sets[0].Count==1,\"SQL_RESULT_SHAPE\");var result=sets[0][0];var body=result.TryGetValue(\"TerminalCanonical\",out var terminal)?terminal:result.TryGetValue(\"OutputCanonical\",out var output)?output:result[\"ResponseCanonical\"];Need(body is string,\"SQL_TERMINAL_COLUMN\");Parse(plan.ResponseRoot,(string)body!);Authorized(a,p,operation,S(b,\"plannedOrderId\"));var commit=await tx.CommitConfirmed();commitConfirmed=commit;if(commitConfirmed)Authorized(a,p,operation,S(b,\"plannedOrderId\"));return new(commit?api==\"PO14\"?202:200:503,commit?(string)body!:CommitUnknown(S(b,\"commandId\")));}catch{if(!commitConfirmed)await tx.Rollback();throw;}}",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "PLAN-IF-010",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+      "source_sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "export async function handlePlanningActionCp18(api:'PO11'|'PO12'|'PO13'|'PO14',raw:Uint8Array,path:Readonly<Record<string,string>>,headers:Readonly<Record<string,string>>,p:TransportCp18):Promise<{status:number;body:string;commit:'CONFIRMED'|'UNKNOWN'}>{\n const root=api==='PO13'?'ConversionPreviewCommand':api==='PO14'?'ConversionStartCommand':'PlanCommand',b=(parseCp18Boundary(root,raw) as J);requireCp18(path.plannedOrderId===b.plannedOrderId&&presentHeader(headers,'Idempotency-Key')===b.requestKey,'PATH_HEADER_BODY_MISMATCH');if(api==='PO11'||api==='PO12')requireCp18(b.schema===(api==='PO11'?'plan.po.firm/1.0':'plan.po.ignore/1.0'),'VALIDATION_FAILED');const operation={PO11:'plan-po.firm',PO12:'plan-po.ignore',PO13:'plan-po.convert.preview',PO14:'plan-po.convert.start'}[api],auth=await p.authorizeFresh(operation,b.plannedOrderId);authenticated(auth,p,operation,b.plannedOrderId,p.nowUtc());const requestDigest=await sha256Cp18(canonicalCp18(b));const tx=await p.beginSerializable();try{const rows=await capture(tx,auth);const old=replay(rows,b,requestDigest,{PO11:'FIRM',PO12:'IGNORE',PO13:'PREVIEW',PO14:'START_CONVERSION'}[api],auth.principalId);if(old!==null){(parseCp18Boundary(api==='PO13'?'ConversionPreview':'CommandOutcome',old) as J);const commit=await tx.commit();return{status:commit==='CONFIRMED'?(api==='PO14'?202:200):503,body:commit==='CONFIRMED'?old:commitUnknown(b),commit};}\n const now=p.nowUtc();authenticated(auth,p,operation,b.plannedOrderId,now);const order=one(rows,'PlannedOrder',r=>r.PlannedOrderId===b.plannedOrderId),bundle=await qualifySource(rows,order,p,now),plan=api==='PO11'||api==='PO12'?await buildDecision(rows,b,auth,p,bundle,now,api==='PO12'):api==='PO13'?await buildPreview(rows,b,auth,p,bundle,now):await buildStart(rows,b,auth,p,bundle,now);const resultsets=await tx.execute(plan.procedure,bindSqlCp18(plan.procedure,exactValues(plan.procedure,plan.parameters)));requireCp18(resultsets.length===1&&resultsets[0].length===1,'SQL_RESULT_SHAPE');const row=resultsets[0][0],body=row.TerminalCanonical??row.OutputCanonical??row.ResponseCanonical;requireCp18(typeof body==='string','SQL_TERMINAL_COLUMN');(parseCp18Boundary(plan.responseRoot,body) as J); // original bytes returned; never toggle replayed or recanonicalize stored outcomes\n authenticated(auth,p,operation,b.plannedOrderId,p.nowUtc());const commit=await tx.commit();return{status:commit==='CONFIRMED'?(api==='PO14'?202:200):503,body:commit==='CONFIRMED'?body:commitUnknown(b),commit};}catch(e){await tx.rollback();throw e;}}",
+      "after": "export async function handlePlanningActionCp18(api:'PO11'|'PO12'|'PO13'|'PO14',raw:Uint8Array,path:Readonly<Record<string,string>>,headers:Readonly<Record<string,string>>,p:TransportCp18):Promise<{status:number;body:string;commit:'CONFIRMED'|'UNKNOWN'}>{\n const root=api==='PO13'?'ConversionPreviewCommand':api==='PO14'?'ConversionStartCommand':'PlanCommand',b=(parseCp18Boundary(root,raw) as J);requireCp18(path.plannedOrderId===b.plannedOrderId&&presentHeader(headers,'Idempotency-Key')===b.requestKey,'PATH_HEADER_BODY_MISMATCH');if(api==='PO11'||api==='PO12')requireCp18(b.schema===(api==='PO11'?'plan.po.firm/1.0':'plan.po.ignore/1.0'),'VALIDATION_FAILED');const operation={PO11:'plan-po.firm',PO12:'plan-po.ignore',PO13:'plan-po.convert.preview',PO14:'plan-po.convert.start'}[api],auth=await p.authorizeFresh(operation,b.plannedOrderId);authenticated(auth,p,operation,b.plannedOrderId,p.nowUtc());const requestDigest=await sha256Cp18(canonicalCp18(b));const tx=await p.beginSerializable();let commitConfirmed=false;try{const rows=await capture(tx,auth);const old=replay(rows,b,requestDigest,{PO11:'FIRM',PO12:'IGNORE',PO13:'PREVIEW',PO14:'START_CONVERSION'}[api],auth.principalId);if(old!==null){(parseCp18Boundary(api==='PO13'?'ConversionPreview':'CommandOutcome',old) as J);authenticated(auth,p,operation,b.plannedOrderId,p.nowUtc());const commit=await tx.commit();commitConfirmed=commit==='CONFIRMED';if(commitConfirmed)authenticated(auth,p,operation,b.plannedOrderId,p.nowUtc());return{status:commit==='CONFIRMED'?(api==='PO14'?202:200):503,body:commit==='CONFIRMED'?old:commitUnknown(b),commit};}\n const now=p.nowUtc();authenticated(auth,p,operation,b.plannedOrderId,now);const order=one(rows,'PlannedOrder',r=>r.PlannedOrderId===b.plannedOrderId),bundle=await qualifySource(rows,order,p,now),plan=api==='PO11'||api==='PO12'?await buildDecision(rows,b,auth,p,bundle,now,api==='PO12'):api==='PO13'?await buildPreview(rows,b,auth,p,bundle,now):await buildStart(rows,b,auth,p,bundle,now);const resultsets=await tx.execute(plan.procedure,bindSqlCp18(plan.procedure,exactValues(plan.procedure,plan.parameters)));requireCp18(resultsets.length===1&&resultsets[0].length===1,'SQL_RESULT_SHAPE');const row=resultsets[0][0],body=row.TerminalCanonical??row.OutputCanonical??row.ResponseCanonical;requireCp18(typeof body==='string','SQL_TERMINAL_COLUMN');(parseCp18Boundary(plan.responseRoot,body) as J); // original bytes returned; never toggle replayed or recanonicalize stored outcomes\n authenticated(auth,p,operation,b.plannedOrderId,p.nowUtc());const commit=await tx.commit();commitConfirmed=commit==='CONFIRMED';if(commitConfirmed)authenticated(auth,p,operation,b.plannedOrderId,p.nowUtc());return{status:commit==='CONFIRMED'?(api==='PO14'?202:200):503,body:commit==='CONFIRMED'?body:commitUnknown(b),commit};}catch(e){if(!commitConfirmed)await tx.rollback();throw e;}}",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "PLAN-IF-011",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+      "source_sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "  IF @NextCommanded=1 EXEC plan_po.EnqueueOwnerCommandCp18 @EnvironmentId,@TenantId,@PlannedOrderId,@ConversionLegId,@NextStepOrdinal,@Owner,@NextOwnerCommandKey,@Now;\n  COMMIT;",
+      "after": "  IF @NextCommanded=1 EXEC plan_po.EnqueueOwnerCommandCp18 @EnvironmentId,@TenantId,@PlannedOrderId,@ConversionLegId,@NextStepOrdinal,@Owner,@NextOwnerCommandKey,@Now;\n  COMMIT;\n  SELECT @LocalTerminalCanonical AS TerminalCanonical,CAST(0 AS bit) AS Replayed;",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    },
+    {
+      "finding": "OPS-IF-029",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+      "source_sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+      "encoding": "UTF-8; preserve original BOM and newline bytes",
+      "expected_occurrences": 1,
+      "before": "\"Schema\": \"CLOSED-WIRE-SCHEMA_R8.json#/$defs/FinalGateProblem\"",
+      "after": "\"Schema\": \"CLOSED-WIRE-SCHEMA_R10.json#/$defs/FinalGateProblem\"",
+      "mode": "LITERAL_REPLACE_DATA_ONLY",
+      "applied_to_original": false
+    }
+  ]
+}

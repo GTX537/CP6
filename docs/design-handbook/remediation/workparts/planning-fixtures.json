@@ -1,0 +1,760 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "findings": [
+    {
+      "issue_id": "DR-OPS-IF-006",
+      "source_finding_ids": [
+        "OPS-IF-006"
+      ],
+      "batch": "W4",
+      "classification": "SUPERSEDED",
+      "targets": [
+        "MES-WO-01"
+      ],
+      "source_version": "MES-WO-01 v1.1 DRAFT; exact computed v2 Owner successor SC06 CP18 / CP19 R05; successor CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "旧WO markdown重复a/b/c摘要按原1011/2364声明保持历史占位示例；新说明gate采用REL AUTH-PROD-001 v2。可复现完整规范后继采用SHA固定SC06/CP19 v2 Owner预映像，不冒充旧占位摘要可计算，不臆造审批事件。",
+      "preserved_constraints": [
+        "原件字节及旧sealed身份不可变",
+        "Scope/Owner wire边界不变",
+        "历史F025/I1仍为历史输入，不改变其算法或输出集合",
+        "实际采用UNPROVEN；业务/DB/Actions不执行"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "MES-WO SourceDescriptor/EngineeringCheck/ManufacturingCandidate gate consumers",
+          "PLAN-PO SC06/CP19 native Owner wire captures"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 1128,
+          "selected_range_sha256": "cec0f37b395033957704dee1b59825e70f08f5f88145bef62bdc0b66a3780da3"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 1218,
+          "selected_range_sha256": "cec0f37b395033957704dee1b59825e70f08f5f88145bef62bdc0b66a3780da3"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 1548,
+          "selected_range_sha256": "0d75053f61b1620bdd38656ad8651bae9c7bf7022dfe918b570d0738edd329f9"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/planning-fixtures/README.md",
+        "remediation/assets/planning-fixtures/patches.json",
+        "remediation/assets/planning-fixtures/planning-closure-manifest.json",
+        "remediation/assets/planning-fixtures/validation.json",
+        "remediation/assets/planning-fixtures/generation-recipe.json",
+        "tools/build_planning_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-OPS-IF-006-P",
+          "scenario": "生成精确设计数据，核对本条原文、身份、字面量、闭包和摘要",
+          "expected": "SC06 SourceDescriptor、EngineeringCheck、candidate PURPOSE-BASIS均version2；其真实预映像摘要复现。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-OPS-IF-006-N",
+          "scenario": "静态反例：旧字段/字面量/区间/摘要至少一项与本条精确条件不匹配",
+          "expected": "Static mismatch detected; this result asserts no service execution or zero-write runtime behavior.",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-OPS-IF-006-RP",
+          "scenario": "真实消费者执行本条正向与恢复契约",
+          "expected": "SC06 SourceDescriptor、EngineeringCheck、candidate PURPOSE-BASIS均version2；其真实预映像摘要复现。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "AC-OPS-IF-006-RN",
+          "scenario": "真实消费者执行本条负向与并发契约",
+          "expected": "v1 gate混入v2输入或将历史占位hash声称真实摘要时拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-007",
+      "source_finding_ids": [
+        "OPS-IF-007"
+      ],
+      "batch": "W4",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "MES-WO-01"
+      ],
+      "source_version": "MES-WO-01 v1.1 DRAFT; exact computed v2 Owner successor SC06 CP18 / CP19 R05; successor CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "新R1 WO示例 UNSTARTED60 obligation scope修为[40,100)，root100和已实际40保持；FinalizeCancel必须闭合所请求完整scope，不能自动把60缩成50；本段属于新说明数据，原作者占位hash非真实证明。",
+      "preserved_constraints": [
+        "原件字节及旧sealed身份不可变",
+        "Scope/Owner wire边界不变",
+        "历史F025/I1仍为历史输入，不改变其算法或输出集合",
+        "实际采用UNPROVEN；业务/DB/Actions不执行"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "MES-WO UNSTARTED obligation scope consumer",
+          "MES-WO FinalizeCancel full-scope closure"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 2281,
+          "selected_range_sha256": "3fb372e32e46f4e05ddea3d20d2245e2b06274aba91853f69d989b50976fd30a"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 2298,
+          "selected_range_sha256": "e73608c054033895406f00b0792eb40e24f725c11455da3c63a530c0fd619bec"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 616,
+          "selected_range_sha256": "6e2179ee16748cf3de68fdd3e91ddd3edf1171d6ea2cda5d45bbcb813325f020"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/planning-fixtures/README.md",
+        "remediation/assets/planning-fixtures/patches.json",
+        "remediation/assets/planning-fixtures/planning-closure-manifest.json",
+        "remediation/assets/planning-fixtures/validation.json",
+        "remediation/assets/planning-fixtures/generation-recipe.json",
+        "tools/build_planning_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-OPS-IF-007-P",
+          "scenario": "生成精确设计数据，核对本条原文、身份、字面量、闭包和摘要",
+          "expected": "数量60对应区间长度60，actual40仍由原root事实保留。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-OPS-IF-007-N",
+          "scenario": "静态反例：旧字段/字面量/区间/摘要至少一项与本条精确条件不匹配",
+          "expected": "Static mismatch detected; this result asserts no service execution or zero-write runtime behavior.",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-OPS-IF-007-RP",
+          "scenario": "真实消费者执行本条正向与恢复契约",
+          "expected": "数量60对应区间长度60，actual40仍由原root事实保留。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "AC-OPS-IF-007-RN",
+          "scenario": "真实消费者执行本条负向与并发契约",
+          "expected": "[0,100)冒充UNSTARTED60或把已执行40当无效果取消必须拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-008",
+      "source_finding_ids": [
+        "OPS-IF-008"
+      ],
+      "batch": "W4",
+      "classification": "DOCUMENT_STALE",
+      "targets": [
+        "MES-WO-01"
+      ],
+      "source_version": "MES-WO-01 v1.1 DRAFT; exact computed v2 Owner successor SC06 CP18 / CP19 R05; successor CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "新R1示例冲突字面量采用既有正式409 SUCCESSOR_SCOPE_HELD；SUCCESSOR_SCOPE_ALREADY_HELD仅作为旧说明保留，不新增wire alias。",
+      "preserved_constraints": [
+        "原件字节及旧sealed身份不可变",
+        "Scope/Owner wire边界不变",
+        "历史F025/I1仍为历史输入，不改变其算法或输出集合",
+        "实际采用UNPROVEN；业务/DB/Actions不执行"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "MES-WO successor resource protection",
+          "409 successor-scope error consumers"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 950,
+          "selected_range_sha256": "e3e9aa2093dfbb4eddc4a98e35d7d3ab6a5164330f66241f3e922ac317bfadad"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 3107,
+          "selected_range_sha256": "be6bb1a2c96036f65e6a54aee1ae3e966a37525b1d3012d259d0e0bffdd65a3b"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/planning-fixtures/README.md",
+        "remediation/assets/planning-fixtures/patches.json",
+        "remediation/assets/planning-fixtures/planning-closure-manifest.json",
+        "remediation/assets/planning-fixtures/validation.json",
+        "remediation/assets/planning-fixtures/generation-recipe.json",
+        "tools/build_planning_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-OPS-IF-008-P",
+          "scenario": "生成精确设计数据，核对本条原文、身份、字面量、闭包和摘要",
+          "expected": "范围已占用使用既有SUCCESSOR_SCOPE_HELD且零新增占用。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-OPS-IF-008-N",
+          "scenario": "静态反例：旧字段/字面量/区间/摘要至少一项与本条精确条件不匹配",
+          "expected": "Static mismatch detected; this result asserts no service execution or zero-write runtime behavior.",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-OPS-IF-008-RP",
+          "scenario": "真实消费者执行本条正向与恢复契约",
+          "expected": "范围已占用使用既有SUCCESSOR_SCOPE_HELD且零新增占用。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "AC-OPS-IF-008-RN",
+          "scenario": "真实消费者执行本条负向与并发契约",
+          "expected": "发送旧ALREADY_HELD字面量、错误地释放TRANSFERRED_NO_EXECUTION区间或形成free pool gap必须拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-PLAN-IF-007",
+      "source_finding_ids": [
+        "PLAN-IF-007"
+      ],
+      "batch": "W4",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "source_version": "PLAN-EXC-01 v1.11 CP12; CP03/CP04 native registry/private worlds; exact per-body schema/version unchanged except explicit R1 native version successors; successor CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Receipt20 原生 F014/F016 的 ACTUAL_AVAILABLE=18:10:02 为唯一时间；为 PREPARED/PUBLISHED 生成新 sealed Graph/Assessment/Impact、新原生投影版本、查询捕获/来源页、CaseRevision/Head；所有事实 Ref 和摘要依赖闭包重算，不重写旧 sealed 身份。",
+      "preserved_constraints": [
+        "原件字节及旧sealed身份不可变",
+        "Scope/Owner wire边界不变",
+        "历史F025/I1仍为历史输入，不改变其算法或输出集合",
+        "实际采用UNPROVEN；业务/DB/Actions不执行"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "PLAN-SUP SupplyProjection/SourceCapture producers",
+          "PLAN-MRP algorithm/input/run/attempt lineage",
+          "PLAN-EXC source-page, private Graph/Assessment/Impact, CaseRevision/Head and masked public views"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 44128,
+          "end_line": 44152,
+          "json_pointer": "/documentsBySemanticId/F014/body/availableNode",
+          "selected_range_sha256": "eb8e37f6b802b79b82fe9deb8a167ac0258a25a72b432e0847bdb354ea36467a"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 43436,
+          "end_line": 43460,
+          "json_pointer": "/documentsBySemanticId/F016/body/actualNode",
+          "selected_range_sha256": "79dae60ccd504d16c2c77db209d1ff381dd96e1256143bd599d477d89b90649b"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 348068,
+          "end_line": 348092,
+          "json_pointer": "/documentsBySemanticId/SUPPLY_PROJECTION_PREPARED_1/body/availableNode",
+          "selected_range_sha256": "952111a6067ed9259a7961dabfa0a1bc7971c248a659affa72e0a83603c5beb6"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 364060,
+          "end_line": 364084,
+          "json_pointer": "/documentsBySemanticId/SUPPLY_PROJECTION_PUBLISHED_1/body/availableNode",
+          "selected_range_sha256": "952111a6067ed9259a7961dabfa0a1bc7971c248a659affa72e0a83603c5beb6"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 11126,
+          "end_line": 11150,
+          "json_pointer": "/objects/graph~1PREPARED/body/supplies/1/availableNode",
+          "selected_range_sha256": "f5baab37d0c396d3b71043c2ca5998a4d4158429112e4d0ae8b610d58938e311"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 16739,
+          "end_line": 16763,
+          "json_pointer": "/objects/graph~1PUBLISHED/body/supplies/1/availableNode",
+          "selected_range_sha256": "f5baab37d0c396d3b71043c2ca5998a4d4158429112e4d0ae8b610d58938e311"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/planning-fixtures/README.md",
+        "remediation/assets/planning-fixtures/patches.json",
+        "remediation/assets/planning-fixtures/planning-closure-manifest.json",
+        "remediation/assets/planning-fixtures/validation.json",
+        "remediation/assets/planning-fixtures/generation-recipe.json",
+        "tools/build_planning_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-PLAN-IF-007-P",
+          "scenario": "生成精确设计数据，核对本条原文、身份、字面量、闭包和摘要",
+          "expected": "新图、投影与真实原始 F014/F016 时间相等，完整闭包解析及摘要通过。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-007-N",
+          "scenario": "静态反例：旧字段/字面量/区间/摘要至少一项与本条精确条件不匹配",
+          "expected": "Static mismatch detected; this result asserts no service execution or zero-write runtime behavior.",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-007-RP",
+          "scenario": "真实消费者执行本条正向与恢复契约",
+          "expected": "新图、投影与真实原始 F014/F016 时间相等，完整闭包解析及摘要通过。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "AC-PLAN-IF-007-RN",
+          "scenario": "真实消费者执行本条负向与并发契约",
+          "expected": "旧18:00投影、旧原生版本/旧图摘要或旧Case绑定进入新DEMO时拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-PLAN-IF-008",
+      "source_finding_ids": [
+        "PLAN-IF-008"
+      ],
+      "batch": "W4",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "source_version": "PLAN-EXC-01 v1.11 CP12; CP03/CP04 native registry/private worlds; exact per-body schema/version unchanged except explicit R1 native version successors; successor CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "MATERIAL_OLD/NEW 新 sealed graph 的 algorithmRef 精确引用 MAT_ALGORITHM_V2 2.0-proposed，与已存在 MAT_INPUT/RUN/ATTEMPT 相等；历史 F025/I1 保留，八类支持输出不改为每次必须八行。完整预映像重算并生成新 Case 引用。",
+      "preserved_constraints": [
+        "原件字节及旧sealed身份不可变",
+        "Scope/Owner wire边界不变",
+        "历史F025/I1仍为历史输入，不改变其算法或输出集合",
+        "实际采用UNPROVEN；业务/DB/Actions不执行"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "PLAN-SUP SupplyProjection/SourceCapture producers",
+          "PLAN-MRP algorithm/input/run/attempt lineage",
+          "PLAN-EXC source-page, private Graph/Assessment/Impact, CaseRevision/Head and masked public views"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 22239,
+          "end_line": 22253,
+          "json_pointer": "/objects/graph~1MATERIAL_OLD/body/mrpLineage/algorithmRef",
+          "selected_range_sha256": "96b8ace0d507049b7b41cd10d1a3e9f1f1984a948122a0bd62d1e8134bd1dddd"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 32801,
+          "end_line": 32815,
+          "json_pointer": "/objects/graph~1MATERIAL_NEW/body/mrpLineage/algorithmRef",
+          "selected_range_sha256": "96b8ace0d507049b7b41cd10d1a3e9f1f1984a948122a0bd62d1e8134bd1dddd"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 29476,
+          "end_line": 29476,
+          "json_pointer": "/documentsBySemanticId/F025/body/algorithmVersion",
+          "selected_range_sha256": "f3ac4a18b225c1d04d8640867e4005808e57523983110a5382f4f27916314d44"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 217707,
+          "end_line": 217721,
+          "json_pointer": "/documentsBySemanticId/MAT_INPUT/body/algorithmRef",
+          "selected_range_sha256": "938fb9ed0f68540b134c886c6aa26325097f6576594477e185c8c3ec489eecfe"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 218246,
+          "end_line": 218260,
+          "json_pointer": "/documentsBySemanticId/MAT_RUN/body/algorithmRef",
+          "selected_range_sha256": "938fb9ed0f68540b134c886c6aa26325097f6576594477e185c8c3ec489eecfe"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 218756,
+          "end_line": 218770,
+          "json_pointer": "/documentsBySemanticId/MAT_ATTEMPT/body/algorithmRef",
+          "selected_range_sha256": "938fb9ed0f68540b134c886c6aa26325097f6576594477e185c8c3ec489eecfe"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 164914,
+          "end_line": 164914,
+          "json_pointer": "/documentsBySemanticId/MAT_ALGORITHM_V2/body/algorithmVersion",
+          "selected_range_sha256": "c64f9bb3e3e732be13de2961d6584caad4ccddce651f73bbdb9ddf83f0462fa6"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/172ccf551439b8dc__CP04_MATERIAL_METHOD_AND_ALGORITHM_SPEC.json",
+          "sha256": "172ccf551439b8dccf13912689c13b5bb1ed31d9eea75fcc4b2ca666ea4f7139",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 6,
+          "end_line": 6,
+          "json_pointer": "/algorithmDesign/algorithmVersion",
+          "selected_range_sha256": "8313f6845600037299d5e360a511179108252ae11878ed29ae548c5d2b69faf2"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "sha256": "77b33224eaeb51c0b4cd1fc5b8ccb601fb33eec69ce9f421393f1206ce199b7d",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 259,
+          "end_line": 259,
+          "selected_range_sha256": "98d4216214d94255ec30c79b1796717958a943f504093aad9bebff49bf02bb45"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/planning-fixtures/README.md",
+        "remediation/assets/planning-fixtures/patches.json",
+        "remediation/assets/planning-fixtures/planning-closure-manifest.json",
+        "remediation/assets/planning-fixtures/validation.json",
+        "remediation/assets/planning-fixtures/generation-recipe.json",
+        "tools/build_planning_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-PLAN-IF-008-P",
+          "scenario": "生成精确设计数据，核对本条原文、身份、字面量、闭包和摘要",
+          "expected": "四个物料算法Ref完全相同；原F025/I1历史事实原样可解析。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-008-N",
+          "scenario": "静态反例：旧字段/字面量/区间/摘要至少一项与本条精确条件不匹配",
+          "expected": "Static mismatch detected; this result asserts no service execution or zero-write runtime behavior.",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-008-RP",
+          "scenario": "真实消费者执行本条正向与恢复契约",
+          "expected": "四个物料算法Ref完全相同；原F025/I1历史事实原样可解析。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "AC-PLAN-IF-008-RN",
+          "scenario": "真实消费者执行本条负向与并发契约",
+          "expected": "将F025 1.0替代新图algorithmRef或缺失任一依赖事实必须拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-PLAN-IF-014",
+      "source_finding_ids": [
+        "PLAN-IF-014"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "source_version": "PLAN-PO R3 CP18 SC06_100_NORMAL_DATA, retained in CP22 members; successor CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "SC06 revision4 以原OwnerReceipt62的 request/result/rawresponse 为唯一证据；修正两份BodyJson及四份revision/head摘要，得到既有PayloadDigest c35ad4…；ExactTuple仍按原UTF-16LE字节哈希。",
+      "preserved_constraints": [
+        "原件字节及旧sealed身份不可变",
+        "Scope/Owner wire边界不变",
+        "历史F025/I1仍为历史输入，不改变其算法或输出集合",
+        "实际采用UNPROVEN；业务/DB/Actions不执行"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "PLAN-PO OwnerReceipt reader",
+          "PLAN-PO PlannedOrderRevision4/PlannedOrderHead pre/post snapshot readers"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+          "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "json_pointer": "/completePreRows/62/row",
+          "selected_range_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+          "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "json_pointer": "/completePreRows/65/row",
+          "selected_range_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+          "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "json_pointer": "/completePreRows/66/row",
+          "selected_range_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/planning-fixtures/README.md",
+        "remediation/assets/planning-fixtures/patches.json",
+        "remediation/assets/planning-fixtures/planning-closure-manifest.json",
+        "remediation/assets/planning-fixtures/validation.json",
+        "remediation/assets/planning-fixtures/generation-recipe.json",
+        "tools/build_planning_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-PLAN-IF-014-P",
+          "scenario": "生成精确设计数据，核对本条原文、身份、字面量、闭包和摘要",
+          "expected": "pre/post revision4、head与receipt request/result/snapshot完全一致。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-014-N",
+          "scenario": "静态反例：旧字段/字面量/区间/摘要至少一项与本条精确条件不匹配",
+          "expected": "Static mismatch detected; this result asserts no service execution or zero-write runtime behavior.",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-014-RP",
+          "scenario": "真实消费者执行本条正向与恢复契约",
+          "expected": "pre/post revision4、head与receipt request/result/snapshot完全一致。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "AC-PLAN-IF-014-RN",
+          "scenario": "真实消费者执行本条负向与并发契约",
+          "expected": "保留旧ownerResultDigest、替换snapshot或以JCS替代UTF-16LE ExactTuple时拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-PLAN-IF-015",
+      "source_finding_ids": [
+        "PLAN-IF-015"
+      ],
+      "batch": "W4",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "source_version": "PLAN-PO CP19 R05 WO_CONTINUOUS_NORMAL_DATA, retained in CP22 members; successor CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "CP19 step1执行键取已冻结请求及step0前驱 CP18-MAKE-579b4a48-c253-5aa9-834d-1847c3733973；完整native结果摘要07c674…；23处键和44处摘要跨后续pre/post、claim、OwnerCommand/Observation/WorkflowStep/RecoveryCheckpoint捕获全量级联。",
+      "preserved_constraints": [
+        "原件字节及旧sealed身份不可变",
+        "Scope/Owner wire边界不变",
+        "历史F025/I1仍为历史输入，不改变其算法或输出集合",
+        "实际采用UNPROVEN；业务/DB/Actions不执行"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "PLAN-PO native step1 resume",
+          "OwnerObservation/OwnerWorkflowStep/OwnerCommand terminal persistence",
+          "RecoveryCheckpoint and later pre/post/claim snapshot readers"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 20081,
+          "end_line": 20081,
+          "json_pointer": "/steps/1/nativeCurrentResult/request/executionKey/executionRequestKey",
+          "selected_range_sha256": "66dadcce39e1c1f81c986bf74e2c2260bc093e5f11b664f221cb705b4edee5b1"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 20131,
+          "end_line": 20131,
+          "json_pointer": "/steps/1/nativeCurrentResult/result/result/executionKey/executionRequestKey",
+          "selected_range_sha256": "991f7433815caa47fef2b217aa92028a9c10ef2f9071bc60c82043b2e4b02362"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 34358,
+          "end_line": 34358,
+          "json_pointer": "/steps/1/actual62ParameterValues/@ResultCanonical",
+          "selected_range_sha256": "601f003b56e51291d88da6c90165af8b6471055f83de7b40d6665add0a55bd01"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 6377,
+          "end_line": 6377,
+          "json_pointer": "/steps/0/nativeCurrentResult/result/items/0/executionKey/executionRequestKey",
+          "selected_range_sha256": "34cc6244960a175e1545e92eec4c6c7d82f057f73f6aad9db985fef59ca4d7b8"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+          "sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+          "reading": "Read exact original selected clauses plus full JSON roots and transitive hash preimages; source scripts treated only as text.",
+          "line": 114,
+          "end_line": 120,
+          "selected_range_sha256": "bce26f56252ba6dfc92522424d41278a27f036036986f3f07231a95649ac7bdf"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/planning-fixtures/README.md",
+        "remediation/assets/planning-fixtures/patches.json",
+        "remediation/assets/planning-fixtures/planning-closure-manifest.json",
+        "remediation/assets/planning-fixtures/validation.json",
+        "remediation/assets/planning-fixtures/generation-recipe.json",
+        "tools/build_planning_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-PLAN-IF-015-P",
+          "scenario": "生成精确设计数据，核对本条原文、身份、字面量、闭包和摘要",
+          "expected": "全部native结果/终态/恢复捕获原文与摘要一致，未受影响的request/local CommandOutcome保持原值。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-015-N",
+          "scenario": "静态反例：旧字段/字面量/区间/摘要至少一项与本条精确条件不匹配",
+          "expected": "Static mismatch detected; this result asserts no service execution or zero-write runtime behavior.",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-PLAN-IF-015-RP",
+          "scenario": "真实消费者执行本条正向与恢复契约",
+          "expected": "全部native结果/终态/恢复捕获原文与摘要一致，未受影响的request/local CommandOutcome保持原值。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "AC-PLAN-IF-015-RN",
+          "scenario": "真实消费者执行本条负向与并发契约",
+          "expected": "旧MAKE-CONVERT键、旧eb120a…摘要或遗漏晚期rootFirstClaim捕获时拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    }
+  ]
+}

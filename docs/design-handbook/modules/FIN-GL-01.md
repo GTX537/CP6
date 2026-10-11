@@ -1,5 +1,30 @@
 # FIN-GL-01 会计事件与凭证过账
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-001 | DESIGN_GAP：完整Credit五维scope与GL五维scope经双向唯一不可变registry映射；PRODUCTION→REAL、SIMULATION→DEMO；六字段Ref原bytes及type/purpose经binding保存，五字段GL Ref引用新binding。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-012 | ADOPTION_PENDING：全部pre-source/Cost controls→FM/BP→cost heads真实sameUow；GL source完整原envelope；GL CompletionCurrent S到成本Apply，reverse writer X。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-020 | ADOPTION_PENDING：新GL consumer扩展仅精确close adjustment授权：effect/date/period真status/fence/target/policy/approval/SOD/bankbudget和gl.close-adjustment.post；不将已关period OPEN。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-021 | INTENTIONAL_DIFFERENCE：仅预登记FX次期计划镜像：原period immutable post+精确次期mirror、current original REVERSED、Owner applied、mirror current有效；period fulfillment、forward current、lifecycle三轴分离。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-022 | ADOPTION_PENDING：report读完整ledger immutable forward/reverse effectiveDate+cut与opening覆盖，GL-only/manual/source-null也包含；FX取as-of历史敞口+owner全集+rates+signed credits。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-023 | ADOPTION_PENDING：保留七封闭source union（MATCH_FORWARD/CORRECTION、RETURN、PAYMENT、ALLOCATION、REVERSAL、REFUND），EffectTarget精确绑定；funds evidence为读，RECORD事实与未来GL目标分离。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-025 | ADOPTION_PENDING：batch reservation跨独立GL到全AP余额OwnerApply，GL成功本地失败保留bridge+reservation；A28只反allocation component，A29 paymentGL独立，cash refund独立。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-026 | INTENTIONAL_DIFFERENCE：AR总体UNRESOLVED下policy-ready INVOICE可独立完成；INV独占COGS source，AR只是观察协调；不套AP整manifest完成门。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-027 | INTENTIONAL_DIFFERENCE：全历史role mapping+GL-only/manual source-null入账，原reversed仍留历史；strict切口需要同native snapshot，CUT_VECTOR_ONLY必须明确诊断选择。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-028 | ADOPTION_PENDING：真实funds/GL Posted不替代业务OA；独立receipt确认新baseline+claims+receipt same finalUow；未Apply compensation不恢复余额，已Apply allocation走inverse。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-031 | INTENTIONAL_DIFFERENCE：货币component qty=abs(amount)、unitprice1需已支持currencyunit basis；UOP实际qty+未舍入rate+residual最终舍入amount；allocation按posting incidence purpose分侧。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-032 | ADOPTION_PENDING：全冲突组G原claim恢复无FREE间隙，所有maker SOD及AND capabilities；原GL current不变，不生成mirror更正；step receipt重放从apply继续。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-033 | INTENTIONAL_DIFFERENCE：区分current完整链与历史period fulfilled；REUSE_CURRENT/REUSE_CORRECTED/BLOCKED/CREATE_EXCLUSIVE；缺mirror阻断不重造，借用普通run不属处置。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-034 | ADOPTION_PENDING：policy显式NA/required；同budget共享gate持到GL commit，normal/automatic/inverse/policy变更全writer；read预检不是permit。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前正文、强制接受/独审及必要规范语义已整理，14个JSON族全部业务字段已补读。案例、文档等价核对和实际运行证据分列：79AC仍NOT_RUN，G01–G12仍UNPROVEN。
 
 ## 1. 业务目的、操作者与权威边界

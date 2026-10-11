@@ -1,5 +1,22 @@
 # MES-EXEC-01 工序执行与报工
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-009 | ADOPTION_PENDING：保留PENDING_BASIS_SUCCESSION与NEW_CONSUMPTION分purpose；same EXEC-BASIS-DOMAIN保护未满足义务无gap转移，旧 CLOSED_SUPERSEDED_BEFORE_EFFECT保留历史。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-010 | ADOPTION_PENDING：E真实IdentityDomain/measurement budget在Basis/work前；Stock Canonical→Scope→E→Output grant→Stock fine→IN local，E B writer不得反向取Stock/WO。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-011 | ADOPTION_PENDING：缩量先在同allowance/source gate关闭所有可能Stock执行/aliases含空集合，禁新SP01/SP02，已POSTED/SEALED消费保留；version+1只更新净allowance。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-012 | ADOPTION_PENDING：全部pre-source/Cost controls→FM/BP→cost heads真实sameUow；GL source完整原envelope；GL CompletionCurrent S到成本Apply，reverse writer X。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-035 | ADOPTION_PENDING：SCHED完整Root组、换机六阶段及参与者已设计；WO改期原白名单不扩大。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-036 | ADOPTION_PENDING：PERF必须来自原Owner槽、局部Pause和真实分窗量，不能从聚合猜分母。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前主文28859行全部规则及356个JSON完整基例/全部递归差异已读，227份Evidence body摘要相符、356表示无损还原0差。强制MAT增补1894行及全部5项当前组合/接受/评审已读；94项业务AC、实际Owner采用与现场运行仍未验证。
 
 ## 1. 业务目的、操作者、触发和Owner边界

@@ -1,5 +1,19 @@
 # CRM-LEAD-01 线索管理与资格确认
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-ACC-PHYSICAL-WIRE | DESIGN_GAP：New ACC v2 A01-A13 and ACC-MAPPING-DECISION/1; independent C03/seven-field preserved; complete scope/owner selection/account binding/current qualification required. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-LEAD-AC-ATOMIC-SUPERSESSION | SUPERSEDED：CP22保R3原60AC身份，AC042/048–052改同事务H02+Manifest；AC035 hiddenCount不是当前closed字段，旧Saga/202/部分成功预期不再作当前验收。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+| COM-LEAD-GENERATED-CS-NULLABLE | ARTIFACT_CONFLICT：OwnerId只改单层string?，保原UUID/unassigned/null Schema；独立编译通过。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`required_materials_consolidated`。当前CP22五SPEC、60AC、125 schema、H01 38定义、16 API、47表审计图、27表/67FK、治理与26角色采用、正常流程及必要字节关系已完成语义整理。重复合成值、历史源码和作者检查按第12节明确分类；所有业务验收与实际运行采用仍为 NOT_RUN/UNPROVEN。
 
 ## 1. 业务目的、操作者和边界

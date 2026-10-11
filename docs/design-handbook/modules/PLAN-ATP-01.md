@@ -1,5 +1,19 @@
 # PLAN-ATP-01 可供量与建议交期开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| PLAN-IF-002 | ADOPTION_PENDING：POL/SUP功能接受不替ATP R11准确端口；schema pin/Scope/完整来源/全部writer最终门分别登记。 | [设计](../remediation/05-planning-material-mapping.md) |
+| PLAN-IF-004 | ARTIFACT_CONFLICT：ATP单位保持完整ASCII StableId1..128；R1显式修Schema/TS/.NET末尾LF锚点歧义，五DDL列128/check；独立编译同时修准确字节Parse重载。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+| PLAN-IF-005 | ARTIFACT_CONFLICT：终结入口改成同组织evaluation关联ReplayRecord按完整自然键序锁定后Evaluation；缺replay拒绝；保留授权ticket与后续CAS、原stage/helper序。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：R11当前规范与全部案例已整理，40包成员逐件分层处置；参考程序实现审计另列。业务验收NOT_RUN，真实Owner采用UNPROVEN。
 
 ## 1. 目的与职责

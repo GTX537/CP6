@@ -1,0 +1,270 @@
+{
+  "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0",
+  "scope": "Primary passages only; not a full original package or current code audit.",
+  "sources": [
+    {
+      "id": "ACC-OPS",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ab/ab181510eef18279__OPS-ACCOUNT.md",
+      "sha256": "ab181510eef182790812b8fb3aebe803c4e8c52a0d69fdde061b5b410d624c5d",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1,
+          "end_line": 80
+        }
+      ]
+    },
+    {
+      "id": "ACC-RECOVERY",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/bed32d5ca99a24a2__RECEIPT-MAPPING.md",
+      "sha256": "bed32d5ca99a24a2253e31e0aaf2b0ffc5791cc345da7654dac765be1aecbee7",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1,
+          "end_line": 60
+        }
+      ]
+    },
+    {
+      "id": "ACC-UA",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3e4af65be952562__ACCEPTANCE.md",
+      "sha256": "a3e4af65be952562f16761a70b2c24349a3d79069f10103439cb6b9991d0f4f7",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1,
+          "end_line": 40
+        }
+      ]
+    },
+    {
+      "id": "ACC-CARDS",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bd97dd191196cc6a__CONTRACT-CARDS.md",
+      "sha256": "bd97dd191196cc6aa46f78ca0c0776239a242279287a2a33e43b9138c1e7a7e5",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1,
+          "end_line": 96
+        }
+      ]
+    },
+    {
+      "id": "ACC-PAGES",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/80/8029ab7aa847c9d1__PAGES-DELTA.md",
+      "sha256": "8029ab7aa847c9d1f6d854bafad457a6f120872b69e18d6c4b706a6357eb5c47",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1,
+          "end_line": 52
+        }
+      ]
+    },
+    {
+      "id": "ACC-RULES",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5f63cf5d7f27627__RULES-RECOVERY.md",
+      "sha256": "c5f63cf5d7f27627ccb07ff8f484c3b7ea5a73013b49f2112f9d2a944e098c93",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 95,
+          "end_line": 115
+        }
+      ]
+    },
+    {
+      "id": "ACC-INDEPENDENT",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11aeb11f6a3b717b__CRM-ACC-01_客户关系账户_前后端开发Spec_v1.0_DRAFT.md",
+      "sha256": "11aeb11f6a3b717b05673c19f7a660b5c1122ad58d829b828b7fad138c0609ae",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 180,
+          "end_line": 217
+        },
+        {
+          "line": 583,
+          "end_line": 642
+        },
+        {
+          "line": 918,
+          "end_line": 962
+        }
+      ]
+    },
+    {
+      "id": "BP-R3",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "sha256": "92c20d1ee1dc090fdff5425bba68bf44f67a3f513400bd875c7c1d605d159280",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1008,
+          "end_line": 1040
+        }
+      ]
+    },
+    {
+      "id": "ORD-R2",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+      "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1,
+          "end_line": 23
+        },
+        {
+          "line": 79,
+          "end_line": 101
+        },
+        {
+          "line": 278,
+          "end_line": 310
+        },
+        {
+          "line": 2100,
+          "end_line": 2285
+        }
+      ]
+    },
+    {
+      "id": "ORD-R3",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 101,
+          "end_line": 150
+        },
+        {
+          "line": 152,
+          "end_line": 253
+        },
+        {
+          "line": 255,
+          "end_line": 304
+        },
+        {
+          "line": 305,
+          "end_line": 355
+        },
+        {
+          "line": 357,
+          "end_line": 407
+        },
+        {
+          "line": 428,
+          "end_line": 453
+        },
+        {
+          "line": 460,
+          "end_line": 559
+        },
+        {
+          "line": 562,
+          "end_line": 611
+        },
+        {
+          "line": 631,
+          "end_line": 644
+        },
+        {
+          "line": 664,
+          "end_line": 711
+        }
+      ]
+    },
+    {
+      "id": "ORD-PB01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+      "sha256": "6174494a5420f95a80667513336de69bbcea61c154a97022cbc3bbe0dcdddbba",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 56,
+          "end_line": 73
+        }
+      ]
+    },
+    {
+      "id": "QTN-R2",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 322,
+          "end_line": 322
+        },
+        {
+          "line": 348,
+          "end_line": 374
+        },
+        {
+          "line": 475,
+          "end_line": 550
+        },
+        {
+          "line": 652,
+          "end_line": 664
+        },
+        {
+          "line": 681,
+          "end_line": 725
+        },
+        {
+          "line": 745,
+          "end_line": 782
+        },
+        {
+          "line": 910,
+          "end_line": 927
+        }
+      ]
+    },
+    {
+      "id": "ACC-FIELDS",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/05/05f59b2151c73245__FIELDS-ACTIONS.md",
+      "sha256": "05f59b2151c73245ce9b74631621b3377b905370349dd485f7e3f733bf2fa39b",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 1,
+          "end_line": 42
+        }
+      ]
+    },
+    {
+      "id": "HO",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "sha256": "affc1caf67bbf423989dbdf184ca7308a56fb313c9ffec95959b7379940becca",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 397,
+          "end_line": 412
+        },
+        {
+          "line": 704,
+          "end_line": 722
+        }
+      ]
+    },
+    {
+      "id": "LEAD-CP22",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/23/23151de8bc435698__CRM-LEAD-01_CP22_FULL-FIVE-SPEC-REVIEW-CANDIDATE.md",
+      "sha256": "23151de8bc435698c04dbed3004683db14eee5bad9f77f315b168cabac2c8cb1",
+      "reading_method": "direct selected line reads; original scripts treated only as data",
+      "selected_ranges": [
+        {
+          "line": 238,
+          "end_line": 275
+        }
+      ]
+    }
+  ]
+}

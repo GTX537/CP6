@@ -1,0 +1,215 @@
+{
+  "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0",
+  "cases": [
+    {
+      "id": "W1-ACC-01",
+      "scenario": "A03 response lost; account now inactive, write right removed but RQ retained",
+      "expected": "Original receipt returned safely; one Account, one command, no second quota debit.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ACC-02",
+      "scenario": "Same command key targets another account or actor",
+      "expected": "Conflict or neutral deny under current RQ; no alias bypass.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ACC-03",
+      "scenario": "BP seven-field LINKED revision14 arrives for R03 account",
+      "expected": "History/passive projection only; cannot manufacture scope decision, bound account version or Effective.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ACC-04",
+      "scenario": "M2a/M2b share predecessor M1; owner has not selected",
+      "expected": "WAIT_OWNER_RESOLUTION; valid M1 retained only while current proof and local eligibility valid.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ACC-05",
+      "scenario": "Same scope/epoch/position contains contrary signed decision",
+      "expected": "Scope CONFLICT; no new use until complete owner resolution covers both digests.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ACC-06",
+      "scenario": "A13 races deactivate or identity-relevant update",
+      "expected": "Conditional commit detects local stamp or later change invalidates use; never reactivates account.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ACC-07",
+      "scenario": "Local account current, Main changes mapping after projection",
+      "expected": "New commercial use synchronously checks Main current mapping and BP; cached eligibility is not permit.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ACC-08",
+      "scenario": "H02 source notice arrives without original Manifest or account target",
+      "expected": "WAITING evidence, zero Account/Lead/Contact/Opportunity creation.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ORD-01",
+      "scenario": "QTN Q24 commits; HTTP response lost",
+      "expected": "Q25 returns original OrderDraft/Fact/Allocation; same Intent cannot make another Order.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ORD-02",
+      "scenario": "Confirm QTN-sourced draft",
+      "expected": "Current Fact and Sales/BP/Finance/approval gates checked; no H-to-C call and no second allocation.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ORD-03",
+      "scenario": "QTN allocated draft quantity changes",
+      "expected": "No in-place source quantity edit; original draft permanently cancelled under I11 proof, then explicit new Intent, or changes stay blocked.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ORD-04",
+      "scenario": "Original evidence A/Fact1 corrected to B/Fact3",
+      "expected": "Old command returns A/Fact1 bytes; new Intent uses B/Fact3. Reuse key with B conflicts.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ORD-05",
+      "scenario": "Fact becomes UNPROVEN before delayed impact arrives",
+      "expected": "Synchronous source guard blocks new Sales effect; old orders/Confirm/Allocation retained.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-ORD-06",
+      "scenario": "Two distinct responsibility groups share Opportunity",
+      "expected": "Distinct owner-approved source slots can create two Orders; same slot alias still one. No Opportunity-wide uniqueness.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-01",
+      "scenario": "Target30 revised40 on same lineage",
+      "expected": "Current target40; delta10; not total70. One current Demand.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-02",
+      "scenario": "v1 accepted; v2 rejected; v3 expected accepted v1",
+      "expected": "Accepted only with v2 actual terminal proof; v2 UNKNOWN blocks ordinary v3.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-03",
+      "scenario": "Cancel/control arrives before initial release",
+      "expected": "Source control exists without Demand ID; delayed old release denied by same gate.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-04",
+      "scenario": "Demand100 but coverage60",
+      "expected": "Receive target100; independent coverage60/shortage40; no silent partial acceptance.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-05",
+      "scenario": "A100 shipped30; activate B40+C30; C unknown",
+      "expected": "Prepared B/C excluded; no double-effective70+70. Atomic activation only when all proofs current.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-06",
+      "scenario": "Cancel evaluated at shipped40, actual shipped50 before commit",
+      "expected": "Old plan rejected stale; original60 cancellation not applied.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-07",
+      "scenario": "Planning reason removed but QA hold retained",
+      "expected": "Only owned reason removed; action still blocked by QA.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-08",
+      "scenario": "Source result not found after timeout",
+      "expected": "noEffectProven=false; query/replay original only, no new key or scan-create.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-MIG-01",
+      "scenario": "Legacy order unknown Confirm or source allocation",
+      "expected": "Retain legacy snapshot; no invented Fact/allocation/source evidence; dependent mutation refused.",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-STATIC-01",
+      "scenario": "Parse OpenAPI and inspect local schema references, 13 ACC operations, 140 fields",
+      "expected": "All refs resolve, closed objects, every required member exists, original field IDs unique.",
+      "verification_level": "STATIC_ASSET",
+      "result": "PASS_STATIC_ONLY"
+    },
+    {
+      "id": "W1-DEM-READ-01",
+      "scenario": "Authorized current Demand read then same-version own control",
+      "expected": "Return atomic ETag/controlSetRevision; current final authorization and If-Match required at mutation",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-READ-02",
+      "scenario": "Control changes between read and mutation or read permission revoked",
+      "expected": "412 stale ETag or 403/hidden404; no new business effect",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-RECOVER-01",
+      "scenario": "Lost manual command or activation response, query original key",
+      "expected": "Return exact original receipt/group decision; UNKNOWN does not activate or prove no effect",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-RECOVER-02",
+      "scenario": "Wrong operation/manifest or unauthorized original-target query",
+      "expected": "Reject without disclosure or mutation; do not guess a new command",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-ABORT-01",
+      "scenario": "Abort wins same group transaction before activation",
+      "expected": "Permanent exact group fence; empty activated/retired; unchanged membership; late writers blocked",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "W1-DEM-ABORT-02",
+      "scenario": "Activation wins or abort commit unknown",
+      "expected": "Already committed cannot abort; unknown queries original key and preserves original facts",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    }
+  ]
+}

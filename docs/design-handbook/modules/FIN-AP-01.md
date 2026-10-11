@@ -1,5 +1,21 @@
 # FIN-AP-01 应付、付款与核销
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION | ADOPTION_PENDING：退货实物不VOID原GR，E=100不变；PENDING_RETURN MRX禁新forward但不自动FENCE旧admission；MATCH/RETURN/manual共享OriginalObligation budget，RETURNED_RETIRED不随credit/refund消失。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-022 | ADOPTION_PENDING：report读完整ledger immutable forward/reverse effectiveDate+cut与opening覆盖，GL-only/manual/source-null也包含；FX取as-of历史敞口+owner全集+rates+signed credits。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-023 | ADOPTION_PENDING：保留七封闭source union（MATCH_FORWARD/CORRECTION、RETURN、PAYMENT、ALLOCATION、REVERSAL、REFUND），EffectTarget精确绑定；funds evidence为读，RECORD事实与未来GL目标分离。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-024 | DESIGN_GAP：CorrectionAdmission独立close/query/receipt：先自身FENCED，完整plan所有book/leg及route/alias/inflight闭合；Draft保留并SEALED_UNPOSTED；Posted先恢复OwnerApply，终态保留历史轴。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-025 | ADOPTION_PENDING：batch reservation跨独立GL到全AP余额OwnerApply，GL成功本地失败保留bridge+reservation；A28只反allocation component，A29 paymentGL独立，cash refund独立。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前997行正文、3333行wire、MASTER65全部725节点、当前28份补充材料和H31共享规范已语义整理。49件其他旧源码只核身份；M06旧发布回执仍缺，专用MATCH取消合同保有界保护。87项业务AC与实际资金/Owner接入均未运行。
 
 ## 1. 业务目的、操作者和Owner边界

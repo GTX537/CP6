@@ -1,5 +1,13 @@
 # PLT-MSG-01 · 精确消息合同与传输入口适配
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本轮115项登记问题未要求修改本模块合同，复用原必要材料阅读与范围记录；不宣称重新全文阅读所有原件或运行已通过。
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。静态设计接受不升级为实现或运行接受。
 
 ## 1. 业务目的、操作者和Owner边界

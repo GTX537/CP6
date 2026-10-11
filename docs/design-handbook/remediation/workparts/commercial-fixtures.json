@@ -1,0 +1,1090 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "findings": [
+    {
+      "issue_id": "COM-PR-N01-AUTHORITY-VERSION",
+      "source_finding_ids": [
+        "COM-PR-N01-AUTHORITY-VERSION"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PUR-PR-01",
+        "PUR-PO-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "ClaimPrepareRequest 使用冻结 bundle 的 PR approval revision 2；两处 authorityScope/sourceBusinessVersion 从3改2，独立 acceptedWireExamples revision3不变。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "授权scope或businessVersion与冻结Grant不同，拒绝Prepare且零写。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+          "line": 1923,
+          "end_line": 1943,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+          "line": 2366,
+          "end_line": 2386,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "sha256": "c3cf448a16a4a8fecb562e844c42da2ee0db7dbd5fbe6b094a0e695bad2e17c1",
+          "line": 209,
+          "end_line": 229,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-01-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "ClaimPrepareRequest 使用冻结 bundle 的 PR approval revision 2；两处 authorityScope/sourceBusinessVersion 从3改2，独立 acceptedWireExamples revision3不变。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-01-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-01-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "授权scope或businessVersion与冻结Grant不同，拒绝Prepare且零写。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-PR-N08-PREVIEW-TIMELINE",
+      "source_finding_ids": [
+        "COM-PR-N08-PREVIEW-TIMELINE"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PUR-PR-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "首次成功与同命令重放的 recordedAt 均固定11:28，落在11:20创建/11:30到期之间；三处12:08修为11:28，读取时钟不得覆盖首次事务记录。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "未消费preview到期后首次提交返回410且零写；相同已消费command只返回原成功，异command不得复用。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+          "line": 9462,
+          "end_line": 9482,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+          "line": 9470,
+          "end_line": 9490,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "sha256": "c3cf448a16a4a8fecb562e844c42da2ee0db7dbd5fbe6b094a0e695bad2e17c1",
+          "line": 184,
+          "end_line": 204,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "sha256": "c3cf448a16a4a8fecb562e844c42da2ee0db7dbd5fbe6b094a0e695bad2e17c1",
+          "line": 539,
+          "end_line": 559,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-02-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "首次成功与同命令重放的 recordedAt 均固定11:28，落在11:20创建/11:30到期之间；三处12:08修为11:28，读取时钟不得覆盖首次事务记录。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-02-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-02-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "未消费preview到期后首次提交返回410且零写；相同已消费command只返回原成功，异command不得复用。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-RETURN-CHILD-ALLOWANCE-QUANTITY",
+      "source_finding_ids": [
+        "COM-RETURN-CHILD-ALLOWANCE-QUANTITY"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PUR-RETURN-01",
+        "WMS-STOCK-01",
+        "WMS-OUT-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "G6R07 quantity6、L2R07 quantity2、EP[11] quantity4、EP[25] quantity6；校验298摘要原像，有向依赖闭包重算127摘要，保留171未变化节点及历史附录。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "任一child再次授父总量10，或任何transitive digest仍旧值，当前版夹具不可采用；不得以父范围防护豁免子数量。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 469,
+          "end_line": 489,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 18751,
+          "end_line": 18771,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 25790,
+          "end_line": 25810,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 46960,
+          "end_line": 46980,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 47398,
+          "end_line": 47418,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-03-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "G6R07 quantity6、L2R07 quantity2、EP[11] quantity4、EP[25] quantity6；校验298摘要原像，有向依赖闭包重算127摘要，保留171未变化节点及历史附录。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-03-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-03-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "任一child再次授父总量10，或任何transitive digest仍旧值，当前版夹具不可采用；不得以父范围防护豁免子数量。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-EST-FIXTURE-POLICY-AND-TTL",
+      "source_finding_ids": [
+        "COM-EST-FIXTURE-POLICY-AND-TTL"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "ERP-EST-01",
+        "ERP-QTN-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "R1Q10当前撤销policy改POL2，lastProven仍POL1；8 Lookup和2 Seal依本版本显式DEMO issuedAt见证到期600秒，E71 payload/reference/消费者摘要同步。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "now>=expiresAt首次Apply拒绝且零写；旧POL1不可替代当前POL2；已提交同command重放保原结果，不延长窗口。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+          "line": 464,
+          "end_line": 484,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+          "line": 14620,
+          "end_line": 14640,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+          "line": 14687,
+          "end_line": 14707,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+          "line": 412,
+          "end_line": 432,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+          "line": 2218,
+          "end_line": 2238,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "sha256": "c48a0460236a9a6e596adf138379026f251fc3348098d1a42e646840a5175d2f",
+          "line": 512,
+          "end_line": 532,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-04-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "R1Q10当前撤销policy改POL2，lastProven仍POL1；8 Lookup和2 Seal依本版本显式DEMO issuedAt见证到期600秒，E71 payload/reference/消费者摘要同步。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-04-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-04-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "now>=expiresAt首次Apply拒绝且零写；旧POL1不可替代当前POL2；已提交同command重放保原结果，不延长窗口。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-CREDIT-PROBLEM-CODE-ALIASES",
+      "source_finding_ids": [
+        "COM-CREDIT-PROBLEM-CODE-ALIASES"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "新current-v1九个Problem的issues[].code与顶层code一致，type使用该code的小写短横URN；原HTTP status/业务fence/UI恢复策略不变，旧三元组只留冻结回放。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "新current-v1不接受HEAD_CHANGED内层别名；未知code保留原错误并fail closed，不按消息文本猜业务错误。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+          "line": 10283,
+          "end_line": 10303,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+          "line": 5603,
+          "end_line": 5623,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3f/3fb49d0e2b6cfbdd__ERP-CREDIT-01_FRONTEND-CONTRACT.json",
+          "sha256": "3fb49d0e2b6cfbdd7fed24cfbbad9eb6ede1f5b99b424912eaeac16eda8b4966",
+          "line": 1043,
+          "end_line": 1063,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-05-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "新current-v1九个Problem的issues[].code与顶层code一致，type使用该code的小写短横URN；原HTTP status/业务fence/UI恢复策略不变，旧三元组只留冻结回放。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-05-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-05-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "新current-v1不接受HEAD_CHANGED内层别名；未知code保留原错误并fail closed，不按消息文本猜业务错误。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION",
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "batch": "W5",
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "ERP-CREDIT-01",
+        "FIN-AR-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "派生独立current-v1 C#/TS codec，锁根Problem修订后的TYPE字节SHA；NO_CHANGE可带Ref，FOUND仍需完整真实native/current来源，未证明COMPLETED保持UNKNOWN。冻结R8保原字节。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "错TYPE或native schema pin拒加载；APPLIED无Ref/REJECTED带Ref拒wire；NO_CHANGE或COMPLETED传输成功不能单独建立FOUND或释放占用。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+          "sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+          "line": 90,
+          "end_line": 110,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+          "sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+          "line": 122,
+          "end_line": 142,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+          "sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+          "line": 174,
+          "end_line": 194,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+          "line": 3164,
+          "end_line": 3184,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+          "sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+          "sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-06-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "派生独立current-v1 C#/TS codec，锁根Problem修订后的TYPE字节SHA；NO_CHANGE可带Ref，FOUND仍需完整真实native/current来源，未证明COMPLETED保持UNKNOWN。冻结R8保原字节。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-06-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-06-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "错TYPE或native schema pin拒加载；APPLIED无Ref/REJECTED带Ref拒wire；NO_CHANGE或COMPLETED传输成功不能单独建立FOUND或释放占用。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-CREDIT-CURRENT-BODY-MONEY-FIELD",
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "ERP-CREDIT-01",
+        "WMS-RMA-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "四个public body共18 Money改为closed value/currency；保数字字符串与货币并更新MULTI lookup binding、5正文身份、Store7 canonical摘要和全部列明current消费者。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "amount别名、额外Money字段、任一旧digest/byteLength/handle/receipt摘要组合均不可进入current夹具；缺真实issuer/Store收据仍fenced。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7b/7bc5b79a7dbc21f0__multi_mixed_complete_public_q14.json",
+          "sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+          "line": 1,
+          "end_line": 1,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest.",
+          "json_pointer": "/data/outcome/value/components/0/invoiceAllocations/0/gross"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+          "line": 762,
+          "end_line": 782,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+          "line": 4613,
+          "end_line": 4633,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b324a9b62d888f26__ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+          "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+          "line": 831,
+          "end_line": 851,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_mixed_complete_public_q14.json",
+          "sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_c06_exact_saved_200.json",
+          "sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_complete_current_q14.json",
+          "sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_existing_target_c06_saved_200.json",
+          "sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_public_native_lookup_binding.json",
+          "sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+          "sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+          "sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+          "sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+          "sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+          "sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-07-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "四个public body共18 Money改为closed value/currency；保数字字符串与货币并更新MULTI lookup binding、5正文身份、Store7 canonical摘要和全部列明current消费者。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-07-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-07-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "amount别名、额外Money字段、任一旧digest/byteLength/handle/receipt摘要组合均不可进入current夹具；缺真实issuer/Store收据仍fenced。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING",
+      "source_finding_ids": [
+        "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "闭合JSON+YAML尾块归一为单一OpenAPI JSON根；十块metadata保留，重复第二stage93准确命名stage94；29路由不变，C01/C02 HTTP200指向COMMITTED并返回首次201原字节。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "重复扩展键、多根载体不可用于生成；重放重命名COMMITTED_REPLAY、重新脱敏/重建body或再次业务写均拒绝。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+          "sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+          "line": 1813,
+          "end_line": 1833,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b2afa82fe46698c__ERP-CREDIT-01_API-REGISTRY.json",
+          "sha256": "2b2afa82fe46698c4cf6ffbf930b9b292d4d006a848db79fbfbfa82dcf3ed709",
+          "line": 303,
+          "end_line": 323,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+          "sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+          "line": 2584,
+          "end_line": 2604,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+          "sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+          "line": 1,
+          "reading": "Full bytes read as data; exact bounded text contexts/JSON pointers and source identities in patch; original programs never executed."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/commercial-fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-08-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "闭合JSON+YAML尾块归一为单一OpenAPI JSON根；十块metadata保留，重复第二stage93准确命名stage94；29路由不变，C01/C02 HTTP200指向COMMITTED并返回首次201原字节。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-08-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-08-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "重复扩展键、多根载体不可用于生成；重放重命名COMMITTED_REPLAY、重新脱敏/重建body或再次业务写均拒绝。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING",
+      "source_finding_ids": [
+        "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "CURRENT03 ops72/73/74及CURRENT10对应producer统一NEW_READY；78/79旧root父键取WN14.OLD_END已保护旧plan，同期future43 OUTPUT不得充旧父。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "错阶段current guard或用未来新plan OUTPUT充旧FK，在任何DML前拒绝；保持OLD_END先于NEW_ADMIT，opaque RV取真实OUTPUT。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+          "sha256": "837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768",
+          "line": 105758,
+          "end_line": 105778,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+          "sha256": "7d27c1e1f65d9b6016ff73d96a1fad3ae8ffd253ef27fe6682fbe4674e8fc858",
+          "line": 69296,
+          "end_line": 69316,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/11_COMPLETE_PHASE_CUTS_AND_INTENT_RESULT_RECONCILIATION.json",
+          "sha256": "442598fb45a33cea4235ef0247a86544f0524b474f47f808c285122d318a44f3",
+          "line": 17144,
+          "end_line": 17164,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+          "sha256": "837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768",
+          "line": 116506,
+          "end_line": 116526,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+          "sha256": "837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768",
+          "line": 117993,
+          "end_line": 118013,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-09-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "CURRENT03 ops72/73/74及CURRENT10对应producer统一NEW_READY；78/79旧root父键取WN14.OLD_END已保护旧plan，同期future43 OUTPUT不得充旧父。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-09-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-09-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "错阶段current guard或用未来新plan OUTPUT充旧FK，在任何DML前拒绝；保持OLD_END先于NEW_ADMIT，opaque RV取真实OUTPUT。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA",
+      "source_finding_ids": [
+        "COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "WN11-04两个ledger操作31 target/producer准确绑定partition_projection，并供操作23消费其实际Store receipt；操作28 C06保存响应保持独立。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "projection receipt不能冒充C06 saved reply receipt；31未有真实收据不得执行23，保持零新Finance派发。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "sha256": "8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5",
+          "line": 31908,
+          "end_line": 31928,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "sha256": "8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5",
+          "line": 32150,
+          "end_line": 32170,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "sha256": "8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5",
+          "line": 32167,
+          "end_line": 32187,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-10-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "WN11-04两个ledger操作31 target/producer准确绑定partition_projection，并供操作23消费其实际Store receipt；操作28 C06保存响应保持独立。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-10-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-10-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "projection receipt不能冒充C06 saved reply receipt；31未有真实收据不得执行23，保持零新Finance派发。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING",
+      "source_finding_ids": [
+        "COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "source_version": "CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "两个ledger ops68/70/71业务版本分别按ProtectedBefore+1；68/71 updated_at取同Uow事件时钟，opaque row_version仍provider-only，四CAS原子性不变。",
+      "preserved_constraints": [
+        "原归档字节/历史接受不变",
+        "仅新版本设计数据；不是runtime证明",
+        "真实Owner/权限/Store缺源维持fence"
+      ],
+      "consumer_adoption": {
+        "required": "直接写ProtectedBefore版本、算术溢出、错旧PK/RV或任一CAS冲突均整体回滚；未知原提交仅查询同原intent，不重派Finance。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "sha256": "82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7",
+          "line": 40394,
+          "end_line": 40414,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "sha256": "82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7",
+          "line": 45195,
+          "end_line": 45215,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "sha256": "82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7",
+          "line": 46933,
+          "end_line": 46953,
+          "reading": "Read exact original selected range; see selected_range_sha256 in derivation manifest."
+        }
+      ],
+      "outputs": [
+        "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "remediation/assets/commercial-fixtures/acceptance.json",
+        "remediation/assets/commercial-fixtures/validation.json",
+        "remediation/assets/fixtures/bounded-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "AC-W5-COM-11-P",
+          "scenario": "精确原版本应用本次有界补丁并验证派生数据/来源preimage",
+          "expected": "两个ledger ops68/70/71业务版本分别按ProtectedBefore+1；68/71 updated_at取同Uow事件时钟，opaque row_version仍provider-only，四CAS原子性不变。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-11-N",
+          "scenario": "错误版本或错误preimage的有界补丁输入",
+          "expected": "必须拒绝，不能模糊套用本版本补丁。",
+          "verification_level": "LOCAL_DESIGN_DATA",
+          "result": "PASS"
+        },
+        {
+          "id": "AC-W5-COM-11-R",
+          "scenario": "真实消费者负向契约/恢复门",
+          "expected": "直接写ProtectedBefore版本、算术溢出、错旧PK/RV或任一CAS冲突均整体回滚；未知原提交仅查询同原intent，不重派Finance。",
+          "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "LOCAL_DESIGN_DATA_PASS_RUNTIME_NOT_RUN"
+    }
+  ],
+  "assets": [
+    {
+      "path": "remediation/assets/commercial-fixtures/acceptance.json",
+      "sha256": "3dc4d4096ef79411e8eae15758d68a91d6e646880c074c1eb7d6642c45a43a14",
+      "bytes": 11193,
+      "role": "CURRENT_TASK_DESIGN_DATA_NOT_RUNTIME_EVIDENCE"
+    },
+    {
+      "path": "remediation/assets/commercial-fixtures/bounded-patches.json",
+      "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+      "bytes": 300185,
+      "role": "CURRENT_TASK_DESIGN_DATA_NOT_RUNTIME_EVIDENCE"
+    },
+    {
+      "path": "remediation/assets/commercial-fixtures/codec-compile-validation.json",
+      "sha256": "c1877dc8adf153bf96bf74990f1b42ec531c1dbc63c21725e19d3f7094a85e2b",
+      "bytes": 6175,
+      "role": "CURRENT_TASK_DESIGN_DATA_NOT_RUNTIME_EVIDENCE"
+    },
+    {
+      "path": "remediation/assets/commercial-fixtures/current-v1-adoption.md",
+      "sha256": "f2d7741601ea6f8d04520d1063a16da732e322f6a08120d1e47b6ab4aa12a138",
+      "bytes": 8306,
+      "role": "CURRENT_TASK_DESIGN_DATA_NOT_RUNTIME_EVIDENCE"
+    },
+    {
+      "path": "remediation/assets/commercial-fixtures/derivation-manifest.json",
+      "sha256": "7c0c97bce1498895fccdb11830f3d896f037dc49234419f856ca3be6385bfd75",
+      "bytes": 193840,
+      "role": "CURRENT_TASK_DESIGN_DATA_NOT_RUNTIME_EVIDENCE"
+    },
+    {
+      "path": "remediation/assets/commercial-fixtures/validation.json",
+      "sha256": "9b22379e272467f13bf54bbcf84f273c902098e6e0d91dfa53b2b00657dba607",
+      "bytes": 2434,
+      "role": "CURRENT_TASK_DESIGN_DATA_NOT_RUNTIME_EVIDENCE"
+    }
+  ]
+}
