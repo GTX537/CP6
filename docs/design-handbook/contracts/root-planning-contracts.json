@@ -1,0 +1,1028 @@
+{
+  "group": "root-planning",
+  "contracts": [
+    {
+      "contract_id": "ATP-POLICY-CURRENT",
+      "target_id": "PLAN-ATP-01",
+      "producer": "PLAN-POL / policy Owner event intake",
+      "consumer": "ATP A02/A06",
+      "identity": "org/site/item/revision/usage/policy ID/version/digest，准确评估时点与事件序号",
+      "transaction": "同PolicyIdentity门摄取事件及选择readAt<=evaluationAsOf最大序号CURRENT；R11持门先于阶段恢复/Receipt3/有效快照/绑定/SUPPLY receipt4",
+      "recovery": "历史recover校原binding，不能重绑最新或caller选择旧event",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 54
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 565
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 605
+        }
+      ]
+    },
+    {
+      "contract_id": "ATP-SUPPLY-COMPLETE",
+      "target_id": "PLAN-ATP-01",
+      "producer": "PLAN-SUP",
+      "consumer": "ATP allocator",
+      "identity": "连续页/唯一Final/全层digest与native quantities、lineage/predecessor/替换proof、reservation tuple、安全量标记",
+      "transaction": "完整horizon与scope；有理原子选赢家、representation聚合后只一次HALF_UP；自需求精确唯一",
+      "recovery": "供给不全UNEVALUATED_SUPPLY；原恢复不重新抓新快照",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 67
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 201
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 261
+        }
+      ]
+    },
+    {
+      "contract_id": "ATP-IAM-TICKET",
+      "target_id": "PLAN-ATP-01",
+      "producer": "IAM current authorization projection",
+      "consumer": "ATP evaluate/read/basis/recover",
+      "identity": "组织主体/委托、动作purpose及全Site/item/rev/usage/productfamily/commercialOwner/context/exclusion关系",
+      "transaction": "可信当前行原子读取，runtime无直接DML或caller GUC自证；recover-original先权后查存在性",
+      "recovery": "缺/过期/不匹配拒绝并保拒审计；原历史成功不代当前读取权",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 101
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 191
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 344
+        }
+      ]
+    },
+    {
+      "contract_id": "ATP-REPLAY-RECOVER",
+      "target_id": "PLAN-ATP-01",
+      "producer": "ATP stage repository",
+      "consumer": "A02/A04 transport",
+      "identity": "org actor/delegation operation requestKey；body/envelope独立digest域",
+      "transaction": "ACCEPTED1、SNAPSHOTS2、CALCULATED3独立阶段，terminal4加精确audit/outbox/replay同UoW；六收据与五carrier完全核",
+      "recovery": "仅两recover transport wrapper，原载体恢复、完整性损坏拒绝；零经济写",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 330
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 344
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 400
+        }
+      ]
+    },
+    {
+      "contract_id": "ATP-PUBLIC-FRESHNESS",
+      "target_id": "PLAN-ATP-01",
+      "producer": "ATP projections + trusted active observer",
+      "consumer": "A03/A05 clients",
+      "identity": "PUBLIC self/storage/representation与Freshness域分开；cursor全查询/权投影绑定",
+      "transaction": "终态只追加Freshness，head锁定序号决定最新；ETag同时绑result和freshness；basis锁后重读lease时间",
+      "recovery": "200统一canonical实体；304真空体；过期新cursor generation不改历史结果",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 279
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 295
+        }
+      ]
+    },
+    {
+      "contract_id": "ATP-COMMERCIAL-ADVISORY",
+      "target_id": "PLAN-ATP-01",
+      "producer": "ATP H09 query",
+      "consumer": "Sales quote/order draft",
+      "identity": "准确line/schedule/Item/revision/usage/Site/quantity/UOM/requestedDate/evaluationAsOf",
+      "transaction": "只评估与审计缓存，OwnerCommittedDate恒null，零Demand/Reservation/Orderpromise/采购制造库存Finance写",
+      "recovery": "建议过期新评估；H10真实释放由原Owner裁决",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 34
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 429
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-POLICY-APPLICATION",
+      "target_id": "PLAN-POL-01",
+      "producer": "Planning POL / Approval / UOM / Engineering / Logistics",
+      "consumer": "Policy resolution / SUP / MRP",
+      "identity": "逐成员Owner版本范围继承，固定审批内容、业务前驱与技术编辑版本分别保存",
+      "transaction": "预检、送审、应用、停新用分开；应用重核当前前驱/重叠/批准/影响，结果与通知在本域一致提交",
+      "recovery": "应用未知查原键；通知失败仅补通知，停止不恢复未批准旧版",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 64
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-IMMUTABLE-INPUT",
+      "target_id": "PLAN-SUP-01",
+      "producer": "Demand + source Owners",
+      "consumer": "SUP Snapshot / MRP",
+      "identity": "正式H10或有权LEGACY责任映射、必要Owner闭包、准确分页前沿、原事实语义",
+      "transaction": "固定InputSet不原地换成员；补源/更正新后继；完整只对有证声明范围",
+      "recovery": "混水位或必要源离线PARTIAL；闭包独立范围另Run，不能删失败行装完整",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 88
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 99
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-STAGE-SUCCESSION",
+      "target_id": "PLAN-SUP-01",
+      "producer": "Procurement / MES / WMS",
+      "consumer": "SUP Representation",
+      "identity": "StableSlice/TransferProof/OutputOccurrence、原量单位角色与SNAPSHOT/DELTA/CORRECTION",
+      "transaction": "每视图同源份额一个代表；真实差额保留；拒收仍离开未到；实收更正不自动复活采购责任",
+      "recovery": "原成功投影漏项仅补映射；无证明TRANSITION_UNRESOLVED不猜新PO版",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 109
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 120
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-ACTIVITY-ELIGIBILITY",
+      "target_id": "PLAN-SUP-01",
+      "producer": "QA / PLM / UOM / Logistics / WMS",
+      "consumer": "SUP eligibility/time",
+      "identity": "准确活动purpose技术Site货主客户时间、必要性与证据状态独立、排除并集",
+      "transaction": "先必要性后证据；FAIL不因不可读消失，交叠未知不报精确可用，实际到货不等可用",
+      "recovery": "专业后继只解除本原因；新结果重评，不自授制造或出货许可",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 131
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 142
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-RESERVATION-RESIDUAL",
+      "target_id": "PLAN-SUP-01",
+      "producer": "WMS Reservation / Allocation",
+      "consumer": "SUP H17 and plan protection",
+      "identity": "原Demand/request/内容/份额/允许部分证明、完整真实接受拒绝未决与当前效力",
+      "transaction": "WMS自身一致边界裁数量，Planning仅引用；Allocation不二扣，自有占用不回全局自由池",
+      "recovery": "余量仅原key/子份额绝不再执行终态后新意图申请；迟到成功取消后仍须真实解除",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 152
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 164
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/17f532540f6e7d01__REVIEW-AND-READ-SCOPE.md",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-MRP-PUBLICATION",
+      "target_id": "PLAN-SUP-01",
+      "producer": "POL/SUP Readiness / MRP authority",
+      "consumer": "Effective result set / PLAN-PO",
+      "identity": "准确InputSet、全ResultSet、ExpectedEffectiveSet和共享ProtectionSet前驱",
+      "transaction": "G01–10；前驱比较与权威发布一致提交，净需求建议Pegging同时切换；无跨Owner全局锁假设",
+      "recovery": "未知查原Publish键；候选失败不先删旧，相关后变留原成功+适用性后继",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 174
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 186
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 255
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/17f532540f6e7d01__REVIEW-AND-READ-SCOPE.md",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-CONVERSION-SLICES",
+      "target_id": "PLAN-SUP-01",
+      "producer": "PLAN-PO Conversion / Procurement PR / MES WO",
+      "consumer": "SUP lineage",
+      "identity": "预批完整Manifest及稳定独立份额、原ConvertRequest/内容、真实对象行/量/快照映射",
+      "transaction": "采购Firmed真实PR仍非PO承诺，制造按活动门仅Created；不可拆组需共同生效",
+      "recovery": "70成功/50未知不全量重转或返50，STUB非成功；原成功只补映射",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 198
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 209
+        }
+      ]
+    },
+    {
+      "contract_id": "PS-CONTROL-REPAIR-CLOSE",
+      "target_id": "PLAN-SUP-01",
+      "producer": "Source control/change Owners",
+      "consumer": "SUP Reconciliation",
+      "identity": "真实发生/控制节点、完整入口在途覆盖、ExpectedProjection和原事实版本、真实DispositionAcceptance",
+      "transaction": "接收停止/入口禁新/在途核清分层；本域修复比较前驱，不改源经济账",
+      "recovery": "必要未知不得转待办关闭；新更正保旧Closure并建关联后继，正常退货不冲原发运",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 220
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 232
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-INPUT",
+      "target_id": "PLAN-MRP-01",
+      "producer": "Demand/POL/SUP/Engineering",
+      "consumer": "MRP fixed InputSet",
+      "identity": "Draft/Capture/Seal/Request独立；正式真实完整与模拟模型完整分开",
+      "transaction": "封装比较Capture/Draft前驱，InputSet不可变，新派生只固模型不伪填输出",
+      "recovery": "未知查各自原key，补源/换图后继I2",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-MATERIAL-OFFSETS",
+      "target_id": "PLAN-MRP-01",
+      "producer": "MES material Owner / WMS",
+      "consumer": "MRP MaterialObligation",
+      "identity": "Obligation/Occurrence及NET_RESIDUAL或GROSS_WITH_EXPLICIT_OFFSETS明确基数、逐Offset与Protection",
+      "transaction": "已抵集合排除同剩余再次抵池且保护仍真实占用，Firm80→WO50/旧30不双算130",
+      "recovery": "Hold需Owner剩余后继，不自改40；无原生显式模式映射不称已采用",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 75
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-TECHNICAL-DERIVATION",
+      "target_id": "PLAN-MRP-01",
+      "producer": "ENG/CFG/UOM/Calendar",
+      "consumer": "MRP graph and child requirements",
+      "identity": "准确Graph/Occurrence/方向/损耗基数/生效节点；父净量合法逐批后派生",
+      "transaction": "共享子料收齐全部相容贡献后一次净算；已冻结输入不换图",
+      "recovery": "跨生效或模型缺失后继输入，非同输入恢复",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 100
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-TIME-NETTING",
+      "target_id": "PLAN-MRP-01",
+      "producer": "POL/SUP/current protection",
+      "consumer": "MRP account ledger",
+      "identity": "AccountScope节点/量纲/资格、FLOOR/安全Demand互斥、既有与拟议供给分账",
+      "transaction": "Pre=Opening+Receipts-Gross;Net=max(0,Floor-Pre);Closing=Pre+Lot，一次结转",
+      "recovery": "确定缺口可算，未知不代0；不自动取消迟到PO/WO",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 115
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-ATTEMPT-GENERATION",
+      "target_id": "PLAN-MRP-01",
+      "producer": "Planning Run authority",
+      "consumer": "Worker/OutputSeal/Selection/Publish",
+      "identity": "Run/InputSet/Algorithm、AttemptId及ExecutionAuthorityGeneration",
+      "transaction": "输出接收封存选择发布均核代次，Cancel/Publish唯一胜者，逻辑隔离不冒物理停止",
+      "recovery": "无隔离RECOVERY_REQUIRED，旧晚到诊断不可抢当前；原失败不改",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 130
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-RESULT-SELECTION",
+      "target_id": "PLAN-MRP-01",
+      "producer": "Single successful authorized Attempt",
+      "consumer": "Planning ResultSet/Selection",
+      "identity": "完整成员/Report/OutputSeal/InputSet/规则，SelectionIntent/ExpectedSelection",
+      "transaction": "不得拼尝试，批次损耗节点限制都属语义确定性；零建议仍保需求覆盖保护",
+      "recovery": "非等价SELECTION_CONFLICT不挑有利值，未知原Selection查回",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 145
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-PUBLICATION",
+      "target_id": "PLAN-MRP-01",
+      "producer": "Planning publication authority + external Owners",
+      "consumer": "EffectiveSet readers / PLAN-PO",
+      "identity": "SelectedResult、RunControl代次、EffectiveSet、ProtectionSet及精确退出保留和外部Guarantee",
+      "transaction": "同权威边界比较四类前驱并完整切换；读者固定集合ID；本地版本不代外部当前门",
+      "recovery": "未知查原Publishkey，不自动Expected改最新、不先删旧；后变留历史+Impact",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 160
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-DOWNSTREAM-IMPACT",
+      "target_id": "PLAN-MRP-01",
+      "producer": "MRP / PLAN-PO / execution Owners",
+      "consumer": "PLAN-PO / EXC / local replan",
+      "identity": "Publication/ResultSet/Member、BlockedActions、材料接续、实际Receipt与共享影响",
+      "transaction": "Firm/Converted使MRP替换前驱失效，限制随结果传递，局部保护不删共享B",
+      "recovery": "投递失败补通知不再转换；必要执行未知不得转待办关闭",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 176
+        }
+      ]
+    },
+    {
+      "contract_id": "MRP-VISIBILITY-EXPORT",
+      "target_id": "PLAN-MRP-01",
+      "producer": "IAM / evidence Owners",
+      "consumer": "MRP readers/exporters",
+      "identity": "固定对象版本模式范围单位节点和受控覆盖",
+      "transaction": "无权不经差额总计标题泄漏，生成和下载分别当前授权，安全文本不执行公式",
+      "recovery": "失权保历史但不给旧链接访问，不重跑业务找结果",
+      "status": "accepted_functional_contract_runtime_and_native_owner_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 192
+        }
+      ]
+    },
+    {
+      "contract_id": "DEM-SOURCE-H10-H32",
+      "target_id": "PLAN-DEM-01",
+      "producer": "Sales",
+      "consumer": "Planning DEM",
+      "identity": "源谱系/原键/SourceVersion/真实接受前驱/目标总量",
+      "transaction": "Demand版+来源映射+必要控制+回执同Planning本地提交；无Demand源控制独立",
+      "recovery": "同键同内容返历史结果与当前效力；旧命令禁用不丢真实旧事实",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "line": 323
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+          "line": 66
+        }
+      ]
+    },
+    {
+      "contract_id": "DEM-MULTICAUSE-CONTROL",
+      "target_id": "PLAN-DEM-01",
+      "producer": "原因Owner及执行Owner",
+      "consumer": "Planning协调/变化",
+      "identity": "ReasonId/控制版/动作入口/准确份额/原在途全集",
+      "transaction": "已收、已阻新、在途核清三层分开；只解除自己原因",
+      "recovery": "UNKNOWN仍可能执行不能以转待办移出关闭门；后继Owner有权接受",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "line": 375
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+          "line": 66
+        }
+      ]
+    },
+    {
+      "contract_id": "DEM-COVERAGE-VERSION",
+      "target_id": "PLAN-DEM-01",
+      "producer": "Planning Run/SUP及WMS原事实",
+      "consumer": "Demand/订单读模型",
+      "identity": "Demand版/控制/Policy/供给水位/Run/Reservation与谱系份额",
+      "transaction": "当前有效输入与完整发布；旧Run不覆盖新，Reservation含Allocation",
+      "recovery": "补原事实投影不重建PO/WO；缺口不缩Demand",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "line": 428
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+          "line": 66
+        }
+      ]
+    },
+    {
+      "contract_id": "DEM-PLM-ADOPTION",
+      "target_id": "PLAN-DEM-01",
+      "producer": "PLM专业Owner",
+      "consumer": "Demand变化/执行",
+      "identity": "准确活动/技术/Purpose/条件/ImpactItem/AdoptionDefinition",
+      "transaction": "按最晚活动门取当前专业证据；准确份额有权后继",
+      "recovery": "ECN已读不等真实采用；新增范围追加影响，历史事实不覆盖",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "line": 631
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+          "line": 66
+        }
+      ]
+    },
+    {
+      "contract_id": "DEM-GROUP-ACTIVATION",
+      "target_id": "PLAN-DEM-01",
+      "producer": "Sales和Planning共同范围",
+      "consumer": "MRP与全部执行入口",
+      "identity": "不可变Group清单/旧及新成员/技术量/真实前驱/准备结果",
+      "transaction": "原剩余退出与全部后继有效共同可证；准备成员不净算",
+      "recovery": "任一UNKNOWN不启用；查原组，实际已生效不可盲补偿；恢复旧范围需新后继",
+      "status": "accepted_functional_design_physical_mapping_and_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "line": 682
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+          "line": 66
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-MRP-SOURCE",
+      "target_id": "PLAN-PO-01",
+      "producer": "PLAN-MRP plus independent truth Owners",
+      "consumer": "PLAN-PO Suggestion",
+      "identity": "完整Run/ResultSet/Publication/Suggestion/Pegging与独立原body graph/current/provenance",
+      "transaction": "APPLIED Suggestion/Pegging/Partition/Order同UoW；失败Run零旧有效head变化",
+      "recovery": "WAITING原包在前驱后续；opaque version与digest域分开",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/be121794b4e0ec0b__PLANNING_SOURCE_PROFESSIONAL_DESIGN_ADOPTION_20261004.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/be121794b4e0ec0b__PLANNING_SOURCE_PROFESSIONAL_DESIGN_ADOPTION_20261004.md",
+          "line": 66
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-PR-INTAKE",
+      "target_id": "PLAN-PO-01",
+      "producer": "PLAN-PO",
+      "consumer": "PUR-PR",
+      "identity": "stable convertRequestId/sourceAllocation/fulltypedDigest/Firm authority/完整pegging",
+      "transaction": "本域先保护原份额；Owner真实PR原结果摄取绑定唯一winner",
+      "recovery": "NOT_OBSERVED非noeffect；native全provesNoEffect才release",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+          "line": 179
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-WO-WORKFLOW",
+      "target_id": "PLAN-PO-01",
+      "producer": "PLAN-PO and independent PLM/CFG/ENG/DEV/REL",
+      "consumer": "MES-WO",
+      "identity": "原五步Owner请求/响应及4或11准确capture",
+      "transaction": "未来body/OwnerID只由真实持久前驱构造；原Root COMMITTED方成功",
+      "recovery": "DEV仅有据不适用普通路；RELreservation仅post-root；缺provider继续fence",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 113
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-WMS-CREATE-CURRENT",
+      "target_id": "PLAN-PO-01",
+      "producer": "PLAN-PO / WMS-TRANSFER",
+      "consumer": "WMS RequestCreate / Planning read model",
+      "identity": "原T04不可变201+SourceBinding与T05当前独立",
+      "transaction": "DRAFT真实请求为创建成功，不等Stage或Stock；实际原source/portion/Binding双向覆盖",
+      "recovery": "纯原slotlookup1.1读immutable201，非FOUND不释放不POST query-by-create",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 57
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-OWNER-CLOSURE",
+      "target_id": "PLAN-PO-01",
+      "producer": "MES-WO / WMS-TRANSFER",
+      "consumer": "PLAN-PO no-effect release",
+      "identity": "四独立proof/原slot/key/body/actor/ranges/三创建路径/同永久终态",
+      "transaction": "Owner独立事务永久关闭并真实发布；receiver原leg集合双向等，winner禁止释放",
+      "recovery": "read-existing只读已签发；absence/timeout/native负结果不独自产生noeffect",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 35
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-TRANSFER-DUAL-CUT",
+      "target_id": "PLAN-PO-01",
+      "producer": "PLAN-MRP bridge and PLANNING independent authority",
+      "consumer": "PLAN-PO publisher / WMS",
+      "identity": "common40与transfer21各完整；selectedportion/全部pegs/proof.subjectRef与wrapper身份分开",
+      "transaction": "两cut同UoW保持；PLAN-PO/PUBLISHER真实caller与PLANNING SourceDemand/issuer分开",
+      "recovery": "缺独立exactpin/authority预算范围/未来执行能力闭合继续RequiredFenced",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+          "line": 547
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-CORE-PURPOSE",
+      "target_id": "PLAN-PO-01",
+      "producer": "Core authenticated SDK/publisher",
+      "consumer": "PLAN-PO all read/write/worker",
+      "identity": "E/T/actor/object/action/site/mask/permissionDigest/time+独立seq/fullpredecessor",
+      "transaction": "25parameterprivatepublisher与Transfer27分权；history/source专用动作读前输出前都核",
+      "recovery": "原receipt历史真相不改；当前撤权阻披露；takeover须cutover+recover",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/56ebc0240965beab__CP22_CORE_DESIGN_ADOPTION.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/56ebc0240965beab__CP22_CORE_DESIGN_ADOPTION.md",
+          "line": 30
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "PO-RECEIPT-CORRECTION",
+      "target_id": "PLAN-PO-01",
+      "producer": "PUR/MES/WMS original receipt plus MRP source change",
+      "consumer": "PLAN-PO",
+      "identity": "原request/query/body/result/stream前驱/currentsource+Leg独立CorrectionHold",
+      "transaction": "真实晚结果写winner/accepted并保sourceWITHDRAWN/correction；聚合accepted+unknown=PENDING",
+      "recovery": "全accepted才SUCCEEDED，accepted+其余永久release才PARTIAL；旧key不可重建",
+      "status": "cp22_new_professional_design_adopted_actual_runtime_registration_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+          "line": 237
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e03121644c31bba__PLAN_PO_CP22_ROOT_DESIGN_ACCEPTANCE_20261004.txt",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC01-SUP-SOURCE",
+      "target_id": "PLAN-EXC-01",
+      "producer": "PLAN-SUP",
+      "consumer": "EXC source/assessment",
+      "identity": "完整source scope/query/page/capture、供给份额/阶段/保护、RequiredOwnerRead/current前沿",
+      "transaction": "Owner一致读取；EXC封存完整Graph与Assessment/Head同本域UoW",
+      "recovery": "不完整保partial，必要动作DIRECT_SOURCE_REQUIRED_FENCED",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 448
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 459
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 239
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC02-MRP-SOURCE",
+      "target_id": "PLAN-EXC-01",
+      "producer": "PLAN-MRP",
+      "consumer": "EXC source/impact",
+      "identity": "RunRequest/Run/InputSet/Attempt/全ResultSet/Selection/Publication/EffectiveSet及实际材料父显式version",
+      "transaction": "原MRP保持唯一事实；EXC接收精确完整当前与历史分域",
+      "recovery": "缺前件fenced；Suggestions空不删除其余正式成员",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 449
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 485
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 940
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC03-POL-ALERT",
+      "target_id": "PLAN-EXC-01",
+      "producer": "PLAN-POL",
+      "consumer": "EXC Dismiss/expiry",
+      "identity": "独立AlertPolicy允许理由/知识/maxDismissUntil及精确current，不是planning safety policy",
+      "transaction": "本域AlertDecision/Revision/slot原子；读到期立即VISIBLE",
+      "recovery": "缺真实policy ALERT_POLICY_REQUIRED_FENCED，不默认许可",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 450
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 302
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 823
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC04-MRP-COORDINATION",
+      "target_id": "PLAN-EXC-01",
+      "producer": "PLAN-MRP",
+      "consumer": "EXC RecalcWork/receipt consumption",
+      "identity": "原slot/request/body/work；真实各stage前驱、单Attempt完整ResultManifest与cancel/publish winner",
+      "transaction": "MRP拥有选择发布；EXC M03精确一次消费到本地，双方非分布式事务",
+      "recovery": "原query保unknown；SAME_INPUT需真实隔离；发布后本地失败只LOCAL_APPLY",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 451
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 461
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 469
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 597
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC05-OWNER-DISPOSITION",
+      "target_id": "PLAN-EXC-01",
+      "producer": "actual obligation Owner",
+      "consumer": "EXC Impact/Closure",
+      "identity": "固定原request/义务范围；accepted累计、settled子集及unresolved明确；真实native settlement",
+      "transaction": "Owner先真实接受后发receipt；EXC Inbox/关系/Work/Head原子",
+      "recovery": "通知非接受；未知未结清；不以人工待办转出必要风险",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 452
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 463
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 558
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC06-ORIGINAL-LOOKUP",
+      "target_id": "PLAN-EXC-01",
+      "producer": "same original Owner",
+      "consumer": "EXC recovery",
+      "identity": "原slot/full raw request及准确receipt/trust，历史原result与current分离",
+      "transaction": "纯读，无reserve/creation/future fence",
+      "recovery": "NOT_OBSERVED/PENDING/UNAVAILABLE均canInferNoEffect=false；maybeSent不重建",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 453
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 465
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 575
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC07-SOURCE-CURRENT",
+      "target_id": "PLAN-EXC-01",
+      "producer": "each actual source Owner",
+      "consumer": "EXC final current guard",
+      "identity": "issuer独立schema/version/digest/audience/E/T/action/actualhead/innerguarantee/consumerbinding",
+      "transaction": "外部current按精确协议保证，不能声称本地gate锁远Owner",
+      "recovery": "历史真实receipt保真；缺当前保证拒依赖新效果",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 454
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 467
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 546
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 908
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC08-IAM-CURSOR",
+      "target_id": "PLAN-EXC-01",
+      "producer": "Core IAM; PLAN-EXC bounded cursor issuer",
+      "consumer": "EXC public/action/read",
+      "identity": "fresh具体purpose/对象/字段完整SDK；issuer公开六field handle与私有query绑定",
+      "transaction": "输入输出fresh核，私有retentionREADY后才签发；无通用public grant",
+      "recovery": "撤权403、head变412；签发/provider缺503；RFC8032例不能生产使用",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 455
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 428
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 432
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 898
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC09-UOW-RETENTION",
+      "target_id": "PLAN-EXC-01",
+      "producer": "Main/Core DB integration",
+      "consumer": "all EXC writers and EX02 pages",
+      "identity": "单connection outer SERIALIZABLE/storegate/全writers；独立private Query/Binding/LOOKUP/retention",
+      "transaction": "完整FK/CAS/allwrites一次commit，确认后响应；非持久BodyCanonical跟实际provider RV读回",
+      "recovery": "commit未知原query；qualifiedMISSING/expiry410，UNKNOWN503，绝对expiry不续",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 456
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 537
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 539
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 548
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 835
+        }
+      ]
+    },
+    {
+      "contract_id": "EXC-PC10-LEGACY-CUTOVER",
+      "target_id": "PLAN-EXC-01",
+      "producer": "Main legacy/WMS/PUR/MES respective Owner",
+      "consumer": "EXC legacy read/mapping",
+      "identity": "原legacy row/stable责任/状态/Reported量/原pending及逐scope IdentityMappingDecision",
+      "transaction": "NEW_READ_ONLY不停止旧writer；NEW_CHAIN仅真实单writer切换后",
+      "recovery": "不伪造历史Run/receipt；缺资格LEGACY_UNVERIFIED，未证明不能启新mutation",
+      "status": "cp12_accepted_static_new_professional_design_actual_owner_core_adoption_registration_grant_zero",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 457
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 623
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 625
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "line": 627
+        }
+      ]
+    }
+  ],
+  "updated_at_utc": "2026-10-10T09:32:23.436829+00:00"
+}

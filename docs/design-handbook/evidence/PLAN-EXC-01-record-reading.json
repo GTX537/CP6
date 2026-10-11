@@ -1,0 +1,3740 @@
+{
+  "target_id": "PLAN-EXC-01",
+  "prepared_at_utc": "2026-10-10T11:44:59.225272+00:00",
+  "status": "required_record_and_difference_attachment_semantics_consolidated",
+  "read_files": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/CP03_LOCAL_RECORD_REGISTRY.json",
+      "sha256": "b1364c8c50c1ea4cc04139b8ead0fa48170349703e88ca4a0b868f6150bdaeb4",
+      "bytes": 5603983,
+      "coverage": "all_normative_semantics_by_exact_reuse_and_complete_field_groups",
+      "boundary": "All fields and distinct business values read; exact reused native/private bodies use source-reading evidence; opaque identity/hash/time instantiations are structurally checked and retained, not claimed as prose read. No original scripts or business runtime executed."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/CP03_PHYSICAL_RECORD_REGISTRY.json",
+      "sha256": "11f539437a29689431689a27d6589b485f2e5e43669a78852c2db637968dd1f2",
+      "bytes": 139492732,
+      "coverage": "all_normative_semantics_by_exact_reuse_and_complete_field_groups",
+      "boundary": "All fields and distinct business values read; exact reused native/private bodies use source-reading evidence; opaque identity/hash/time instantiations are structurally checked and retained, not claimed as prose read. No original scripts or business runtime executed."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/CP03_AC_DIFFERENCE_SPECIMENS.json",
+      "sha256": "8a39c27ad9f35b1a6b6c6c6a8b3bafa2e3599516a672615a2eb510a94abd5ac4",
+      "bytes": 476938,
+      "coverage": "all_normative_semantics_by_exact_reuse_and_complete_field_groups",
+      "boundary": "All fields and distinct business values read; exact reused native/private bodies use source-reading evidence; opaque identity/hash/time instantiations are structurally checked and retained, not claimed as prose read. No original scripts or business runtime executed."
+    }
+  ],
+  "table_field_coverage": {
+    "AlertDecision": {
+      "rows": 7,
+      "roots": [
+        "StoredAlertDecisionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "AssessmentId",
+        "AssessmentDigest",
+        "State",
+        "ReasonCode",
+        "PriorDecisionId",
+        "PriorDecisionDigest",
+        "DismissalId",
+        "DismissalDigest",
+        "OperationId",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 5,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeId": 4,
+        "EpisodeDigest": 4,
+        "AssessmentId": 4,
+        "AssessmentDigest": 4,
+        "State": 2,
+        "ReasonCode": 3,
+        "PriorDecisionId": 3,
+        "PriorDecisionDigest": 3,
+        "DismissalId": 2,
+        "DismissalDigest": 2,
+        "OperationId": 3,
+        "BodyDigest": 7
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_AlertDecision.json"
+    },
+    "AlertHead": {
+      "rows": 2,
+      "roots": [
+        "StoredAlertHeadRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "DecisionId",
+        "DecisionDigest",
+        "State"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 2,
+        "RowVersion": 2,
+        "CaseId": 1,
+        "CaseDigest": 1,
+        "EpisodeId": 1,
+        "EpisodeDigest": 1,
+        "DecisionId": 2,
+        "DecisionDigest": 2,
+        "State": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_AlertHead.json"
+    },
+    "Assessment": {
+      "rows": 7,
+      "roots": [
+        "AssessmentBusinessFact"
+      ],
+      "hash_profiles": [
+        "PRIVATE_ASSESSMENT_BUSINESS_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "GraphId",
+        "GraphDigest",
+        "OriginalCurrentManifestId",
+        "OriginalCurrentManifestDigest",
+        "Version",
+        "Knowledge",
+        "BusinessOutcome",
+        "EvaluatedAt",
+        "RequiredValue",
+        "RequiredKnowledge",
+        "RequiredBasisFactId",
+        "RequiredBasisFactDigest",
+        "OnTimeValue",
+        "OnTimeKnowledge",
+        "OnTimeBasisFactId",
+        "OnTimeBasisFactDigest",
+        "ShortageValue",
+        "ShortageKnowledge",
+        "ShortageBasisFactId",
+        "ShortageBasisFactDigest",
+        "LateValue",
+        "LateKnowledge",
+        "LateBasisFactId",
+        "LateBasisFactDigest",
+        "UomFactId",
+        "UomFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 5,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeId": 4,
+        "EpisodeDigest": 4,
+        "GraphId": 7,
+        "GraphDigest": 7,
+        "OriginalCurrentManifestId": 6,
+        "OriginalCurrentManifestDigest": 6,
+        "Version": 2,
+        "Knowledge": 1,
+        "BusinessOutcome": 3,
+        "EvaluatedAt": 5,
+        "RequiredValue": 4,
+        "RequiredKnowledge": 1,
+        "RequiredBasisFactId": 4,
+        "RequiredBasisFactDigest": 4,
+        "OnTimeValue": 4,
+        "OnTimeKnowledge": 1,
+        "OnTimeBasisFactId": 4,
+        "OnTimeBasisFactDigest": 4,
+        "ShortageValue": 4,
+        "ShortageKnowledge": 1,
+        "ShortageBasisFactId": 3,
+        "ShortageBasisFactDigest": 3,
+        "LateValue": 2,
+        "LateKnowledge": 1,
+        "LateBasisFactId": 3,
+        "LateBasisFactDigest": 3,
+        "UomFactId": 1,
+        "UomFactDigest": 1,
+        "BodyDigest": 7
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Assessment.json"
+    },
+    "Audit": {
+      "rows": 35,
+      "roots": [
+        "StoredAuditRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "OperationId",
+        "ActorFactId",
+        "ActorFactDigest",
+        "AuthorityId",
+        "AuthorityDigest",
+        "Action",
+        "ResultKind",
+        "BeforeRevision",
+        "AfterRevision",
+        "LocalCommitSeq",
+        "RequestArtifactId",
+        "RequestArtifactDigest",
+        "ExportOperationId",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 35,
+        "RecordedAt": 26,
+        "CaseId": 5,
+        "CaseDigest": 5,
+        "EpisodeId": 5,
+        "EpisodeDigest": 5,
+        "OperationId": 11,
+        "ActorFactId": 1,
+        "ActorFactDigest": 1,
+        "AuthorityId": 33,
+        "AuthorityDigest": 33,
+        "Action": 13,
+        "ResultKind": 4,
+        "BeforeRevision": 6,
+        "AfterRevision": 6,
+        "LocalCommitSeq": 24,
+        "RequestArtifactId": 13,
+        "RequestArtifactDigest": 13,
+        "ExportOperationId": 2,
+        "BodyDigest": 35
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Audit.json"
+    },
+    "BeneficiaryShare": {
+      "rows": 15,
+      "roots": [
+        "StoredBeneficiaryShareRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "DemandSliceId",
+        "DemandSliceDigest",
+        "BeneficiaryKind",
+        "SupplySpanId",
+        "SupplySpanDigest",
+        "PeggingFactId",
+        "PeggingFactDigest",
+        "MappingFactId",
+        "MappingFactDigest",
+        "SourceFrom",
+        "SourceTo",
+        "TargetFrom",
+        "TargetTo",
+        "IsRetainedBoundary",
+        "MaterialObligationId",
+        "MaterialObligationDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 15,
+        "RecordedAt": 5,
+        "GraphId": 7,
+        "GraphDigest": 7,
+        "DemandSliceId": 10,
+        "DemandSliceDigest": 10,
+        "BeneficiaryKind": 2,
+        "SupplySpanId": 11,
+        "SupplySpanDigest": 11,
+        "PeggingFactId": 10,
+        "PeggingFactDigest": 10,
+        "MappingFactId": 10,
+        "MappingFactDigest": 10,
+        "SourceFrom": 4,
+        "SourceTo": 7,
+        "TargetFrom": 5,
+        "TargetTo": 5,
+        "IsRetainedBoundary": 2,
+        "MaterialObligationId": 5,
+        "MaterialObligationDigest": 5,
+        "BodyDigest": 15
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_BeneficiaryShare.json"
+    },
+    "BoundaryProtection": {
+      "rows": 2,
+      "roots": [
+        "StoredBoundaryProtectionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ImpactId",
+        "ImpactDigest",
+        "ProtectionId",
+        "ProtectionDigest",
+        "BeneficiaryNodeId",
+        "BeneficiaryNodeDigest",
+        "IndependenceProofId",
+        "IndependenceProofDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 1,
+        "ImpactId": 2,
+        "ImpactDigest": 2,
+        "ProtectionId": 2,
+        "ProtectionDigest": 2,
+        "BeneficiaryNodeId": 2,
+        "BeneficiaryNodeDigest": 2,
+        "IndependenceProofId": 1,
+        "IndependenceProofDigest": 1,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_BoundaryProtection.json"
+    },
+    "CaseClosure": {
+      "rows": 2,
+      "roots": [
+        "StoredCaseClosureRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "ResolutionId",
+        "ResolutionDigest",
+        "ImpactId",
+        "ImpactDigest",
+        "ClosedAt",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 2,
+        "CaseId": 2,
+        "CaseDigest": 2,
+        "EpisodeId": 2,
+        "EpisodeDigest": 2,
+        "ResolutionId": 2,
+        "ResolutionDigest": 2,
+        "ImpactId": 2,
+        "ImpactDigest": 2,
+        "ClosedAt": 2,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CaseClosure.json"
+    },
+    "CaseHead": {
+      "rows": 15,
+      "roots": [
+        "StoredCaseHeadRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "CaseId",
+        "CaseDigest",
+        "RevisionId",
+        "RevisionDigest",
+        "BusinessRevision",
+        "WriterName",
+        "WriterEpoch",
+        "LocalCommitSeq"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 4,
+        "RecordedAt": 10,
+        "RowVersion": 15,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "RevisionId": 15,
+        "RevisionDigest": 15,
+        "BusinessRevision": 5,
+        "WriterName": 1,
+        "WriterEpoch": 2,
+        "LocalCommitSeq": 12
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CaseHead.json"
+    },
+    "CaseOrigin": {
+      "rows": 4,
+      "roots": [
+        "StoredCaseOriginRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "Owner",
+        "StableResponsibilityKeyId",
+        "StableResponsibilityKeyDigest",
+        "SourceObjectKeyId",
+        "SourceObjectKeyDigest",
+        "SourceLineKeyId",
+        "SourceLineKeyDigest",
+        "ScheduleKeyId",
+        "ScheduleKeyDigest",
+        "OccurrenceKeyId",
+        "OccurrenceKeyDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 4,
+        "RecordedAt": 2,
+        "Owner": 3,
+        "StableResponsibilityKeyId": 4,
+        "StableResponsibilityKeyDigest": 4,
+        "SourceObjectKeyId": 4,
+        "SourceObjectKeyDigest": 4,
+        "SourceLineKeyId": 1,
+        "SourceLineKeyDigest": 1,
+        "ScheduleKeyId": 1,
+        "ScheduleKeyDigest": 1,
+        "OccurrenceKeyId": 1,
+        "OccurrenceKeyDigest": 1,
+        "BodyDigest": 4
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CaseOrigin.json"
+    },
+    "CaseRevision": {
+      "rows": 15,
+      "roots": [
+        "StoredCaseRevisionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "BusinessRevision",
+        "AssessmentId",
+        "AssessmentDigest",
+        "ImpactId",
+        "ImpactDigest",
+        "AlertDecisionId",
+        "AlertDecisionDigest",
+        "ObservationId",
+        "ObservationDigest",
+        "Lifecycle",
+        "WriterName",
+        "WriterEpoch",
+        "LocalCommitSeq",
+        "ClosureId",
+        "ClosureDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 15,
+        "RecordedAt": 10,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeId": 4,
+        "EpisodeDigest": 4,
+        "BusinessRevision": 5,
+        "AssessmentId": 7,
+        "AssessmentDigest": 7,
+        "ImpactId": 7,
+        "ImpactDigest": 7,
+        "AlertDecisionId": 7,
+        "AlertDecisionDigest": 7,
+        "ObservationId": 15,
+        "ObservationDigest": 15,
+        "Lifecycle": 2,
+        "WriterName": 1,
+        "WriterEpoch": 2,
+        "LocalCommitSeq": 12,
+        "ClosureId": 3,
+        "ClosureDigest": 3,
+        "BodyDigest": 15
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CaseRevision.json"
+    },
+    "CommandReceipt": {
+      "rows": 10,
+      "roots": [
+        "CommandReceipt"
+      ],
+      "hash_profiles": [
+        "ORIGINAL_COMMAND_RESULT_EXCLUDES_OWN_RESULTDIGEST"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "OperationId",
+        "SlotId",
+        "SlotDigest",
+        "Outcome",
+        "HttpStatus",
+        "ResultArtifactId",
+        "ResultArtifactDigest",
+        "OriginalAppliedRevision",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 10,
+        "RecordedAt": 8,
+        "OperationId": 10,
+        "SlotId": 10,
+        "SlotDigest": 10,
+        "Outcome": 2,
+        "HttpStatus": 2,
+        "ResultArtifactId": 10,
+        "ResultArtifactDigest": 10,
+        "OriginalAppliedRevision": 4,
+        "BodyDigest": 10
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CommandReceipt.json"
+    },
+    "CommandSlot": {
+      "rows": 10,
+      "roots": [
+        "StoredCommandSlotRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "OperationId",
+        "Kind",
+        "RequestKeyId",
+        "RequestKeyDigest",
+        "CommandId",
+        "RequestArtifactId",
+        "RequestArtifactDigest",
+        "RequestDigest",
+        "ActorFactId",
+        "ActorFactDigest",
+        "AuthorityId",
+        "AuthorityDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 10,
+        "RecordedAt": 8,
+        "CaseId": 2,
+        "CaseDigest": 2,
+        "EpisodeId": 2,
+        "EpisodeDigest": 2,
+        "OperationId": 10,
+        "Kind": 8,
+        "RequestKeyId": 10,
+        "RequestKeyDigest": 10,
+        "CommandId": 10,
+        "RequestArtifactId": 10,
+        "RequestArtifactDigest": 10,
+        "RequestDigest": 10,
+        "ActorFactId": 1,
+        "ActorFactDigest": 1,
+        "AuthorityId": 10,
+        "AuthorityDigest": 10,
+        "BodyDigest": 10
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CommandSlot.json"
+    },
+    "CurrentManifest": {
+      "rows": 40,
+      "roots": [
+        "CurrentManifestBusinessFact"
+      ],
+      "hash_profiles": [
+        "CURRENT_BUSINESS_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ManifestVersion",
+        "Knowledge",
+        "Effectivity",
+        "CapturedAt",
+        "ValidUntil",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 40,
+        "RecordedAt": 18,
+        "ManifestVersion": 2,
+        "Knowledge": 1,
+        "Effectivity": 1,
+        "CapturedAt": 18,
+        "ValidUntil": 5,
+        "BodyDigest": 40
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CurrentManifest.json"
+    },
+    "CurrentManifestMember": {
+      "rows": 558,
+      "roots": [
+        "StoredCurrentManifestMemberRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ManifestId",
+        "ManifestDigest",
+        "ResourceKeyId",
+        "ResourceKeyDigest",
+        "ResourceKind",
+        "HeadFactId",
+        "HeadFactDigest",
+        "SubjectFactId",
+        "SubjectFactDigest",
+        "TrustId",
+        "TrustDigest",
+        "Action",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 558,
+        "RecordedAt": 18,
+        "ManifestId": 40,
+        "ManifestDigest": 40,
+        "ResourceKeyId": 349,
+        "ResourceKeyDigest": 349,
+        "ResourceKind": 12,
+        "HeadFactId": 353,
+        "HeadFactDigest": 353,
+        "SubjectFactId": 59,
+        "SubjectFactDigest": 59,
+        "TrustId": 353,
+        "TrustDigest": 353,
+        "Action": 15,
+        "BodyDigest": 558
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_CurrentManifestMember.json"
+    },
+    "DemandSlice": {
+      "rows": 9,
+      "roots": [
+        "StoredDemandSliceRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "DemandFactId",
+        "DemandFactDigest",
+        "DocumentFactId",
+        "DocumentFactDigest",
+        "DocumentLineKeyId",
+        "DocumentLineKeyDigest",
+        "ScheduleFactId",
+        "ScheduleFactDigest",
+        "ResponsibilityFrom",
+        "ResponsibilityTo",
+        "UomFactId",
+        "UomFactDigest",
+        "OutstandingValue",
+        "OutstandingKnowledge",
+        "CurrentControlFactId",
+        "CurrentControlFactDigest",
+        "ScheduleNABasisId",
+        "ScheduleNABasisDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 9,
+        "RecordedAt": 4,
+        "GraphId": 5,
+        "GraphDigest": 5,
+        "DemandFactId": 4,
+        "DemandFactDigest": 4,
+        "DocumentFactId": 3,
+        "DocumentFactDigest": 3,
+        "DocumentLineKeyId": 1,
+        "DocumentLineKeyDigest": 1,
+        "ScheduleFactId": 3,
+        "ScheduleFactDigest": 3,
+        "ResponsibilityFrom": 3,
+        "ResponsibilityTo": 3,
+        "UomFactId": 1,
+        "UomFactDigest": 1,
+        "OutstandingValue": 4,
+        "OutstandingKnowledge": 1,
+        "CurrentControlFactId": 3,
+        "CurrentControlFactDigest": 3,
+        "ScheduleNABasisId": 1,
+        "ScheduleNABasisDigest": 1,
+        "BodyDigest": 9
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_DemandSlice.json"
+    },
+    "Dismissal": {
+      "rows": 1,
+      "roots": [
+        "StoredDismissalRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "AssessmentId",
+        "AssessmentDigest",
+        "PolicyFactId",
+        "PolicyFactDigest",
+        "OperationId",
+        "ReasonCode",
+        "Note",
+        "UntilNodeArtifactId",
+        "UntilNodeArtifactDigest",
+        "DismissedAt",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "CaseId": 1,
+        "CaseDigest": 1,
+        "EpisodeId": 1,
+        "EpisodeDigest": 1,
+        "AssessmentId": 1,
+        "AssessmentDigest": 1,
+        "PolicyFactId": 1,
+        "PolicyFactDigest": 1,
+        "OperationId": 1,
+        "ReasonCode": 1,
+        "Note": 1,
+        "UntilNodeArtifactId": 1,
+        "UntilNodeArtifactDigest": 1,
+        "DismissedAt": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Dismissal.json"
+    },
+    "DispositionReceipt": {
+      "rows": 2,
+      "roots": [
+        "StoredDispositionReceiptRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "WorkId",
+        "OwnerReceiptFactId",
+        "OwnerReceiptFactDigest",
+        "OriginalRequestArtifactId",
+        "OriginalRequestArtifactDigest",
+        "ReceiptArtifactId",
+        "ReceiptArtifactDigest",
+        "ProvenanceId",
+        "ProvenanceDigest",
+        "Outcome",
+        "ObservedAt",
+        "OccurredAt",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 2,
+        "WorkId": 1,
+        "OwnerReceiptFactId": 2,
+        "OwnerReceiptFactDigest": 2,
+        "OriginalRequestArtifactId": 1,
+        "OriginalRequestArtifactDigest": 1,
+        "ReceiptArtifactId": 2,
+        "ReceiptArtifactDigest": 2,
+        "ProvenanceId": 2,
+        "ProvenanceDigest": 2,
+        "Outcome": 2,
+        "ObservedAt": 2,
+        "OccurredAt": 2,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_DispositionReceipt.json"
+    },
+    "DispositionReceiptObligation": {
+      "rows": 3,
+      "roots": [
+        "StoredDispositionReceiptObligationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ReceiptId",
+        "ReceiptDigest",
+        "ObligationId",
+        "ObligationDigest",
+        "Relation",
+        "RangeFrom",
+        "RangeTo",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 3,
+        "RecordedAt": 2,
+        "ReceiptId": 2,
+        "ReceiptDigest": 2,
+        "ObligationId": 1,
+        "ObligationDigest": 1,
+        "Relation": 2,
+        "RangeFrom": 1,
+        "RangeTo": 1,
+        "BodyDigest": 3
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_DispositionReceiptObligation.json"
+    },
+    "DispositionRequestObligation": {
+      "rows": 1,
+      "roots": [
+        "StoredDispositionRequestObligationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "WorkId",
+        "ObligationId",
+        "ObligationDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "WorkId": 1,
+        "ObligationId": 1,
+        "ObligationDigest": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_DispositionRequestObligation.json"
+    },
+    "DispositionWork": {
+      "rows": 3,
+      "roots": [
+        "StoredDispositionWorkRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "ImpactId",
+        "ImpactDigest",
+        "OperationId",
+        "Owner",
+        "OriginalSlotArtifactId",
+        "OriginalSlotArtifactDigest",
+        "RequestArtifactId",
+        "RequestArtifactDigest",
+        "State",
+        "ProcessingRevision",
+        "LatestReceiptId",
+        "LatestReceiptDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 3,
+        "RowVersion": 3,
+        "CaseId": 1,
+        "CaseDigest": 1,
+        "EpisodeId": 1,
+        "EpisodeDigest": 1,
+        "ImpactId": 1,
+        "ImpactDigest": 1,
+        "OperationId": 1,
+        "Owner": 1,
+        "OriginalSlotArtifactId": 1,
+        "OriginalSlotArtifactDigest": 1,
+        "RequestArtifactId": 1,
+        "RequestArtifactDigest": 1,
+        "State": 3,
+        "ProcessingRevision": 3,
+        "LatestReceiptId": 3,
+        "LatestReceiptDigest": 3
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_DispositionWork.json"
+    },
+    "EligibilityCondition": {
+      "rows": 9,
+      "roots": [
+        "StoredEligibilityConditionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "SubjectFactId",
+        "SubjectFactDigest",
+        "Kind",
+        "Requiredness",
+        "RequirednessBasisId",
+        "RequirednessBasisDigest",
+        "EvidenceState",
+        "EvidenceFactId",
+        "EvidenceFactDigest",
+        "RangeFrom",
+        "RangeTo",
+        "ReasonCode",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 9,
+        "RecordedAt": 4,
+        "GraphId": 5,
+        "GraphDigest": 5,
+        "SubjectFactId": 3,
+        "SubjectFactDigest": 3,
+        "Kind": 2,
+        "Requiredness": 1,
+        "RequirednessBasisId": 1,
+        "RequirednessBasisDigest": 1,
+        "EvidenceState": 1,
+        "EvidenceFactId": 4,
+        "EvidenceFactDigest": 4,
+        "RangeFrom": 1,
+        "RangeTo": 3,
+        "ReasonCode": 4,
+        "BodyDigest": 9
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_EligibilityCondition.json"
+    },
+    "Episode": {
+      "rows": 4,
+      "roots": [
+        "StoredEpisodeRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeOrdinal",
+        "CauseFactId",
+        "CauseFactDigest",
+        "ReasonCode",
+        "PriorClosureId",
+        "PriorClosureDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 4,
+        "RecordedAt": 2,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeOrdinal": 1,
+        "CauseFactId": 4,
+        "CauseFactDigest": 4,
+        "ReasonCode": 3,
+        "PriorClosureId": 1,
+        "PriorClosureDigest": 1,
+        "BodyDigest": 4
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Episode.json"
+    },
+    "ExceptionCase": {
+      "rows": 4,
+      "roots": [
+        "StoredExceptionCaseRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "OriginId",
+        "OriginDigest",
+        "InitialCauseFactId",
+        "InitialCauseFactDigest",
+        "DetectedAt",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 4,
+        "RecordedAt": 2,
+        "OriginId": 4,
+        "OriginDigest": 4,
+        "InitialCauseFactId": 4,
+        "InitialCauseFactDigest": 4,
+        "DetectedAt": 2,
+        "BodyDigest": 4
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExceptionCase.json"
+    },
+    "ExecutionObligation": {
+      "rows": 2,
+      "roots": [
+        "StoredExecutionObligationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ImpactId",
+        "ImpactDigest",
+        "Owner",
+        "SubjectFactId",
+        "SubjectFactDigest",
+        "InitialState",
+        "RequiredForClosure",
+        "CanStillAffectCase",
+        "PotentialQty",
+        "PotentialKnowledge",
+        "OriginalSlotArtifactId",
+        "OriginalSlotArtifactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 2,
+        "ImpactId": 2,
+        "ImpactDigest": 2,
+        "Owner": 1,
+        "SubjectFactId": 1,
+        "SubjectFactDigest": 1,
+        "InitialState": 2,
+        "RequiredForClosure": 1,
+        "CanStillAffectCase": 2,
+        "PotentialQty": 2,
+        "PotentialKnowledge": 1,
+        "OriginalSlotArtifactId": 1,
+        "OriginalSlotArtifactDigest": 1,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExecutionObligation.json"
+    },
+    "ExecutionPathCoverage": {
+      "rows": 6,
+      "roots": [
+        "StoredExecutionPathCoverageRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ObligationId",
+        "ObligationDigest",
+        "PathKind",
+        "ScopeKeyId",
+        "ScopeKeyDigest",
+        "AdmissionBoundaryFactId",
+        "AdmissionBoundaryFactDigest",
+        "CurrentStopFactId",
+        "CurrentStopFactDigest",
+        "CoverageFactId",
+        "CoverageFactDigest",
+        "Knowledge",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 6,
+        "RecordedAt": 2,
+        "ObligationId": 2,
+        "ObligationDigest": 2,
+        "PathKind": 3,
+        "ScopeKeyId": 1,
+        "ScopeKeyDigest": 1,
+        "AdmissionBoundaryFactId": 1,
+        "AdmissionBoundaryFactDigest": 1,
+        "CurrentStopFactId": 2,
+        "CurrentStopFactDigest": 2,
+        "CoverageFactId": 2,
+        "CoverageFactDigest": 2,
+        "Knowledge": 1,
+        "BodyDigest": 6
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExecutionPathCoverage.json"
+    },
+    "Export": {
+      "rows": 2,
+      "roots": [
+        "StoredExportRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "OperationId",
+        "ReadCutSeq",
+        "ColumnMaskArtifactId",
+        "ColumnMaskArtifactDigest",
+        "PermissionId",
+        "PermissionDigest",
+        "State",
+        "ExpiresAt",
+        "FileArtifactId",
+        "FileArtifactDigest",
+        "VisibleRowCount",
+        "ByteLength"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 2,
+        "RowVersion": 2,
+        "OperationId": 1,
+        "ReadCutSeq": 1,
+        "ColumnMaskArtifactId": 1,
+        "ColumnMaskArtifactDigest": 1,
+        "PermissionId": 1,
+        "PermissionDigest": 1,
+        "State": 2,
+        "ExpiresAt": 1,
+        "FileArtifactId": 2,
+        "FileArtifactDigest": 2,
+        "VisibleRowCount": 2,
+        "ByteLength": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Export.json"
+    },
+    "ExportBundle": {
+      "rows": 1,
+      "roots": [
+        "StoredExportBundleRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "MemberIdentityDigest",
+        "MemberIdsCanonical",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "MemberIdentityDigest": 1,
+        "MemberIdsCanonical": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportBundle.json"
+    },
+    "ExportCheckpoint": {
+      "rows": 3,
+      "roots": [
+        "StoredExportCheckpointRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "OperationId",
+        "ProcessingRevision",
+        "GenerationDispatch",
+        "OriginalRequestArtifactId",
+        "OriginalRequestArtifactDigest",
+        "WriterEpoch",
+        "FileArtifactId",
+        "FileArtifactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 3,
+        "RecordedAt": 3,
+        "OperationId": 1,
+        "ProcessingRevision": 3,
+        "GenerationDispatch": 3,
+        "OriginalRequestArtifactId": 1,
+        "OriginalRequestArtifactDigest": 1,
+        "WriterEpoch": 1,
+        "FileArtifactId": 2,
+        "FileArtifactDigest": 2,
+        "BodyDigest": 3
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportCheckpoint.json"
+    },
+    "ExportCommandReceipt": {
+      "rows": 1,
+      "roots": [
+        "StoredExportCommandReceiptRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "OperationId",
+        "SlotId",
+        "SlotDigest",
+        "HttpStatus",
+        "ResultArtifactId",
+        "ResultArtifactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "OperationId": 1,
+        "SlotId": 1,
+        "SlotDigest": 1,
+        "HttpStatus": 1,
+        "ResultArtifactId": 1,
+        "ResultArtifactDigest": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportCommandReceipt.json"
+    },
+    "ExportCommandSlot": {
+      "rows": 1,
+      "roots": [
+        "StoredExportCommandSlotRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "BundleId",
+        "BundleDigest",
+        "OperationId",
+        "PreparationId",
+        "PreparationDigest",
+        "RequestKeyId",
+        "RequestKeyDigest",
+        "RequestArtifactId",
+        "RequestArtifactDigest",
+        "RequestDigest",
+        "ActorFactId",
+        "ActorFactDigest",
+        "AuthorityId",
+        "AuthorityDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "BundleId": 1,
+        "BundleDigest": 1,
+        "OperationId": 1,
+        "PreparationId": 1,
+        "PreparationDigest": 1,
+        "RequestKeyId": 1,
+        "RequestKeyDigest": 1,
+        "RequestArtifactId": 1,
+        "RequestArtifactDigest": 1,
+        "RequestDigest": 1,
+        "ActorFactId": 1,
+        "ActorFactDigest": 1,
+        "AuthorityId": 1,
+        "AuthorityDigest": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportCommandSlot.json"
+    },
+    "ExportOperation": {
+      "rows": 4,
+      "roots": [
+        "StoredExportOperationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "BundleId",
+        "BundleDigest",
+        "ExportId",
+        "State",
+        "ProcessingRevision"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 3,
+        "RowVersion": 4,
+        "BundleId": 1,
+        "BundleDigest": 1,
+        "ExportId": 2,
+        "State": 3,
+        "ProcessingRevision": 4
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportOperation.json"
+    },
+    "ExportPreparation": {
+      "rows": 1,
+      "roots": [
+        "StoredExportPreparationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "BundleId",
+        "BundleDigest",
+        "ReadCutSeq",
+        "AuthorityId",
+        "AuthorityDigest",
+        "ExpiresAt",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "BundleId": 1,
+        "BundleDigest": 1,
+        "ReadCutSeq": 1,
+        "AuthorityId": 1,
+        "AuthorityDigest": 1,
+        "ExpiresAt": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportPreparation.json"
+    },
+    "ExportPreparationMember": {
+      "rows": 2,
+      "roots": [
+        "StoredExportPreparationMemberRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "PreparationId",
+        "PreparationDigest",
+        "Ordinal",
+        "CaseRevisionId",
+        "CaseRevisionDigest",
+        "AssessmentId",
+        "AssessmentDigest",
+        "AuthorityId",
+        "AuthorityDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 1,
+        "PreparationId": 1,
+        "PreparationDigest": 1,
+        "Ordinal": 2,
+        "CaseRevisionId": 2,
+        "CaseRevisionDigest": 2,
+        "AssessmentId": 2,
+        "AssessmentDigest": 2,
+        "AuthorityId": 2,
+        "AuthorityDigest": 2,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportPreparationMember.json"
+    },
+    "ExportRowRef": {
+      "rows": 2,
+      "roots": [
+        "StoredExportRowRefRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ExportId",
+        "CaseRevisionId",
+        "CaseRevisionDigest",
+        "Ordinal",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 1,
+        "ExportId": 1,
+        "CaseRevisionId": 2,
+        "CaseRevisionDigest": 2,
+        "Ordinal": 2,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ExportRowRef.json"
+    },
+    "FactDependency": {
+      "rows": 9715,
+      "roots": [
+        "StoredFactDependencyRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "FromFactId",
+        "FromFactDigest",
+        "ToFactId",
+        "ToFactDigest",
+        "Relation",
+        "MappingFactId",
+        "MappingFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 9715,
+        "RecordedAt": 108,
+        "FromFactId": 622,
+        "FromFactDigest": 622,
+        "ToFactId": 386,
+        "ToFactDigest": 386,
+        "Relation": 1,
+        "MappingFactId": 1,
+        "MappingFactDigest": 1,
+        "BodyDigest": 9715
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_FactDependency.json"
+    },
+    "HeadObservation": {
+      "rows": 15,
+      "roots": [
+        "StoredHeadObservationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "AssessmentId",
+        "AssessmentDigest",
+        "CurrentManifestId",
+        "CurrentManifestDigest",
+        "ObservedAt",
+        "Effectivity",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 15,
+        "RecordedAt": 10,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeId": 4,
+        "EpisodeDigest": 4,
+        "AssessmentId": 7,
+        "AssessmentDigest": 7,
+        "CurrentManifestId": 10,
+        "CurrentManifestDigest": 10,
+        "ObservedAt": 9,
+        "Effectivity": 1,
+        "BodyDigest": 15
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_HeadObservation.json"
+    },
+    "ImpactBeneficiary": {
+      "rows": 15,
+      "roots": [
+        "StoredImpactBeneficiaryRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ImpactId",
+        "ImpactDigest",
+        "ShareId",
+        "ShareDigest",
+        "DemandNodeId",
+        "DemandNodeDigest",
+        "SupplyNodeId",
+        "SupplyNodeDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 15,
+        "RecordedAt": 5,
+        "ImpactId": 7,
+        "ImpactDigest": 7,
+        "ShareId": 15,
+        "ShareDigest": 15,
+        "DemandNodeId": 13,
+        "DemandNodeDigest": 13,
+        "SupplyNodeId": 11,
+        "SupplyNodeDigest": 11,
+        "BodyDigest": 15
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ImpactBeneficiary.json"
+    },
+    "ImpactEdge": {
+      "rows": 15,
+      "roots": [
+        "StoredImpactEdgeRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ImpactId",
+        "ImpactDigest",
+        "FromNodeId",
+        "FromNodeDigest",
+        "ToNodeId",
+        "ToNodeDigest",
+        "EvidenceFactId",
+        "EvidenceFactDigest",
+        "MappingFactId",
+        "MappingFactDigest",
+        "Relation",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 15,
+        "RecordedAt": 4,
+        "ImpactId": 5,
+        "ImpactDigest": 5,
+        "FromNodeId": 15,
+        "FromNodeDigest": 15,
+        "ToNodeId": 7,
+        "ToNodeDigest": 7,
+        "EvidenceFactId": 9,
+        "EvidenceFactDigest": 9,
+        "MappingFactId": 7,
+        "MappingFactDigest": 7,
+        "Relation": 4,
+        "BodyDigest": 15
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ImpactEdge.json"
+    },
+    "ImpactManifest": {
+      "rows": 7,
+      "roots": [
+        "ImpactBusinessFact"
+      ],
+      "hash_profiles": [
+        "PRIVATE_IMPACT_BUSINESS_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "AssessmentId",
+        "AssessmentDigest",
+        "CurrentManifestId",
+        "CurrentManifestDigest",
+        "Version",
+        "GraphCompleteness",
+        "ExecutionCertainty",
+        "LocalRecalcAllowed",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 5,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeId": 4,
+        "EpisodeDigest": 4,
+        "AssessmentId": 7,
+        "AssessmentDigest": 7,
+        "CurrentManifestId": 6,
+        "CurrentManifestDigest": 6,
+        "Version": 2,
+        "GraphCompleteness": 1,
+        "ExecutionCertainty": 2,
+        "LocalRecalcAllowed": 2,
+        "BodyDigest": 7
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ImpactManifest.json"
+    },
+    "ImpactNode": {
+      "rows": 30,
+      "roots": [
+        "StoredImpactNodeRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ImpactId",
+        "ImpactDigest",
+        "SubjectFactId",
+        "SubjectFactDigest",
+        "NodeKind",
+        "Classification",
+        "ResponsibleOwner",
+        "RangeFrom",
+        "RangeTo",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 30,
+        "RecordedAt": 5,
+        "ImpactId": 7,
+        "ImpactDigest": 7,
+        "SubjectFactId": 14,
+        "SubjectFactDigest": 14,
+        "NodeKind": 5,
+        "Classification": 2,
+        "ResponsibleOwner": 5,
+        "RangeFrom": 4,
+        "RangeTo": 8,
+        "BodyDigest": 30
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ImpactNode.json"
+    },
+    "Inbox": {
+      "rows": 18,
+      "roots": [
+        "StoredInboxRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "ProducerOwner",
+        "EventId",
+        "StreamId",
+        "Sequence",
+        "PreviousDigest",
+        "ArtifactId",
+        "ArtifactDigest",
+        "SemanticDigest",
+        "CanonicalFactId",
+        "CanonicalFactDigest",
+        "ProcessingState",
+        "ProcessingRevision",
+        "FirstReceivedAt",
+        "ClaimEpoch",
+        "NextAttemptAt",
+        "HolderKey",
+        "LeaseUntil",
+        "AppliedReceiptId",
+        "AppliedReceiptDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 9,
+        "RowVersion": 18,
+        "ProducerOwner": 3,
+        "EventId": 7,
+        "StreamId": 3,
+        "Sequence": 3,
+        "PreviousDigest": 5,
+        "ArtifactId": 7,
+        "ArtifactDigest": 7,
+        "SemanticDigest": 7,
+        "CanonicalFactId": 7,
+        "CanonicalFactDigest": 7,
+        "ProcessingState": 6,
+        "ProcessingRevision": 6,
+        "FirstReceivedAt": 7,
+        "ClaimEpoch": 3,
+        "NextAttemptAt": 2,
+        "HolderKey": 2,
+        "LeaseUntil": 3,
+        "AppliedReceiptId": 4,
+        "AppliedReceiptDigest": 4
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Inbox.json"
+    },
+    "InboxAlias": {
+      "rows": 1,
+      "roots": [
+        "StoredInboxAliasRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "InboxId",
+        "CanonicalFactId",
+        "CanonicalFactDigest",
+        "TransportEventId",
+        "ProducerOwner",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "InboxId": 1,
+        "CanonicalFactId": 1,
+        "CanonicalFactDigest": 1,
+        "TransportEventId": 1,
+        "ProducerOwner": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_InboxAlias.json"
+    },
+    "KeyIdentity": {
+      "rows": 1128,
+      "roots": [
+        "StoredKeyIdentityRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "Namespace",
+        "KeyBytes",
+        "ByteLength",
+        "KeyRawSha256",
+        "CollisionOrdinal",
+        "DisplayText",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1128,
+        "RecordedAt": 119,
+        "Namespace": 131,
+        "KeyBytes": 1035,
+        "ByteLength": 109,
+        "KeyRawSha256": 1035,
+        "CollisionOrdinal": 1,
+        "DisplayText": 1035,
+        "BodyDigest": 1128
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_KeyIdentity.json"
+    },
+    "MaterialObligation": {
+      "rows": 4,
+      "roots": [
+        "StoredMaterialObligationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "ObligationFactId",
+        "ObligationFactDigest",
+        "WorkOrderFactId",
+        "WorkOrderFactDigest",
+        "MaterialLineKeyId",
+        "MaterialLineKeyDigest",
+        "OccurrenceKeyId",
+        "OccurrenceKeyDigest",
+        "BasisKind",
+        "BasisFactId",
+        "BasisFactDigest",
+        "RemainingValue",
+        "RemainingKnowledge",
+        "SourceKind",
+        "TechnicalOccurrenceFactId",
+        "TechnicalOccurrenceFactDigest",
+        "DesignFrom",
+        "DesignTo",
+        "ParentSuggestionFactId",
+        "ParentSuggestionFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 4,
+        "RecordedAt": 1,
+        "GraphId": 2,
+        "GraphDigest": 2,
+        "ObligationFactId": 2,
+        "ObligationFactDigest": 2,
+        "WorkOrderFactId": 2,
+        "WorkOrderFactDigest": 2,
+        "MaterialLineKeyId": 2,
+        "MaterialLineKeyDigest": 2,
+        "OccurrenceKeyId": 2,
+        "OccurrenceKeyDigest": 2,
+        "BasisKind": 2,
+        "BasisFactId": 2,
+        "BasisFactDigest": 2,
+        "RemainingValue": 2,
+        "RemainingKnowledge": 1,
+        "SourceKind": 2,
+        "TechnicalOccurrenceFactId": 2,
+        "TechnicalOccurrenceFactDigest": 2,
+        "DesignFrom": 1,
+        "DesignTo": 2,
+        "ParentSuggestionFactId": 2,
+        "ParentSuggestionFactDigest": 2,
+        "BodyDigest": 4
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_MaterialObligation.json"
+    },
+    "MaterialOffset": {
+      "rows": 2,
+      "roots": [
+        "StoredMaterialOffsetRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ObligationId",
+        "ObligationDigest",
+        "SourceFactId",
+        "SourceFactDigest",
+        "FromQty",
+        "ToQty",
+        "UomFactId",
+        "UomFactDigest",
+        "AlreadyIncluded",
+        "StillProtected",
+        "InclusionProofId",
+        "InclusionProofDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 1,
+        "ObligationId": 2,
+        "ObligationDigest": 2,
+        "SourceFactId": 1,
+        "SourceFactDigest": 1,
+        "FromQty": 1,
+        "ToQty": 1,
+        "UomFactId": 1,
+        "UomFactDigest": 1,
+        "AlreadyIncluded": 1,
+        "StillProtected": 1,
+        "InclusionProofId": 1,
+        "InclusionProofDigest": 1,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_MaterialOffset.json"
+    },
+    "MrpReceipt": {
+      "rows": 10,
+      "roots": [
+        "StoredMrpReceiptRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "WorkId",
+        "ReceiptFactId",
+        "ReceiptFactDigest",
+        "OriginalRequestArtifactId",
+        "OriginalRequestArtifactDigest",
+        "NativeReceiptArtifactId",
+        "NativeReceiptArtifactDigest",
+        "ProvenanceId",
+        "ProvenanceDigest",
+        "Stage",
+        "RunFactId",
+        "RunFactDigest",
+        "InputSetFactId",
+        "InputSetFactDigest",
+        "AttemptFactId",
+        "AttemptFactDigest",
+        "ResultSetFactId",
+        "ResultSetFactDigest",
+        "SelectionFactId",
+        "SelectionFactDigest",
+        "PublicationFactId",
+        "PublicationFactDigest",
+        "EffectiveSetFactId",
+        "EffectiveSetFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 10,
+        "RecordedAt": 10,
+        "WorkId": 2,
+        "ReceiptFactId": 9,
+        "ReceiptFactDigest": 9,
+        "OriginalRequestArtifactId": 2,
+        "OriginalRequestArtifactDigest": 2,
+        "NativeReceiptArtifactId": 9,
+        "NativeReceiptArtifactDigest": 9,
+        "ProvenanceId": 9,
+        "ProvenanceDigest": 9,
+        "Stage": 8,
+        "RunFactId": 3,
+        "RunFactDigest": 3,
+        "InputSetFactId": 3,
+        "InputSetFactDigest": 3,
+        "AttemptFactId": 3,
+        "AttemptFactDigest": 3,
+        "ResultSetFactId": 2,
+        "ResultSetFactDigest": 2,
+        "SelectionFactId": 2,
+        "SelectionFactDigest": 2,
+        "PublicationFactId": 2,
+        "PublicationFactDigest": 2,
+        "EffectiveSetFactId": 2,
+        "EffectiveSetFactDigest": 2,
+        "BodyDigest": 10
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_MrpReceipt.json"
+    },
+    "MrpResultMember": {
+      "rows": 16,
+      "roots": [
+        "StoredMrpResultMemberRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "MrpReceiptId",
+        "MrpReceiptDigest",
+        "MemberFactId",
+        "MemberFactDigest",
+        "Kind",
+        "Ordinal",
+        "ParentFactId",
+        "ParentFactDigest",
+        "MappingFactId",
+        "MappingFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 16,
+        "RecordedAt": 4,
+        "MrpReceiptId": 4,
+        "MrpReceiptDigest": 4,
+        "MemberFactId": 4,
+        "MemberFactDigest": 4,
+        "Kind": 3,
+        "Ordinal": 4,
+        "ParentFactId": 1,
+        "ParentFactDigest": 1,
+        "MappingFactId": 3,
+        "MappingFactDigest": 3,
+        "BodyDigest": 16
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_MrpResultMember.json"
+    },
+    "ObligationSettlement": {
+      "rows": 1,
+      "roots": [
+        "StoredObligationSettlementRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ObligationId",
+        "ObligationDigest",
+        "OwnerReceiptId",
+        "OwnerReceiptDigest",
+        "ResultFactId",
+        "ResultFactDigest",
+        "State",
+        "NoLongerAffectsProofId",
+        "NoLongerAffectsProofDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "ObligationId": 1,
+        "ObligationDigest": 1,
+        "OwnerReceiptId": 1,
+        "OwnerReceiptDigest": 1,
+        "ResultFactId": 1,
+        "ResultFactDigest": 1,
+        "State": 1,
+        "NoLongerAffectsProofId": 1,
+        "NoLongerAffectsProofDigest": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ObligationSettlement.json"
+    },
+    "Operation": {
+      "rows": 38,
+      "roots": [
+        "StoredOperationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "Kind",
+        "State",
+        "ProcessingRevision",
+        "CheckpointId",
+        "CheckpointDigest",
+        "OriginalReceiptId",
+        "OriginalReceiptDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 10,
+        "RecordedAt": 20,
+        "RowVersion": 38,
+        "CaseId": 2,
+        "CaseDigest": 2,
+        "EpisodeId": 2,
+        "EpisodeDigest": 2,
+        "Kind": 8,
+        "State": 5,
+        "ProcessingRevision": 11,
+        "CheckpointId": 6,
+        "CheckpointDigest": 6,
+        "OriginalReceiptId": 11,
+        "OriginalReceiptDigest": 11
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Operation.json"
+    },
+    "Outbox": {
+      "rows": 7,
+      "roots": [
+        "StoredOutboxRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "OperationId",
+        "TargetOwner",
+        "EffectKeyId",
+        "EffectKeyDigest",
+        "EventKind",
+        "PayloadArtifactId",
+        "PayloadArtifactDigest",
+        "OriginalSlotArtifactId",
+        "OriginalSlotArtifactDigest",
+        "InboxId",
+        "ExportOperationId",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 6,
+        "OperationId": 7,
+        "TargetOwner": 3,
+        "EffectKeyId": 7,
+        "EffectKeyDigest": 7,
+        "EventKind": 5,
+        "PayloadArtifactId": 7,
+        "PayloadArtifactDigest": 7,
+        "OriginalSlotArtifactId": 6,
+        "OriginalSlotArtifactDigest": 6,
+        "InboxId": 1,
+        "ExportOperationId": 1,
+        "BodyDigest": 7
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Outbox.json"
+    },
+    "OutboxDelivery": {
+      "rows": 7,
+      "roots": [
+        "StoredOutboxDeliveryRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "OutboxId",
+        "OutboxDigest",
+        "State",
+        "ClaimEpoch",
+        "AttemptCount",
+        "HolderKey",
+        "LeaseUntil",
+        "LastAttemptAt",
+        "TransportCode"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 6,
+        "RowVersion": 7,
+        "OutboxId": 7,
+        "OutboxDigest": 7,
+        "State": 1,
+        "ClaimEpoch": 1,
+        "AttemptCount": 1,
+        "HolderKey": 1,
+        "LeaseUntil": 1,
+        "LastAttemptAt": 1,
+        "TransportCode": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_OutboxDelivery.json"
+    },
+    "PermissionObservation": {
+      "rows": 34,
+      "roots": [
+        "StoredPermissionObservationRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "DecisionFactId",
+        "DecisionFactDigest",
+        "ProviderQualificationId",
+        "ProviderQualificationDigest",
+        "PrincipalFactId",
+        "PrincipalFactDigest",
+        "Action",
+        "ResourceCaseId",
+        "ResourceCaseDigest",
+        "IssuedAt",
+        "ValidUntil",
+        "CurrentHeadFactId",
+        "CurrentHeadFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 34,
+        "RecordedAt": 24,
+        "DecisionFactId": 1,
+        "DecisionFactDigest": 1,
+        "ProviderQualificationId": 1,
+        "ProviderQualificationDigest": 1,
+        "PrincipalFactId": 1,
+        "PrincipalFactDigest": 1,
+        "Action": 13,
+        "ResourceCaseId": 4,
+        "ResourceCaseDigest": 4,
+        "IssuedAt": 24,
+        "ValidUntil": 1,
+        "CurrentHeadFactId": 22,
+        "CurrentHeadFactDigest": 22,
+        "BodyDigest": 34
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_PermissionObservation.json"
+    },
+    "ProcessingAttempt": {
+      "rows": 6,
+      "roots": [
+        "StoredProcessingAttemptRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "InboxId",
+        "AttemptOrdinal",
+        "ClaimEpoch",
+        "WriterEpoch",
+        "Outcome",
+        "ObservedAt",
+        "ErrorCode",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 6,
+        "RecordedAt": 6,
+        "InboxId": 5,
+        "AttemptOrdinal": 2,
+        "ClaimEpoch": 3,
+        "WriterEpoch": 2,
+        "Outcome": 3,
+        "ObservedAt": 6,
+        "ErrorCode": 2,
+        "BodyDigest": 6
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ProcessingAttempt.json"
+    },
+    "ProducerQualification": {
+      "rows": 636,
+      "roots": [
+        "ProducerQualificationBinding"
+      ],
+      "hash_profiles": [
+        "QUALIFICATION_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "Owner",
+        "Role",
+        "ContractId",
+        "ContractVersion",
+        "ContractDigest",
+        "BodySchemaDigest",
+        "AuthenticatedChannelId",
+        "ActualIssuer",
+        "ValidFrom",
+        "ValidTo",
+        "QualificationState",
+        "ArtifactId",
+        "ArtifactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 636,
+        "RecordedAt": 116,
+        "Owner": 17,
+        "Role": 80,
+        "ContractId": 17,
+        "ContractVersion": 1,
+        "ContractDigest": 17,
+        "BodySchemaDigest": 80,
+        "AuthenticatedChannelId": 17,
+        "ActualIssuer": 17,
+        "ValidFrom": 116,
+        "ValidTo": 1,
+        "QualificationState": 1,
+        "ArtifactId": 636,
+        "ArtifactDigest": 636,
+        "BodyDigest": 371
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ProducerQualification.json"
+    },
+    "ProjectionHead": {
+      "rows": 9,
+      "roots": [
+        "StoredProjectionHeadRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "CaseId",
+        "CaseDigest",
+        "ProjectionKind",
+        "RevisionId",
+        "RevisionDigest",
+        "ProjectionVersion"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 4,
+        "RecordedAt": 6,
+        "RowVersion": 9,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "ProjectionKind": 1,
+        "RevisionId": 9,
+        "RevisionDigest": 9,
+        "ProjectionVersion": 3
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ProjectionHead.json"
+    },
+    "ProjectionRevision": {
+      "rows": 9,
+      "roots": [
+        "StoredProjectionRevisionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "ProjectionKind",
+        "ProjectionVersion",
+        "AssessmentId",
+        "AssessmentDigest",
+        "ImpactId",
+        "ImpactDigest",
+        "CurrentManifestId",
+        "CurrentManifestDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 9,
+        "RecordedAt": 6,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "ProjectionKind": 1,
+        "ProjectionVersion": 3,
+        "AssessmentId": 7,
+        "AssessmentDigest": 7,
+        "ImpactId": 7,
+        "ImpactDigest": 7,
+        "CurrentManifestId": 7,
+        "CurrentManifestDigest": 7,
+        "BodyDigest": 9
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ProjectionRevision.json"
+    },
+    "Protection": {
+      "rows": 2,
+      "roots": [
+        "StoredProtectionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "SourceFactId",
+        "SourceFactDigest",
+        "BeneficiaryFactId",
+        "BeneficiaryFactDigest",
+        "Kind",
+        "IncludedInAvailable",
+        "State",
+        "RangeFrom",
+        "RangeTo",
+        "QuantityValue",
+        "QuantityKnowledge",
+        "CurrentHeadFactId",
+        "CurrentHeadFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 1,
+        "GraphId": 2,
+        "GraphDigest": 2,
+        "SourceFactId": 1,
+        "SourceFactDigest": 1,
+        "BeneficiaryFactId": 1,
+        "BeneficiaryFactDigest": 1,
+        "Kind": 1,
+        "IncludedInAvailable": 1,
+        "State": 1,
+        "RangeFrom": 1,
+        "RangeTo": 1,
+        "QuantityValue": 1,
+        "QuantityKnowledge": 1,
+        "CurrentHeadFactId": 1,
+        "CurrentHeadFactDigest": 1,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Protection.json"
+    },
+    "RecalcStep": {
+      "rows": 12,
+      "roots": [
+        "StoredRecalcStepRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "WorkId",
+        "Ordinal",
+        "OriginalRequestArtifactId",
+        "OriginalRequestArtifactDigest",
+        "OriginalQuerySlotArtifactId",
+        "OriginalQuerySlotArtifactDigest",
+        "ObservedMrpReceiptId",
+        "ObservedMrpReceiptDigest",
+        "PredecessorStepId",
+        "PredecessorStepDigest",
+        "Stage",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 12,
+        "RecordedAt": 12,
+        "WorkId": 2,
+        "Ordinal": 9,
+        "OriginalRequestArtifactId": 2,
+        "OriginalRequestArtifactDigest": 2,
+        "OriginalQuerySlotArtifactId": 2,
+        "OriginalQuerySlotArtifactDigest": 2,
+        "ObservedMrpReceiptId": 11,
+        "ObservedMrpReceiptDigest": 11,
+        "PredecessorStepId": 10,
+        "PredecessorStepDigest": 10,
+        "Stage": 9,
+        "BodyDigest": 12
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_RecalcStep.json"
+    },
+    "RecalcWork": {
+      "rows": 14,
+      "roots": [
+        "StoredRecalcWorkRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "ImpactId",
+        "ImpactDigest",
+        "OperationId",
+        "Kind",
+        "RequestArtifactId",
+        "RequestArtifactDigest",
+        "OriginalMrpSlotArtifactId",
+        "OriginalMrpSlotArtifactDigest",
+        "CurrentStage",
+        "ProcessingRevision",
+        "LatestMrpReceiptId",
+        "LatestMrpReceiptDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 13,
+        "RowVersion": 14,
+        "CaseId": 1,
+        "CaseDigest": 1,
+        "EpisodeId": 1,
+        "EpisodeDigest": 1,
+        "ImpactId": 2,
+        "ImpactDigest": 2,
+        "OperationId": 2,
+        "Kind": 2,
+        "RequestArtifactId": 2,
+        "RequestArtifactDigest": 2,
+        "OriginalMrpSlotArtifactId": 2,
+        "OriginalMrpSlotArtifactDigest": 2,
+        "CurrentStage": 10,
+        "ProcessingRevision": 10,
+        "LatestMrpReceiptId": 11,
+        "LatestMrpReceiptDigest": 11
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_RecalcWork.json"
+    },
+    "RecoveryCheckpoint": {
+      "rows": 5,
+      "roots": [
+        "StoredRecoveryCheckpointRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "OperationId",
+        "ProcessingRevision",
+        "LastObservationOrdinal",
+        "NextActionOrdinal",
+        "OriginalSlotArtifactId",
+        "OriginalSlotArtifactDigest",
+        "OriginalRequestArtifactId",
+        "OriginalRequestArtifactDigest",
+        "DispatchState",
+        "WriterEpoch",
+        "HolderFactId",
+        "HolderFactDigest",
+        "NextActionKind",
+        "LastObservationFactId",
+        "LastObservationFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 5,
+        "RecordedAt": 5,
+        "OperationId": 3,
+        "ProcessingRevision": 3,
+        "LastObservationOrdinal": 2,
+        "NextActionOrdinal": 2,
+        "OriginalSlotArtifactId": 3,
+        "OriginalSlotArtifactDigest": 3,
+        "OriginalRequestArtifactId": 3,
+        "OriginalRequestArtifactDigest": 3,
+        "DispatchState": 3,
+        "WriterEpoch": 2,
+        "HolderFactId": 2,
+        "HolderFactDigest": 2,
+        "NextActionKind": 2,
+        "LastObservationFactId": 2,
+        "LastObservationFactDigest": 2,
+        "BodyDigest": 5
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_RecoveryCheckpoint.json"
+    },
+    "RepairPlan": {
+      "rows": 1,
+      "roots": [
+        "StoredRepairPlanRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "ProjectionId",
+        "ExpectedVersion",
+        "ExpectedCurrentManifestId",
+        "ExpectedCurrentManifestDigest",
+        "SourcePublicationReceiptId",
+        "SourcePublicationReceiptDigest",
+        "Reason",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "CaseId": 1,
+        "CaseDigest": 1,
+        "ProjectionId": 1,
+        "ExpectedVersion": 1,
+        "ExpectedCurrentManifestId": 1,
+        "ExpectedCurrentManifestDigest": 1,
+        "SourcePublicationReceiptId": 1,
+        "SourcePublicationReceiptDigest": 1,
+        "Reason": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_RepairPlan.json"
+    },
+    "RepairReceipt": {
+      "rows": 1,
+      "roots": [
+        "StoredRepairReceiptRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RepairPlanId",
+        "RepairPlanDigest",
+        "OperationId",
+        "ProducedRevisionId",
+        "ProducedRevisionDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 1,
+        "RepairPlanId": 1,
+        "RepairPlanDigest": 1,
+        "OperationId": 1,
+        "ProducedRevisionId": 1,
+        "ProducedRevisionDigest": 1,
+        "BodyDigest": 1
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_RepairReceipt.json"
+    },
+    "Resolution": {
+      "rows": 2,
+      "roots": [
+        "StoredResolutionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "AssessmentId",
+        "AssessmentDigest",
+        "ImpactId",
+        "ImpactDigest",
+        "CurrentManifestId",
+        "CurrentManifestDigest",
+        "OperationId",
+        "Kind",
+        "Reason",
+        "ActorFactId",
+        "ActorFactDigest",
+        "ResolvedAt",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 2,
+        "CaseId": 2,
+        "CaseDigest": 2,
+        "EpisodeId": 2,
+        "EpisodeDigest": 2,
+        "AssessmentId": 2,
+        "AssessmentDigest": 2,
+        "ImpactId": 2,
+        "ImpactDigest": 2,
+        "CurrentManifestId": 2,
+        "CurrentManifestDigest": 2,
+        "OperationId": 2,
+        "Kind": 2,
+        "Reason": 1,
+        "ActorFactId": 1,
+        "ActorFactDigest": 1,
+        "ResolvedAt": 2,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_Resolution.json"
+    },
+    "ResolutionEvidence": {
+      "rows": 10,
+      "roots": [
+        "StoredResolutionEvidenceRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ResolutionId",
+        "ResolutionDigest",
+        "EvidenceFactId",
+        "EvidenceFactDigest",
+        "EvidenceRole",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 10,
+        "RecordedAt": 2,
+        "ResolutionId": 2,
+        "ResolutionDigest": 2,
+        "EvidenceFactId": 10,
+        "EvidenceFactDigest": 10,
+        "EvidenceRole": 2,
+        "BodyDigest": 10
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ResolutionEvidence.json"
+    },
+    "ResultConsumption": {
+      "rows": 2,
+      "roots": [
+        "StoredResultConsumptionRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "WorkId",
+        "MrpPublicationReceiptId",
+        "MrpPublicationReceiptDigest",
+        "NewAssessmentId",
+        "NewAssessmentDigest",
+        "NewImpactId",
+        "NewImpactDigest",
+        "ConsumerState",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 2,
+        "RecordedAt": 1,
+        "WorkId": 1,
+        "MrpPublicationReceiptId": 1,
+        "MrpPublicationReceiptDigest": 1,
+        "NewAssessmentId": 1,
+        "NewAssessmentDigest": 1,
+        "NewImpactId": 1,
+        "NewImpactDigest": 1,
+        "ConsumerState": 1,
+        "BodyDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_ResultConsumption.json"
+    },
+    "SourceArtifact": {
+      "rows": 1341,
+      "roots": [
+        "StoredSourceArtifactRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "IssuerOwner",
+        "SchemaId",
+        "SchemaVersion",
+        "MediaType",
+        "RawUtf8",
+        "RawByteLength",
+        "RawSha256",
+        "Canonicalization",
+        "NativeCanonical",
+        "NativeDigest",
+        "PrivateStorageLocator",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1341,
+        "RecordedAt": 125,
+        "IssuerOwner": 17,
+        "SchemaId": 105,
+        "SchemaVersion": 1,
+        "MediaType": 2,
+        "RawUtf8": 1076,
+        "RawByteLength": 600,
+        "RawSha256": 1076,
+        "Canonicalization": 2,
+        "NativeCanonical": 1076,
+        "NativeDigest": 1076,
+        "PrivateStorageLocator": 1341,
+        "BodyDigest": 1341
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceArtifact.json"
+    },
+    "SourceFact": {
+      "rows": 636,
+      "roots": [
+        "NAMED_GOVERNED_NATIVE_SCHEMA_ROOT"
+      ],
+      "hash_profiles": [
+        "NATIVE_BUSINESS_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "Owner",
+        "Kind",
+        "StableKeyId",
+        "StableKeyDigest",
+        "VersionKeyId",
+        "VersionKeyDigest",
+        "ArtifactId",
+        "ArtifactDigest",
+        "ProvenanceId",
+        "ProvenanceDigest",
+        "NativeCanonicalDigest",
+        "StateForm",
+        "OccurredAt",
+        "FirstReceivedAt",
+        "ReplacesFactId",
+        "ReplacesFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 636,
+        "RecordedAt": 116,
+        "Owner": 17,
+        "Kind": 80,
+        "StableKeyId": 636,
+        "StableKeyDigest": 636,
+        "VersionKeyId": 71,
+        "VersionKeyDigest": 71,
+        "ArtifactId": 636,
+        "ArtifactDigest": 636,
+        "ProvenanceId": 636,
+        "ProvenanceDigest": 636,
+        "NativeCanonicalDigest": 636,
+        "StateForm": 1,
+        "OccurredAt": 15,
+        "FirstReceivedAt": 116,
+        "ReplacesFactId": 1,
+        "ReplacesFactDigest": 1,
+        "BodyDigest": 636
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceFact.json"
+    },
+    "SourceGraph": {
+      "rows": 7,
+      "roots": [
+        "SourceGraphBusinessFact"
+      ],
+      "hash_profiles": [
+        "PRIVATE_GRAPH_BUSINESS_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "GraphVersion",
+        "OriginKind",
+        "Knowledge",
+        "SealedAt",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 5,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeId": 4,
+        "EpisodeDigest": 4,
+        "GraphVersion": 2,
+        "OriginKind": 2,
+        "Knowledge": 1,
+        "SealedAt": 5,
+        "BodyDigest": 7
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceGraph.json"
+    },
+    "SourceGraphMember": {
+      "rows": 840,
+      "roots": [
+        "StoredSourceGraphMemberRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "MemberId",
+        "MemberDigest",
+        "MemberOrdinal",
+        "UseKind",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 840,
+        "RecordedAt": 5,
+        "GraphId": 7,
+        "GraphDigest": 7,
+        "MemberId": 330,
+        "MemberDigest": 330,
+        "MemberOrdinal": 188,
+        "UseKind": 1,
+        "BodyDigest": 840
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceGraphMember.json"
+    },
+    "SourceProvenance": {
+      "rows": 636,
+      "roots": [
+        "SourceTrust"
+      ],
+      "hash_profiles": [
+        "SOURCE_TRUST_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "ArtifactId",
+        "ArtifactDigest",
+        "QualificationId",
+        "QualificationDigest",
+        "ActualIssuerOwner",
+        "QualifiedAt",
+        "OccurredAt",
+        "OriginalAuthorityArtifactId",
+        "OriginalAuthorityArtifactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 636,
+        "RecordedAt": 116,
+        "ArtifactId": 636,
+        "ArtifactDigest": 636,
+        "QualificationId": 636,
+        "QualificationDigest": 371,
+        "ActualIssuerOwner": 17,
+        "QualifiedAt": 116,
+        "OccurredAt": 15,
+        "OriginalAuthorityArtifactId": 1,
+        "OriginalAuthorityArtifactDigest": 1,
+        "BodyDigest": 636
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceProvenance.json"
+    },
+    "SourceReadCoverage": {
+      "rows": 21,
+      "roots": [
+        "StoredSourceReadCoverageRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "Owner",
+        "ReadScopeKeyId",
+        "ReadScopeKeyDigest",
+        "QuerySlotArtifactId",
+        "QuerySlotArtifactDigest",
+        "CaptureFactId",
+        "CaptureFactDigest",
+        "Requiredness",
+        "Knowledge",
+        "FinalPageSeen",
+        "ExpectedPages",
+        "ActualPages",
+        "CompleteThroughArtifactId",
+        "CompleteThroughArtifactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 21,
+        "RecordedAt": 5,
+        "GraphId": 7,
+        "GraphDigest": 7,
+        "Owner": 3,
+        "ReadScopeKeyId": 21,
+        "ReadScopeKeyDigest": 21,
+        "QuerySlotArtifactId": 21,
+        "QuerySlotArtifactDigest": 21,
+        "CaptureFactId": 21,
+        "CaptureFactDigest": 21,
+        "Requiredness": 1,
+        "Knowledge": 1,
+        "FinalPageSeen": 1,
+        "ExpectedPages": 1,
+        "ActualPages": 1,
+        "CompleteThroughArtifactId": 1,
+        "CompleteThroughArtifactDigest": 1,
+        "BodyDigest": 21
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceReadCoverage.json"
+    },
+    "SourceReadPage": {
+      "rows": 21,
+      "roots": [
+        "StoredSourceReadPageRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CoverageId",
+        "CoverageDigest",
+        "Ordinal",
+        "PageFactId",
+        "PageFactDigest",
+        "IsFinal",
+        "PreviousPageId",
+        "PreviousPageDigest",
+        "NextCursorKeyId",
+        "NextCursorKeyDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 21,
+        "RecordedAt": 5,
+        "CoverageId": 21,
+        "CoverageDigest": 21,
+        "Ordinal": 1,
+        "PageFactId": 21,
+        "PageFactDigest": 21,
+        "IsFinal": 1,
+        "PreviousPageId": 1,
+        "PreviousPageDigest": 1,
+        "NextCursorKeyId": 1,
+        "NextCursorKeyDigest": 1,
+        "BodyDigest": 21
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceReadPage.json"
+    },
+    "SourceReadPlan": {
+      "rows": 7,
+      "roots": [
+        "SourceReadPlanBusinessFact"
+      ],
+      "hash_profiles": [
+        "PRIVATE_SOURCE_READ_PLAN_ROOT"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CaseId",
+        "CaseDigest",
+        "EpisodeId",
+        "EpisodeDigest",
+        "BoundCurrentManifestId",
+        "BoundCurrentManifestDigest",
+        "Version",
+        "Readiness",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 7,
+        "RecordedAt": 5,
+        "CaseId": 4,
+        "CaseDigest": 4,
+        "EpisodeId": 4,
+        "EpisodeDigest": 4,
+        "BoundCurrentManifestId": 6,
+        "BoundCurrentManifestDigest": 6,
+        "Version": 1,
+        "Readiness": 1,
+        "BodyDigest": 7
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceReadPlan.json"
+    },
+    "SourceStream": {
+      "rows": 10,
+      "roots": [
+        "StoredSourceStreamRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "Owner",
+        "StreamKeyId",
+        "StreamKeyDigest",
+        "EpochKeyId",
+        "EpochKeyDigest",
+        "AppliedSequence",
+        "ObservedHighSequence",
+        "EpochStartFactId",
+        "EpochStartFactDigest",
+        "AppliedFactId",
+        "AppliedFactDigest",
+        "LastSemanticDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 3,
+        "RecordedAt": 10,
+        "RowVersion": 10,
+        "Owner": 3,
+        "StreamKeyId": 3,
+        "StreamKeyDigest": 3,
+        "EpochKeyId": 3,
+        "EpochKeyDigest": 3,
+        "AppliedSequence": 4,
+        "ObservedHighSequence": 4,
+        "EpochStartFactId": 3,
+        "EpochStartFactDigest": 3,
+        "AppliedFactId": 8,
+        "AppliedFactDigest": 8,
+        "LastSemanticDigest": 8
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SourceStream.json"
+    },
+    "StoreCommitHead": {
+      "rows": 286,
+      "roots": [
+        "StoredStoreCommitHeadRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "CommitSequence",
+        "CurrentCommitId",
+        "CurrentCommitDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 128,
+        "RowVersion": 286,
+        "CommitSequence": 140,
+        "CurrentCommitId": 286,
+        "CurrentCommitDigest": 286
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_StoreCommitHead.json"
+    },
+    "StoreCommitRecord": {
+      "rows": 286,
+      "roots": [
+        "StoredStoreCommitRecordRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "CommitSequence",
+        "WriterName",
+        "WriterEpoch",
+        "TransactionCorrelationId",
+        "PriorCommitId",
+        "PriorCommitDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 286,
+        "RecordedAt": 128,
+        "CommitSequence": 140,
+        "WriterName": 1,
+        "WriterEpoch": 2,
+        "TransactionCorrelationId": 286,
+        "PriorCommitId": 277,
+        "PriorCommitDigest": 277,
+        "BodyDigest": 286
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_StoreCommitRecord.json"
+    },
+    "SupplyRoot": {
+      "rows": 5,
+      "roots": [
+        "StoredSupplyRootRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RootFactId",
+        "RootFactDigest",
+        "LineageFactId",
+        "LineageFactDigest",
+        "OriginalUomFactId",
+        "OriginalUomFactDigest",
+        "OriginalTotal",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 5,
+        "RecordedAt": 5,
+        "RootFactId": 5,
+        "RootFactDigest": 5,
+        "LineageFactId": 5,
+        "LineageFactDigest": 5,
+        "OriginalUomFactId": 1,
+        "OriginalUomFactDigest": 1,
+        "OriginalTotal": 5,
+        "BodyDigest": 5
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SupplyRoot.json"
+    },
+    "SupplySpan": {
+      "rows": 13,
+      "roots": [
+        "StoredSupplySpanRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "GraphId",
+        "GraphDigest",
+        "RootId",
+        "RootDigest",
+        "SourceFactId",
+        "SourceFactDigest",
+        "FromQty",
+        "ToQty",
+        "Quantity",
+        "UomFactId",
+        "UomFactDigest",
+        "Stage",
+        "ViewKind",
+        "IsCurrentRepresentative",
+        "RepresentationProofId",
+        "RepresentationProofDigest",
+        "CurrentHeadFactId",
+        "CurrentHeadFactDigest",
+        "CoordinateQuantity",
+        "QuantityKnowledge",
+        "QuantityBasisFactId",
+        "QuantityBasisFactDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 13,
+        "RecordedAt": 5,
+        "GraphId": 7,
+        "GraphDigest": 7,
+        "RootId": 5,
+        "RootDigest": 5,
+        "SourceFactId": 5,
+        "SourceFactDigest": 5,
+        "FromQty": 2,
+        "ToQty": 5,
+        "Quantity": 5,
+        "UomFactId": 1,
+        "UomFactDigest": 1,
+        "Stage": 2,
+        "ViewKind": 3,
+        "IsCurrentRepresentative": 1,
+        "RepresentationProofId": 4,
+        "RepresentationProofDigest": 4,
+        "CurrentHeadFactId": 9,
+        "CurrentHeadFactDigest": 9,
+        "CoordinateQuantity": 5,
+        "QuantityKnowledge": 1,
+        "QuantityBasisFactId": 5,
+        "QuantityBasisFactDigest": 5,
+        "BodyDigest": 13
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_SupplySpan.json"
+    },
+    "WaitingDependency": {
+      "rows": 2,
+      "roots": [
+        "StoredWaitingDependencyRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "InboxId",
+        "DependencyKind",
+        "RequiredKeyId",
+        "RequiredKeyDigest",
+        "RequiredSequence",
+        "RequiredFactId",
+        "RequiredFactDigest",
+        "ResolvedFactId",
+        "ResolvedFactDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 2,
+        "RowVersion": 2,
+        "InboxId": 1,
+        "DependencyKind": 1,
+        "RequiredKeyId": 1,
+        "RequiredKeyDigest": 1,
+        "RequiredSequence": 1,
+        "RequiredFactId": 1,
+        "RequiredFactDigest": 1,
+        "ResolvedFactId": 2,
+        "ResolvedFactDigest": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_WaitingDependency.json"
+    },
+    "WriterHead": {
+      "rows": 7,
+      "roots": [
+        "StoredWriterHeadRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "RowVersion",
+        "WriterName",
+        "LeaseId",
+        "LeaseDigest",
+        "Epoch",
+        "HolderKey",
+        "State",
+        "ValidUntil"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 1,
+        "RecordedAt": 2,
+        "RowVersion": 7,
+        "WriterName": 1,
+        "LeaseId": 6,
+        "LeaseDigest": 6,
+        "Epoch": 2,
+        "HolderKey": 2,
+        "State": 1,
+        "ValidUntil": 2
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_WriterHead.json"
+    },
+    "WriterLeaseHistory": {
+      "rows": 6,
+      "roots": [
+        "StoredWriterLeaseHistoryRecord"
+      ],
+      "hash_profiles": [
+        "EXACT_STORED_PHYSICAL_RECORD"
+      ],
+      "all_column_names": [
+        "EnvironmentId",
+        "TenantId",
+        "Id",
+        "RecordedAt",
+        "WriterName",
+        "Epoch",
+        "HolderKey",
+        "AcquiredAt",
+        "ValidUntil",
+        "PriorLeaseId",
+        "PriorLeaseDigest",
+        "BodyDigest"
+      ],
+      "distinct_values_by_column": {
+        "EnvironmentId": 1,
+        "TenantId": 1,
+        "Id": 6,
+        "RecordedAt": 2,
+        "WriterName": 1,
+        "Epoch": 2,
+        "HolderKey": 2,
+        "AcquiredAt": 2,
+        "ValidUntil": 2,
+        "PriorLeaseId": 2,
+        "PriorLeaseDigest": 2,
+        "BodyDigest": 6
+      },
+      "read_projection": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows_WriterLeaseHistory.json"
+    }
+  },
+  "method": [
+    "Read complete field-name and distinct business-value groups across all 81 tables; preserve each original row and correlations in projections.",
+    "Reuse 633 native and seven graph/private families only by exact objects, together with already read 65 business UoW surfaces.",
+    "Read 371 distinct qualification bodies by all fields, 80 role families and two conditional qualification meanings; actual adoption remains zero.",
+    "Verify all 636 NativeKey six-field projections against exact FactRefs, including three local CurrentApplied facts.",
+    "Read remaining five payloads: three complete CurrentApplied native wrappers/receipts, exact two-member export bundle, exact CSV.",
+    "Supplement all 141 envelope paths of 38 whole native wrappers needed by 62 unique UoW pointers; initial body-range-only gap retained in validation evidence.",
+    "Read all six isolated AC specimens, exact request/raw equality and graph/normalized unknown-quantity representation."
+  ],
+  "validation_evidence": [
+    "PLAN-EXC-01-record-representation-validation.json",
+    "PLAN-EXC-01-record-key-and-AC-validation.json",
+    "PLAN-EXC-01-UoW-source-reuse-validation.json",
+    "PLAN-EXC-01-UoW-document-relations.json"
+  ],
+  "exact_reuse_cache": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_rows-reuse.json",
+  "payload_cache": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_row-payloads.json",
+  "limits": [
+    "Not a database foreign-key/locking or application execution proof.",
+    "Source original static PASS or QUALIFIED labels do not establish actual professional registration.",
+    "Historical/non-emitted templates and current archive member disposition are tracked separately."
+  ],
+  "business_tests": "NOT_RUN",
+  "runtime": "UNPROVEN"
+}

@@ -1,0 +1,1105 @@
+{
+  "at_utc": "2026-10-10T16:08:17.186923+00:00",
+  "mode": "apply",
+  "scope": "Ten exact known JSON files and approved internal-reference fields only; no original source paths changed.",
+  "file_count": 10,
+  "edit_count": 164,
+  "backup_root": "D:/CP6-archives/consolidation-20261010/root-planning-cache/internal-link-backups/20261010T160816744770Z",
+  "files": [
+    {
+      "file": "evidence/commercial-reading.json",
+      "before_sha256": "7779892668fafa23a0337ad8bb7a71e8ba091274ab1e33f14402708e717e0383",
+      "after_sha256": "a29238c20e99129455abf7f91630fdcdbd37733ca2822462bce25f0d866e6a45",
+      "written": true,
+      "edit_count": 1,
+      "edits": [
+        {
+          "pointer": "/source_selection_index",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/indexes/required-inputs.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/indexes/required-inputs.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/indexes/required-inputs.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/operations-reading.json",
+      "before_sha256": "81182c348b88c1c58d94cd14b8bfc56d2187012501b74c24f8ef659df89af05b",
+      "after_sha256": "a6def21fefa0fa7d1856be87191af717b59eada61190cf3de5d912892bbd480c",
+      "written": true,
+      "edit_count": 119,
+      "edits": [
+        {
+          "pointer": "/files/75/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-MASTER-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-MASTER-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-MASTER-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/79/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/79/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/80/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/80/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/82/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/82/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/83/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/83/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/84/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/85/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/88/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/88/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/89/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/89/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/94/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-IN-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/95/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-IN-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/96/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/97/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/97/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/98/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-IN-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/98/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/103/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/103/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/410/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/410/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/416/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/416/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/424/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/424/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/425/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/425/collaborator_reuse/source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/426/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/427/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/429/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-IN-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/468/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-DEL-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/470/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-DEL-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/472/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-DEL-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/482/semantic_closure/collaborator_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-MASTER-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-MASTER-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-MASTER-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/506/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/508/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/509/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/513/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/514/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/515/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/516/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/517/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/518/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/519/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/520/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/521/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/535/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/535/collaborator_reuse/fixture_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-master65-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-master65-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-master65-reading.json"
+        },
+        {
+          "pointer": "/files/536/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/537/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/538/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/539/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/540/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/541/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/542/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/543/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/544/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/545/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/546/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/547/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/548/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/549/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/550/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AP-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AP-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/554/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/0/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/1/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/338/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/348/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/349/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/352/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/356/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/358/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/359/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/360/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/362/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/363/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/364/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/366/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/370/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/555/structured_record_directory/371/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/704/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/714/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/715/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/717/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/719/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/720/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/721/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/722/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-fixture-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-fixture-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-fixture-reading.json"
+        },
+        {
+          "pointer": "/files/723/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/724/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/725/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/726/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/730/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/731/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/732/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/733/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/734/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/735/collaborator_reuse/ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/FIN-AR-01-current-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/FIN-AR-01-current-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/774/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/775/structured_sections/0/shared_basis_reading",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/776/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/779/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/780/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/781/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/783/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/784/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/785/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/786/structured_sections/0/shared_basis_reading",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/789/structured_sections/0/shared_basis_reading",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/790/structured_sections/0/shared_basis_reading",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/1188/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/1190/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/1191/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/1192/structured_sections/0/source_reading_ledger",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/PLAN-EXC-01-source-reading.json",
+      "before_sha256": "1958274aaf2b4fd57c653b45f51ca9e8a1dbc29b61fdf1d1ec4b06d1ee010181",
+      "after_sha256": "6f4ed93d331b0a8f4f917bc28b68758ede81075c9616dad1b88f103539e46c79",
+      "written": true,
+      "edit_count": 1,
+      "edits": [
+        {
+          "pointer": "/current_material_selection/index_path",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/root-plan-exc-current-members.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/root-plan-exc-current-members.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/root-plan-exc-current-members.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/PLAN-PO-01-cp2021-normal-reading.json",
+      "before_sha256": "1b0f54a0aa794ef303d632f46bfdad9530608f1fd8555fe0afd92638bb37cc62",
+      "after_sha256": "679744758899168585c4905b63de27f953ca398f5e7a6c9849f54fbc37881be9",
+      "written": true,
+      "edit_count": 2,
+      "edits": [
+        {
+          "pointer": "/team_exact_reuse/parent_reading_record",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/PLAN-PO-01-root-normal-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/PLAN-PO-01-root-normal-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/PLAN-PO-01-root-normal-reading.json"
+        },
+        {
+          "pointer": "/team_exact_reuse/cp19_reuse_record",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/PLAN-PO-01-cp19-normal-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/PLAN-PO-01-cp19-normal-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/PLAN-PO-01-cp19-normal-reading.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/QA-IPQC-01-continuous-reading.json",
+      "before_sha256": "02ac6b69f29820b01231bf9800acbc44794d9f12a76fde885b434032015175c0",
+      "after_sha256": "cc4311b743a920c93c469b099d55c3114d1711837284144dc5e464447b74cfed",
+      "written": true,
+      "edit_count": 2,
+      "edits": [
+        {
+          "pointer": "/reuse/0/evidence_path",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/QA-IPQC-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/QA-IPQC-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/reuse/1/evidence_path",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/QA-IPQC-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/QA-IPQC-01-supplement-reading.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/QA-IPQC-01-F01-reading.json",
+      "before_sha256": "088dfd825c117bd1b77650e6c2fcd913a69f756bcaef778e52796cfffffcc019",
+      "after_sha256": "7dc6de5d1eb2d7243eb14fc30ab788a8a564fc4f82c01048c5519142b2dbc045",
+      "written": true,
+      "edit_count": 1,
+      "edits": [
+        {
+          "pointer": "/read_scope/schemas/reuse_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/QA-IPQC-01-supplement-reading.json; root 192 definitions full business-field read",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-supplement-reading.json; root 192 definitions full business-field read",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/QA-IPQC-01-supplement-reading.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/WMS-DEL-01-supplement-reading.json",
+      "before_sha256": "8ee860a91d7c9c1cc2ef8f1aed29a31b87bcc5deb61cf8b72e277178f183bdc7",
+      "after_sha256": "1b438e706fe013a8f4a0c3a4f91ddad143cbe1a4e1bda3f61f8d64d02f709660",
+      "written": true,
+      "edit_count": 9,
+      "edits": [
+        {
+          "pointer": "/files/8/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/9/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/10/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/11/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/12/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/13/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/14/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/15/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/16/reused_source_record/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/WMS-IN-01-supplement-reading.json",
+      "before_sha256": "ff10688602056127cbd9476b9692777008372a95bfdaee0f210e3c60df53252c",
+      "after_sha256": "35343064f9262121df836aa7e26183ea63fb9e624085db52026228a0143f7e0f",
+      "written": true,
+      "edit_count": 1,
+      "edits": [
+        {
+          "pointer": "/files/0/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "evidence/WMS-STOCK-RSV-supplement-reading.json",
+      "before_sha256": "dd4e5160c8ee96a8e1a94a24dbaf42f2717e24c94dd1426b273b5a410f4ba582",
+      "after_sha256": "54c99c85f11e19860dc92d8c4a9e361e6afbae32b4a0675051ea4e372087c2b2",
+      "written": true,
+      "edit_count": 16,
+      "edits": [
+        {
+          "pointer": "/files/0/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/1/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/10/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/11/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/12/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/13/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/14/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/15/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/16/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/17/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/18/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/commercial-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json"
+        },
+        {
+          "pointer": "/files/19/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/files/20/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/21/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/files/22/inherited_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/linked_contract",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/contracts/WMS-STOCK-RSV-数量与恢复附册.md",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/contracts/WMS-STOCK-RSV-数量与恢复附册.md",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/contracts/WMS-STOCK-RSV-数量与恢复附册.md"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    },
+    {
+      "file": "worklogs/operations-progress.json",
+      "before_sha256": "40428704f6ad910d008960c98d73466f4897fcaa1d2704e42e1c9c483828ccb2",
+      "after_sha256": "54dc667f6abb3dca2f433fae84b930dfef0a49921f4730c5235e1b9abda4a44d",
+      "written": true,
+      "edit_count": 12,
+      "edits": [
+        {
+          "pointer": "/targets/FIN-COST-01/required_input_closure/joint_evidence/0",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/targets/FIN-COST-01/required_input_closure/joint_evidence/1",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/targets/WMS-STOCK-01/required_input_closure/joint_evidence/0",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/targets/WMS-STOCK-01/required_input_closure/joint_evidence/1",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/targets/WMS-RSV-01/required_input_closure/joint_evidence/0",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/targets/WMS-RSV-01/required_input_closure/joint_evidence/1",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/targets/WMS-IN-01/required_input_closure/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-IN-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-IN-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/targets/WMS-DEL-01/required_input_closure/collaborator_evidence",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-DEL-01-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-DEL-01-supplement-reading.json"
+        },
+        {
+          "pointer": "/targets/FIN-AP-01/required_input_closure/joint_evidence/0",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/targets/FIN-AP-01/required_input_closure/joint_evidence/1",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        },
+        {
+          "pointer": "/targets/FIN-AR-01/required_input_closure/joint_evidence/0",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/WMS-STOCK-RSV-supplement-reading.json"
+        },
+        {
+          "pointer": "/targets/FIN-AR-01/required_input_closure/joint_evidence/1",
+          "before": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+          "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json",
+          "matched_existing_target": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json"
+        }
+      ],
+      "all_other_json_semantics_equal": true,
+      "json_roundtrip_equal": true
+    }
+  ],
+  "business_tests": "NOT_RUN"
+}

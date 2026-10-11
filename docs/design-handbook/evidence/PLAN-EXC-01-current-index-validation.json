@@ -1,0 +1,78 @@
+{
+  "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP12_COMPOSITION_AND_CHANGE_INDEX.json",
+  "sha256": "2df3200b4b98fc2f1b31f4bb957e1b900ff4e0773b9e40212fc98e0ceb304f45",
+  "checks": {
+    "selected_member": 350,
+    "complete_selection_set": 1,
+    "changed_member": 9,
+    "native_current": 10,
+    "immutable_current": 2720,
+    "parent_full_row": 4,
+    "mutable_current": 4,
+    "complete_snapshot": 297,
+    "current_pair_full_wrapper": 2,
+    "clock_key_full_row": 1,
+    "first_packet_full": 1,
+    "first_fact_full": 1
+  },
+  "errors": [],
+  "author_readback_claim_groups": {
+    "completeNativeCopies": {
+      "records": 0,
+      "asserted_semantics": {},
+      "qualification": "Original author claim; not inherited as our runtime or full historical readback."
+    },
+    "completeKnownCurrentRefs": {
+      "records": 0,
+      "asserted_semantics": {},
+      "qualification": "Original author claim; not inherited as our runtime or full historical readback."
+    },
+    "normalPacketRawArtifacts": {
+      "records": 34,
+      "asserted_semantics": {
+        "completeArtifactEqualsActualStoredColumns": [
+          "true"
+        ],
+        "rawEqualsStoredRawUtf8": [
+          "true"
+        ],
+        "declaredBodyEqualsRaw": [
+          "true"
+        ]
+      },
+      "qualification": "Original author claim; not inherited as our runtime or full historical readback."
+    },
+    "currentHeadBindingRelations": {
+      "records": 558,
+      "asserted_semantics": {
+        "sameActualRevision": [
+          "true"
+        ],
+        "exactSubjectActionGuaranteed": [
+          "true"
+        ],
+        "allActualGuaranteesSameHeadRevision": [
+          "true"
+        ]
+      },
+      "qualification": "Original author claim; not inherited as our runtime or full historical readback."
+    },
+    "mutableRowDomainPreservation": {
+      "records": 417,
+      "asserted_semantics": {
+        "originalPrimaryKeyPreserved": [
+          "true"
+        ],
+        "originalProviderClockFieldsPreserved": [
+          "true"
+        ],
+        "nonpersistentBodyCanonical": [
+          "\"RowVersion and mutable BodyCanonical remain readback-only; no persistent new column or token generation.\""
+        ]
+      },
+      "qualification": "Original author claim; not inherited as our runtime or full historical readback."
+    }
+  },
+  "historical_maps": "Old/new UUID and digest association dictionaries retained as complete historical transformation indices, not authoritative replacements for selected bodies; historical old bodies not all semantically reread.",
+  "business_tests": "NOT_RUN"
+}

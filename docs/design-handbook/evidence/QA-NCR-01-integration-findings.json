@@ -1,0 +1,256 @@
+{
+  "target_id": "QA-NCR-01",
+  "execution": "NOT_RUN",
+  "findings": [
+    {
+      "id": "NCR-TYPE-01",
+      "target_id": "QA-NCR-01",
+      "status": "OPEN_STATIC_DESIGN_ALIGNMENT",
+      "title": "Main6 与 CP4 C# 的五处 null-only 成员被声明为非空整数",
+      "fact": "C09FailedProblem 的 AUTH_REQUIRED/CAPABILITY_DENIED/SCOPE_CONFLICT 三分支 originalQuery 以及 IpqcFinalGuardResult 非成功分支 guardRef，在原 Schema 中只能为 null；NCR-R6-TYPES.cs.txt 对应属性均为 required long，并保留 const=null 注释。 CP4_R1 Consumer 声明同一 IpqcFinalGuardResult 分支还出现 public int GuardRef => null。",
+      "impact": "直接采用这些 C# 声明无法自然表示准确 null-only wire。须采用可忠实表示 null-only 的类型及严格 codec，不能以 0 代替 null，也不能改变被引用 Owner wire。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+          "sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+          "lines": [
+            1972,
+            2004
+          ],
+          "json_pointer": "/C09FailedProblem/variants/0..2/originalQuery",
+          "claim": "三个属性分别 L1972/1988/2004 required long"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+          "sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+          "lines": [
+            4456,
+            4460
+          ],
+          "json_pointer": "/IpqcFinalGuardResult/variants/1/guardRef",
+          "claim": "required long; const=null"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+          "lines": [
+            18628,
+            18630
+          ],
+          "json_pointer": "/$defs/C09FailedProblem/oneOf/0/properties/originalQuery",
+          "claim": "const:null；分支1 L18677–18679、分支2 L18726–18728 同约束"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f0519fea751041c__SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+          "sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+          "lines": [
+            52550,
+            52552
+          ],
+          "json_pointer": "/types/IpqcFinalGuardResult/oneOf/1/properties/guardRef",
+          "claim": "const:null"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+          "sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+          "lines": [
+            198,
+            202
+          ],
+          "claim": "IpqcFinalGuardResult_Case2 GuardRef 非空 int 的表达式为 null，静态声明不一致。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/93d5eabb725f756a__SOURCE-QA-SCHEMAS.json",
+          "sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+          "lines": [
+            2838,
+            2840
+          ],
+          "json_pointer": "/$defs/IpqcFinalGuardResult/oneOf/1/properties/guardRef",
+          "claim": "const:null；与当前 IPQC 相同子树。"
+        }
+      ],
+      "exit_condition": "精确 pin 下修正候选 C# 声明并以合法 null/非法数值的严格编解码示例证明一致；本次不修改原件。",
+      "boundary": "仅静态声明与 Schema 差异；本次未编译、未运行 codec 或业务，不能称生产故障。"
+    },
+    {
+      "id": "NCR-FIELD-01",
+      "target_id": "QA-NCR-01",
+      "status": "OPEN_STATIC_DESIGN_ALIGNMENT",
+      "title": "FIELD 的五条 nullable 注释与同条 shape 不一致",
+      "fact": "MainResult CLOSE_MAIN.priorHeadRef 的注释 nullable=true 而 shape 为非空 Evidence；InitialSourceOptionQuery.sourceKind/keyword/cursor 与 InitialSourceOptionPage.nextCursor 注释 nullable=false 而 shape 明确包含 null。",
+      "impact": "若表单/DTO 生成器仅依赖 nullable 元数据，会偏离当前闭型 wire；采用前应统一注释并保留 required 与 null 为独立概念。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "lines": [
+            30788,
+            30801
+          ],
+          "json_pointer": "/fields/1849",
+          "claim": {
+            "pointer": "#/$defs/MainResult/oneOf/14/properties/priorHeadRef",
+            "shape": {
+              "$ref": "#/$defs/Evidence"
+            },
+            "required": true,
+            "source": "exact committed local fact set and stable intent/business digest; exact member priorHeadRef in named producer output",
+            "persistence": {
+              "table": "qa_ncr.MainResult",
+              "columnOrChild": "PriorHeadRef",
+              "domain": "exact scalar/ref identity columns or complete named typed child/profile; compare body/typed values from one strict parse"
+            },
+            "editable": false,
+            "nullable": true,
+            "sourceKind": "NAMED_FAMILY_MEMBER"
+          }
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "lines": [
+            52882,
+            52902
+          ],
+          "json_pointer": "/fields/3338",
+          "claim": {
+            "pointer": "#/$defs/InitialSourceOptionQuery/properties/sourceKind",
+            "source": "named original-source option producer exact InitialSourceOptionQuery.sourceKind",
+            "persistence": null,
+            "editable": false,
+            "nullable": false,
+            "shape": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "QA_IPQC",
+                    "QA_IQC",
+                    "WMS_RMA"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": true,
+            "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+          }
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "lines": [
+            52905,
+            52923
+          ],
+          "json_pointer": "/fields/3339",
+          "claim": {
+            "pointer": "#/$defs/InitialSourceOptionQuery/properties/keyword",
+            "source": "named original-source option producer exact InitialSourceOptionQuery.keyword",
+            "persistence": null,
+            "editable": false,
+            "nullable": false,
+            "shape": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": true,
+            "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+          }
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "lines": [
+            52940,
+            52958
+          ],
+          "json_pointer": "/fields/3341",
+          "claim": {
+            "pointer": "#/$defs/InitialSourceOptionQuery/properties/cursor",
+            "source": "named original-source option producer exact InitialSourceOptionQuery.cursor",
+            "persistence": null,
+            "editable": false,
+            "nullable": false,
+            "shape": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 16384
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": true,
+            "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+          }
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+          "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+          "lines": [
+            53212,
+            53230
+          ],
+          "json_pointer": "/fields/3360",
+          "claim": {
+            "pointer": "#/$defs/InitialSourceOptionPage/properties/nextCursor",
+            "source": "named original-source option producer exact InitialSourceOptionPage.nextCursor",
+            "persistence": null,
+            "editable": false,
+            "nullable": false,
+            "shape": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 16384
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": true,
+            "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+          }
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11b9077c2ccacb39__NCR-R6-WIRE.json",
+          "sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+          "lines": [
+            10820,
+            10820
+          ],
+          "json_pointer": "/$defs/MainResult",
+          "claim": "完整 MainResult 定义入口"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11b9077c2ccacb39__NCR-R6-WIRE.json",
+          "sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+          "lines": [
+            20782,
+            20782
+          ],
+          "json_pointer": "/$defs/InitialSourceOptionQuery",
+          "claim": "完整来源查询定义入口"
+        }
+      ],
+      "exit_condition": "Owner 校准五条元数据，生成器按精确 Schema 和 producer 权限规则逐字段验证；不把 FIELD editable 元数据直接当浏览器写权限。",
+      "boundary": "仅文档注释与 shape 的静态差异，未证运行错误。"
+    }
+  ]
+}

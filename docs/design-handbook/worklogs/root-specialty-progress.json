@@ -1,0 +1,91 @@
+{
+  "group": "root-specialty",
+  "updated_at_utc": "2026-10-10T12:11:16.117688+00:00",
+  "status": "required_materials_consolidated_pending_task_level_review",
+  "targets": [
+    {
+      "target_id": "WMS-KIT-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-KIT-01.md",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 15
+    },
+    {
+      "target_id": "WMS-SLOT-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-SLOT-01.md",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 15
+    },
+    {
+      "target_id": "WMS-REP-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-REP-01.md",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 15
+    },
+    {
+      "target_id": "WMS-XDOCK-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-XDOCK-01.md",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 15
+    },
+    {
+      "target_id": "WMS-ROLL-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-ROLL-01.md",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 15
+    },
+    {
+      "target_id": "WMS-REM-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-REM-01.md",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 15
+    },
+    {
+      "target_id": "WMS-TOOL-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-TOOL-01.md",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 17
+    },
+    {
+      "target_id": "WMS-INK-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-INK-01.md",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 17
+    },
+    {
+      "target_id": "WMS-VMI-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-VMI-01.md",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 17
+    },
+    {
+      "target_id": "WMS-SAMPLE-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-SAMPLE-01.md",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 17
+    },
+    {
+      "target_id": "WMS-AUTO-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-AUTO-01.md",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 17
+    },
+    {
+      "target_id": "WMS-ANALYTICS-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/WMS-ANALYTICS-01.md",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "required_source_count": 17
+    }
+  ]
+}

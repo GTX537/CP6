@@ -1,0 +1,2575 @@
+{
+  "target_id": "FIN-AP-01",
+  "status": "MASTER65_fixture_semantics_consolidated",
+  "updated_at_utc": "2026-10-10T13:25:46.318125+00:00",
+  "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9fa9c6de844cf5d3__AP-R1-MASTER65-DOCUMENT-EXAMPLE.json",
+  "sha256": "9fa9c6de844cf5d3b5b34f354b36edb23ed89f8a0931bc72d60055ca87320df8",
+  "bytes": 1288029,
+  "lines": 33745,
+  "required_subset_consolidated": true,
+  "module_closure": false,
+  "reading_method": "All 270 novel structural nodes plus exact reuse of 81 inherited full reference/type/body records and whole 167-definition schema; all novel fields read in eight complete compact pages. 455 structural nodes reuse exact prior semantics, not a new literal reading. Opaque UUID/hash aliases reversible. Repeated objects retained in full original.",
+  "reuse": {
+    "inherited_records": [
+      {
+        "ap_index": 0,
+        "fin_master_index": 0,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 1,
+        "fin_master_index": 1,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 2,
+        "fin_master_index": 2,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 3,
+        "fin_master_index": 3,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 4,
+        "fin_master_index": 4,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 5,
+        "fin_master_index": 5,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 6,
+        "fin_master_index": 6,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 7,
+        "fin_master_index": 7,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 8,
+        "fin_master_index": 8,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 9,
+        "fin_master_index": 9,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 10,
+        "fin_master_index": 11,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 11,
+        "fin_master_index": 12,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 12,
+        "fin_master_index": 13,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 13,
+        "fin_master_index": 23,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 14,
+        "fin_master_index": 24,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 15,
+        "fin_master_index": 25,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 16,
+        "fin_master_index": 28,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 17,
+        "fin_master_index": 29,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 18,
+        "fin_master_index": 30,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 19,
+        "fin_master_index": 31,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 20,
+        "fin_master_index": 32,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 21,
+        "fin_master_index": 34,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 22,
+        "fin_master_index": 36,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 23,
+        "fin_master_index": 37,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 24,
+        "fin_master_index": 47,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 25,
+        "fin_master_index": 48,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 26,
+        "fin_master_index": 49,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 27,
+        "fin_master_index": 52,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 28,
+        "fin_master_index": 53,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 29,
+        "fin_master_index": 54,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 30,
+        "fin_master_index": 55,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 31,
+        "fin_master_index": 56,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 32,
+        "fin_master_index": 58,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 33,
+        "fin_master_index": 60,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 34,
+        "fin_master_index": 61,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 35,
+        "fin_master_index": 71,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 36,
+        "fin_master_index": 72,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 37,
+        "fin_master_index": 73,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 38,
+        "fin_master_index": 76,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 39,
+        "fin_master_index": 77,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 40,
+        "fin_master_index": 78,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 41,
+        "fin_master_index": 79,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 42,
+        "fin_master_index": 80,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 43,
+        "fin_master_index": 82,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 44,
+        "fin_master_index": 84,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 45,
+        "fin_master_index": 85,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 46,
+        "fin_master_index": 86,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 47,
+        "fin_master_index": 87,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 48,
+        "fin_master_index": 91,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 49,
+        "fin_master_index": 94,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 50,
+        "fin_master_index": 104,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 51,
+        "fin_master_index": 105,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 52,
+        "fin_master_index": 106,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 53,
+        "fin_master_index": 109,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 54,
+        "fin_master_index": 110,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 55,
+        "fin_master_index": 111,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 56,
+        "fin_master_index": 112,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 57,
+        "fin_master_index": 113,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 58,
+        "fin_master_index": 115,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 59,
+        "fin_master_index": 117,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 60,
+        "fin_master_index": 118,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 61,
+        "fin_master_index": 128,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 62,
+        "fin_master_index": 129,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 63,
+        "fin_master_index": 130,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 64,
+        "fin_master_index": 133,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 65,
+        "fin_master_index": 134,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 66,
+        "fin_master_index": 135,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 67,
+        "fin_master_index": 136,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 68,
+        "fin_master_index": 137,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 69,
+        "fin_master_index": 139,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 70,
+        "fin_master_index": 141,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 71,
+        "fin_master_index": 142,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 72,
+        "fin_master_index": 152,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 73,
+        "fin_master_index": 153,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 74,
+        "fin_master_index": 154,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 75,
+        "fin_master_index": 157,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 76,
+        "fin_master_index": 158,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 77,
+        "fin_master_index": 159,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 78,
+        "fin_master_index": 160,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 79,
+        "fin_master_index": 161,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      },
+      {
+        "ap_index": 80,
+        "fin_master_index": 163,
+        "other_fields": {
+          "evidenceStatus": "DEMO_DOCUMENT_ORIGINAL_NOT_RUNTIME"
+        }
+      }
+    ],
+    "schema_value_equal": true,
+    "schema_definitions": 167,
+    "skipped_exact_reuse_nodes": [
+      "N89",
+      "N90",
+      "N91",
+      "N92",
+      "N93",
+      "N94",
+      "N95",
+      "N96",
+      "N97",
+      "N98",
+      "N99",
+      "N100",
+      "N101",
+      "N102",
+      "N103",
+      "N104",
+      "N105",
+      "N106",
+      "N107",
+      "N108",
+      "N109",
+      "N110",
+      "N111",
+      "N112",
+      "N113",
+      "N114",
+      "N115",
+      "N116",
+      "N117",
+      "N118",
+      "N119",
+      "N120",
+      "N121",
+      "N122",
+      "N123",
+      "N124",
+      "N125",
+      "N126",
+      "N127",
+      "N128",
+      "N129",
+      "N130",
+      "N131",
+      "N132",
+      "N133",
+      "N134",
+      "N135",
+      "N136",
+      "N137",
+      "N138",
+      "N139",
+      "N140",
+      "N141",
+      "N142",
+      "N143",
+      "N144",
+      "N145",
+      "N146",
+      "N147",
+      "N148",
+      "N149",
+      "N150",
+      "N151",
+      "N152",
+      "N153",
+      "N154",
+      "N155",
+      "N156",
+      "N157",
+      "N158",
+      "N159",
+      "N160",
+      "N161",
+      "N162",
+      "N163",
+      "N164",
+      "N165",
+      "N166",
+      "N167",
+      "N168",
+      "N169",
+      "N170",
+      "N171",
+      "N172",
+      "N173",
+      "N174",
+      "N175",
+      "N176",
+      "N177",
+      "N178",
+      "N179",
+      "N180",
+      "N181",
+      "N182",
+      "N183",
+      "N184",
+      "N185",
+      "N186",
+      "N187",
+      "N188",
+      "N189",
+      "N190",
+      "N191",
+      "N192",
+      "N193",
+      "N194",
+      "N195",
+      "N196",
+      "N197",
+      "N198",
+      "N199",
+      "N200",
+      "N201",
+      "N202",
+      "N203",
+      "N204",
+      "N205",
+      "N206",
+      "N207",
+      "N208",
+      "N209",
+      "N210",
+      "N211",
+      "N212",
+      "N213",
+      "N214",
+      "N215",
+      "N216",
+      "N217",
+      "N218",
+      "N219",
+      "N220",
+      "N221",
+      "N222",
+      "N223",
+      "N224",
+      "N225",
+      "N226",
+      "N227",
+      "N228",
+      "N229",
+      "N230",
+      "N231",
+      "N232",
+      "N233",
+      "N234",
+      "N235",
+      "N236",
+      "N237",
+      "N238",
+      "N239",
+      "N240",
+      "N241",
+      "N242",
+      "N243",
+      "N244",
+      "N245",
+      "N246",
+      "N247",
+      "N248",
+      "N249",
+      "N250",
+      "N251",
+      "N252",
+      "N253",
+      "N254",
+      "N255",
+      "N256",
+      "N257",
+      "N258",
+      "N259",
+      "N260",
+      "N261",
+      "N262",
+      "N263",
+      "N264",
+      "N265",
+      "N266",
+      "N267",
+      "N268",
+      "N269",
+      "N270",
+      "N271",
+      "N272",
+      "N273",
+      "N274",
+      "N275",
+      "N276",
+      "N277",
+      "N278",
+      "N279",
+      "N280",
+      "N281",
+      "N282",
+      "N283",
+      "N284",
+      "N285",
+      "N286",
+      "N287",
+      "N288",
+      "N289",
+      "N290",
+      "N291",
+      "N292",
+      "N293",
+      "N294",
+      "N295",
+      "N296",
+      "N297",
+      "N298",
+      "N299",
+      "N300",
+      "N301",
+      "N302",
+      "N303",
+      "N304",
+      "N305",
+      "N306",
+      "N307",
+      "N308",
+      "N309",
+      "N310",
+      "N311",
+      "N312",
+      "N313",
+      "N314",
+      "N315",
+      "N316",
+      "N317",
+      "N318",
+      "N319",
+      "N320",
+      "N487",
+      "N488",
+      "N489",
+      "N490",
+      "N491",
+      "N492",
+      "N493",
+      "N494",
+      "N495",
+      "N496",
+      "N497",
+      "N498",
+      "N499",
+      "N500",
+      "N501",
+      "N502",
+      "N503",
+      "N504",
+      "N505",
+      "N506",
+      "N507",
+      "N508",
+      "N509",
+      "N510",
+      "N511",
+      "N512",
+      "N513",
+      "N514",
+      "N515",
+      "N516",
+      "N517",
+      "N518",
+      "N519",
+      "N520",
+      "N521",
+      "N522",
+      "N523",
+      "N524",
+      "N525",
+      "N526",
+      "N527",
+      "N528",
+      "N529",
+      "N530",
+      "N531",
+      "N532",
+      "N533",
+      "N534",
+      "N535",
+      "N536",
+      "N537",
+      "N538",
+      "N539",
+      "N540",
+      "N541",
+      "N542",
+      "N543",
+      "N544",
+      "N545",
+      "N546",
+      "N547",
+      "N548",
+      "N549",
+      "N550",
+      "N551",
+      "N552",
+      "N553",
+      "N554",
+      "N555",
+      "N556",
+      "N557",
+      "N558",
+      "N559",
+      "N560",
+      "N561",
+      "N562",
+      "N563",
+      "N564",
+      "N565",
+      "N566",
+      "N567",
+      "N568",
+      "N569",
+      "N570",
+      "N571",
+      "N572",
+      "N573",
+      "N574",
+      "N575",
+      "N576",
+      "N577",
+      "N578",
+      "N579",
+      "N580",
+      "N581",
+      "N582",
+      "N583",
+      "N584",
+      "N585",
+      "N586",
+      "N587",
+      "N588",
+      "N589",
+      "N590",
+      "N591",
+      "N592",
+      "N593",
+      "N594",
+      "N595",
+      "N596",
+      "N597",
+      "N598",
+      "N599",
+      "N600",
+      "N601",
+      "N602",
+      "N603",
+      "N604",
+      "N605",
+      "N606",
+      "N607",
+      "N608",
+      "N609",
+      "N610",
+      "N611",
+      "N612",
+      "N613",
+      "N614",
+      "N615",
+      "N616",
+      "N617",
+      "N618",
+      "N619",
+      "N620",
+      "N621",
+      "N622",
+      "N623",
+      "N624",
+      "N625",
+      "N626",
+      "N627",
+      "N628",
+      "N629",
+      "N630",
+      "N631",
+      "N632",
+      "N633",
+      "N634",
+      "N635",
+      "N636",
+      "N637",
+      "N638",
+      "N639",
+      "N640",
+      "N641",
+      "N642",
+      "N643",
+      "N644",
+      "N645",
+      "N646",
+      "N647",
+      "N648",
+      "N649",
+      "N650",
+      "N651",
+      "N652",
+      "N653",
+      "N654",
+      "N655",
+      "N656",
+      "N657",
+      "N658",
+      "N659",
+      "N660",
+      "N661",
+      "N662",
+      "N663",
+      "N664",
+      "N665",
+      "N666",
+      "N667",
+      "N668",
+      "N669",
+      "N670",
+      "N671",
+      "N672",
+      "N673",
+      "N674",
+      "N675",
+      "N676",
+      "N677",
+      "N678",
+      "N679",
+      "N680",
+      "N681",
+      "N682",
+      "N683",
+      "N684",
+      "N685",
+      "N686",
+      "N687",
+      "N688",
+      "N689",
+      "N690",
+      "N691",
+      "N692",
+      "N693",
+      "N694",
+      "N695",
+      "N696",
+      "N697",
+      "N698",
+      "N699",
+      "N700",
+      "N701",
+      "N702",
+      "N703",
+      "N704",
+      "N705",
+      "N706",
+      "N707",
+      "N708",
+      "N709"
+    ],
+    "skipped_nodes": 455,
+    "reading_pages": [
+      {
+        "page": 0,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-000.txt",
+        "chars": 11433
+      },
+      {
+        "page": 1,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-001.txt",
+        "chars": 11374
+      },
+      {
+        "page": 2,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-002.txt",
+        "chars": 11009
+      },
+      {
+        "page": 3,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-003.txt",
+        "chars": 11228
+      },
+      {
+        "page": 4,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-004.txt",
+        "chars": 11449
+      },
+      {
+        "page": 5,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-005.txt",
+        "chars": 11071
+      },
+      {
+        "page": 6,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-006.txt",
+        "chars": 11238
+      },
+      {
+        "page": 7,
+        "file": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\fin-ap-normal\\read-007.txt",
+        "chars": 4975
+      }
+    ],
+    "required_semantics_read": true,
+    "read_pages": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "additional_inherited_bases_read": [
+      119,
+      121,
+      122,
+      123,
+      124,
+      126,
+      132,
+      133,
+      134,
+      136,
+      138,
+      142,
+      166,
+      191,
+      192
+    ]
+  },
+  "projection_validation": {
+    "files": 1,
+    "bytes": 1288029,
+    "nodes": 725,
+    "json_strings": 0,
+    "opaque_identities": 273,
+    "pages": 25,
+    "compact_characters": 295764,
+    "errors": [],
+    "semantic_read_complete": true,
+    "business": "NOT_RUN"
+  },
+  "record_digest_checks": [
+    {
+      "pointer": "/masterSelections/0/root",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-root-released-1",
+        "version": "1",
+        "digest": "67de40af638c5f9c73d1625ee168480b2fef472893e7d06bee4d05148da0bb3c",
+        "purpose": "RootBody"
+      },
+      "computed": "67de40af638c5f9c73d1625ee168480b2fef472893e7d06bee4d05148da0bb3c",
+      "matches": true
+    },
+    {
+      "pointer": "/masterSelections/0/version",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "13f17ca2-6f2d-5c13-a5ec-d13842a4f401",
+        "version": "bf116ca8-9caf-5099-861f-312ff92b3491",
+        "digest": "abc79261c5ddc0eb93a6356b29a75fb320c67a38998789a9856ffa58b21f47ba",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "abc79261c5ddc0eb93a6356b29a75fb320c67a38998789a9856ffa58b21f47ba",
+      "matches": true
+    },
+    {
+      "pointer": "/masterSelections/1/root",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-root-released",
+        "version": "1",
+        "digest": "4a3eb52ece2d016798400f27f4973a505bd7490d9bc9987758fde73e3dce6af8",
+        "purpose": "RootBody"
+      },
+      "computed": "4a3eb52ece2d016798400f27f4973a505bd7490d9bc9987758fde73e3dce6af8",
+      "matches": true
+    },
+    {
+      "pointer": "/masterSelections/1/version",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "65e7026d-0f0c-5223-a237-c964c60ef46f",
+        "version": "ed731b67-3f7a-5669-8dfb-92c1a69d5546",
+        "digest": "bcad8ef2b7a0da15c4b6490e5fc3374113cd755faceb951072fc195ac7c948db",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "bcad8ef2b7a0da15c4b6490e5fc3374113cd755faceb951072fc195ac7c948db",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/0",
+      "type": "QualificationsBody",
+      "reference": {
+        "owner": "FINANCE-QUALIFICATIONS",
+        "id": "QUAL-FINANCE-REVIEWER",
+        "version": "1",
+        "digest": "5b55bf5c2f2353f431e4ef44bdbbcee02a2ce07755b6177dfba45a97a673d70d",
+        "purpose": "QualificationsBody"
+      },
+      "computed": "5b55bf5c2f2353f431e4ef44bdbbcee02a2ce07755b6177dfba45a97a673d70d",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/1",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "DEMO-EVIDENCE",
+        "id": "CALENDAR",
+        "version": "1",
+        "digest": "b22962f8f273a84db5492794a20aa8e5e4ebffdef825b5b45c8f43eacd784cbe",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed": "b22962f8f273a84db5492794a20aa8e5e4ebffdef825b5b45c8f43eacd784cbe",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/2",
+      "type": "IamPolicyBody",
+      "reference": {
+        "owner": "SYS-IAM",
+        "id": "IAM-POLICY-1",
+        "version": "1",
+        "digest": "e524ea4b074db457d63bddad8cb5c05f3c374bb257642b59ba6ffec16f2e8a35",
+        "purpose": "IamPolicyBody"
+      },
+      "computed": "e524ea4b074db457d63bddad8cb5c05f3c374bb257642b59ba6ffec16f2e8a35",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/3",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "DEMO-EVIDENCE",
+        "id": "ENCRYPTION-PROFILE",
+        "version": "1",
+        "digest": "e50b7b59f5098089dbc8c19e2ec5ab159176586390f33732e1afb51b4afa3152",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed": "e50b7b59f5098089dbc8c19e2ec5ab159176586390f33732e1afb51b4afa3152",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/4",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "DEMO-EVIDENCE",
+        "id": "BANK-FORMAT",
+        "version": "1",
+        "digest": "f68c8e77db36b95597f360e49af44c8d9b852eedcec5174fca22ff1e3510808c",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed": "f68c8e77db36b95597f360e49af44c8d9b852eedcec5174fca22ff1e3510808c",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/5",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "DEMO-EVIDENCE",
+        "id": "PROFESSIONAL-ORIGINAL",
+        "version": "1",
+        "digest": "643956c8ff38cd6affb02246323ab4a27022bde14040cbbed2b7f913cbb7f3e2",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed": "643956c8ff38cd6affb02246323ab4a27022bde14040cbbed2b7f913cbb7f3e2",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/6",
+      "type": "ProfessionalPolicyBody",
+      "reference": {
+        "owner": "FINANCE-PROFESSIONAL-BASIS",
+        "id": "PROFESSIONAL-POLICY",
+        "version": "1",
+        "digest": "f22075c72b550e92720dbc7f127902a235f9e0384910e6feb0a083fe3efd89ba",
+        "purpose": "ProfessionalPolicyBody"
+      },
+      "computed": "f22075c72b550e92720dbc7f127902a235f9e0384910e6feb0a083fe3efd89ba",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/7",
+      "type": "FinanceContextBody",
+      "reference": {
+        "owner": "FINANCE-CONTEXT",
+        "id": "FINANCE-CONTEXT",
+        "version": "1",
+        "digest": "9348d649fab0dbf3d3179a54f15cb611b081a32d2bcce276faf17b447d6258e6",
+        "purpose": "FinanceContextBody"
+      },
+      "computed": "9348d649fab0dbf3d3179a54f15cb611b081a32d2bcce276faf17b447d6258e6",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/8",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "MES-MACHINE",
+        "id": "MACHINE-1",
+        "version": "1",
+        "digest": "e88f59f7c160ccd852bd28de18e2eacae68e44f3d80479651428f5e07f8b8931",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed": "e88f59f7c160ccd852bd28de18e2eacae68e44f3d80479651428f5e07f8b8931",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/9",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "SYS-ORG",
+        "id": "DEPARTMENT-1",
+        "version": "1",
+        "digest": "d167d146b9c01adc0e7be5c52e615e8569918384d9c9d6c2bc191e0cfd7a62a9",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed": "d167d146b9c01adc0e7be5c52e615e8569918384d9c9d6c2bc191e0cfd7a62a9",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/10",
+      "type": "BpIdentityBody",
+      "reference": {
+        "owner": "MAIN-BP",
+        "id": "BP-IDENTITY",
+        "version": "1",
+        "digest": "679053ec728880396debf7cc3da9b0cff8298b9d5883a82e908c9c278aa4fa4e",
+        "purpose": "BpIdentityBody"
+      },
+      "computed": "679053ec728880396debf7cc3da9b0cff8298b9d5883a82e908c9c278aa4fa4e",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/11",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "67757559-31f6-5fba-9f67-ed0957fdefd7",
+        "version": "e28b8e7f-8edc-5ee9-8eee-5cb2b11dda2d",
+        "digest": "4f3255ca0f8b5d13140a90ad7b533488e99c7f37e03a81050d5eecca7cfedca9",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "4f3255ca0f8b5d13140a90ad7b533488e99c7f37e03a81050d5eecca7cfedca9",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/12",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-control-1",
+        "version": "1",
+        "digest": "31da1a3aad1fbcbc67ad02dd6e83b8596bfb7aed7f61545a1fcde43ec1e22294",
+        "purpose": "ControlBody"
+      },
+      "computed": "31da1a3aad1fbcbc67ad02dd6e83b8596bfb7aed7f61545a1fcde43ec1e22294",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/13",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-decision-1",
+        "version": "1",
+        "digest": "f5e7d90a5c8bef789ca7efccc6854cc6d279c6935809c32f4ba4b9afb9a0135c",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed": "f5e7d90a5c8bef789ca7efccc6854cc6d279c6935809c32f4ba4b9afb9a0135c",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/14",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "8dd98c1e-c5f5-529f-b69e-e0b4938f1ef3",
+        "version": "3",
+        "digest": "362ec40aaa5f1954c075d1a13d1aa200f4413d32eeb8c701efeda059534a8cf1",
+        "purpose": "ProposalBody"
+      },
+      "computed": "362ec40aaa5f1954c075d1a13d1aa200f4413d32eeb8c701efeda059534a8cf1",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/15",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-root-approved-1",
+        "version": "1",
+        "digest": "b31155491acdcb34148c414a0cd60c623133b1f69c18e66bdd4a858dd211130a",
+        "purpose": "RootBody"
+      },
+      "computed": "b31155491acdcb34148c414a0cd60c623133b1f69c18e66bdd4a858dd211130a",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/16",
+      "type": "ConstraintSnapshotBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-constraints-1",
+        "version": "1",
+        "digest": "e3a2573281989f5d21119dd4687940b532b0656cb7fc60212fe74252af91c68f",
+        "purpose": "ConstraintSnapshotBody"
+      },
+      "computed": "e3a2573281989f5d21119dd4687940b532b0656cb7fc60212fe74252af91c68f",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/17",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-preview-1",
+        "version": "1",
+        "digest": "a0b16d538b21124ee0af981fb3eff6e56b1372c7c996d512dc37cfad0431151c",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed": "a0b16d538b21124ee0af981fb3eff6e56b1372c7c996d512dc37cfad0431151c",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/18",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-release-1",
+        "version": "1",
+        "digest": "9df96cf3444e600f05e950146f7a25cb1b2d2691c336f688765b8992f876edb3",
+        "purpose": "ReleaseBody"
+      },
+      "computed": "9df96cf3444e600f05e950146f7a25cb1b2d2691c336f688765b8992f876edb3",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/19",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-timeline-1",
+        "version": "1",
+        "digest": "521842b169488fa073d6c45d80dd07dc4a0180ccd86aba51a5bbe2227f9339b7",
+        "purpose": "TimelineBody"
+      },
+      "computed": "521842b169488fa073d6c45d80dd07dc4a0180ccd86aba51a5bbe2227f9339b7",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/20",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-control-2",
+        "version": "1",
+        "digest": "8e8a646f7613569a6d783ea2b14be0f14de76e264788531c61815cd8c2f5ea14",
+        "purpose": "ControlBody"
+      },
+      "computed": "8e8a646f7613569a6d783ea2b14be0f14de76e264788531c61815cd8c2f5ea14",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/21",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GP-root-released-1",
+        "version": "1",
+        "digest": "ff7f2214e1c82bef1b37baf158163557c5371cd1189d2f921269993110c4f26b",
+        "purpose": "RootBody"
+      },
+      "computed": "ff7f2214e1c82bef1b37baf158163557c5371cd1189d2f921269993110c4f26b",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/22",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "845a5bde-182d-5b7f-9648-6dc6eee32929",
+        "version": "c16b27f9-48eb-5e9c-b2fe-77f90883575b",
+        "digest": "0ba3fb4ba45dd6561d726651f724b94eeccd0e8915873d27b0663d75b9451472",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "0ba3fb4ba45dd6561d726651f724b94eeccd0e8915873d27b0663d75b9451472",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/23",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-control-1",
+        "version": "1",
+        "digest": "63a8ea97ddc39a3638b1a07714a64b2dc6779562011b57cecbccdc89b2024f3d",
+        "purpose": "ControlBody"
+      },
+      "computed": "63a8ea97ddc39a3638b1a07714a64b2dc6779562011b57cecbccdc89b2024f3d",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/24",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-decision-1",
+        "version": "1",
+        "digest": "70a5e70ce68a60bfa63d58d2386b684f2f814271319b2061f10a19c8efd023ad",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed": "70a5e70ce68a60bfa63d58d2386b684f2f814271319b2061f10a19c8efd023ad",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/25",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "3d8ee702-26ae-57eb-8ee3-adc35068280a",
+        "version": "3",
+        "digest": "01604f790f6bb77cb90bd5df936cf252dfde9a2d3dd5bd24958d1f436558c9cb",
+        "purpose": "ProposalBody"
+      },
+      "computed": "01604f790f6bb77cb90bd5df936cf252dfde9a2d3dd5bd24958d1f436558c9cb",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/26",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-root-approved-1",
+        "version": "1",
+        "digest": "dc758fed7fbc583e9fe34b8326be47fdc7c238d8fa4c79edcbb074976be2913b",
+        "purpose": "RootBody"
+      },
+      "computed": "dc758fed7fbc583e9fe34b8326be47fdc7c238d8fa4c79edcbb074976be2913b",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/27",
+      "type": "ConstraintSnapshotBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-constraints-1",
+        "version": "1",
+        "digest": "b3cf8e447743f2203d1ddc3b83732c95a5b9a5637d412e63ec171a6dbf8aa82d",
+        "purpose": "ConstraintSnapshotBody"
+      },
+      "computed": "b3cf8e447743f2203d1ddc3b83732c95a5b9a5637d412e63ec171a6dbf8aa82d",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/28",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-preview-1",
+        "version": "1",
+        "digest": "198e71b59e222d0551b1597b9307a9b3846af8473d142c04bcf71b2717c38bb2",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed": "198e71b59e222d0551b1597b9307a9b3846af8473d142c04bcf71b2717c38bb2",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/29",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-release-1",
+        "version": "1",
+        "digest": "1851e53a7b031ced9ede2961c1def046cfbf349eff7c5e31dade80d9feefe762",
+        "purpose": "ReleaseBody"
+      },
+      "computed": "1851e53a7b031ced9ede2961c1def046cfbf349eff7c5e31dade80d9feefe762",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/30",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-timeline-1",
+        "version": "1",
+        "digest": "14bbf4dd4e48e71b4bd609963a78293b7a21d8f06e5ca7781b3ca8cef7f045b5",
+        "purpose": "TimelineBody"
+      },
+      "computed": "14bbf4dd4e48e71b4bd609963a78293b7a21d8f06e5ca7781b3ca8cef7f045b5",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/31",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-control-2",
+        "version": "1",
+        "digest": "382f9b8dbbd5c566e50ee3557f6f28958de0604d1a5ec168d1c1d3c7e60b087b",
+        "purpose": "ControlBody"
+      },
+      "computed": "382f9b8dbbd5c566e50ee3557f6f28958de0604d1a5ec168d1c1d3c7e60b087b",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/32",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "GL-root-released-1",
+        "version": "1",
+        "digest": "a03817e79e79d20ac8312a0d712044c028be945335c7df819cdbec9dfff2a3ce",
+        "purpose": "RootBody"
+      },
+      "computed": "a03817e79e79d20ac8312a0d712044c028be945335c7df819cdbec9dfff2a3ce",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/33",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "13f17ca2-6f2d-5c13-a5ec-d13842a4f401",
+        "version": "bf116ca8-9caf-5099-861f-312ff92b3491",
+        "digest": "abc79261c5ddc0eb93a6356b29a75fb320c67a38998789a9856ffa58b21f47ba",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "abc79261c5ddc0eb93a6356b29a75fb320c67a38998789a9856ffa58b21f47ba",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/34",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-control-1",
+        "version": "1",
+        "digest": "9b186b5fba30ba0313ecd3fb1829544a4cb6350b47ff676af4eec0de51633bf0",
+        "purpose": "ControlBody"
+      },
+      "computed": "9b186b5fba30ba0313ecd3fb1829544a4cb6350b47ff676af4eec0de51633bf0",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/35",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-decision-1",
+        "version": "1",
+        "digest": "33ce975542ef033f821a27b724c9f1748aa40dbedfc373a4e0ea741bedc865ed",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed": "33ce975542ef033f821a27b724c9f1748aa40dbedfc373a4e0ea741bedc865ed",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/36",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "cf310e3e-1ef6-59b1-a2d6-e91884c7125f",
+        "version": "3",
+        "digest": "f9c16c2007bc80b79de7bf5b64013da91c5f4762e8de8bf412990b946bb27c44",
+        "purpose": "ProposalBody"
+      },
+      "computed": "f9c16c2007bc80b79de7bf5b64013da91c5f4762e8de8bf412990b946bb27c44",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/37",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-root-approved-1",
+        "version": "1",
+        "digest": "04b08c0e77289220760eef0e0b559aa7dcc140affa5f1793622edf761cff8bce",
+        "purpose": "RootBody"
+      },
+      "computed": "04b08c0e77289220760eef0e0b559aa7dcc140affa5f1793622edf761cff8bce",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/38",
+      "type": "ConstraintSnapshotBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-constraints-1",
+        "version": "1",
+        "digest": "8db68495ef5642c3e1186d149e732945481bab099ba84f3e97475bfcc4c7e33f",
+        "purpose": "ConstraintSnapshotBody"
+      },
+      "computed": "8db68495ef5642c3e1186d149e732945481bab099ba84f3e97475bfcc4c7e33f",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/39",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-preview-1",
+        "version": "1",
+        "digest": "cdb8471b5e94b07758f1c78b15b23851ceaf2f64ee4586df518212d229508003",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed": "cdb8471b5e94b07758f1c78b15b23851ceaf2f64ee4586df518212d229508003",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/40",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-release-1",
+        "version": "1",
+        "digest": "1e674acb2856efe4e993514615ff0c051949bba66eb286c7b3b3687f489be46e",
+        "purpose": "ReleaseBody"
+      },
+      "computed": "1e674acb2856efe4e993514615ff0c051949bba66eb286c7b3b3687f489be46e",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/41",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-timeline-1",
+        "version": "1",
+        "digest": "924ee9be86e8e823664acf4c4677b6f794f322e8d153c77539f60ba6f8742e38",
+        "purpose": "TimelineBody"
+      },
+      "computed": "924ee9be86e8e823664acf4c4677b6f794f322e8d153c77539f60ba6f8742e38",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/42",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-control-2",
+        "version": "1",
+        "digest": "df097cbdbc6b1e0086248266e7d46275a925e34626da7b64578ed429556a7f06",
+        "purpose": "ControlBody"
+      },
+      "computed": "df097cbdbc6b1e0086248266e7d46275a925e34626da7b64578ed429556a7f06",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/43",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "TX-root-released-1",
+        "version": "1",
+        "digest": "67de40af638c5f9c73d1625ee168480b2fef472893e7d06bee4d05148da0bb3c",
+        "purpose": "RootBody"
+      },
+      "computed": "67de40af638c5f9c73d1625ee168480b2fef472893e7d06bee4d05148da0bb3c",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/44",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "DEMO-EVIDENCE",
+        "id": "BANK-CIPHER-DEMO",
+        "version": "1",
+        "digest": "5eebbbfe7bf350b528621129bbb4742d25cb1291b938a652f82e3f4ddc84a142",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed": "5eebbbfe7bf350b528621129bbb4742d25cb1291b938a652f82e3f4ddc84a142",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/45",
+      "type": "SecretRecordBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BANK-SECRET",
+        "version": "1",
+        "digest": "01e0936d63b2f044fb2d942ec36bb3d55929e44fef2553d197add2bc13f0a063",
+        "purpose": "SecretRecordBody"
+      },
+      "computed": "01e0936d63b2f044fb2d942ec36bb3d55929e44fef2553d197add2bc13f0a063",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/46",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "4d43c7ae-706f-5e11-b189-0f1a9f6f1ad1",
+        "version": "2a0a54b2-e862-55d6-86ea-674e465ff44d",
+        "digest": "ad213dff7c17c117ae82bcbbc293ad65d7f44a23d6503b80cb93a3124459e056",
+        "purpose": "BP_PAYMENT_BANK_REFERENCE"
+      },
+      "computed": "ad213dff7c17c117ae82bcbbc293ad65d7f44a23d6503b80cb93a3124459e056",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/47",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-control-1",
+        "version": "1",
+        "digest": "13100315cdf2f9b604f44c04d436a02eef2f7d04f5f394e992db46335b2fac52",
+        "purpose": "ControlBody"
+      },
+      "computed": "13100315cdf2f9b604f44c04d436a02eef2f7d04f5f394e992db46335b2fac52",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/48",
+      "type": "BankVerificationBody",
+      "reference": {
+        "owner": "FINANCE-PROFESSIONAL-BASIS",
+        "id": "BANK-VERIFICATION",
+        "version": "1",
+        "digest": "fd3704dd77861fcb702d9d937c79b1d77c5ebfc0d9aa14bb99cd6788b22c4368",
+        "purpose": "BankVerificationBody"
+      },
+      "computed": "fd3704dd77861fcb702d9d937c79b1d77c5ebfc0d9aa14bb99cd6788b22c4368",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/49",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "4d43c7ae-706f-5e11-b189-0f1a9f6f1ad1",
+        "version": "d771550e-56f7-58a4-8d5b-5086ffbdc374",
+        "digest": "a4b6888031bf74d59619f2261a55bb7369aa602577db95f2015ef37b3b1cdb61",
+        "purpose": "BP_PAYMENT_BANK_REFERENCE"
+      },
+      "computed": "a4b6888031bf74d59619f2261a55bb7369aa602577db95f2015ef37b3b1cdb61",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/50",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-decision-2",
+        "version": "1",
+        "digest": "ba93b7ab615c7be21f8023ee88ac6fe86e96bd9a1c824d3d6c10a9c8cec7fac7",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed": "ba93b7ab615c7be21f8023ee88ac6fe86e96bd9a1c824d3d6c10a9c8cec7fac7",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/51",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "d8375dc6-ae56-5d71-b5aa-b281f121b0b8",
+        "version": "4",
+        "digest": "3168b6594e513b0792e4d3592a449f4e6ca7c695df3328f46da3eefdada883f5",
+        "purpose": "ProposalBody"
+      },
+      "computed": "3168b6594e513b0792e4d3592a449f4e6ca7c695df3328f46da3eefdada883f5",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/52",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-root-approved-2",
+        "version": "1",
+        "digest": "36189e8997f6018c403e7775e69238ab2eca2b4f6809da2bede6c96d75a122a5",
+        "purpose": "RootBody"
+      },
+      "computed": "36189e8997f6018c403e7775e69238ab2eca2b4f6809da2bede6c96d75a122a5",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/53",
+      "type": "ConstraintSnapshotBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-constraints-2",
+        "version": "1",
+        "digest": "edcb932de730338c428c37850d8b36fbccb2d4ee1fd478148c4b34965acee7d3",
+        "purpose": "ConstraintSnapshotBody"
+      },
+      "computed": "edcb932de730338c428c37850d8b36fbccb2d4ee1fd478148c4b34965acee7d3",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/54",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-preview-2",
+        "version": "1",
+        "digest": "61b42b25b189bf9e73ba7b91d5faf3bf7fc4277043d74ea31e73d3207f90eb9d",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed": "61b42b25b189bf9e73ba7b91d5faf3bf7fc4277043d74ea31e73d3207f90eb9d",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/55",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-release-2",
+        "version": "1",
+        "digest": "43ca72857f046ee1900d834f61f4a6dd97395dd964cdd96fbba829f2022ca30d",
+        "purpose": "ReleaseBody"
+      },
+      "computed": "43ca72857f046ee1900d834f61f4a6dd97395dd964cdd96fbba829f2022ca30d",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/56",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-timeline-1",
+        "version": "1",
+        "digest": "5b1805fc1e7e7866639d43ca5acad3616f8d181ffb6b051caa385e60d02d6f66",
+        "purpose": "TimelineBody"
+      },
+      "computed": "5b1805fc1e7e7866639d43ca5acad3616f8d181ffb6b051caa385e60d02d6f66",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/57",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-control-2",
+        "version": "1",
+        "digest": "feb99730a669c249799286d58413992e9df1b69697ac784e89f1fc9dfa62bd78",
+        "purpose": "ControlBody"
+      },
+      "computed": "feb99730a669c249799286d58413992e9df1b69697ac784e89f1fc9dfa62bd78",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/58",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "BK-root-released-2",
+        "version": "1",
+        "digest": "7a5231b0b666e375f01661f383f9f59ac60d264506e0b8d817c493db86586f19",
+        "purpose": "RootBody"
+      },
+      "computed": "7a5231b0b666e375f01661f383f9f59ac60d264506e0b8d817c493db86586f19",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/59",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "20b556b8-7881-54ce-a943-e0b0831f31f0",
+        "version": "a58c4456-f025-58a8-b0e9-18c4daddfa75",
+        "digest": "b5872ed52605a4aa2b86b6279c1fa355da37c41d6454a4165778935114f305b5",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "b5872ed52605a4aa2b86b6279c1fa355da37c41d6454a4165778935114f305b5",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/60",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-control-1",
+        "version": "1",
+        "digest": "7e9f67c5b8050e9f24efbf4be84a43dd59f638a6e1f1bba884ab8eee47d9c890",
+        "purpose": "ControlBody"
+      },
+      "computed": "7e9f67c5b8050e9f24efbf4be84a43dd59f638a6e1f1bba884ab8eee47d9c890",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/61",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-decision-1",
+        "version": "1",
+        "digest": "efcf487f44d780893ab290d817b4bfbb0d149adf9f5025d16ca5b2b621898496",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed": "efcf487f44d780893ab290d817b4bfbb0d149adf9f5025d16ca5b2b621898496",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/62",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "d57fe288-2ce1-5b3b-b4d6-00a4d7e06a9f",
+        "version": "3",
+        "digest": "2a0d152e86796d9d1de10aad2248b79e8db903ac0a3ffef50a8792fc43a2f290",
+        "purpose": "ProposalBody"
+      },
+      "computed": "2a0d152e86796d9d1de10aad2248b79e8db903ac0a3ffef50a8792fc43a2f290",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/63",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-root-approved-1",
+        "version": "1",
+        "digest": "480930bfb6246aaaccc6862f93dc2233c8a37a8548af2c48c99a23bc7ff79b3e",
+        "purpose": "RootBody"
+      },
+      "computed": "480930bfb6246aaaccc6862f93dc2233c8a37a8548af2c48c99a23bc7ff79b3e",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/64",
+      "type": "ConstraintSnapshotBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-constraints-1",
+        "version": "1",
+        "digest": "35c98a921aa35047bb26ce2e3c58817add76c251ede064e850b035ea832e3b99",
+        "purpose": "ConstraintSnapshotBody"
+      },
+      "computed": "35c98a921aa35047bb26ce2e3c58817add76c251ede064e850b035ea832e3b99",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/65",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-preview-1",
+        "version": "1",
+        "digest": "15d55468befbbed0ccc9ac1139957ae443e4e60c032cdee99c5dfba6ff215df1",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed": "15d55468befbbed0ccc9ac1139957ae443e4e60c032cdee99c5dfba6ff215df1",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/66",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-release-1",
+        "version": "1",
+        "digest": "7bb3beb1e4c19a213eb80bee3464f3f75e2bd437b29402268e3a0df154ebd042",
+        "purpose": "ReleaseBody"
+      },
+      "computed": "7bb3beb1e4c19a213eb80bee3464f3f75e2bd437b29402268e3a0df154ebd042",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/67",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-timeline-1",
+        "version": "1",
+        "digest": "e0e327b943d72ec80955489b0388e4f3e1ec61717e79645cd1802b448563d645",
+        "purpose": "TimelineBody"
+      },
+      "computed": "e0e327b943d72ec80955489b0388e4f3e1ec61717e79645cd1802b448563d645",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/68",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-control-2",
+        "version": "1",
+        "digest": "04a4ba689f6aa13c7df3a4b08c51bbcb9c0a814abd3f150f6f21d47a286fb3ec",
+        "purpose": "ControlBody"
+      },
+      "computed": "04a4ba689f6aa13c7df3a4b08c51bbcb9c0a814abd3f150f6f21d47a286fb3ec",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/69",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CD-root-released-1",
+        "version": "1",
+        "digest": "b93ae4c267ad096eee67afb1268543af0f11ca8c647949f81ff7aae970106fea",
+        "purpose": "RootBody"
+      },
+      "computed": "b93ae4c267ad096eee67afb1268543af0f11ca8c647949f81ff7aae970106fea",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/70",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "ab4b4824-a143-525f-b6c6-11136599fc25",
+        "version": "03ade10c-b1d1-550b-8dd8-d815f6e4bde8",
+        "digest": "3302f45e5239a28cefe811969484f4afc300d50b33164c5220c183dec68bb462",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "3302f45e5239a28cefe811969484f4afc300d50b33164c5220c183dec68bb462",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/71",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-control-1",
+        "version": "1",
+        "digest": "b55492c026bd96ac4f9f13c9c3a1a0dd94cddf78dd8dd0f25948b5f81438db49",
+        "purpose": "ControlBody"
+      },
+      "computed": "b55492c026bd96ac4f9f13c9c3a1a0dd94cddf78dd8dd0f25948b5f81438db49",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/72",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-decision-1",
+        "version": "1",
+        "digest": "b171d7f528d7274b54d4b143fa2530bd9d618d3ff57bcb86409c7c7115d5981a",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed": "b171d7f528d7274b54d4b143fa2530bd9d618d3ff57bcb86409c7c7115d5981a",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/73",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "df1195c8-7b2d-55e5-99f6-12a2b7be6e3a",
+        "version": "3",
+        "digest": "18840292c48a690c2c7dcca236dbe950b79b706178e9d364f05d1dd92082c56a",
+        "purpose": "ProposalBody"
+      },
+      "computed": "18840292c48a690c2c7dcca236dbe950b79b706178e9d364f05d1dd92082c56a",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/74",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-root-approved-1",
+        "version": "1",
+        "digest": "48e100fae971b116d850686a2172141702963637576f1271a594c19aa5b69acc",
+        "purpose": "RootBody"
+      },
+      "computed": "48e100fae971b116d850686a2172141702963637576f1271a594c19aa5b69acc",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/75",
+      "type": "ConstraintSnapshotBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-constraints-1",
+        "version": "1",
+        "digest": "0bac9afb1c1cbaa07a81be43c8b8640607fe04a8c0c567e484a5d42d3f310d1a",
+        "purpose": "ConstraintSnapshotBody"
+      },
+      "computed": "0bac9afb1c1cbaa07a81be43c8b8640607fe04a8c0c567e484a5d42d3f310d1a",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/76",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-preview-1",
+        "version": "1",
+        "digest": "bb947cf7e55d39d5e0b0913e317210160661ccfc10bc24e36f9d6938b59d7efe",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed": "bb947cf7e55d39d5e0b0913e317210160661ccfc10bc24e36f9d6938b59d7efe",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/77",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-release-1",
+        "version": "1",
+        "digest": "f0239871b3eb6383a8184ee4c0b32176a466291077622300d2a59e3dc8009d7f",
+        "purpose": "ReleaseBody"
+      },
+      "computed": "f0239871b3eb6383a8184ee4c0b32176a466291077622300d2a59e3dc8009d7f",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/78",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-timeline-1",
+        "version": "1",
+        "digest": "23367b91f04194a7a96bd4c8a5edfe662aba6bcc965a49cc92ecd0bcf2e616f7",
+        "purpose": "TimelineBody"
+      },
+      "computed": "23367b91f04194a7a96bd4c8a5edfe662aba6bcc965a49cc92ecd0bcf2e616f7",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/79",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-control-2",
+        "version": "1",
+        "digest": "23777c755f0202286ef928b29f3463d8eaccd6e10a979d29ce39b8ce4afc52d8",
+        "purpose": "ControlBody"
+      },
+      "computed": "23777c755f0202286ef928b29f3463d8eaccd6e10a979d29ce39b8ce4afc52d8",
+      "matches": true
+    },
+    {
+      "pointer": "/inheritedOriginalRecords/80",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "CC-root-released-1",
+        "version": "1",
+        "digest": "1b5246b72c459c28d73a15e5eb571a4902441dd45c443dd90bbb02f4345181b6",
+        "purpose": "RootBody"
+      },
+      "computed": "1b5246b72c459c28d73a15e5eb571a4902441dd45c443dd90bbb02f4345181b6",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/0",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "65e7026d-0f0c-5223-a237-c964c60ef46f",
+        "version": "ed731b67-3f7a-5669-8dfb-92c1a69d5546",
+        "digest": "bcad8ef2b7a0da15c4b6490e5fc3374113cd755faceb951072fc195ac7c948db",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed": "bcad8ef2b7a0da15c4b6490e5fc3374113cd755faceb951072fc195ac7c948db",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/1",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-control-1",
+        "version": "1",
+        "digest": "ee3d1d89e765f6ad6d022975d42d15914fc6097e6bc0b931d862377a15703011",
+        "purpose": "ControlBody"
+      },
+      "computed": "ee3d1d89e765f6ad6d022975d42d15914fc6097e6bc0b931d862377a15703011",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/2",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b2161ddd-4ef7-5190-a678-c82b1a3be71a",
+        "version": "1",
+        "digest": "a306fbb436be01523d3887e4b38d62b1e3a4b319a7e3e232466ab52bf0cb4e96",
+        "purpose": "ProposalBody"
+      },
+      "computed": "a306fbb436be01523d3887e4b38d62b1e3a4b319a7e3e232466ab52bf0cb4e96",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/3",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b2161ddd-4ef7-5190-a678-c82b1a3be71a",
+        "version": "2",
+        "digest": "43d5d04cdfa7fc84d9ed82270e11a5fdd8a14267d6b0ac650d3fca1f2ff99a17",
+        "purpose": "ProposalBody"
+      },
+      "computed": "43d5d04cdfa7fc84d9ed82270e11a5fdd8a14267d6b0ac650d3fca1f2ff99a17",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/4",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-root-draft",
+        "version": "1",
+        "digest": "a269018a1068af3fc67b2021b0f21719799a77b8d7dc33b7ae3bcd5793746149",
+        "purpose": "RootBody"
+      },
+      "computed": "a269018a1068af3fc67b2021b0f21719799a77b8d7dc33b7ae3bcd5793746149",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/5",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-root-submitted",
+        "version": "1",
+        "digest": "bc879df1cf803c58683a26ce157806a89d6cba1939e7ddccaa7410edcbe0ad69",
+        "purpose": "RootBody"
+      },
+      "computed": "bc879df1cf803c58683a26ce157806a89d6cba1939e7ddccaa7410edcbe0ad69",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/6",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-decision-1",
+        "version": "1",
+        "digest": "ab52ed9e63cb4bcd8f6b3632e7bdda102fc1612db52e698ee8487ff073b545a0",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed": "ab52ed9e63cb4bcd8f6b3632e7bdda102fc1612db52e698ee8487ff073b545a0",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/7",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b2161ddd-4ef7-5190-a678-c82b1a3be71a",
+        "version": "3",
+        "digest": "cb50d677e769d1ddcce009099f7f02529c9085ea0dadba7f278d40b0075f29da",
+        "purpose": "ProposalBody"
+      },
+      "computed": "cb50d677e769d1ddcce009099f7f02529c9085ea0dadba7f278d40b0075f29da",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/8",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-root-approved",
+        "version": "1",
+        "digest": "091b46fef5ba54196c4764afa940036d1c81a15e7eb66b05bbc25497d3092f87",
+        "purpose": "RootBody"
+      },
+      "computed": "091b46fef5ba54196c4764afa940036d1c81a15e7eb66b05bbc25497d3092f87",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/9",
+      "type": "ConstraintSnapshotBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-constraints-29",
+        "version": "1",
+        "digest": "6dd9f7c44e4dff9bc8f6902ad41948b82cb55738c053098f772a0a8b1c41411d",
+        "purpose": "ConstraintSnapshotBody"
+      },
+      "computed": "6dd9f7c44e4dff9bc8f6902ad41948b82cb55738c053098f772a0a8b1c41411d",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/10",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-preview",
+        "version": "1",
+        "digest": "ca28797641a0970ff90b788872b4aa82d48a8fa293a32d7aa24f83580f6d85f6",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed": "ca28797641a0970ff90b788872b4aa82d48a8fa293a32d7aa24f83580f6d85f6",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/11",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-release",
+        "version": "1",
+        "digest": "6377d697eadbc8c9af424b9a87dfa47a7ea9eaed022db2741f7b1accbf768ce9",
+        "purpose": "ReleaseBody"
+      },
+      "computed": "6377d697eadbc8c9af424b9a87dfa47a7ea9eaed022db2741f7b1accbf768ce9",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/12",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-timeline-1",
+        "version": "1",
+        "digest": "587e20d5e206a4f0ad64d7c83511febf55b910a02722e564911111e77e78084e",
+        "purpose": "TimelineBody"
+      },
+      "computed": "587e20d5e206a4f0ad64d7c83511febf55b910a02722e564911111e77e78084e",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/13",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-control-2",
+        "version": "1",
+        "digest": "18ba188a632305c57cbde49cfdbd64bbf35b208e5946ae3bce95eecd5515a87b",
+        "purpose": "ControlBody"
+      },
+      "computed": "18ba188a632305c57cbde49cfdbd64bbf35b208e5946ae3bce95eecd5515a87b",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/14",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b2161ddd-4ef7-5190-a678-c82b1a3be71a",
+        "version": "4",
+        "digest": "cb25577066e28cfa69d7a90ba784238bf904cc48c21a851182614cfe6877cd98",
+        "purpose": "ProposalBody"
+      },
+      "computed": "cb25577066e28cfa69d7a90ba784238bf904cc48c21a851182614cfe6877cd98",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/15",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "AP65-TX2-root-released",
+        "version": "1",
+        "digest": "4a3eb52ece2d016798400f27f4973a505bd7490d9bc9987758fde73e3dce6af8",
+        "purpose": "RootBody"
+      },
+      "computed": "4a3eb52ece2d016798400f27f4973a505bd7490d9bc9987758fde73e3dce6af8",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/16",
+      "type": "ConsumerRegistrationBody",
+      "reference": {
+        "owner": "SYS-IAM",
+        "id": "AP65-CONSUMER-REGISTRATION",
+        "version": "1",
+        "digest": "3872ca5cbe3a476a04c4d4827838a37df7f33f665d877a62470a3d49b3faf1a3",
+        "purpose": "ConsumerRegistrationBody"
+      },
+      "computed": "3872ca5cbe3a476a04c4d4827838a37df7f33f665d877a62470a3d49b3faf1a3",
+      "matches": true
+    },
+    {
+      "pointer": "/isolatedDemoSetupOriginalRecords/17",
+      "type": "IamPolicyBody",
+      "reference": {
+        "owner": "SYS-IAM",
+        "id": "AP65-IAM-POLICY",
+        "version": "1",
+        "digest": "954c9ada7d17cf063b8fd7b0f5329e5913b8491386a6f56159bc5bfeb4fd4bf0",
+        "purpose": "IamPolicyBody"
+      },
+      "computed": "954c9ada7d17cf063b8fd7b0f5329e5913b8491386a6f56159bc5bfeb4fd4bf0",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/0/consumerIntent",
+      "type": "ConsumerIntentBody",
+      "reference": {
+        "owner": "Finance AP",
+        "id": "586fbd57-38da-5d72-b738-1821363bbc62",
+        "version": "1",
+        "digest": "a7c9894606ab07506f0aa7fe0672e2154e2513acaca6a1c5a21979cd8bf48450",
+        "purpose": "ConsumerIntentBody"
+      },
+      "computed": "a7c9894606ab07506f0aa7fe0672e2154e2513acaca6a1c5a21979cd8bf48450",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/0/consumerIntentProof",
+      "type": "ConsumerIntentProofBody",
+      "reference": {
+        "owner": "Finance AP",
+        "id": "f62a0c88-cb6e-54d9-b30b-affe01706393",
+        "version": "1",
+        "digest": "c1fceebaa91d0be96997a0f67be440f36763d83ed0f036e6e388a5d3dcdbe848",
+        "purpose": "ConsumerIntentProofBody"
+      },
+      "computed": "c1fceebaa91d0be96997a0f67be440f36763d83ed0f036e6e388a5d3dcdbe848",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/0/useReceipt",
+      "type": "UseReceiptBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "4f987ae1-cf56-511e-8789-57071862ee2d",
+        "version": "1",
+        "digest": "312b67246f753e04c0083abf5d589ff01c31467fabb9358fa1beb67b4ed0e7c7",
+        "purpose": "UseReceiptBody"
+      },
+      "computed": "312b67246f753e04c0083abf5d589ff01c31467fabb9358fa1beb67b4ed0e7c7",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/0/consumerResult",
+      "type": "ConsumerResultBody",
+      "reference": {
+        "owner": "Finance AP",
+        "id": "d657c9ab-fe6e-5653-a993-1bc33eb1e885",
+        "version": "1",
+        "digest": "6415130979c05cb6e5d2eb0bb2ad222cecf8311bfe52ef11434ce02afab0ca3c",
+        "purpose": "ConsumerResultBody"
+      },
+      "computed": "6415130979c05cb6e5d2eb0bb2ad222cecf8311bfe52ef11434ce02afab0ca3c",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/1/consumerIntent",
+      "type": "ConsumerIntentBody",
+      "reference": {
+        "owner": "Finance AP",
+        "id": "a7fa4bc5-0e2a-5e64-a6ee-c948c001708b",
+        "version": "1",
+        "digest": "dc1a680198bea1cc453f58d7cf6831e5a915140a1a2afa67e5661f0d8ef2a751",
+        "purpose": "ConsumerIntentBody"
+      },
+      "computed": "dc1a680198bea1cc453f58d7cf6831e5a915140a1a2afa67e5661f0d8ef2a751",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/1/consumerIntentProof",
+      "type": "ConsumerIntentProofBody",
+      "reference": {
+        "owner": "Finance AP",
+        "id": "35f22df2-2eb6-504b-8eda-a40ca70f3a6a",
+        "version": "1",
+        "digest": "22aa21d29f5dd2190354198b79a0fb4af7d5ad36d690defba5e4f834ec1d8150",
+        "purpose": "ConsumerIntentProofBody"
+      },
+      "computed": "22aa21d29f5dd2190354198b79a0fb4af7d5ad36d690defba5e4f834ec1d8150",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/1/useReceipt",
+      "type": "UseReceiptBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "88c48cc7-d572-5c30-b291-0236624840d6",
+        "version": "1",
+        "digest": "b45c42296fd9d85208713f07e58c3d40e3f5a07aab57dd51603a6560378e224b",
+        "purpose": "UseReceiptBody"
+      },
+      "computed": "b45c42296fd9d85208713f07e58c3d40e3f5a07aab57dd51603a6560378e224b",
+      "matches": true
+    },
+    {
+      "pointer": "/sameUowExpectedSuccessBranch/batches/1/consumerResult",
+      "type": "ConsumerResultBody",
+      "reference": {
+        "owner": "Finance AP",
+        "id": "4d3f125d-61bc-5e1a-b9c2-369803768700",
+        "version": "1",
+        "digest": "ea833acf345704f409c6cf6c2c0804f78d87b816efd2b4ac7911f58a5f2265c1",
+        "purpose": "ConsumerResultBody"
+      },
+      "computed": "ea833acf345704f409c6cf6c2c0804f78d87b816efd2b4ac7911f58a5f2265c1",
+      "matches": true
+    }
+  ],
+  "record_digest_failures": [],
+  "business_tests": "NOT_RUN",
+  "actual_owner_adoption": "UNPROVEN",
+  "prior_reading": "evidence/FIN-MASTER-01-supplement-reading.json",
+  "design_appendix": "contracts/FIN-AP-01-主数据采用与跨域接口.md"
+}

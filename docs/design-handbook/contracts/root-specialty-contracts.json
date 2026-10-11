@@ -1,0 +1,851 @@
+{
+  "group": "root-specialty",
+  "contracts": [
+    {
+      "contract_id": "X4-TOOL-ENG-CURRENT",
+      "target_id": "WMS-TOOL-01",
+      "producer": "ENG / MASTER / OA / Stock",
+      "consumer": "WMS TOOL",
+      "identity": "工程准确版本与当前用途资格；维护/报废审批决定与应用分离",
+      "transaction": "同UoW当前适配保护对应来源；仅远端观察则相关新使用RequiredFenced。实物报废不自动Stock报损/Finance资产报废。",
+      "recovery": "历史Use/Discard结果沿原键回放，不把当前撤回改写历史。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 20
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 62
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 70
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-TOOL-OCCURRENCE",
+      "target_id": "WMS-TOOL-01",
+      "producer": "实际发生producer及WMS观察/认定",
+      "consumer": "TOOL Use/Maintenance",
+      "identity": "稳定发生K不含recordVersion/HTTP key，原发生贯穿Use事实和回执",
+      "transaction": "普通Use、观察认定、维护完成、周期reset分别定义；缺政策真实观察不加正式计数/重置/许可。",
+      "recovery": "有权补认定只一次，原周期关闭时纠正历史及Lifetime，不错加新cycle。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 84
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 90
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 96
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+          "line": 100
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-INK-STOCK-CONVERSION",
+      "target_id": "WMS-INK-01",
+      "producer": "Stock InkStockAdapter.Required",
+      "consumer": "Ink Mix",
+      "identity": "两父原Root原区间、稳定K、同UOM/Owner/技术用途和完整manifest",
+      "transaction": "同实际QuantityUoW消费两父、生成子Root/MixReceipt/子开封/质量总体映射；任一缺失零提交。",
+      "recovery": "QueryOriginal原operation/digest；UNKNOWN不换键、不再混合。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 62
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 64
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 70
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 140
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-INKQ-SOURCE-BINDING",
+      "target_id": "WMS-INK-01",
+      "producer": "Ink QualitySourceSelection producer / Quality INKQ-1",
+      "consumer": "Ink OPEN/MIX",
+      "identity": "sourceSelectionRef完整NativeRef + 完整source回显 + sourceSubjectDigest",
+      "transaction": "Quality新request回读准确版本并逐字段匹配；selector/digest贯穿Resolution/current/HoldExact；独立INKQ不能改旧QAP SourceKind。",
+      "recovery": "同requestKey同绑定回放；缺selector400、echo不符422、换selector409、原件不可证503。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 110
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 112
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 114
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 120
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 122
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 124
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 126
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-INKQ-GUARD-MAP",
+      "target_id": "WMS-INK-01",
+      "producer": "Quality InkQualityParticipant / Stock",
+      "consumer": "Ink正常开封混合",
+      "identity": "Resolution/selector/consumerIntent/expectedVector/sourceSubjectDigest，完整输出Domain/Family义务",
+      "transaction": "HoldExact与所有相关writer同UoW至外层commit；RecordUse及PopulationToRootMap同次转换，子Root先PENDING/RESTRICTED，不把APPLICABLE当PASS。",
+      "recovery": "撤回先赢零新效果，转换先commit保原事实后继限制；异常实际只观察并关联原Owner处置。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 132
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 136
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 138
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 140
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+          "line": 142
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-VMI-PRICING",
+      "target_id": "WMS-VMI-01",
+      "producer": "Stock日末真实保管量 / Finance PriceTerm",
+      "consumer": "VMI Calculation/Confirmation/OA/Finance manifest",
+      "identity": "baseQuantity→priceQuantity精确转换，priceBasisQty/Uom、dailyRate、currency、roundingPolicy全链冻结",
+      "transaction": "raw=(priceQuantity/priceBasisQty)*dailyRate；日行不再乘月天数；priceQuantity最多8位可精确表达；raw约分有理数各整数最多128位。LINE或TOTAL一个Finance舍入点。",
+      "recovery": "重算新不可变候选版，不能覆盖确认或复用已变金额的旧OA批准。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 48
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 66
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 100
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 102
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-VMI-FINANCE-INTAKE",
+      "target_id": "WMS-VMI-01",
+      "producer": "WMS VMI服务计费依据",
+      "consumer": "Finance专业服务义务受理Owner",
+      "identity": "intakeKey=(scope,WMS_VMI,serviceObligationId,stableLineId,yearMonth,chargeKind)；完整确认/价段/原数量单位/有理金额/sourceCut",
+      "transaction": "本域确认/冻结/Audit/Result/FinanceHandoff Outbox同事务；Finance自身独立接收/应用，ACK或ACCEPTED_BASIS不等AR/GL。",
+      "recovery": "按原intakeKey+digest查询/同bytes重投；错digest/Owner隔离。现AR仅Order/Shipment时须新增服务适配，不能塞OrderId。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 50
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 70
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 74
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 76
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-VMI-STOCK-REQUESTEDUSE",
+      "target_id": "WMS-VMI-01",
+      "producer": "Stock SQ02/SQ07 / use-context producer",
+      "consumer": "VMI库存与可用查询",
+      "identity": "RequestedUse四字段全保、useContextRef/revision、evaluation、原vector/evaluatedAt",
+      "transaction": "冻结CURRENT=SQ07 AS_KNOWN/CAPTURE_NOW/effectiveAt null；预览SQ02需完整use/evaluation；历史SQ07 EXACT_VECTOR，不用时钟伪造。",
+      "recovery": "null问题NOT_EVALUATED/Free=null；有问题缺证UNKNOWN。正式月费不取PLANNED Free。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 106
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 108
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 110
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 112
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+          "line": 114
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-SAMPLE-CUSTODY",
+      "target_id": "WMS-SAMPLE-01",
+      "producer": "Stock SampleStockAdapter / MASTER / Quality",
+      "consumer": "Sample Loan/Return",
+      "identity": "原Root原范围/UOM/货主/技术、明确custody、Loan/实际发生K",
+      "transaction": "Stock合法保管移动与Loan/Return/Operation/Audit同UoW；Sample从属Root后取Loan，不能倒锁或先OPEN再异步搬库。",
+      "recovery": "Owner UNKNOWN只留ReturnObservation，不減正式outstanding；同原key回执不再搬Root。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 64
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 66
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 70
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 90
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 96
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 98
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-SAMPLE-OCCURRENCE",
+      "target_id": "WMS-SAMPLE-01",
+      "producer": "handover occurrence/evidence producer",
+      "consumer": "Loan/Return/Stock SourceParticipant",
+      "identity": "K=(scope,producerOwner,sourceKind,document,line,leaf,direction)；稳定凭据唯一映射实际发生",
+      "transaction": "OccurrenceUse与范围排他同最终事务；换HTTP/source version仍原Loan/Return。正式应用需要PROVEN实际来源，缺leaf只观察。",
+      "recovery": "Loan1已归还后旧实发仍回Loan1；新实际leaf才Loan2；修正不通过正向新key。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 108
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 110
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 112
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 114
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 116
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-AUTO-SOURCE-ADMISSION",
+      "target_id": "WMS-AUTO-01",
+      "producer": "原IN/OUT/TRANSFER/StockTake SourceTaskAdapter",
+      "consumer": "AUTO派发与源结果应用",
+      "identity": "来源槽=(scope,sourceOwner,stableOperation,line,leg)，selector保原schema/body",
+      "transaction": "AdmitDispatchInUow与源取消互斥，本地command+Outbox原子；设备执行和源业务应用是独立事务，不是整HTTP链原子。",
+      "recovery": "UNKNOWN保原槽/command；Source ReceiveExecutionFact仅接收，QueryApplication回真实Owner/Stock结果。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 58
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 92
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 98
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 100
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 108
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 110
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-AUTO-DEVICE-IDENTITIES",
+      "target_id": "WMS-AUTO-01",
+      "producer": "已登记OEM DeviceTaskAdapter",
+      "consumer": "AUTO Inbox / SourceHandoff",
+      "identity": "producerEventIdentity四元组、deviceOccurrenceIdentity五元组、sourceApplicationKey完整来源槽+实际发生；各namespace有原证据",
+      "transaction": "Inbox/Observation/SourceHandoff同本地事务；设备完工不直接写Stock；不同事件同发生只一次最终源应用。",
+      "recovery": "同event同body换delivery只回原观察；异body隔离；缺执行leaf/原namespace UNKNOWN；QueryOriginal缺失不证明零效果。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 112
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 114
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 116
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 118
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+          "line": 120
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-ANALYTICS-STOCK-CUT",
+      "target_id": "WMS-ANALYTICS-01",
+      "producer": "StockAnalyticsReadAdapter / SQ02/SQ07",
+      "consumer": "ReportSnapshot",
+      "identity": "同cut精确Root/Slice/Movement/Claim/Restriction、signed legs/corrections、完整manifest、RequestedUse/evaluation",
+      "transaction": "冻结当前与历史映射按原SQ07向量，跨Owner只声明COHERENT_VECTOR/PARTIAL；单行manifest/totals/cuts/READY原子发布。",
+      "recovery": "CurrentOnly不可回退成假历史；Free缺场景NOT_EVALUATED、缺证UNKNOWN；重述新report保旧快照。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 22
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 58
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 60
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 98
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 106
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 118
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 120
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 122
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-ANALYTICS-OPERATIONAL-CARDS",
+      "target_id": "WMS-ANALYTICS-01",
+      "producer": "IN/OUT/StockTake原header只读producer",
+      "consumer": "Dashboard OPS-CARDS-1",
+      "identity": "四卡原状态/日期谓词，按headerId、各Site当地业务日、完整成员manifest",
+      "transaction": "CURRENT_ONLY一次只读cut冻结三类header和卡总数；未完盘点与待审批子集分开不加总。",
+      "recovery": "历史HISTORY_UNAVAILABLE/count=null；另看当前需单独snapshot/MIXED_EXPLICIT；单卡失败只未知该卡。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 124
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 128
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 129
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 130
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 131
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 135
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 137
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 139
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 141
+        }
+      ]
+    },
+    {
+      "contract_id": "X4-ANALYTICS-BRIDGE-VALUATION",
+      "target_id": "WMS-ANALYTICS-01",
+      "producer": "Integration/S6 / Finance只读adapter",
+      "consumer": "Analytics健康和金额",
+      "identity": "native运输状态/业务原结果/各分母/cut；Finance准确Stock span+cut+context→金额币种/估值证据",
+      "transaction": "全部read-only，无补偿/重排或数量写；旧COMPENSATED只人工标签，ACK不等业务恢复。",
+      "recovery": "缺业务结果保持UNKNOWN，缺估值仅金额未知；恢复仅已采用INT-OPS导航。",
+      "status": "accepted_design_candidate_native_mapping_and_runtime_adoption_required",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 80
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 82
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 84
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 100
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 112
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-KIT-COMPOSE-UOW",
+      "target_id": "WMS-KIT-01",
+      "producer": "WMS Composition Source / Stock共同多计划适配",
+      "consumer": "Kit输入消费/产出与组成谱系",
+      "identity": "orderId+physicalOccurrenceKey+direction及独立physicalInstructionOwner/occurrence唯一；冻结原定义、成套产品技术/单位/基数、完整输入/输出、SourceBudget",
+      "transaction": "ComposeInSameUow先收集所有原execution/leaf/Scope/Root/Claim/容量与Composition canonical，统一验证后同真实Main QuantityUoW提交全部Stock计划、lineage、SourceBudget、终态和回执；不能逐腿commit或使用SHIP/新增未接受TRANSFORM枚举。",
+      "recovery": "任何腿未知保保护，缺共同适配WAITING_ADOPTION；历史半成功RECONCILIATION不自动补扣。",
+      "status": "selected_current_design_native_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 54
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 85
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 88
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 90
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 92
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 95
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 103
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-KIT-HISTORICAL-COMPOSITION",
+      "target_id": "WMS-KIT-01",
+      "producer": "原CompositionResult / Stock准确套件Root",
+      "consumer": "DISASSEMBLE后继",
+      "identity": "predecessorCompositionRef与原输出Root、历史DefinitionVersion/逐原范围组成映射",
+      "transaction": "成套量先准确换成kitBaseUom，再按无量纲配方倍数；拆旧组成可读SUPERSEDED/RETIRED但需当前质量/用途，不强改最新ACTIVE。",
+      "recovery": "已完成反悔是新物理作业，记账错误由Stock Correction，不覆盖原图。",
+      "status": "selected_current_design_native_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 80
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 83
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 84
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 85
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 96
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 99
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-SLOT-ANALYSIS-PLAN",
+      "target_id": "WMS-SLOT-01",
+      "producer": "Slot Analysis producer",
+      "consumer": "Plan/Proposal/UI",
+      "identity": "UQ(Tenant,Environment,Actor,analysisRequestKey)；AnalysisRef与PlanRef独立真实身份",
+      "transaction": "不可变Analysis/rows、独立Plan/head、CommandResult/Audit同一短事务；source未知可保存UNKNOWN，Plan提交失败不回成功。",
+      "recovery": "丢响应by-key回同两个Ref；换HTTP键同业务key不再建，Proposal路径只能planRef。",
+      "status": "selected_current_design_native_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 41
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 42
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 49
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 56
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 87
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 375
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-SLOT-TRANSFER",
+      "target_id": "WMS-SLOT-01",
+      "producer": "SlotTransferAdapter-1 / accepted TRANSFER→Stock",
+      "consumer": "Slot方案行执行/停止",
+      "identity": "dispatchKey=(tenant,env,planId,proposalVersion,lineKey)，完整TransferExecutionLink原请求/所有Stage/Receipt/coverage",
+      "transaction": "NEW唯一Transfer路线，每行完整Move Stage；多行仅逐项原子可PARTIAL；stop与dispatch共同LineGate，NEW旧Mobile V2全部写点423。",
+      "recovery": "按完整Stage族关闭/原key恢复；POSTED无StockReceipt仍UNKNOWN；真实部分实作交Transfer ActualFact/Case，不自动余量子任务。",
+      "status": "selected_current_design_native_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 70
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 72
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 74
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 76
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 78
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 80
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 83
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 88
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-REP-DEMAND-SLOT",
+      "target_id": "WMS-REP-01",
+      "producer": "REP Rule/Stock cut/Transfer current",
+      "consumer": "REP Batch and manual prepare",
+      "identity": "DemandSlot完整目标维度；AllocationPlan稳定splitKey与原Order；一个ActiveIntent总义务",
+      "transaction": "所有选行一个短登记事务全部新增或全回滚；REGISTERED即计未到，不能父子重复；到货转onHand需共同完整cut",
+      "recovery": "停止未知保预算；旧义务终态不复活；新代要前驱关闭证明",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-REP-TRANSFER",
+      "target_id": "WMS-REP-01",
+      "producer": "ReplenishTransferAdapter-1 / Transfer / Stock",
+      "consumer": "REP Order result",
+      "identity": "dispatchKey=(tenant,environment,orderId,selectionVersion)及一次operationId；全部Stage/原Stock两腿",
+      "transaction": "NEW唯一Transfer→Stock；每split正常一个完整Stage；旧MobileV2全部写点fence；原执行门及Root/Claim/容量最终裁决",
+      "recovery": "UNKNOWN查原键不重派；完整任务族4+6；异步关联只补link不再物理",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-XDOCK-OWNER-STEPS",
+      "target_id": "WMS-XDOCK-01",
+      "producer": "XDockOwnerCoordinator-1 / IN / OUT / RSV / Stock",
+      "consumer": "XDOCK coordination",
+      "identity": "原Source/ReceiptLine/Root到OUT需求准确非重叠映射；Owner原键和完整Body",
+      "transaction": "IN/OUT分阶段各自物理UoW；本域仅编排；不可Stock IN/OUT凑净零",
+      "recovery": "IN成功只补link；OUT成功只重派原消息；停止保已收货/已发历史并准确处置剩余",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/433993a9448ae3c0__WMS-XDOCK-01_越库作业_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/433993a9448ae3c0__WMS-XDOCK-01_越库作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 84
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-XDOCK-CURRENT-AMOUNTS",
+      "target_id": "WMS-XDOCK-01",
+      "producer": "IN / OUT / Stock current results",
+      "consumer": "XDOCK LineQuantityProjection",
+      "identity": "lineKey+product/technical/owner/baseUom完整四Ref及互斥范围/共同cut",
+      "transaction": "按当前有效范围求收/发/留存/未收；历史确认单独保；头只同维度互斥完整cut可合",
+      "recovery": "current未知为null/UNKNOWN；跨维度NOT_AGGREGATABLE；不拿历史20补当前",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/433993a9448ae3c0__WMS-XDOCK-01_越库作业_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/433993a9448ae3c0__WMS-XDOCK-01_越库作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-ROLL-COMPOSITION",
+      "target_id": "WMS-ROLL-01",
+      "producer": "RollCompositionBridge-1 / Stock / Product",
+      "consumer": "ROLL SLIT",
+      "identity": "真实physicalInstruction/occurrence及父全剩余；每outputKey固定，精确stock↔length与面积平衡",
+      "transaction": "全部父CONSUME/子RECEIPT/容量Claim/Lineage/父子行业状态同DbTransaction顶层commit；末子失败全回滚",
+      "recovery": "丢响应回原Receipt/同子ID；部分原件对账不补物理；已切UNKNOWN不复活父",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 131
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-ROLL-LOSS-EXIT",
+      "target_id": "WMS-ROLL-01",
+      "producer": "WMS正式Disposition Owner / Stock ActualFact",
+      "consumer": "ROLL SLIT非零损耗",
+      "identity": "每KERF/REMAINDER独立准确指令/发生/父/宽长面积与完成/physicalExit，OUTSIDE_WMS+KNOWN_ZERO",
+      "transaction": "同Source/Disposition/PhysicalExit/Capacity门持有至commit，永久消费每part；不再父LOSS",
+      "recovery": "仍在场全部好料+废边进同ActualFact/Case，原容量/Source保护且域UNKNOWN；后续仅废边一次处置",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 111
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-ROLL-CONSUMPTION",
+      "target_id": "WMS-ROLL-01",
+      "producer": "真实ConsumptionOwner / MAT / Stock",
+      "consumer": "ROLL消费关联",
+      "identity": "instructionOwner/consumptionId/materialLine/physicalOccurrence，原Root/Claim/Use/SourceAllowance",
+      "transaction": "原Owner唯一CONSUME+Claim原子；ROLL link同UoW或WAITING_LINK不再耗",
+      "recovery": "MES已耗仅关联；Correction核全后继；真实退料RETURN；阈值只分类不LOSS",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 152
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-REM-ROOT-ROLE",
+      "target_id": "WMS-REM-01",
+      "producer": "Stock / Product / ROLL / Measurement",
+      "consumer": "REM注册/激活/匹配",
+      "identity": "physicalSourceKey完整Root份额，REM同角色不可重叠；ROLL跨角色QuantityFactKey同一；用途免几何决定",
+      "transaction": "同Record/Intake/Source/RootCoverage门CAS激活/别名零Stock；几何只匹配不反推库存",
+      "recovery": "同物理有证才DuplicateAlias，无证仍隔离；Active不可换源",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/3192726a41ddd3cf__WMS-REM-01_余料管理_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/3192726a41ddd3cf__WMS-REM-01_余料管理_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 82
+        }
+      ]
+    },
+    {
+      "contract_id": "X3-REM-RSV-USE",
+      "target_id": "WMS-REM-01",
+      "producer": "RSV / Stock / 真实ConsumptionOwner",
+      "consumer": "REM预约/释放/实际使用",
+      "identity": "原需求申请canonical及真实ConsumptionId/物理发生跨MES/ROLL/REM归一",
+      "transaction": "RSV+Stock唯一BACKED Claim；完整UseFence/NoFurtherUse后仅放未耗；真实CONSUME+Claim同UoW",
+      "recovery": "UNKNOWN保保护/原键查询只补link；30耗20只放10；线边MOVE不耗",
+      "status": "selected_design_runtime_adoption_unproven",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/3192726a41ddd3cf__WMS-REM-01_余料管理_完整设计_RECOVERY_v1.1_R2.md",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/3192726a41ddd3cf__WMS-REM-01_余料管理_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 103
+        }
+      ]
+    }
+  ],
+  "status": "in_progress",
+  "updated_at_utc": "2026-10-10T08:03:23.309243+00:00"
+}

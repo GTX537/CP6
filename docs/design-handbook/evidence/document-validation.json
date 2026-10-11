@@ -1,0 +1,14 @@
+{
+  "as_of_utc": "2026-10-10T16:12:34.254699+00:00",
+  "scope": "JSON/CSV parse, written module IDs/section presence, local Markdown file and line links. Link existence and heading count do not establish correct semantics or full source reading.",
+  "json_files_parsed": 105,
+  "csv_files_parsed": 4,
+  "local_links_checked": 19774,
+  "written_modules": 125,
+  "expected_targets": 125,
+  "modules_not_yet_written": [],
+  "errors": [],
+  "warnings": [],
+  "business_tests_executed": false,
+  "semantic_completion_assessed_by_this_check": false
+}

@@ -1,0 +1,1192 @@
+{
+  "target_id": "QA-IPQC-01",
+  "component": "F01_PHYSICALIDENTITY_TRANSITION_CHECKPOINT_R4",
+  "status": "component_business_semantics_consolidated",
+  "source": {
+    "source_path": "D:/CP6-archives/consolidation-20261010/objects/5dbc9a77c6468acfd644623f1aebc44982388fbbc122bc8f9d338acfd2057708.json",
+    "sha256": "5dbc9a77c6468acfd644623f1aebc44982388fbbc122bc8f9d338acfd2057708",
+    "bytes": 48570859,
+    "total_lines": 610761
+  },
+  "coverage": "structured",
+  "read_scope": {
+    "schemas": {
+      "count": 191,
+      "structural_reuse_ignoring_id_count": 182,
+      "novel_full_read_count": 9,
+      "same_as_current_master": false,
+      "reuse_evidence": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-supplement-reading.json; root 192 definitions full business-field read",
+      "source_ids_preserved": "184 old recovery-r3 root ids; 7 explicit accepted/selection schemas have no root $id",
+      "current_only_types": [
+        "QapPhysicalMembers",
+        "QapPlanContent",
+        "QapPolicyContent",
+        "QapQualityRequirementSource",
+        "QapSampleSelection",
+        "QapTechnicalBinding",
+        "WriterEpochTransitionCommand",
+        "WriterEpochTransitionOutcome"
+      ],
+      "current_source": {
+        "file": "CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+        "sha256": "ec15532bb8820016f44af4dcf91823b2ec2af7684ec767cc1f25a4bbe61ec74b",
+        "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec15532bb8820016__CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+        "bytes": 1803613,
+        "root": {
+          "$node": "N539"
+        },
+        "node_range": [
+          0,
+          539
+        ],
+        "json_string_range": [
+          0,
+          -1
+        ]
+      },
+      "reuse_mapping": {
+        "ActivateRetestCommand": "/types/ActivateRetestCommand",
+        "ApprovalCommand": "/types/ApprovalCommand",
+        "ApprovalOutcome": "/types/ApprovalOutcome",
+        "ApprovalPacketResult": "/types/ApprovalPacketResult",
+        "CommandResultLookupRequest": "/types/CommandResultLookupRequest",
+        "CommandResultLookupResult": "/types/CommandResultLookupResult",
+        "CoreQuality": "/types/CoreQuality",
+        "CorrectionCommand": "/types/CorrectionCommand",
+        "CorrectionCommitResult": "/types/CorrectionCommitResult",
+        "CorrectionOutcome": "/types/CorrectionOutcome",
+        "CreateTaskCommand": "/types/CreateTaskCommand",
+        "CreateTaskOutcome": "/types/CreateTaskOutcome",
+        "Decision": "/types/Decision",
+        "DeliveryLeaseResult": "/types/DeliveryLeaseResult",
+        "DeliveryOutcome": "/types/DeliveryOutcome",
+        "DeliveryRead": "/types/DeliveryRead",
+        "DeliveryResumeCommand": "/types/DeliveryResumeCommand",
+        "Digest": "/types/Digest",
+        "DispositionDraftResult": "/types/DispositionDraftResult",
+        "DraftCommand": "/types/DraftCommand",
+        "DraftOutcome": "/types/DraftOutcome",
+        "Eligibility": "/types/Eligibility",
+        "EligibilityCut": "/types/EligibilityCut",
+        "EligibilityFact": "/types/EligibilityFact",
+        "EligibilityFactKind": "/types/EligibilityFactKind",
+        "EligibilityRead": "/types/EligibilityRead",
+        "EligibilityTrustedFact": "/types/EligibilityTrustedFact",
+        "EnvironmentKey": "/types/EnvironmentKey",
+        "ExecEvidence": "/types/ExecEvidence",
+        "ExecQaSource": "/types/ExecQaSource",
+        "ExecQualityDisposition": "/types/ExecQualityDisposition",
+        "ExecQualityTaskResult": "/types/ExecQualityTaskResult",
+        "ExecQuantity": "/types/ExecQuantity",
+        "ExecRange": "/types/ExecRange",
+        "ExecRef": "/types/ExecRef",
+        "ExecScope": "/types/ExecScope",
+        "ExpectedHeads": "/types/ExpectedHeads",
+        "ExportCommand": "/types/ExportCommand",
+        "ExportOutcome": "/types/ExportOutcome",
+        "ExportReceipt": "/types/ExportReceipt",
+        "FamilyCut": "/types/FamilyCut",
+        "FamilyPage": "/types/FamilyPage",
+        "FamilyRead": "/types/FamilyRead",
+        "FamilySearch": "/types/FamilySearch",
+        "FixturePrerequisiteBundle": "/types/FixturePrerequisiteBundle",
+        "FreezePacketCommand": "/types/FreezePacketCommand",
+        "FreezeResultSetCommand": "/types/FreezeResultSetCommand",
+        "FreezeResultSetOutcome": "/types/FreezeResultSetOutcome",
+        "FrozenDelivery": "/types/FrozenDelivery",
+        "GenericReceipt": "/types/GenericReceipt",
+        "HandoffCommand": "/types/HandoffCommand",
+        "HandoffOutcome": "/types/HandoffOutcome",
+        "HistoryPage": "/types/HistoryPage",
+        "HistoryQuery": "/types/HistoryQuery",
+        "Id": "/types/Id",
+        "ImpactOutcome": "/types/ImpactOutcome",
+        "IngressOutcome": "/types/IngressOutcome",
+        "IpqcFinalGuardResult": "/types/IpqcFinalGuardResult",
+        "LegacyMapCommand": "/types/LegacyMapCommand",
+        "LegacyMapOutcome": "/types/LegacyMapOutcome",
+        "LegacyMapResult": "/types/LegacyMapResult",
+        "LegacyPage": "/types/LegacyPage",
+        "LegacySearch": "/types/LegacySearch",
+        "LongText": "/types/LongText",
+        "Mode": "/types/Mode",
+        "ObservationBatchCommand": "/types/ObservationBatchCommand",
+        "ObservationCommitResult": "/types/ObservationCommitResult",
+        "ObservationInput": "/types/ObservationInput",
+        "ObservationOutcome": "/types/ObservationOutcome",
+        "OutEvidence": "/types/OutEvidence",
+        "OutFlatRef": "/types/OutFlatRef",
+        "OutQualityDisposition": "/types/OutQualityDisposition",
+        "OutQualityTaskResult": "/types/OutQualityTaskResult",
+        "OutRange": "/types/OutRange",
+        "OutRef": "/types/OutRef",
+        "OwnerIngressResult": "/types/OwnerIngressResult",
+        "OwnerObservationResult": "/types/OwnerObservationResult",
+        "OwnerResultCommand": "/types/OwnerResultCommand",
+        "PacketOutcome": "/types/PacketOutcome",
+        "PartitionSegment": "/types/PartitionSegment",
+        "PayloadType": "/types/PayloadType",
+        "PlmDocument": "/types/PlmDocument",
+        "PlmDocumentRead": "/types/PlmDocumentRead",
+        "PlmDocumentReadRequest": "/types/PlmDocumentReadRequest",
+        "PlmEvaluation": "/types/PlmEvaluation",
+        "PlmEvaluationRead": "/types/PlmEvaluationRead",
+        "PlmEvaluationReadRequest": "/types/PlmEvaluationReadRequest",
+        "PlmReadState": "/types/PlmReadState",
+        "PlmTrialRead": "/types/PlmTrialRead",
+        "PlmTrialReadRequest": "/types/PlmTrialReadRequest",
+        "PlmVerificationPlan": "/types/PlmVerificationPlan",
+        "PlmVerificationRead": "/types/PlmVerificationRead",
+        "PlmVerificationReadRequest": "/types/PlmVerificationReadRequest",
+        "PolicyContextRead": "/types/PolicyContextRead",
+        "PolicyResolveCommand": "/types/PolicyResolveCommand",
+        "PolicyResolveOutcome": "/types/PolicyResolveOutcome",
+        "PopulationMember": "/types/PopulationMember",
+        "PopulationPage": "/types/PopulationPage",
+        "PopulationRead": "/types/PopulationRead",
+        "Problem": "/types/Problem",
+        "QapAdoptionRegistration": "/types/QapAdoptionRegistration",
+        "QapCoordinateValidation": "/types/QapCoordinateValidation",
+        "QapCoverage": "/types/QapCoverage",
+        "QapEffectLocator": "/types/QapEffectLocator",
+        "QapEvidence": "/types/QapEvidence",
+        "QapExpected": "/types/QapExpected",
+        "QapFamilyChangeResult": "/types/QapFamilyChangeResult",
+        "QapFamilyContinuity": "/types/QapFamilyContinuity",
+        "QapFamilyControlChange": "/types/QapFamilyControlChange",
+        "QapFamilyControlHead": "/types/QapFamilyControlHead",
+        "QapFamilyCut": "/types/QapFamilyCut",
+        "QapFamilyDirectorySnapshot": "/types/QapFamilyDirectorySnapshot",
+        "QapFamilyKey": "/types/QapFamilyKey",
+        "QapFamilyObligation": "/types/QapFamilyObligation",
+        "QapFamilyReadResult": "/types/QapFamilyReadResult",
+        "QapFinalGuardInput": "/types/QapFinalGuardInput",
+        "QapFinalGuardResult": "/types/QapFinalGuardResult",
+        "QapMissing": "/types/QapMissing",
+        "QapMode": "/types/QapMode",
+        "QapPlanInstance": "/types/QapPlanInstance",
+        "QapPolicyTaskContext": "/types/QapPolicyTaskContext",
+        "QapPopulation": "/types/QapPopulation",
+        "QapProofFamilyContinuity": "/types/QapProofFamilyContinuity",
+        "QapProofFamilyControlHead": "/types/QapProofFamilyControlHead",
+        "QapProofFamilyCut": "/types/QapProofFamilyCut",
+        "QapProofPlanInstance": "/types/QapProofPlanInstance",
+        "QapProofRead": "/types/QapProofRead",
+        "QapProofResolutionEvidence": "/types/QapProofResolutionEvidence",
+        "QapProofUseFact": "/types/QapProofUseFact",
+        "QapRange": "/types/QapRange",
+        "QapRef": "/types/QapRef",
+        "QapResolution": "/types/QapResolution",
+        "QapResolutionEvidence": "/types/QapResolutionEvidence",
+        "QapSourceKind": "/types/QapSourceKind",
+        "QapStage": "/types/QapStage",
+        "QapUom": "/types/QapUom",
+        "QapUseFact": "/types/QapUseFact",
+        "QapUseResult": "/types/QapUseResult",
+        "QapValidity": "/types/QapValidity",
+        "Qty": "/types/Qty",
+        "RangeOutcome": "/types/RangeOutcome",
+        "RawEvidenceHandoff": "/types/RawEvidenceHandoff",
+        "ResultSet": "/types/ResultSet",
+        "ResultSetCoverageProof": "/types/ResultSetCoverageProof",
+        "RetestActivationOutcome": "/types/RetestActivationOutcome",
+        "RetestActivationResult": "/types/RetestActivationResult",
+        "RetestProposalCommand": "/types/RetestProposalCommand",
+        "RetestProposalOutcome": "/types/RetestProposalOutcome",
+        "RetestProposalResult": "/types/RetestProposalResult",
+        "ReviewCommand": "/types/ReviewCommand",
+        "ReviewCommitResult": "/types/ReviewCommitResult",
+        "ReviewItem": "/types/ReviewItem",
+        "ReviewOutcome": "/types/ReviewOutcome",
+        "RulingCommand": "/types/RulingCommand",
+        "RulingCommitResult": "/types/RulingCommitResult",
+        "RulingOutcome": "/types/RulingOutcome",
+        "SamplingInstruction": "/types/SamplingInstruction",
+        "ShortText": "/types/ShortText",
+        "SourceEnvelope": "/types/SourceEnvelope",
+        "SourceOptionPage": "/types/SourceOptionPage",
+        "SourceRead": "/types/SourceRead",
+        "SourceReassessmentCommand": "/types/SourceReassessmentCommand",
+        "SourceReassessmentResult": "/types/SourceReassessmentResult",
+        "SourceSearch": "/types/SourceSearch",
+        "Stage": "/types/Stage",
+        "StockConsumerOutcome": "/types/StockConsumerOutcome",
+        "StockConsumerResult": "/types/StockConsumerResult",
+        "StockOrdinaryUseCommand": "/types/StockOrdinaryUseCommand",
+        "StockWireSource": "/types/StockWireSource",
+        "SuccessorCommand": "/types/SuccessorCommand",
+        "SuccessorOutcome": "/types/SuccessorOutcome",
+        "TaskDetail": "/types/TaskDetail",
+        "TaskRead": "/types/TaskRead",
+        "Time": "/types/Time",
+        "TrialAuthorization": "/types/TrialAuthorization",
+        "TrialOutSourceHead": "/types/TrialOutSourceHead",
+        "TrialSourceReadResult": "/types/TrialSourceReadResult",
+        "UUID": "/types/UUID",
+        "Ver": "/types/Ver",
+        "WithdrawCommand": "/types/WithdrawCommand",
+        "WithdrawOutcome": "/types/WithdrawOutcome",
+        "WriterEpochResult": "/types/WriterEpochResult"
+      },
+      "novel_full_read_types": [
+        "OutQualitySource",
+        "OutReceiptMapping",
+        "QapDomainAccepted",
+        "QapPhysicalMembersAccepted",
+        "QapPlanContentAccepted",
+        "QapPopulationAccepted",
+        "QapSourceContextAccepted",
+        "QapStandardApprovalAccepted",
+        "SampleSelectionEvidence"
+      ]
+    },
+    "checkpoint": {
+      "business_groups": 93,
+      "final_rows": 854,
+      "external_owner_records": 261,
+      "internal_fact_records": 314,
+      "steps": 8,
+      "business_fields_read": true,
+      "historic_row_versions_not_in_final": 4,
+      "world_metadata_read": true
+    },
+    "legalVariant": {
+      "steps": 8,
+      "final_rows": 854,
+      "external_owner_records": 261,
+      "internal_fact_records": 314,
+      "business_fields_read": true,
+      "method": "entire raw recursive field difference (including embedded JSON strings) against fully read checkpoint; all differences classified/read; unchanged content reused by exact equality",
+      "raw_difference_count": 19023,
+      "hash_difference_count": 18778,
+      "nonhash_difference_count": 245,
+      "business_difference_classes": [
+        {
+          "before": "5",
+          "after": "11",
+          "occurrences": 62,
+          "meaning": "RAW-001 and Observation value propagated"
+        },
+        {
+          "before": "ACCEPTED",
+          "after": "REJECTED",
+          "occurrences": 175,
+          "meaning": "first member outcome/partition propagated"
+        },
+        {
+          "before": 90,
+          "after": 89,
+          "occurrences": 1,
+          "field": "derived.accepted"
+        },
+        {
+          "before": 10,
+          "after": 11,
+          "occurrences": 1,
+          "field": "derived.rejected"
+        },
+        {
+          "before": "accepted includes [0,1)",
+          "after": "[0,1) removed",
+          "occurrences": 3
+        },
+        {
+          "before": "rejected excludes [0,1)",
+          "after": "[0,1) inserted before [90,100)",
+          "occurrences": 3
+        }
+      ]
+    },
+    "variantManifest_and_validation": "full metadata+70 negative names/reasons read; author PASS only"
+  },
+  "representation": {
+    "cache": "D:/CP6-archives/consolidation-20261010/platform-ipqc-f01-reading",
+    "business_pages_read": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "schema_novel_chars": 28239,
+    "opaque_values": "UUID/hash literal strings were not each manually reread. Their values remain in source/raw difference manifest; source hashes, catalog identities, row keys and specified links were checked exactly within static_document_checks.",
+    "business_view_reuse_boundary": "Displayed equality is of full business-view values after abstracting UUID/hash literals, not raw source bytes. Raw equality/hash checks cover the explicitly listed row keys, catalog bodies, step transitions/cuts, created-key visibility and 22 member-chain assertions; no claim of every possible foreign-key or runtime validation.",
+    "raw_difference_manifest": "D:/CP6-archives/consolidation-20261010/platform-ipqc-f01-reading/variant-all-differences.json",
+    "source_line_directory": "D:/CP6-archives/consolidation-20261010/platform-ipqc-f01-reading/source-lines.json",
+    "raw_identity_audit": "D:/CP6-archives/consolidation-20261010/platform-ipqc-f01-reading/static-identity-checks.json"
+  },
+  "business_tests": "NOT_RUN",
+  "author_checker_executed": false,
+  "runtime": "UNPROVEN",
+  "remaining": [],
+  "component_semantics_consolidated": true,
+  "module_required_materials_consolidated": "not_set_by_this_supplement",
+  "source_sections": [
+    {
+      "pointer": "/checkpoint/identity",
+      "line": 3,
+      "end_line": 3,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/factClass",
+      "line": 4,
+      "end_line": 4,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/authorityClaim",
+      "line": 5,
+      "end_line": 5,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/runtimeAcceptance",
+      "line": 6,
+      "end_line": 6,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/businessAC",
+      "line": 7,
+      "end_line": 7,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/schemas",
+      "line": 8,
+      "end_line": 57373,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/initialState",
+      "line": 57374,
+      "end_line": 57463,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/steps",
+      "line": 57464,
+      "end_line": 267186,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/finalRows",
+      "line": 267187,
+      "end_line": 279661,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/finalDigest",
+      "line": 279662,
+      "end_line": 279662,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/derived",
+      "line": 279663,
+      "end_line": 279679,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/externalOwnerCatalog",
+      "line": 279680,
+      "end_line": 289158,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/internalFactCatalog",
+      "line": 289159,
+      "end_line": 304853,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/internalCreatedAt",
+      "line": 304854,
+      "end_line": 305169,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/checkpoint/steps/0",
+      "line": 57465,
+      "end_line": 65565,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/checkpoint/steps/1",
+      "line": 65566,
+      "end_line": 79937,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/checkpoint/steps/2",
+      "line": 79938,
+      "end_line": 101991,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/checkpoint/steps/3",
+      "line": 101992,
+      "end_line": 129138,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/checkpoint/steps/4",
+      "line": 129139,
+      "end_line": 165276,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/checkpoint/steps/5",
+      "line": 165277,
+      "end_line": 197657,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/checkpoint/steps/6",
+      "line": 197658,
+      "end_line": 228648,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/checkpoint/steps/7",
+      "line": 228649,
+      "end_line": 267185,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/identity",
+      "line": 305172,
+      "end_line": 305172,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/factClass",
+      "line": 305173,
+      "end_line": 305173,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/authorityClaim",
+      "line": 305174,
+      "end_line": 305174,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/runtimeAcceptance",
+      "line": 305175,
+      "end_line": 305175,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/businessAC",
+      "line": 305176,
+      "end_line": 305176,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/schemas",
+      "line": 305177,
+      "end_line": 362542,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/initialState",
+      "line": 362543,
+      "end_line": 362632,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/steps",
+      "line": 362633,
+      "end_line": 572355,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/finalRows",
+      "line": 572356,
+      "end_line": 584830,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/finalDigest",
+      "line": 584831,
+      "end_line": 584831,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/derived",
+      "line": 584832,
+      "end_line": 584848,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/externalOwnerCatalog",
+      "line": 584849,
+      "end_line": 594327,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/internalFactCatalog",
+      "line": 594328,
+      "end_line": 610022,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/internalCreatedAt",
+      "line": 610023,
+      "end_line": 610338,
+      "coverage": "structured",
+      "all_business_fields_read": true,
+      "notes": "Schemas separately classified; row/catalogue repeats by complete field equality; opaque UUID/hash identities mechanically checked, not each literal manually reread."
+    },
+    {
+      "pointer": "/legalVariant/steps/0",
+      "line": 362634,
+      "end_line": 370734,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/steps/1",
+      "line": 370735,
+      "end_line": 385106,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/steps/2",
+      "line": 385107,
+      "end_line": 407160,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/steps/3",
+      "line": 407161,
+      "end_line": 434307,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/steps/4",
+      "line": 434308,
+      "end_line": 470445,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/steps/5",
+      "line": 470446,
+      "end_line": 502826,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/steps/6",
+      "line": 502827,
+      "end_line": 533817,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/legalVariant/steps/7",
+      "line": 533818,
+      "end_line": 572354,
+      "coverage": "structured",
+      "read": "all actor/request/response/expected/body values, writes envelope and each row family, before/after and visible catalog scope; exact raw identity checks"
+    },
+    {
+      "pointer": "/variantManifest",
+      "line": 610340,
+      "end_line": 610373,
+      "coverage": "full",
+      "notes": "All field values read. Author-reported PASS/replayed not executed by this agent."
+    },
+    {
+      "pointer": "/manifest",
+      "line": 610374,
+      "end_line": 610384,
+      "coverage": "full",
+      "notes": "All field values read. Author-reported PASS/replayed not executed by this agent."
+    },
+    {
+      "pointer": "/validation",
+      "line": 610385,
+      "end_line": 610760,
+      "coverage": "full",
+      "notes": "All field values read. Author-reported PASS/replayed not executed by this agent."
+    }
+  ],
+  "row_family_counts": {
+    "Approval": 1,
+    "ApprovalPacket": 1,
+    "AuditEvent": 8,
+    "Command": 8,
+    "CommandTerminal": 8,
+    "Decision": 1,
+    "DecisionHead": 1,
+    "DecisionPartitionRange": 100,
+    "DeliveryPayload": 1,
+    "DispositionDraft": 1,
+    "DispositionIdentity": 1,
+    "EligibilityCut": 1,
+    "EvaluatedRangeOutcome": 100,
+    "FamilyControl": 1,
+    "FamilyDirectoryHead": 1,
+    "FamilyDirectoryMember": 1,
+    "FamilyDirectoryVersion": 2,
+    "MappingHead": 1,
+    "MeasurementSlot": 100,
+    "Observation": 100,
+    "ObservationReview": 1,
+    "ObservationReviewItem": 100,
+    "ObservationSetHead": 1,
+    "OutcomeCoverageEvidence": 100,
+    "PopulationMember": 100,
+    "ResultCoverageEvidence": 1,
+    "ResultSet": 1,
+    "ResultSetHead": 1,
+    "ResultSetSlot": 100,
+    "ReviewHead": 1,
+    "SourceHead": 1,
+    "SourceMappingVersion": 1,
+    "SourceOriginalVersion": 1,
+    "TaskHead": 1,
+    "TaskRevision": 4,
+    "WriterEpochHead": 1,
+    "WriterEpochHistory": 1
+  },
+  "external_type_counts": {
+    "AliasSetEvidence": 1,
+    "QapDomainAccepted": 1,
+    "PopulationMemberEvidence": 100,
+    "QapPhysicalMembersAccepted": 1,
+    "QapSourceContextAccepted": 1,
+    "SourceHeadEvidence": 1,
+    "CommercialPolicyEvidence": 1,
+    "EligibilityAuthorityEvidence": 6,
+    "EligibilityFactEvidence": 6,
+    "EligibilityHeadEvidence": 6,
+    "NoEndAuthorityEvidence": 2,
+    "ApprovalAuthorityEvidence": 1,
+    "ActorAuthorityEvidence": 1,
+    "ItemEvidence": 1,
+    "ExecQaSource": 1,
+    "ExecutionEvidence": 1,
+    "LotEvidence": 1,
+    "ActualManifestEvidence": 1,
+    "PhysicalOccurrenceEvidence": 1,
+    "RawMeasurementEvidence": 100,
+    "ActualReportEvidence": 1,
+    "OperationEvidence": 1,
+    "BaselineEvidence": 1,
+    "QapFamilyContinuity": 1,
+    "QapPlanInstance": 1,
+    "QapPlanContentAccepted": 1,
+    "QapPolicyTaskContext": 1,
+    "PolicyVersionEvidence": 1,
+    "QapPopulationAccepted": 1,
+    "PurposeEvidence": 1,
+    "QapResolutionEvidence": 1,
+    "SampleSelectionEvidence": 1,
+    "MethodEvidence": 1,
+    "EligibilityCoverageEvidence": 6,
+    "HomogeneityEvidence": 1,
+    "AcceptRejectRuleEvidence": 1,
+    "QualityRequirementHeadEvidence": 1,
+    "RequirementsEvidence": 1,
+    "ApprovalSourceEvidence": 1,
+    "QapStandardApprovalAccepted": 1,
+    "TechnicalBindingEvidence": 1,
+    "SpecificationEvidence": 1
+  },
+  "internal_type_counts": {
+    "ObservationEvidence": 100,
+    "EvaluatedRangeOutcome": 100,
+    "FamilyControlEvidence": 1,
+    "ReviewEvidence": 1,
+    "DispositionDraftEvidence": 1,
+    "TaskStateEvidence": 4,
+    "Decision": 1,
+    "ResultSet": 1,
+    "DispositionIdentityEvidence": 1,
+    "OutcomeCoverageEvidence": 100,
+    "ResultCoverageEvidence": 1,
+    "EligibilityCutEvidence": 1,
+    "ApprovalPacketEvidence": 1,
+    "MappingEvidence": 1
+  },
+  "static_document_checks": {
+    "checkpoint": {
+      "steps": [
+        {
+          "step": 1,
+          "api": "I03",
+          "before": 8,
+          "writes": 7,
+          "after": 14,
+          "owner_cut_count": 135,
+          "errors": []
+        },
+        {
+          "step": 2,
+          "api": "I05",
+          "before": 14,
+          "writes": 205,
+          "after": 219,
+          "owner_cut_count": 135,
+          "errors": []
+        },
+        {
+          "step": 3,
+          "api": "I09",
+          "before": 219,
+          "writes": 107,
+          "after": 325,
+          "owner_cut_count": 259,
+          "errors": []
+        },
+        {
+          "step": 4,
+          "api": "I11",
+          "before": 325,
+          "writes": 207,
+          "after": 531,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 5,
+          "api": "I15",
+          "before": 531,
+          "writes": 207,
+          "after": 737,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 6,
+          "api": "I16",
+          "before": 737,
+          "writes": 4,
+          "after": 741,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 7,
+          "api": "I17",
+          "before": 741,
+          "writes": 4,
+          "after": 745,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 8,
+          "api": "I18",
+          "before": 745,
+          "writes": 109,
+          "after": 854,
+          "owner_cut_count": 261,
+          "errors": []
+        }
+      ],
+      "catalog_digest_checks": 575,
+      "catalog_digest_errors": [],
+      "catalog_identity_errors": [],
+      "final_rows_equal_last_after": true,
+      "final_digest_equal": true,
+      "opaque_uuid_sets_equal_to_baseline": true,
+      "member_chain_checks": {
+        "members": 100,
+        "assertions_each": 22,
+        "errors": []
+      },
+      "accepted_rejected_counts_match": true,
+      "all_row_task_identity": {
+        "task_id": "5499c5de-d3ec-5410-b6ad-a2fda43e0215",
+        "rows_with_TaskId": 6316,
+        "mismatches": []
+      }
+    },
+    "legalVariant": {
+      "steps": [
+        {
+          "step": 1,
+          "api": "I03",
+          "before": 8,
+          "writes": 7,
+          "after": 14,
+          "owner_cut_count": 135,
+          "errors": []
+        },
+        {
+          "step": 2,
+          "api": "I05",
+          "before": 14,
+          "writes": 205,
+          "after": 219,
+          "owner_cut_count": 135,
+          "errors": []
+        },
+        {
+          "step": 3,
+          "api": "I09",
+          "before": 219,
+          "writes": 107,
+          "after": 325,
+          "owner_cut_count": 259,
+          "errors": []
+        },
+        {
+          "step": 4,
+          "api": "I11",
+          "before": 325,
+          "writes": 207,
+          "after": 531,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 5,
+          "api": "I15",
+          "before": 531,
+          "writes": 207,
+          "after": 737,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 6,
+          "api": "I16",
+          "before": 737,
+          "writes": 4,
+          "after": 741,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 7,
+          "api": "I17",
+          "before": 741,
+          "writes": 4,
+          "after": 745,
+          "owner_cut_count": 260,
+          "errors": []
+        },
+        {
+          "step": 8,
+          "api": "I18",
+          "before": 745,
+          "writes": 109,
+          "after": 854,
+          "owner_cut_count": 261,
+          "errors": []
+        }
+      ],
+      "catalog_digest_checks": 575,
+      "catalog_digest_errors": [],
+      "catalog_identity_errors": [],
+      "final_rows_equal_last_after": true,
+      "final_digest_equal": true,
+      "opaque_uuid_sets_equal_to_baseline": true,
+      "member_chain_checks": {
+        "members": 100,
+        "assertions_each": 22,
+        "errors": []
+      },
+      "accepted_rejected_counts_match": true,
+      "all_row_task_identity": {
+        "task_id": "5499c5de-d3ec-5410-b6ad-a2fda43e0215",
+        "rows_with_TaskId": 6316,
+        "mismatches": []
+      }
+    },
+    "unique_physical_row_versions": 1290,
+    "row_body_digest_errors": [],
+    "row_execution_identity_errors": [],
+    "author_checker_executed": false,
+    "exploratory_formula_note": "Initial exploratory hashing excluded terminalDigest and hashed accepted proof wrappers. Exact source forms: response digest=whole response; terminalDigest=result; Domain/SourceContext digest=nested body. No source defect inferred.",
+    "schema_reuse_boundary": "182 complete definitions equal current canonical after explicitly ignoring $id only; 9 independently read.",
+    "physical_key_checks": {
+      "unique_row_versions": 1290,
+      "table_patterns": 37,
+      "patterns": {
+        "ApprovalPacket": [
+          "PacketId"
+        ],
+        "Approval": [
+          "ApprovalId"
+        ],
+        "AuditEvent": [
+          "AuditId"
+        ],
+        "CommandTerminal": [
+          "CommandId"
+        ],
+        "Command": [
+          "CommandId"
+        ],
+        "DecisionHead": [
+          "StreamId"
+        ],
+        "DecisionPartitionRange": [
+          "$segmentId"
+        ],
+        "Decision": [
+          "DecisionId"
+        ],
+        "DeliveryPayload": [
+          "PayloadId"
+        ],
+        "DispositionDraft": [
+          "DraftId"
+        ],
+        "DispositionIdentity": [
+          "DispositionId"
+        ],
+        "EligibilityCut": [
+          "CutId"
+        ],
+        "EvaluatedRangeOutcome": [
+          "OutcomeId"
+        ],
+        "FamilyControl": [
+          "FamilyId"
+        ],
+        "FamilyDirectoryHead": [
+          "=F01"
+        ],
+        "FamilyDirectoryMember": [
+          "FamilyId"
+        ],
+        "FamilyDirectoryVersion": [
+          "=F01",
+          "Revision"
+        ],
+        "MappingHead": [
+          "=F01"
+        ],
+        "MeasurementSlot": [
+          "SlotId"
+        ],
+        "ObservationReviewItem": [
+          "ReviewId",
+          "ObservationId"
+        ],
+        "ObservationReview": [
+          "ReviewId",
+          "ReviewRevision"
+        ],
+        "ObservationSetHead": [
+          "TaskId"
+        ],
+        "Observation": [
+          "ObservationId",
+          "ObservationRevision"
+        ],
+        "OutcomeCoverageEvidence": [
+          "CoverageId"
+        ],
+        "PopulationMember": [
+          "MemberId"
+        ],
+        "ResultCoverageEvidence": [
+          "CoverageId"
+        ],
+        "ResultSetHead": [
+          "TaskId"
+        ],
+        "ResultSetSlot": [
+          "SlotId"
+        ],
+        "ResultSet": [
+          "ResultSetId",
+          "ResultSetRevision"
+        ],
+        "ReviewHead": [
+          "ReviewId"
+        ],
+        "SourceHead": [
+          "OwnerId"
+        ],
+        "SourceMappingVersion": [
+          "=F01",
+          "Revision"
+        ],
+        "SourceOriginalVersion": [
+          "Owner",
+          "OwnerId",
+          "OwnerRevision"
+        ],
+        "TaskHead": [
+          "TaskId"
+        ],
+        "TaskRevision": [
+          "TaskId",
+          "TaskRevision"
+        ],
+        "WriterEpochHead": [
+          "=F01"
+        ],
+        "WriterEpochHistory": [
+          "=F01",
+          "Epoch"
+        ]
+      },
+      "errors": [],
+      "scope": "Checkpoint canonical row envelope identity conventions, not equivalence to all 49 relational SQL table columns/PKs. ReviewHead fixture key uses ReviewId; no generic TaskId assumption retained.",
+      "corrected_exploratory_assumption": "Initial generic key expectation ReviewHead|TaskId corrected to its actual body identity ReviewId. Relational schema is not validated by this fixture-key check."
+    },
+    "row_body_canonical_text_errors": []
+  },
+  "identity_boundary": {
+    "fixture_row_family_count": 37,
+    "relational_model_table_count": 49,
+    "not_ddl_materialization_or_sql_execution": true,
+    "example": "ReviewHead fixture key uses ReviewId; actual relational primary key is S+TaskId and rowversion, not fixture key."
+  },
+  "schema_alignment_observation": {
+    "kind": "embedded_fixture_version_boundary",
+    "source_sha256": "5dbc9a77c6468acfd644623f1aebc44982388fbbc122bc8f9d338acfd2057708",
+    "pointers": [
+      "/checkpoint/schemas/OutReceiptMapping",
+      "/checkpoint/schemas/OutQualitySource/properties/receiptMappings/items"
+    ],
+    "lines": [
+      {
+        "line": 20885,
+        "end_line": 21002
+      },
+      {
+        "line": 20105,
+        "end_line": 20555
+      }
+    ],
+    "current_canonical_sha256": "ec15532bb8820016f44af4dcf91823b2ec2af7684ec767cc1f25a4bbe61ec74b",
+    "difference": "F01 embedded old schemas omit current receiptSubject; 182 remaining complete definitions agree after explicitly ignoring $id; 7 accepted/selection schemas separately read. No production failure claim."
+  },
+  "declared_external_variant_files": [
+    {
+      "path": "checkpoints/f01_physicalidentity_variants/FAIL_TO_PASS_91_9.json",
+      "bytes": 23668323,
+      "sha256": "f8e83ff1191365a9d269b9f13b6e1f11aa1fb70f694d351503719eac902f195c",
+      "accepted": 91,
+      "rejected": 9,
+      "replayed": true,
+      "name": "FAIL_TO_PASS_91_9",
+      "coverage": "metadata_only",
+      "notes": "This checkpoint manifest states replayed=true; separate external file body not included in this assigned component reading."
+    },
+    {
+      "path": "checkpoints/f01_physicalidentity_variants/LOWER_BOUNDARY_0.json",
+      "bytes": 23668510,
+      "sha256": "e0248e6c1c31dfd048d357a4ada5ef7d0612b2f1c97603af626fbe28bf576b84",
+      "accepted": 90,
+      "rejected": 10,
+      "replayed": true,
+      "name": "LOWER_BOUNDARY_0",
+      "coverage": "metadata_only",
+      "notes": "This checkpoint manifest states replayed=true; separate external file body not included in this assigned component reading."
+    },
+    {
+      "path": "checkpoints/f01_physicalidentity_variants/UPPER_BOUNDARY_10.json",
+      "bytes": 23668572,
+      "sha256": "6141c2fe863410c0929d17ba69455585cbbdb681ef8dbfd89869f6cff6ecf35f",
+      "accepted": 90,
+      "rejected": 10,
+      "replayed": true,
+      "name": "UPPER_BOUNDARY_10",
+      "coverage": "metadata_only",
+      "notes": "This checkpoint manifest states replayed=true; separate external file body not included in this assigned component reading."
+    },
+    {
+      "path": "checkpoints/f01_physicalidentity_variants/OVER_BOUNDARY_10_00000001.json",
+      "bytes": 23669130,
+      "sha256": "5d8fc652b8441097bb0e9262e1cf2d918a677ad7fa0a0601fab9296f3a92938d",
+      "accepted": 89,
+      "rejected": 11,
+      "replayed": true,
+      "name": "OVER_BOUNDARY_10_00000001",
+      "coverage": "metadata_only",
+      "notes": "This checkpoint manifest states replayed=true; separate external file body not included in this assigned component reading."
+    }
+  ],
+  "local_document_checks": {
+    "links_checked": 43,
+    "link_errors": [],
+    "source_sha_matches": true,
+    "not_business_validation": true
+  }
+}

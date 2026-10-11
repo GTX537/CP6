@@ -1,0 +1,617 @@
+{
+  "target_id": "PLAN-PO-01",
+  "status": "root_twenty_plus_delegated_three_normal_files_consolidated",
+  "updated_at_utc": "2026-10-10T12:52:39.740541+00:00",
+  "owner": "root",
+  "scope": "Root twenty CP18 normal files N0–3106 complete; additional CP20/CP21 three files delegated to platform_engineering_design, alongside its nine CP19 files.",
+  "cache": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\po-root-normal-v2",
+  "projection_validation": {
+    "files": 23,
+    "bytes": 86984008,
+    "nodes": 3575,
+    "json_strings": 493,
+    "opaque_identities": 1007,
+    "pages": 140,
+    "compact_characters": 1529137,
+    "errors": [],
+    "semantic_read_complete": true,
+    "business": "NOT_RUN",
+    "embedded_json_strings_roundtrip_checked": 493,
+    "embedded_json_errors": []
+  },
+  "method": "Full current case fields and all novel typed node fields/deltas semantically read; exact subobjects reused only after earlier node read. Opaque UUID/hash rendered with reversible symbols. Embedded JSON decoded values individually checked. No original scripts or business code executed.",
+  "read_pages": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32
+  ],
+  "read_node_ranges": [
+    [
+      0,
+      3106
+    ]
+  ],
+  "files": [
+    {
+      "file": "PLAN_PO_R3_CP18_SOURCE_NORMAL_DATA.json",
+      "sha256": "59e1a4ed7ce14142aef474981bea5dc26fe58bbe6bc8addab172a3435d68742b",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SOURCE_NORMAL_DATA.json",
+      "bytes": 124533,
+      "root": {
+        "$node": "N94"
+      },
+      "node_range": [
+        0,
+        94
+      ],
+      "json_string_range": [
+        0,
+        40
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_OWNER_PROFILE_NORMAL_DATA.json",
+      "sha256": "0b66435cb93df050b919b9d63be3491b51fbdce08e5b94cfbf5dd5aac5161381",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OWNER_PROFILE_NORMAL_DATA.json",
+      "bytes": 41741,
+      "root": {
+        "$node": "N128"
+      },
+      "node_range": [
+        95,
+        128
+      ],
+      "json_string_range": [
+        41,
+        42
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_TRANSFER_BRIDGE_NORMAL_DATA.json",
+      "sha256": "6eac597166453a449b2575981a2470d099dada358be137cbc44e8e0e8f8b3799",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_TRANSFER_BRIDGE_NORMAL_DATA.json",
+      "bytes": 78793,
+      "root": {
+        "$node": "N206"
+      },
+      "node_range": [
+        129,
+        206
+      ],
+      "json_string_range": [
+        43,
+        46
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_WO_SUPPORT_NORMAL_DATA.json",
+      "sha256": "ec40c00f8d31882e6173fa8e023211f7ba917725858f5fe957adf54c53fd1b05",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_WO_SUPPORT_NORMAL_DATA.json",
+      "bytes": 85546,
+      "root": {
+        "$node": "N250"
+      },
+      "node_range": [
+        207,
+        250
+      ],
+      "json_string_range": [
+        47,
+        58
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "bytes": 939328,
+      "root": {
+        "$node": "N570"
+      },
+      "node_range": [
+        251,
+        570
+      ],
+      "json_string_range": [
+        59,
+        100
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_MULTI_START_NORMAL_DATA.json",
+      "sha256": "b4591e8c1b3c5220ce0eff7968527e683d9ea5ebbb7db52628a326bb76689001",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_MULTI_START_NORMAL_DATA.json",
+      "bytes": 1307334,
+      "root": {
+        "$node": "N1037"
+      },
+      "node_range": [
+        571,
+        1037
+      ],
+      "json_string_range": [
+        101,
+        148
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_CREATION_CLOSURE_NORMAL_DATA.json",
+      "sha256": "894faea26e6a162aa78320a0e3e2251a9b7e0b1f06b2408f0987e3b3142d9b04",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_CREATION_CLOSURE_NORMAL_DATA.json",
+      "bytes": 148238,
+      "root": {
+        "$node": "N1106"
+      },
+      "node_range": [
+        1038,
+        1106
+      ],
+      "json_string_range": [
+        149,
+        172
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_EXISTING_CLOSURE_READ_NORMAL_DATA.json",
+      "sha256": "5e7dcd493953067d7542c06837448d56fa1ae8fa9d97dee7ec97df67b84cff69",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_EXISTING_CLOSURE_READ_NORMAL_DATA.json",
+      "bytes": 29163,
+      "root": {
+        "status": "ORDINARY_PROPOSED_OWNER_READ_SCHEMA_VALUES_NOT_EXECUTED",
+        "worlds": [
+          {
+            "$node": "N1111"
+          },
+          {
+            "$node": "N1116"
+          }
+        ],
+        "business": "NOT_RUN",
+        "runtime": "UNPROVEN",
+        "actualAdopted": 0
+      },
+      "node_range": [
+        1107,
+        1116
+      ],
+      "json_string_range": [
+        173,
+        172
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_NO_EFFECT_NORMAL_DATA.json",
+      "sha256": "29e753048b2ce24daa00c21019af97cf1ef93b0a0d913c22afb884d3704c7346",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NO_EFFECT_NORMAL_DATA.json",
+      "bytes": 360423,
+      "root": {
+        "$node": "N1305"
+      },
+      "node_range": [
+        1117,
+        1305
+      ],
+      "json_string_range": [
+        173,
+        225
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_IGNORE_NORMAL_DATA.json",
+      "sha256": "daa6b91382c2135b7f7b8587d01e08d529332c27d58d61474e75315c50fa5e04",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_IGNORE_NORMAL_DATA.json",
+      "bytes": 273899,
+      "root": {
+        "$node": "N1361"
+      },
+      "node_range": [
+        1306,
+        1361
+      ],
+      "json_string_range": [
+        226,
+        232
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_CURRENT_FIRM_IGNORE_NORMAL_DATA.json",
+      "sha256": "240039a78887a8d63685a5fe1ee9e8d47c554b92b5f44ddea5b33cb15c91288d",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_CURRENT_FIRM_IGNORE_NORMAL_DATA.json",
+      "bytes": 921219,
+      "root": {
+        "$node": "N1380"
+      },
+      "node_range": [
+        1362,
+        1380
+      ],
+      "json_string_range": [
+        233,
+        237
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_OWNER_READ_FAILURE_NORMAL_DATA.json",
+      "sha256": "7b0a61a6b3d5f772b358aa612ac2d5164eed364deb417a2d886ee10b05d2a19b",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OWNER_READ_FAILURE_NORMAL_DATA.json",
+      "bytes": 970727,
+      "root": {
+        "$node": "N1393"
+      },
+      "node_range": [
+        1381,
+        1393
+      ],
+      "json_string_range": [
+        238,
+        242
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_READ_NORMAL_DATA.json",
+      "sha256": "cd8266340cca45703dda86efda5282f62cf4bbd6c7ba351473719e18134c7292",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_READ_NORMAL_DATA.json",
+      "bytes": 105355,
+      "root": {
+        "$node": "N1422"
+      },
+      "node_range": [
+        1394,
+        1422
+      ],
+      "json_string_range": [
+        243,
+        243
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_EPOCH_NORMAL_DATA.json",
+      "sha256": "ba98958a33ddb8a74e30fa8cae59c0ec441d41c6e313822e1f3b963de9e2a202",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_EPOCH_NORMAL_DATA.json",
+      "bytes": 2446675,
+      "root": {
+        "$node": "N1458"
+      },
+      "node_range": [
+        1423,
+        1458
+      ],
+      "json_string_range": [
+        244,
+        247
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_SCENARIO_ROW_IMAGES.json",
+      "sha256": "783fb667fb58246e9747e1008bb4e008b92b4b25f92d5e54e29010fc64413f26",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SCENARIO_ROW_IMAGES.json",
+      "bytes": 2594402,
+      "root": {
+        "$node": "N1747"
+      },
+      "node_range": [
+        1459,
+        1747
+      ],
+      "json_string_range": [
+        248,
+        275
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_DEFERRED_STATE_NORMAL_DATA.json",
+      "sha256": "f1e9207ead95805db6ae81d462795b1c1ef07b61027614e34c950e6042ae4144",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_DEFERRED_STATE_NORMAL_DATA.json",
+      "bytes": 7469804,
+      "root": {
+        "$node": "N2564"
+      },
+      "node_range": [
+        1748,
+        2564
+      ],
+      "json_string_range": [
+        276,
+        354
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_SC18_THREE_OWNER_NORMAL_DATA.json",
+      "sha256": "64ffd1358897a05772579a37928b4c210761ec9d20edabd325acff0189f35778",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC18_THREE_OWNER_NORMAL_DATA.json",
+      "bytes": 18394474,
+      "root": {
+        "$node": "N2947"
+      },
+      "node_range": [
+        2565,
+        2947
+      ],
+      "json_string_range": [
+        355,
+        385
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_WMS_CREATION_AXES_NORMAL_DATA.json",
+      "sha256": "cee5779e1532b13197b573c086d2b93c462533f6a10fb776b878d3bb9c0b4ccd",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_WMS_CREATION_AXES_NORMAL_DATA.json",
+      "bytes": 6623118,
+      "root": {
+        "$node": "N3020"
+      },
+      "node_range": [
+        2948,
+        3020
+      ],
+      "json_string_range": [
+        386,
+        395
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_WMS_SLOT_LOOKUP_NORMAL_DATA.json",
+      "sha256": "e20cd80e3cc39e642dff8eeca4c478468d8f69835a31bada0194cc4affa9348a",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_WMS_SLOT_LOOKUP_NORMAL_DATA.json",
+      "bytes": 4503138,
+      "root": {
+        "$node": "N3092"
+      },
+      "node_range": [
+        3021,
+        3092
+      ],
+      "json_string_range": [
+        396,
+        409
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "PLAN_PO_R3_CP18_WMS_NEW_SLOT_ROOT_NORMAL_DATA.json",
+      "sha256": "7262240de4fef6a6bc06ef3f999944f45d30cb57427b33a5037716006c84ddbf",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_WMS_NEW_SLOT_ROOT_NORMAL_DATA.json",
+      "bytes": 1209300,
+      "root": {
+        "$node": "N3106"
+      },
+      "node_range": [
+        3093,
+        3106
+      ],
+      "json_string_range": [
+        410,
+        413
+      ],
+      "semantic_read_complete": true,
+      "coverage": "full_business_fields_and_exact_subobject_reuse_with_structured_snapshot_table_mapping",
+      "reader": "root"
+    },
+    {
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "sha256": "f41b075008395c8612a6c2e08d8ef4b709fc6427fa9a3e75038597c1f5c16b8e",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "bytes": 32570574,
+      "root": {
+        "$node": "N3532"
+      },
+      "node_range": [
+        3107,
+        3532
+      ],
+      "json_string_range": [
+        414,
+        484
+      ],
+      "semantic_read_complete": true,
+      "coverage": "team_complete_novel_fields_and_exact_earlier_root_node_reuse",
+      "reader": "platform_engineering_design",
+      "evidence": "evidence/PLAN-PO-01-cp2021-normal-reading.json"
+    },
+    {
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "sha256": "d611b467823424d2eff18d72fd4af5793f423f72425faae7a501706194fac2ce",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "bytes": 4159712,
+      "root": {
+        "$node": "N3558"
+      },
+      "node_range": [
+        3533,
+        3558
+      ],
+      "json_string_range": [
+        485,
+        492
+      ],
+      "semantic_read_complete": true,
+      "coverage": "team_complete_novel_fields_and_exact_earlier_root_node_reuse",
+      "reader": "platform_engineering_design",
+      "evidence": "evidence/PLAN-PO-01-cp2021-normal-reading.json"
+    },
+    {
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "sha256": "2ce3d53b3bafc329fe2bc386005ee94f714cd8a3a18df45e276fe964e5d7cbce",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "bytes": 1626512,
+      "root": {
+        "$node": "N3574"
+      },
+      "node_range": [
+        3559,
+        3574
+      ],
+      "json_string_range": [
+        493,
+        492
+      ],
+      "semantic_read_complete": true,
+      "coverage": "team_complete_novel_fields_and_exact_earlier_root_node_reuse",
+      "reader": "platform_engineering_design",
+      "evidence": "evidence/PLAN-PO-01-cp2021-normal-reading.json"
+    }
+  ],
+  "required_materials_consolidated": true,
+  "business_tests": "NOT_RUN",
+  "runtime": "UNPROVEN",
+  "notes": [
+    "Root twenty files N0–3106 complete; platform completed CP20/CP21 N3107–3574 with explicit team reuse of earlier root nodes. Original root read-page claims unchanged.",
+    "Complete novel case values, fields, parameters, writes, before/after deltas and typed rows read; repeated complete snapshot graphs use exact row/ordered-array mapping, not a claim of literal rereading every occurrence.",
+    "SC18 both orderings preserve source WITHDRAWN, original winners and correction hold; WMS original creation axis is independent of current T05 availability.",
+    "Static source alignment observations retained separately; no archived code executed, no runtime or production acceptance claimed."
+  ],
+  "compact_read_pages": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "snapshot_rendering": "From N1142, large arrays of previously interned row nodes may be grouped by table, retaining every row reference and original array position; business fields stay in complete individual nodes. This is structured snapshot mapping, not rereading raw repeated bytes.",
+  "delta_read_pages": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32
+  ],
+  "array_delta_validation": "po-root-normal-v2/array-delta-fidelity.json: 49 exact arrays reconstructed equal, zero errors; only exact repeated spans reused; all ordered edits remain explicit.",
+  "delta_partial_pages": [
+    {
+      "page": 33,
+      "nodes": [
+        3083,
+        3106
+      ]
+    }
+  ],
+  "root_owned_required_materials_consolidated": true,
+  "team_completion_evidence": "evidence/PLAN-PO-01-cp2021-normal-reading.json"
+}

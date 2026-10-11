@@ -1,0 +1,35 @@
+{
+  "at_utc": "2026-10-10T16:15:20.265049+00:00",
+  "initial_git_diff_check_exit": 2,
+  "changes": [
+    {
+      "file": "AUTHORING-CONTRACT.md",
+      "only_trailing_whitespace": true
+    },
+    {
+      "file": "architecture/04-关键身份与状态词典.md",
+      "only_trailing_whitespace": true
+    },
+    {
+      "file": "contracts/QA-IPQC-01-类型字段索引.md",
+      "only_trailing_whitespace": true
+    },
+    {
+      "file": "contracts/WMS-STOCK-RSV-数量与恢复附册.md",
+      "only_trailing_whitespace": true
+    },
+    {
+      "file": "modules/FIN-CLOSE-01.md",
+      "only_trailing_whitespace": true
+    },
+    {
+      "file": "modules/FIN-FX-01.md",
+      "only_trailing_whitespace": true
+    },
+    {
+      "file": "modules/FIN-REPORT-01.md",
+      "only_trailing_whitespace": true
+    }
+  ],
+  "meaning": "Only seven authored Markdown files trimmed; original sources untouched; semantic token sequence unchanged."
+}

@@ -1,0 +1,868 @@
+{
+  "target_id": "WMS-TRANSFER-01",
+  "checked_at_utc": "2026-10-10T15:25:53.996573+00:00",
+  "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+  "source_sha256": "9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830",
+  "source_bytes": 5239383,
+  "scope": "Own stdlib static document checks only. No archived program or business code executed.",
+  "counts": {
+    "source_sha256": 1,
+    "source_block_matches_cache": 1529,
+    "evidence_body_hash": 960,
+    "range_segment_equal_positive": 242,
+    "range_request_projection": 229,
+    "range_root_projection": 229,
+    "observation_location_sum": 14,
+    "observation_transit_sum": 14,
+    "observation_conservation": 14,
+    "observation_claim_conservation": 14,
+    "observation_capacity_arithmetic": 19,
+    "stock_ordinal_equal_positive": 24,
+    "capacity_domain_arithmetic": 6,
+    "canonical_effect_hash": 17,
+    "exact_source_window": 48,
+    "accepted_source_identity": 1,
+    "accepted_design_and_runtime_separation": 1,
+    "mat_SC08_exact_reuse": 1,
+    "immutable_evidence_identity": 856
+  },
+  "failures": [],
+  "failure_count": 0,
+  "unique_verified_evidence_bodies": 856,
+  "all_reference_identities": 864,
+  "unmatched_reference_identities": 8,
+  "unmatched_references": [
+    {
+      "ref": {
+        "owner": "MES_MAT",
+        "id": "aa58310e-e097-5037-8fe8-1854fa7bf1ed",
+        "version": "1",
+        "digest": "05ea494d91e0e6b674830a70bd739e51c097529b4b9ef2242ee20c9a2446a806"
+      },
+      "occurrences": [
+        [
+          1499,
+          "/useLegs/0/demandSourceLineage"
+        ],
+        [
+          1500,
+          "/selection/useLegs/0/demandSourceLineage"
+        ],
+        [
+          1511,
+          "/useLegs/0/demandSourceLineage"
+        ],
+        [
+          1512,
+          "/selection/useLegs/0/demandSourceLineage"
+        ],
+        [
+          1521,
+          "/selection/useLegs/0/demandSourceLineage"
+        ],
+        [
+          1522,
+          "/selection/useLegs/0/demandSourceLineage"
+        ]
+      ]
+    },
+    {
+      "ref": {
+        "owner": "MES_MAT",
+        "id": "fe6171f5-b748-5c9e-8d3d-502a4f3cda72",
+        "version": "1",
+        "digest": "1e49049828b807b86f3d7b975ecdbc900b5b68303f482c411b8bb27b4491ca9c"
+      },
+      "occurrences": [
+        [
+          1503,
+          "/stockExecutionManifestRef"
+        ]
+      ]
+    },
+    {
+      "ref": {
+        "owner": "MES_MAT",
+        "id": "9dbe0b4c-9304-5b5a-b8fc-c8b51f7f8233",
+        "version": "1",
+        "digest": "6deccb06a3dc6468245aa656170f4b2e374aa452284e94451746010e7a86ebeb"
+      },
+      "occurrences": [
+        [
+          1503,
+          "/sourceAllowanceRef"
+        ]
+      ]
+    },
+    {
+      "ref": {
+        "owner": "MES_MAT",
+        "id": "be431a60-957d-59e4-aa27-830f8bc0e8f0",
+        "version": "1",
+        "digest": "6af7506fee3eaa1f3930c97aa20f2df33dbc8c7f1a78a8c75152a557ec26148a"
+      },
+      "occurrences": [
+        [
+          1515,
+          "/stockExecutionManifestRef"
+        ]
+      ]
+    },
+    {
+      "ref": {
+        "owner": "MES_MAT",
+        "id": "56773ecd-7987-5e32-8526-07796b400ec3",
+        "version": "1",
+        "digest": "7008233fcdf5df98849364842de83afeef21a795e8d48d0d81cc04df2720e9f1"
+      },
+      "occurrences": [
+        [
+          1515,
+          "/sourceAllowanceRef"
+        ]
+      ]
+    },
+    {
+      "ref": {
+        "owner": "QUALITY",
+        "id": "6a67266f-3182-5f19-b0e5-9c594ce4bec1",
+        "version": "1",
+        "digest": "df3fd1b5d7ad4fd1ce3024d0c7ac591b1ce5bd30bf738f5a3ef5b38873a24b54"
+      },
+      "occurrences": [
+        [
+          1521,
+          "/returnQualityBasisFixture"
+        ],
+        [
+          1522,
+          "/returnQuality/basisRef"
+        ]
+      ]
+    },
+    {
+      "ref": {
+        "owner": "MES_MAT",
+        "id": "dfaf362c-a2a0-5989-9901-e17d1905997e",
+        "version": "1",
+        "digest": "c74c6aeda860167dc0d7e161b05f7113cd50d96b7db04339f0c0513f6da2bc65"
+      },
+      "occurrences": [
+        [
+          1525,
+          "/stockExecutionManifestRef"
+        ]
+      ]
+    },
+    {
+      "ref": {
+        "owner": "MES_MAT",
+        "id": "5aea195e-31f9-5643-be2b-1328c0a80c7b",
+        "version": "1",
+        "digest": "b1821a99ab10d357b0695448b87d8d2cdc5cbf20b8d77c7fc72bf5f948c8bab7"
+      },
+      "occurrences": [
+        [
+          1525,
+          "/sourceAllowanceRef"
+        ]
+      ]
+    }
+  ],
+  "qualified_exclusions": [
+    {
+      "blocks": [
+        657,
+        658
+      ],
+      "reason": "Legacy display ref identifies EV0355 original evidence (B655), not the surrounding projected history response; both views remain read-only."
+    },
+    {
+      "blocks": [
+        1497,
+        1529
+      ],
+      "reason": "Complete MAT SC08 range uses explicitly hypothetical fixture digests and selected response projections; no genuine authority or runtime acceptance claimed."
+    }
+  ],
+  "windows": [
+    {
+      "id": "W001",
+      "source_lines": [
+        1520,
+        1535
+      ],
+      "package_lines": [
+        20,
+        35
+      ],
+      "sha256": "8a66ca21835db6e1ce35ba7fd17734f87523de8ee8ccbadf34cfbceb0adcce2c",
+      "bytes": 1833,
+      "exact": true
+    },
+    {
+      "id": "W002",
+      "source_lines": [
+        143157,
+        143272
+      ],
+      "package_lines": [
+        43,
+        158
+      ],
+      "sha256": "636479328d9404ca9220c32bbaf6023c0f69e3f83e4b1ab99b7050fcb59d7497",
+      "bytes": 3180,
+      "exact": true
+    },
+    {
+      "id": "W003",
+      "source_lines": [
+        149726,
+        149776
+      ],
+      "package_lines": [
+        166,
+        216
+      ],
+      "sha256": "7ddf1ec09f3cc2692b0ddb4686fd862f22dc9c507e919c29c3f85b52705fe868",
+      "bytes": 1126,
+      "exact": true
+    },
+    {
+      "id": "W004",
+      "source_lines": [
+        150588,
+        150682
+      ],
+      "package_lines": [
+        224,
+        318
+      ],
+      "sha256": "334772b510e6b2d3683fbfc2328e64a7dc534c0a2993e0a8e1b5a76e86cd8861",
+      "bytes": 2661,
+      "exact": true
+    },
+    {
+      "id": "W005",
+      "source_lines": [
+        154658,
+        154713
+      ],
+      "package_lines": [
+        326,
+        381
+      ],
+      "sha256": "c18671b14da4fbe8b29f018d446e64721b1a407681226461b76cf0b60c12a11f",
+      "bytes": 1383,
+      "exact": true
+    },
+    {
+      "id": "W006",
+      "source_lines": [
+        154714,
+        154832
+      ],
+      "package_lines": [
+        389,
+        507
+      ],
+      "sha256": "6411070d64adf6815d8b4bc762abed2133ee202a3d186bc539e91cd6b8687767",
+      "bytes": 3508,
+      "exact": true
+    },
+    {
+      "id": "W007",
+      "source_lines": [
+        155811,
+        155943
+      ],
+      "package_lines": [
+        515,
+        647
+      ],
+      "sha256": "c98f855ae677919db43089336739aacd6df6cb75146ae912d987fcb86ff4c4da",
+      "bytes": 3481,
+      "exact": true
+    },
+    {
+      "id": "W008",
+      "source_lines": [
+        157044,
+        157209
+      ],
+      "package_lines": [
+        655,
+        820
+      ],
+      "sha256": "b58fb49ac13c5a04826223ead436da638bf835a85ceed508bd30394a3dd68997",
+      "bytes": 5225,
+      "exact": true
+    },
+    {
+      "id": "W009",
+      "source_lines": [
+        159263,
+        159292
+      ],
+      "package_lines": [
+        828,
+        857
+      ],
+      "sha256": "c925d21295c1bf152013df0e4df78dbfc7691a08eb95282045010a36cce7b6df",
+      "bytes": 637,
+      "exact": true
+    },
+    {
+      "id": "W010",
+      "source_lines": [
+        159293,
+        159334
+      ],
+      "package_lines": [
+        865,
+        906
+      ],
+      "sha256": "5b0aa1903ed4b61efcd5db9743f9b6c5cf6a928aca4b8d29c55952128bb5428e",
+      "bytes": 1188,
+      "exact": true
+    },
+    {
+      "id": "W011",
+      "source_lines": [
+        159335,
+        159401
+      ],
+      "package_lines": [
+        914,
+        980
+      ],
+      "sha256": "1f8afcac8f43b7a364b2639ae49e68323fd1fe52120f36349fb8b59562cd6235",
+      "bytes": 1568,
+      "exact": true
+    },
+    {
+      "id": "W012",
+      "source_lines": [
+        159402,
+        159443
+      ],
+      "package_lines": [
+        988,
+        1029
+      ],
+      "sha256": "dbf971b78896122f97e9057dfc45c8761329a831af32ab593f07cdc7bea67797",
+      "bytes": 1006,
+      "exact": true
+    },
+    {
+      "id": "W013",
+      "source_lines": [
+        157380,
+        157417
+      ],
+      "package_lines": [
+        1037,
+        1074
+      ],
+      "sha256": "33adf48204aca5ce980fc42d977330b741e8bd6ab5652678f7c0a900f1bf95dc",
+      "bytes": 924,
+      "exact": true
+    },
+    {
+      "id": "W014",
+      "source_lines": [
+        159444,
+        159485
+      ],
+      "package_lines": [
+        1082,
+        1123
+      ],
+      "sha256": "c5bd596611ee27a6b7b5f97b782c1e61ff28f3d6bf05825fe84d78152b89e843",
+      "bytes": 897,
+      "exact": true
+    },
+    {
+      "id": "W015",
+      "source_lines": [
+        159486,
+        159547
+      ],
+      "package_lines": [
+        1131,
+        1192
+      ],
+      "sha256": "9503e9cc13ac23d7c2cefb7c2d97f1e8d9078556aae4931ebeecc89a9b0cc454",
+      "bytes": 1532,
+      "exact": true
+    },
+    {
+      "id": "W016",
+      "source_lines": [
+        159548,
+        159587
+      ],
+      "package_lines": [
+        1200,
+        1239
+      ],
+      "sha256": "b117d63b20b4dd87ba32f9e37e7d9f48fc020f78c5a7b6f450600b531243a761",
+      "bytes": 1069,
+      "exact": true
+    },
+    {
+      "id": "W017",
+      "source_lines": [
+        159184,
+        159221
+      ],
+      "package_lines": [
+        1247,
+        1284
+      ],
+      "sha256": "8e683f27de93ed4bea7d825fea12c6168daf8b29422ca692912aabd385c8c669",
+      "bytes": 931,
+      "exact": true
+    },
+    {
+      "id": "W018",
+      "source_lines": [
+        159588,
+        159629
+      ],
+      "package_lines": [
+        1292,
+        1333
+      ],
+      "sha256": "9e6ec926c21110ed1b8ec6b180b360c741d2248fa5f44608a77724ecdf64bf8e",
+      "bytes": 897,
+      "exact": true
+    },
+    {
+      "id": "W019",
+      "source_lines": [
+        159630,
+        159691
+      ],
+      "package_lines": [
+        1341,
+        1402
+      ],
+      "sha256": "e2093e3ace3cb6f6bf7cbd45c3806a25ae054eaec6cc7beeb4796f0e66eb0304",
+      "bytes": 1532,
+      "exact": true
+    },
+    {
+      "id": "W020",
+      "source_lines": [
+        159692,
+        159731
+      ],
+      "package_lines": [
+        1410,
+        1449
+      ],
+      "sha256": "746da831ca0e55023bde3f50ff7f2bc5a77055087530593d84948910c08ae252",
+      "bytes": 1069,
+      "exact": true
+    },
+    {
+      "id": "W021",
+      "source_lines": [
+        159732,
+        159761
+      ],
+      "package_lines": [
+        1457,
+        1486
+      ],
+      "sha256": "fc6c61d8d5076bd467d787cd0489edba3eb64c2a749784bec24ddb7f5f37bee8",
+      "bytes": 637,
+      "exact": true
+    },
+    {
+      "id": "W022",
+      "source_lines": [
+        159762,
+        159803
+      ],
+      "package_lines": [
+        1494,
+        1535
+      ],
+      "sha256": "1a537e4165cd89159b09ab9507939bd26fba61cc30844d4c3e10b665d7afeb20",
+      "bytes": 1186,
+      "exact": true
+    },
+    {
+      "id": "W023",
+      "source_lines": [
+        159804,
+        159870
+      ],
+      "package_lines": [
+        1543,
+        1609
+      ],
+      "sha256": "dce3df6d133cdfdc1776d74b4795d4d7e5f7335cc831e14eaf89b1076c4e35cc",
+      "bytes": 1568,
+      "exact": true
+    },
+    {
+      "id": "W024",
+      "source_lines": [
+        159871,
+        159912
+      ],
+      "package_lines": [
+        1617,
+        1658
+      ],
+      "sha256": "7d1a04d89e33771debe7c51191d96cd40cfa2f89203f1b41f592ad59175e5f87",
+      "bytes": 897,
+      "exact": true
+    },
+    {
+      "id": "W025",
+      "source_lines": [
+        159913,
+        159974
+      ],
+      "package_lines": [
+        1666,
+        1727
+      ],
+      "sha256": "33b387420aa0ca48fd6bea3cb32b292fac09ec28115e40fe3799622346cb0820",
+      "bytes": 1532,
+      "exact": true
+    },
+    {
+      "id": "W026",
+      "source_lines": [
+        159975,
+        160008
+      ],
+      "package_lines": [
+        1735,
+        1768
+      ],
+      "sha256": "0d3b96410a93527b7a5cf1cc24ea4dc4c0819becf14032e6ca8bc407d06e6b18",
+      "bytes": 945,
+      "exact": true
+    },
+    {
+      "id": "W027",
+      "source_lines": [
+        160009,
+        160050
+      ],
+      "package_lines": [
+        1776,
+        1817
+      ],
+      "sha256": "43d3bad7a9313d4372583100c0123066f8435879e8e62bffca0dc157139bf156",
+      "bytes": 897,
+      "exact": true
+    },
+    {
+      "id": "W028",
+      "source_lines": [
+        160051,
+        160112
+      ],
+      "package_lines": [
+        1825,
+        1886
+      ],
+      "sha256": "dcd2af129b61a983bbb98314ac5b2d9cddc9c6adb5a25d99d191fd2b54fb9f07",
+      "bytes": 1532,
+      "exact": true
+    },
+    {
+      "id": "W029",
+      "source_lines": [
+        160113,
+        160146
+      ],
+      "package_lines": [
+        1894,
+        1927
+      ],
+      "sha256": "8719d3b3c0c1a1db5a6ed972a0bdafa96a66ccbb7dda6350cb6ada4d40da5751",
+      "bytes": 945,
+      "exact": true
+    },
+    {
+      "id": "W030",
+      "source_lines": [
+        160147,
+        160554
+      ],
+      "package_lines": [
+        1935,
+        2342
+      ],
+      "sha256": "294691a7daa9bdf50a52d600ad6698d72848938a31de1d16116c84fc5153d31f",
+      "bytes": 13588,
+      "exact": true
+    },
+    {
+      "id": "W031",
+      "source_lines": [
+        161397,
+        161806
+      ],
+      "package_lines": [
+        2350,
+        2759
+      ],
+      "sha256": "324c7513b66f939b7c969643eb30d061842b824500e3bdd3b307fa5867d8a9a0",
+      "bytes": 13619,
+      "exact": true
+    },
+    {
+      "id": "W032",
+      "source_lines": [
+        165749,
+        165947
+      ],
+      "package_lines": [
+        2767,
+        2965
+      ],
+      "sha256": "97b8f39589acebfe008adbfa953156eb3566ff00d9301b672742dc141a035991",
+      "bytes": 6051,
+      "exact": true
+    },
+    {
+      "id": "W033",
+      "source_lines": [
+        165049,
+        165434
+      ],
+      "package_lines": [
+        2973,
+        3358
+      ],
+      "sha256": "35aefd0d56ca262036cbe45e1aaff3e1a0442dd30a969d070699857c9e6065cd",
+      "bytes": 13063,
+      "exact": true
+    },
+    {
+      "id": "W034",
+      "source_lines": [
+        130204,
+        130263
+      ],
+      "package_lines": [
+        3366,
+        3425
+      ],
+      "sha256": "c0c379d9898fab484d5bcf22deb2e8e3dd36bd7b7956ae8f57268cb5692c183d",
+      "bytes": 1404,
+      "exact": true
+    },
+    {
+      "id": "W035",
+      "source_lines": [
+        130264,
+        130341
+      ],
+      "package_lines": [
+        3433,
+        3510
+      ],
+      "sha256": "b67d444ed97b2cc8561c32a2c99efa367fdfc681dd10d7be18badd9f5cad4d20",
+      "bytes": 2313,
+      "exact": true
+    },
+    {
+      "id": "W036",
+      "source_lines": [
+        4235,
+        4341
+      ],
+      "package_lines": [
+        3518,
+        3624
+      ],
+      "sha256": "dcb704a9a66de5394cfcdc7b604c967b83041710689a90d1bae4ea5f2e51618a",
+      "bytes": 2946,
+      "exact": true
+    },
+    {
+      "id": "W037",
+      "source_lines": [
+        4896,
+        5002
+      ],
+      "package_lines": [
+        3632,
+        3738
+      ],
+      "sha256": "86eee30061590f3f12f1c7eebd867f314c1f734eec5e4b121911211205b90917",
+      "bytes": 3043,
+      "exact": true
+    },
+    {
+      "id": "W038",
+      "source_lines": [
+        6711,
+        7056
+      ],
+      "package_lines": [
+        3746,
+        4091
+      ],
+      "sha256": "b4fc43a7aec91d8de7834a5c1e60c058efe782a827c40835c92f4ebf2f72218f",
+      "bytes": 9625,
+      "exact": true
+    },
+    {
+      "id": "W039",
+      "source_lines": [
+        8014,
+        8250
+      ],
+      "package_lines": [
+        4099,
+        4335
+      ],
+      "sha256": "cb4dee857847b924e0082ffb916b6f000bd516376f3cd7286cc772917bdd9a3a",
+      "bytes": 6034,
+      "exact": true
+    },
+    {
+      "id": "W040",
+      "source_lines": [
+        78563,
+        78598
+      ],
+      "package_lines": [
+        4343,
+        4378
+      ],
+      "sha256": "3e0a019dd895b58c55b9880f6c699df579bc817eeff6929d236385b6ea1a068c",
+      "bytes": 999,
+      "exact": true
+    },
+    {
+      "id": "W041",
+      "source_lines": [
+        78599,
+        78619
+      ],
+      "package_lines": [
+        4386,
+        4406
+      ],
+      "sha256": "7b4c25f66e805002cbc179e0bde354535bfca2fac1acac183fcbbb8de6606c8e",
+      "bytes": 506,
+      "exact": true
+    },
+    {
+      "id": "W042",
+      "source_lines": [
+        166195,
+        166219
+      ],
+      "package_lines": [
+        4414,
+        4438
+      ],
+      "sha256": "1d146686f2067ed9e4fc99fa015a2f55a9c86617d0816050ef21e1f4498c2c96",
+      "bytes": 613,
+      "exact": true
+    },
+    {
+      "id": "W043",
+      "source_lines": [
+        166220,
+        166255
+      ],
+      "package_lines": [
+        4446,
+        4481
+      ],
+      "sha256": "301a59415fe5a83059f9af6424f4bfd18117619b93d1009f1eca591bd62ea5da",
+      "bytes": 1054,
+      "exact": true
+    },
+    {
+      "id": "W044",
+      "source_lines": [
+        165979,
+        166011
+      ],
+      "package_lines": [
+        4489,
+        4521
+      ],
+      "sha256": "a1ad669759f1c247a2088897ad7bdc75eb4408e1f311de3fc201f14bda904143",
+      "bytes": 936,
+      "exact": true
+    },
+    {
+      "id": "W045",
+      "source_lines": [
+        166012,
+        166049
+      ],
+      "package_lines": [
+        4529,
+        4566
+      ],
+      "sha256": "a6c14b3e4ddca3c8e238c415c5179b74c784eedf174ac88a10bbad4df5f98098",
+      "bytes": 1078,
+      "exact": true
+    },
+    {
+      "id": "W046",
+      "source_lines": [
+        166050,
+        166087
+      ],
+      "package_lines": [
+        4574,
+        4611
+      ],
+      "sha256": "18f828721dcf4579ccd4797a0dc986ac13d0ba5be2e7489f6e8f922494abfe91",
+      "bytes": 1084,
+      "exact": true
+    },
+    {
+      "id": "W047",
+      "source_lines": [
+        166124,
+        166159
+      ],
+      "package_lines": [
+        4619,
+        4654
+      ],
+      "sha256": "8842b5ca74d4ba4115417060d1f7539543b13df5bc698fb347168c3fbad9df60",
+      "bytes": 666,
+      "exact": true
+    },
+    {
+      "id": "W048",
+      "source_lines": [
+        166160,
+        166194
+      ],
+      "package_lines": [
+        4662,
+        4696
+      ],
+      "sha256": "f7ca03e12678c6645fcc614bbb48102ccb7a7cf24ee7144c393dba6bed544981",
+      "bytes": 600,
+      "exact": true
+    }
+  ],
+  "limitations": [
+    "No general reference graph completeness claim for the hypothetical MAT chain.",
+    "No full JSON Schema validator, code compiler, database, concurrency test or Owner adoption executed.",
+    "Business field reading uses typed opaque values; UUID/hash literal semantics are not manually reviewed value by value."
+  ],
+  "runtime_tests_executed": 0
+}

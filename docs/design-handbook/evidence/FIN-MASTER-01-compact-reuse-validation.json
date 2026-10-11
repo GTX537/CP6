@@ -1,0 +1,8 @@
+{
+  "method": "Reconstruct exact original JSON values from compact full/base+deltas, exact body/ref aliases and bijective opaque identity symbols; no fixture execution.",
+  "counts": {
+    "records": 390,
+    "cases": 239
+  },
+  "errors": []
+}

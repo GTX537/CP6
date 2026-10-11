@@ -1,0 +1,1807 @@
+{
+  "target_id": "QA-IPQC-01",
+  "updated_at_utc": "2026-10-10T15:08:29.295013+00:00",
+  "required_materials_consolidated": true,
+  "status": "required_current_materials_consolidated_with_explicit_adoption_questions",
+  "canonical_source": {
+    "file": "CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+    "sha256": "ec15532bb8820016f44af4dcf91823b2ec2af7684ec767cc1f25a4bbe61ec74b",
+    "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec15532bb8820016__CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+    "bytes": 1803613,
+    "root": {
+      "$node": "N539"
+    },
+    "node_range": [
+      0,
+      539
+    ],
+    "json_string_range": [
+      0,
+      -1
+    ]
+  },
+  "schema_source": {
+    "file": "SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+    "sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+    "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f0519fea751041c__SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+    "bytes": 1766984,
+    "root": {
+      "$node": "N540"
+    },
+    "node_range": [
+      540,
+      540
+    ],
+    "json_string_range": [
+      0,
+      -1
+    ]
+  },
+  "schema_count": 192,
+  "schema_fields_all_read": true,
+  "reading_view": "Eight schema-fields-00 through 07, 67846 chars, no dropped constraints or literals; exactType aliases reconstruct identical values; root schema/id metadata preserved separately.",
+  "schema_roundtrip": true,
+  "standalone_schema_registry_value_equal": true,
+  "schema_metadata": {
+    "ids_match_each_type_name": true,
+    "root_id_prefix": "urn:cp6:qa-ipqc:recovery-r4-systemic:",
+    "draft2020_12_present": 186,
+    "draft_keyword_absent": 6,
+    "nested_recovery_r3_ids_preserved": true
+  },
+  "canonical_other_metadata_fully_read": true,
+  "api_facade_reuse": {
+    "apis": true,
+    "facades": true
+  },
+  "reuse_source": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\c6\\c6e3e6f4c8d0e25c__API_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+  "reuse_evidence": "operations-reading.json full 1–1210 API registry",
+  "remaining": [],
+  "business_tests": "NOT_RUN",
+  "actual_owner_adoption": "UNPROVEN",
+  "raw_projection": {
+    "files": 8,
+    "nodes": 14038,
+    "json_strings": 1631,
+    "fidelity_errors": 0,
+    "semantic_read_complete": true,
+    "completion_basis": "Separate root field reading plus F01/continuous/governance component ledgers; no expansion of earlier literal read_ranges."
+  },
+  "relational_model": {
+    "source": {
+      "file": "RELATIONAL_SCHEMA_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "41a16ac59112f143be3b7b97513e7306c30e7ef167421b94e0e143776fefc7c5",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/41/41a16ac59112f143__RELATIONAL_SCHEMA_RECOVERY_R4_SYSTEMIC.json",
+      "bytes": 151301,
+      "root": {
+        "$node": "N817"
+      },
+      "node_range": [
+        541,
+        817
+      ],
+      "json_string_range": [
+        0,
+        -1
+      ]
+    },
+    "all_68_tables_fields_keys_checks_indexes_read": true,
+    "sql": {
+      "source_path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\bf\\bfbd0d7b7c245820__QA-IPQC-01_SQLSERVER_DESIGN_RECOVERY_R4_SYSTEMIC.sql",
+      "sha256": "bfbd0d7b7c2458200897c66ff16ba842d148fff8b5ca77f5ce22e883c39e1ec8",
+      "sql_lines": 1825,
+      "tables": 68,
+      "columns": 740,
+      "foreign_keys": 107,
+      "indexes": 96,
+      "checks": [
+        {
+          "object": "TABLE:AdapterRegistration",
+          "start_line": 6,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_AdapterRegistration_State",
+          "start_line": 1631,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:Approval",
+          "start_line": 25,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Approval_Decision",
+          "start_line": 1096,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Approval_Packet",
+          "start_line": 1101,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Approval_Command",
+          "start_line": 1106,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Approval_DecisionPacket",
+          "start_line": 1111,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Approval_CommandActor",
+          "start_line": 1116,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Approval_AuthorityEvidence",
+          "start_line": 1121,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Approval_ApprovalEvidence",
+          "start_line": 1126,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Approval_Approval_Decision",
+          "start_line": 1633,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ApprovalPacket",
+          "start_line": 53,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Packet_TaskRevision",
+          "start_line": 1131,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Packet_ResultSet",
+          "start_line": 1136,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ApprovalPacket_Packet_TaskRevision",
+          "start_line": 1635,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ApprovalPacket_Packet_ResultSet",
+          "start_line": 1637,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:AuditEvent",
+          "start_line": 70,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Audit_Command",
+          "start_line": 1141,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Audit_Command",
+          "start_line": 1639,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_AuditEvent_Audit_Command",
+          "start_line": 1641,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:Command",
+          "start_line": 88,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Command_RequestReplay",
+          "start_line": 1643,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:Decision",
+          "start_line": 112,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Decision_Stream",
+          "start_line": 1146,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Decision_TaskRevision",
+          "start_line": 1151,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Decision_ResultSet",
+          "start_line": 1156,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Decision_Packet",
+          "start_line": 1161,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_Decision_SameTaskResult",
+          "start_line": 1166,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_Decision_SamePacketTaskResult",
+          "start_line": 1171,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Decision_Decision_Stream",
+          "start_line": 1645,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Decision_Decision_TaskRevision",
+          "start_line": 1647,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Decision_Decision_ResultSet",
+          "start_line": 1649,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Decision_Decision_Packet",
+          "start_line": 1651,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DecisionHead",
+          "start_line": 138,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DecisionHead_Decision",
+          "start_line": 1176,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DecisionHead_DecisionHead_Decision",
+          "start_line": 1653,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DecisionPartitionRange",
+          "start_line": 151,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DecisionRange_Decision",
+          "start_line": 1181,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DecisionRange_ResultSet",
+          "start_line": 1186,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DecisionRange_Outcome",
+          "start_line": 1191,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_DecisionRange_SameResultOutcome",
+          "start_line": 1196,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Partition_ExactOutcomeSemantic",
+          "start_line": 1201,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DecisionPartitionRange_DecisionRange_Decision",
+          "start_line": 1655,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DecisionPartitionRange_DecisionRange_ResultSet",
+          "start_line": 1657,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DecisionPartitionRange_DecisionRange_Outcome",
+          "start_line": 1659,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DecisionStream",
+          "start_line": 171,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DecisionStream_Family",
+          "start_line": 1206,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DecisionStream_DecisionStream_Family",
+          "start_line": 1661,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:Delivery",
+          "start_line": 184,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Delivery_Payload",
+          "start_line": 1211,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Delivery_Registration",
+          "start_line": 1216,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Delivery_SourceVersion",
+          "start_line": 1221,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Delivery_Decision",
+          "start_line": 1226,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Delivery_Previous",
+          "start_line": 1231,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_Delivery_ExactSourceDigest",
+          "start_line": 1236,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_Delivery_ExactPayload",
+          "start_line": 1241,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_Delivery_ExactDecisionDigest",
+          "start_line": 1246,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_Delivery_ExactRegistrationDigest",
+          "start_line": 1251,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Delivery_CanonicalSequence",
+          "start_line": 1663,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Delivery_Decision",
+          "start_line": 1665,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Delivery_Delivery_Payload",
+          "start_line": 1667,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Delivery_Delivery_Registration",
+          "start_line": 1669,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Delivery_Delivery_SourceVersion",
+          "start_line": 1671,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Delivery_Delivery_Previous",
+          "start_line": 1673,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DeliveryAttempt",
+          "start_line": 219,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DeliveryAttempt_Delivery",
+          "start_line": 1256,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DeliveryAttempt_DeliveryAttempt_Delivery",
+          "start_line": 1675,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DeliveryLease",
+          "start_line": 231,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DeliveryLease_Delivery",
+          "start_line": 1261,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DeliveryLease_DeliveryLease_Delivery",
+          "start_line": 1677,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DeliveryObservationHead",
+          "start_line": 244,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DeliveryObservationHead_Revision",
+          "start_line": 1266,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DeliveryObservationHead_DeliveryObservationHead_Revision",
+          "start_line": 1679,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DeliveryObservationRevision",
+          "start_line": 255,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_DeliveryObservation_Delivery",
+          "start_line": 1271,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DeliveryObservationRevision_DeliveryObservation_Delivery",
+          "start_line": 1681,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DeliveryPayload",
+          "start_line": 267,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Payload_Registration",
+          "start_line": 1276,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DeliveryPayload_Payload_Registration",
+          "start_line": 1683,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DependencyWake",
+          "start_line": 285,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:DispositionDraft",
+          "start_line": 297,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Draft_Task",
+          "start_line": 1281,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Draft_ResultSet",
+          "start_line": 1286,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DispositionDraft_Draft_Task",
+          "start_line": 1685,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_DispositionDraft_Draft_ResultSet",
+          "start_line": 1687,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:EligibilityCut",
+          "start_line": 311,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_EligibilityCut_Task",
+          "start_line": 1291,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_EligibilityCut_EligibilityCut_Task",
+          "start_line": 1689,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:EligibilityCutFact",
+          "start_line": 324,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_EligibilityFact_Cut",
+          "start_line": 1296,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_EligibilityCutFact_EligibilityFact_Cut",
+          "start_line": 1691,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:EvaluatedRangeOutcome",
+          "start_line": 338,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_EvaluatedRangeOutcome_ResultSet",
+          "start_line": 1301,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_EvaluatedRangeOutcome_EvaluatedRangeOutcome_ResultSet",
+          "start_line": 1693,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ExportReceipt",
+          "start_line": 357,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Export_Subject",
+          "start_line": 1695,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:FamilyControlHead",
+          "start_line": 375,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_FamilyControlHead_Version",
+          "start_line": 1306,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyControlHead_State",
+          "start_line": 1697,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyControlHead_FamilyControlHead_Version",
+          "start_line": 1699,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:FamilyControlVersion",
+          "start_line": 386,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_FamilyControl_DirectoryHead",
+          "start_line": 1311,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyControlVersion_FamilyControl_DirectoryHead",
+          "start_line": 1701,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:FamilyCutEvidence",
+          "start_line": 408,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_FamilyCut_DirectoryVersion",
+          "start_line": 1316,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyCutEvidence_FamilyCut_DirectoryVersion",
+          "start_line": 1703,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:FamilyDirectoryHead",
+          "start_line": 424,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_FamilyDirectoryHead_Version",
+          "start_line": 1321,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyDirectoryHead_CurrentRevision",
+          "start_line": 1705,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:FamilyDirectoryMember",
+          "start_line": 435,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_FamilyDirectoryMember_Version",
+          "start_line": 1326,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyDirectoryMember_Family",
+          "start_line": 1707,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyDirectoryMember_FamilyDirectoryMember_Version",
+          "start_line": 1709,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:FamilyDirectoryVersion",
+          "start_line": 447,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyDirectoryVersion_Digest",
+          "start_line": 1711,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:FamilyObligationSegment",
+          "start_line": 464,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_FamilyObligation_ControlVersion",
+          "start_line": 1331,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_FamilyObligationSegment_FamilyObligation_ControlVersion",
+          "start_line": 1713,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ImpactCase",
+          "start_line": 480,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:Inbox",
+          "start_line": 493,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:InitialClaim",
+          "start_line": 508,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_InitialClaim_Slot",
+          "start_line": 1336,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_InitialClaim_ObservationHead",
+          "start_line": 1341,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_InitialClaim_InitialClaim_Slot",
+          "start_line": 1715,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_InitialClaim_InitialClaim_ObservationHead",
+          "start_line": 1717,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:InspectionTask",
+          "start_line": 519,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Task_SourceHead",
+          "start_line": 1346,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_InspectionTask_Task_SourceHead",
+          "start_line": 1719,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:LegacyMapping",
+          "start_line": 533,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_LegacyMapping_WriterEpoch",
+          "start_line": 1351,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_LegacyMapping_LegacyMapping_WriterEpoch",
+          "start_line": 1721,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:MeasurementSlot",
+          "start_line": 546,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_MeasurementSlot_Task",
+          "start_line": 1356,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_MeasurementSlot_Member",
+          "start_line": 1361,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_MeasurementSlot_MeasurementSlot_Task",
+          "start_line": 1723,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_MeasurementSlot_MeasurementSlot_Member",
+          "start_line": 1725,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:Observation",
+          "start_line": 562,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Observation_Slot",
+          "start_line": 1366,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Observation_EligibilityCut",
+          "start_line": 1371,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Observation_SourceCommand",
+          "start_line": 1376,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Observation_Observation_Slot",
+          "start_line": 1727,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Observation_Observation_EligibilityCut",
+          "start_line": 1729,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ObservationHead",
+          "start_line": 585,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ObservationHead_Revision",
+          "start_line": 1381,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ObservationHead_Slot",
+          "start_line": 1386,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationHead_ObservationHead_Revision",
+          "start_line": 1731,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationHead_ObservationHead_Slot",
+          "start_line": 1733,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ObservationReview",
+          "start_line": 597,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Review_TaskRevision",
+          "start_line": 1391,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_Review_Command",
+          "start_line": 1396,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationReview_Review_TaskRevision",
+          "start_line": 1735,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ObservationReviewItem",
+          "start_line": 613,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ReviewItem_Review",
+          "start_line": 1401,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ReviewItem_Observation",
+          "start_line": 1406,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ReviewItem_Task",
+          "start_line": 1411,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_ReviewItem_ObservationCommand",
+          "start_line": 1416,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_ReviewItem_ReviewCommand",
+          "start_line": 1421,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationReviewItem_ReviewItem_Review",
+          "start_line": 1737,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationReviewItem_ReviewItem_Observation",
+          "start_line": 1739,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationReviewItem_ReviewItem_Task",
+          "start_line": 1741,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ObservationRuling",
+          "start_line": 631,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Ruling_Task",
+          "start_line": 1426,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Ruling_Observation",
+          "start_line": 1431,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationRuling_Ruling_Task",
+          "start_line": 1743,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ObservationRuling_Ruling_Observation",
+          "start_line": 1745,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:Outbox",
+          "start_line": 644,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Outbox_Delivery",
+          "start_line": 1436,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Outbox_Payload",
+          "start_line": 1441,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_Outbox_SameDeliveryPayload",
+          "start_line": 1446,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Outbox_Dispatch",
+          "start_line": 1747,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Outbox_Outbox_Delivery",
+          "start_line": 1749,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_Outbox_Outbox_Payload",
+          "start_line": 1751,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:OwnerObservationHead",
+          "start_line": 660,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_OwnerObservationHead_Revision",
+          "start_line": 1451,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_OwnerObservationHead_State",
+          "start_line": 1753,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_OwnerObservationHead_OwnerObservationHead_Revision",
+          "start_line": 1755,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:OwnerObservationRevision",
+          "start_line": 673,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_OwnerObservation_Original",
+          "start_line": 1456,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_OwnerObservation_Message",
+          "start_line": 1757,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_OwnerObservationRevision_OwnerObservation_Original",
+          "start_line": 1759,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:OwnerResultOriginal",
+          "start_line": 691,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_OwnerResult_Inbox",
+          "start_line": 1461,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_OwnerResultOriginal_OwnerResult_Inbox",
+          "start_line": 1761,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:PlmEvidenceHandoff",
+          "start_line": 704,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:PopulationMember",
+          "start_line": 717,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_PopulationMember_Task",
+          "start_line": 1466,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_PopulationMember_PopulationMember_Task",
+          "start_line": 1763,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:QapConsumerResult",
+          "start_line": 729,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:QapGuardEvidence",
+          "start_line": 743,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_QapGuard_FamilyCut",
+          "start_line": 1471,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_QapGuard_Registration",
+          "start_line": 1476,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_QapGuard_Resolution",
+          "start_line": 1765,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_QapGuardEvidence_QapGuard_FamilyCut",
+          "start_line": 1767,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_QapGuardEvidence_QapGuard_Registration",
+          "start_line": 1769,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:QapUseFact",
+          "start_line": 767,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_QapUse_Guard",
+          "start_line": 1481,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_QapUse_FamilyCut",
+          "start_line": 1486,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_QapUse_ConsumerResult",
+          "start_line": 1491,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_QapUse_Resolution",
+          "start_line": 1771,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_QapUse_ConsumerReceipt",
+          "start_line": 1773,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_QapUseFact_QapUse_Guard",
+          "start_line": 1775,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_QapUseFact_QapUse_FamilyCut",
+          "start_line": 1777,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:RequirementOutcome",
+          "start_line": 790,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_RequirementOutcome_ResultSet",
+          "start_line": 1496,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_RequirementOutcome_RequirementOutcome_ResultSet",
+          "start_line": 1779,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ResultSet",
+          "start_line": 802,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ResultSet_TaskRevision",
+          "start_line": 1501,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ResultSet_ResultSet_TaskRevision",
+          "start_line": 1781,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ResultSetHead",
+          "start_line": 819,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ResultSetHead_ResultSet",
+          "start_line": 1506,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ResultSetHead_Task",
+          "start_line": 1511,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ResultSetHead_ResultSetHead_ResultSet",
+          "start_line": 1783,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ResultSetHead_ResultSetHead_Task",
+          "start_line": 1785,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ResultSetSlot",
+          "start_line": 830,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ResultSetSlot_ResultSet",
+          "start_line": 1516,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ResultSetSlot_Slot",
+          "start_line": 1521,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_ResultSetSlot_SameTaskResult",
+          "start_line": 1526,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R4_ResultSetSlot_ExactOutcome",
+          "start_line": 1531,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ResultSetSlot_ResultSetSlot_ResultSet",
+          "start_line": 1787,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ResultSetSlot_ResultSetSlot_Slot",
+          "start_line": 1789,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:RetestEpisode",
+          "start_line": 843,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_Retest_Task",
+          "start_line": 1536,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_RetestEpisode_Retest_Task",
+          "start_line": 1791,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ReviewHead",
+          "start_line": 855,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ReviewHead_Review",
+          "start_line": 1541,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ReviewHead_Task",
+          "start_line": 1546,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ReviewHead_ReviewHead_Review",
+          "start_line": 1793,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ReviewHead_ReviewHead_Task",
+          "start_line": 1795,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:SampleSelectionRoster",
+          "start_line": 866,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_SampleSelectionRoster_Task",
+          "start_line": 1551,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_SampleSelectionRoster_SampleSelectionRoster_Task",
+          "start_line": 1797,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:SourceAlias",
+          "start_line": 878,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_SourceAlias_SourceHead",
+          "start_line": 1556,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_SourceAlias_SourceAlias_SourceHead",
+          "start_line": 1799,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:SourceHead",
+          "start_line": 890,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_SourceHead_Original",
+          "start_line": 1561,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_SourceHead_Mapping",
+          "start_line": 1566,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_SourceHead_ExactDigest",
+          "start_line": 1571,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_SourceHead_State",
+          "start_line": 1801,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_SourceHead_SourceHead_Original",
+          "start_line": 1803,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_SourceHead_SourceHead_Mapping",
+          "start_line": 1805,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:SourceMappingVersion",
+          "start_line": 904,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_SourceMapping_SourceOriginal",
+          "start_line": 1576,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_SourceMapping_OwnerRevision",
+          "start_line": 1807,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:SourceOriginalVersion",
+          "start_line": 917,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:StockConsumerResult",
+          "start_line": 933,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_StockResult_Decision",
+          "start_line": 1581,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_StockResult_Guard",
+          "start_line": 1586,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:StockEffect",
+          "start_line": 954,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_R3_StockEffect_ConsumerResult",
+          "start_line": 1591,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:TaskHead",
+          "start_line": 971,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_TaskHead_Revision",
+          "start_line": 1596,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_TaskHead_State",
+          "start_line": 1809,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_TaskHead_TaskHead_Revision",
+          "start_line": 1811,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:TaskRevision",
+          "start_line": 982,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_TaskRevision_Task",
+          "start_line": 1601,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_TaskRevision_TaskRevision_Task",
+          "start_line": 1813,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:WriterEpochHead",
+          "start_line": 996,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_WriterEpochHead_History",
+          "start_line": 1606,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_WriterEpochHead_Epoch",
+          "start_line": 1815,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:WriterEpochHistory",
+          "start_line": 1006,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_WriterEpochHistory_State",
+          "start_line": 1817,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ResultInvalidation",
+          "start_line": 1024,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ResultInvalidation_ResultSet",
+          "start_line": 1611,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_ResultInvalidation_Task",
+          "start_line": 1819,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:AuthorityEvidence",
+          "start_line": 1040,
+          "exact_text_equal": true
+        },
+        {
+          "object": "INDEX:IX_AuthorityEvidence_ActorAction",
+          "start_line": 1821,
+          "exact_text_equal": true
+        },
+        {
+          "object": "TABLE:ApprovalEvidence",
+          "start_line": 1067,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ApprovalEvidence_Packet",
+          "start_line": 1616,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ApprovalEvidence_DecisionPacket",
+          "start_line": 1621,
+          "exact_text_equal": true
+        },
+        {
+          "object": "FK:FK_ApprovalEvidence_Authority",
+          "start_line": 1626,
+          "exact_text_equal": true
+        }
+      ],
+      "nondeclaration_text": [
+        "-- QA-IPQC-01 Recovery-R4 Systemic SQL Server relational design.",
+        "-- DESIGN ONLY / NOT EXECUTED. BusinessAC NOT_RUN; runtime/adoption UNPROVEN.",
+        "-- rowversion is DB-generated binary(8); clients omit it from writes and compare returned bytes as opaque tokens.",
+        "IF SCHEMA_ID(N'qa_ipqc') IS NULL EXEC(N'CREATE SCHEMA [qa_ipqc]');",
+        "-- Head CAS contract (normative pattern; one transaction with immutable history insert):",
+        "-- UPDATE [qa_ipqc].[TaskHead] SET [TaskRevision]=@newRevision WHERE E=@E AND [TaskId]=@taskId AND [RowVersion]=@expectedRowVersion;",
+        "-- Require @@ROWCOUNT=1; otherwise rollback and return STALE_HEAD. Apply the same pattern to every mutable *Head and lease row."
+      ],
+      "unexpected_unmapped_statements": [],
+      "all_declarations_exact_equal": true,
+      "sql_executed": false
+    },
+    "rowversion": "12 DB-generated opaque 8-byte columns; never client arithmetic/assignment",
+    "append_only_counts": {
+      "True": 53,
+      "False": 15
+    }
+  },
+  "payload_publications": {
+    "source": {
+      "file": "PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "bytes": 138327,
+      "root": {
+        "$node": "N876"
+      },
+      "node_range": [
+        818,
+        876
+      ],
+      "json_string_range": [
+        0,
+        -1
+      ]
+    },
+    "full_semantic_nodes": [
+      818,
+      876
+    ],
+    "reading_pages": [
+      0,
+      1,
+      2
+    ],
+    "publication_count": 5,
+    "hash_checks": [
+      {
+        "payload_type": "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "part": "payload",
+        "declared": "3e35bc6080b8e9edae1e11d26b21aed9aa48e9674e4dc0cf157857cb571eb832",
+        "computed": "3e35bc6080b8e9edae1e11d26b21aed9aa48e9674e4dc0cf157857cb571eb832",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "part": "registration",
+        "declared": "a2816c76938507fae90606fda4eb368128fa120be50527d52095576a966c4d51",
+        "computed": "a2816c76938507fae90606fda4eb368128fa120be50527d52095576a966c4d51",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "part": "frozenPayload",
+        "declared": "b52d9746a1c0703b52c42a51067e2d6281cfed0f704bc96aca32315ee07eb768",
+        "computed": "b52d9746a1c0703b52c42a51067e2d6281cfed0f704bc96aca32315ee07eb768",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "part": "delivery",
+        "declared": "79b26b316a07783da117148148b03b7c2a9927361bb6bea2a3bef0ffd53f182a",
+        "computed": "79b26b316a07783da117148148b03b7c2a9927361bb6bea2a3bef0ffd53f182a",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "payload",
+        "declared": "a3c9f0dbab44c33ef9814bd4906cb9f3e434bf57699eadef5db963ae7dda0e2a",
+        "computed": "a3c9f0dbab44c33ef9814bd4906cb9f3e434bf57699eadef5db963ae7dda0e2a",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "registration",
+        "declared": "c750d748f7f5a520c71e375e454caa5eaac233c5f528d99f8df1ab37efb3410b",
+        "computed": "c750d748f7f5a520c71e375e454caa5eaac233c5f528d99f8df1ab37efb3410b",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "frozenPayload",
+        "declared": "f3d2eb7b4b6410a5290e66d079230ef0056341815749acda194fa5b1bb01e598",
+        "computed": "f3d2eb7b4b6410a5290e66d079230ef0056341815749acda194fa5b1bb01e598",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "delivery",
+        "declared": "f52b75fd169d7a72a74212f56191949fc22fca8319ce1890282d6597e64fc690",
+        "computed": "f52b75fd169d7a72a74212f56191949fc22fca8319ce1890282d6597e64fc690",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "ownerFact/0",
+        "declared": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+        "computed": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "ownerFact/1",
+        "declared": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870",
+        "computed": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "ownerFact/2",
+        "declared": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b",
+        "computed": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "ownerFact/3",
+        "declared": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9",
+        "computed": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "ownerFact/4",
+        "declared": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46",
+        "computed": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "part": "ownerFact/5",
+        "declared": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8",
+        "computed": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "payload",
+        "declared": "e4205038d87933459c6cc1e3598b807ab2e9312cdb540558aa55868fd1e97786",
+        "computed": "e4205038d87933459c6cc1e3598b807ab2e9312cdb540558aa55868fd1e97786",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "registration",
+        "declared": "350792ea193fef4ad4e2bff866ab5a50752450779a2e3aa2683cf5dbc628cfcf",
+        "computed": "350792ea193fef4ad4e2bff866ab5a50752450779a2e3aa2683cf5dbc628cfcf",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "frozenPayload",
+        "declared": "1e1725135ff1ade2a1c0341b150f08eb2fb0866b4fbf1b452674841ef0c5f097",
+        "computed": "1e1725135ff1ade2a1c0341b150f08eb2fb0866b4fbf1b452674841ef0c5f097",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "delivery",
+        "declared": "fe18844e20d47d5752d02c06080afb84393375a18003fabd4aa2d0cd72413e38",
+        "computed": "fe18844e20d47d5752d02c06080afb84393375a18003fabd4aa2d0cd72413e38",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "ownerFact/0",
+        "declared": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+        "computed": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "ownerFact/1",
+        "declared": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870",
+        "computed": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "ownerFact/2",
+        "declared": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b",
+        "computed": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "ownerFact/3",
+        "declared": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9",
+        "computed": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "ownerFact/4",
+        "declared": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46",
+        "computed": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "part": "ownerFact/5",
+        "declared": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8",
+        "computed": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8",
+        "equal": true
+      },
+      {
+        "payload_type": "PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "part": "payload",
+        "declared": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+        "computed": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+        "equal": true
+      },
+      {
+        "payload_type": "PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "part": "registration",
+        "declared": "19d8fb652959bbf5f73cb4581b5560bddf9e0d3615344836e674dabe5f3877a9",
+        "computed": "19d8fb652959bbf5f73cb4581b5560bddf9e0d3615344836e674dabe5f3877a9",
+        "equal": true
+      },
+      {
+        "payload_type": "PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "part": "frozenPayload",
+        "declared": "5be6489b942a1a61f9708808dbb2dd658239cc007b5284a5e7ee000e48a20e77",
+        "computed": "5be6489b942a1a61f9708808dbb2dd658239cc007b5284a5e7ee000e48a20e77",
+        "equal": true
+      },
+      {
+        "payload_type": "PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "part": "delivery",
+        "declared": "22c2881433b3fdf92972bd2a16b46e7a419938d2b7b89778b3eef0299f133fc5",
+        "computed": "22c2881433b3fdf92972bd2a16b46e7a419938d2b7b89778b3eef0299f133fc5",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "payload",
+        "declared": "67945ed83a40f06cd113cd8a7e8fd49116ca6d1355960c2b78a6b51eab814efc",
+        "computed": "67945ed83a40f06cd113cd8a7e8fd49116ca6d1355960c2b78a6b51eab814efc",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "registration",
+        "declared": "209212d6383c298ee2cc70d58e58cf4df71530f18f7a7f989608b8ac8c4aa1b4",
+        "computed": "209212d6383c298ee2cc70d58e58cf4df71530f18f7a7f989608b8ac8c4aa1b4",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "frozenPayload",
+        "declared": "20cb6119795723a77be1a8d49933195acdaa30c22da33aa3afc2c98a0163620e",
+        "computed": "20cb6119795723a77be1a8d49933195acdaa30c22da33aa3afc2c98a0163620e",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "delivery",
+        "declared": "b9a8084531fead2865d40c217f32ae75cb16024ce70759a496232674bf49e0ba",
+        "computed": "b9a8084531fead2865d40c217f32ae75cb16024ce70759a496232674bf49e0ba",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "ownerFact/0",
+        "declared": "9be25cbe51b8d95985b5799b55f28f9d1e5920620224540d796ca863e6c53cdb",
+        "computed": "9be25cbe51b8d95985b5799b55f28f9d1e5920620224540d796ca863e6c53cdb",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "ownerFact/1",
+        "declared": "a0be8ef34d3b30e7957883400fcdd5c22b41ea2e198a097528e19409f4da04d0",
+        "computed": "a0be8ef34d3b30e7957883400fcdd5c22b41ea2e198a097528e19409f4da04d0",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "ownerFact/2",
+        "declared": "7c97680f6b55483c5034f9b4cdbd84280bd5767c6a3ad0864c099cf6e9c5ce6c",
+        "computed": "7c97680f6b55483c5034f9b4cdbd84280bd5767c6a3ad0864c099cf6e9c5ce6c",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "ownerFact/3",
+        "declared": "647a21595383aedf8bcc20d96b5674821b9b4620ebe0bd8bbc0cda7efa404c04",
+        "computed": "647a21595383aedf8bcc20d96b5674821b9b4620ebe0bd8bbc0cda7efa404c04",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "ownerFact/4",
+        "declared": "bb558c46097296292eadef7f6cbf28351ad8cbd99eaa1dc84b70068ac4a3c071",
+        "computed": "bb558c46097296292eadef7f6cbf28351ad8cbd99eaa1dc84b70068ac4a3c071",
+        "equal": true
+      },
+      {
+        "payload_type": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "part": "ownerFact/5",
+        "declared": "79ccde31b2b05abb19d913969faa0820c526ab635b47895a25f7258cee628d86",
+        "computed": "79ccde31b2b05abb19d913969faa0820c526ab635b47895a25f7258cee628d86",
+        "equal": true
+      }
+    ],
+    "all_hashes_equal": true,
+    "actual_external_send": "NOT_RUN"
+  },
+  "frontend_fields": {
+    "source_sha256": "9a3c4c7f7927e1bdee13915c836692e863ec4499a4fb32971105eca66a47b8f1",
+    "actions": 20,
+    "field_occurrences": 791,
+    "property_templates": 63,
+    "all_fields_and_action_metadata_read": true,
+    "field_roundtrip": true,
+    "matching_continuous_request_responses": 40,
+    "body_hash_checks": 40,
+    "continuous_body_semantic_detail_pending": false,
+    "continuous_body_semantic_detail_evidence": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-continuous-reading.json"
+  },
+  "continuous_progress": {
+    "source_sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+    "62_step_summaries_and_write_field_groups_read": true,
+    "427_owner_bodies_business_fields_read": true,
+    "owner_reading_method": "Full F02/F03 and F04 OWNER0-3; explicit deep deltas and fixture-id parameters for remaining records; 31 member arrays / 2470 values verified against exact id/range formula; raw opaque bindings retained separately. This is structured reading, not literal rereading of every UUID/hash.",
+    "427_owner_body_hash_checks": true,
+    "427_owner_projection_roundtrip": true,
+    "request_response_JCS_checks": 124,
+    "input_and_response_hash_checks": 124,
+    "required_semantic_detail_remaining": [
+      "request/response individual business value detail beyond step summaries",
+      "row images/transaction lock-read/write bindings",
+      "reference catalogue",
+      "governance/version boundary documents"
+    ],
+    "later_component_closure": "evidence/QA-IPQC-01-continuous-reading.json"
+  },
+  "closure_components": [
+    "QA-IPQC-01-F01-reading.json",
+    "QA-IPQC-01-continuous-reading.json",
+    "QA-IPQC-01-governance-reading.json"
+  ],
+  "closure_meaning": "Current necessary business design consolidated through whole-field reading and exact reuse; historical/quarantined artifacts classified with explicit scope. Not a claim that every opaque literal, historical program, all SQL constraints or runtime adoption was independently tested."
+}

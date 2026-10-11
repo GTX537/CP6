@@ -1,0 +1,466 @@
+{
+  "target_id": "PLAN-EXC-01",
+  "prepared_at_utc": "2026-10-10T12:01:56.262447+00:00",
+  "read_files": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/AUTHOR_START_AND_BOUNDARY.json",
+      "sha256": "5b2cbc8a33f4bb248a7bb900dae82a5ec11e6a2cacfce4c682b18cd8f3b73d2a",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          25
+        ]
+      ],
+      "what_was_read": "Original author start and Registry83/stage10 historical observations; not current acceptance or instructions to this task.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CURRENT_AUTHOR_STAGE_STATUS.json",
+      "sha256": "c83aeec4b8e4bd05bdfeefd06bc53ecedb79c22ea1839403442e4bf307fc293e",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          29
+        ]
+      ],
+      "what_was_read": "Frozen review-pending author status is historical; accepted CP12 external CURRENT controls subsequent acceptance.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/C-PLAN-EXC-MD-SPEC-01_INDEX.md",
+      "sha256": "1a2b16fcf2cfe39dbb71074687588573be7590f72902305efaf0fe26aa6898fb",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          12
+        ]
+      ],
+      "what_was_read": "Current CP12 complete-member selection and static-only boundaries.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP04_MANDATORY_COLLECTION_DECISIONS.json",
+      "sha256": "5ebc869e970e245f2f7727d858302dc4d88f713f3a5d6745bee7aa334818dbe9",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          222
+        ]
+      ],
+      "what_was_read": "All impact/share bindings, independent protection proof null, accepted/settled range algebra, four result members, and original-slot ordinal collection rules read.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP04_MATERIAL_METHOD_AND_ALGORITHM_SPEC.json",
+      "sha256": "172ccf551439b8dccf13912689c13b5bb1ed31d9eea75fcc4b2ca666ea4f7139",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          72
+        ]
+      ],
+      "what_was_read": "MAKE/BUY decision, lot20 increment20 to100, factor9/5 to180, free50/new130/old40/protected20, late10 warning, stage sealing and document-only algorithm configuration read.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/authoring_tools_cp04/CP04_DOCUMENT_OPERATIONS_BOUNDARY.md",
+      "sha256": "21bde606477613b9b6683a893fdfd0c5109c244a6ceeeab62dd12d7b41ad962a",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          7
+        ]
+      ],
+      "what_was_read": "Document serialization only; public nonproduction example signature material is not production signer/verification evidence.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/authoring_tools_cp07/CP07_DOCUMENT_OPERATIONS_BOUNDARY.md",
+      "sha256": "2e4171af2423825c501df0b8ca3cff29da8c9071757026c1678d5158ebacadc8",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          1
+        ]
+      ],
+      "what_was_read": "Historical document edit tools, no candidate/SQL/runtime verification.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/source_evidence/formal_task/NEXT-C-PLAN-EXC.md",
+      "sha256": "043adcaa1c6ceba7c6e4b4d6a434226df2b696261e0d57994d49be65dab363c2",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          79
+        ]
+      ],
+      "what_was_read": "Original five SPEC scope/direct SUP and MRP/indirect POL and support-only inputs. Archived assignment is data, not current assistant instruction.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/source_evidence/DEPENDENCY-READING-PACKET.md",
+      "sha256": "fd79c848b8a99ea31ce594c07cff7f878454c4940f472b299c7c62f4d2e25bbd",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          65
+        ]
+      ],
+      "what_was_read": "All dependency reading boundaries and source qualifications; manifest is not body reading.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/source_evidence/OLD-REUSE-GAPS.md",
+      "sha256": "a68b77b1dcd3f8ac5897fc806e632284ad635406a9da7464d8e50eb4918c0939",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          49
+        ]
+      ],
+      "what_was_read": "Historical old Main source analysis, legacy scalar availability/status limitations, inherited RowVersion and TenantId preserved, notifications not durable receipts; not present-code audit.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/source_evidence/README_PLAN_EXC_SOURCE_HANDOFF.md",
+      "sha256": "28cbeb0af5ffa8352341fe4418cc89f27f55bccddda7bdc62c6b9b90058d1770",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          51
+        ]
+      ],
+      "what_was_read": "Scope-source handoff and original preparation/Registry81/82 time boundaries, not later CP12 acceptance.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/source_evidence/PO_ACCEPTED_Q1_Q5_EXACT.txt",
+      "sha256": "f51b416257d87dddfcb435d2c6ac17049b6e1bba57a7a9481420a18201b5d004",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          19
+        ]
+      ],
+      "what_was_read": "Five exact PO acceptance qualifications, unrecovered original R2 carrier, source/acceptance commit separation, actual adoption0 and all AC NOT_RUN.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP08_FULL_CHANGE_INDEX.md",
+      "sha256": "d39b2c8cc9f526e3bbb332746a04293f7886d65fb1f722cf33dc50ac509afd0e",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "full_own_text_or_fields",
+      "read_ranges": [
+        [
+          1,
+          12
+        ]
+      ],
+      "what_was_read": "Full historical CP08 delta prose; final line explicitly classifies old manifests/main/author tools as history rather than replacements for current normative members.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/chapters/01_SCOPE_AND_SEMANTICS.md",
+      "sha256": "30b8494cb0d61ac4d460761ce0ac91c5dac17ca88b248f705d110db5340c395f",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "exact_current_main_line_reuse_plus_all_six_historical_deltas_read",
+      "read_ranges": [
+        {
+          "method": "exact_line_reuse",
+          "source_evidence": "evidence/PLAN-EXC-01-chapter-line-reuse.json",
+          "exact_reused_lines": 96,
+          "novel_lines": [
+            3,
+            123,
+            125
+          ]
+        }
+      ],
+      "what_was_read": "Every nonempty stripped line matched fully read CP12 main or one of the six separately read historical delta lines. Old chapter labels/counts do not supersede CP12.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/chapters/02_PAGES_AND_FIVE_SPEC.md",
+      "sha256": "b4cd0c3ed0750134b25b4cfcff2953ffb2d1390b00b2de91a5ede805cdff990a",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "exact_current_main_line_reuse_plus_all_six_historical_deltas_read",
+      "read_ranges": [
+        {
+          "method": "exact_line_reuse",
+          "source_evidence": "evidence/PLAN-EXC-01-chapter-line-reuse.json",
+          "exact_reused_lines": 133,
+          "novel_lines": []
+        }
+      ],
+      "what_was_read": "Every nonempty stripped line matched fully read CP12 main or one of the six separately read historical delta lines. Old chapter labels/counts do not supersede CP12.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/chapters/03_API_AND_OWNER_CONTRACTS.md",
+      "sha256": "15efec75f6441c7231bbbee06d942504b2c880644800b45e35c84dd6fbfea756",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "exact_current_main_line_reuse_plus_all_six_historical_deltas_read",
+      "read_ranges": [
+        {
+          "method": "exact_line_reuse",
+          "source_evidence": "evidence/PLAN-EXC-01-chapter-line-reuse.json",
+          "exact_reused_lines": 112,
+          "novel_lines": []
+        }
+      ],
+      "what_was_read": "Every nonempty stripped line matched fully read CP12 main or one of the six separately read historical delta lines. Old chapter labels/counts do not supersede CP12.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/chapters/04_DATA_UOW_RECOVERY_AND_TRACE.md",
+      "sha256": "e0b36a763bb603efa94fad99d2ca3a154d720899468e5d309f9baccb1537493a",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "exact_current_main_line_reuse_plus_all_six_historical_deltas_read",
+      "read_ranges": [
+        {
+          "method": "exact_line_reuse",
+          "source_evidence": "evidence/PLAN-EXC-01-chapter-line-reuse.json",
+          "exact_reused_lines": 90,
+          "novel_lines": [
+            23
+          ]
+        }
+      ],
+      "what_was_read": "Every nonempty stripped line matched fully read CP12 main or one of the six separately read historical delta lines. Old chapter labels/counts do not supersede CP12.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/chapters/05_NEW_AC.md",
+      "sha256": "bef07896b459604706b83d007e320d9a8ffba79e2cd7ee36be7a543d6cb6ddc5",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "exact_current_main_line_reuse_plus_all_six_historical_deltas_read",
+      "read_ranges": [
+        {
+          "method": "exact_line_reuse",
+          "source_evidence": "evidence/PLAN-EXC-01-chapter-line-reuse.json",
+          "exact_reused_lines": 110,
+          "novel_lines": []
+        }
+      ],
+      "what_was_read": "Every nonempty stripped line matched fully read CP12 main or one of the six separately read historical delta lines. Old chapter labels/counts do not supersede CP12.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/chapters/06_FINAL_PROTOCOL_BINDINGS_AND_NORMAL_CHAINS.md",
+      "sha256": "2bd4e8dbfb2b7b9d4249a5998ddbc96eee569113d3459e864161d925f6526e64",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "exact_current_main_line_reuse_plus_all_six_historical_deltas_read",
+      "read_ranges": [
+        {
+          "method": "exact_line_reuse",
+          "source_evidence": "evidence/PLAN-EXC-01-chapter-line-reuse.json",
+          "exact_reused_lines": 22,
+          "novel_lines": []
+        }
+      ],
+      "what_was_read": "Every nonempty stripped line matched fully read CP12 main or one of the six separately read historical delta lines. Old chapter labels/counts do not supersede CP12.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/chapters/07_CP02_FULL_PROPAGATION_REBUILT.md",
+      "sha256": "fdd749bd3f63909af54cbfa375ec732787ab2457c26b8e8bd4216012ff2c722e",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "exact_current_main_line_reuse_plus_all_six_historical_deltas_read",
+      "read_ranges": [
+        {
+          "method": "exact_line_reuse",
+          "source_evidence": "evidence/PLAN-EXC-01-chapter-line-reuse.json",
+          "exact_reused_lines": 40,
+          "novel_lines": [
+            51,
+            76
+          ]
+        }
+      ],
+      "what_was_read": "Every nonempty stripped line matched fully read CP12 main or one of the six separately read historical delta lines. Old chapter labels/counts do not supersede CP12.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP12_COMPOSITION_AND_CHANGE_INDEX.json",
+      "sha256": "2df3200b4b98fc2f1b31f4bb957e1b900ff4e0773b9e40212fc98e0ceb304f45",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "current_normative_fields_read_and_exact_current_object_validation",
+      "read_ranges": [
+        {
+          "evidence": "evidence/PLAN-EXC-01-current-index-validation.json"
+        }
+      ],
+      "what_was_read": "Read current selection/causal successor rules and qualification; checked all350 other current file identities,9 changed source identities,10 new native objects,2720 immutable rows,4 parent rows/4 mutable snapshots and297 cut references. Historical old identity/digest maps and author readback claims remain structural/history, not full former-body comparison.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/SOURCE_READING_LOG.json",
+      "sha256": "bd32b7d3a17e5e29c9ab05407a21331202a4606385e3e8e76a6d2153f35451b5",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "historical_author_coverage_claims_and_own_boundaries_read",
+      "read_ranges": [],
+      "what_was_read": "Read own coverage boundaries and excluded scopes. Author136-entry source reading claims are not credited as this task reading.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP04_AUTHOR_MAPS/CP04_REQUIRED_RELATIONS_AUTHOR_MAPPING.json",
+      "sha256": "c276e9c9e6f77f02c08fd1617a9f1f086b6f72be45a8ab1ce9e487b7f5d65fc7",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "roles": [
+        "current_selected_member"
+      ],
+      "coverage": "historical_assistance_role_and_qualification_read",
+      "read_ranges": [],
+      "what_was_read": "Read purpose/asReadFrom/qualification and field inventory; original snapshot mappings require refreshing if parent roots change and do not replace current complete records. Old full mapping body not reread.",
+      "unread_ranges": "Referenced historical source bodies do not inherit reading; opaque identity lists are structural evidence, not business prose."
+    }
+  ],
+  "disposition_counts": {
+    "read_current_or_context_with_explicit_reuse_boundary": 50,
+    "superseded_version_or_author_observation_kept_for_history": 110,
+    "historical_document_authoring_tool_not_product_implementation": 169,
+    "source_preparation_and_historical_review_provenance": 22
+  },
+  "method": "New own-text/field reads, exact chapter-line reuse and current-index object comparisons; retained author/history/preparation manifests explicitly not credited as normative body reads.",
+  "current_member_ledger": "evidence/root-plan-exc-current-members.json",
+  "business_tests": "NOT_RUN",
+  "runtime": "UNPROVEN",
+  "actual_owner_adoption": 0
+}

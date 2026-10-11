@@ -1,0 +1,323 @@
+{
+  "scope": "NCR concentrated documentation review: module/four appendices, current evidence, source hashes/ranges and local links. No business/SQL/schema-validator/compiler/runtime execution.",
+  "markdown_count": 5,
+  "link_count": 378,
+  "reading_source_hashes": 175,
+  "errors": [],
+  "status": "PASS",
+  "acceptance_archive_manifest_metadata": {
+    "source": "handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/A-CRM/QA-NCR-01/versions/R12/NCR-R12-ARCHIVE-1018018f-7682-4c25-bfee-abc1265aef52",
+    "entry_count": 34,
+    "resolved_exact_count": 34,
+    "entries": [
+      {
+        "relative_path": "ARCHIVE-PREFLIGHT.json",
+        "sha256": "fef1eb0eea0d7d779679afc4d39522aadd558198c0d136f6494f3ce3549d64d2",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/git-objects/e4/e47a36cdece3c315__ARCHIVE-PREFLIGHT.json",
+        "size_equal": true,
+        "git_blob_equal": true,
+        "sha_equal": true
+      },
+      {
+        "relative_path": "IDENTITY.json",
+        "sha256": "dcba4fd5d150453fbc58a66aee6f0a50e19c87dc35768ff6d43a68e6e5382f7c",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/git-objects/cc/cc38b7a634adb20f__IDENTITY.json",
+        "size_equal": true,
+        "git_blob_equal": true,
+        "sha_equal": true
+      },
+      {
+        "relative_path": "INDEX.md",
+        "sha256": "b4a245583418f84afd04a92d3d794b148797674bfb000b8eba61bb71a9d963a4",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b4/b4a245583418f84a__INDEX.md",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "LIBRARY-REFERENCES.json",
+        "sha256": "0758ca11c692455e5aaba8215c16de09e8624911aa95564138dc224f8b856def",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/07/0758ca11c692455e__LIBRARY-REFERENCES.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "acceptance/UA-20261004-A-QA-NCR-R12-ROOT-DECISION.txt",
+        "sha256": "389806299e2681bc5d2754bdac645eaa9cfdec9741825e453c8d7764962083ae",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/389806299e2681bc__UA-20261004-A-QA-NCR-R12-ROOT-DECISION.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "acceptance/UA-20261004-A-QA-NCR-R12.json",
+        "sha256": "d31414d5a965b09c846da367ca64c50a3b8b94caf121a4813b39ca87191fbbc3",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d3/d31414d5a965b09c__UA-20261004-A-QA-NCR-R12.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "adoptions/FIN_WMS/QA-NCR-R12-FINANCE-WMS-PRECISE-DESIGN-DELTA-ADOPTIONS-20261004.json",
+        "sha256": "b5c7cf18171b011d2d5040d85ba54c71f2827cd837242dbf4b2c428bd765609b",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b5/b5c7cf18171b011d__QA-NCR-R12-FINANCE-WMS-PRECISE-DESIGN-DELTA-ADOPTIONS-20261004.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "adoptions/MAIN_TECH_PUR/LIBRARY-R12-REPORT-AND-RECORDS-RECEIPT.json",
+        "sha256": "95c54dd73de77b77ac2236e26f4d8c1f4e1c4a890e58bee52922d32f4b091456",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/95c54dd73de77b77__LIBRARY-R12-REPORT-AND-RECORDS-RECEIPT.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "adoptions/MAIN_TECH_PUR/MAIN-TECH-PUR-R12-PRECISE-OWNER-DELTA-ADOPTION-RECORDS.json",
+        "sha256": "ab08516f1ecce05bf63156bcc5eed5f11e9de310b00a5efa317434e8a4d4a026",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ab/ab08516f1ecce05b__MAIN-TECH-PUR-R12-PRECISE-OWNER-DELTA-ADOPTION-RECORDS.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "adoptions/MAIN_TECH_PUR/QA-NCR-R12-MAIN-TECH-PUR-AUTHORITY-PRECISE-DESIGN-DELTA-ADOPTION-REVIEW.txt",
+        "sha256": "706343f425114b3ce1d97ec3d6cd793d89a21d44b9d878a0567be91458cbb845",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/706343f425114b3c__QA-NCR-R12-MAIN-TECH-PUR-AUTHORITY-PRECISE-DESIGN-DELTA-ADOPTION-REVIEW.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "adoptions/QA_MES/LIBRARY-R12-REPORT-RECEIPT.json",
+        "sha256": "2bb5d2a515aafc68c51b07dd52539e278b107b27a90af1227395471c03376e11",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2bb5d2a515aafc68__LIBRARY-R12-REPORT-RECEIPT.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "adoptions/QA_MES/QA-MES-R12-PRECISE-DESIGN-DELTA-ADOPTION-REVIEW.txt",
+        "sha256": "18c79dfa59c770cde677b79a64e524cdd14e447ba6cec65119b4facb8a869348",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/18/18c79dfa59c770cd__QA-MES-R12-PRECISE-DESIGN-DELTA-ADOPTION-REVIEW.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "adoptions/QA_MES/QA-MES-R12-PRECISE-OWNER-DELTA-ADOPTION-RECORDS.json",
+        "sha256": "5a52092d2e699241b00bdc119bd8161d3ac8d21a143c6dc77b030e75f7078974",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5a/5a52092d2e699241__QA-MES-R12-PRECISE-OWNER-DELTA-ADOPTION-RECORDS.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R12-ACTIVE-ARTIFACT-INDEX.json",
+        "sha256": "f98ed1c8a0fdb9d42ef426b514a2636af991f3ba541745fefe726e4800edf7fd",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f9/f98ed1c8a0fdb9d4__NCR-R12-ACTIVE-ARTIFACT-INDEX.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R12-ADOPTION-DELTA-INDEX.json",
+        "sha256": "edb4735318fa492aad339eb919f4468f7fb8bd992c85492114f7eaaeccccfbb8",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ed/edb4735318fa492a__NCR-R12-ADOPTION-DELTA-INDEX.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R12-DIFF.json",
+        "sha256": "26a0ff3ca17fb85545aa299a034cf8fafacdc4645d2725d29fbdfc901cbe56a9",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/26a0ff3ca17fb855__NCR-R12-DIFF.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R12-MINIMAL-CHANGE-INDEX.json",
+        "sha256": "c35c745ac5fa69c1957cc0f80c1511dd4179f2678ff081e5550d921a3cd6dbf8",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c35c745ac5fa69c1__NCR-R12-MINIMAL-CHANGE-INDEX.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R12-PACKAGE-MANIFEST.json",
+        "sha256": "00bd4bd92b51579fa5c7a27715311ae528640dd7869a1a39f10ebbd0560bc036",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/00/00bd4bd92b51579f__NCR-R12-PACKAGE-MANIFEST.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R12-REVIEW-RESPONSE.json",
+        "sha256": "bdf63c8664ad5665ea429c880f74fb5a6bbd767381f04c52535f8b03f1950909",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdf63c8664ad5665__NCR-R12-REVIEW-RESPONSE.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R12-TAIL-INSTANCE-INDEX.json",
+        "sha256": "f829176afed4880e4d3c28a2524f54a2d8e94be449531c4f64e42ebf9e40d3fc",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f829176afed4880e__NCR-R12-TAIL-INSTANCE-INDEX.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R6-SIX-SPEC-TRACE.json",
+        "sha256": "1873fccdc6df89416e523b0df37db88880dbe58b5f98b048682fb59fc5624c84",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/18/1873fccdc6df8941__NCR-R6-SIX-SPEC-TRACE.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/NCR-R6-SOURCE-PINS.json",
+        "sha256": "234a638911960eefeacf1bf5b54ae0d537956ef2eb2a76e60caf31591a04e676",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/23/234a638911960eef__NCR-R6-SOURCE-PINS.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/ORIGINAL-50-AC-TRACE.json",
+        "sha256": "ae52063afef997b9d6ed1ed7ec7378ed1d8df07e206d70e99dabbd51f10b0a45",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ae/ae52063afef997b9__ORIGINAL-50-AC-TRACE.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/QA-NCR-01_SIX-SPEC-COVERAGE_R12.md",
+        "sha256": "03492141eed1764bd0210792a4f6207cbc872fa48b94ea28c9ceee814d79e66c",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/03/03492141eed1764b__QA-NCR-01_SIX-SPEC-COVERAGE_R12.md",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "candidate/QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+        "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "governance/LIBRARY-FINAL-REPORT-AND-EVIDENCE-RECEIPT.json",
+        "sha256": "1664c706bf3dd20505a7f49da4160e0d0bb16bc6d97179f69231ec1ca74a9c99",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/16/1664c706bf3dd205__LIBRARY-FINAL-REPORT-AND-EVIDENCE-RECEIPT.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "governance/QA-NCR-R12-COORD-O1-FINAL-DESIGN-ACCEPTANCE-GOVERNANCE-REVIEW-GPT61-XHIGH.txt",
+        "sha256": "712b83f6cde9282e865e63ad63c26c95b70811271e32b9dc47768f16b36ad2c9",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/71/712b83f6cde9282e__QA-NCR-R12-COORD-O1-FINAL-DESIGN-ACCEPTANCE-GOVERNANCE-REVIEW-GPT61-XHIGH.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "governance/QA-NCR-R12-FINAL-ACCEPTANCE-GOVERNANCE-EVIDENCE.json",
+        "sha256": "b32065ddbe0ae8aa35c11cb0474121f2d0a203e4f9a838a9174baf0103ecc2d0",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b32065ddbe0ae8aa__QA-NCR-R12-FINAL-ACCEPTANCE-GOVERNANCE-EVIDENCE.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "review/QA-NCR-SIX-SPEC-R12-INDEPENDENT-STATIC-FINAL-REVIEW-GPT61-XHIGH.txt",
+        "sha256": "9c7ac8d4957790d41f68fe636c9c1ec1cd19c6cc4ac0ec23702d27e31a329b46",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c7ac8d4957790d4__QA-NCR-SIX-SPEC-R12-INDEPENDENT-STATIC-FINAL-REVIEW-GPT61-XHIGH.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "review/SR-20261004-A-QA-NCR-R12-FINAL.json",
+        "sha256": "f8f7fa69c71152ca78c86338e20e590e519a1d45a8c53920a762950d9647935c",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8f7fa69c71152ca__SR-20261004-A-QA-NCR-R12-FINAL.json",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "review/history/R10-INDEPENDENT-STATIC-DELTA-REVIEW-INPUT.txt",
+        "sha256": "0d7568e2ee4013606f2271b4daf48b2b8a726844eb39f1e1b5fed0cb96dd989d",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0d/0d7568e2ee401360__R10-INDEPENDENT-STATIC-DELTA-REVIEW-INPUT.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "review/history/R11-INDEPENDENT-STATIC-DELTA-REVIEW-INPUT.txt",
+        "sha256": "a8f50ae8b02610cba58a7bf9465054ba1fb0ae7ea33caa4d3857e708c9c14857",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a8/a8f50ae8b02610cb__R11-INDEPENDENT-STATIC-DELTA-REVIEW-INPUT.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "review/history/R9-INDEPENDENT-WHOLE-REVIEW-INPUT.txt",
+        "sha256": "c8b6de49b5dd9541077d0167cfd38467b7febc9eb85b78b596963cdf5cbae9e2",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c8b6de49b5dd9541__R9-INDEPENDENT-WHOLE-REVIEW-INPUT.txt",
+        "size_equal": true,
+        "git_blob_equal": true
+      },
+      {
+        "relative_path": "review/reviewer_tail_relation_readback.json",
+        "sha256": "c0fac116d5978a1f9d539fde9b236e0497b93a7336510786571ece5b0c8613d3",
+        "resolved_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/git-objects/63/63c0f0328cb2c7cd__reviewer_tail_relation_readback.json",
+        "size_equal": true,
+        "git_blob_equal": true,
+        "sha_equal": true
+      }
+    ],
+    "meaning": "Local source-byte identity only; does not replay publication, approval or runtime checks"
+  },
+  "unique_reading_source_hashes": 175,
+  "json_syntax_files": 5,
+  "adoption_merge_checks": {
+    "exact_source_files": 10,
+    "exact_current_json_records": 15,
+    "exact_current_report_sections": 11,
+    "unique_current_scope_ids": 26,
+    "member_disposition_total": 273,
+    "member_disposition_counts": {
+      "current_or_support_semantics_read_or_exact_reused": 156,
+      "identity_provenance_or_author_results": 54,
+      "historical_predecessor_or_candidate_implementation": 50,
+      "authoring_tool_text_not_executed": 13
+    },
+    "remaining_current_semantic_inputs": 0,
+    "actual_runtime_tests": "NOT_RUN"
+  },
+  "concentrated_content_review": {
+    "status": "NO_REMAINING_DOCUMENTATION_BLOCKER_AFTER_CORRECTIONS",
+    "reviewed_documents": [
+      "D:/CP6/docs/CP6_开发设计文档_20261010/modules/QA-NCR-01.md",
+      "D:/CP6/docs/CP6_开发设计文档_20261010/contracts/QA-NCR-01-专业采用与版本继承附册.md",
+      "D:/CP6/docs/CP6_开发设计文档_20261010/contracts/QA-NCR-01-数据类型与事务附册.md",
+      "D:/CP6/docs/CP6_开发设计文档_20261010/contracts/QA-NCR-01-普通场景与来源闭包.md",
+      "D:/CP6/docs/CP6_开发设计文档_20261010/contracts/QA-NCR-01-返工消费与Owner合同.md"
+    ],
+    "method": "Full prose review of five current handbook documents plus source-directed checks; 175 source identities/ranges verified, not all originals reread. Root adoption semantics explicitly reused by exact SHA.",
+    "corrections": [
+      {
+        "issue": "Normal appendix incorrectly included original version in sourceUseKeyDigest.",
+        "resolution": "Root hash excludes version/digest; SourceVersionBinding preserves exact original version separately.",
+        "evidence": [
+          {
+            "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/ebb0386a3a64d072__NCR-R6-DIGEST-DOMAINS.json",
+            "line": 143
+          },
+          {
+            "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/947a92499bfa19f6__NCR-R6-CORE-AND-PERSISTENCE.md",
+            "line": 139
+          }
+        ]
+      },
+      {
+        "issue": "Data appendix stale ordinary-data/adoption pending status.",
+        "resolution": "Updated actual completed scope and exact root26 adoption reuse."
+      },
+      {
+        "issue": "Broad WMS ownership and post-head guard DAG could be misread.",
+        "resolution": "WMS stock-only disposition; nonstock actual requirement Owner. All current guards pass before one commit; DAG is in-transaction object/row construction."
+      },
+      {
+        "issue": "Relative links/incorrect continuous-case navigation in root appendix.",
+        "resolution": "Absolute delivery links and normal-scene navigation; added26 precise source-line anchors without changing professional conclusions."
+      }
+    ],
+    "retained_open_items": [
+      "NCR-TYPE-01 and NCR-FIELD-01 static design alignment, no runtime defect claimed.",
+      "Q1-Q4 historical original-source limitations remain; new Main6 is not recovered CP8/dispatchCP6.",
+      "Runtime authority/registration/IAM/native-codec/shared-UoW/all-writer/migration/business acceptance UNPROVEN/NOT_RUN.",
+      "Two old author-only adoption indexes metadata; separate Main machine records ab08516 identity-only, eleven current scopes read from complete current report."
+    ],
+    "source_mutations": false,
+    "archived_programs_executed": false,
+    "business_tests": "NOT_RUN",
+    "actions": "NOT_RUN"
+  }
+}

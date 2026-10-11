@@ -1,0 +1,3009 @@
+{
+  "scope": "Report matrix field/hash equality only, not adoption authority or runtime proof",
+  "records": [
+    {
+      "ordinal": 1,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-UOM-UomNativeFact",
+      "version": "3.0-proposed",
+      "line": 125,
+      "owner": "UOM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-UOM-UomNativeFact/contractBody",
+        "expected": "8e393884f0c4353fe625d997a9a9704255842389b76561876b7482c4b873531c",
+        "actual": "8e393884f0c4353fe625d997a9a9704255842389b76561876b7482c4b873531c",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-UOM-UomNativeFact/completeCodecPackage",
+        "expected": "5bc53a543090aaee4d06ace845bd7263b08deae7a50506bfef29b943df77aab8",
+        "actual": "5bc53a543090aaee4d06ace845bd7263b08deae7a50506bfef29b943df77aab8",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 2,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-ITEM-ItemNativeFact",
+      "version": "3.0-proposed",
+      "line": 130,
+      "owner": "ITEM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-ITEM-ItemNativeFact/contractBody",
+        "expected": "bd6afe2acdde219676eab6b2c3e5449146c285587c0b27bd483fb353364aadca",
+        "actual": "bd6afe2acdde219676eab6b2c3e5449146c285587c0b27bd483fb353364aadca",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-ITEM-ItemNativeFact/completeCodecPackage",
+        "expected": "6f988494281622f749da63173fffb8d03b58e4eea4a18411339dd03a6a6abfdf",
+        "actual": "6f988494281622f749da63173fffb8d03b58e4eea4a18411339dd03a6a6abfdf",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 3,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-SITE-SiteNativeFact",
+      "version": "3.0-proposed",
+      "line": 135,
+      "owner": "SITE",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-SITE-SiteNativeFact/contractBody",
+        "expected": "a2c95de481ae8eeb66ba29fa15b6f1a90efb644688dbd0b9d76e11501c6e4109",
+        "actual": "a2c95de481ae8eeb66ba29fa15b6f1a90efb644688dbd0b9d76e11501c6e4109",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-SITE-SiteNativeFact/completeCodecPackage",
+        "expected": "1000ad72ed244133515d6077fe886270a44486b2f21c55a6a5dae4c950b91697",
+        "actual": "1000ad72ed244133515d6077fe886270a44486b2f21c55a6a5dae4c950b91697",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 4,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-LEGAL-ENTITY-LegalEntityNativeFact",
+      "version": "3.0-proposed",
+      "line": 140,
+      "owner": "LEGAL-ENTITY",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-LEGAL-ENTITY-LegalEntityNativeFact/contractBody",
+        "expected": "78c160c10ad62bc0c6a5aa9b72073ff72b42ce55878416612fc94008a8a14ec8",
+        "actual": "78c160c10ad62bc0c6a5aa9b72073ff72b42ce55878416612fc94008a8a14ec8",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-LEGAL-ENTITY-LegalEntityNativeFact/completeCodecPackage",
+        "expected": "82ebc6d40a0c288c9760e3592d9db265b51f3b2980de530b11dfeeca9acf0a80",
+        "actual": "82ebc6d40a0c288c9760e3592d9db265b51f3b2980de530b11dfeeca9acf0a80",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 5,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLM-TechnicalNativeFact",
+      "version": "3.0-proposed",
+      "line": 145,
+      "owner": "PLM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLM-TechnicalNativeFact/contractBody",
+        "expected": "0c8174d451c4bc1c300b7e60f9dd853cbfe8c928fa55ac4d7afc0febe8209b6a",
+        "actual": "0c8174d451c4bc1c300b7e60f9dd853cbfe8c928fa55ac4d7afc0febe8209b6a",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLM-TechnicalNativeFact/completeCodecPackage",
+        "expected": "fe5a1a7de5f1b3b8258ffcaa07f70678172e6df4831013c6dc5fc1b85566379c",
+        "actual": "fe5a1a7de5f1b3b8258ffcaa07f70678172e6df4831013c6dc5fc1b85566379c",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 6,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-POL-PolicyNativeFact",
+      "version": "3.0-proposed",
+      "line": 150,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-PolicyNativeFact/contractBody",
+        "expected": "b5492a65996754890cf428f94081fe97178595bd02cc8f040da70e5d80888e7f",
+        "actual": "b5492a65996754890cf428f94081fe97178595bd02cc8f040da70e5d80888e7f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-PolicyNativeFact/completeCodecPackage",
+        "expected": "f0adc534118827ca9ef94306f54bd90bd793e3207fed0330918494511d5002af",
+        "actual": "f0adc534118827ca9ef94306f54bd90bd793e3207fed0330918494511d5002af",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 7,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-POL-CalendarNativeFact",
+      "version": "3.0-proposed",
+      "line": 155,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-CalendarNativeFact/contractBody",
+        "expected": "b6894458d9eb8086f967494331b33f944590742c28c85e565483478662662acc",
+        "actual": "b6894458d9eb8086f967494331b33f944590742c28c85e565483478662662acc",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-CalendarNativeFact/completeCodecPackage",
+        "expected": "caf62aa348ad4b8c5aeb292d10d428c36fffc9cd0f9cd203773e6fe9eb9b96b7",
+        "actual": "caf62aa348ad4b8c5aeb292d10d428c36fffc9cd0f9cd203773e6fe9eb9b96b7",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 8,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-QUALITY-QualityNativeFact",
+      "version": "3.0-proposed",
+      "line": 160,
+      "owner": "QUALITY",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-QUALITY-QualityNativeFact/contractBody",
+        "expected": "8da0f1e00a621d864b7e7dc3fd1c6a3ec49a30b2b78f5ed0194354776696af49",
+        "actual": "8da0f1e00a621d864b7e7dc3fd1c6a3ec49a30b2b78f5ed0194354776696af49",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-QUALITY-QualityNativeFact/completeCodecPackage",
+        "expected": "3d2a5d72d4063e5c8d39c8dfd5cdb25dec75747a9080fd93992eb98fc9176f94",
+        "actual": "3d2a5d72d4063e5c8d39c8dfd5cdb25dec75747a9080fd93992eb98fc9176f94",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 9,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-SUP-ProtectionNativeFact",
+      "version": "3.0-proposed",
+      "line": 165,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-ProtectionNativeFact/contractBody",
+        "expected": "ec3e8da4eafbf9e7635bae9c6861fc57ca3f021105a6868553b69741b2ab5b85",
+        "actual": "ec3e8da4eafbf9e7635bae9c6861fc57ca3f021105a6868553b69741b2ab5b85",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-ProtectionNativeFact/completeCodecPackage",
+        "expected": "750fc2197827d74cb74bb067366b58f807926d923fd9e5dbdf5f9ec438192395",
+        "actual": "750fc2197827d74cb74bb067366b58f807926d923fd9e5dbdf5f9ec438192395",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 10,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLANNING-DEMAND-DemandSourceNativeFact",
+      "version": "3.0-proposed",
+      "line": 170,
+      "owner": "PLANNING-DEMAND",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-DemandSourceNativeFact/contractBody",
+        "expected": "be5cb3efdcfc61e2582afb09437acfed0cb2b842f5418d6e0989b937cbe70254",
+        "actual": "be5cb3efdcfc61e2582afb09437acfed0cb2b842f5418d6e0989b937cbe70254",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-DemandSourceNativeFact/completeCodecPackage",
+        "expected": "22a8e6102bf4be6f79cb1a199c5d22ce0ed85f011ac5fa3bd74ec71f7d6f316f",
+        "actual": "22a8e6102bf4be6f79cb1a199c5d22ce0ed85f011ac5fa3bd74ec71f7d6f316f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 11,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLANNING-DEMAND-DemandControlNativeFact",
+      "version": "3.0-proposed",
+      "line": 175,
+      "owner": "PLANNING-DEMAND",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-DemandControlNativeFact/contractBody",
+        "expected": "58344eed92ad5bd459f06be655dc7342b64c6d421d1eb1a9936c4c59b2d8602a",
+        "actual": "58344eed92ad5bd459f06be655dc7342b64c6d421d1eb1a9936c4c59b2d8602a",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-DemandControlNativeFact/completeCodecPackage",
+        "expected": "f1560b562b8a27cb110f63303a650a2efac80276585b6a249c04ed41ecadf0e1",
+        "actual": "f1560b562b8a27cb110f63303a650a2efac80276585b6a249c04ed41ecadf0e1",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 12,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLANNING-DEMAND-DemandNativeFact",
+      "version": "3.0-proposed",
+      "line": 180,
+      "owner": "PLANNING-DEMAND",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-DemandNativeFact/contractBody",
+        "expected": "41da164794f380202caad598e398ce2b9af46ed44583c97540354bf34fe6e9af",
+        "actual": "41da164794f380202caad598e398ce2b9af46ed44583c97540354bf34fe6e9af",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-DemandNativeFact/completeCodecPackage",
+        "expected": "f836148792eb31cd3403ae802abfa18f0804c61b1dd68c5bfde4e24e34a61f8d",
+        "actual": "f836148792eb31cd3403ae802abfa18f0804c61b1dd68c5bfde4e24e34a61f8d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 13,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-WMS-STOCK-StockNativeFact",
+      "version": "3.0-proposed",
+      "line": 185,
+      "owner": "WMS-STOCK",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-WMS-STOCK-StockNativeFact/contractBody",
+        "expected": "e18a3014f0016c56ef654758cb08129e704eb0fea7c27a545f08e05b662c0890",
+        "actual": "e18a3014f0016c56ef654758cb08129e704eb0fea7c27a545f08e05b662c0890",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-WMS-STOCK-StockNativeFact/completeCodecPackage",
+        "expected": "357f91acba4c7f996acb0d69c33f6680f311a557d8493128a109131f01826333",
+        "actual": "357f91acba4c7f996acb0d69c33f6680f311a557d8493128a109131f01826333",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 14,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-PO-FirmNativeFact",
+      "version": "3.0-proposed",
+      "line": 190,
+      "owner": "PLAN-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-PO-FirmNativeFact/contractBody",
+        "expected": "eabc94392bf6a969c10eee4266dc6a8cfaffea7c30e1f92c9ffb60274727615b",
+        "actual": "eabc94392bf6a969c10eee4266dc6a8cfaffea7c30e1f92c9ffb60274727615b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-PO-FirmNativeFact/completeCodecPackage",
+        "expected": "397869c492629c91c5b829571ce852c2b72c5d4714732c161204042bcd189c33",
+        "actual": "397869c492629c91c5b829571ce852c2b72c5d4714732c161204042bcd189c33",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 15,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-WMS-STOCK-MovementNativeFact",
+      "version": "3.0-proposed",
+      "line": 195,
+      "owner": "WMS-STOCK",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-WMS-STOCK-MovementNativeFact/contractBody",
+        "expected": "93aa5cf82246b8ee5db8885882b48adb03d6f5a361f50d79a9756e14b239b63a",
+        "actual": "93aa5cf82246b8ee5db8885882b48adb03d6f5a361f50d79a9756e14b239b63a",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-WMS-STOCK-MovementNativeFact/completeCodecPackage",
+        "expected": "5ffcfb2ba7e3ea889755cc7fa68b9160cd5fab38204367a9ef7dc0d5616aa121",
+        "actual": "5ffcfb2ba7e3ea889755cc7fa68b9160cd5fab38204367a9ef7dc0d5616aa121",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 16,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpRunNativeFact",
+      "version": "3.0-proposed",
+      "line": 200,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpRunNativeFact/contractBody",
+        "expected": "4b88ec3189078527d4cf6db278c2772a0bcc1ba1902948c5cdc6f5dbae3b995d",
+        "actual": "4b88ec3189078527d4cf6db278c2772a0bcc1ba1902948c5cdc6f5dbae3b995d",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpRunNativeFact/completeCodecPackage",
+        "expected": "47b8517ad0391aa6e9b8ef28b5bcec16d42912498765af33d49f093256e0aaca",
+        "actual": "47b8517ad0391aa6e9b8ef28b5bcec16d42912498765af33d49f093256e0aaca",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 17,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpInputNativeFact",
+      "version": "3.0-proposed",
+      "line": 205,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpInputNativeFact/contractBody",
+        "expected": "28b6145eddf46bf0ec70740676b34f641c4f3bcfa2385459e7b26e004a87533f",
+        "actual": "28b6145eddf46bf0ec70740676b34f641c4f3bcfa2385459e7b26e004a87533f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpInputNativeFact/completeCodecPackage",
+        "expected": "1076473a1c53c1e776802262e0a4b184dc8ff7bc6a7acd6b2b9e0f1b3958516d",
+        "actual": "1076473a1c53c1e776802262e0a4b184dc8ff7bc6a7acd6b2b9e0f1b3958516d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 18,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpInputManifestNativeFact",
+      "version": "3.0-proposed",
+      "line": 210,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpInputManifestNativeFact/contractBody",
+        "expected": "b68616ed80394c0db419368e7f8d110bb4266d162fed6104645784e50e87ac48",
+        "actual": "b68616ed80394c0db419368e7f8d110bb4266d162fed6104645784e50e87ac48",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpInputManifestNativeFact/completeCodecPackage",
+        "expected": "01a7f1429823f94f295a7182f19c9e47f4ab535a791e0b1a1a11997335566c30",
+        "actual": "01a7f1429823f94f295a7182f19c9e47f4ab535a791e0b1a1a11997335566c30",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 19,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpAttemptNativeFact",
+      "version": "3.0-proposed",
+      "line": 215,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpAttemptNativeFact/contractBody",
+        "expected": "5671aff791c9adf9a0d6ce4372b5cd65787d6831dc7120e1ae94c2d61fd887ae",
+        "actual": "5671aff791c9adf9a0d6ce4372b5cd65787d6831dc7120e1ae94c2d61fd887ae",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpAttemptNativeFact/completeCodecPackage",
+        "expected": "867752560f90791879e25090abef1f70bb1a01c0d5a4fe93a41572a03e44b1e3",
+        "actual": "867752560f90791879e25090abef1f70bb1a01c0d5a4fe93a41572a03e44b1e3",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 20,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpAlgorithmNativeFact",
+      "version": "3.0-proposed",
+      "line": 220,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpAlgorithmNativeFact/contractBody",
+        "expected": "03ea7ddc76a1e7f2ff870037574f583f4024d8e105aeca6c5908ad55857f1fd6",
+        "actual": "03ea7ddc76a1e7f2ff870037574f583f4024d8e105aeca6c5908ad55857f1fd6",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpAlgorithmNativeFact/completeCodecPackage",
+        "expected": "14ca4fd53a731abb34f3becef90e9b0819af52bd391b999c3659da3673d8878a",
+        "actual": "14ca4fd53a731abb34f3becef90e9b0819af52bd391b999c3659da3673d8878a",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 21,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpOutputSealNativeFact",
+      "version": "3.0-proposed",
+      "line": 225,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpOutputSealNativeFact/contractBody",
+        "expected": "e3f45de1ab5a5266309d1bcdf72d3b560566b4893088cbd9a57b6f06c41f67ec",
+        "actual": "e3f45de1ab5a5266309d1bcdf72d3b560566b4893088cbd9a57b6f06c41f67ec",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpOutputSealNativeFact/completeCodecPackage",
+        "expected": "e59aa7258db76e8d12ba1f870f50aaade03a416ef6a407e1c285939e8d71a4ff",
+        "actual": "e59aa7258db76e8d12ba1f870f50aaade03a416ef6a407e1c285939e8d71a4ff",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 22,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpResultSetNativeFact",
+      "version": "3.0-proposed",
+      "line": 230,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpResultSetNativeFact/contractBody",
+        "expected": "6edc7d1e17089b0d4be24095098da449674b4e0a20b57c52dd9a7dcffc3b8be4",
+        "actual": "6edc7d1e17089b0d4be24095098da449674b4e0a20b57c52dd9a7dcffc3b8be4",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpResultSetNativeFact/completeCodecPackage",
+        "expected": "f243409d317091a6d1bea9f018faaa05b48ff8d6a778181837bf18d3f4190d75",
+        "actual": "f243409d317091a6d1bea9f018faaa05b48ff8d6a778181837bf18d3f4190d75",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 23,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpResultBusinessFact",
+      "version": "3.0-proposed",
+      "line": 235,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpResultBusinessFact/contractBody",
+        "expected": "afa5378bd536dd025adc3f1b88067211fbe5a2ab355ae1c0a5e939ff0f21e799",
+        "actual": "afa5378bd536dd025adc3f1b88067211fbe5a2ab355ae1c0a5e939ff0f21e799",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpResultBusinessFact/completeCodecPackage",
+        "expected": "48b7def8212fe735ae5d9900783cd4da80bfd39c62343718b011009b38a20a72",
+        "actual": "48b7def8212fe735ae5d9900783cd4da80bfd39c62343718b011009b38a20a72",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 24,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpValidationNativeFact",
+      "version": "3.0-proposed",
+      "line": 240,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpValidationNativeFact/contractBody",
+        "expected": "b2a027220f9070934d61796fd10fafcf425535aab5f650d1b9b915a8387e8be3",
+        "actual": "b2a027220f9070934d61796fd10fafcf425535aab5f650d1b9b915a8387e8be3",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpValidationNativeFact/completeCodecPackage",
+        "expected": "c396b47c3e3ac0fa14ee841306c637ef21d89a0c968829cd6ae8d9cfdec27644",
+        "actual": "c396b47c3e3ac0fa14ee841306c637ef21d89a0c968829cd6ae8d9cfdec27644",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 25,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpSelectionNativeFact",
+      "version": "3.0-proposed",
+      "line": 245,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpSelectionNativeFact/contractBody",
+        "expected": "9d15c1f0b5d8090970d341644b8c46f2638f5d8586880338152e629159b3e910",
+        "actual": "9d15c1f0b5d8090970d341644b8c46f2638f5d8586880338152e629159b3e910",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpSelectionNativeFact/completeCodecPackage",
+        "expected": "a01b7d1c022755bd55245283ab930ec3aadeae9db57219a0dc400344f8f98db9",
+        "actual": "a01b7d1c022755bd55245283ab930ec3aadeae9db57219a0dc400344f8f98db9",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 26,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpPublicationNativeFact",
+      "version": "3.0-proposed",
+      "line": 250,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpPublicationNativeFact/contractBody",
+        "expected": "16ce56ea5c8baccc12f5e702dcadbc8ff55bc79d89b645d52d07295811da0045",
+        "actual": "16ce56ea5c8baccc12f5e702dcadbc8ff55bc79d89b645d52d07295811da0045",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpPublicationNativeFact/completeCodecPackage",
+        "expected": "55d9c237e0bad4ce5c5d640d1684b73fb1d6b7db8c55138e123c4d480e9b440f",
+        "actual": "55d9c237e0bad4ce5c5d640d1684b73fb1d6b7db8c55138e123c4d480e9b440f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 27,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpEffectiveSetNativeFact",
+      "version": "3.0-proposed",
+      "line": 255,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpEffectiveSetNativeFact/contractBody",
+        "expected": "a7b4bbcc71215c6434438f146667d90619abbbe50b2e07b22aa91b516e2ced89",
+        "actual": "a7b4bbcc71215c6434438f146667d90619abbbe50b2e07b22aa91b516e2ced89",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpEffectiveSetNativeFact/completeCodecPackage",
+        "expected": "4b4f17e51fdd12972050adf85bbb8be20bba2a79acc8ae59c85b168e5699d7fe",
+        "actual": "4b4f17e51fdd12972050adf85bbb8be20bba2a79acc8ae59c85b168e5699d7fe",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 28,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpProtectionSetNativeFact",
+      "version": "3.0-proposed",
+      "line": 260,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpProtectionSetNativeFact/contractBody",
+        "expected": "4233677e3b73c426341a2fd195a2feba714ccc03131f595f26b21f642640a071",
+        "actual": "4233677e3b73c426341a2fd195a2feba714ccc03131f595f26b21f642640a071",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpProtectionSetNativeFact/completeCodecPackage",
+        "expected": "4115943958a8c93c9fe5c6eabd867a229b732fe4d7949e30fba7df4d95e1f7d9",
+        "actual": "4115943958a8c93c9fe5c6eabd867a229b732fe4d7949e30fba7df4d95e1f7d9",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 29,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLANNING-DEMAND-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 265,
+      "owner": "PLANNING-DEMAND",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-CurrentHeadNativeFact/contractBody",
+        "expected": "60dbf956484d64d7040a6858e30c9267418fdf033ef1c1d7107e47979f3a330d",
+        "actual": "60dbf956484d64d7040a6858e30c9267418fdf033ef1c1d7107e47979f3a330d",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 30,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-WMS-STOCK-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 270,
+      "owner": "WMS-STOCK",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-WMS-STOCK-CurrentHeadNativeFact/contractBody",
+        "expected": "7ab2ba08ff638c24381df5fedbc107d644056bbd4da8b8ee960c7418dfad75bf",
+        "actual": "7ab2ba08ff638c24381df5fedbc107d644056bbd4da8b8ee960c7418dfad75bf",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-WMS-STOCK-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 31,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-POL-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 275,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-CurrentHeadNativeFact/contractBody",
+        "expected": "8779965afa326f5cfeab3feb5ccdeda065ae19ea6a0ff29810f80c488436940f",
+        "actual": "8779965afa326f5cfeab3feb5ccdeda065ae19ea6a0ff29810f80c488436940f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 32,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLM-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 280,
+      "owner": "PLM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLM-CurrentHeadNativeFact/contractBody",
+        "expected": "f609e32cb737e5342d6adf55cf9e69638ab80dea5aa254917a0844ec89a1b205",
+        "actual": "f609e32cb737e5342d6adf55cf9e69638ab80dea5aa254917a0844ec89a1b205",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLM-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 33,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-QUALITY-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 285,
+      "owner": "QUALITY",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-QUALITY-CurrentHeadNativeFact/contractBody",
+        "expected": "ef379970701c5c4c093fa78f6ef1bc8098f801b465a19a4f2d3a1d4f9ea81897",
+        "actual": "ef379970701c5c4c093fa78f6ef1bc8098f801b465a19a4f2d3a1d4f9ea81897",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-QUALITY-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 34,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-SUP-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 290,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-CurrentHeadNativeFact/contractBody",
+        "expected": "2ac0c205b8da2112c5ec8d6c2e24b0eb25165ce426ac5f9b77be161a2484f921",
+        "actual": "2ac0c205b8da2112c5ec8d6c2e24b0eb25165ce426ac5f9b77be161a2484f921",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 35,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 295,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-CurrentHeadNativeFact/contractBody",
+        "expected": "7b9897e76f8470aaa20da5d56e9b5ec62c5a11bb738e1a56d827647d4b38a13b",
+        "actual": "7b9897e76f8470aaa20da5d56e9b5ec62c5a11bb738e1a56d827647d4b38a13b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 36,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-SUP-SupplyProjectionNativeFact",
+      "version": "3.0-proposed",
+      "line": 300,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-SupplyProjectionNativeFact/contractBody",
+        "expected": "19ea7cde3f49f46f0b6784c68fc642efe935091cccbcdec21d9a4f43e02cb9f3",
+        "actual": "19ea7cde3f49f46f0b6784c68fc642efe935091cccbcdec21d9a4f43e02cb9f3",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-SupplyProjectionNativeFact/completeCodecPackage",
+        "expected": "a64d938a28654599bbff516fb3e33bcdad2042f1528e47d2d9e686f4c48cd570",
+        "actual": "a64d938a28654599bbff516fb3e33bcdad2042f1528e47d2d9e686f4c48cd570",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 37,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MappingNativeFact",
+      "version": "3.0-proposed",
+      "line": 305,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MappingNativeFact/contractBody",
+        "expected": "5907e24787aba2d02dc616ce6de9ec817f5ddacff44c48adcd324ee85f8d2986",
+        "actual": "5907e24787aba2d02dc616ce6de9ec817f5ddacff44c48adcd324ee85f8d2986",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MappingNativeFact/completeCodecPackage",
+        "expected": "6e3b1fc099f1f80c962b5c2f12e08a400a4a675fa771d6ea336bfcbbe41dcbf1",
+        "actual": "6e3b1fc099f1f80c962b5c2f12e08a400a4a675fa771d6ea336bfcbbe41dcbf1",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 38,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpOutputNativeFact",
+      "version": "3.0-proposed",
+      "line": 310,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpOutputNativeFact/contractBody",
+        "expected": "32ce89e7e5ba55ecfaa09e0f038c3085540c6cdd730cb7f9b067b43c26e3a21f",
+        "actual": "32ce89e7e5ba55ecfaa09e0f038c3085540c6cdd730cb7f9b067b43c26e3a21f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpOutputNativeFact/completeCodecPackage",
+        "expected": "899dce1a531cc5709a03fa8cf46784273e19f428da05292e164a3d815f357095",
+        "actual": "899dce1a531cc5709a03fa8cf46784273e19f428da05292e164a3d815f357095",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 39,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-SUP-SourceCaptureNativeFact",
+      "version": "3.0-proposed",
+      "line": 315,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-SourceCaptureNativeFact/contractBody",
+        "expected": "3cbfad501fb16440bd9291384963d86ea7fff48bfbb89acfe856e5888349e671",
+        "actual": "3cbfad501fb16440bd9291384963d86ea7fff48bfbb89acfe856e5888349e671",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-SourceCaptureNativeFact/completeCodecPackage",
+        "expected": "41bca83b214ecd57bd44f2c0bdb3701bed2e54b43410d54cc185a6d3cf5ef0da",
+        "actual": "41bca83b214ecd57bd44f2c0bdb3701bed2e54b43410d54cc185a6d3cf5ef0da",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 40,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpSourceReadCaptureNativeFact",
+      "version": "3.0-proposed",
+      "line": 320,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpSourceReadCaptureNativeFact/contractBody",
+        "expected": "b9476b60a3cd7ebbe85bce319841c8a9aff12d859b44253a0d07bddcff73e2b8",
+        "actual": "b9476b60a3cd7ebbe85bce319841c8a9aff12d859b44253a0d07bddcff73e2b8",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpSourceReadCaptureNativeFact/completeCodecPackage",
+        "expected": "098d928ccd87a9ea1bf048cf26602d4bb9025199550104aae2827deaa3eca752",
+        "actual": "098d928ccd87a9ea1bf048cf26602d4bb9025199550104aae2827deaa3eca752",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 41,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-POL-PolicySourceReadCaptureNativeFact",
+      "version": "3.0-proposed",
+      "line": 325,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-PolicySourceReadCaptureNativeFact/contractBody",
+        "expected": "1901ea317ffb524e50046ebef9c2529bb57cb74ebe060f7973e46512ad89ff50",
+        "actual": "1901ea317ffb524e50046ebef9c2529bb57cb74ebe060f7973e46512ad89ff50",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-PolicySourceReadCaptureNativeFact/completeCodecPackage",
+        "expected": "980032045eb941bf358beaeef21afad736a54feac521c71d10bb945245f51faf",
+        "actual": "980032045eb941bf358beaeef21afad736a54feac521c71d10bb945245f51faf",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 42,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-ScopeMappingNativeFact",
+      "version": "3.0-proposed",
+      "line": 330,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-ScopeMappingNativeFact/contractBody",
+        "expected": "8a9668fdbffe41a3271e4d7731abf35640a6d580887cd0fa43d1378d3f16540d",
+        "actual": "8a9668fdbffe41a3271e4d7731abf35640a6d580887cd0fa43d1378d3f16540d",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-ScopeMappingNativeFact/completeCodecPackage",
+        "expected": "00f30eff5d61a796790afeca0f6a8c72f597cde3347be8ed5c54f55553d6a00d",
+        "actual": "00f30eff5d61a796790afeca0f6a8c72f597cde3347be8ed5c54f55553d6a00d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 43,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpCoordinationBusinessFact",
+      "version": "3.0-proposed",
+      "line": 335,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpCoordinationBusinessFact/contractBody",
+        "expected": "82f1620a78452d8dfdc9897eeacfa1ecb5ca7b8c03eef979a77f56831cc49877",
+        "actual": "82f1620a78452d8dfdc9897eeacfa1ecb5ca7b8c03eef979a77f56831cc49877",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpCoordinationBusinessFact/completeCodecPackage",
+        "expected": "044ea3c0342606c6cf828e6e58116c8dcb70d3b8089a512bb5856ea208b7a6a4",
+        "actual": "044ea3c0342606c6cf828e6e58116c8dcb70d3b8089a512bb5856ea208b7a6a4",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 44,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpPreparationNativeFact",
+      "version": "3.0-proposed",
+      "line": 340,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpPreparationNativeFact/contractBody",
+        "expected": "39fbb41b51292feafaeca5764c0558a9ec8843e2c1b0feb1666a5f81d8450e5c",
+        "actual": "39fbb41b51292feafaeca5764c0558a9ec8843e2c1b0feb1666a5f81d8450e5c",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpPreparationNativeFact/completeCodecPackage",
+        "expected": "c576663cc28a9d979d4342ba0ee8c5475c75485c03b43ffb44d19f8b1e44b02d",
+        "actual": "c576663cc28a9d979d4342ba0ee8c5475c75485c03b43ffb44d19f8b1e44b02d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 45,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpCaptureNativeFact",
+      "version": "3.0-proposed",
+      "line": 345,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpCaptureNativeFact/contractBody",
+        "expected": "3f828aa5a80296de594f80f12799788f08b9dd0e61e823f107bcd679dee802a9",
+        "actual": "3f828aa5a80296de594f80f12799788f08b9dd0e61e823f107bcd679dee802a9",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpCaptureNativeFact/completeCodecPackage",
+        "expected": "c4fadb0c3fb72d271e031ee34cb64441eb8d43283c0c2658a398bd9074851dfd",
+        "actual": "c4fadb0c3fb72d271e031ee34cb64441eb8d43283c0c2658a398bd9074851dfd",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 46,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-POL-AlertPolicyBusinessFact",
+      "version": "3.0-proposed",
+      "line": 350,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-AlertPolicyBusinessFact/contractBody",
+        "expected": "fae5e256ead87e2d43709fbd6c1cfea2afb5980c574516316eb43e38ce09d3ad",
+        "actual": "fae5e256ead87e2d43709fbd6c1cfea2afb5980c574516316eb43e38ce09d3ad",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-AlertPolicyBusinessFact/completeCodecPackage",
+        "expected": "9aacc258a9c7ecb586b39bdea5e934c413bc4ca3bd7d4e9c5e28d49db73df71d",
+        "actual": "9aacc258a9c7ecb586b39bdea5e934c413bc4ca3bd7d4e9c5e28d49db73df71d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 47,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpIsolationNativeFact",
+      "version": "3.0-proposed",
+      "line": 355,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpIsolationNativeFact/contractBody",
+        "expected": "c8ed538b045398d29bc3cf9971ef39c9ec89104368981c3edf05f4998725a9f1",
+        "actual": "c8ed538b045398d29bc3cf9971ef39c9ec89104368981c3edf05f4998725a9f1",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpIsolationNativeFact/completeCodecPackage",
+        "expected": "0c32559d1badfd30dadda467c47b47c47e9508f6cf067e5fecc995e43677f7b9",
+        "actual": "0c32559d1badfd30dadda467c47b47c47e9508f6cf067e5fecc995e43677f7b9",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 48,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PUR-PO-CommercialNativeFact",
+      "version": "3.0-proposed",
+      "line": 360,
+      "owner": "PUR-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-CommercialNativeFact/contractBody",
+        "expected": "76f0d580229d2793e878188d3262d9b22d603d2dab65e25960c1ef6acd3c8b25",
+        "actual": "76f0d580229d2793e878188d3262d9b22d603d2dab65e25960c1ef6acd3c8b25",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-CommercialNativeFact/completeCodecPackage",
+        "expected": "7ccc576d061852bc6ceb9fbd690942f32a6a7c7f9cb225b2ee9755a72caf1a90",
+        "actual": "7ccc576d061852bc6ceb9fbd690942f32a6a7c7f9cb225b2ee9755a72caf1a90",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 49,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PUR-PO-OwnerDispositionBusinessFact",
+      "version": "3.0-proposed",
+      "line": 365,
+      "owner": "PUR-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-OwnerDispositionBusinessFact/contractBody",
+        "expected": "8de5713174baa8406a6ac758036f4209409f7996644f812114f4aecb477bd7bf",
+        "actual": "8de5713174baa8406a6ac758036f4209409f7996644f812114f4aecb477bd7bf",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-OwnerDispositionBusinessFact/completeCodecPackage",
+        "expected": "4dc95356870076e7a726483467e0bdf04f98669645292b1a4b044745ea34a21c",
+        "actual": "4dc95356870076e7a726483467e0bdf04f98669645292b1a4b044745ea34a21c",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 50,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PUR-PO-CommercialDispositionResultNativeFact",
+      "version": "3.0-proposed",
+      "line": 370,
+      "owner": "PUR-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-CommercialDispositionResultNativeFact/contractBody",
+        "expected": "0f2b505048bb8733b09101e35e6c9218e7b1107518d38e37873aad64c6370269",
+        "actual": "0f2b505048bb8733b09101e35e6c9218e7b1107518d38e37873aad64c6370269",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-CommercialDispositionResultNativeFact/completeCodecPackage",
+        "expected": "e05b75123a6c02b650a8a72c06213ed904e59f795695c1bef70d674f93ea72e9",
+        "actual": "e05b75123a6c02b650a8a72c06213ed904e59f795695c1bef70d674f93ea72e9",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 51,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpControlWinnerNativeFact",
+      "version": "3.0-proposed",
+      "line": 375,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpControlWinnerNativeFact/contractBody",
+        "expected": "bebbb32b02cde69b60c6b9d34b80b46d96c2b55ad5b798f6d38837b68918e540",
+        "actual": "bebbb32b02cde69b60c6b9d34b80b46d96c2b55ad5b798f6d38837b68918e540",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpControlWinnerNativeFact/completeCodecPackage",
+        "expected": "fdcb7f0c5f13aac09e07158816a6a0489a5fc66456b76b2ef2835c40f916acc2",
+        "actual": "fdcb7f0c5f13aac09e07158816a6a0489a5fc66456b76b2ef2835c40f916acc2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 52,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-SUP-ExecutionPathNativeFact",
+      "version": "3.0-proposed",
+      "line": 380,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-ExecutionPathNativeFact/contractBody",
+        "expected": "41efe4928e5bbe2285e6c53cf637dafbdc883d3a86341fc62cd45b80f0fa286e",
+        "actual": "41efe4928e5bbe2285e6c53cf637dafbdc883d3a86341fc62cd45b80f0fa286e",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-ExecutionPathNativeFact/completeCodecPackage",
+        "expected": "8cad65a7294132fcc0cc61fbbc8fd98b3a30f063508a5c34154fa7e47be74df0",
+        "actual": "8cad65a7294132fcc0cc61fbbc8fd98b3a30f063508a5c34154fa7e47be74df0",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 53,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-MrpRecoveryEligibilityNativeFact",
+      "version": "3.0-proposed",
+      "line": 385,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpRecoveryEligibilityNativeFact/contractBody",
+        "expected": "55fa6f9137450b8baab21d5b36aaebfec2bbe5eca5810a6b0ee4a37137e35213",
+        "actual": "55fa6f9137450b8baab21d5b36aaebfec2bbe5eca5810a6b0ee4a37137e35213",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpRecoveryEligibilityNativeFact/completeCodecPackage",
+        "expected": "3ca7fa8ecbf4a069fee14e568d7ab87921701bd9bc46731d2042e186cf34e7a2",
+        "actual": "3ca7fa8ecbf4a069fee14e568d7ab87921701bd9bc46731d2042e186cf34e7a2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 54,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-MRP-StreamEpochNativeFact",
+      "version": "3.0-proposed",
+      "line": 390,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-StreamEpochNativeFact/contractBody",
+        "expected": "094a59cdb4fe47576efaa404ab12d0ac27f2674bf7ed9f646c274dbd544b0656",
+        "actual": "094a59cdb4fe47576efaa404ab12d0ac27f2674bf7ed9f646c274dbd544b0656",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-StreamEpochNativeFact/completeCodecPackage",
+        "expected": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "actual": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 55,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PUR-PO-StreamEpochNativeFact",
+      "version": "3.0-proposed",
+      "line": 395,
+      "owner": "PUR-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-StreamEpochNativeFact/contractBody",
+        "expected": "90e71638e16cd99b9266c06c51109e2b7f945665406e24f6a6282a5f2893ecde",
+        "actual": "90e71638e16cd99b9266c06c51109e2b7f945665406e24f6a6282a5f2893ecde",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-StreamEpochNativeFact/completeCodecPackage",
+        "expected": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "actual": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 56,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-SUP-StreamEpochNativeFact",
+      "version": "3.0-proposed",
+      "line": 400,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-StreamEpochNativeFact/contractBody",
+        "expected": "ec13e4029f0c2b2e161e1b33b2c4878c99a4e6657d6dd92b4ad355bb1281dd07",
+        "actual": "ec13e4029f0c2b2e161e1b33b2c4878c99a4e6657d6dd92b4ad355bb1281dd07",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-StreamEpochNativeFact/completeCodecPackage",
+        "expected": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "actual": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 57,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-SUP-CoverageAllocationNativeFact",
+      "version": "3.0-proposed",
+      "line": 405,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-CoverageAllocationNativeFact/contractBody",
+        "expected": "492f1710c34e390128ba1b4193b2318490e6a095ebef010470dbbe3a7a71280c",
+        "actual": "492f1710c34e390128ba1b4193b2318490e6a095ebef010470dbbe3a7a71280c",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-CoverageAllocationNativeFact/completeCodecPackage",
+        "expected": "a519c354b3d8b45b637179c4b7b4be522bd15fae996d8f43c9c3f55fd4ac064b",
+        "actual": "a519c354b3d8b45b637179c4b7b4be522bd15fae996d8f43c9c3f55fd4ac064b",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 58,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PUR-PO-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 410,
+      "owner": "PUR-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-CurrentHeadNativeFact/contractBody",
+        "expected": "312442d18e536f0a325121aff43e74d6c4f5bd470ae86ec7265b5c70fcc1b5ba",
+        "actual": "312442d18e536f0a325121aff43e74d6c4f5bd470ae86ec7265b5c70fcc1b5ba",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 59,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-POL-PlanningOwnerSourcePageNativeFact",
+      "version": "3.0-proposed",
+      "line": 415,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-POL-PlanningOwnerSourcePageNativeFact/contractBody",
+        "expected": "a87c2ecb103b68102dfcc56130cfed2ba7c3f44ec6a39442f8180ef8e0e66608",
+        "actual": "a87c2ecb103b68102dfcc56130cfed2ba7c3f44ec6a39442f8180ef8e0e66608",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-POL-PlanningOwnerSourcePageNativeFact/completeCodecPackage",
+        "expected": "1fd3461222e1de3d2cd8e32c4b304cdd49df52aad633e6cfd4c1e95d0c7fab18",
+        "actual": "1fd3461222e1de3d2cd8e32c4b304cdd49df52aad633e6cfd4c1e95d0c7fab18",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 60,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLM-TechnicalMaterialOccurrenceNativeFact",
+      "version": "3.0-proposed",
+      "line": 420,
+      "owner": "PLM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLM-TechnicalMaterialOccurrenceNativeFact/contractBody",
+        "expected": "60bea368a1c7556b2ccbfc11879c9de2068de6c4e95389d12c5363c2f783cc8a",
+        "actual": "60bea368a1c7556b2ccbfc11879c9de2068de6c4e95389d12c5363c2f783cc8a",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLM-TechnicalMaterialOccurrenceNativeFact/completeCodecPackage",
+        "expected": "d159062974cfdb993fac82228001dbc0f1a4b544abd609a2fc777817c6a3d859",
+        "actual": "d159062974cfdb993fac82228001dbc0f1a4b544abd609a2fc777817c6a3d859",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 61,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-WMS-STOCK-WmsReservationEvidenceNativeFact",
+      "version": "3.0-proposed",
+      "line": 425,
+      "owner": "WMS-STOCK",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-WMS-STOCK-WmsReservationEvidenceNativeFact/contractBody",
+        "expected": "453ef0b80b6b0815694b53f5ae9c24ba904149655034f137c4dc55b664ae72f5",
+        "actual": "453ef0b80b6b0815694b53f5ae9c24ba904149655034f137c4dc55b664ae72f5",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-WMS-STOCK-WmsReservationEvidenceNativeFact/completeCodecPackage",
+        "expected": "7ed6887dc0c035e6bb1ea900f439b8380e5723156ddbdfa1d1191289cf8d7bd9",
+        "actual": "7ed6887dc0c035e6bb1ea900f439b8380e5723156ddbdfa1d1191289cf8d7bd9",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 62,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-SUP-PlanningOwnerSourcePageNativeFact",
+      "version": "3.0-proposed",
+      "line": 430,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-SUP-PlanningOwnerSourcePageNativeFact/contractBody",
+        "expected": "be3e2924c306ccda1eee0087833076309a9814f217d7043c74df353b31ab198e",
+        "actual": "be3e2924c306ccda1eee0087833076309a9814f217d7043c74df353b31ab198e",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-SUP-PlanningOwnerSourcePageNativeFact/completeCodecPackage",
+        "expected": "1fd3461222e1de3d2cd8e32c4b304cdd49df52aad633e6cfd4c1e95d0c7fab18",
+        "actual": "1fd3461222e1de3d2cd8e32c4b304cdd49df52aad633e6cfd4c1e95d0c7fab18",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 63,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-MRP-ManufacturingFirmNativeFact",
+      "version": "3.0-proposed",
+      "line": 435,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-ManufacturingFirmNativeFact/contractBody",
+        "expected": "84f93cc473c45e528ba83c0e17027affcbaeaa88065eac7b521f6ccea20d7314",
+        "actual": "84f93cc473c45e528ba83c0e17027affcbaeaa88065eac7b521f6ccea20d7314",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-ManufacturingFirmNativeFact/completeCodecPackage",
+        "expected": "7c50c61fb7d181c33e2f69bb1de51fed80460da9fd1182ea8cbdcefe54b48f0d",
+        "actual": "7c50c61fb7d181c33e2f69bb1de51fed80460da9fd1182ea8cbdcefe54b48f0d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 64,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-MRP-MrpEffectiveSetAbsenceNativeFact",
+      "version": "3.0-proposed",
+      "line": 440,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-MrpEffectiveSetAbsenceNativeFact/contractBody",
+        "expected": "2611c6b275ede49b4fb689e78ac8f7708b00da5cb5c204c3694b64444b48d6a6",
+        "actual": "2611c6b275ede49b4fb689e78ac8f7708b00da5cb5c204c3694b64444b48d6a6",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-MrpEffectiveSetAbsenceNativeFact/completeCodecPackage",
+        "expected": "28c5c7a5db13ef7269cb050c54fd8b708715cdb4ce10554a5fe378d9c2b60297",
+        "actual": "28c5c7a5db13ef7269cb050c54fd8b708715cdb4ce10554a5fe378d9c2b60297",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 65,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-MRP-PlannedMaterialResponsibilityFromFirmNativeFact",
+      "version": "3.0-proposed",
+      "line": 445,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlannedMaterialResponsibilityFromFirmNativeFact/contractBody",
+        "expected": "bc9c1dff44b1727862b37e7e1a0535116064b749a751e57f38c9de5304923bd9",
+        "actual": "bc9c1dff44b1727862b37e7e1a0535116064b749a751e57f38c9de5304923bd9",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlannedMaterialResponsibilityFromFirmNativeFact/completeCodecPackage",
+        "expected": "f173961298593864885cbbba0450508a42068340fa320e88e38fe9419bf083e3",
+        "actual": "f173961298593864885cbbba0450508a42068340fa320e88e38fe9419bf083e3",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 66,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-MRP-PlanningOwnerSourcePageNativeFact",
+      "version": "3.0-proposed",
+      "line": 450,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlanningOwnerSourcePageNativeFact/contractBody",
+        "expected": "3afbc694d82a6d37f1fb3f66b4cbbc2a61695859fa0145dd905a7531a726d99b",
+        "actual": "3afbc694d82a6d37f1fb3f66b4cbbc2a61695859fa0145dd905a7531a726d99b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlanningOwnerSourcePageNativeFact/completeCodecPackage",
+        "expected": "1fd3461222e1de3d2cd8e32c4b304cdd49df52aad633e6cfd4c1e95d0c7fab18",
+        "actual": "1fd3461222e1de3d2cd8e32c4b304cdd49df52aad633e6cfd4c1e95d0c7fab18",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 67,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-MRP-PlanningOwnerSourceQueryCore",
+      "version": "3.0-proposed",
+      "line": 455,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlanningOwnerSourceQueryCore/contractBody",
+        "expected": "581b656407215f3ab9f818b1eea78f92be4c57e7ced2e020cf8a02ad45b3eb4b",
+        "actual": "581b656407215f3ab9f818b1eea78f92be4c57e7ced2e020cf8a02ad45b3eb4b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlanningOwnerSourceQueryCore/completeCodecPackage",
+        "expected": "cf7613544d102d03fcd7c72d8019d1626e7dc99cc6f8edcaa13427fe2d7ff1f2",
+        "actual": "cf7613544d102d03fcd7c72d8019d1626e7dc99cc6f8edcaa13427fe2d7ff1f2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 68,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-MRP-PlanningScopeClosureNativeFact",
+      "version": "3.0-proposed",
+      "line": 460,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlanningScopeClosureNativeFact/contractBody",
+        "expected": "f0e3f3fe49f7a74a6ddf3894c4927c80438af5657df1a3860d6005e424d276d0",
+        "actual": "f0e3f3fe49f7a74a6ddf3894c4927c80438af5657df1a3860d6005e424d276d0",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-PlanningScopeClosureNativeFact/completeCodecPackage",
+        "expected": "7b7a9e045177b7ee0bfa1b4da3cd040a027b50cfeba6d6fdd5ecdfcac716c0d6",
+        "actual": "7b7a9e045177b7ee0bfa1b4da3cd040a027b50cfeba6d6fdd5ecdfcac716c0d6",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 69,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PUR-PO-CommercialBeneficiaryMappingNativeFact",
+      "version": "3.0-proposed",
+      "line": 465,
+      "owner": "PUR-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PUR-PO-CommercialBeneficiaryMappingNativeFact/contractBody",
+        "expected": "40494e34d97bc0bc081a156b0487702cc22659a174cc3dae077b1c773bca9ef7",
+        "actual": "40494e34d97bc0bc081a156b0487702cc22659a174cc3dae077b1c773bca9ef7",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PUR-PO-CommercialBeneficiaryMappingNativeFact/completeCodecPackage",
+        "expected": "a8060feea06dfcee8ef2c16bbbd650314b0ca1f1086d1f5eaeb2f3c384f0f5be",
+        "actual": "a8060feea06dfcee8ef2c16bbbd650314b0ca1f1086d1f5eaeb2f3c384f0f5be",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 70,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-WO-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 470,
+      "owner": "MES-WO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-CurrentHeadNativeFact/contractBody",
+        "expected": "47b3b7972f74cb80450d067b515b5b3497d39e16e1ddd65a9f0c50b3f53ab57f",
+        "actual": "47b3b7972f74cb80450d067b515b5b3497d39e16e1ddd65a9f0c50b3f53ab57f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 71,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-WO-WoMaterialCreationContextNativeFact",
+      "version": "3.0-proposed",
+      "line": 475,
+      "owner": "MES-WO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialCreationContextNativeFact/contractBody",
+        "expected": "1fd861c48232d2b7948ef62f9be34c3b4d9b09cfcd244788aed8175700841bc0",
+        "actual": "1fd861c48232d2b7948ef62f9be34c3b4d9b09cfcd244788aed8175700841bc0",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialCreationContextNativeFact/completeCodecPackage",
+        "expected": "0de2e589aead8a36b068619b21aa5639b8616549cfbd3f04885547ba8f53fa6e",
+        "actual": "0de2e589aead8a36b068619b21aa5639b8616549cfbd3f04885547ba8f53fa6e",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 72,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-WO-WoMaterialCreationMappingNativeFact",
+      "version": "3.0-proposed",
+      "line": 480,
+      "owner": "MES-WO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialCreationMappingNativeFact/contractBody",
+        "expected": "fb6d8e45b8d2195c237f818d7d54b95ba9109e7493bb7c0fb18a6b97e359bb6e",
+        "actual": "fb6d8e45b8d2195c237f818d7d54b95ba9109e7493bb7c0fb18a6b97e359bb6e",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialCreationMappingNativeFact/completeCodecPackage",
+        "expected": "4a55a37364d553ab30e248191e10b3c6b8e2d8d2042359fc5659e1250766c404",
+        "actual": "4a55a37364d553ab30e248191e10b3c6b8e2d8d2042359fc5659e1250766c404",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 73,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-WO-WoMaterialLineNativeFact",
+      "version": "3.0-proposed",
+      "line": 485,
+      "owner": "MES-WO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialLineNativeFact/contractBody",
+        "expected": "f4543c92440fa4049ed9237405ef5765019e11ca2d52ce40b25c7458d91eef2a",
+        "actual": "f4543c92440fa4049ed9237405ef5765019e11ca2d52ce40b25c7458d91eef2a",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialLineNativeFact/completeCodecPackage",
+        "expected": "0a1fd621114dd038755d7b37d31c0fa70e25ccfc73461af9da0087e522b9789f",
+        "actual": "0a1fd621114dd038755d7b37d31c0fa70e25ccfc73461af9da0087e522b9789f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 74,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-WO-WoMaterialObligationNativeFact",
+      "version": "3.0-proposed",
+      "line": 490,
+      "owner": "MES-WO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialObligationNativeFact/contractBody",
+        "expected": "e4dd8939217d5a3b6ad57ba9f448d602e3a3307614f7403324401eaa99cb8523",
+        "actual": "e4dd8939217d5a3b6ad57ba9f448d602e3a3307614f7403324401eaa99cb8523",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialObligationNativeFact/completeCodecPackage",
+        "expected": "826a18b02b8977e15f51b3dcb98c034740c7cf931b170e201bc2ca878a709f28",
+        "actual": "826a18b02b8977e15f51b3dcb98c034740c7cf931b170e201bc2ca878a709f28",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 75,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-WO-WoMaterialTransitionNativeFact",
+      "version": "3.0-proposed",
+      "line": 495,
+      "owner": "MES-WO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialTransitionNativeFact/contractBody",
+        "expected": "352af3dd345c0787333a13d37fc20ec450a7c963efc0c3bb492a6a2a604a1ea4",
+        "actual": "352af3dd345c0787333a13d37fc20ec450a7c963efc0c3bb492a6a2a604a1ea4",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-WoMaterialTransitionNativeFact/completeCodecPackage",
+        "expected": "a5a9815fc9236fcbd9bbd480e3c597d7d5ecff819039455493c3feaff5286149",
+        "actual": "a5a9815fc9236fcbd9bbd480e3c597d7d5ecff819039455493c3feaff5286149",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 76,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-MAT-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 500,
+      "owner": "MES-MAT",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-CurrentHeadNativeFact/contractBody",
+        "expected": "32fb9b91a2b919ee5e470bfec2a81107a0ff370bd1ab9b4bf95ef00501d80677",
+        "actual": "32fb9b91a2b919ee5e470bfec2a81107a0ff370bd1ab9b4bf95ef00501d80677",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 77,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-MAT-MatOffsetEvidenceNativeFact",
+      "version": "3.0-proposed",
+      "line": 505,
+      "owner": "MES-MAT",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-MatOffsetEvidenceNativeFact/contractBody",
+        "expected": "e4194c6397c0bdbec3f9044934289fe0ee45ec6e0696c31324b7c18a68375a81",
+        "actual": "e4194c6397c0bdbec3f9044934289fe0ee45ec6e0696c31324b7c18a68375a81",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-MatOffsetEvidenceNativeFact/completeCodecPackage",
+        "expected": "de23c5b4f0a49f8f192d0ff8d72ddbd8e4e5a49ba4360979bc7ccb9ff8f6a158",
+        "actual": "de23c5b4f0a49f8f192d0ff8d72ddbd8e4e5a49ba4360979bc7ccb9ff8f6a158",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 78,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-MAT-MatProtectionBindingsNativeFact",
+      "version": "3.0-proposed",
+      "line": 510,
+      "owner": "MES-MAT",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-MatProtectionBindingsNativeFact/contractBody",
+        "expected": "8ebf72848a4cd0773ddbb25b59ed3dedd86e2e6ed4416d08a8f3c2308ccde4d1",
+        "actual": "8ebf72848a4cd0773ddbb25b59ed3dedd86e2e6ed4416d08a8f3c2308ccde4d1",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-MatProtectionBindingsNativeFact/completeCodecPackage",
+        "expected": "b6b295140c73e1c50828f345323ef660e0dd6c9a85376f15872a7dbe8c257169",
+        "actual": "b6b295140c73e1c50828f345323ef660e0dd6c9a85376f15872a7dbe8c257169",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 79,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-MES-MAT-MatRemainingBasisNativeFact",
+      "version": "3.0-proposed",
+      "line": 515,
+      "owner": "MES-MAT",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-MatRemainingBasisNativeFact/contractBody",
+        "expected": "476913411e83e3dbdfd0d85646977ca5cca01c591d5ec3e0b35b74b23b1b2d47",
+        "actual": "476913411e83e3dbdfd0d85646977ca5cca01c591d5ec3e0b35b74b23b1b2d47",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-MatRemainingBasisNativeFact/completeCodecPackage",
+        "expected": "f5d73c772a8efff8bdde4f0dc692285a74a94f1115261f8c5d033d9d23d74371",
+        "actual": "f5d73c772a8efff8bdde4f0dc692285a74a94f1115261f8c5d033d9d23d74371",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 80,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-POL-MrpPlanningMethodPolicyNativeFact",
+      "version": "3.0-proposed",
+      "line": 520,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-POL-MrpPlanningMethodPolicyNativeFact/contractBody",
+        "expected": "ee8c15cd1840c993274ea3721fdd91f70be558f9b4b4a720a0ccabe94cb1d02c",
+        "actual": "ee8c15cd1840c993274ea3721fdd91f70be558f9b4b4a720a0ccabe94cb1d02c",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-POL-MrpPlanningMethodPolicyNativeFact/completeCodecPackage",
+        "expected": "3f5cdb694a0232c94380ac388b5e19dd8cd087b1f909ee5d13dabcb6e3cf83b3",
+        "actual": "3f5cdb694a0232c94380ac388b5e19dd8cd087b1f909ee5d13dabcb6e3cf83b3",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 81,
+      "group": "A",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-MRP-MrpPlanningSuggestionNativeFact",
+      "version": "3.0-proposed",
+      "line": 525,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-MrpPlanningSuggestionNativeFact/contractBody",
+        "expected": "8f6cf59a68e937758c81d1caf906f63158c6cc46ab64ab510eb831783d27bca7",
+        "actual": "8f6cf59a68e937758c81d1caf906f63158c6cc46ab64ab510eb831783d27bca7",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-MRP-MrpPlanningSuggestionNativeFact/completeCodecPackage",
+        "expected": "31bc6850a0c4afa30d710f3cc1a7af094e7fac2c4351272f933fa77390984eab",
+        "actual": "31bc6850a0c4afa30d710f3cc1a7af094e7fac2c4351272f933fa77390984eab",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 82,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/UOM/NATIVE",
+      "version": "3.0-proposed",
+      "line": 530,
+      "owner": "UOM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-UOM-UomNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "5b3771e294302e226836dde726930b905c716f775c9e50c0d598fe116964a62d",
+        "actual": "5b3771e294302e226836dde726930b905c716f775c9e50c0d598fe116964a62d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 83,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/ITEM/NATIVE",
+      "version": "3.0-proposed",
+      "line": 534,
+      "owner": "ITEM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-ITEM-ItemNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "4f6323e6f4677e0a7c27f5f2bd9c1f7e0585b10a67c80cdf32aa1961f756fa9c",
+        "actual": "4f6323e6f4677e0a7c27f5f2bd9c1f7e0585b10a67c80cdf32aa1961f756fa9c",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 84,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/SITE/NATIVE",
+      "version": "3.0-proposed",
+      "line": 538,
+      "owner": "SITE",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-SITE-SiteNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "b6724da00125634ca551a3791159338780a45306b1056685c9c5d3dcb9f5749f",
+        "actual": "b6724da00125634ca551a3791159338780a45306b1056685c9c5d3dcb9f5749f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 85,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/LEGAL-ENTITY/NATIVE",
+      "version": "3.0-proposed",
+      "line": 542,
+      "owner": "LEGAL-ENTITY",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-LEGAL-ENTITY-LegalEntityNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "9650bf0a99396f4a96958b6ae5c17cc62246998144c1538ac06698554a20342f",
+        "actual": "9650bf0a99396f4a96958b6ae5c17cc62246998144c1538ac06698554a20342f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 86,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PLM/NATIVE",
+      "version": "3.0-proposed",
+      "line": 546,
+      "owner": "PLM",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLM-TechnicalNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "c72dd3e45bfd99f92364d234a99bb197f64e0ccac9cb8160e6bcce30ad2791df",
+        "actual": "c72dd3e45bfd99f92364d234a99bb197f64e0ccac9cb8160e6bcce30ad2791df",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 87,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PLAN-POL/NATIVE",
+      "version": "3.0-proposed",
+      "line": 550,
+      "owner": "PLAN-POL",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-POL-PolicyNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "4a9be0d858a8dff4ad5f319818a44d03d13a75dd6b8907da69acf02fe67e8bd4",
+        "actual": "4a9be0d858a8dff4ad5f319818a44d03d13a75dd6b8907da69acf02fe67e8bd4",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 88,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/QUALITY/NATIVE",
+      "version": "3.0-proposed",
+      "line": 554,
+      "owner": "QUALITY",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-QUALITY-QualityNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "7c374035ebb892f3e99591b4e05f242b19b270a4dfdbec26fe523fb4592f69aa",
+        "actual": "7c374035ebb892f3e99591b4e05f242b19b270a4dfdbec26fe523fb4592f69aa",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 89,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PLAN-SUP/NATIVE",
+      "version": "3.0-proposed",
+      "line": 558,
+      "owner": "PLAN-SUP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-SUP-ProtectionNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "0927f23de21a822ad6570ab7747652be4968d22794341df23147c9e811f585e1",
+        "actual": "0927f23de21a822ad6570ab7747652be4968d22794341df23147c9e811f585e1",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 90,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PLANNING-DEMAND/NATIVE",
+      "version": "3.0-proposed",
+      "line": 562,
+      "owner": "PLANNING-DEMAND",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLANNING-DEMAND-DemandSourceNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "4844a1907da0e37255edd9d44319076d3c152341412e1c565697b302f4a898de",
+        "actual": "4844a1907da0e37255edd9d44319076d3c152341412e1c565697b302f4a898de",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 91,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/WMS-STOCK/NATIVE",
+      "version": "3.0-proposed",
+      "line": 566,
+      "owner": "WMS-STOCK",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-WMS-STOCK-StockNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "65a7b410d2f2edf7f08012f59549da3000cab04fa4a72db0c0f1dfd1298c0e79",
+        "actual": "65a7b410d2f2edf7f08012f59549da3000cab04fa4a72db0c0f1dfd1298c0e79",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 92,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PLAN-PO/NATIVE",
+      "version": "3.0-proposed",
+      "line": 570,
+      "owner": "PLAN-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-PO-FirmNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "619f09f6841388eba77d8698500e1cbb7ddb957b056121411bdf9bc8cee556be",
+        "actual": "619f09f6841388eba77d8698500e1cbb7ddb957b056121411bdf9bc8cee556be",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 93,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PLAN-MRP/NATIVE",
+      "version": "3.0-proposed",
+      "line": 574,
+      "owner": "PLAN-MRP",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-MRP-MrpRunNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "1a660a448eb9efae87af64b71d8996cc7db1cfc02438e770b04bf4caad9f3014",
+        "actual": "1a660a448eb9efae87af64b71d8996cc7db1cfc02438e770b04bf4caad9f3014",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 94,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PUR-PO/NATIVE",
+      "version": "3.0-proposed",
+      "line": 578,
+      "owner": "PUR-PO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PUR-PO-CommercialNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "a33c46142a6fe2b82b6595099822958dcafb719ea4ca8fe49a5227fc99f51cb6",
+        "actual": "a33c46142a6fe2b82b6595099822958dcafb719ea4ca8fe49a5227fc99f51cb6",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 95,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/MES-WO/NATIVE",
+      "version": "3.0-proposed",
+      "line": 582,
+      "owner": "MES-WO",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-WO-CurrentHeadNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "f9a9f06dc839630c9cf97d1a02a35c8933cd8830a26171dfcdfbff1c7a5fac73",
+        "actual": "f9a9f06dc839630c9cf97d1a02a35c8933cd8830a26171dfcdfbff1c7a5fac73",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 96,
+      "group": "A",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/MES-MAT/NATIVE",
+      "version": "3.0-proposed",
+      "line": 586,
+      "owner": "MES-MAT",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-MES-MAT-CurrentHeadNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "e72b648ce72157c7c83572dbf67155c1b31a2bca90cffaa5774383d1fc187627",
+        "actual": "e72b648ce72157c7c83572dbf67155c1b31a2bca90cffaa5774383d1fc187627",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 97,
+      "group": "A",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC01",
+      "version": "3.0-proposed",
+      "line": 590,
+      "owner": "['PLAN-SUP']",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/0/contractBody",
+        "expected": "cd492d4ac126679c31135177cfd05a0cdddf84b51a124c0763bbebc9a14ea661",
+        "actual": "cd492d4ac126679c31135177cfd05a0cdddf84b51a124c0763bbebc9a14ea661",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/0/contractBody/completeRecursiveCodecPackages",
+        "expected": "90444d0672322d020a762697bb3318c0d74ba4a7f23a0d543550a685eca50735",
+        "actual": "90444d0672322d020a762697bb3318c0d74ba4a7f23a0d543550a685eca50735",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 98,
+      "group": "A",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC02",
+      "version": "3.0-proposed",
+      "line": 595,
+      "owner": "['PLAN-MRP']",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/1/contractBody",
+        "expected": "5c53e981f51b7cedfaa4ebc999c74e6c66dc400f23b4eff7a65115ccf11be73b",
+        "actual": "5c53e981f51b7cedfaa4ebc999c74e6c66dc400f23b4eff7a65115ccf11be73b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/1/contractBody/completeRecursiveCodecPackages",
+        "expected": "7494814eb7cd2dac9dd83aa204295ebfe3ba0ce2493dadf21fe441b260e6e9f2",
+        "actual": "7494814eb7cd2dac9dd83aa204295ebfe3ba0ce2493dadf21fe441b260e6e9f2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 99,
+      "group": "A",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC03",
+      "version": "3.0-proposed",
+      "line": 600,
+      "owner": "['PLAN-POL']",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/2/contractBody",
+        "expected": "214455efdd52437a82597ff9ae23b52e1f827c092ec7f35ff7a166412894621a",
+        "actual": "214455efdd52437a82597ff9ae23b52e1f827c092ec7f35ff7a166412894621a",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/2/contractBody/completeRecursiveCodecPackages",
+        "expected": "52e777a59f9dff4f7233818fa917e5c625fd3fd7a0ee1218d53a3fedfd240c96",
+        "actual": "52e777a59f9dff4f7233818fa917e5c625fd3fd7a0ee1218d53a3fedfd240c96",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 100,
+      "group": "A",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC04",
+      "version": "3.0-proposed",
+      "line": 605,
+      "owner": "['PLAN-MRP']",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/3/contractBody",
+        "expected": "73a99a7ae89d4cfc18c1171f897b5dfc5d31c1d0a516b7a2f051a8d82bac07ba",
+        "actual": "73a99a7ae89d4cfc18c1171f897b5dfc5d31c1d0a516b7a2f051a8d82bac07ba",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/3/contractBody/completeRecursiveCodecPackages",
+        "expected": "75ffae5b3706ae70adeb6ed83a02428c1b91590dfb784237a0bf5aa6dd245db8",
+        "actual": "75ffae5b3706ae70adeb6ed83a02428c1b91590dfb784237a0bf5aa6dd245db8",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 101,
+      "group": "A",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC05",
+      "version": "3.0-proposed",
+      "line": 610,
+      "owner": "['PUR-PO', 'PUR-PR', 'MES-WO', 'WMS-STOCK', 'PLAN-PO', 'QUALITY', 'PLM', 'MES-MAT']",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/4/contractBody",
+        "expected": "ed2b958a04ea6458d55a9db986aece8b7313cc780ff66dbd11ce128aa5a74862",
+        "actual": "ed2b958a04ea6458d55a9db986aece8b7313cc780ff66dbd11ce128aa5a74862",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/4/contractBody/completeRecursiveCodecPackages",
+        "expected": "15387001ce90f27941819ecc23f8aeae23aa8237ddb2814a32bb90b143db4587",
+        "actual": "15387001ce90f27941819ecc23f8aeae23aa8237ddb2814a32bb90b143db4587",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 102,
+      "group": "A",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC06",
+      "version": "3.0-proposed",
+      "line": 615,
+      "owner": "['PLAN-MRP', 'PUR-PO', 'PUR-PR', 'MES-WO', 'WMS-STOCK', 'PLAN-PO']",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/5/contractBody",
+        "expected": "4e69c4578d584ec1a24a727293b78ab5fe82722e99ab669396d00c42ef269441",
+        "actual": "4e69c4578d584ec1a24a727293b78ab5fe82722e99ab669396d00c42ef269441",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/5/contractBody/completeRecursiveCodecPackages",
+        "expected": "090aea49dbf6d3d4eadacba1ec2d94fa5f0dc2d3d041fb2dfcd28cc254dbbb16",
+        "actual": "090aea49dbf6d3d4eadacba1ec2d94fa5f0dc2d3d041fb2dfcd28cc254dbbb16",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 103,
+      "group": "A",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC07",
+      "version": "3.0-proposed",
+      "line": 620,
+      "owner": "['PLAN-SUP', 'PLAN-MRP', 'PLAN-POL', 'PLANNING-DEMAND', 'WMS-STOCK', 'QUALITY', 'PLM', 'CFG', 'ENG', 'DEV', 'REL', 'UOM', 'ITEM', 'SITE', 'LEGAL-ENTITY', 'MES-MAT']",
+      "decision": "ADOPT_STATIC_FUNCTIONAL_DESIGN_FOR_CURRENT_CP12",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/6/contractBody",
+        "expected": "3e3e61d4881ad94e5f433a0dfa98e22894d6733aec8932b7593c44e8288e0c43",
+        "actual": "3e3e61d4881ad94e5f433a0dfa98e22894d6733aec8932b7593c44e8288e0c43",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/6/contractBody/completeRecursiveCodecPackages",
+        "expected": "9288437d3b35f70646c76f0e8bfc962b17c02f77df28fbdc3467c7d3cce36a9b",
+        "actual": "9288437d3b35f70646c76f0e8bfc962b17c02f77df28fbdc3467c7d3cce36a9b",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 104,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-EXC-ExceptionIdentityNativeFact",
+      "version": "3.0-proposed",
+      "line": 625,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-ExceptionIdentityNativeFact/contractBody",
+        "expected": "b551eb7a8d9f29d8a76b77ef32808ae20d2d36048882d7e203c803a2b0571bd9",
+        "actual": "b551eb7a8d9f29d8a76b77ef32808ae20d2d36048882d7e203c803a2b0571bd9",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-ExceptionIdentityNativeFact/completeCodecPackage",
+        "expected": "db8ad17e6c8105f55462402b3cb12163fc16ff4fb12af48a9cb1ad3f09ce31f0",
+        "actual": "db8ad17e6c8105f55462402b3cb12163fc16ff4fb12af48a9cb1ad3f09ce31f0",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 105,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-EXC-AssessmentBusinessFact",
+      "version": "3.0-proposed",
+      "line": 630,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-AssessmentBusinessFact/contractBody",
+        "expected": "1ec810e24d0d3566fc6ef6dc335a25f10688e1d7dea8b0b93f433b851f47ed8b",
+        "actual": "1ec810e24d0d3566fc6ef6dc335a25f10688e1d7dea8b0b93f433b851f47ed8b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-AssessmentBusinessFact/completeCodecPackage",
+        "expected": "be33d2e2094ab48077d3a1b72512e7b712cbcdacca93bcfecaf13688bf49297d",
+        "actual": "be33d2e2094ab48077d3a1b72512e7b712cbcdacca93bcfecaf13688bf49297d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 106,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-EXC-ImpactBusinessFact",
+      "version": "3.0-proposed",
+      "line": 635,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-ImpactBusinessFact/contractBody",
+        "expected": "26569a95ce319012af8ac6cf0217b11e75746bcd53456875454c492d45b4a08f",
+        "actual": "26569a95ce319012af8ac6cf0217b11e75746bcd53456875454c492d45b4a08f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-ImpactBusinessFact/completeCodecPackage",
+        "expected": "c6ad1cdddc6a69465d04f80e8dce8a932f834c1b7fdf3a3f217fbfddfb39dd10",
+        "actual": "c6ad1cdddc6a69465d04f80e8dce8a932f834c1b7fdf3a3f217fbfddfb39dd10",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 107,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-EXC-SourceGraphBusinessFact",
+      "version": "3.0-proposed",
+      "line": 640,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-SourceGraphBusinessFact/contractBody",
+        "expected": "18fcf9b329a7d283a8e21d8d82638e500ba0f35ff9853b082914d69600a5ba5f",
+        "actual": "18fcf9b329a7d283a8e21d8d82638e500ba0f35ff9853b082914d69600a5ba5f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-SourceGraphBusinessFact/completeCodecPackage",
+        "expected": "d95248dcece16924df657adce22e6717870fb3b8b9a61797987b5129256603ca",
+        "actual": "d95248dcece16924df657adce22e6717870fb3b8b9a61797987b5129256603ca",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 108,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-PLAN-EXC-OwnerDispositionRequestBusinessFact",
+      "version": "3.0-proposed",
+      "line": 645,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-OwnerDispositionRequestBusinessFact/contractBody",
+        "expected": "23b57140a04122f18ba6c91b0151b03cb09aa153420f83296b9cf819716116ba",
+        "actual": "23b57140a04122f18ba6c91b0151b03cb09aa153420f83296b9cf819716116ba",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-OwnerDispositionRequestBusinessFact/completeCodecPackage",
+        "expected": "b5c9f48f7346e233e5544ae58ad3b3bbb05503dbae9ae8aaa8dba645ea5cf2a2",
+        "actual": "b5c9f48f7346e233e5544ae58ad3b3bbb05503dbae9ae8aaa8dba645ea5cf2a2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 109,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-EXC-CurrentAppliedNativeFact",
+      "version": "3.0-proposed",
+      "line": 650,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-EXC-CurrentAppliedNativeFact/contractBody",
+        "expected": "30c1ec567b86c0c23b2c44e7c8a52f29269ac2fc55647e8e3bbc5b66ef8adc0b",
+        "actual": "30c1ec567b86c0c23b2c44e7c8a52f29269ac2fc55647e8e3bbc5b66ef8adc0b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-EXC-CurrentAppliedNativeFact/completeCodecPackage",
+        "expected": "dea0d5d5aa651e9afa5cd981d3837eac818d8e50a058470af16086b2f2bafb2f",
+        "actual": "dea0d5d5aa651e9afa5cd981d3837eac818d8e50a058470af16086b2f2bafb2f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 110,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-EXC-MrpCoordinationRequest",
+      "version": "3.0-proposed",
+      "line": 655,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-EXC-MrpCoordinationRequest/contractBody",
+        "expected": "8daf6ee33927ef5db19277222d9c399111757eb4dbeb464b62062a5028de5b86",
+        "actual": "8daf6ee33927ef5db19277222d9c399111757eb4dbeb464b62062a5028de5b86",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-EXC-MrpCoordinationRequest/completeCodecPackage",
+        "expected": "5908e5504bf21bd99072611cbb9ca069314eb41964e1bec94d4d6ca1d8396000",
+        "actual": "5908e5504bf21bd99072611cbb9ca069314eb41964e1bec94d4d6ca1d8396000",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 111,
+      "group": "B",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-PLAN-EXC-PlanningOwnerSourceQueryCore",
+      "version": "3.0-proposed",
+      "line": 660,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-EXC-PlanningOwnerSourceQueryCore/contractBody",
+        "expected": "27f291b9d0ecdad09b15fd50f5b148ff542d47b6e84b41eb73f7f03e83fd25dd",
+        "actual": "27f291b9d0ecdad09b15fd50f5b148ff542d47b6e84b41eb73f7f03e83fd25dd",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-PLAN-EXC-PlanningOwnerSourceQueryCore/completeCodecPackage",
+        "expected": "cf7613544d102d03fcd7c72d8019d1626e7dc99cc6f8edcaa13427fe2d7ff1f2",
+        "actual": "cf7613544d102d03fcd7c72d8019d1626e7dc99cc6f8edcaa13427fe2d7ff1f2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 112,
+      "group": "B",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/PLAN-EXC/NATIVE",
+      "version": "3.0-proposed",
+      "line": 665,
+      "owner": "PLAN-EXC",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-PLAN-EXC-ExceptionIdentityNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "8a86825c19f943ad987f321295fdb7a53dc978ab451876b7fa4969cc322876af",
+        "actual": "8a86825c19f943ad987f321295fdb7a53dc978ab451876b7fa4969cc322876af",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 113,
+      "group": "B",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC09",
+      "version": "3.0-proposed",
+      "line": 669,
+      "owner": "['CORE', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/8/contractBody",
+        "expected": "0fda4f3acab480eb28551ecbe3ac5997e20de9e27a503a186ecf6426aaa2cd2c",
+        "actual": "0fda4f3acab480eb28551ecbe3ac5997e20de9e27a503a186ecf6426aaa2cd2c",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/8/contractBody/completeRecursiveCodecPackages",
+        "expected": "464b11cfc6b8246a50a7875deca26df89058b7b3658b55c08a62ad5fcd18ae1f",
+        "actual": "464b11cfc6b8246a50a7875deca26df89058b7b3658b55c08a62ad5fcd18ae1f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 114,
+      "group": "B",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC10",
+      "version": "3.0-proposed",
+      "line": 674,
+      "owner": "['PLAN-EXC', 'WMS-STOCK', 'PUR-PR', 'MES-WO', 'MES-MAT']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/9/contractBody",
+        "expected": "47d578db2a7e22ad4d75d0b293231cd60d0468356e07fbe468ff5f8ea876d33e",
+        "actual": "47d578db2a7e22ad4d75d0b293231cd60d0468356e07fbe468ff5f8ea876d33e",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/proposals/9/contractBody/completeRecursiveCodecPackages",
+        "expected": "59832daeeab176ea17d446fedea8bdd08422ad8cb3d6a22867ef6a1e8d6ab796",
+        "actual": "59832daeeab176ea17d446fedea8bdd08422ad8cb3d6a22867ef6a1e8d6ab796",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 115,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION",
+      "version": "6.0-proposed",
+      "line": 679,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/privateReadRetentionPort",
+        "expected": "9e49dcf757641da05cbcd013081185e1ea1c4e1d14779e3a0929e02722bf2010",
+        "actual": "9e49dcf757641da05cbcd013081185e1ea1c4e1d14779e3a0929e02722bf2010",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 116,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateCursorQuery",
+      "version": "6.0-proposed",
+      "line": 683,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateCursorQuery",
+        "expected": "99a21265a99aa85fb6cb97bb9ae1c4b81632bd918c36b306b4d74144db8b5503",
+        "actual": "99a21265a99aa85fb6cb97bb9ae1c4b81632bd918c36b306b4d74144db8b5503",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateCursorQuery",
+        "expected": "99a21265a99aa85fb6cb97bb9ae1c4b81632bd918c36b306b4d74144db8b5503",
+        "actual": "99a21265a99aa85fb6cb97bb9ae1c4b81632bd918c36b306b4d74144db8b5503",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 117,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateCursorBinding",
+      "version": "6.0-proposed",
+      "line": 688,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateCursorBinding",
+        "expected": "de37d8f20c95a6964a221e927f1246ea90037d9d3ceb68692340eba969888118",
+        "actual": "de37d8f20c95a6964a221e927f1246ea90037d9d3ceb68692340eba969888118",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateCursorBinding",
+        "expected": "de37d8f20c95a6964a221e927f1246ea90037d9d3ceb68692340eba969888118",
+        "actual": "de37d8f20c95a6964a221e927f1246ea90037d9d3ceb68692340eba969888118",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 118,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateQueryEnvelope",
+      "version": "6.0-proposed",
+      "line": 693,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateQueryEnvelope",
+        "expected": "6c9e633538cd0d7419ba66c80f81c77a346100391d89c2ba3e322b5c0fddcd9a",
+        "actual": "6c9e633538cd0d7419ba66c80f81c77a346100391d89c2ba3e322b5c0fddcd9a",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateQueryEnvelope",
+        "expected": "6c9e633538cd0d7419ba66c80f81c77a346100391d89c2ba3e322b5c0fddcd9a",
+        "actual": "6c9e633538cd0d7419ba66c80f81c77a346100391d89c2ba3e322b5c0fddcd9a",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 119,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateBindingEnvelope",
+      "version": "6.0-proposed",
+      "line": 698,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateBindingEnvelope",
+        "expected": "31b4c85a9377cece7c43cb0b0588c26a912ce3bc6b8593a3a4209edc0d89db8f",
+        "actual": "31b4c85a9377cece7c43cb0b0588c26a912ce3bc6b8593a3a4209edc0d89db8f",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateBindingEnvelope",
+        "expected": "31b4c85a9377cece7c43cb0b0588c26a912ce3bc6b8593a3a4209edc0d89db8f",
+        "actual": "31b4c85a9377cece7c43cb0b0588c26a912ce3bc6b8593a3a4209edc0d89db8f",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 120,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateReadRetentionGuarantee",
+      "version": "6.0-proposed",
+      "line": 703,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateReadRetentionGuarantee",
+        "expected": "5c4893e495987bf791cf256652a6659245c747abb32437a12135e8f208042540",
+        "actual": "5c4893e495987bf791cf256652a6659245c747abb32437a12135e8f208042540",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateReadRetentionGuarantee",
+        "expected": "5c4893e495987bf791cf256652a6659245c747abb32437a12135e8f208042540",
+        "actual": "5c4893e495987bf791cf256652a6659245c747abb32437a12135e8f208042540",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 121,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateRetainInitialInput",
+      "version": "6.0-proposed",
+      "line": 708,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateRetainInitialInput",
+        "expected": "3c330c98d1c7e33d8be71a9104392b1105bab0530fc2cde3645529c9d300114d",
+        "actual": "3c330c98d1c7e33d8be71a9104392b1105bab0530fc2cde3645529c9d300114d",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateRetainInitialInput",
+        "expected": "3c330c98d1c7e33d8be71a9104392b1105bab0530fc2cde3645529c9d300114d",
+        "actual": "3c330c98d1c7e33d8be71a9104392b1105bab0530fc2cde3645529c9d300114d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 122,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateRetainNextBindingInput",
+      "version": "6.0-proposed",
+      "line": 713,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateRetainNextBindingInput",
+        "expected": "840f0716d95bdbe60c6531838c519d23e93be160edd0291807ac0510e6aa1456",
+        "actual": "840f0716d95bdbe60c6531838c519d23e93be160edd0291807ac0510e6aa1456",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateRetainNextBindingInput",
+        "expected": "840f0716d95bdbe60c6531838c519d23e93be160edd0291807ac0510e6aa1456",
+        "actual": "840f0716d95bdbe60c6531838c519d23e93be160edd0291807ac0510e6aa1456",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 123,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateLookupInput",
+      "version": "6.0-proposed",
+      "line": 718,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateLookupInput",
+        "expected": "e73df43d7c504fd52144db3de392e0d08085e8757db0d911e86e7295c4538cf4",
+        "actual": "e73df43d7c504fd52144db3de392e0d08085e8757db0d911e86e7295c4538cf4",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateLookupInput",
+        "expected": "e73df43d7c504fd52144db3de392e0d08085e8757db0d911e86e7295c4538cf4",
+        "actual": "e73df43d7c504fd52144db3de392e0d08085e8757db0d911e86e7295c4538cf4",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 124,
+      "group": "B",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-PC09/PRIVATE-CURSOR-READ-RETENTION/PrivateRetentionLookupResult",
+      "version": "6.0-proposed",
+      "line": 723,
+      "owner": "['MAIN', 'PLAN-EXC']",
+      "decision": "ADOPT_CURRENT_CP12_EXACT_B_STATIC_DESIGN_SCOPE",
+      "member": "CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "正文": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateRetentionLookupResult",
+        "expected": "7f8a988e84381a3251d78be9e211614f921d17a3b14fce63ab2f671681f4b33d",
+        "actual": "7f8a988e84381a3251d78be9e211614f921d17a3b14fce63ab2f671681f4b33d",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/protocol/completePrivateReadCodecPackages/PrivateRetentionLookupResult",
+        "expected": "7f8a988e84381a3251d78be9e211614f921d17a3b14fce63ab2f671681f4b33d",
+        "actual": "7f8a988e84381a3251d78be9e211614f921d17a3b14fce63ab2f671681f4b33d",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 125,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-CORE-CorePrincipalNativeFact",
+      "version": "3.0-proposed",
+      "line": 728,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CorePrincipalNativeFact/contractBody",
+        "expected": "dfaacbe2c279eef53890fdd3554caa8bdae5c41ca097ee21bb95f5b849f6f8e4",
+        "actual": "dfaacbe2c279eef53890fdd3554caa8bdae5c41ca097ee21bb95f5b849f6f8e4",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CorePrincipalNativeFact/completeCodecPackage",
+        "expected": "7a098f917bb73b4f9a141cf3f337859dd5e581ffdc135f72c3d42813c1c2850a",
+        "actual": "7a098f917bb73b4f9a141cf3f337859dd5e581ffdc135f72c3d42813c1c2850a",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 126,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-CORE-CorePermissionNativeFact",
+      "version": "3.0-proposed",
+      "line": 733,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CorePermissionNativeFact/contractBody",
+        "expected": "e5e03590f0563b0e659e57a5fceecbc62f6356868cc0289da09da82a812b1679",
+        "actual": "e5e03590f0563b0e659e57a5fceecbc62f6356868cc0289da09da82a812b1679",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CorePermissionNativeFact/completeCodecPackage",
+        "expected": "383cdd71f3bf879a1a66fa1484f7bd1533c751c9fc47b6b6077d6930a615dda4",
+        "actual": "383cdd71f3bf879a1a66fa1484f7bd1533c751c9fc47b6b6077d6930a615dda4",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 127,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-CORE-CurrentHeadNativeFact",
+      "version": "3.0-proposed",
+      "line": 738,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CurrentHeadNativeFact/contractBody",
+        "expected": "d694e9f42eddbe45cd9bcfb1d687afbfc937713b4213273a6b40c3bb30034a8c",
+        "actual": "d694e9f42eddbe45cd9bcfb1d687afbfc937713b4213273a6b40c3bb30034a8c",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CurrentHeadNativeFact/completeCodecPackage",
+        "expected": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "actual": "84ec5c7f4db3a48c967819113f3d3e85e0fe3e81776a4e07b8fa3969ce1e11c2",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 128,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-CORE-StreamEpochNativeFact",
+      "version": "3.0-proposed",
+      "line": 743,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-StreamEpochNativeFact/contractBody",
+        "expected": "5437432bb7a32928824939807fd623db7fadf1dbf2be48b10b42a15339e4489d",
+        "actual": "5437432bb7a32928824939807fd623db7fadf1dbf2be48b10b42a15339e4489d",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-StreamEpochNativeFact/completeCodecPackage",
+        "expected": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "actual": "59093b925e1ac7338844a11c8e8d78df4371e4cb9ab18072d646b266c1a83e9e",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 129,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-CP02-NATIVE-CORE-CurrentObservationNativeFact",
+      "version": "3.0-proposed",
+      "line": 748,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CurrentObservationNativeFact/contractBody",
+        "expected": "f645d7089fd5785acc8297f2248f4886e7439115bd25923f73acd404163a4222",
+        "actual": "f645d7089fd5785acc8297f2248f4886e7439115bd25923f73acd404163a4222",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CurrentObservationNativeFact/completeCodecPackage",
+        "expected": "aca1652b06f373a349478e4bbaf48849b660782c15b2390c2d544ccb6664c53c",
+        "actual": "aca1652b06f373a349478e4bbaf48849b660782c15b2390c2d544ccb6664c53c",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 130,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-PC08-CORE-SDK",
+      "version": "3.0-proposed",
+      "line": 753,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-PC08-CORE-SDK/contractBody",
+        "expected": "49b2702d734d12087b6e3c10c48461dfd369171e8466c83ec513ff2f84b3ea5d",
+        "actual": "49b2702d734d12087b6e3c10c48461dfd369171e8466c83ec513ff2f84b3ea5d",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-PC08-CORE-SDK/completeCodecPackage",
+        "expected": "d72a67c70fd411f6291c3907d9881a032e9f448a26d18bd40a825a1cdca2ab4a",
+        "actual": "d72a67c70fd411f6291c3907d9881a032e9f448a26d18bd40a825a1cdca2ab4a",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 131,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-CORE-PlanningConsumerDelegationNativeFact",
+      "version": "3.0-proposed",
+      "line": 758,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-CORE-PlanningConsumerDelegationNativeFact/contractBody",
+        "expected": "abb25e6e12e875fd25278e6b0102091ccaf2729e15a2189dacce2c79bf09578b",
+        "actual": "abb25e6e12e875fd25278e6b0102091ccaf2729e15a2189dacce2c79bf09578b",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-CORE-PlanningConsumerDelegationNativeFact/completeCodecPackage",
+        "expected": "e9e4ce28763a21b6714484a678684c449c4aa52c41cf8bb744105db22097299c",
+        "actual": "e9e4ce28763a21b6714484a678684c449c4aa52c41cf8bb744105db22097299c",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 132,
+      "group": "C",
+      "kind": "LEAF",
+      "id": "EXC-CP03-NATIVE-CORE-PlanningConsumerPermissionNativeFact",
+      "version": "3.0-proposed",
+      "line": 763,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-CORE-PlanningConsumerPermissionNativeFact/contractBody",
+        "expected": "0c203a5c92c08e46560c97f238575c37dbbd04689dfb71b4d1f45a1145a69e18",
+        "actual": "0c203a5c92c08e46560c97f238575c37dbbd04689dfb71b4d1f45a1145a69e18",
+        "equal": true
+      },
+      "完整codec": {
+        "pointer": "/contracts/EXC-CP03-NATIVE-CORE-PlanningConsumerPermissionNativeFact/completeCodecPackage",
+        "expected": "e5eca3d94238bcae6bf1dbb989a49d3e4a617dd3440f0a7cbe268c2fb4bed7c5",
+        "actual": "e5eca3d94238bcae6bf1dbb989a49d3e4a617dd3440f0a7cbe268c2fb4bed7c5",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 133,
+      "group": "C",
+      "kind": "NATIVE_AGGREGATE",
+      "id": "CP03/EXC/CORE/NATIVE",
+      "version": "3.0-proposed",
+      "line": 768,
+      "owner": "CORE",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_LEAF_CONTRACTS.json",
+      "正文": {
+        "pointer": "/contracts/EXC-CP02-NATIVE-CORE-CorePrincipalNativeFact/contractBody/nativeIssuerAndPin/completeAggregateContract",
+        "expected": "11bb9d81739f418806a4ea793c2b7cd8ced551becd3d1c60b6e672e71d744337",
+        "actual": "11bb9d81739f418806a4ea793c2b7cd8ced551becd3d1c60b6e672e71d744337",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 134,
+      "group": "C",
+      "kind": "ROLE_PROPOSAL",
+      "id": "EXC-PC08",
+      "version": "3.0-proposed",
+      "line": 772,
+      "owner": "['CORE']",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/7/contractBody",
+        "expected": "c80a48522a6496078bcbbf500b7116be385ee714e47632358b0e208e7b90dfe6",
+        "actual": "c80a48522a6496078bcbbf500b7116be385ee714e47632358b0e208e7b90dfe6",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 135,
+      "group": "C",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC-CP04-CURSOR-01",
+      "version": "6.0-proposed",
+      "line": 776,
+      "owner": "None",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_OWNER_PROPOSALS_AND_ADOPTION_GATES.json",
+      "正文": {
+        "pointer": "/proposals/7/contractBody/boundedPublicCursorIssuerProtocol",
+        "expected": "b302faf17fe09fb4e29c5d19d919f3006e0ba249f282635b82eb9deaac539f6a",
+        "actual": "b302faf17fe09fb4e29c5d19d919f3006e0ba249f282635b82eb9deaac539f6a",
+        "equal": true
+      }
+    },
+    {
+      "ordinal": 136,
+      "group": "C",
+      "kind": "SUPPLEMENTAL",
+      "id": "EXC_DISCLOSURE_POLICY",
+      "version": "3-proposed with CP04/CP06 bounded amendments",
+      "line": 780,
+      "owner": "None",
+      "decision": "ADOPT_CURRENT_CP12_C_SCOPED_STATIC_DESIGN_ONLY",
+      "member": "EXC_DISCLOSURE_POLICY.json",
+      "正文": {
+        "pointer": "",
+        "expected": "557d50b51fae55d68d26b2c3f5ba322f75fbe81af5ab08ae495f8f4e5c8dd90e",
+        "actual": "557d50b51fae55d68d26b2c3f5ba322f75fbe81af5ab08ae495f8f4e5c8dd90e",
+        "equal": true
+      }
+    }
+  ],
+  "errors": [],
+  "unrecognized_lines": []
+}

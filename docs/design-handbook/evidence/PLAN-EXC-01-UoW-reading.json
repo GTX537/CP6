@@ -1,0 +1,1680 @@
+{
+  "target_id": "PLAN-EXC-01",
+  "prepared_at_utc": "2026-10-10T11:29:59.081765+00:00",
+  "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/CP03_LOCAL_UOW_LEDGER_INDEX.json",
+  "sha256": "03c9e362bbb51cfd91be49297b81c306a5b43abdeb31bc02906f3bfcc18a97ae",
+  "status": "all_packet_semantics_plus_underlying_record_field_semantics_consolidated_with_exact_reuse",
+  "business_packet_surfaces_read": [
+    {
+      "packet": "BOOTSTRAP_PRIMARY",
+      "source_line": 8
+    },
+    {
+      "packet": "INITIAL_CASE_HEAD",
+      "source_line": 51232
+    },
+    {
+      "packet": "PREPARED_CASE_HEAD",
+      "source_line": 100179
+    },
+    {
+      "packet": "RECALC_REGISTER",
+      "source_line": 102577
+    },
+    {
+      "packet": "SHARED_CASE_HEAD",
+      "source_line": 106813
+    },
+    {
+      "packet": "SHARED_HANDOFF_REGISTER",
+      "source_line": 121888
+    },
+    {
+      "packet": "RECALC_OBSERVE_ACCEPTED",
+      "source_line": 126101
+    },
+    {
+      "packet": "RECALC_OBSERVE_PREPARING",
+      "source_line": 128616
+    },
+    {
+      "packet": "RECALC_OBSERVE_INPUT_SEALED",
+      "source_line": 134871
+    },
+    {
+      "packet": "RECALC_OBSERVE_RUN_REQUESTED",
+      "source_line": 137964
+    },
+    {
+      "packet": "RECALC_OBSERVE_ATTEMPT_STARTED",
+      "source_line": 140953
+    },
+    {
+      "packet": "SHARED_CAPTURE_ACCEPTED",
+      "source_line": 145869
+    },
+    {
+      "packet": "RECALC_OBSERVE_RESULT_SEALED",
+      "source_line": 149653
+    },
+    {
+      "packet": "RECALC_OBSERVE_SELECTED",
+      "source_line": 154278
+    },
+    {
+      "packet": "RECALC_OBSERVE_PUBLISHED",
+      "source_line": 160938
+    },
+    {
+      "packet": "SHARED_CAPTURE_SETTLED",
+      "source_line": 167045
+    },
+    {
+      "packet": "RECALC_LOCAL_CONSUMPTION",
+      "source_line": 194641
+    },
+    {
+      "packet": "SHARED_SETTLED_CASE_SUCCESSOR",
+      "source_line": 216397
+    },
+    {
+      "packet": "SHARED_RESOLVE",
+      "source_line": 218888
+    },
+    {
+      "packet": "ALERT_DISMISS",
+      "source_line": 225529
+    },
+    {
+      "packet": "ALERT_RESTORE",
+      "source_line": 230398
+    },
+    {
+      "packet": "ALERT_EXPIRY_READ",
+      "source_line": 233072
+    },
+    {
+      "packet": "REPAIR_BRANCH_TRUE_BUSINESS_CONSUMPTION",
+      "source_line": 233123
+    },
+    {
+      "packet": "LOCAL_PROJECTION_FAILURE_BOUNDARY",
+      "source_line": 235812
+    },
+    {
+      "packet": "REPAIR_WRITER_EPOCH9",
+      "source_line": 235826
+    },
+    {
+      "packet": "LOCAL_PROJECTION_REPAIR_PREPARE",
+      "source_line": 263669
+    },
+    {
+      "packet": "LOCAL_PROJECTION_REPAIR",
+      "source_line": 769922
+    },
+    {
+      "packet": "M04_RECEIVE_SEQUENCE2",
+      "source_line": 268983
+    },
+    {
+      "packet": "M04_LATE_SEQUENCE1_HISTORY_ONLY",
+      "source_line": 272381
+    },
+    {
+      "packet": "M04_LOCAL_APPLY_RETRYABLE_FAILURE",
+      "source_line": 276049
+    },
+    {
+      "packet": "M04_APPLY_ORIGINAL_SEQUENCE2",
+      "source_line": 277634
+    },
+    {
+      "packet": "M04_EXACT_NATIVE_ALIAS",
+      "source_line": 282949
+    },
+    {
+      "packet": "PRIMARY_WRITER_EPOCH9",
+      "source_line": 284610
+    },
+    {
+      "packet": "RESOLVE_AFTER_M04_AND_EPOCH9",
+      "source_line": 289154
+    },
+    {
+      "packet": "EPOCH_OLD_WRITER_FENCED",
+      "source_line": 293455
+    },
+    {
+      "packet": "COLD_ORIGINAL_MAY_HAVE_SENT",
+      "source_line": 293472
+    },
+    {
+      "packet": "COLD_EXPIRED_WRITER8_ACQUIRE9",
+      "source_line": 295231
+    },
+    {
+      "packet": "COLD_FRESH_RECOVER_SOURCE_CUT",
+      "source_line": 295369
+    },
+    {
+      "packet": "COLD_ORIGINAL_READONLY_NOT_OBSERVED",
+      "source_line": 297460
+    },
+    {
+      "packet": "COLD_ORIGINAL_READONLY_FOUND_SOURCE_CAPTURE",
+      "source_line": 300827
+    },
+    {
+      "packet": "COLD_ORIGINAL_READONLY_FOUND",
+      "source_line": 323180
+    },
+    {
+      "packet": "BOOTSTRAP_SAME_INPUT_RECOVERY",
+      "source_line": 328458
+    },
+    {
+      "packet": "SAME_INPUT_INITIAL_CASE_HEAD",
+      "source_line": 379682
+    },
+    {
+      "packet": "SAME_INPUT_EXPIRED_WRITER8_ACQUIRE9",
+      "source_line": 381904
+    },
+    {
+      "packet": "SAME_INPUT_RECOVERY_REGISTER",
+      "source_line": 518477
+    },
+    {
+      "packet": "SAME_INPUT_RECOVERY_CAPTURE_G2",
+      "source_line": 528759
+    },
+    {
+      "packet": "SAME_INPUT_LATE_G1_DIAGNOSTIC",
+      "source_line": 534911
+    },
+    {
+      "packet": "MULTICASE_EXPORT_PREPARE",
+      "source_line": 553418
+    },
+    {
+      "packet": "MULTICASE_EXPORT_REGISTER",
+      "source_line": 558111
+    },
+    {
+      "packet": "MULTICASE_EXPORT_MAY_HAVE_GENERATED",
+      "source_line": 558541
+    },
+    {
+      "packet": "MULTICASE_EXPORT_CAPTURE_ORIGINAL_FILE",
+      "source_line": 558695
+    },
+    {
+      "packet": "MULTICASE_EXPORT_REPLAY_AND_DENIALS",
+      "source_line": 559023
+    },
+    {
+      "packet": "MATERIAL_OLD_LOCAL_HEAD",
+      "source_line": 701060
+    },
+    {
+      "packet": "MATERIAL_NEW_LOCAL_HEAD",
+      "source_line": 705700
+    },
+    {
+      "packet": "MATERIAL_EXACT_SEPARATE_OBLIGATIONS",
+      "source_line": 710340
+    },
+    {
+      "packet": "M02_ORIGINAL_STREAM_BEGIN",
+      "source_line": 727575
+    },
+    {
+      "packet": "M02_ORIGINAL_SEQUENCE1",
+      "source_line": 728182
+    },
+    {
+      "packet": "M02_ORIGINAL_SEQUENCE2",
+      "source_line": 732209
+    },
+    {
+      "packet": "M03_ORIGINAL_STREAM_BEGIN",
+      "source_line": 736332
+    },
+    {
+      "packet": "M03_ORIGINAL_SEQUENCE1",
+      "source_line": 736939
+    },
+    {
+      "packet": "M03_ORIGINAL_SEQUENCE2",
+      "source_line": 743973
+    },
+    {
+      "packet": "EPOCH9_NONTERMINAL_EXPIRED_LEASE_ACQUIRE",
+      "source_line": 753628
+    },
+    {
+      "packet": "EPOCH9_NONTERMINAL_HEAD_TUPLE",
+      "source_line": 758172
+    },
+    {
+      "packet": "IMPACT_REQUIRED_LOCAL_WAIT",
+      "source_line": 769946
+    },
+    {
+      "packet": "REPAIR_REQUIRED_LOCAL_WAIT",
+      "source_line": 769949
+    }
+  ],
+  "surface_boundary": "Original packet-surface reading combined with separate complete record-field reading; opaque identities preserved and structurally compared, not a business execution proof.",
+  "shared_reuse_audit": {
+    "exact_structure_nodes": 1563,
+    "raw_json_strings_parsed": 58,
+    "cache": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/_uow-reuse.json",
+    "upstream_semantic_evidence": "PLAN-EXC-01-source-reading.json when independently completed"
+  },
+  "admission_rule": "Preserve exact original source time; later capture does not backdate inclusion. Compare UTC instants including fractions, not strings.",
+  "admission_timestamp_comparisons": [
+    {
+      "packet": "ADMIT_PRIMARY_2",
+      "source_original_recorded_at": "2026-10-04T16:49:00Z",
+      "local_at": "2026-10-04T16:50:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_3",
+      "source_original_recorded_at": "2026-10-04T17:00:00Z",
+      "local_at": "2026-10-04T17:00:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_4",
+      "source_original_recorded_at": "2026-10-04T17:01:00Z",
+      "local_at": "2026-10-04T17:01:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_5",
+      "source_original_recorded_at": "2026-10-04T17:02:00Z",
+      "local_at": "2026-10-04T17:02:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_6",
+      "source_original_recorded_at": "2026-10-04T17:03:00Z",
+      "local_at": "2026-10-04T17:03:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_7",
+      "source_original_recorded_at": "2026-10-04T17:04:00Z",
+      "local_at": "2026-10-04T17:04:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_8",
+      "source_original_recorded_at": "2026-10-04T17:04:10Z",
+      "local_at": "2026-10-04T17:04:10Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_9",
+      "source_original_recorded_at": "2026-10-04T17:05:00Z",
+      "local_at": "2026-10-04T17:05:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_10",
+      "source_original_recorded_at": "2026-10-04T17:05:01Z",
+      "local_at": "2026-10-04T17:05:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_11",
+      "source_original_recorded_at": "2026-10-04T17:05:02Z",
+      "local_at": "2026-10-04T17:05:02Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_12",
+      "source_original_recorded_at": "2026-10-04T17:05:03Z",
+      "local_at": "2026-10-04T17:05:03Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_13",
+      "source_original_recorded_at": "2026-10-04T17:05:04Z",
+      "local_at": "2026-10-04T17:05:04Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_14",
+      "source_original_recorded_at": "2026-10-04T17:06:00Z",
+      "local_at": "2026-10-04T17:06:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_15",
+      "source_original_recorded_at": "2026-10-04T17:06:01Z",
+      "local_at": "2026-10-04T17:06:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_16",
+      "source_original_recorded_at": "2026-10-04T17:06:02Z",
+      "local_at": "2026-10-04T17:06:02Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_17",
+      "source_original_recorded_at": "2026-10-04T17:07:00Z",
+      "local_at": "2026-10-04T17:07:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_18",
+      "source_original_recorded_at": "2026-10-04T17:07:01Z",
+      "local_at": "2026-10-04T17:07:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_19",
+      "source_original_recorded_at": "2026-10-04T17:07:02Z",
+      "local_at": "2026-10-04T17:07:02Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_20",
+      "source_original_recorded_at": "2026-10-04T17:07:03Z",
+      "local_at": "2026-10-04T17:07:03Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_21",
+      "source_original_recorded_at": "2026-10-04T17:07:03.100Z",
+      "local_at": "2026-10-04T17:07:03.100Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_22",
+      "source_original_recorded_at": "2026-10-04T17:08:00Z",
+      "local_at": "2026-10-04T17:08:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_23",
+      "source_original_recorded_at": "2026-10-04T17:32:00Z",
+      "local_at": "2026-10-04T17:32:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_24",
+      "source_original_recorded_at": "2026-10-04T17:34:00Z",
+      "local_at": "2026-10-04T17:34:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_25",
+      "source_original_recorded_at": "2026-10-04T17:35:00Z",
+      "local_at": "2026-10-04T17:35:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_26",
+      "source_original_recorded_at": "2026-10-04T17:57:00Z",
+      "local_at": "2026-10-04T17:57:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_27",
+      "source_original_recorded_at": "2026-10-04T17:57:30Z",
+      "local_at": "2026-10-04T17:57:30Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_28",
+      "source_original_recorded_at": "2026-10-04T17:57:35Z",
+      "local_at": "2026-10-04T17:57:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_29",
+      "source_original_recorded_at": "2026-10-04T17:57:40Z",
+      "local_at": "2026-10-04T17:57:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_30",
+      "source_original_recorded_at": "2026-10-04T17:58:00Z",
+      "local_at": "2026-10-04T17:58:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_31",
+      "source_original_recorded_at": "2026-10-04T17:58:20Z",
+      "local_at": "2026-10-04T17:58:20Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_32",
+      "source_original_recorded_at": "2026-10-04T17:58:30Z",
+      "local_at": "2026-10-04T17:58:30Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_33",
+      "source_original_recorded_at": "2026-10-04T17:58:40Z",
+      "local_at": "2026-10-04T17:58:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_34",
+      "source_original_recorded_at": "2026-10-04T17:59:00Z",
+      "local_at": "2026-10-04T17:59:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_35",
+      "source_original_recorded_at": "2026-10-04T17:59:10Z",
+      "local_at": "2026-10-04T17:59:10Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_36",
+      "source_original_recorded_at": "2026-10-04T17:59:20Z",
+      "local_at": "2026-10-04T17:59:20Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_37",
+      "source_original_recorded_at": "2026-10-04T17:59:30Z",
+      "local_at": "2026-10-04T17:59:30Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_38",
+      "source_original_recorded_at": "2026-10-04T17:59:35Z",
+      "local_at": "2026-10-04T17:59:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_39",
+      "source_original_recorded_at": "2026-10-04T17:59:36Z",
+      "local_at": "2026-10-04T17:59:36Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_40",
+      "source_original_recorded_at": "2026-10-04T17:59:37Z",
+      "local_at": "2026-10-04T17:59:37Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_41",
+      "source_original_recorded_at": "2026-10-04T17:59:40Z",
+      "local_at": "2026-10-04T17:59:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_42",
+      "source_original_recorded_at": "2026-10-04T17:59:42Z",
+      "local_at": "2026-10-04T17:59:42Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_43",
+      "source_original_recorded_at": "2026-10-04T17:59:43Z",
+      "local_at": "2026-10-04T17:59:43Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_44",
+      "source_original_recorded_at": "2026-10-04T17:59:45Z",
+      "local_at": "2026-10-04T17:59:45Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_45",
+      "source_original_recorded_at": "2026-10-04T18:00:00Z",
+      "local_at": "2026-10-04T18:00:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_46",
+      "source_original_recorded_at": "2026-10-04T18:09:00Z",
+      "local_at": "2026-10-04T18:09:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_47",
+      "source_original_recorded_at": "2026-10-04T18:09:01Z",
+      "local_at": "2026-10-04T18:09:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_48",
+      "source_original_recorded_at": "2026-10-04T18:10:00Z",
+      "local_at": "2026-10-04T18:10:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_50",
+      "source_original_recorded_at": "2026-10-04T18:10:00.500Z",
+      "local_at": "2026-10-04T18:10:00.500Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_51",
+      "source_original_recorded_at": "2026-10-04T18:10:00.800Z",
+      "local_at": "2026-10-04T18:10:00.800Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_52",
+      "source_original_recorded_at": "2026-10-04T18:10:03Z",
+      "local_at": "2026-10-04T18:10:03Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_53",
+      "source_original_recorded_at": "2026-10-04T18:10:04Z",
+      "local_at": "2026-10-04T18:10:04Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_54",
+      "source_original_recorded_at": "2026-10-04T18:10:10Z",
+      "local_at": "2026-10-04T18:10:10Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_58",
+      "source_original_recorded_at": "2026-10-04T18:10:11Z",
+      "local_at": "2026-10-04T18:10:11Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_61",
+      "source_original_recorded_at": "2026-10-04T18:10:12Z",
+      "local_at": "2026-10-04T18:10:12Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_63",
+      "source_original_recorded_at": "2026-10-04T18:10:13Z",
+      "local_at": "2026-10-04T18:10:13Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_64",
+      "source_original_recorded_at": "2026-10-04T18:10:14Z",
+      "local_at": "2026-10-04T18:10:14Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_65",
+      "source_original_recorded_at": "2026-10-04T18:10:15Z",
+      "local_at": "2026-10-04T18:10:15Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_67",
+      "source_original_recorded_at": "2026-10-04T18:10:16Z",
+      "local_at": "2026-10-04T18:10:16Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_69",
+      "source_original_recorded_at": "2026-10-04T18:10:17Z",
+      "local_at": "2026-10-04T18:10:17Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_71",
+      "source_original_recorded_at": "2026-10-04T18:10:17.500000Z",
+      "local_at": "2026-10-04T18:10:17.500000Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_72",
+      "source_original_recorded_at": "2026-10-04T18:10:18Z",
+      "local_at": "2026-10-04T18:10:18Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_73",
+      "source_original_recorded_at": "2026-10-04T18:10:19Z",
+      "local_at": "2026-10-04T18:10:19Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_74",
+      "source_original_recorded_at": "2026-10-04T18:10:20Z",
+      "local_at": "2026-10-04T18:10:20Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_76",
+      "source_original_recorded_at": "2026-10-04T18:10:21Z",
+      "local_at": "2026-10-04T18:10:21Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_78",
+      "source_original_recorded_at": "2026-10-04T18:10:22Z",
+      "local_at": "2026-10-04T18:10:22Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_79",
+      "source_original_recorded_at": "2026-10-04T18:10:23Z",
+      "local_at": "2026-10-04T18:10:23Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_81",
+      "source_original_recorded_at": "2026-10-04T18:10:24Z",
+      "local_at": "2026-10-04T18:10:24Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_82",
+      "source_original_recorded_at": "2026-10-04T18:10:25Z",
+      "local_at": "2026-10-04T18:10:25Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_83",
+      "source_original_recorded_at": "2026-10-04T18:10:26Z",
+      "local_at": "2026-10-04T18:10:26Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_85",
+      "source_original_recorded_at": "2026-10-04T18:10:26.500Z",
+      "local_at": "2026-10-04T18:10:26.500Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_86",
+      "source_original_recorded_at": "2026-10-04T18:10:27Z",
+      "local_at": "2026-10-04T18:10:27Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_88",
+      "source_original_recorded_at": "2026-10-04T18:10:28Z",
+      "local_at": "2026-10-04T18:10:28Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_90",
+      "source_original_recorded_at": "2026-10-04T18:10:29Z",
+      "local_at": "2026-10-04T18:10:29Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_ALERT_ONLY_50",
+      "source_original_recorded_at": "2026-10-04T18:10:00.500Z",
+      "local_at": "2026-10-04T18:10:00.500Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_ALERT_ONLY_52",
+      "source_original_recorded_at": "2026-10-04T18:10:00.800Z",
+      "local_at": "2026-10-04T18:10:00.800Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_LOCAL_PROJECTION_REPAIR_91",
+      "source_original_recorded_at": "2026-10-04T18:10:29Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_LOCAL_PROJECTION_REPAIR_92",
+      "source_original_recorded_at": "2026-10-04T18:10:30Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_LOCAL_PROJECTION_REPAIR_93",
+      "source_original_recorded_at": "2026-10-04T18:10:33Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_LOCAL_PROJECTION_REPAIR_94",
+      "source_original_recorded_at": "2026-10-04T18:10:34Z",
+      "local_at": "2026-10-04T18:10:34Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_LOCAL_PROJECTION_REPAIR_95",
+      "source_original_recorded_at": "2026-10-04T18:10:35Z",
+      "local_at": "2026-10-04T18:10:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_93",
+      "source_original_recorded_at": "2026-10-04T18:10:30Z",
+      "local_at": "2026-10-04T18:10:30Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_100",
+      "source_original_recorded_at": "2026-10-04T18:10:33Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_PRIMARY_101",
+      "source_original_recorded_at": "2026-10-04T18:10:34Z",
+      "local_at": "2026-10-04T18:10:34Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_2",
+      "source_original_recorded_at": "2026-10-04T16:49:00Z",
+      "local_at": "2026-10-04T16:50:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_3",
+      "source_original_recorded_at": "2026-10-04T17:00:00Z",
+      "local_at": "2026-10-04T17:00:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_4",
+      "source_original_recorded_at": "2026-10-04T17:01:00Z",
+      "local_at": "2026-10-04T17:01:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_5",
+      "source_original_recorded_at": "2026-10-04T17:02:00Z",
+      "local_at": "2026-10-04T17:02:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_6",
+      "source_original_recorded_at": "2026-10-04T17:03:00Z",
+      "local_at": "2026-10-04T17:03:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_7",
+      "source_original_recorded_at": "2026-10-04T17:04:00Z",
+      "local_at": "2026-10-04T17:04:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_8",
+      "source_original_recorded_at": "2026-10-04T17:04:10Z",
+      "local_at": "2026-10-04T17:04:10Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_9",
+      "source_original_recorded_at": "2026-10-04T17:05:00Z",
+      "local_at": "2026-10-04T17:05:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_10",
+      "source_original_recorded_at": "2026-10-04T17:05:01Z",
+      "local_at": "2026-10-04T17:05:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_11",
+      "source_original_recorded_at": "2026-10-04T17:05:02Z",
+      "local_at": "2026-10-04T17:05:02Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_12",
+      "source_original_recorded_at": "2026-10-04T17:05:03Z",
+      "local_at": "2026-10-04T17:05:03Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_13",
+      "source_original_recorded_at": "2026-10-04T17:05:04Z",
+      "local_at": "2026-10-04T17:05:04Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_14",
+      "source_original_recorded_at": "2026-10-04T17:06:00Z",
+      "local_at": "2026-10-04T17:06:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_15",
+      "source_original_recorded_at": "2026-10-04T17:06:01Z",
+      "local_at": "2026-10-04T17:06:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_16",
+      "source_original_recorded_at": "2026-10-04T17:06:02Z",
+      "local_at": "2026-10-04T17:06:02Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_17",
+      "source_original_recorded_at": "2026-10-04T17:07:00Z",
+      "local_at": "2026-10-04T17:07:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_18",
+      "source_original_recorded_at": "2026-10-04T17:07:01Z",
+      "local_at": "2026-10-04T17:07:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_19",
+      "source_original_recorded_at": "2026-10-04T17:07:02Z",
+      "local_at": "2026-10-04T17:07:02Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_20",
+      "source_original_recorded_at": "2026-10-04T17:07:03Z",
+      "local_at": "2026-10-04T17:07:03Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_21",
+      "source_original_recorded_at": "2026-10-04T17:07:03.100Z",
+      "local_at": "2026-10-04T17:07:03.100Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_22",
+      "source_original_recorded_at": "2026-10-04T17:08:00Z",
+      "local_at": "2026-10-04T17:08:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_23",
+      "source_original_recorded_at": "2026-10-04T17:32:00Z",
+      "local_at": "2026-10-04T17:32:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_24",
+      "source_original_recorded_at": "2026-10-04T17:34:00Z",
+      "local_at": "2026-10-04T17:34:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_25",
+      "source_original_recorded_at": "2026-10-04T17:35:00Z",
+      "local_at": "2026-10-04T17:35:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_26",
+      "source_original_recorded_at": "2026-10-04T17:57:00Z",
+      "local_at": "2026-10-04T17:57:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_27",
+      "source_original_recorded_at": "2026-10-04T17:57:30Z",
+      "local_at": "2026-10-04T17:57:30Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_28",
+      "source_original_recorded_at": "2026-10-04T17:57:35Z",
+      "local_at": "2026-10-04T17:57:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_29",
+      "source_original_recorded_at": "2026-10-04T17:57:40Z",
+      "local_at": "2026-10-04T17:57:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_30",
+      "source_original_recorded_at": "2026-10-04T17:58:00Z",
+      "local_at": "2026-10-04T17:58:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_31",
+      "source_original_recorded_at": "2026-10-04T17:58:20Z",
+      "local_at": "2026-10-04T17:58:20Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_32",
+      "source_original_recorded_at": "2026-10-04T17:58:30Z",
+      "local_at": "2026-10-04T17:58:30Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_33",
+      "source_original_recorded_at": "2026-10-04T17:58:40Z",
+      "local_at": "2026-10-04T17:58:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_34",
+      "source_original_recorded_at": "2026-10-04T17:59:00Z",
+      "local_at": "2026-10-04T17:59:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_35",
+      "source_original_recorded_at": "2026-10-04T17:59:10Z",
+      "local_at": "2026-10-04T17:59:10Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_36",
+      "source_original_recorded_at": "2026-10-04T17:59:20Z",
+      "local_at": "2026-10-04T17:59:20Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_37",
+      "source_original_recorded_at": "2026-10-04T17:59:30Z",
+      "local_at": "2026-10-04T17:59:30Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_38",
+      "source_original_recorded_at": "2026-10-04T17:59:35Z",
+      "local_at": "2026-10-04T17:59:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_39",
+      "source_original_recorded_at": "2026-10-04T17:59:36Z",
+      "local_at": "2026-10-04T17:59:36Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_40",
+      "source_original_recorded_at": "2026-10-04T17:59:37Z",
+      "local_at": "2026-10-04T17:59:37Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_41",
+      "source_original_recorded_at": "2026-10-04T17:59:40Z",
+      "local_at": "2026-10-04T17:59:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_42",
+      "source_original_recorded_at": "2026-10-04T17:59:42Z",
+      "local_at": "2026-10-04T17:59:42Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_43",
+      "source_original_recorded_at": "2026-10-04T17:59:43Z",
+      "local_at": "2026-10-04T17:59:43Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_44",
+      "source_original_recorded_at": "2026-10-04T17:59:45Z",
+      "local_at": "2026-10-04T17:59:45Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_45",
+      "source_original_recorded_at": "2026-10-04T18:00:00Z",
+      "local_at": "2026-10-04T18:00:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_46",
+      "source_original_recorded_at": "2026-10-04T18:09:00Z",
+      "local_at": "2026-10-04T18:09:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_47",
+      "source_original_recorded_at": "2026-10-04T18:09:01Z",
+      "local_at": "2026-10-04T18:09:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_48",
+      "source_original_recorded_at": "2026-10-04T18:10:00Z",
+      "local_at": "2026-10-04T18:10:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_51",
+      "source_original_recorded_at": "2026-10-04T18:10:00.500Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_52",
+      "source_original_recorded_at": "2026-10-04T18:10:00.800Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_53",
+      "source_original_recorded_at": "2026-10-04T18:10:03Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_54",
+      "source_original_recorded_at": "2026-10-04T18:10:04Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_55",
+      "source_original_recorded_at": "2026-10-04T18:10:10Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_56",
+      "source_original_recorded_at": "2026-10-04T18:10:11Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_57",
+      "source_original_recorded_at": "2026-10-04T18:10:12Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_58",
+      "source_original_recorded_at": "2026-10-04T18:10:13Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_59",
+      "source_original_recorded_at": "2026-10-04T18:10:14Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_60",
+      "source_original_recorded_at": "2026-10-04T18:10:15Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_61",
+      "source_original_recorded_at": "2026-10-04T18:10:16Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_62",
+      "source_original_recorded_at": "2026-10-04T18:10:17Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_63",
+      "source_original_recorded_at": "2026-10-04T18:10:17.500000Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_64",
+      "source_original_recorded_at": "2026-10-04T18:10:18Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_65",
+      "source_original_recorded_at": "2026-10-04T18:10:19Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_66",
+      "source_original_recorded_at": "2026-10-04T18:10:20Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_67",
+      "source_original_recorded_at": "2026-10-04T18:10:21Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_68",
+      "source_original_recorded_at": "2026-10-04T18:10:22Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_69",
+      "source_original_recorded_at": "2026-10-04T18:10:23Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_70",
+      "source_original_recorded_at": "2026-10-04T18:10:24Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_71",
+      "source_original_recorded_at": "2026-10-04T18:10:25Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_72",
+      "source_original_recorded_at": "2026-10-04T18:10:26Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_73",
+      "source_original_recorded_at": "2026-10-04T18:10:26.500Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_74",
+      "source_original_recorded_at": "2026-10-04T18:10:27Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_75",
+      "source_original_recorded_at": "2026-10-04T18:10:28Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_76",
+      "source_original_recorded_at": "2026-10-04T18:10:29Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_77",
+      "source_original_recorded_at": "2026-10-04T18:10:30Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_78",
+      "source_original_recorded_at": "2026-10-04T18:10:33Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_79",
+      "source_original_recorded_at": "2026-10-04T18:10:34Z",
+      "local_at": "2026-10-04T18:10:34Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_80",
+      "source_original_recorded_at": "2026-10-04T18:10:35Z",
+      "local_at": "2026-10-04T18:10:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_81",
+      "source_original_recorded_at": "2026-10-04T18:10:37Z",
+      "local_at": "2026-10-04T18:10:37Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_82",
+      "source_original_recorded_at": "2026-10-04T18:10:37.100Z",
+      "local_at": "2026-10-04T18:10:37.100Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_83",
+      "source_original_recorded_at": "2026-10-04T18:10:38Z",
+      "local_at": "2026-10-04T18:10:38Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_84",
+      "source_original_recorded_at": "2026-10-04T18:10:39Z",
+      "local_at": "2026-10-04T18:10:39Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_85",
+      "source_original_recorded_at": "2026-10-04T18:10:40Z",
+      "local_at": "2026-10-04T18:10:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_87",
+      "source_original_recorded_at": "2026-10-04T18:10:41Z",
+      "local_at": "2026-10-04T18:10:41Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_88",
+      "source_original_recorded_at": "2026-10-04T18:10:42Z",
+      "local_at": "2026-10-04T18:10:42Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_SAME_INPUT_RECOVERY_90",
+      "source_original_recorded_at": "2026-10-04T18:10:43Z",
+      "local_at": "2026-10-04T18:10:43Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_103",
+      "source_original_recorded_at": "2026-10-04T18:10:35Z",
+      "local_at": "2026-10-04T18:10:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_104",
+      "source_original_recorded_at": "2026-10-04T18:10:37Z",
+      "local_at": "2026-10-04T18:10:37Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_105",
+      "source_original_recorded_at": "2026-10-04T18:10:37.100Z",
+      "local_at": "2026-10-04T18:10:37.100Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_106",
+      "source_original_recorded_at": "2026-10-04T18:10:38Z",
+      "local_at": "2026-10-04T18:10:38Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_107",
+      "source_original_recorded_at": "2026-10-04T18:10:39Z",
+      "local_at": "2026-10-04T18:10:39Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_108",
+      "source_original_recorded_at": "2026-10-04T18:10:40Z",
+      "local_at": "2026-10-04T18:10:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_109",
+      "source_original_recorded_at": "2026-10-04T18:10:41Z",
+      "local_at": "2026-10-04T18:10:41Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_110",
+      "source_original_recorded_at": "2026-10-04T18:10:42Z",
+      "local_at": "2026-10-04T18:10:42Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_111",
+      "source_original_recorded_at": "2026-10-04T18:10:43Z",
+      "local_at": "2026-10-04T18:10:43Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_112",
+      "source_original_recorded_at": "2026-10-04T18:10:45Z",
+      "local_at": "2026-10-04T18:10:45Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MULTICASE_EXPORT_113",
+      "source_original_recorded_at": "2026-10-04T18:10:50Z",
+      "local_at": "2026-10-04T18:10:50Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_103",
+      "source_original_recorded_at": "2026-10-04T18:10:35Z",
+      "local_at": "2026-10-04T18:10:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_104",
+      "source_original_recorded_at": "2026-10-04T18:10:37Z",
+      "local_at": "2026-10-04T18:10:37Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_105",
+      "source_original_recorded_at": "2026-10-04T18:10:37.100Z",
+      "local_at": "2026-10-04T18:10:37.100Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_106",
+      "source_original_recorded_at": "2026-10-04T18:10:38Z",
+      "local_at": "2026-10-04T18:10:38Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_107",
+      "source_original_recorded_at": "2026-10-04T18:10:39Z",
+      "local_at": "2026-10-04T18:10:39Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_108",
+      "source_original_recorded_at": "2026-10-04T18:10:40Z",
+      "local_at": "2026-10-04T18:10:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_109",
+      "source_original_recorded_at": "2026-10-04T18:10:41Z",
+      "local_at": "2026-10-04T18:10:41Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_110",
+      "source_original_recorded_at": "2026-10-04T18:10:42Z",
+      "local_at": "2026-10-04T18:10:42Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_111",
+      "source_original_recorded_at": "2026-10-04T18:10:43Z",
+      "local_at": "2026-10-04T18:10:43Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_112",
+      "source_original_recorded_at": "2026-10-04T18:10:45Z",
+      "local_at": "2026-10-04T18:10:45Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_113",
+      "source_original_recorded_at": "2026-10-04T18:10:50Z",
+      "local_at": "2026-10-04T18:10:50Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_114",
+      "source_original_recorded_at": "2026-10-04T18:19:40Z",
+      "local_at": "2026-10-04T18:19:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_115",
+      "source_original_recorded_at": "2026-10-04T18:19:50Z",
+      "local_at": "2026-10-04T18:19:50Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_116",
+      "source_original_recorded_at": "2026-10-04T18:19:51Z",
+      "local_at": "2026-10-04T18:19:51Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_117",
+      "source_original_recorded_at": "2026-10-04T18:20:00Z",
+      "local_at": "2026-10-04T18:20:00Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_118",
+      "source_original_recorded_at": "2026-10-04T18:20:01Z",
+      "local_at": "2026-10-04T18:20:01Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_119",
+      "source_original_recorded_at": "2026-10-04T18:20:02Z",
+      "local_at": "2026-10-04T18:20:02Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_120",
+      "source_original_recorded_at": "2026-10-04T18:20:03Z",
+      "local_at": "2026-10-04T18:20:03Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_121",
+      "source_original_recorded_at": "2026-10-04T18:20:04Z",
+      "local_at": "2026-10-04T18:20:04Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_122",
+      "source_original_recorded_at": "2026-10-04T18:20:05Z",
+      "local_at": "2026-10-04T18:20:05Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_123",
+      "source_original_recorded_at": "2026-10-04T18:20:06Z",
+      "local_at": "2026-10-04T18:20:06Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_124",
+      "source_original_recorded_at": "2026-10-04T18:20:07Z",
+      "local_at": "2026-10-04T18:20:07Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_125",
+      "source_original_recorded_at": "2026-10-04T18:20:07.500000Z",
+      "local_at": "2026-10-04T18:20:07.500000Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_126",
+      "source_original_recorded_at": "2026-10-04T18:20:08Z",
+      "local_at": "2026-10-04T18:20:08Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_127",
+      "source_original_recorded_at": "2026-10-04T18:20:09Z",
+      "local_at": "2026-10-04T18:20:09Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_128",
+      "source_original_recorded_at": "2026-10-04T18:20:10Z",
+      "local_at": "2026-10-04T18:20:10Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_129",
+      "source_original_recorded_at": "2026-10-04T18:20:11Z",
+      "local_at": "2026-10-04T18:20:11Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_130",
+      "source_original_recorded_at": "2026-10-04T18:20:12Z",
+      "local_at": "2026-10-04T18:20:12Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_131",
+      "source_original_recorded_at": "2026-10-04T18:20:13Z",
+      "local_at": "2026-10-04T18:20:13Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_132",
+      "source_original_recorded_at": "2026-10-04T18:20:14Z",
+      "local_at": "2026-10-04T18:20:14Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_133",
+      "source_original_recorded_at": "2026-10-04T18:20:15Z",
+      "local_at": "2026-10-04T18:20:15Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_134",
+      "source_original_recorded_at": "2026-10-04T18:20:16Z",
+      "local_at": "2026-10-04T18:20:16Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_135",
+      "source_original_recorded_at": "2026-10-04T18:20:17Z",
+      "local_at": "2026-10-04T18:20:17Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_136",
+      "source_original_recorded_at": "2026-10-04T18:20:18Z",
+      "local_at": "2026-10-04T18:20:18Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_137",
+      "source_original_recorded_at": "2026-10-04T18:20:19Z",
+      "local_at": "2026-10-04T18:20:19Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_MATERIAL_TWO_CASES_138",
+      "source_original_recorded_at": "2026-10-04T18:20:25Z",
+      "local_at": "2026-10-04T18:20:25Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_103",
+      "source_original_recorded_at": "2026-10-04T18:10:35Z",
+      "local_at": "2026-10-04T18:10:35Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_104",
+      "source_original_recorded_at": "2026-10-04T18:10:37Z",
+      "local_at": "2026-10-04T18:10:37Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_105",
+      "source_original_recorded_at": "2026-10-04T18:10:37.100Z",
+      "local_at": "2026-10-04T18:10:37.100Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_106",
+      "source_original_recorded_at": "2026-10-04T18:10:38Z",
+      "local_at": "2026-10-04T18:10:38Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_107",
+      "source_original_recorded_at": "2026-10-04T18:10:39Z",
+      "local_at": "2026-10-04T18:10:39Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_108",
+      "source_original_recorded_at": "2026-10-04T18:10:40Z",
+      "local_at": "2026-10-04T18:10:40Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_109",
+      "source_original_recorded_at": "2026-10-04T18:10:41Z",
+      "local_at": "2026-10-04T18:10:41Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_110",
+      "source_original_recorded_at": "2026-10-04T18:10:42Z",
+      "local_at": "2026-10-04T18:10:42Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_111",
+      "source_original_recorded_at": "2026-10-04T18:10:43Z",
+      "local_at": "2026-10-04T18:10:43Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_M02_M03_ORIGINAL_HISTORY_INGRESS_112",
+      "source_original_recorded_at": "2026-10-04T18:10:45Z",
+      "local_at": "2026-10-04T18:10:45Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_EPOCH9_NONTERMINAL_HEAD_100",
+      "source_original_recorded_at": "2026-10-04T18:10:33Z",
+      "local_at": "2026-10-04T18:10:33Z",
+      "not_earlier_than_source": true
+    },
+    {
+      "packet": "ADMIT_EPOCH9_NONTERMINAL_HEAD_101",
+      "source_original_recorded_at": "2026-10-04T18:10:34Z",
+      "local_at": "2026-10-04T18:10:34Z",
+      "not_earlier_than_source": true
+    }
+  ],
+  "cold_selected_rows": [
+    {
+      "packet": "COLD_FRESH_RECOVER_SOURCE_CUT",
+      "selected_count": 95,
+      "all_selected_inserted": true,
+      "extra_parent_or_store_records": [
+        "StoreCommitRecord/a193313b-ebc8-5891-a491-1ff03bdb7ae3"
+      ]
+    },
+    {
+      "packet": "COLD_ORIGINAL_READONLY_FOUND_SOURCE_CAPTURE",
+      "selected_count": 1057,
+      "all_selected_inserted": true,
+      "extra_parent_or_store_records": [
+        "KeyIdentity/3ee1795e-17ae-53f3-b713-57d1d97d7dbd",
+        "KeyIdentity/5bacfbcb-b789-5156-8f08-4d3e65b160a3",
+        "KeyIdentity/6aea6f50-e546-5ed8-b173-51ec59b6c396",
+        "StoreCommitRecord/433b5115-2e87-56d4-b80f-67f64b88ebc4"
+      ]
+    }
+  ],
+  "structural_evidence": "PLAN-EXC-01-UoW-document-relations.json",
+  "structural_counts": {
+    "packets": 292,
+    "snapshots": 297,
+    "roster_deltas": 287,
+    "mutable_copies": 417,
+    "distinct_immutable_references": 16262,
+    "ordered_writes": 29903
+  },
+  "structural_errors": [],
+  "read_metadata": "All terminal-state names, lossless resolution protocol, CP08/09/10/11/12 causal rules; long relocation/copy-pointer lists checked structurally, not treated as fresh semantic bodies.",
+  "remaining": [
+    "Current archive member classification and independent professional/report dispositions tracked separately"
+  ],
+  "business_tests": "NOT_RUN",
+  "actual_runtime": "UNPROVEN",
+  "original_scripts_executed": false,
+  "underlying_record_evidence": "PLAN-EXC-01-record-reading.json"
+}

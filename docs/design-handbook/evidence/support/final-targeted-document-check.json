@@ -1,0 +1,11 @@
+{
+  "at_utc": "2026-10-10T16:13:59.970125+00:00",
+  "scope": "Only final report/support evidence, changed project-memory entry links, prepared file types and obvious credential markers; not a security audit",
+  "new_json_parsed": 3,
+  "new_or_changed_links_checked": 7,
+  "errors": [],
+  "unexpected_file_types": [],
+  "credential_marker_files": [],
+  "handbook_prepared_files": 302,
+  "business_execution": false
+}

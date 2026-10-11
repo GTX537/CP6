@@ -1,0 +1,2063 @@
+{
+  "group": "operations",
+  "updated_at": "2026-10-10T15:25:07.406809+00:00",
+  "purpose": "静态设计整合差异/准确采用退出条件；不替代Issue或生产验收，不把设计接受改写为真实采用",
+  "findings": [
+    {
+      "finding_id": "OPS-IF-001",
+      "targets": [
+        "FIN-CREDIT-01",
+        "FIN-GL-01"
+      ],
+      "kind": "contract_mapping_required",
+      "statement": "Credit Scope用legalEntityId/ledgerId、PRODUCTION/SIMULATION和六字段Ref；GL用legalEntityKey/ledgerKey、DEMO/REAL和五字段Ref。",
+      "interpretation": "两个有意不同的Owner wire不能直接复用同一个DTO；未证明存在跨域适配，不判定原设计或运行系统有BUG。",
+      "exit_condition": "Owner登记Scope身份/环境/Ref type与purpose无损映射及实际消费合同；覆盖未知/不能映射时的拒绝行为。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+          "line": 139
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+          "line": 26
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+          "line": 255
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-002",
+      "targets": [
+        "FIN-CREDIT-01"
+      ],
+      "kind": "numeric_domain_reconciliation",
+      "statement": "规范金额wire可达38位纯整数，主文数据库decimal(38,8)仅可容纳30整数位。",
+      "interpretation": "这是静态域宽度整合差异；尚未检查真实DB实现，不把有效wire静默截断或私自缩窄。",
+      "exit_condition": "Owner明确可接受业务域及无损存储设计，给出最大整数/混合小数/数据库溢出边界的准确合同。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+          "line": 537
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+          "line": 245
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+          "line": 1894,
+          "claim": "SV14明确38位纯整数为Schema正向；固定SQL decimal38/8仅30整数位的整合映射仍待核"
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-003",
+      "targets": [
+        "WMS-RMA-01",
+        "WMS-STOCK-01",
+        "WMS-OUT-01",
+        "WMS-IN-01"
+      ],
+      "kind": "cross_owner_lock_order",
+      "statement": "RMA Scope/Source/Entitlement/RMA头先于Stock Canonical，与Stock/OUT Canonical及叶先于Scope叙述不同；RMA接收又要求共同事务。",
+      "interpretation": "共同参与时可能形成组合取锁问题，不能按摘要自行重排原件；无运行死锁证据。对应全局DC-001。",
+      "exit_condition": "IN/RMA/Stock给出完整资源预收集、唯一分级锁序及进入外层/内层的共同采用合同，并取得相关并发验证。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "line": 699
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a5/a5a4316bf2aa0d30__WMS-RMA-01_DATA-DICTIONARY.json",
+          "line": 314
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5a/5aed7ccb52e1878b__WMS-STOCK-01_库存数量账与移动_前后端开发Spec_v1.1.1_REVIEW.md",
+          "line": 1414
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7e/7e25b78ea1261553__WMS-OUT-01_出库拣配包装与发运_前后端开发Spec_v1.3_R3_REVIEW_CANDIDATE.md",
+          "line": 905
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-004",
+      "targets": [
+        "WMS-RMA-01",
+        "QA-NCR-01",
+        "WMS-IN-01"
+      ],
+      "kind": "successor_adoption_unproven",
+      "statement": "RMA冻结时专业处置Owner采用仍RequiredFenced；后继QA-NCR已有设计不能自动使RMA五类终结处置获得实际执行许可。",
+      "interpretation": "保留冻结文本的当时范围与当前后继关系，不泛化成QA-NCR正文缺失，也不通过IN接收adapter绕过专业处置。对应全局DC-002。",
+      "exit_condition": "逐处置类型取得后继准确版本的Owner协议/adapter/授权/共同事务及RMA实际采用记录，明确哪些路径解除RequiredFenced。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "line": 277
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "line": 371
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "line": 699
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-005",
+      "targets": [
+        "WMS-DEL-01",
+        "WMS-STOCK-01",
+        "WMS-OUT-01"
+      ],
+      "kind": "accepted_successor_adoption_gate",
+      "statement": "DEL-SOURCE-FENCE-1要求相关Stock更正、OUT解释和DEL Proof路径在Owner Canonical之前取得完整Movement F0，并使用同连接SERIALIZABLE事务。",
+      "interpretation": "这是当前DEL后继的明确新增共同门；旧Stock/OUT册未陈述不等可省略。仅相关路由适用，不泛化全部业务事务。对应全局DC-003；模块与合同已交叉登记。",
+      "exit_condition": "完整相关writer清单均加入同一外层F0 wrapper、current-cut读取和epoch推进；无法加入的入口明确ADOPTION_FENCE_NOT_JOINED；证明没有内层持K1再回取F0。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "line": 15270
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "line": 15276
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "line": 15278
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "line": 15290
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "line": 15320
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-006",
+      "targets": [
+        "MES-WO-01"
+      ],
+      "kind": "fixture_reference_version",
+      "statement": "连续例REL/AUTH-PROD-001在SourceDescriptor/EngineeringCheck为version2，候选PURPOSE-BASIS gate为version1，未见该例许可后继/映射说明。",
+      "interpretation": "静态连贯夹具的准确前驱差异，不能把两版默认为一版；不撤销已接受设计结论。",
+      "exit_condition": "Owner澄清预期准确Ref版本或显式后继/映射关系，更新受控夹具验证预期；保留原件历史。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 1128
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 1218
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 1548
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-007",
+      "targets": [
+        "MES-WO-01"
+      ],
+      "kind": "fixture_scope_semantics",
+      "statement": "UNSTARTED-60义务检查行Scope=[0,100)，resultRef指CANCEL-40-100-FINAL。",
+      "interpretation": "需确认是根级检查关联Scope还是取消事实Scope，不把整100当未发生证明；静态实例未运行。",
+      "exit_condition": "Owner明确字段层级/范围含义，可执行夹具分别断言根关联域与准确[40,100)取消事实域。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 2281
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 2298
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 616
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-008",
+      "targets": [
+        "MES-WO-01"
+      ],
+      "kind": "wire_error_code_difference",
+      "statement": "规范表使用SUCCESSOR_SCOPE_HELD，末例使用SUCCESSOR_SCOPE_ALREADY_HELD。",
+      "interpretation": "实现前需统一准确wire错误码；没有代码运行失败证据。",
+      "exit_condition": "Owner确定规范错误枚举及案例期望值，客户端/服务端/契约例统一采用。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 950
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 3107
+        }
+      ],
+      "status": "open_integration_check",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-009",
+      "targets": [
+        "MES-MAT-01",
+        "MES-EXEC-01"
+      ],
+      "kind": "accepted_supplement_runtime_gate",
+      "statement": "MAT M35–37已接受，共同最终点登记EXEC-BASIS-DOMAIN，旧义务只能在全attempt无效果、独立物理NO_ACTUAL_EFFECT及完整来源prefix证明下移交。",
+      "interpretation": "当前EXEC R2 L831–843已定义X44独立DTO/VerifyPendingBasisSuccession，同EXEC-BASIS-DOMAIN与正常MAT耗用/源更正共同互斥；设计接口组合有正文，不是缺件。仍需实际Owner采用，不能借移交purpose授权新消费。",
+      "exit_condition": "按EXEC当前正文核X44与共同源Gate覆盖全部相竞争写者，保留不同purpose权限和全前驱CAS；无采用时保持GUARANTEE_UNAVAILABLE/OWNER_PROTOCOL_NOT_READY。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/89826583e0cd6992__MAT-SUPP-PENDING-BASIS-SUCCESSION-01_v1.0_R1_PROPOSED.md",
+          "line": 80
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/89826583e0cd6992__MAT-SUPP-PENDING-BASIS-SUCCESSION-01_v1.0_R1_PROPOSED.md",
+          "line": 133
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f4/f44092bdd0d9f07c__CURRENT.json",
+          "line": 55
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f4/f44092bdd0d9f07c__CURRENT.json",
+          "line": 74
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f4/f44092bdd0d9f07c__CURRENT.json",
+          "line": 105
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 829
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 831
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 836
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 843
+        }
+      ],
+      "status": "design_interface_defined_runtime_adoption_unproven",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-010",
+      "targets": [
+        "MES-OUTPUT-01",
+        "MES-EXEC-01",
+        "WMS-STOCK-01",
+        "WMS-IN-01"
+      ],
+      "kind": "accepted_facade_runtime_adoption",
+      "statement": "OUTPUT共同EXEC物理域最终Guard需全部相关源writer采用；不能仅候选通知防旧产出重复收货",
+      "interpretation": "精确接受L39明确纳入限定Facade字段设计；不是原Owner已有同名HTTP或生产部署声明，也不记运行BUG。",
+      "status": "design_interface_defined_runtime_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "明确E域解析/LockKeyVersion/DB/principal及Report、Correction、Complete、lateActual、Gap、Fence/Closure、Migration、Settle所有路径同X锁；IN/Stock最终UoW同域S锁；有真实采用证据",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 297
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 309
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 311
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 313
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 315
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 317
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 424
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 648
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c47569f1836ecf6f__HISTORY__handoffs__PLAN-REUSE-01B__documentation__MD02__acceptances__C-RES__MES-OUTPUT-01__UA-20260930-C-MES-OUTPUT-MD01.md.txt",
+          "line": 39
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-011",
+      "targets": [
+        "MES-OUTPUT-01",
+        "MES-EXEC-01",
+        "WMS-STOCK-01",
+        "WMS-IN-01"
+      ],
+      "kind": "accepted_facade_runtime_adoption",
+      "statement": "OUTPUT缩量要求Stock整个Allowance完整执行集合关闭，不是逐Grant关闭列表或余额查询",
+      "interpretation": "精确接受L39明确纳入限定Facade字段设计；不是原Owner已有同名HTTP或生产部署声明，也不记运行BUG。",
+      "status": "design_interface_defined_runtime_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "实现准确Prepare/LookupAllowanceRevisionClose受控Facade，完整成员/原结果/旧authority永久屏障/后继保consumed，无未知遗漏；有真实Owner采用证据",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 428
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 439
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 441
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 443
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c47569f1836ecf6f__HISTORY__handoffs__PLAN-REUSE-01B__documentation__MD02__acceptances__C-RES__MES-OUTPUT-01__UA-20260930-C-MES-OUTPUT-MD01.md.txt",
+          "line": 39
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-012",
+      "targets": [
+        "FIN-COST-01",
+        "FIN-GL-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01"
+      ],
+      "kind": "accepted_required_participant_runtime_adoption",
+      "statement": "FIN-COST已设计来源到GL及GL完成到成本的双向最终当前性参与者；生产共同门实际采用未证",
+      "interpretation": "R-COST-01/05源门S与所有变化writer X，R-COST-07 GL Completion门S与逆向writer X均有封闭输入/输出和锁序。当前冻结设计接受不自动证明所有Owner原决定门/worker/admin已接入；不记正文缺失或运行BUG。",
+      "status": "design_interface_defined_runtime_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "逐Owner登记准确资源及全部writer，证明两方向同真实连接/事务、联合锁图无环与并发先后结果，并核不同来源域control与会计SourceControl的实际映射",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 482
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 486
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 508
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 514
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 515
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 528
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 552
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 554
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 873
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-013",
+      "targets": [
+        "QA-POL-01",
+        "PUR-GR-01",
+        "MES-OUTPUT-01",
+        "WMS-IN-01"
+      ],
+      "kind": "context_specific_population_mapping",
+      "statement": "QA-POL采购叶总体P与制造既有完整总体不能用同一数量规则归一",
+      "interpretation": "L690采购Q28以source/part完整localExtent经当前Q65得到P，合法40叶可P40；L669已有制造总体100的D60仍用100量带。两者设计场景不同，不是相互冲突；消费者当前映射与专业合法分群需双侧核。",
+      "status": "design_semantics_distinguished_counterpart_adoption_to_verify",
+      "runtime_bug_claim": false,
+      "exit_condition": "GR/IN/OUTPUT分别提供精确原叶/总体/域/Stage/current mapping，并以40叶与100总体D60两个独立案例证明按原规范映射、不以面积相等或新resolution绕旧族",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 127
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 163
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 669
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 690
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-014",
+      "targets": [
+        "QA-IQC-01",
+        "QA-POL-01",
+        "WMS-STOCK-01"
+      ],
+      "kind": "accepted_successor_contract_extension",
+      "statement": "IQC R5明确为QAP命名空间EffectLocator追加ORDINARY_STOCK_USE；镜像通用说明不能覆盖有界修订",
+      "interpretation": "主文§18.4 L16258–16261及R5独审L37、FIX-MAP L12明确新增闭合普通Stock locator。QAP R1原形状不是相同枚举；后继设计接受不等其原字节改写或Stock实际采用。应区分后继适配与原合同，不以差异自动列BUG。",
+      "status": "successor_extension_defined_runtime_adapter_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "消费者精确注册R5扩展分支及IQCFinalCurrentGuard/RecordEffectUse，证明普通六动作真实locator、原MOVE方向映射、source-first零效果与stock-first保历史同事务；保原R1身份",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 320
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 322
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 907
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 16090
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 16258
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 16259
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 15818
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 15906
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/98/987d02861abe82dd__SR-20261001-C-QA-IQC-MD01-INDEPENDENT-R5.md",
+          "line": 37
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2e/2ef464ec62e93f91__C-QA-IQC-MD-SPEC-01_R5_FIX-MAP.md",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-015",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "kind": "implementation_type_binding_unverified",
+      "statement": "IPQC完整独立TS附件中的Evidence/Uom两个名称未在文件声明或导入",
+      "interpretation": "全文325行及定向符号定位：L273 registrationRef: Evidence，L322 measurementUnitRef/rule.unitRef: Uom；既有QapEvidence/QapUom及不同Owner Evidence不能凭名字自动替换。本项为设计附件落实类型待核，不是运行BUG；当前接受已明确TS编译NOT_RUN。",
+      "status": "pending_exact_schema_to_implementation_binding",
+      "runtime_bug_claim": false,
+      "exit_condition": "用canonical具体schema和Owner原wire确定对应类型与import/alias，实际实施时验证闭合类型，保留冻结源原字节和接受边界",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "line": 15
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "line": 16
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "line": 273
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+          "line": 322
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7f/7faae8212b09d21e__ACCEPTANCE.md",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-016",
+      "targets": [
+        "QA-NCR-01",
+        "QA-IPQC-01",
+        "QA-POL-01",
+        "MES-OUTPUT-01"
+      ],
+      "kind": "accepted_successor_integration_contract",
+      "statement": "NCR后继已设计采用IPQC旧SourceEnvelope/完整standalone/Resolution27的无损适配",
+      "interpretation": "R12保旧accepted源字节，candidate10保存原I02 legacy五成员和完整standalone六成员Subject，并直接用27-member QapResolutionEvidence。I04/I06实际PlanInstance/同预登记Family/native原摘要全核；QA/MES和Main R12原RETURN已设计采用。不是旧源schema自动修复或运行ready。",
+      "status": "design_resolution_adopted_runtime_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "实际适配登记精确source codec/profile、双view完整原件与field join，QA/QAP完整writer同UoW current，证明source→Projection→Binding及下游使用保原身份",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 577
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 581
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 583
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 585
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 587
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 593
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 597
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 614
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 620
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 622
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 630
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/389806299e2681bc__UA-20261004-A-QA-NCR-R12-ROOT-DECISION.txt",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-017",
+      "targets": [
+        "QA-NCR-01",
+        "FIN-INV-01",
+        "FIN-COST-01",
+        "WMS-RMA-01"
+      ],
+      "kind": "accepted_successor_integration_contract",
+      "statement": "H30返回处置无原Finance enum；proof2/INPUT9是准确后继窄合同",
+      "interpretation": "RETURN_TO_SOURCE保持PENDING/H30_QA_RETURN_SEMANTIC_UNMAPPED，不篡HOLD。QA-NCR与QA-NCR-01经新external bodies/OwnerNameBinding保原。旧proof1公式源缺件由proof2独立新域补设计；INPUT9和control世代/真实共同消费已有准确设计采用，原typedResult:v1不变。",
+      "status": "design_resolution_adopted_runtime_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "实现核Main/Finance精确profile/issuer/登记/名字/tuple/control与全部currentwriter，源映射Qty12无损、RETURN保持准确未映射，actualFinance effect+H30Use/Guard同UoW",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 458
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 462
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 466
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 470
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 489
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 496
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 498
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 500
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 502
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 505
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 550
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "line": 562
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/389806299e2681bc__UA-20261004-A-QA-NCR-R12-ROOT-DECISION.txt",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-018",
+      "targets": [
+        "WMS-TRANSFER-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01"
+      ],
+      "kind": "successor_adapter_adoption_boundary",
+      "statement": "SLOT/REP NEW唯一路线与Transfer物理合同相容；封闭SourceDemand Owner映射及全current门须真实采用",
+      "interpretation": "SLOT/REP后继提出Adapter登记原Transfer Request/批准/完整Stage；Transfer SourceDemand.owner仅WMS_TRANSFER/PLANNING/MES_MAT，不能直接塞SLOTTING/REP或改变旧wire。可映射仓储需求但须保原dispatch/Proposal/Order/范围、来源预算/停止门及lookup完整Stage族。REP允许异步Order知识补链不放宽Transfer+Stock正常同连接/事务。",
+      "status": "design_adapter_defined_precise_bilateral_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "双方登记准确field/profile/来源Owner映射、原dispatch去重和全Stage lookup/seal、Source current/Stop与Stock final共同门；证明Order异步仅元数据补链及NEW旧V2全writer fence",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "line": 133
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "line": 1307
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "line": 1319
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "line": 1355
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+          "line": 1379
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 70
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 74
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 78
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 93
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 95
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-019",
+      "targets": [
+        "MES-MAT-01",
+        "PLAN-MRP-01"
+      ],
+      "kind": "native_projection_to_consumer_basis_mapping",
+      "statement": "MAT有原生RemainingBasis，MRP R03两种输入模式仍需准确Owner映射，不能按同名字段自动采纳",
+      "interpretation": "MAT原生planned/confirmedConsumedNet/lineSpans/offsetManifest/protectionBindings/ownerVector并未声明NET_RESIDUAL或GROSS_WITH_EXPLICIT_OFFSETS，且OffsetManifest字段与MRP消费表示不同；两侧均禁止重复义务/抵扣，同义方向相容但未找到已读材料中的完整字段/模式映射。已抵扣20仍真实占用，Owner净剩余40+派生180-独立自由50=170，不再减20；源后继未知不能MRP自行改净剩余。",
+      "status": "design_contract_defined_bilateral_mapping_and_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "由准确MES/材料Owner明确每义务输入BasisKind、已抵集合/阶段/版本/UOM、ResidualHandoff排除集合、真实保护与后继应用合同，消费方验证NET/GROSS仅一次且不改Owner事实；核当前真实实例。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 335
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 343
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 345
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 347
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 485
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 77
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 82
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 83
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 85
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 87
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 91
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 93
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 94
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 95
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 98
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-020",
+      "targets": [
+        "FIN-CLOSE-01",
+        "FIN-GL-01"
+      ],
+      "kind": "explicit_proposed_extension_not_implicit_adoption",
+      "statement": "锁期年结RP-CLOSE-03已有精确消费扩展设计，GL独立接受/实现未证",
+      "interpretation": "S2接受并未改GL R-GL-03只OPEN语义；新schema授权绑定一个effect/真实Closed状态/period/fence/原GL计划/批准/到期/撤销，需独立路由登记。不得误写设计缺失或用临时OPEN代采用。",
+      "status": "design_defined_actual_bilateral_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "GL Owner正式接受准确扩展/版本兼容、current撤销与同UoW门、真实provider/writer范围及原键恢复；仅开放准确年结/反结路由，不放宽普通Post。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 219
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 676
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 690
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 692
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 694
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-021",
+      "targets": [
+        "FIN-CLOSE-01",
+        "FIN-FX-01",
+        "FIN-GL-01",
+        "FIN-REPORT-01"
+      ],
+      "kind": "closed_static_issue_preserve_typed_completion",
+      "statement": "计划镜像后GL Reversed与原期FX履行三轴已设计闭合",
+      "interpretation": "旧R0 B3已关闭：原期P1仍不可变、正确次期M1令原头真Reversed；仅预冻结FIN-FX FX_SCHEDULED_CHAIN可S2原期FULFILLED/H37 CLEAR，不把GL改Posted，也不给普通APAR冲销例外。",
+      "status": "design_defined_actual_bilateral_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "实现保类型化completionBasis、逐成员原镜像日期/金额/Ref/current原因和全frontier；已完整重复只原生命周期不GL正向retry；实际多Owner采用/运行验收待证。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 247
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 257
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 261
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 265
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 509
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 511
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 513
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 921
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 923
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-022",
+      "targets": [
+        "FIN-FX-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-REPORT-01",
+        "FIN-GL-01"
+      ],
+      "kind": "defined_consumer_contract_bilateral_provider_pending",
+      "statement": "全账事实快照和历史暴露已有消费侧规范，不能从逐腿结果/现在未结推完整",
+      "interpretation": "RP-REPORT-01要求全部不可变正反PostedFacts/可信opening/真实commit cut；RP-FX-01要求asOf/cut真实signed carrying及前次调整，七月结清不得移除六月暴露。接受GL API20、APAR余额原语不自动等于这两份完整provider已采用。",
+      "status": "design_defined_actual_bilateral_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "准确GL/APAR/BANK等provider完整成员与连续性/零集合证、历史日期与知识cut、current writer门双侧映射及真实实例；缺一required provider阻相应完整报表/重估/关账，不阻独立率资料。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 302
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 352
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 354
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 469
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 475
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 479
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 481
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 485
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 677
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "line": 678
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-023",
+      "targets": [
+        "FIN-AP-01",
+        "FIN-GL-01",
+        "FIN-BANK-01"
+      ],
+      "kind": "source_contract_defined_actual_adoption_unproven",
+      "statement": "AP七Source分支与真实资金合同已定义，不能记只有参与者名称",
+      "interpretation": "R1完整七分支/资金/现金支票已关B03/B04；Source/CapacityControl前置共同门与Balance后置明确，非MATCH不伪造MATCH或未来GLid。",
+      "status": "specific_scope_recorded_runtime_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "真实Bank/Cash/Source/GL所有writer采用准确合同及资源图、同UoW current S/X竞态、真实外部流水和归属；不可凭后继设计接受称部署成功。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 790
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 828
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 850
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 864
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 893
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 905
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-024",
+      "targets": [
+        "FIN-AP-01",
+        "PUR-MATCH-01"
+      ],
+      "kind": "specific_contract_gap",
+      "statement": "MATCH纠正取消专用close仍缺，只该路径保FENCED",
+      "interpretation": "forward FinanceClose已定义；缺的是独立CorrectionAdmission对应取消close，不能借AP资金R1新合同或历史NOT_OBSERVED释放保护。",
+      "status": "specific_scope_recorded_runtime_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "MATCH Owner接受精确专用关闭wire及全路径future-effect closure/AP双侧采用；此前保护不释放，其他已定义设计继续整理。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 85
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 406
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 588
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 699
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-025",
+      "targets": [
+        "FIN-AP-01",
+        "FIN-GL-01",
+        "FIN-CLOSE-01"
+      ],
+      "kind": "atomicity_explicit_not_cross_owner_transaction",
+      "statement": "AP整批核销的Reservation→独立GL→OwnerApply三阶段已明确",
+      "interpretation": "GL真成功不能因AP final失败全回滚，保持Reservation和桥接；A28只镜像分配组件，A29单独原付款GL。CLOSE必须同时检查OwnerApplied及桥接，不能只GL Posted。",
+      "status": "specific_scope_recorded_runtime_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "AP/GL/CLOSE双侧准确完整plan/component/Reservation/cut与应用凭据、全batch原子和未知恢复运行证据；会计镜像也不得宣称资金已退。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 143
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 145
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 147
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 159
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 163
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 177
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "line": 533
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-026",
+      "targets": [
+        "FIN-AR-01",
+        "FIN-GL-01",
+        "FIN-INV-01"
+      ],
+      "kind": "intentional_contract_difference",
+      "statement": "AR独立READY的INVOICE与AP全Manifest READY不可互套",
+      "interpretation": "AR父FinancePlan可UNRESOLVED，仅批准policy无COGS依赖的INVOICE单事件先Post；每个GL事件自身仍全READY。COGS/Inventory由FININV唯一生产，AR仅编排观察。",
+      "status": "design_scope_recorded_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "按准确事件DAG/政策及真实FININV ExecutionResult双侧采用；不得用AP规则覆盖AR或同经济来源发两次COGS。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 93
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 95
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 598
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 604
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-027",
+      "targets": [
+        "FIN-AR-01",
+        "FIN-GL-01",
+        "FIN-REPORT-01",
+        "FIN-CLOSE-01"
+      ],
+      "kind": "provider_adoption_unproven_not_missing_consumer_design",
+      "statement": "AR完整GL历史cut与共享snapshot/向量降级已有具体Required设计",
+      "interpretation": "包含GL-only/反向历史/历史rolemapping/fullouterjoin，SHARED_SNAPSHOT真实同handle否则显式CUT_VECTOR_ONLY；S2意图相容不证明provider已采用。",
+      "status": "design_scope_recorded_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "GL/AR/S2准确provider版本双方采用，真实完整cut与snapshot运行证据；不可按安全分页UI或差0宣称全账勾稽。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 895
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 899
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 909
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 913
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 915
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 917
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-028",
+      "targets": [
+        "FIN-AR-01",
+        "FIN-GL-01"
+      ],
+      "kind": "accepted_receipt_approval_final_scope",
+      "statement": "AR收款独立审批及同事务余额应用已在R2闭合",
+      "interpretation": "GL自动化/成功不代AR current批准；FundsClaim保留直到D25/D12/D12E/D13/D19/outbox同AR提交。未应用GL补偿不得生成反核销余额。",
+      "status": "design_scope_recorded_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "exit_condition": "真实审批/资金/GL当前最后门及所有writer覆盖、ResultSlot竞争、BLOCKED追加恢复与0错误余额运行证据。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 620
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 624
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 1005
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 1009
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 1017
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 1027
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 1029
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 1035
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "line": 1037
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-029",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "kind": "accepted_successor_overrides_historical_shapes",
+      "statement": "R10机器规范覆盖旧路由/表与冷恢复写信封，旧引用仍需显式解析",
+      "interpretation": "C05准确/api/fin/inventory/v1/cost-results/adoptions；48表、Original+CorrectionSlot唯一；仅三表持久Uow。API/FE ErrorUnion仍文字指R8，与当前R10根SchemaFile并存。",
+      "status": "design_scope_recorded_implementation_mapping_unconfirmed",
+      "runtime_bug_claim": false,
+      "exit_condition": "以准确R10文件实现并核历史指针，不能回退旧internal路由/18表/六row全持久Uow；不据残留标题宣称运行错误。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+          "line": 1244
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+          "line": 1252
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+          "line": 3
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+          "line": 602
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "line": 3
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+          "line": 6079
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+          "line": 6088
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-030",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "kind": "numeric_physical_mapping_unconfirmed",
+      "statement": "INV开放整数位wire与有限精度字段、MAVG decimal(76,0)需准确物理映射",
+      "interpretation": "Decimal18/Qty12正则未限整数位；普通值decimal(38,18)/(38,12)，MAVG精确分子分母和余量另有decimal(76,0)。",
+      "status": "design_scope_recorded_implementation_mapping_unconfirmed",
+      "runtime_bug_claim": false,
+      "exit_condition": "明确解析/overflow/精确大整数存储映射及边界拒绝，并通过真实值端到端核对；不得double/截断。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "line": 25
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "line": 29
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+          "line": 895
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-031",
+      "targets": [
+        "FIN-BANK-01",
+        "FIN-ASSET-01",
+        "FIN-GL-01"
+      ],
+      "kind": "selected_source_profiles_adoption_unproven",
+      "statement": "X5金额/UOP来源映射已明确，真实GL消费采用未证",
+      "interpretation": "金额q是有据原币单位数、UOP q是真实工作量；GL原wire不改，不用NA或裸quantity1。不可记为本域映射缺失，也不可绕SourceProfile门。",
+      "exit_condition": "GL精确profile独立消费接受/注册和专业Policy、真实SourceGuard/应用门证据。",
+      "status": "design_defined_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "line": 63
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "line": 67
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "line": 69
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "line": 89
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "line": 91
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-032",
+      "targets": [
+        "FIN-BANK-01",
+        "FIN-GL-01"
+      ],
+      "kind": "successor_R2_recovery_closed",
+      "statement": "R05原普通解配前驱循环已由专用整组转移闭合",
+      "interpretation": "在完整联合资格/SOD/全组manifest/当前GL与Close门下，G→原K无FREE；StepReceipt后只续A apply，普通release HOLD门不变。",
+      "exit_condition": "真实全writer/跨Owner门采用及零部分释放、丢回包、转移后恢复证据；未运行不宣称真实bug已修。",
+      "status": "design_defined_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "line": 84
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "line": 90
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "line": 94
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "line": 96
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "line": 98
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "line": 100
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-033",
+      "targets": [
+        "FIN-ASSET-01",
+        "FIN-CLOSE-01",
+        "FIN-GL-01"
+      ],
+      "kind": "accepted_final_current_chain_boundary",
+      "statement": "历史折旧FULFILLED与处置final当前可复用不能合并",
+      "interpretation": "当前GL/源Balance/完整更正链共同裁决，借用普通final与专属final归属不同，反向不清原履行。",
+      "exit_condition": "原GL/ASSET/Close当前链和全部writer双侧采用，真实partial/reversal/correction履行矩阵验证。",
+      "status": "design_defined_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "line": 99
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "line": 101
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "line": 103
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "line": 123
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "line": 125
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "line": 176
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-034",
+      "targets": [
+        "FIN-BUD-01",
+        "FIN-GL-01"
+      ],
+      "kind": "same_uow_budget_gate_adoption_unproven",
+      "statement": "预算并发额度门已设计，预检ALLOW不作过账票",
+      "interpretation": "GL准确Policy决定REQUIRED/NA；预算版本/政策与所有GL writer共享额度门，剩100两60只能一过；预算不另造主账。",
+      "exit_condition": "GL/BUD实际MainUow参加者、全局锁序和all-writer覆盖登记，真实额度争用/activation对撞证据。",
+      "status": "design_defined_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4793a84b5a7d4d0e__FIN-BUD-01.md",
+          "line": 76
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4793a84b5a7d4d0e__FIN-BUD-01.md",
+          "line": 78
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4793a84b5a7d4d0e__FIN-BUD-01.md",
+          "line": 79
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-035",
+      "targets": [
+        "MES-SCHED-01",
+        "MES-WO-01",
+        "MES-RES-01",
+        "MES-EXEC-01"
+      ],
+      "kind": "bounded_new_adapters_defined_adoption_unproven",
+      "statement": "SCHED完整Root组与换机六阶段已定义，原WO改期白名单不扩字段",
+      "interpretation": "TIME_ONLY一次Root业务Revision，换机仅自身回执链承接五域；RES采用与绑定真实同UoW；实际采用和联合全锁序仍未证。",
+      "exit_condition": "WO/RES/EXEC准确适配、当前全writer、阶段Lookup/Stop决定/真实最终UoW证据，不能GET最新五域或MachineCd塞原DTO。",
+      "status": "design_defined_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 130
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 145
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 147
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 169
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 184
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 186
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 188
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 249
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-036",
+      "targets": [
+        "MES-PERF-01",
+        "MES-EXEC-01",
+        "MES-RES-01",
+        "MES-OUTPUT-01"
+      ],
+      "kind": "canonical_slot_and_time_part_provider_adoption_unproven",
+      "statement": "PERF所需原Owner槽/局部Pause/真实分窗量合同具体，实际输出未证",
+      "interpretation": "全机Pause不能扣别槽；无原Owner跨窗份额不能按时长摊量，同cut本身不防身份重复。",
+      "exit_condition": "真实CanonicalRun接管、Pause scope mapping、TimedQuantityPart完整非交叠分解与closure provider双侧采用。",
+      "status": "design_defined_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 185
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 195
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 201
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 204
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 207
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 209
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 215
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 217
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 359
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-037",
+      "targets": [
+        "MES-PERF-01"
+      ],
+      "kind": "R21_mode_closure_rule_supersedes_R2_residual",
+      "statement": "R2.1取消WHOLE_SHIFT必暂定的错误组合，CLOSED齐证两分母同发布门",
+      "interpretation": "LIVE始终provisional，CLOSED必须已结束+完整原闭包；历史false后继STALE不改布尔；不能自行把provisional false当发布完成。",
+      "exit_condition": "实际封闭域/原Owner current cut、计算域一致/CAS/迟到更正矩阵验收；静态closed不证明运行。",
+      "status": "design_defined_actual_adoption_unproven",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 238
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 240
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 244
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 246
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 248
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 250
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 252
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 258
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+          "line": 260
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-038",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "kind": "current_same_composition_page_state_wire_type_difference",
+      "statement": "R10页面valueExitState/inventoryValueState在封闭Schema中是Money|null，但FE合同明确为ValueEffect/Work及Owner轴状态",
+      "interpretation": "当前规范之间可定位的类型差异；不能凭字段名或历史审阅通过自行选定Money或状态，不是运行bug声明",
+      "exit_condition": "设计Owner统一2字段语义、Row Schema/API/页面/案例；状态与价值金额独立显示且不互相推导",
+      "status": "requires_owner_contract_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "line": 6622
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "line": 7328
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99e39a74d448a789__FRONTEND-CONTRACT_R10.json",
+          "line": 502
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99e39a74d448a789__FRONTEND-CONTRACT_R10.json",
+          "line": 821
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-039",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "kind": "current_fixture_receipt_and_query_identity_difference",
+      "statement": "SC12 C01返回及终态槽BindingDigest为7b87…，同ReceiptId的SourceRegistrationReceipt行却为43ab…；C03原回执/槽Binding395846…、ResultDigest e398…，C09同原receipt返回Binding66cb…、ResultDigest2a540…且resultRef.digest仍e398…",
+      "interpretation": "准确同命令/同回执的wire、持久行、原键查询示例存在不同摘要；R10静态PASS不能补出缺失的一致性解释。不是运行bug或授权更改规范。",
+      "exit_condition": "设计Owner统一原命令binding及原回执持久/重放/查询字节，明确摘要域，给出连贯示例；后续实现检验直接响应→数据库→冷重启查询的准确相等。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 493,
+          "json_pointer": "/Scenarios/SC12/Steps/0/Response/receipt"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 711,
+          "json_pointer": "/Scenarios/SC12/Steps/0/PersistedRows/8"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 731,
+          "json_pointer": "/Scenarios/SC12/Steps/0/PersistedRows/9"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 1947,
+          "json_pointer": "/Scenarios/SC12/Steps/2/Response/receipt"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 2193,
+          "json_pointer": "/Scenarios/SC12/Steps/2/PersistedRows/9"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 2345,
+          "json_pointer": "/Scenarios/SC12/Steps/3/Response"
+        }
+      ],
+      "status": "requires_owner_contract_alignment",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-040",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "kind": "current_fixture_correction_effect_consumption_identity_difference",
+      "statement": "SC20同ConsumptionId在CorrectionEffect.layerConsumptions与FinalRows中effectId为2738…，外层CorrectionEffect及实际LayerConsumption持久行为cb852…；FinalRows.ReverseOfConsumptionId为CONS-RCPT-20-ORIGINAL，而CorrectionEffect和持久行均null。",
+      "interpretation": "同一退货消耗的摘要对象/最终摘要行/持久行身份与原消耗谱系不一致；数量100→90及价值500→450一致不能代替身份链一致。",
+      "exit_condition": "设计Owner确定本例退货消耗是否引用原Consumption并统一EffectId/ReverseOfConsumptionId、相应canonical摘要和Ref；不能由整理者猜选某份。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 14152,
+          "json_pointer": "/Scenarios/SC20/CorrectionEffect"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 14188,
+          "json_pointer": "/Scenarios/SC20/CorrectionEffect/layerConsumptions/0"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 13475,
+          "json_pointer": "/Scenarios/SC20/FinalRows/ReverseLayerConsumption"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 12336,
+          "json_pointer": "/Scenarios/SC20/Steps/0/PersistedRows/6"
+        }
+      ],
+      "status": "requires_owner_contract_alignment",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-041",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "kind": "current_fixture_row_wrapper_primary_key_difference",
+      "statement": "SC20 C03的OwnerResultFact ObjectIdentity包装PrimaryKey.ObjectId=OWNERFACT-AP-SC20，实际Row.ObjectId=OWNERFACT-AP-SC20-RETURN。",
+      "interpretation": "原件层包装主键与声明持久行的确定性差异；cold恢复只依Row时不得拿包装当数据库列，也不能忽略连续写集载体的不一致。",
+      "exit_condition": "设计Owner统一写集PrimaryKey与Row的相同身份；后续夹具物化使用声明SQL PK且明确拒绝包装/行不一致。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "line": 13137,
+          "json_pointer": "/Scenarios/SC20/Steps/1/PersistedRows/2"
+        }
+      ],
+      "status": "requires_owner_contract_alignment",
+      "runtime_bug_claim": false
+    },
+    {
+      "finding_id": "OPS-IF-042",
+      "targets": [
+        "FIN-CREDIT-01"
+      ],
+      "kind": "current_body_vector_http_annotation_difference",
+      "statement": "R4主文L500将未知字段INVALID_FIELD列HTTP400，SV02 why（dfc3c400…L154）却写HTTP422。",
+      "interpretation": "正文错误表与向量注释不同；向量仅是Schema结构拒绝记录，不是HTTP执行结果。",
+      "exit_condition": "设计Owner统一INVALID_FIELD对外HTTP映射，并同步前端与契约验收；不以旧actualValid=false证明某HTTP行为。",
+      "status": "requires_owner_contract_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+          "line": 500,
+          "claim": "HTTP400 INVALID_FIELD"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+          "line": 154,
+          "claim": "SV02 why writes422"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-043",
+      "targets": [
+        "WMS-OUT-01",
+        "WMS-STOCK-01"
+      ],
+      "kind": "document_fixture_prose_identity_quantity_difference",
+      "statement": "MULTILOC MC-RCAP02标题100→90但字段40→36；resourceSemantics具体Package为旧b300前缀，实际60资源和包装集合为b310两Package。",
+      "interpretation": "多库位数据/容量规则明确；旁注沿用旧示例标识及总量，需文书对齐，不自动改写已接受原件或认定线上bug。",
+      "exit_condition": "Owner统一案例标题和具体Package示例，保持4+6/两Package/同原子Part与现有资源集合一致；实现前以准确已采用wire与current资源登记双核。",
+      "status": "requires_owner_document_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "line": 4993,
+          "claim": "标题与40→36字段"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "line": 20521,
+          "claim": "旧具体Package旁注"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "line": 18022,
+          "claim": "准确两Package身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "line": 11601,
+          "claim": "START完整60资源"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-044",
+      "targets": [
+        "MES-MAT-01",
+        "WMS-STOCK-01"
+      ],
+      "kind": "document_fixture_original_operation_identity_difference",
+      "statement": "SC09-B查原成功operationId a1c16cf6…与七Stock调用对应响应72305281…不同，但Consumption locator及Stock Receipt/Movement/semanticDigest一致。",
+      "interpretation": "源示例operationId对齐待核；不改变原业务身份恢复规则，不推断运行重复扣料。原摘要本就声明假设值，不用摘要真实性作本项依据。",
+      "exit_condition": "Owner确认同原Stock操作唯一operationId并对齐两示例；实现按完整Canonical/locator+原Receipt保持一次效果。",
+      "status": "requires_owner_document_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 4139,
+          "claim": "查询例operationId"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 4142,
+          "claim": "原Consumption键"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 4150,
+          "claim": "同StockReceipt"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 7160,
+          "claim": "调用响应operationId"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 7164,
+          "claim": "同回执身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 648,
+          "claim": "假设fixture摘要"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-045",
+      "targets": [
+        "QA-IQC-01",
+        "QA-POL-01"
+      ],
+      "kind": "current_bundle_fixture_policy_population_mismatch",
+      "statement": "R5证据册POLICY1数量区间仍为完整人口100..100，但采购C/D解析与计划使用P40/P60，来源纠正后P80/P50也引用同一POLICY1。",
+      "interpretation": "现行正文要求采购按每原source/part完整叶人口核量带；母域100不能替代40/60。该项是随包fixture与明确正文的具体差异，非真实运行缺陷；不得按样例放宽现行规则。",
+      "exit_condition": "在准确QAP有权Policy/TechnicalBinding原件中提供覆盖P40/P60/P80/P50的量带及所需批准，并同步解析/计划/摘要；或将当前不匹配样例改为拒绝案例。",
+      "status": "requires_fixture_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 5800,
+          "claim": "POLICY1 scope.quantityBand为INSPECTION_POPULATION且minimum=maximum=100"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 140423,
+          "claim": "C解析quantity40"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 140428,
+          "claim": "C仍引用POLICY1"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 160638,
+          "claim": "D解析quantity60"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 160643,
+          "claim": "D仍引用POLICY1"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 669,
+          "claim": "量带按完整检验总体P重算"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "line": 690,
+          "claim": "采购合法40叶为P40"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 114,
+          "claim": "IQC按完整source/part叶人口消费Q28"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 97139,
+          "claim": "E05-RESOLUTION保持同POLICY1但quantity80"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 197402,
+          "claim": "R2-D-RESOLUTION保持同POLICY1但quantity50"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-046",
+      "targets": [
+        "QA-IQC-01"
+      ],
+      "kind": "current_bundle_fixture_observation_provenance_difference",
+      "statement": "复测及逐叶测量 input.evidenceRefs 指新扫描，但 evaluationBasisRefs 第三项仍指原首轮扫描；其中新值MATCH/PASS仍可引用原WRONG扫描。",
+      "interpretation": "完整212测量族中两复测与100逐叶测量保留此不同身份。字段差异已证实；Owner需说明旧引用是否有专业依据或为复制残留，不能把它当运行结果或据此修改评价规范。",
+      "exit_condition": "逐项对齐评价所依据的准确扫描原件，或给出旧扫描保留为评价依据的明确专业语义，并更新受影响摘要和连续引用。",
+      "status": "requires_owner_document_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 172001,
+          "claim": "LEAF-D-M91 input引用LEAF-D-SCAN-91"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 172031,
+          "claim": "其evaluationBasisRefs仍指SCAN-091"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 26226,
+          "claim": "原SCAN-091 observedFields.lot=WRONG"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 171958,
+          "claim": "新LEAF-D-SCAN-91 observedFields.lot=L1"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 143,
+          "claim": "观察枚举与规格接受集合分别判定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 539,
+          "claim": "MeasurementBody保evaluationBasisRefs"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-047",
+      "targets": [
+        "QA-IQC-01"
+      ],
+      "kind": "current_bundle_legacy_fixture_wire_shape",
+      "statement": "R5随包早期批量测量请求缺slotRef/expectedSlotHeadRevision；早期ResultSubmit的input仍有measurementRefs且observationSnapshotRef放在input外。",
+      "interpretation": "当前类型明确要求准确槽与完整ObservationSnapshot，且禁止只交选中测量列表。该样例保留旧形状，不能作为现行可执行成功请求直接生成代码；后续槽/全快照规则本身已设计。 同一文件末尾complete_measurement_batch已补齐槽字段、examples/J05也给新槽请求，因此范围严格限早期重复节点，不泛化为全部当前示例缺失。",
+      "exit_condition": "按当前MeasurementInput与ResultSubmit重写该早期输入及响应并重算引用，或明确标为旧形状拒绝例；完整槽义务不得被弱化。",
+      "status": "requires_fixture_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 28122,
+          "claim": "批量首项完整对象未含两个槽前置字段，其余项同形"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 41520,
+          "claim": "RESULT-SUBMIT-REQUEST.input采用旧measurementRefs形状"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 537,
+          "claim": "MeasurementInput必填slotRef和expectedSlotHeadRevision"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 541,
+          "claim": "ResultSubmit必填observationSnapshotRef，没有measurementRefs"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 542,
+          "claim": "ResultSubmission必须包含slotEntries与obligationDigest"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 229142,
+          "claim": "末尾完整100批已按新MeasurementInput含槽字段"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "line": 227371,
+          "claim": "同文件J05提供合法新槽输入"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-048",
+      "targets": [
+        "WMS-RMA-01"
+      ],
+      "kind": "current_contract_state_projection",
+      "statement": "D05要求slice/head和Work保留REQUIRED_FENCED，而canonical DispositionState/WorkState均无该枚举，Slice含有。",
+      "interpretation": "当前本地资格门设计明确；全规范读取后仍需聚合/Work投影解释，不能复制Slice枚举或自行选BLOCKED/PENDING视为已定。",
+      "exit_condition": "Owner提供资格→Slice→DispositionState→WorkState的准确映射及完整typed Work/Detail案例。",
+      "status": "requires_owner_state_mapping",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "line": 357,
+          "claim": "DispositionState闭合集合不含REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "line": 414,
+          "claim": "WorkState闭合集合不含REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "line": 1985,
+          "claim": "Slice state分支包含REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+          "line": 1021,
+          "claim": "D05文字要求slice/head及Work保REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "line": 458,
+          "claim": "主文D05同要求"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-049",
+      "targets": [
+        "WMS-RMA-01",
+        "FIN-INV-01"
+      ],
+      "kind": "current_fixture_seal_effect_identity",
+      "statement": "H30 SEALED_NO_EFFECT正例查询FININV|RMA-1|0-5，所附terminalReceipt.effectKeys却为RMA-1|DSP-1|EFFECT。",
+      "interpretation": "未展示消费者binding关系；通过结构分支不能证明该FIN-INV效果已关闭，不能据此释放消费者claim。不是实际seal运行缺陷，五D04当前仍fenced。",
+      "exit_condition": "提供同一FIN-INV consumer/effectKey的binding/receipt/noAdditionalEffectProof并增加关系断言，或明确例为不可执行占位。",
+      "status": "requires_fixture_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "line": 2468,
+          "claim": "H30查询原FIN-INV效果键"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "line": 2489,
+          "claim": "复用处置效果键的terminalReceipt"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "line": 4251,
+          "claim": "schemaPositive又收录同一例"
+        }
+      ]
+    },
+    {
+      "finding_id": "OPS-IF-050",
+      "targets": [
+        "WMS-RMA-01",
+        "WMS-OUT-01"
+      ],
+      "kind": "current_fixture_source_coordinate_identity",
+      "statement": "原履约snapshot区分Shipment头SHIP-100与行SHIP-100-L1，后续claim.shipmentLineRef.id却使用SHIP-100，未附准确行别名映射。",
+      "interpretation": "规范要求稳定原ShipmentLine身份；若直接复制示例可能合并同头不同原行。现仅为静态示例待核，不推断当前代码按头计量。",
+      "exit_condition": "补准确行owner/id或有权映射，核同SKU不同ShipmentLine/InvoiceLine/价格的独立源坐标。",
+      "status": "requires_fixture_alignment",
+      "runtime_bug_claim": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "line": 80,
+          "claim": "shipmentRef头身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "line": 84,
+          "claim": "shipmentLineId独立行身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "line": 999,
+          "claim": "claim.shipmentLineRef采用头样值"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "line": 814,
+          "claim": "规范coordinate key必须ShipmentLine owner/id"
+        }
+      ]
+    }
+  ]
+}

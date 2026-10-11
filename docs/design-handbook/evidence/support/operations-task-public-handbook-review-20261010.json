@@ -1,0 +1,310 @@
+{
+  "reviewer": "operations_design",
+  "as_of_utc": "2026-10-10T15:45:49.771681+00:00",
+  "scope": "Public handbook entry/navigation/cross-domain contract status and disposition consistency; excludes original-source rereading and repeated operations module review",
+  "read_files": [
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/AUTHORING-CONTRACT.md",
+      "sha256": "42fd2f536bf797f3e54d8af84434d5522f4c3b0a593eb85f139c8dbdb383fdc5",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/README.md",
+      "sha256": "124888bfef4c21955affe410a31334b8dc5d1c85af9a5e6f761c5cb79a5372ad",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/开发者与AI阅读指南.md",
+      "sha256": "cc01d5dd8b31efe7c075e3fd2d575e957f211df29cce2b2320fc764a98122824",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/整理计划.md",
+      "sha256": "c931d54521db3c6438fb91dc0359d84cc85296dff2b282f64e33cb8b56f5824c",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/architecture/01-系统边界与开发地图.md",
+      "sha256": "77e0b0f604ea4f09999694085796ec0df40e60c251ff4d5a0edc501d6cb006ec",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/architecture/02-事务回执与恢复.md",
+      "sha256": "f5e6f903457b4d748b84697668f6c6e7f471d0e63bcb08a7d9145087e4c155cd",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/architecture/03-资料版本与接受边界.md",
+      "sha256": "919ce50de7ab5c7d614b89c230d73269183593cff88549e408eaf7c607dab7e9",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/architecture/04-关键身份与状态词典.md",
+      "sha256": "c4a60a5efdc70b0e3985d9f6d1428db8f4204de264c331fbce5ba48728c8b619",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/architecture/05-编码顺序与适配门.md",
+      "sha256": "e87024e08ce21db7f044d7c709f33b2b73be007b07bc8865f62a0de2590a577a",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/资料缺口与集成待核.md",
+      "sha256": "d598b0f46476e757910ed737862a95231c88762aee57a892ae8fccaac1db3041",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/全局开发入口一致性复核-20261010.md",
+      "sha256": "1c2c1e06bb249f60d7eeb819cdab4b8e4e019527b3c9e0d1c38cbc6a83cd7782",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/X3-六专项阅读与采用边界.md",
+      "sha256": "befd48509bdfc44628a19e0811166958e7cff0122fb8fd2a8451130d1bab876f",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/X4-六专项阅读与采用边界.md",
+      "sha256": "92af43d60306297a83df19a604495fa71b00c3236a2adbb57a05fbeabf162e51",
+      "coverage": "full_current_handbook_text",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/模块目录.md",
+      "sha256": "7b4e4b205a66386114c33b22212ac3d9d68aad44da2294f0ccd9463dc392b060",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/indexes/module-navigation.json",
+      "sha256": "a42b41923d48e0f8d2b1b44e8df74c3a59efa7ec1813e26c2bee961b8d73c451",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/indexes/inventory-summary.json",
+      "sha256": "5f6f80f27447ce99ba6bac424fe53f0a2f6c48b33ba9e378b25a3b00fd09f51d",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/indexes/all-file-dispositions.json",
+      "sha256": "2bae0720dc3b27951a4f9098ca6dbb900201fe4710102e95dc49df10b64d2ee0",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/indexes/required-inputs.json",
+      "sha256": "e9cae0952914ec99f5b80f2357417d1ee2c60e42dbc1696cac66679300841e83",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/missing-source-register.json",
+      "sha256": "6c2357f2d05d1a382ab054f2f30b88584958ac6fd7f254821be2310447ee9376",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/additional-archive-gaps.json",
+      "sha256": "55a6cfd781e4b9c540fc68cbcc8e3953f7a0b59eb1d71b82f75634fc535c8273",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/document-validation.json",
+      "sha256": "71a0468f121c6fc4a62229427e7b321884997207cd97ea1c6be12cf0572a59ce",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/contracts/commercial-contracts.json",
+      "sha256": "ee61c80e8098fd5c9ce9cc9ff42da8e472d8030bf9a88b7c494a3df8f2f449c8",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/contracts/operations-contracts.json",
+      "sha256": "9b0d293eb44a9a0f849826809b6a27da3504f31b69bd6c07c97306ca058b9b32",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/contracts/platform-engineering-contracts.json",
+      "sha256": "ba5fc2ba491118ec70214bc2e2bf8337cda051bb9433a5615bc1c7d3de1dbc11",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/contracts/root-planning-contracts.json",
+      "sha256": "1ae9a0757eca0eebe881f01dcc434c66cd9760eac966103b3b8429dc0117c4cb",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/contracts/root-specialty-contracts.json",
+      "sha256": "3178892635ffa3c8cc3ee989962df6504206cacb70f1827a4dfa9280aa202dc9",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/worklogs/commercial-progress.json",
+      "sha256": "db9dd0bbdf4dda6c9ebac4d05c9f3423003cb1909cf84ae7c63fdf9ce6679647",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/worklogs/operations-progress.json",
+      "sha256": "1bcc63c37bf0c8561b5d740d53e4bb24b2381afdf45649b31f543aafb834c85c",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/worklogs/platform-engineering-progress.json",
+      "sha256": "b27bf589d8cc94646f41b1c125953060cf36794d449807f55a67d087899c7d06",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/worklogs/root-planning-progress.json",
+      "sha256": "7b380cf307aa5e64ef00c005a486844cef572d7ef2f60cca83827f7c1f37701d",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/worklogs/root-quality-progress.json",
+      "sha256": "325e4d76a7eb6d56d9b47267484f52f7066d3446bd3b0f2601e41238d0fdc8b5",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/worklogs/root-specialty-progress.json",
+      "sha256": "35db21383d9d4b0d1b9d883c71ac8fab51571cae79627ca19b22fba6066c3004",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/commercial-reading.json",
+      "sha256": "eebdd86c604cb60de62cc75efb78576871c4a5444cf28a1273c577ebbe534aeb",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/operations-reading.json",
+      "sha256": "22baeb85a46ad3c1901ace55f8626ca925df6552db1a10ca04e71c48fa54d663",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/platform-engineering-reading.json",
+      "sha256": "a1f39d533d958253763fe7aaee91c8b891f8345370bbdfa459dad49d0d88806c",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/root-planning-reading.json",
+      "sha256": "61184a7f2778b6844eb418a394139066223d8babe2c3ee4923db9de45be4ddad",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/root-specialty-reading.json",
+      "sha256": "3b45491b449907e0cc0bd684ef88d37395509160d84c9330a79c75f653167bcd",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    },
+    {
+      "path": "D:/CP6-worktrees/dd-1010/docs/design-handbook/evidence/root-specialty-required-closure.json",
+      "sha256": "4b9fd37bd29d413056708773b89055a985c571c32e7699eb43afa68c85128410",
+      "coverage": "selected_summary_state_fields_and_structural_projection",
+      "not_original_source_reread": true
+    }
+  ],
+  "contract_projection": {
+    "groups": 5,
+    "entries": 614,
+    "unique_ids": 614,
+    "fields": "contract_id, status/runtime_status plus group scope/pending; four OA entries without status read all non-evidence fields; not all exact wires/embedded evidence rereviewed"
+  },
+  "navigation": {
+    "entries": 125,
+    "unique_target_ids": 125,
+    "domain_counts_equal_architecture01": true,
+    "known_transient_states_not_reported_as_defects": [
+      "ERP-CREDIT-01",
+      "QA-NCR-01"
+    ],
+    "known_exact_required_gap": "WMS-DEL-01/R01071"
+  },
+  "verification": {
+    "public_md_files": 14,
+    "local_link_existence_checks": 267,
+    "source_paths_stat_only_no_read": 73,
+    "link_errors": [],
+    "business_tests": "NOT_RUN",
+    "source_scripts_executed": false,
+    "public_files_modified": [
+      "evidence/X3-六专项阅读与采用边界.md:47",
+      "evidence/X4-六专项阅读与采用边界.md:29"
+    ],
+    "modification_authorization": "root explicit message permits only stale X3/X4 closure prose correction"
+  },
+  "findings": [
+    {
+      "id": "PUBLIC-OPS-01",
+      "status": "fixed_bounded_recheck",
+      "where": [
+        "evidence/X3-六专项阅读与采用边界.md:47",
+        "evidence/X4-六专项阅读与采用边界.md:29"
+      ],
+      "claim": "陈旧core/待必要材料闭合措辞与12项最新required台账不一致；已改为当前必要材料闭合、跨域复核/运行另轴。专项ledger未改。"
+    },
+    {
+      "id": "PUBLIC-OPS-02",
+      "status": "reported_to_root_assigned_to_original_agent",
+      "where": [
+        "contracts/platform-engineering-contracts.json:6723",
+        "contracts/platform-engineering-contracts.json:6724",
+        "contracts/platform-engineering-contracts.json:6726"
+      ],
+      "claim": "pending_contracts仍列全部ENG/PLM必要附件/Office语义、SPACE mostly-core未闭合；与同组44项required、current_normative_unread_inputs=[]不一致。",
+      "fix": "保留真实视觉/历史/实际采用队列，移除已完成必要语义项。"
+    },
+    {
+      "id": "PUBLIC-OPS-03",
+      "status": "reported_to_root_for_final_delivery_normalization",
+      "where": [
+        "evidence/operations-reading.json:341599",
+        "evidence/operations-reading.json:522339",
+        "11 evidence/worklogs JSON files; 164 string fields referencing worktree handbook root"
+      ],
+      "claim": "复用证据入口依赖工作树，两个可逆别名映射仍指Temp；单按阅读指南的交付根/原档案/展开对象迁移会漏这些引用。",
+      "fix": "内部手册JSON引用改交付根；两个Temp映射复制持久目录并更新指针；原source_path与原件SHA不改。"
+    }
+  ],
+  "positive_conclusions": [
+    "没有发现把accepted/static PASS升级为runtime或生产就绪的全局结论",
+    "缺件报告明确M04为当前指定独审、正文在；其余21分类包含历史，3受阻包和X3历史ZIP另外保留；没有将历史包强制变当前规范",
+    "所审入口明确七状态轴、各Owner事务/身份/回执差异和有界采用门",
+    "旧全局复核记录有明确时间/精确SHA/范围限定，其历史条目数未按当前数量误报为缺陷"
+  ],
+  "limitations": [
+    "无原件内容重读，无代码/DB/构建/业务测试/Actions",
+    "未重复已完成37运营模块审查",
+    "614合同仅全条状态/身份结构投影，未重审每一wire和nested evidence",
+    "group reading只审状态/闭合/限制及路径可复核性，不重新证明全部语义阅读",
+    "正在收尾的CREDIT/NCR及最终快照计数变动未当缺陷"
+  ]
+}
