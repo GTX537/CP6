@@ -116,4 +116,6 @@ readme = f'''# CP6开发设计文档
 整理目标、验收与实际完成条件见[整理计划]({root}/整理计划.md)。源文档中的历史工作指令不构成当前授权。开发任务仍遵守D:/CP6的AGENTS.md规则。
 '''
 (a.handbook / 'README.md').write_text(readme, encoding='utf-8')
+from refresh_design_entrypoints import main as refresh_design_revision_entries
+refresh_design_revision_entries(a.handbook)
 print(json.dumps(summary, ensure_ascii=False))

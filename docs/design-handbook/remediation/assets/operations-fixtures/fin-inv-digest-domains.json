@@ -1,0 +1,22 @@
+{
+  "SC20_result_excludes": [
+    "resultDigest",
+    "adoptionMode"
+  ],
+  "SC12_binding": "entire Request.binding",
+  "SC12_result": "Response.result excluding resultDigest",
+  "scenario_seals": {
+    "SC12": {
+      "original_fixture_digest": "80783d7d27092c404918b9700429599cb85e70f5c990e240d97e8092a100855d",
+      "profile": "OPS-SCENARIO-FULL/1: SHA256(canonical scenario excluding FixtureDigest)",
+      "original_legacy_digest_preserved": true,
+      "derived_full_digest": "a051e1459e577f033b1760676f3a9d7e6c4aa54066f5e7623140900378530904"
+    },
+    "SC20": {
+      "original_fixture_digest": "eb3bfea8b1b630de853941444543f8c59ac21f4be096cb90b98dc16c1464f3cd",
+      "profile": "OPS-SCENARIO-FULL/1: SHA256(canonical scenario excluding FixtureDigest)",
+      "original_legacy_digest_preserved": true,
+      "derived_full_digest": "90ad094d938eaaae8dc9fdf8f0b673ef37eca3004cccfc372aa3fc2f11a9f8df"
+    }
+  }
+}

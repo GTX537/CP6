@@ -1,0 +1,41 @@
+{
+  "revision": "1.0.0",
+  "permission": "MAT_MRP_BASIS_READ",
+  "tenant_and_actor": "trusted context only",
+  "operations": [
+    {
+      "method": "POST",
+      "route": "/internal/mes/material-obligations/{materialObligationId}/mrp-basis/v1/read",
+      "request": "wire-1.0.0.schema.json#/$defs/ReadRequest",
+      "success": "wire-1.0.0.schema.json#/$defs/ResidualHandoff",
+      "idempotency": [
+        "tenant",
+        "authenticated consumer",
+        "mappingVersion",
+        "requestKey"
+      ],
+      "transaction": "consistent Owner capture plus immutable read receipt, no material effects",
+      "errors": {
+        "400": "INVALID_WIRE",
+        "401": "UNAUTHENTICATED",
+        "403": "FORBIDDEN",
+        "404": "NOT_FOUND",
+        "409": [
+          "REQUEST_KEY_CONFLICT",
+          "BINDING_MISMATCH",
+          "MATERIAL_REVISION_CHANGED",
+          "SCOPE_MISMATCH"
+        ],
+        "503": "OWNER_CUT_UNAVAILABLE"
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/internal/mes/material-obligations/{materialObligationId}/mrp-basis/v1/reads/{requestKey}",
+      "success": "original immutable capture after current authorization",
+      "missing": "404 NOT_FOUND",
+      "recovery": "never recreate read or assert current applicability from historical capture"
+    }
+  ],
+  "runtime_status": "NOT_RUN"
+}

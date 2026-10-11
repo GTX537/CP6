@@ -1,5 +1,17 @@
 # PLM-VER-01 · 方案验证、试制与设计确认
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING | DESIGN_GAP：用不可变候选全集聚合及RoundBinding映射OA2，保Subject/Package/Policy/Technical四身份与rejectDisposition；OwnerInbox/应用回执/Outbox及撤回竞争完整持久化。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。本册整理当前主文、原回收合同和FB02全部语义；强制包中其余索引/工作簿的逐项关闭仍待后续批次。业务AC/TC均为`NOT_RUN`。
 
 ## 1. 目的、操作者和业务Owner

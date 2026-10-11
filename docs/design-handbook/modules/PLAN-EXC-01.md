@@ -1,5 +1,21 @@
 # PLAN-EXC-01｜缺料、供给异常与重算协调开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME | SUPERSEDED：CP22 role15内专业设计已有准确ADOPT；总17角色、实际provider/adoption0保持，不扩旧RC1批准。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| PLAN-IF-003 | DOCUMENT_STALE：AC087步骤陈旧readcut22改为当前精确input.fixedReadCut113，保原case身份及所有权限/页约束。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+| PLAN-IF-006 | ARTIFACT_CONFLICT：原StoredLegacyAnchorRecord两Reported字段使用原SignedDecimal；新责任非负约束不变。 | [设计](../remediation/05-planning-material-mapping.md) |
+| PLAN-IF-007 | ARTIFACT_CONFLICT：Receipt20 原生 F014/F016 的 ACTUAL_AVAILABLE=18:10:02 为唯一时间；为 PREPARED/PUBLISHED 生成新 sealed Graph/Assessment/Impact、新原生投影版本、查询捕获/来源页、CaseRevision/Head；所有事实 Ref 和摘要依赖闭包重算，不重写旧 sealed 身份。 | [设计](../remediation/assets/planning-fixtures/README.md) |
+| PLAN-IF-008 | ARTIFACT_CONFLICT：MATERIAL_OLD/NEW 新 sealed graph 的 algorithmRef 精确引用 MAT_ALGORITHM_V2 2.0-proposed，与已存在 MAT_INPUT/RUN/ATTEMPT 相等；历史 F025/I1 保留，八类支持输出不改为每次必须八行。完整预映像重算并生成新 Case 引用。 | [设计](../remediation/assets/planning-fixtures/README.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：`required_materials_consolidated`。当前 CP12 原五 SPEC 的有效规则与必要附件已整理，旧版本、作者工具和来源准备材料另有逐项阅读边界。原设计已静态接受；40 REQ、103 AC 为该轮新编设计身份，业务执行全部 `NOT_RUN`。本状态不表示351份历史成员逐字全读或产品已实现。[M:632] [S:5] [A:5]
 
 ## 1. 目的、操作者与Owner

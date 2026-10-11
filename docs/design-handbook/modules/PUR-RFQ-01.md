@@ -1,5 +1,17 @@
 # PUR-RFQ-01 采购询比价与供应价格
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-RFQ-PR-SOURCE-STATE-ADAPTER | INTENTIONAL_DIFFERENCE：内部EXECUTED_PENDING_LEDGER与ClaimRecord wire CONSUMED属于不同层；PR P→E和RFQ异步P→C保各自receipt推进。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 目的、操作者与已接受业务边界
 
 采购员把明确需求发给合资格供应商，收录原始报价，按可解释的数量／单位／货币／费用比较，经批准和本域应用形成采购选择；也可维护独立供应价格，并向 PO Owner 提交冻结商业依据。采购审核人、价格维护人、结果恢复人、Source/PO/Projection/OA 机器身份各有专用职责，角色人员映射由 IAM 给出。 [原文 L21](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md:21>)、[原文 L23](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md:23>)、[原文 L98](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md:98>)、[原文 L114](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md:114>)

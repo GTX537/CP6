@@ -1,5 +1,17 @@
 # SYS-IAM-01 · 用户组织、字段授权与认证完成
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING | DESIGN_GAP：新增SPACE/S5身份权限组合、61字段78DTO路径及完整grant-clause交集；四原Space版本与S5向量独立；每页缓存导出下载当前撤权门。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。六个SPEC均按已接受v0.2展开；新增逻辑DTO/门/错误仍是候选待实现，40AC NOT_RUN、实际采用UNPROVEN。
 
 ## 1. 业务目的、操作者与责任

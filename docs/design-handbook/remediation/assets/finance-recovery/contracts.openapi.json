@@ -1,0 +1,230 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CP6 correction close supplement",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/internal/finance/match-adjustments/closures/v1/fence-and-close": {
+      "post": {
+        "operationId": "fenceAndCloseCorrection",
+        "security": [
+          {
+            "serviceIdentity": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "contracts.schema.json#/$defs/CloseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Original identity-bound result; no-effect only terminal proof",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/CloseStatus"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Original identity-bound result; no-effect only terminal proof",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/CloseStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/finance/match-adjustments/closures/v1/query": {
+      "post": {
+        "operationId": "queryCorrectionClose",
+        "security": [
+          {
+            "serviceIdentity": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "contracts.schema.json#/$defs/CloseQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Original identity-bound result; no-effect only terminal proof",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/CloseQueryResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Typed failure; never proof of no effect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "contracts.schema.json#/$defs/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "serviceIdentity": {
+        "type": "mutualTLS"
+      }
+    }
+  }
+}

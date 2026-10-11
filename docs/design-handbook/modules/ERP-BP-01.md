@@ -1,5 +1,18 @@
 # ERP-BP-01 交易伙伴主数据开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-ACC-PHYSICAL-WIRE | DESIGN_GAP：New ACC v2 A01-A13 and ACC-MAPPING-DECISION/1; independent C03/seven-field preserved; complete scope/owner selection/account binding/current qualification required. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-OWNER-LOCK-ORDER | ADOPTION_PENDING：采用 IAM→BP（含Mapping/ReverseClaim）→EST→QTN 已登记依赖；闭包预收集、循环或遗漏 LOCK_PLAN_UNPROVEN；禁止持EST回调BP。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 > 整理状态：`required_materials_consolidated`。本页已整理全部有效规范、143 个原字段、128 个可写字段和 146 个 JSON 样例的对象语义；重复子树按精确值复用，摘要字面未逐项重算。设计已接受，124 项业务 AC 均 `NOT_RUN`，10 项生产 Owner Gate 均 `UNPROVEN_PRODUCTION_GATE`。本轮没有执行源代码、SQL、迁移或测试。[接受范围][U31] [验证边界][U54]
 
 ## 1. 业务目的、操作者与职责

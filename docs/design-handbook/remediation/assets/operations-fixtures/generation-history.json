@@ -1,0 +1,42 @@
+{
+  "role": "AUTHORING_DIAGNOSTICS_RETAINED_NOT_BUSINESS_TESTS",
+  "failures": [
+    {
+      "command_runtime": "default python",
+      "observed_error": "AttributeError: 'WindowsPath' object has no attribute 'is_relative_to'",
+      "resolution": "Use the task's isolated Python 3.13 runtime; the default installed interpreter is too old."
+    },
+    {
+      "command_runtime": "python3.14",
+      "observed_error": "ModuleNotFoundError: No module named 'jsonschema'",
+      "resolution": "Final generation uses the existing uv-isolated Python 3.13 and jsonschema 4.26.0; no repository dependency changed."
+    },
+    {
+      "generator_location": "rma / originalSnapshot line identity",
+      "observed_error": "KeyError: 'lineVersion'",
+      "resolution": "Read the original exact property shipmentLineVersion and baseQty."
+    },
+    {
+      "generator_location": "rma / dispositionTargetProjections",
+      "observed_error": "KeyError: 'adapterId'",
+      "resolution": "Select the five adapter branch objects, excluding separate metadata dictionaries."
+    },
+    {
+      "generator_location": "documentation / root finding evidence",
+      "observed_error": "KeyError: 'source_path'",
+      "resolution": "Support the root evidence object's path property as well as the operations evidence source_path property."
+    },
+    {
+      "validator_location": "IPQC-frozen-delivery",
+      "observed_error": "AssertionError: IPQC-frozen-delivery",
+      "resolution": "Compare the native wire decimal-string Sequence with canonical decimal formatting of the SQL integer Sequence; neither stored value was changed."
+    }
+  ],
+  "latest_success_reports": [
+    "static-validation.json",
+    "independent-validation.json"
+  ],
+  "business_execution": "NOT_RUN",
+  "executed_business_tests": 0,
+  "note": "These are real generator/environment/validator diagnostics encountered while authoring this revision. They are not application failures or runtime acceptance. Successful final reports do not erase these earlier failures."
+}

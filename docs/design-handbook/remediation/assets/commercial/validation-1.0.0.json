@@ -1,0 +1,13 @@
+{
+  "scope": "Local static document checks only. No HTTP/DB/runtime/Owner/CI tests executed.",
+  "result": "PASS_STATIC_ONLY",
+  "operation_count": 42,
+  "schema_count": 99,
+  "local_reference_count": 1046,
+  "field_count": 140,
+  "source_hash_count": 15,
+  "owner_binding_count": 21,
+  "json_schema_validation": "PASS_META_SCHEMA_AND_6_DOCUMENT_CASES",
+  "required_runtime": "NOT_RUN",
+  "source_mutations": "NONE"
+}

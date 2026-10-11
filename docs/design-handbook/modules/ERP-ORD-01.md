@@ -1,5 +1,25 @@
 # ERP-ORD-01｜销售订单全生命周期开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-HO-OLD-FACTORY | SUPERSEDED：Replace Opportunity-wide uniqueness only in new single-writer adapter with exact source intent/responsibility identities; legacy remains observation and explicit migration gate. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-EST-QTN-V2-DECODER | ADOPTION_PENDING：保原EstimateBasis并注册完整v2 ModelIdentity/FormulaDigest/Disclosure解码与I03/I05用途。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-QTN-FACT-H07-R2 | ADOPTION_PENDING：Persist exact historical Fact/source/receipt; synchronously join current Fact before new Sales effects; I19 projections never cancel order/release allocation or assert customer revocation. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-IC-PROTECTION-ADOPTION | ADOPTION_PENDING：仅 MAIN_INTAKE_NEW_EFFECT 与 CRM_RESULT_PROJECTION 两purpose采用；durable grant不因超时自行释放；本地COMMITTED/ABORTED原终态结算，权限即时撤销独立。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-IC-ORIGINAL-TRANSPORT | INTENTIONAL_DIFFERENCE：新HO/OPP运输原封闭bytes和opaque版本；旧C03删敏感字段/int版本不可无损替代。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-IC-BOUNDED-REBUILD | ADOPTION_PENDING：固定原H/V目录、完整CRM handoff/attribution/group/conflict与Main Intake/Quote/Commercial/Resolution集合，分页代际与CAS重核；UNCHANGED只刷新checkedAt。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-ORD-FUNCTIONAL-PHYSICAL-BOUNDARY | DESIGN_GAP：New ORD-DEM-SOURCE/1, typed lifecycle plans, local receipt/lineage/control/membership identities; complete 140-field disposition; no historical physical approval invented. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-ORD-QTN-H07-SUCCESSOR | SUPERSEDED：Adopt exact QTN R2 I10/Allocation at actual DRAFT commit; Confirm consumes no second H/C account; immutable source quantities, bounded I11 full release. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-FUL-CATALOGUE-AND-CURRENT-FENCE | ADOPTION_PENDING：采用完整Sales母集合和预建空site F−1门；F−1→全部F0→owner heads，严格当前仅native同库Serializable；跨库返回UNKNOWN。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：`core_semantics_consolidated`。本册整理当前获认可的订单功能文本组合，保留物理适配、真实 Owner 实例和业务验证的独立状态；不是已运行的软件说明。[P:535] 本次已读 R01、R02、R03、R04 正文全篇，订单工作簿全部提取文本采用结构合读，未做原生视觉验收。详见第 12 节。
 
 ## 1. 业务目的、操作者与边界

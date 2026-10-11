@@ -1,0 +1,47 @@
+{
+  "revision": "ATP-STABLEID-LEXICAL/20261011-R1",
+  "cases": [
+    {
+      "value": "EA",
+      "valid": true
+    },
+    {
+      "value": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "valid": true
+    },
+    {
+      "value": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "valid": false
+    },
+    {
+      "value": "EA\n",
+      "valid": false
+    },
+    {
+      "value": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "valid": false
+    },
+    {
+      "value": "EA\r\n",
+      "valid": false
+    },
+    {
+      "value": "EA ",
+      "valid": false
+    },
+    {
+      "value": "公斤",
+      "valid": false
+    },
+    {
+      "value": "",
+      "valid": false
+    },
+    {
+      "value": "0._:/-",
+      "valid": true
+    }
+  ],
+  "adoption": "New explicit schema/TS/C# lexical profile for current input; original historical results are not revalidated or normalized with this successor",
+  "runtime": "NOT_RUN"
+}

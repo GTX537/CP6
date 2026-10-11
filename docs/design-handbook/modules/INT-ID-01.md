@@ -1,5 +1,17 @@
 # INT-ID-01 Main 与 CRM 身份投影合同
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-S6-PRECHECKPOINT-FINALAUTH | ADOPTION_PENDING：重复/旧/同版本成功前先真事务持久化checkpoint，transport/raw与content摘要独立；Reconciliation→Published→Projection→Inbox→checkpoint；最终授权必须真实native held。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 业务目的、操作者与权威边界
 
 Main 是租户、组织、用户、角色权限及撤权事实的权威；CRM 保存投影、发布后的授权读模型和本地会话；Platform 提供运输、Inbox、checkpoint 等原语。租户 IAM 管理员在 Main 修改身份，CRM 用户在已绑定组织登录；投影服务取可信 Main 快照，应用 worker 在自己的事务消费。不能在 CRM 新建主身份、从 displayName 推导 ID、开第二身份消费者或把 Platform 当身份主库。 [规范 L9](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:9>)、[规范 L99](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:99>)、[规范 L124](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:124>)、[规范 L126](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md:126>)

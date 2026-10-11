@@ -1,5 +1,19 @@
 # FIN-COST-01 制造成本归集与结转
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-SUB-COST-RECEIPT-VS-ACCEPTANCE | INTENTIONAL_DIFFERENCE：Finance approved RECEIPT完整累计Q作cost，Pcum+sameM仅一次、累计舍入取delta；消耗依据独立COMMERCIAL_ACCEPTANCE_GROSS与冻结Qplan、unitUsage。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-012 | ADOPTION_PENDING：全部pre-source/Cost controls→FM/BP→cost heads真实sameUow；GL source完整原envelope；GL CompletionCurrent S到成本Apply，reverse writer X。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-017 | SUPERSEDED：R12闭合旧profile/Uow proof gap：UTF8 domain+NUL+JCS完整非digest proof、INPUT9 current generation、真实同Uow；RETURN_TO_SOURCE仍不在Finance R10 H30枚举。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前913行正文、756行wire、SC15/C65全部532个业务表示、当前评审/接受与H31共享规范已语义整理。329成员已核身份和角色；143件其他历史代码不称全文实读。76项业务AC和真实Owner采用仍未运行。
 
 ## 1. 业务目的、操作者、触发与边界

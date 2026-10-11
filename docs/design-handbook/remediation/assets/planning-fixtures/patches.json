@@ -1,0 +1,92 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "bounded_design_data_revision_not_original",
+  "patches": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "source_sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "source_finding_ids": [
+        "PLAN-IF-014"
+      ],
+      "decision": "Revision4 preserves exact original OwnerReceipt; BodyJson and all revision/head digest copies follow the native receipt.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "\"{\\\"conversionLegId\\\":\\\"f5f8629b-24d5-5788-b5dc-893b4de592f4\\\",\\\"eventId\\\":\\\"7e853295-acd6-576d-b319-7c28f0296c04\\\",\\\"observedAt\\\":\\\"2026-10-02T11:15:00Z\\\",\\\"ownerCommandKey\\\":\\\"42000000-0000-4000-8000-000000000003\\\",\\\"ownerHttpStatus\\\":201,\\\"ownerQueryKey\\\":\\\"MES-WO/command/42000000-0000-4000-8000-000000000003\\\",\\\"ownerResult\\\":{\\\"changed\\\":true,\\\"commandId\\\":\\\"42000000-0000-4000-8000-000000000003\\\",\\\"error\\\":null,\\\"operation\\\":\\\"CREATE_ROOT_WORK_ORDER\\\",\\\"outcome\\\":\\\"COMMITTED\\\",\\\"recordedAt\\\":\\\"2026-10-02T11:13:00Z\\\",\\\"replayed\\\":false,\\\"result\\\":{\\\"bindingRegistryRevision\\\":\\\"1\\\",\\\"controlEpoch\\\":\\\"1\\\",\\\"controlState\\\":\\\"NO_NEW_EXECUTION\\\",\\\"deviationClaimRefs\\\":[],\\\"evidenceVersion\\\":\\\"1\\\",\\\"lifecycle\\\":\\\"CREATED\\\",\\\"relReservationRefs\\\":[{\\\"id\\\":\\\"RESERVE-001\\\",\\\"owner\\\":\\\"REL\\\",\\\"version\\\":\\\"1\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rootExecutionKey\\\":{\\\"executionRequestKey\\\":\\\"MAKE-CONVERT-20261002-001\\\",\\\"initiatingOwner\\\":\\\"PLAN-PO\\\"},\\\"scope\\\":{\\\"ranges\\\":[{\\\"from\\\":\\\"0.00000000\\\",\\\"portionId\\\":\\\"51000000-0000-4000-8000-000000000001\\\",\\\"to\\\":\\\"100.00000000\\\"}],\\\"scopeId\\\":\\\"50000000-0000-4000-8000-000000000001\\\",\\\"scopeVersion\\\":\\\"1\\\"},\\\"snapshotDigest\\\":\\\"5d0e31764397e6cbfb62b1fbb2df1184825da911df2a9aacd9f76998c3eb5bf2\\\",\\\"snapshotId\\\":\\\"31000000-0000-4000-8000-000000000001\\\",\\\"sourceBindingRef\\\":{\\\"id\\\":\\\"CP18-BIND-MAKE-100\\\",\\\"owner\\\":\\\"PLAN-PO\\\",\\\"version\\\":\\\"1\\\"},\\\"workOrderId\\\":\\\"44000000-0000-4000-8000-000000000001\\\",\\\"workOrderNo\\\":\\\"WO20261002-000001\\\"}},\\\"ownerResultDigest\\\":\\\"1fe7b6969706d9a768eb16b69ab0bdd2cd83988813cee1203ebcc3e87d05a6f3\\\",\\\"previousDigest\\\":null,\\\"producerOwner\\\":\\\"MES-WO\\\",\\\"requestDigest\\\":\\\"b1250b1323eddeb03c052ae25edbcd59d02a97d2125af8a446a67784e30312b8\\\",\\\"schema\\\":\\\"plan.po.owner-receipt/1.0\\\",\\\"sequence\\\":\\\"1\\\",\\\"stepOrdinal\\\":4,\\\"streamId\\\":\\\"CP18-SC06-100\\\"}\"",
+          "after": "\"{\\\"conversionLegId\\\":\\\"f5f8629b-24d5-5788-b5dc-893b4de592f4\\\",\\\"eventId\\\":\\\"7e853295-acd6-576d-b319-7c28f0296c04\\\",\\\"observedAt\\\":\\\"2026-10-02T11:15:00Z\\\",\\\"ownerCommandKey\\\":\\\"42000000-0000-4000-8000-000000000003\\\",\\\"ownerHttpStatus\\\":201,\\\"ownerQueryKey\\\":\\\"MES-WO/command/42000000-0000-4000-8000-000000000003\\\",\\\"ownerResult\\\":{\\\"changed\\\":true,\\\"commandId\\\":\\\"42000000-0000-4000-8000-000000000003\\\",\\\"error\\\":null,\\\"operation\\\":\\\"CREATE_ROOT_WORK_ORDER\\\",\\\"outcome\\\":\\\"COMMITTED\\\",\\\"recordedAt\\\":\\\"2026-10-02T11:13:00Z\\\",\\\"replayed\\\":false,\\\"result\\\":{\\\"bindingRegistryRevision\\\":\\\"1\\\",\\\"controlEpoch\\\":\\\"1\\\",\\\"controlState\\\":\\\"NO_NEW_EXECUTION\\\",\\\"deviationClaimRefs\\\":[],\\\"evidenceVersion\\\":\\\"1\\\",\\\"lifecycle\\\":\\\"CREATED\\\",\\\"relReservationRefs\\\":[{\\\"id\\\":\\\"RESERVE-001\\\",\\\"owner\\\":\\\"REL\\\",\\\"version\\\":\\\"1\\\"}],\\\"revision\\\":\\\"1\\\",\\\"rootExecutionKey\\\":{\\\"executionRequestKey\\\":\\\"MAKE-CONVERT-20261002-001\\\",\\\"initiatingOwner\\\":\\\"PLAN-PO\\\"},\\\"scope\\\":{\\\"ranges\\\":[{\\\"from\\\":\\\"0.00000000\\\",\\\"portionId\\\":\\\"51000000-0000-4000-8000-000000000001\\\",\\\"to\\\":\\\"100.00000000\\\"}],\\\"scopeId\\\":\\\"50000000-0000-4000-8000-000000000001\\\",\\\"scopeVersion\\\":\\\"1\\\"},\\\"snapshotDigest\\\":\\\"46d9088dd0532f6eeabdb169e156004f2641b054b5f08a4b66bec87932f2031a\\\",\\\"snapshotId\\\":\\\"31000000-0000-4000-8000-000000000001\\\",\\\"sourceBindingRef\\\":{\\\"id\\\":\\\"CP18-BIND-MAKE-100\\\",\\\"owner\\\":\\\"PLAN-PO\\\",\\\"version\\\":\\\"1\\\"},\\\"workOrderId\\\":\\\"44000000-0000-4000-8000-000000000001\\\",\\\"workOrderNo\\\":\\\"WO20261002-000001\\\"}},\\\"ownerResultDigest\\\":\\\"e93e444a53554f06c00e38aa196130742f0a1fb70d965e5d44ffe1e6104b4e5c\\\",\\\"previousDigest\\\":null,\\\"producerOwner\\\":\\\"MES-WO\\\",\\\"requestDigest\\\":\\\"eff57d82d721b954519949b2b242c09c563e25127b0147e06433c3531d7ae279\\\",\\\"schema\\\":\\\"plan.po.owner-receipt/1.0\\\",\\\"sequence\\\":\\\"1\\\",\\\"stepOrdinal\\\":4,\\\"streamId\\\":\\\"CP18-SC06-100\\\"}\"",
+          "expected_count": 2
+        },
+        {
+          "op": "replace_text",
+          "before": "f0677a98cfc858766f02d49c6d88b8cc2b4d709304b6e5ebe6097f6de136cffa",
+          "after": "c35ad4f9195c1958b59989ca76d97b67112ee0921b0b126b1dda3541ff05a6a0",
+          "expected_count": 4
+        }
+      ],
+      "derived_sha256": "0a9828a83b5e6390da8639391374fa0c27eb809adf21edf24aed3dd7a8e55e41",
+      "expected_derived_sha256": "0a9828a83b5e6390da8639391374fa0c27eb809adf21edf24aed3dd7a8e55e41",
+      "expected_derived_bytes": 939328,
+      "serialization": "UTF8_EXACT_APPLY_OPERATIONS_RESULT"
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+      "source_sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+      "source_finding_ids": [
+        "PLAN-IF-015"
+      ],
+      "decision": "Freeze request executionRequestKey from predecessor; correct complete native result, receipt/terminal/observation/checkpoint and all later pre/post/claim snapshots.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "MAKE-CONVERT-20261002-001",
+          "after": "CP18-MAKE-579b4a48-c253-5aa9-834d-1847c3733973",
+          "expected_count": 23
+        },
+        {
+          "op": "replace_text",
+          "before": "eb120a6230ed41596747a42c4d72b72aea63a597e8cdf04f975aecf4fdada54b",
+          "after": "07c674c823ef9ec67fc1954b7a389e520899c61995064a94706346c2fde401a5",
+          "expected_count": 44
+        }
+      ],
+      "derived_sha256": "b637d6e227e88624e83aace4238b215ed891401a4472018babb0490a3e7bd48b",
+      "expected_derived_sha256": "b637d6e227e88624e83aace4238b215ed891401a4472018babb0490a3e7bd48b",
+      "expected_derived_bytes": 9251603,
+      "serialization": "UTF8_EXACT_APPLY_OPERATIONS_RESULT"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+      "source_sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+      "source_finding_ids": [
+        "OPS-IF-006",
+        "OPS-IF-007",
+        "OPS-IF-008"
+      ],
+      "decision": "New R1 illustrative WO text only. Placeholder hashes stay explicitly illustrative; exact computed v2 successor is pinned SC06/CP19, not these historical MD literals.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "      \"gateId\": \"PURPOSE-BASIS\",\n      \"action\": \"CREATE_WO\",\n      \"requiredness\": \"REQUIRED\",\n      \"evidenceState\": \"SATISFIED\",\n      \"sourceRefs\": [\n        {\n          \"owner\": \"REL\",\n          \"id\": \"AUTH-PROD-001\",\n          \"version\": \"1\"\n        }\n      ],\n      \"reasonCode\": \"APPLICABLE_AT_CUT\",\n      \"blockingScope\": null,\n      \"checkedAt\": \"2026-10-01T06:01:00Z\"\n    },\n",
+          "after": "      \"gateId\": \"PURPOSE-BASIS\",\n      \"action\": \"CREATE_WO\",\n      \"requiredness\": \"REQUIRED\",\n      \"evidenceState\": \"SATISFIED\",\n      \"sourceRefs\": [\n        {\n          \"owner\": \"REL\",\n          \"id\": \"AUTH-PROD-001\",\n          \"version\": \"2\"\n        }\n      ],\n      \"reasonCode\": \"APPLICABLE_AT_CUT\",\n      \"blockingScope\": null,\n      \"checkedAt\": \"2026-10-01T06:01:00Z\"\n    },\n",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "      \"obligationId\": \"UNSTARTED-60\",\n      \"kind\": \"UNSTARTED-60\",\n      \"scope\": {\n        \"scopeId\": \"50000000-0000-4000-8000-000000000001\",\n        \"scopeVersion\": \"1\",\n        \"ranges\": [\n          {\n            \"portionId\": \"51000000-0000-4000-8000-000000000001\",\n            \"from\": \"0.00000000\",\n            \"to\": \"100.00000000\"\n          }\n        ]\n      },\n      \"owner\": \"MFG\",\n      \"requiredness\": \"REQUIRED\",\n      \"dependsOnExecution\": true,\n      \"currentResult\": \"SATISFIED\",\n      \"resultRef\": {\n        \"owner\": \"MFG\",\n        \"id\": \"CANCEL-40-100-FINAL\",\n        \"version\": \"1\"\n      },\n      \"unknownScope\": null,\n      \"independenceProofRef\": null,\n      \"acceptedConsequenceOwnerRef\": null,\n",
+          "after": "      \"obligationId\": \"UNSTARTED-60\",\n      \"kind\": \"UNSTARTED-60\",\n      \"scope\": {\n        \"scopeId\": \"50000000-0000-4000-8000-000000000001\",\n        \"scopeVersion\": \"1\",\n        \"ranges\": [\n          {\n            \"portionId\": \"51000000-0000-4000-8000-000000000001\",\n            \"from\": \"40.00000000\",\n            \"to\": \"100.00000000\"\n          }\n        ]\n      },\n      \"owner\": \"MFG\",\n      \"requiredness\": \"REQUIRED\",\n      \"dependsOnExecution\": true,\n      \"currentResult\": \"SATISFIED\",\n      \"resultRef\": {\n        \"owner\": \"MFG\",\n        \"id\": \"CANCEL-40-100-FINAL\",\n        \"version\": \"1\"\n      },\n      \"unknownScope\": null,\n      \"independenceProofRef\": null,\n      \"acceptedConsequenceOwnerRef\": null,\n",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "SUCCESSOR_SCOPE_ALREADY_HELD",
+          "after": "SUCCESSOR_SCOPE_HELD",
+          "expected_count": 1
+        }
+      ],
+      "derived_sha256": "cf005901ede6830bda019da70597dfdb6e5dee21538f1cbd25e928c63ce201c3",
+      "expected_derived_sha256": "cf005901ede6830bda019da70597dfdb6e5dee21538f1cbd25e928c63ce201c3",
+      "expected_derived_bytes": 282325,
+      "serialization": "UTF8_EXACT_APPLY_OPERATIONS_RESULT"
+    }
+  ]
+}

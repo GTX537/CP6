@@ -1,5 +1,18 @@
 # PLAN-DEM-01｜独立需求接收、版本和控制开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-ORD-FUNCTIONAL-PHYSICAL-BOUNDARY | DESIGN_GAP：New ORD-DEM-SOURCE/1, typed lifecycle plans, local receipt/lineage/control/membership identities; complete 140-field disposition; no historical physical approval invented. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE | ADOPTION_PENDING：现金退款完整current source proposal只作提议；真实5S/rights/currency/lineage原目录（含legacy/import/manual/alias/inflight/reservation/end）；新demand需原owner/node25真实source。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：`core_semantics_consolidated`。当前 Order/Demand 功能文本组合已获有限认可；物理接口、真实 Owner 实例、旧数据迁移及运行验证分别保留。本册覆盖 Planning 接收端，Sales 的完整商业流程和共同 140 字段字典见 [ERP-ORD-01](D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-ORD-01.md)。[P:66] [P:690]
 
 ## 1. 目的、角色与Owner

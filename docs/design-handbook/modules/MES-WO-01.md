@@ -1,5 +1,20 @@
 # MES-WO-01 生产工单与制造快照
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-006 | SUPERSEDED：旧WO markdown重复a/b/c摘要按原1011/2364声明保持历史占位示例；新说明gate采用REL AUTH-PROD-001 v2。可复现完整规范后继采用SHA固定SC06/CP19 v2 Owner预映像，不冒充旧占位摘要可计算，不臆造审批事件。 | [设计](../remediation/assets/planning-fixtures/README.md) |
+| OPS-IF-007 | ARTIFACT_CONFLICT：新R1 WO示例 UNSTARTED60 obligation scope修为[40,100)，root100和已实际40保持；FinalizeCancel必须闭合所请求完整scope，不能自动把60缩成50；本段属于新说明数据，原作者占位hash非真实证明。 | [设计](../remediation/assets/planning-fixtures/README.md) |
+| OPS-IF-008 | DOCUMENT_STALE：新R1示例冲突字面量采用既有正式409 SUCCESSOR_SCOPE_HELD；SUCCESSOR_SCOPE_ALREADY_HELD仅作为旧说明保留，不新增wire alias。 | [设计](../remediation/assets/planning-fixtures/README.md) |
+| OPS-IF-035 | ADOPTION_PENDING：SCHED完整Root组、换机六阶段及参与者已设计；WO改期原白名单不扩大。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。本轮3412行当前正文（含全部30段JSON与115项设计场景）、85行接受和161行限定复审全文实读。下列实例差异及真实接线Gate继续保留，全文读完不等实施或业务验证完成。
 
 ## 1. 业务目的、操作者、触发和边界

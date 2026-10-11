@@ -1,5 +1,21 @@
 # FIN-CLOSE-01 财务期间与关闭
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-020 | ADOPTION_PENDING：新GL consumer扩展仅精确close adjustment授权：effect/date/period真status/fence/target/policy/approval/SOD/bankbudget和gl.close-adjustment.post；不将已关period OPEN。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-021 | INTENTIONAL_DIFFERENCE：仅预登记FX次期计划镜像：原period immutable post+精确次期mirror、current original REVERSED、Owner applied、mirror current有效；period fulfillment、forward current、lifecycle三轴分离。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-025 | ADOPTION_PENDING：batch reservation跨独立GL到全AP余额OwnerApply，GL成功本地失败保留bridge+reservation；A28只反allocation component，A29 paymentGL独立，cash refund独立。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-027 | INTENTIONAL_DIFFERENCE：全历史role mapping+GL-only/manual source-null入账，原reversed仍留历史；strict切口需要同native snapshot，CUT_VECTOR_ONLY必须明确诊断选择。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-033 | INTENTIONAL_DIFFERENCE：区分current完整链与历史period fulfilled；REUSE_CURRENT/REUSE_CORRECTED/BLOCKED/CREATE_EXCLUSIVE；缺mirror阻断不重造，借用普通run不属处置。 | [设计](../remediation/04-finance-correction-contracts.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前全部业务正文、规范附件、接口和28项AC已语义整理；来源资格目录全部字段语义已补读，旧源码/历史材料不冒称本轮全读。真实关账采用和业务验收仍未证明。
 
 ## 1. 业务目的、操作者和Owner边界

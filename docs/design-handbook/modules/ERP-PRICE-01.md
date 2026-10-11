@@ -1,5 +1,18 @@
 # ERP-PRICE-01 板纸单价与行业价格参数
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-EST-PRICE-COVERAGE-V2 | ADOPTION_PENDING：EST R2 v2采用整张coverage+准确coveragePolicy+最终保护，旧PRICE列不能代替；保留原估算/报价用途。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-PRICE-EST-UNIT-SCALE | INTENTIONAL_DIFFERENCE：保PRICE0..18与EST0..12能力差异；EST不支持的精度显式拒绝或原Owner准确版本化转换。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 目的、操作者和业务范围
 
 Main ERP 维护 Standard／Estimate 两类行业板纸价，供查询与 EST 准确来源读取。导入员准备原表、维护员确认所选行、价格控制责任人停用／恢复来源版本；EST 是受信消费者。PRICE 不决定正式报价、销售成交价或财务估值，也不替客户、币种、UOM、产品和政策 Owner 建新主账。 [原文 L3](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a1/a18753ac35341b9b__ERP-PRICE-R2.original.md:3>)、[原文 L20](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a1/a18753ac35341b9b__ERP-PRICE-R2.original.md:20>)、[原文 L67](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a1/a18753ac35341b9b__ERP-PRICE-R2.original.md:67>)

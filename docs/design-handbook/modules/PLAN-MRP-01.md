@@ -1,5 +1,17 @@
 # PLAN-MRP-01 物料需求运算与重算开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-019, PLAN-IF-001 | DESIGN_GAP：新增MAT-MRP-RESIDUAL/1由MAT Owner准确生产NET/GROSS两种表达；保完整MaterialBinding、原责任代表、抵扣覆盖并集、已抵及排除集合、仍占保护与当前cut，原RemainingBasis不改名。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：`required_materials_consolidated`。当前登记的22份必读原件已完整实读：R01–R03、必读限定、字段/操作、140条验收、来源/INDEX/TRACE/文档检查及PD01接受。功能文本已认可；特殊模型、真实参数、正式原生画布和运行仍待证。材料阅读闭合不等于实现完成。
 
 ## 1. 目的、角色与Owner

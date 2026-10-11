@@ -1,0 +1,1451 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "bounded_design_data_revision_not_original",
+  "patches": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+      "source_sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+      "source_finding_ids": [
+        "COM-PR-N01-AUTHORITY-VERSION",
+        "COM-PR-N08-PREVIEW-TIMELINE"
+      ],
+      "decision": "N01 exact bound approval2; N08 first Tx before expiry, replay retains original recordedAt. Bundle/payload hashes unaffected.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/scenarios/0/objects/PO.ClaimPrepareRequest/grants/0/responsibility/authorizationScopeId",
+          "before": "pr-approval:00000000-0000-4000-8000-000000000010:3",
+          "after": "pr-approval:00000000-0000-4000-8000-000000000010:2"
+        },
+        {
+          "op": "replace_json",
+          "path": "/scenarios/0/objects/PO.ClaimPrepareRequest/grants/0/sourceBusinessVersion",
+          "before": "3",
+          "after": "2"
+        },
+        {
+          "op": "replace_json",
+          "path": "/scenarios/7/objects/RestructureResultMerge/command/recordedAt",
+          "before": "2026-10-01T12:08:00.000Z",
+          "after": "2026-10-01T11:28:00.000Z"
+        },
+        {
+          "op": "replace_json",
+          "path": "/scenarios/7/objects/RestructureResultMergeReplay/command/recordedAt",
+          "before": "2026-10-01T12:08:00.000Z",
+          "after": "2026-10-01T11:28:00.000Z"
+        },
+        {
+          "op": "replace_json",
+          "path": "/scenarios/7/objects/RestructureCommandQueryResultMerge/result/command/recordedAt",
+          "before": "2026-10-01T12:08:00.000Z",
+          "after": "2026-10-01T11:28:00.000Z"
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "source_sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+      "source_finding_ids": [
+        "COM-CREDIT-PROBLEM-CODE-ALIASES"
+      ],
+      "decision": "Current-v1 problem triplets align specific code/type/issues; original statuses and retryAdvice preserved. New codec must pin derived registry SHA.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_BLOCKED_DEPENDENCY/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "BLOCKED_DEPENDENCY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_BLOCKED_DEPENDENCY/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:blocked-dependency"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_CORRECTION_INCREASE_INSUFFICIENT/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "CORRECTION_INCREASE_INSUFFICIENT"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_CORRECTION_INCREASE_INSUFFICIENT/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:correction-increase-insufficient"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_EFFECTIVE_PROJECTION_CHANGED/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "EFFECTIVE_PROJECTION_CHANGED"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_EFFECTIVE_PROJECTION_CHANGED/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:effective-projection-changed"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_FIN_RECOVERY_SOURCE_UNPROVEN/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "FIN_RECOVERY_SOURCE_UNPROVEN"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_FIN_RECOVERY_SOURCE_UNPROVEN/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:fin-recovery-source-unproven"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_LEGACY_DATABASE_SCOPE_UNPROVEN/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "LEGACY_DATABASE_SCOPE_UNPROVEN"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_LEGACY_DATABASE_SCOPE_UNPROVEN/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:legacy-database-scope-unproven"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_LEGACY_WRITER_INVENTORY_INCOMPLETE/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "LEGACY_WRITER_INVENTORY_INCOMPLETE"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_LEGACY_WRITER_INVENTORY_INCOMPLETE/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:legacy-writer-inventory-incomplete"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_ORIGINAL_FULFILMENT_MISMATCH/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "ORIGINAL_FULFILMENT_MISMATCH"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_ORIGINAL_FULFILMENT_MISMATCH/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:original-fulfilment-mismatch"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_REFUND_AUTHORIZATION_EXHAUSTED/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "REFUND_AUTHORIZATION_EXHAUSTED"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_REFUND_AUTHORIZATION_EXHAUSTED/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:refund-authorization-exhausted"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_UOM_NOT_EXACT/properties/issues/items/properties/code/const",
+          "before": "HEAD_CHANGED",
+          "after": "UOM_NOT_EXACT"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/Problem_UOM_NOT_EXACT/properties/type/const",
+          "before": "urn:cp6:erp-credit:problem:head-changed",
+          "after": "urn:cp6:erp-credit:problem:uom-not-exact"
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+      "source_sha256": "837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768",
+      "source_finding_ids": [
+        "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+      ],
+      "decision": "NEW_READY roots use own phase protected set. OLD_END roots bind exact old-plan six-column parent, never subsequent new43 output.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/sourcePhase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/completeSourceGuard/phase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/6/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/7/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/71/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/sourcePhase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/completeSourceGuard/phase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/6/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/7/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/72/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/sourcePhase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/completeSourceGuard/phase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/1/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec11_commercial_budget",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec11_commercial_budget"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/6/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/2/compositeColumnMap/7/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec12_commercial_budget_claim",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec12_commercial_budget_claim"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/0/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/1/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/2/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/3/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/4/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/73/exactPkAndFkBindings/foreignKeys/3/compositeColumnMap/5/parentValue/source",
+          "before": "WN14.COMMERCIAL_TERMINAL.ProtectedFullParentSet.ec45_invoice_entitlement_head",
+          "after": "WN14.NEW_READY.ProtectedFullParentSet.ec45_invoice_entitlement_head"
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/77/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/0/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "environment_id",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "environment_id",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/77/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/1/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "tenant_id",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "tenant_id",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/77/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/2/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "legal_entity_key",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "legal_entity_key",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/77/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/3/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "ledger_key",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "ledger_key",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/77/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/4/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "mode",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "mode",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/77/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/5/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "correction_id",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "correction_id",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/78/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/0/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "environment_id",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "environment_id",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/78/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/1/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "tenant_id",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "tenant_id",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/78/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/2/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "legal_entity_key",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "legal_entity_key",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/78/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/3/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "ledger_key",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "ledger_key",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/78/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/4/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "mode",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "mode",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/normalOperations/78/exactPkAndFkBindings/foreignKeys/0/compositeColumnMap/5/parentValue",
+          "before": {
+            "cellKind": "ACTUAL_OUTPUT_CELL",
+            "column": "correction_id",
+            "ordinal": 43,
+            "providerGeneratedNotPredicted": true
+          },
+          "after": {
+            "cellKind": "SOURCE_CELL",
+            "column": "correction_id",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "WN14.OLD_END.ProtectedFullParentSet.ec39_general_correction_plan"
+          }
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+      "source_sha256": "7d27c1e1f65d9b6016ff73d96a1fad3ae8ffd253ef27fe6682fbe4674e8fc858",
+      "source_finding_ids": [
+        "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+      ],
+      "decision": "Typed phase agrees with complete WN14_NEW_READY execution order.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/operations/72/phase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/operations/73/phase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        },
+        {
+          "op": "replace_json",
+          "path": "/operations/74/phase",
+          "before": "COMMERCIAL_TERMINAL",
+          "after": "NEW_READY"
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "source_sha256": "8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5",
+      "source_finding_ids": [
+        "COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA"
+      ],
+      "decision": "Ordinal31 is partition projection producer; ordinal28 original C06 saved200 unchanged; no new Finance effect.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/attemptWriteLedger/30/mutationTarget",
+          "before": "StoreActualPutIfAbsent.wn11_existing_target_c06_saved_200",
+          "after": "StoreActualPutIfAbsent.wn11_existing_target_partition_projection"
+        },
+        {
+          "op": "replace_json",
+          "path": "/attemptWriteLedger/30/branchSavedReplyProducer",
+          "before": "Original closed CommercialOutcomeView renderer from this branch desired13.2/retained13.2/dispatch0; AR result is independently qualified original target00ef issuer lookup; same original C06 own immutable response bytes saved once",
+          "after": "Original closed FinancialPartitionProjection producer for wn11_existing_target_partition_projection; desired=retained net12/tax1.2/gross13.2; independently qualified original target00ef plus old retained11; dispatch=0; Store receipt is consumed by WN11-04:23 and never substitutes for the C06 saved response receipt."
+        },
+        {
+          "op": "replace_json",
+          "path": "/newWriteLedger/30/mutationTarget",
+          "before": "StoreActualPutIfAbsent.wn11_existing_target_c06_saved_200",
+          "after": "StoreActualPutIfAbsent.wn11_existing_target_partition_projection"
+        },
+        {
+          "op": "replace_json",
+          "path": "/newWriteLedger/30/branchSavedReplyProducer",
+          "before": "Original closed CommercialOutcomeView renderer from this branch desired13.2/retained13.2/dispatch0; AR result is independently qualified original target00ef issuer lookup; same original C06 own immutable response bytes saved once",
+          "after": "Original closed FinancialPartitionProjection producer for wn11_existing_target_partition_projection; desired=retained net12/tax1.2/gross13.2; independently qualified original target00ef plus old retained11; dispatch=0; Store receipt is consumed by WN11-04:23 and never substitutes for the C06 saved response receipt."
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "source_sha256": "82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7",
+      "source_finding_ids": [
+        "COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING"
+      ],
+      "decision": "Business revisions advance once, both updated_at use one new server eventClock; before rows, provider row_version and original owner receipt unchanged. Four CAS atomic.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/attemptWriteLedger/67/fullInput/revision",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "revision",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec24_fin_ar_work"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "revision",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.sameOriginalBProtected.ec24_fin_ar_work"
+              },
+              {
+                "cellKind": "LITERAL",
+                "value": 1
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "INTEGER_ADD_EXACT",
+            "physicalType": "bigint",
+            "rule": "opaque row_version remains provider-only; integer business revision increases once"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/attemptWriteLedger/69/fullInput/head_version",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "head_version",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec11_commercial_budget"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "head_version",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.sameOriginalBProtected.ec11_commercial_budget"
+              },
+              {
+                "cellKind": "LITERAL",
+                "value": 1
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "INTEGER_ADD_EXACT",
+            "physicalType": "bigint",
+            "rule": "opaque row_version remains provider-only; integer business revision increases once"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/attemptWriteLedger/70/fullInput/projection_revision",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "projection_revision",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec45_invoice_entitlement_head"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "projection_revision",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.sameOriginalBProtected.ec45_invoice_entitlement_head"
+              },
+              {
+                "cellKind": "LITERAL",
+                "value": 1
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "INTEGER_ADD_EXACT",
+            "physicalType": "bigint",
+            "rule": "opaque row_version remains provider-only; integer business revision increases once"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/attemptWriteLedger/67/fullInput/updated_at",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "updated_at",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec24_fin_ar_work"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "updated_at",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.ORIGINAL_INTENT_RECOVERY.eventClock"
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "EXACT_PHASE_EVENT_CLOCK",
+            "physicalType": "datetime2(3)",
+            "rule": "one same-Uow observer timestamp after qualified capture and before known commit; preserve old recorded_at"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/attemptWriteLedger/70/fullInput/updated_at",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "updated_at",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec45_invoice_entitlement_head"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "updated_at",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.ORIGINAL_INTENT_RECOVERY.eventClock"
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "EXACT_PHASE_EVENT_CLOCK",
+            "physicalType": "datetime2(3)",
+            "rule": "one same-Uow observer timestamp after qualified capture and before known commit; preserve old recorded_at"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/newWriteLedger/67/fullInput/revision",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "revision",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec24_fin_ar_work"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "revision",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.sameOriginalBProtected.ec24_fin_ar_work"
+              },
+              {
+                "cellKind": "LITERAL",
+                "value": 1
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "INTEGER_ADD_EXACT",
+            "physicalType": "bigint",
+            "rule": "opaque row_version remains provider-only; integer business revision increases once"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/newWriteLedger/69/fullInput/head_version",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "head_version",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec11_commercial_budget"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "head_version",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.sameOriginalBProtected.ec11_commercial_budget"
+              },
+              {
+                "cellKind": "LITERAL",
+                "value": 1
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "INTEGER_ADD_EXACT",
+            "physicalType": "bigint",
+            "rule": "opaque row_version remains provider-only; integer business revision increases once"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/newWriteLedger/70/fullInput/projection_revision",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "projection_revision",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec45_invoice_entitlement_head"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "projection_revision",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.sameOriginalBProtected.ec45_invoice_entitlement_head"
+              },
+              {
+                "cellKind": "LITERAL",
+                "value": 1
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "INTEGER_ADD_EXACT",
+            "physicalType": "bigint",
+            "rule": "opaque row_version remains provider-only; integer business revision increases once"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/newWriteLedger/67/fullInput/updated_at",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "updated_at",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec24_fin_ar_work"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "updated_at",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.ORIGINAL_INTENT_RECOVERY.eventClock"
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "EXACT_PHASE_EVENT_CLOCK",
+            "physicalType": "datetime2(3)",
+            "rule": "one same-Uow observer timestamp after qualified capture and before known commit; preserve old recorded_at"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/newWriteLedger/70/fullInput/updated_at",
+          "before": {
+            "cellKind": "SOURCE_CELL",
+            "column": "updated_at",
+            "resolveOnlyUnderActualQualifiedSameSource": true,
+            "source": "MULTI-02.sameOriginalBProtected.ec45_invoice_entitlement_head"
+          },
+          "after": {
+            "cellKind": "DERIVED_TYPED_CELL",
+            "inputs": [
+              {
+                "cellKind": "SOURCE_CELL",
+                "column": "updated_at",
+                "resolveOnlyUnderActualQualifiedSameSource": true,
+                "source": "MULTI-02.ORIGINAL_INTENT_RECOVERY.eventClock"
+              }
+            ],
+            "mustResolveFromCompleteQualifiedProducer": true,
+            "operator": "EXACT_PHASE_EVENT_CLOCK",
+            "physicalType": "datetime2(3)",
+            "rule": "one same-Uow observer timestamp after qualified capture and before known commit; preserve old recorded_at"
+          }
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "source_sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "decision": "max_length is new field error subtype; valid idempotency key exposes intended 201/4001 codepoint rejection; database/write expectations unchanged, not an executed-handler claim.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/families/24/steps/5/transport/proofLocation",
+          "before": "Authorization bearer; never URL/log",
+          "after": "X-Download-Proof header; Authorization bearer authenticates the CRM session; never URL/log"
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/25/steps/1/uiExpectation/configuration/etag",
+          "before": "\"AAAAAAAAAAE=\"",
+          "after": "\"AAAAAAAAAAI=\""
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/2/request/headers/Idempotency-Key",
+          "before": "long-name-key",
+          "after": "fx27-long-name-0001"
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/2/expectedHttp/status",
+          "before": 400,
+          "after": 422
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/2/expectedHttp/body/status",
+          "before": 400,
+          "after": 422
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/2/expectedHttp/body/code",
+          "before": "crm.idempotency_key_invalid",
+          "after": "crm.validation_failed"
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/2/expectedHttp/body/fieldErrors",
+          "before": [],
+          "after": [
+            {
+              "field": "contactName",
+              "code": "max_length"
+            }
+          ]
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/2/derivedBy",
+          "before": "RECOVERY-R3 handler transition",
+          "after": "current-task design fixture correction; NOT_RUN"
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/2/mutation",
+          "before": {
+            "kind": "executed",
+            "validatedBy": "build_recovery_r3_checkpoint1.py"
+          },
+          "after": {
+            "kind": "design-corrected",
+            "validatedBy": "NOT_RUN"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/3/request/headers/Idempotency-Key",
+          "before": "long-need-key",
+          "after": "fx27-long-need-0001"
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/3/expectedHttp/status",
+          "before": 400,
+          "after": 422
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/3/expectedHttp/body/status",
+          "before": 400,
+          "after": 422
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/3/expectedHttp/body/code",
+          "before": "crm.idempotency_key_invalid",
+          "after": "crm.validation_failed"
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/3/expectedHttp/body/fieldErrors",
+          "before": [],
+          "after": [
+            {
+              "field": "need",
+              "code": "max_length"
+            }
+          ]
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/3/derivedBy",
+          "before": "RECOVERY-R3 handler transition",
+          "after": "current-task design fixture correction; NOT_RUN"
+        },
+        {
+          "op": "replace_json",
+          "path": "/families/26/steps/3/mutation",
+          "before": {
+            "kind": "executed",
+            "validatedBy": "build_recovery_r3_checkpoint1.py"
+          },
+          "after": {
+            "kind": "design-corrected",
+            "validatedBy": "NOT_RUN"
+          }
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+      "source_sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+      "source_finding_ids": [
+        "PLAN-IF-006"
+      ],
+      "decision": "Only legacy original fields preserve signed values. Formal quantity domain remains unchanged.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/$defs/StoredLegacyAnchorRecord/properties/ReportedRequiredQty",
+          "before": {
+            "$ref": "#/$defs/DecimalQty"
+          },
+          "after": {
+            "$ref": "#/$defs/SignedDecimal"
+          }
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/StoredLegacyAnchorRecord/properties/ReportedAvailableQty",
+          "before": {
+            "$ref": "#/$defs/DecimalQty"
+          },
+          "after": {
+            "$ref": "#/$defs/SignedDecimal"
+          }
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+      "source_sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+      "source_finding_ids": [
+        "PLAN-IF-009"
+      ],
+      "decision": "New producer contract treats branches as per-portion entries, not three branch kinds; exact closed schema unchanged, contractBody SHA recomputed, version explicit. Historical pins preserved; all new consumer registration must choose this complete new tuple.",
+      "operations": [
+        {
+          "op": "remove_json",
+          "path": "/ports/3/contractBody/profileSchema/properties/branches/maxItems",
+          "before": 3
+        },
+        {
+          "op": "replace_json",
+          "path": "/ports/3/contractVersion",
+          "before": "1.1-proposed",
+          "after": "1.2-design-revision-20261011"
+        },
+        {
+          "op": "replace_json",
+          "path": "/ports/3/contractDigest",
+          "before": "2f43d5f5bfe58027eccdca5552b31cb968dfca9f1bda8dba50f192b82749630a",
+          "after": "af5100ec8fdfef94058f801996ab7305c97859b359f5c6cf74cd34474fa7c708"
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OPENAPI.json",
+      "source_sha256": "63ebd079202536dd53ea07eb524fa32f089326c18d9229dbfc50cf4487cf7011",
+      "source_finding_ids": [
+        "PLAN-IF-012"
+      ],
+      "decision": "Project exact API_REGISTRY PO15 503 outcomes; Owner closure behavior unchanged.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/paths/~1conversions~1{conversionLegId}~1owner-steps/post/responses/503/content/application~1problem+json/schema/allOf/1/properties/code/enum",
+          "before": [
+            "COMMIT_CONFIRMATION_UNAVAILABLE",
+            "CORE_AUTHORIZATION_REQUIRED_FENCED",
+            "INTERNAL_CONTRACT_ERROR",
+            "OWNER_PROTOCOL_NOT_READY",
+            "READ_SOURCE_UNAVAILABLE",
+            "TRANSFER_REQUEST_CLOSURE_REQUIRED_FENCED",
+            "UOW_SCOPE_LOCK_TIMEOUT",
+            "WMS_ORIGINAL_SLOT_LOOKUP_REQUIRED_FENCED",
+            "WO_CREATION_CLOSURE_REQUIRED_FENCED"
+          ],
+          "after": [
+            "COMMIT_CONFIRMATION_UNAVAILABLE",
+            "CORE_AUTHORIZATION_REQUIRED_FENCED",
+            "INTERNAL_CONTRACT_ERROR",
+            "OWNER_PROTOCOL_NOT_READY",
+            "READ_SOURCE_UNAVAILABLE",
+            "TRANSFER_REQUEST_CLOSURE_REQUIRED_FENCED",
+            "UOW_SCOPE_LOCK_TIMEOUT",
+            "WMS_ORIGINAL_SLOT_LOOKUP_REQUIRED_FENCED",
+            "WO_CREATION_CLOSURE_REQUIRED_FENCED",
+            "CREATION_CLOSURE_REQUIRED_FENCED",
+            "CREATION_CLOSURE_TRANSPORT_INVALID",
+            "OWNER_RESPONSE_STATUS_INVALID"
+          ]
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+      "source_sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+      "source_finding_ids": [
+        "PLAN-IF-013"
+      ],
+      "decision": "Align wrapper keys with actual complete primary key; all real modeled rows unchanged.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/worlds/0/priorNativeFactsOrClosures/0/preRows/226/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/0/priorNativeFactsOrClosures/0/postRows/226/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/0/public65/preRows/226/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/0/public65/postRows/226/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/0/machine68/preRows/226/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/0/machine68/postRows/226/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/priorNativeFactsOrClosures/0/preRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/priorNativeFactsOrClosures/0/postRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/priorNativeFactsOrClosures/1/preRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/priorNativeFactsOrClosures/1/postRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/public65/preRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/public65/postRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/machine68/preRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/1/machine68/postRows/219/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/2/public65/preRows/233/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/2/public65/postRows/233/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/2/machine68/preRows/233/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "op": "replace_json",
+          "path": "/worlds/2/machine68/postRows/233/key/ResourceKey",
+          "before": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "after": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        }
+      ]
+    }
+  ]
+}

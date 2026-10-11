@@ -1,0 +1,2806 @@
+{
+  "as_of_utc": "2026-10-11T12:28:23.983489+00:00",
+  "scope": "Design traceability, source integrity, exact bounded patch preconditions and declared structural checks only. No archived programs, business tests, database or production execution.",
+  "command": "python docs/design-handbook/tools/validate_design_completion.py --handbook docs/design-handbook --output docs/design-handbook/evidence/design-completion-validation.json",
+  "checks": [
+    {
+      "check": "source-register:evidence/commercial-integration-findings.json",
+      "result": "PASS",
+      "detail": 37
+    },
+    {
+      "check": "source-register:evidence/operations-integration-findings.json",
+      "result": "PASS",
+      "detail": 50
+    },
+    {
+      "check": "source-register:evidence/platform-engineering-integration-findings.json",
+      "result": "PASS",
+      "detail": 7
+    },
+    {
+      "check": "source-register:evidence/QA-NCR-01-integration-findings.json",
+      "result": "PASS",
+      "detail": 2
+    },
+    {
+      "check": "source-register:evidence/root-integration-findings.json",
+      "result": "PASS",
+      "detail": 4
+    },
+    {
+      "check": "source-register:evidence/root-planning-integration-findings.json",
+      "result": "PASS",
+      "detail": 15
+    },
+    {
+      "check": "complete-traceability",
+      "result": "PASS",
+      "detail": {
+        "source_findings": 115,
+        "canonical_issues": 114,
+        "targets": 125
+      }
+    },
+    {
+      "check": "acceptance-catalog-and-runtime-status",
+      "result": "PASS",
+      "detail": {
+        "cases": 288,
+        "business_executions": 0
+      }
+    },
+    {
+      "check": "asset-manifest-and-composed-derivatives",
+      "result": "PASS",
+      "detail": {
+        "assets": 69,
+        "composed_originals": 66
+      }
+    },
+    {
+      "check": "large-recipes-materialized-byte-integrity",
+      "result": "PASS",
+      "detail": {
+        "operations_products": 22,
+        "planning_products": 3,
+        "check": "Exact materialized bytes and original-source pins only; generator semantic results reused from recorded reports"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-ACC-PHYSICAL-WIRE",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-HO-OLD-FACTORY",
+      "result": "PASS",
+      "detail": {
+        "sources": 11,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-OWNER-LOCK-ORDER",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-EST-PRICE-COVERAGE-V2",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-EST-QTN-V2-DECODER",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-QTN-FACT-H07-R2",
+      "result": "PASS",
+      "detail": {
+        "sources": 11,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-IC-PROTECTION-ADOPTION",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-IC-ORIGINAL-TRANSPORT",
+      "result": "PASS",
+      "detail": {
+        "sources": 5,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-IC-BOUNDED-REBUILD",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-ORD-FUNCTIONAL-PHYSICAL-BOUNDARY",
+      "result": "PASS",
+      "detail": {
+        "sources": 19,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-ORD-QTN-H07-SUCCESSOR",
+      "result": "PASS",
+      "detail": {
+        "sources": 26,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-FUL-CATALOGUE-AND-CURRENT-FENCE",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-S6-PRECHECKPOINT-FINALAUTH",
+      "result": "PASS",
+      "detail": {
+        "sources": 16,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-FSC-FACT-GUARD-EXTENSION",
+      "result": "PASS",
+      "detail": {
+        "sources": 7,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-PRICE-EST-UNIT-SCALE",
+      "result": "PASS",
+      "detail": {
+        "sources": 1,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-PR-CP22-NATIVE-OWNER-ADOPTION",
+      "result": "PASS",
+      "detail": {
+        "sources": 7,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-RFQ-PR-SOURCE-STATE-ADAPTER",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION",
+      "result": "PASS",
+      "detail": {
+        "sources": 5,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-RETURN-CURRENT-KNOWLEDGE-CUT",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-RETURN-H31-COMPOSITE-RESOURCES",
+      "result": "PASS",
+      "detail": {
+        "sources": 16,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-SUB-COST-RECEIPT-VS-ACCEPTANCE",
+      "result": "PASS",
+      "detail": {
+        "sources": 14,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-INQ-GENERATED-CONTRACT-ADOPTION",
+      "result": "PASS",
+      "detail": {
+        "sources": 9,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-LEAD-AC-ATOMIC-SUPERSESSION",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-LEAD-GENERATED-CS-NULLABLE",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-PR-N01-AUTHORITY-VERSION",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-PR-N08-PREVIEW-TIMELINE",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-RETURN-CHILD-ALLOWANCE-QUANTITY",
+      "result": "PASS",
+      "detail": {
+        "sources": 11,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-EST-FIXTURE-POLICY-AND-TTL",
+      "result": "PASS",
+      "detail": {
+        "sources": 13,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-PROBLEM-CODE-ALIASES",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING",
+      "result": "PASS",
+      "detail": {
+        "sources": 7,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-001",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-002",
+      "result": "PASS",
+      "detail": {
+        "sources": 3,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-003",
+      "result": "PASS",
+      "detail": {
+        "sources": 16,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-004",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-005",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-006",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-007",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-008",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "DOCUMENT_STALE"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-009",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-010",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-011",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-012",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-013",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-014",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-015",
+      "result": "PASS",
+      "detail": {
+        "sources": 5,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-016",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-017",
+      "result": "PASS",
+      "detail": {
+        "sources": 26,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-018",
+      "result": "PASS",
+      "detail": {
+        "sources": 11,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-MRP-MAT",
+      "result": "PASS",
+      "detail": {
+        "sources": 16,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-020",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-021",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-022",
+      "result": "PASS",
+      "detail": {
+        "sources": 20,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-023",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-024",
+      "result": "PASS",
+      "detail": {
+        "sources": 16,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-025",
+      "result": "PASS",
+      "detail": {
+        "sources": 14,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-026",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-027",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-028",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-029",
+      "result": "PASS",
+      "detail": {
+        "sources": 16,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-030",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-031",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-032",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-033",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-034",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-035",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-036",
+      "result": "PASS",
+      "detail": {
+        "sources": 9,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-037",
+      "result": "PASS",
+      "detail": {
+        "sources": 9,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-038",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-039",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-040",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-041",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-042",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-043",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-044",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-045",
+      "result": "PASS",
+      "detail": {
+        "sources": 20,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-046",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-047",
+      "result": "PASS",
+      "detail": {
+        "sources": 14,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-048",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-049",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-OPS-IF-050",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PE-ACT-FILE-COMMIT-MODE",
+      "result": "PASS",
+      "detail": {
+        "sources": 1,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-PE-HANDOFF-NAMESPACE",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "DOCUMENT_STALE"
+      }
+    },
+    {
+      "check": "disposition:DR-PE-ENG-MULTI-OUTPUT-MANIFEST",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-PE-ENG-TOOL-OWNER-PARTICIPANT",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "SUPERSEDED"
+      }
+    },
+    {
+      "check": "disposition:DR-PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "DESIGN_GAP"
+      }
+    },
+    {
+      "check": "disposition:DR-NCR-TYPE-01",
+      "result": "PASS",
+      "detail": {
+        "sources": 7,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-NCR-FIELD-01",
+      "result": "PASS",
+      "detail": {
+        "sources": 7,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-ROOT-X3-X4-ABC-01",
+      "result": "PASS",
+      "detail": {
+        "sources": 3,
+        "classification": "INTENTIONAL_DIFFERENCE"
+      }
+    },
+    {
+      "check": "disposition:DR-IPQC-CONT-01",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-IPQC-CONT-02",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-IPQC-CONT-03",
+      "result": "PASS",
+      "detail": {
+        "sources": 8,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-002",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "ADOPTION_PENDING"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-003",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "DOCUMENT_STALE"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-004",
+      "result": "PASS",
+      "detail": {
+        "sources": 4,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-005",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-006",
+      "result": "PASS",
+      "detail": {
+        "sources": 11,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-007",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-008",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-009",
+      "result": "PASS",
+      "detail": {
+        "sources": 5,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-010",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-011",
+      "result": "PASS",
+      "detail": {
+        "sources": 12,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-012",
+      "result": "PASS",
+      "detail": {
+        "sources": 2,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-013",
+      "result": "PASS",
+      "detail": {
+        "sources": 18,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-014",
+      "result": "PASS",
+      "detail": {
+        "sources": 6,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "disposition:DR-PLAN-IF-015",
+      "result": "PASS",
+      "detail": {
+        "sources": 10,
+        "classification": "ARTIFACT_CONFLICT"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+        "source_sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+        "derived_sha256": "0a197a8187b9c07bbe041f48c233e2a5f19df36cfa403201af4823e7eca52fd8",
+        "operations": 131,
+        "finding_ids": [
+          "COM-RETURN-CHILD-ALLOWANCE-QUANTITY"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+        "source_sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+        "derived_sha256": "771b53e6bb14d77d670deeb899b47b1f93a71f026748bc81e9bb0585440a62eb",
+        "operations": 41,
+        "finding_ids": [
+          "COM-EST-FIXTURE-POLICY-AND-TTL"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:multi_mixed_complete_public_q14.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_mixed_complete_public_q14.json",
+        "source_sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+        "derived_sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+        "operations": 9,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:wn11_c06_exact_saved_200.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_c06_exact_saved_200.json",
+        "source_sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+        "derived_sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+        "operations": 3,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:wn11_complete_current_q14.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_complete_current_q14.json",
+        "source_sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+        "derived_sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+        "operations": 3,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:wn11_existing_target_c06_saved_200.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_existing_target_c06_saved_200.json",
+        "source_sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+        "derived_sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "operations": 3,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:multi_public_native_lookup_binding.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_public_native_lookup_binding.json",
+        "source_sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+        "derived_sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+        "operations": 1,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+        "source_sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+        "derived_sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+        "operations": 56,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+        "source_sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+        "derived_sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+        "operations": 9,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+        "source_sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+        "derived_sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+        "operations": 4,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+        "source_sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+        "derived_sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+        "operations": 648,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+        "source_sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+        "derived_sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+        "operations": 2,
+        "finding_ids": [
+          "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+        "source_sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+        "derived_sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+        "operations": 5,
+        "finding_ids": [
+          "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+        "source_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+        "derived_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+        "operations": 7,
+        "finding_ids": [
+          "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/commercial-fixtures/bounded-patches.json:533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+        "source_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+        "derived_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+        "operations": 9,
+        "finding_ids": [
+          "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:PLAN-ATP-WIRE.types.cs",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+        "source_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+        "derived_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+        "operations": 2,
+        "finding_ids": [
+          "PLAN-IF-004"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:PLAN-ATP-POSTGRESQL-DDL.sql",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+        "derived_sha256": "0e7ac0787f24cfa6eeca3b52ff141500127502ee1c09f966c6bb2d1f58561c26",
+        "operations": 4,
+        "finding_ids": [
+          "PLAN-IF-004"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+        "source_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+        "derived_sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+        "operations": 2,
+        "finding_ids": [
+          "NCR-TYPE-01"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+        "source_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+        "derived_sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+        "operations": 3,
+        "finding_ids": [
+          "NCR-TYPE-01"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+        "source_sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+        "derived_sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+        "operations": 5,
+        "finding_ids": [
+          "NCR-FIELD-01"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:CrmLeadCp20Contracts.cs",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/lead/CONTRACTS/CrmLeadCp20Contracts.cs",
+        "source_sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+        "derived_sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7",
+        "operations": 1,
+        "finding_ids": [
+          "COM-LEAD-GENERATED-CS-NULLABLE"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+        "source_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+        "derived_sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+        "operations": 2,
+        "finding_ids": [
+          "OPS-IF-015"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:8538042210844249__crm-inq.openapi.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/8538042210844249__crm-inq.openapi.json",
+        "source_sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a",
+        "derived_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+        "operations": 1,
+        "finding_ids": [
+          "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+        ],
+        "result": "PASS",
+        "local_refs_resolved": 257
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+        "source_sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+        "derived_sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b",
+        "operations": 3,
+        "finding_ids": [
+          "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+        "source_sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+        "derived_sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850",
+        "operations": 3,
+        "finding_ids": [
+          "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:229813cf102aad92__ui-positive-cases.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/22/229813cf102aad92__ui-positive-cases.json",
+        "source_sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23",
+        "derived_sha256": "b5cd3840d288f191ed213e348ae2fed4d01f26c2c28812ab92d3e4ed323b989b",
+        "operations": 1,
+        "finding_ids": [
+          "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:PLAN-ATP-WIRE.schema.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+        "source_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+        "derived_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+        "operations": 2,
+        "finding_ids": [
+          "PLAN-IF-004"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/core-types/bounded-patches.json:PLAN-ATP-WIRE.types.ts",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+        "source_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+        "derived_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-004"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN-ATP-POSTGRESQL-DDL.sql",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+        "derived_sha256": "d486bf299e9ab951cf889c0c64ef10dbd84cbc5f8e213349f1bf0c0a9d9cb3f8",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-005"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN-ATP-POSTGRESQL-DDL.sql",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+        "derived_sha256": "b756830bb448cdb6a77211b91448e68a95445d23d27e94857d468664a1056bbe",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-005"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN-ATP-POSTGRESQL-DDL.sql",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+        "derived_sha256": "f66c3868c5928a3e337fc66b9471252d3c6d3e0634221fa959c4ec56b5565a0b",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-005"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN-ATP-POSTGRESQL-DDL.sql",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+        "derived_sha256": "a51ccaf2111e71c601dd4a04d423ca883eb5327425e6c7c3d3f374f755a922cd",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-005"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN-ATP-POSTGRESQL-DDL.sql",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+        "derived_sha256": "87730b063e089086bd9c34f2e4d0dace98d803b604329cff75bc303eefcc77a0",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-005"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+        "source_sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+        "derived_sha256": "7f5d1e1e51b1025e1a1e60acb7a5654225b6b198e887ae18c9d477feae39f90b",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-010"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+        "source_sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+        "derived_sha256": "1f6a020db61b4551612a83ab54d8d55273025ef459363670556973e4bb022987",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-010"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+        "source_sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+        "derived_sha256": "65bdd614f359b4cace97dcc583ece1e240f748c8c2888da0119d3f896c28ecc5",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-011"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/finance-recovery/source-patches.json:f31bcf82ae23555c__API-CATALOG_R10.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+        "source_sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+        "derived_sha256": "673340180bd581a9dfffabcf18e93b6a8f2384a772a8be2b6cb51a86fe0752cc",
+        "operations": 1,
+        "finding_ids": [
+          "OPS-IF-029"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:NORMATIVE-EXAMPLES.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+        "source_sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+        "derived_sha256": "c6319172ffa25b6a06d1fef37e41bc818930b85d755c6bc7af8f5145fe195681",
+        "operations": 5,
+        "finding_ids": [
+          "COM-PR-N01-AUTHORITY-VERSION",
+          "COM-PR-N08-PREVIEW-TIMELINE"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "source_sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+        "derived_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+        "operations": 18,
+        "finding_ids": [
+          "COM-CREDIT-PROBLEM-CODE-ALIASES"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+        "source_sha256": "837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768",
+        "derived_sha256": "67543b1230d63b6b199040aefcc245f2fefc887f22861a17cd639f757607a20d",
+        "operations": 78,
+        "finding_ids": [
+          "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+        "source_sha256": "7d27c1e1f65d9b6016ff73d96a1fad3ae8ffd253ef27fe6682fbe4674e8fc858",
+        "derived_sha256": "909754ed7a7de1745f05736085ee8cbd2f70bb59f1ccab7ba879f722b1c5380d",
+        "operations": 3,
+        "finding_ids": [
+          "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+        "source_sha256": "8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5",
+        "derived_sha256": "58c4e539844762b1387378252813852efdd7e2a29fbc2361b424cddc80eaf010",
+        "operations": 4,
+        "finding_ids": [
+          "COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+        "source_sha256": "82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7",
+        "derived_sha256": "7e62da74b81430b83b7a6dea8e75e5e05f3b548749119358e9ef6f72e29e0446",
+        "operations": 10,
+        "finding_ids": [
+          "COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+        "source_sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+        "derived_sha256": "4087f29215dd4de47dedc4b2e7d9e34eb0dcd63a645bae8f032364b2cc8a3ac8",
+        "operations": 16,
+        "finding_ids": [
+          "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+        "source_sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+        "derived_sha256": "d54b0d45f44cdbb626f3ff200ecee9e2f59aa8cc39907c202ac8367c930a7431",
+        "operations": 2,
+        "finding_ids": [
+          "PLAN-IF-006"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+        "source_sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+        "derived_sha256": "c2d4d5f82259c507f55261bbbf32538f0ab149b5999327711ae91ea54154e06b",
+        "operations": 3,
+        "finding_ids": [
+          "PLAN-IF-009"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:PLAN_PO_R3_CP18_OPENAPI.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OPENAPI.json",
+        "source_sha256": "63ebd079202536dd53ea07eb524fa32f089326c18d9229dbfc50cf4487cf7011",
+        "derived_sha256": "8ad080bb9d5d770053ebdacec5415d202e0447df2aa76da8d2f746ed35bd008e",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-012"
+        ],
+        "result": "PASS",
+        "local_refs_resolved": 2431
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/bounded-patches.json:CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+        "source_sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+        "derived_sha256": "742cafdedbecb4d7970e2264d07710f65ab4f551b07ef8d3ef62bda6b24bc350",
+        "operations": 18,
+        "finding_ids": [
+          "PLAN-IF-013"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/fixtures/editorial-patches.json:EXC_NEW_AC_CATALOGUE.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+        "source_sha256": "6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542",
+        "derived_sha256": "e55d7fe3e930d8101ea6694b68039151d0497e68c712abd64933d50f8c17a344",
+        "operations": 1,
+        "finding_ids": [
+          "PLAN-IF-003"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+        "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+        "derived_sha256": "b742a5a2d73cba80ce73d2658894de1788c5ba993d23152a113a0febc6c8fe35",
+        "operations": 11,
+        "finding_ids": [
+          "OPS-IF-038"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+        "source_sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+        "derived_sha256": "7f79b60270191e240e5e92097dd83610cab7426695ee5de15a8d6edce6e0572f",
+        "operations": 15,
+        "finding_ids": [
+          "OPS-IF-039",
+          "OPS-IF-040",
+          "OPS-IF-041"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+        "source_sha256": "dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2",
+        "derived_sha256": "a008e32600304533e7dafc9b7d34dcc927c5289fda6ce632528cf0ead8a5cffb",
+        "operations": 1,
+        "finding_ids": [
+          "OPS-IF-042"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+        "source_sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+        "derived_sha256": "2e289cd50b440fb9df6b0f1974918551570ddbe0379956f11050c635b18ee9ed",
+        "operations": 2,
+        "finding_ids": [
+          "OPS-IF-043"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+        "source_sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+        "derived_sha256": "c40bdd59af4c2f720773d539dea852835a5c6db595fdd675a083820b0d4605e3",
+        "operations": 1,
+        "finding_ids": [
+          "OPS-IF-044"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+        "source_sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+        "derived_sha256": "272e68a41f75bd01ba5b57d0018eadbb5fbd656e1bad2d65de1b7c14e1380733",
+        "operations": 42,
+        "finding_ids": [
+          "OPS-IF-048",
+          "OPS-IF-049",
+          "OPS-IF-050"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+        "source_sha256": "561c763d68c1f87a6ae8118e1d1e782175d0821774c597fb3e28fe9125dfc98a",
+        "derived_sha256": "68fecc754a5568f0c2ef74abe37d41031ceeceecf88db345d7107c4e1986f6f7",
+        "operations": 1,
+        "finding_ids": [
+          "OPS-IF-048"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+        "source_sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+        "derived_sha256": "987c173fea8056d6d8d237c112e3f3309e4de9c5a73a5819aa59fce9cb5e5376",
+        "operations": 2,
+        "finding_ids": [
+          "OPS-IF-048"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:99bf7b7371715a62__fixture-F03-I29-request.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99bf7b7371715a62__fixture-F03-I29-request.json",
+        "source_sha256": "99bf7b7371715a62b9400021b018431e66c603e8266ab7bddf521ab101b2e3ab",
+        "derived_sha256": "461c6d0e3357744f5c9ce5ba9afb777016ce100f0aad22dcd1fc27d9961114cc",
+        "operations": 2,
+        "finding_ids": [
+          "IPQC-CONT-02"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:c603f220fd83336d__fixture-F03-I29-response.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c603f220fd83336d__fixture-F03-I29-response.json",
+        "source_sha256": "c603f220fd83336dedd15fec1518d111905836807131aca5eb5fe20342fc63b9",
+        "derived_sha256": "9ffb97d74a477bb083754054c12ff83f0c9e0ac16ae9d046550ff2b3440b46db",
+        "operations": 4,
+        "finding_ids": [
+          "IPQC-CONT-02"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/420ebe12bc2aec95__fixture-F03-I29-writes.json",
+        "source_sha256": "420ebe12bc2aec9509e781236d57baecf25b02bb23a03c3eace2fb9a82c626a5",
+        "derived_sha256": "66b565e5b553f44e83a185fc7ed9f66a5c48cbb04fe6eefad2b946b5d74c6851",
+        "operations": 16,
+        "finding_ids": [
+          "IPQC-CONT-02"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+        "source_sha256": "eba9b5010c3181a3b3c1a603fcb1315dca10c96c16393ec2afdd332160812415",
+        "derived_sha256": "c157f9a06801bd05f66ca696c2be73b6a7f8e5c3b97c6b1b8f68ee71a46bb1db",
+        "operations": 12,
+        "finding_ids": [
+          "IPQC-CONT-03"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+        "source_sha256": "9a3c4c7f7927e1bdee13915c836692e863ec4499a4fb32971105eca66a47b8f1",
+        "derived_sha256": "5f0075cd375a8258e6fb59ed8a5751090b3217566b142f67744eb9ace4a4fd68",
+        "operations": 8,
+        "finding_ids": [
+          "IPQC-CONT-02"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+        "source_sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+        "derived_sha256": "9fd03e7e6412bf814335a7495830d96d6da1686368f5d8cd1610f28159257d0f",
+        "operations": 7,
+        "finding_ids": [
+          "IPQC-CONT-02"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+        "source_sha256": "38a6c24482eb54fc4c9e9002ce5a1c9d40b26bad47154b44b06e26f15c497428",
+        "derived_sha256": "1854032552b01c361bf85f030bb33fc12a1530c8f0791cde6ddb0416cf82784b",
+        "operations": 34,
+        "finding_ids": [
+          "OPS-IF-048",
+          "OPS-IF-049",
+          "OPS-IF-050"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+        "source_sha256": "2bf87130cde5b1fedaa86a386fc619decd1248d792f324dc14f90cd827016219",
+        "derived_sha256": "8751d43275bdd2456d0505971875f680e4ebc7fbb6886159da30a6257f4577fc",
+        "operations": 1,
+        "finding_ids": [
+          "OPS-IF-039",
+          "OPS-IF-040",
+          "OPS-IF-041"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+        "source_sha256": "a044573d078160c1e806b562e38fa5438eba541d7f1ffaec6a9a45a3b172e5a6",
+        "derived_sha256": "a8e2e641a911ef25bd1829d9a5b2946a0c21933df9d009ec04d62dd17606fb75",
+        "operations": 4,
+        "finding_ids": [
+          "OPS-IF-039",
+          "OPS-IF-040",
+          "OPS-IF-041"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+        "source_sha256": "67dcc3fb406be18f786ebea5054add54482647f61cf20199cf417947f8c8e240",
+        "derived_sha256": "0257464b46a32d50c6e683c3d15d62d59d2cfe0a0245aa7bf6d92fe9bb15716f",
+        "operations": 3,
+        "finding_ids": [
+          "OPS-IF-039",
+          "OPS-IF-040",
+          "OPS-IF-041"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/operations-fixtures/bounded-patches.json:5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5e/5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+        "source_sha256": "5e0b3a55dcdf6cd2630d3d734cb1ee3d784999eb40d222c751ef164de11082e6",
+        "derived_sha256": "a8e0c2d337db3bc11caedafe91c8c8f1963747df936cf703cb287c702484997d",
+        "operations": 2,
+        "finding_ids": [
+          "OPS-IF-039",
+          "OPS-IF-040",
+          "OPS-IF-041"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/planning-fixtures/patches.json:PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+        "source_sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+        "derived_sha256": "0a9828a83b5e6390da8639391374fa0c27eb809adf21edf24aed3dd7a8e55e41",
+        "operations": 2,
+        "finding_ids": [
+          "PLAN-IF-014"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/planning-fixtures/patches.json:CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+        "source_sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+        "derived_sha256": "b637d6e227e88624e83aace4238b215ed891401a4472018babb0490a3e7bd48b",
+        "operations": 2,
+        "finding_ids": [
+          "PLAN-IF-015"
+        ],
+        "result": "PASS"
+      }
+    },
+    {
+      "check": "bounded-patch:remediation/assets/planning-fixtures/patches.json:a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+      "result": "PASS",
+      "detail": {
+        "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+        "source_sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+        "derived_sha256": "cf005901ede6830bda019da70597dfdb6e5dee21538f1cbd25e928c63ce201c3",
+        "operations": 3,
+        "finding_ids": [
+          "OPS-IF-006",
+          "OPS-IF-007",
+          "OPS-IF-008"
+        ],
+        "result": "PASS"
+      }
+    }
+  ],
+  "errors": [],
+  "patches": [
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+      "derived_sha256": "0a197a8187b9c07bbe041f48c233e2a5f19df36cfa403201af4823e7eca52fd8",
+      "operations": 131,
+      "finding_ids": [
+        "COM-RETURN-CHILD-ALLOWANCE-QUANTITY"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "source_sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+      "derived_sha256": "771b53e6bb14d77d670deeb899b47b1f93a71f026748bc81e9bb0585440a62eb",
+      "operations": 41,
+      "finding_ids": [
+        "COM-EST-FIXTURE-POLICY-AND-TTL"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_mixed_complete_public_q14.json",
+      "source_sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+      "derived_sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "operations": 9,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_c06_exact_saved_200.json",
+      "source_sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+      "derived_sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "operations": 3,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_complete_current_q14.json",
+      "source_sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+      "derived_sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "operations": 3,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_existing_target_c06_saved_200.json",
+      "source_sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+      "derived_sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "operations": 3,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_public_native_lookup_binding.json",
+      "source_sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+      "derived_sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "operations": 1,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "source_sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+      "derived_sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "operations": 56,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "source_sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+      "derived_sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "operations": 9,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "source_sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+      "derived_sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "operations": 4,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "source_sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+      "derived_sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "operations": 648,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "source_sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+      "derived_sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "operations": 2,
+      "finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "source_sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "derived_sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "operations": 5,
+      "finding_ids": [
+        "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "source_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "derived_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "operations": 7,
+      "finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "source_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "derived_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "operations": 9,
+      "finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "source_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "derived_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "operations": 2,
+      "finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "derived_sha256": "0e7ac0787f24cfa6eeca3b52ff141500127502ee1c09f966c6bb2d1f58561c26",
+      "operations": 4,
+      "finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "source_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "derived_sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "operations": 2,
+      "finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "source_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "derived_sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "operations": 3,
+      "finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "source_sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "derived_sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "operations": 5,
+      "finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/lead/CONTRACTS/CrmLeadCp20Contracts.cs",
+      "source_sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+      "derived_sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7",
+      "operations": 1,
+      "finding_ids": [
+        "COM-LEAD-GENERATED-CS-NULLABLE"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "source_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "derived_sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "operations": 2,
+      "finding_ids": [
+        "OPS-IF-015"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/8538042210844249__crm-inq.openapi.json",
+      "source_sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a",
+      "derived_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+      "operations": 1,
+      "finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "result": "PASS",
+      "local_refs_resolved": 257
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "source_sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+      "derived_sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b",
+      "operations": 3,
+      "finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "source_sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+      "derived_sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850",
+      "operations": 3,
+      "finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/22/229813cf102aad92__ui-positive-cases.json",
+      "source_sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23",
+      "derived_sha256": "b5cd3840d288f191ed213e348ae2fed4d01f26c2c28812ab92d3e4ed323b989b",
+      "operations": 1,
+      "finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+      "source_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "derived_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "operations": 2,
+      "finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+      "source_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "derived_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "derived_sha256": "d486bf299e9ab951cf889c0c64ef10dbd84cbc5f8e213349f1bf0c0a9d9cb3f8",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-005"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "derived_sha256": "b756830bb448cdb6a77211b91448e68a95445d23d27e94857d468664a1056bbe",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-005"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "derived_sha256": "f66c3868c5928a3e337fc66b9471252d3c6d3e0634221fa959c4ec56b5565a0b",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-005"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "derived_sha256": "a51ccaf2111e71c601dd4a04d423ca883eb5327425e6c7c3d3f374f755a922cd",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-005"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "derived_sha256": "87730b063e089086bd9c34f2e4d0dace98d803b604329cff75bc303eefcc77a0",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-005"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+      "source_sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+      "derived_sha256": "7f5d1e1e51b1025e1a1e60acb7a5654225b6b198e887ae18c9d477feae39f90b",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-010"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+      "source_sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+      "derived_sha256": "1f6a020db61b4551612a83ab54d8d55273025ef459363670556973e4bb022987",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-010"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+      "source_sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+      "derived_sha256": "65bdd614f359b4cace97dcc583ece1e240f748c8c2888da0119d3f896c28ecc5",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-011"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+      "source_sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+      "derived_sha256": "673340180bd581a9dfffabcf18e93b6a8f2384a772a8be2b6cb51a86fe0752cc",
+      "operations": 1,
+      "finding_ids": [
+        "OPS-IF-029"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+      "source_sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+      "derived_sha256": "c6319172ffa25b6a06d1fef37e41bc818930b85d755c6bc7af8f5145fe195681",
+      "operations": 5,
+      "finding_ids": [
+        "COM-PR-N01-AUTHORITY-VERSION",
+        "COM-PR-N08-PREVIEW-TIMELINE"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "source_sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+      "derived_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "operations": 18,
+      "finding_ids": [
+        "COM-CREDIT-PROBLEM-CODE-ALIASES"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+      "source_sha256": "837a6f0af252ad4a09891da4e77af37d900a9b2458f76bba24ff9437652ad768",
+      "derived_sha256": "67543b1230d63b6b199040aefcc245f2fefc887f22861a17cd639f757607a20d",
+      "operations": 78,
+      "finding_ids": [
+        "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+      "source_sha256": "7d27c1e1f65d9b6016ff73d96a1fad3ae8ffd253ef27fe6682fbe4674e8fc858",
+      "derived_sha256": "909754ed7a7de1745f05736085ee8cbd2f70bb59f1ccab7ba879f722b1c5380d",
+      "operations": 3,
+      "finding_ids": [
+        "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "source_sha256": "8081008e2052071a2c894bdc1f9a93beb16d7946794bff097cc5ba1a0f3184a5",
+      "derived_sha256": "58c4e539844762b1387378252813852efdd7e2a29fbc2361b424cddc80eaf010",
+      "operations": 4,
+      "finding_ids": [
+        "COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "source_sha256": "82b648817ae6499178d20c77d70fe34e4eb847a2da638d4d97d21d1152476dc7",
+      "derived_sha256": "7e62da74b81430b83b7a6dea8e75e5e05f3b548749119358e9ef6f72e29e0446",
+      "operations": 10,
+      "finding_ids": [
+        "COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "source_sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+      "derived_sha256": "4087f29215dd4de47dedc4b2e7d9e34eb0dcd63a645bae8f032364b2cc8a3ac8",
+      "operations": 16,
+      "finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+      "source_sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+      "derived_sha256": "d54b0d45f44cdbb626f3ff200ecee9e2f59aa8cc39907c202ac8367c930a7431",
+      "operations": 2,
+      "finding_ids": [
+        "PLAN-IF-006"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+      "source_sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+      "derived_sha256": "c2d4d5f82259c507f55261bbbf32538f0ab149b5999327711ae91ea54154e06b",
+      "operations": 3,
+      "finding_ids": [
+        "PLAN-IF-009"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OPENAPI.json",
+      "source_sha256": "63ebd079202536dd53ea07eb524fa32f089326c18d9229dbfc50cf4487cf7011",
+      "derived_sha256": "8ad080bb9d5d770053ebdacec5415d202e0447df2aa76da8d2f746ed35bd008e",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-012"
+      ],
+      "result": "PASS",
+      "local_refs_resolved": 2431
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+      "source_sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+      "derived_sha256": "742cafdedbecb4d7970e2264d07710f65ab4f551b07ef8d3ef62bda6b24bc350",
+      "operations": 18,
+      "finding_ids": [
+        "PLAN-IF-013"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+      "source_sha256": "6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542",
+      "derived_sha256": "e55d7fe3e930d8101ea6694b68039151d0497e68c712abd64933d50f8c17a344",
+      "operations": 1,
+      "finding_ids": [
+        "PLAN-IF-003"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "derived_sha256": "b742a5a2d73cba80ce73d2658894de1788c5ba993d23152a113a0febc6c8fe35",
+      "operations": 11,
+      "finding_ids": [
+        "OPS-IF-038"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "source_sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+      "derived_sha256": "7f79b60270191e240e5e92097dd83610cab7426695ee5de15a8d6edce6e0572f",
+      "operations": 15,
+      "finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "source_sha256": "dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2",
+      "derived_sha256": "a008e32600304533e7dafc9b7d34dcc927c5289fda6ce632528cf0ead8a5cffb",
+      "operations": 1,
+      "finding_ids": [
+        "OPS-IF-042"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "source_sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+      "derived_sha256": "2e289cd50b440fb9df6b0f1974918551570ddbe0379956f11050c635b18ee9ed",
+      "operations": 2,
+      "finding_ids": [
+        "OPS-IF-043"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "source_sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+      "derived_sha256": "c40bdd59af4c2f720773d539dea852835a5c6db595fdd675a083820b0d4605e3",
+      "operations": 1,
+      "finding_ids": [
+        "OPS-IF-044"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "source_sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+      "derived_sha256": "272e68a41f75bd01ba5b57d0018eadbb5fbd656e1bad2d65de1b7c14e1380733",
+      "operations": 42,
+      "finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "source_sha256": "561c763d68c1f87a6ae8118e1d1e782175d0821774c597fb3e28fe9125dfc98a",
+      "derived_sha256": "68fecc754a5568f0c2ef74abe37d41031ceeceecf88db345d7107c4e1986f6f7",
+      "operations": 1,
+      "finding_ids": [
+        "OPS-IF-048"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "source_sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+      "derived_sha256": "987c173fea8056d6d8d237c112e3f3309e4de9c5a73a5819aa59fce9cb5e5376",
+      "operations": 2,
+      "finding_ids": [
+        "OPS-IF-048"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99bf7b7371715a62__fixture-F03-I29-request.json",
+      "source_sha256": "99bf7b7371715a62b9400021b018431e66c603e8266ab7bddf521ab101b2e3ab",
+      "derived_sha256": "461c6d0e3357744f5c9ce5ba9afb777016ce100f0aad22dcd1fc27d9961114cc",
+      "operations": 2,
+      "finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c603f220fd83336d__fixture-F03-I29-response.json",
+      "source_sha256": "c603f220fd83336dedd15fec1518d111905836807131aca5eb5fe20342fc63b9",
+      "derived_sha256": "9ffb97d74a477bb083754054c12ff83f0c9e0ac16ae9d046550ff2b3440b46db",
+      "operations": 4,
+      "finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "source_sha256": "420ebe12bc2aec9509e781236d57baecf25b02bb23a03c3eace2fb9a82c626a5",
+      "derived_sha256": "66b565e5b553f44e83a185fc7ed9f66a5c48cbb04fe6eefad2b946b5d74c6851",
+      "operations": 16,
+      "finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "source_sha256": "eba9b5010c3181a3b3c1a603fcb1315dca10c96c16393ec2afdd332160812415",
+      "derived_sha256": "c157f9a06801bd05f66ca696c2be73b6a7f8e5c3b97c6b1b8f68ee71a46bb1db",
+      "operations": 12,
+      "finding_ids": [
+        "IPQC-CONT-03"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "source_sha256": "9a3c4c7f7927e1bdee13915c836692e863ec4499a4fb32971105eca66a47b8f1",
+      "derived_sha256": "5f0075cd375a8258e6fb59ed8a5751090b3217566b142f67744eb9ace4a4fd68",
+      "operations": 8,
+      "finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "source_sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+      "derived_sha256": "9fd03e7e6412bf814335a7495830d96d6da1686368f5d8cd1610f28159257d0f",
+      "operations": 7,
+      "finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "source_sha256": "38a6c24482eb54fc4c9e9002ce5a1c9d40b26bad47154b44b06e26f15c497428",
+      "derived_sha256": "1854032552b01c361bf85f030bb33fc12a1530c8f0791cde6ddb0416cf82784b",
+      "operations": 34,
+      "finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "source_sha256": "2bf87130cde5b1fedaa86a386fc619decd1248d792f324dc14f90cd827016219",
+      "derived_sha256": "8751d43275bdd2456d0505971875f680e4ebc7fbb6886159da30a6257f4577fc",
+      "operations": 1,
+      "finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "source_sha256": "a044573d078160c1e806b562e38fa5438eba541d7f1ffaec6a9a45a3b172e5a6",
+      "derived_sha256": "a8e2e641a911ef25bd1829d9a5b2946a0c21933df9d009ec04d62dd17606fb75",
+      "operations": 4,
+      "finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "source_sha256": "67dcc3fb406be18f786ebea5054add54482647f61cf20199cf417947f8c8e240",
+      "derived_sha256": "0257464b46a32d50c6e683c3d15d62d59d2cfe0a0245aa7bf6d92fe9bb15716f",
+      "operations": 3,
+      "finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5e/5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "source_sha256": "5e0b3a55dcdf6cd2630d3d734cb1ee3d784999eb40d222c751ef164de11082e6",
+      "derived_sha256": "a8e0c2d337db3bc11caedafe91c8c8f1963747df936cf703cb287c702484997d",
+      "operations": 2,
+      "finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "source_sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "derived_sha256": "0a9828a83b5e6390da8639391374fa0c27eb809adf21edf24aed3dd7a8e55e41",
+      "operations": 2,
+      "finding_ids": [
+        "PLAN-IF-014"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+      "source_sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+      "derived_sha256": "b637d6e227e88624e83aace4238b215ed891401a4472018babb0490a3e7bd48b",
+      "operations": 2,
+      "finding_ids": [
+        "PLAN-IF-015"
+      ],
+      "result": "PASS"
+    },
+    {
+      "source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+      "source_sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+      "derived_sha256": "cf005901ede6830bda019da70597dfdb6e5dee21538f1cbd25e928c63ce201c3",
+      "operations": 3,
+      "finding_ids": [
+        "OPS-IF-006",
+        "OPS-IF-007",
+        "OPS-IF-008"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "source_files_checked": 355,
+  "reused_local_results": [
+    {
+      "path": "remediation/assets/commercial/validation-1.0.0.json",
+      "sha256": "c5805ed73f13db04e476e473908b19f13dc33219e01ed3bfee9a0b833fba03f9",
+      "result": "PASS_STATIC_ONLY",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/commercial-fixtures/codec-compile-validation.json",
+      "sha256": "c1877dc8adf153bf96bf74990f1b42ec531c1dbc63c21725e19d3f7094a85e2b",
+      "result": "PASS_COMPILE_ONLY",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/commercial-fixtures/validation.json",
+      "sha256": "9b22379e272467f13bf54bbcf84f273c902098e6e0d91dfa53b2b00657dba607",
+      "result": "PASS",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/core-types/atp-stableid-validation.json",
+      "sha256": "9c5a6fcf64b20f875221b0d2739d579e036180e00275e0c2fef903134e975025",
+      "result": "PASS",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/core-types/attachment-compile-validation.json",
+      "sha256": "29c3e7f83a9b6cc6315e43464c47a3c0a79629c33f09fd3076b224cfb2cdab62",
+      "result": "PASS_COMPILE_ONLY",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/core-types/dotnet-validation.json",
+      "sha256": "08b0e749a1fcf9f426e528569022da9de1a3a3c203967b9484abd87b37115acc",
+      "result": "PASS",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/core-types/numeric-validation.json",
+      "sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+      "result": "PASS",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/material-handoff/validation.json",
+      "sha256": "0faac7ae8ff32d571a1923f50a28fda2db4a2abeb9a667444e363285b7f75858",
+      "result": "PASS",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/operations-fixtures/independent-validation.json",
+      "sha256": "4ec5cd8134fd3134584ba0115a8f84a48e09a2ac186f37d16c9fcbd29c6ef6b6",
+      "result": "SEE_ORIGINAL_REPORT",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/operations-fixtures/static-validation.json",
+      "sha256": "cf9147b5ea97fe3dd1bb33bc5f0fec1ce1eeff9b2f8425472057b6113326690a",
+      "result": "SEE_ORIGINAL_REPORT",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/planning-fixtures/validation.json",
+      "sha256": "8c7d8fd1c498e239fc34336f77166e530d6abe6f36b761a8ff5f845839271fb5",
+      "result": "PASS_STATIC_DESIGN_DATA_ONLY",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    },
+    {
+      "path": "remediation/assets/shared-consumers/validation.json",
+      "sha256": "bb7392e70c455ed47f0e0eeaafe40763e5ac4306c138f0ad4b46d6a2580dec0a",
+      "result": "PASS",
+      "scope": "Reused exact recorded local static/compile check; not re-executed by this aggregate validator"
+    }
+  ],
+  "business_tests_executed": false,
+  "runtime_acceptance": "NOT_RUN",
+  "result": "PASS"
+}

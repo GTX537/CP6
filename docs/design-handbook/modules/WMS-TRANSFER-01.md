@@ -1,5 +1,17 @@
 # WMS-TRANSFER-01 移库与调拨执行
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-018 | ADOPTION_PENDING：SLOT/REP NEW路线与Transfer相容，但SourceDemand Owner及全current门必须真实采用。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。完整业务规范、封闭 DTO、40 个 API、持久约束、112 条 AC，以及全部 1,529 个 JSON 的业务字段与连续案例已整理；当前组合材料和准确接受记录闭合。UUID/SHA 的阅读与原值校验范围分别记录。本状态仅表示文档整理，不表示库存作业已运行。
 
 ## 1. 业务目的、操作者与权威边界

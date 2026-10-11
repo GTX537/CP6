@@ -1,0 +1,189 @@
+{
+  "result": "PASS",
+  "scope": "original regex membership, exact decimal round trip and design storage mappings; no database or application execution",
+  "cases": [
+    {
+      "wire_type": "signedDecimal",
+      "input": "99999999999999999999999999999999999999",
+      "accepted": true,
+      "pair": {
+        "unscaledValue": "99999999999999999999999999999999999999",
+        "scale": 0
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "-99999999999999999999999999999999999999",
+      "accepted": true,
+      "pair": {
+        "unscaledValue": "-99999999999999999999999999999999999999",
+        "scale": 0
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "999999999999999999999999999999.12345678",
+      "accepted": true,
+      "pair": {
+        "unscaledValue": "99999999999999999999999999999912345678",
+        "scale": 8
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "9999999999999999999999999999999.12345678",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "0.00000001",
+      "accepted": true,
+      "pair": {
+        "unscaledValue": "1",
+        "scale": 8
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "0",
+      "accepted": true,
+      "pair": {
+        "unscaledValue": "0",
+        "scale": 0
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "-0",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "1.0",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "positiveDecimal",
+      "input": "0",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "signedDecimal",
+      "input": "1e3",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "nonNegativeDecimal",
+      "input": "-1",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "Decimal18",
+      "input": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111111111",
+      "accepted": true,
+      "pair": {
+        "unscaledDigits": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999111111111111111111",
+        "scale": 18,
+        "originalWire": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111111111"
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "Qty12",
+      "input": "-999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111",
+      "accepted": true,
+      "pair": {
+        "unscaledDigits": "-999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999111111111111",
+        "scale": 12,
+        "originalWire": "-999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111"
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "Qty12",
+      "input": "-0.000",
+      "accepted": true,
+      "pair": {
+        "unscaledDigits": "0",
+        "scale": 0,
+        "originalWire": "-0.000"
+      },
+      "result": "PASS"
+    },
+    {
+      "wire_type": "Decimal18",
+      "input": "1.1111111111111111111",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "Qty12",
+      "input": "1e12",
+      "accepted": false,
+      "pair": null,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "ATP.StableId",
+      "input": "UUUUUUUUUUUUUUUU",
+      "accepted": true,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "ATP.StableId",
+      "input": "UUUUUUUUUUUUUUUUU",
+      "accepted": true,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "ATP.StableId",
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "accepted": true,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "ATP.StableId",
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "accepted": false,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "ATP.StableId",
+      "input": "",
+      "accepted": false,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "ATP.StableId",
+      "input": "EA ",
+      "accepted": false,
+      "result": "PASS"
+    },
+    {
+      "wire_type": "ATP.StableId",
+      "input": "公斤",
+      "accepted": false,
+      "result": "PASS"
+    }
+  ],
+  "inventory_columns_mapped": 66,
+  "runtime_acceptance": "NOT_RUN"
+}

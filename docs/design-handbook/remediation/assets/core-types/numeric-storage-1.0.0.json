@@ -1,0 +1,1683 @@
+{
+  "revision": "CP6-EXACT-NUMERIC-STORAGE/1",
+  "source_integrity": [
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+      "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e"
+    }
+  ],
+  "credit": {
+    "wire": "original signed/nonnegative/positiveDecimal selected per field",
+    "sql_server_columns": {
+      "UnscaledValue": "decimal(38,0)",
+      "Scale": "smallint CHECK 0..8"
+    },
+    "canonical_rules": "zero -> (0,0); Scale>0 forbids UnscaledValue divisible by10; validate reconstructed wire against original exact field pattern",
+    "dotnet": "BigInteger + scale; never System.Decimal intermediary",
+    "typescript": "string/bigint pair; never Number intermediary"
+  },
+  "inventory_mappings": [
+    {
+      "source_pointer": "/Tables/1/Columns/6",
+      "table": "SourcePortion",
+      "logical_column": "SourceQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "SourceQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "SourceQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/1/Columns/8",
+      "table": "SourcePortion",
+      "logical_column": "BaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "BaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "BaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/1/Columns/10",
+      "table": "SourcePortion",
+      "logical_column": "RatioNumerator",
+      "old_storage_type": "decimal(38,0)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RatioNumeratorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RatioNumeratorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            0
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/1/Columns/11",
+      "table": "SourcePortion",
+      "logical_column": "RatioDenominator",
+      "old_storage_type": "decimal(38,0)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RatioDenominatorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RatioDenominatorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            0
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/2/Columns/2",
+      "table": "SourcePortionBalance",
+      "logical_column": "OriginalBaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "OriginalBaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "OriginalBaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/2/Columns/3",
+      "table": "SourcePortionBalance",
+      "logical_column": "ValuedBaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ValuedBaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ValuedBaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/2/Columns/4",
+      "table": "SourcePortionBalance",
+      "logical_column": "ClearedBaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ClearedBaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ClearedBaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/2/Columns/5",
+      "table": "SourcePortionBalance",
+      "logical_column": "OutboundBaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "OutboundBaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "OutboundBaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/2/Columns/6",
+      "table": "SourcePortionBalance",
+      "logical_column": "ReversedBaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ReversedBaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ReversedBaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/2/Columns/7",
+      "table": "SourcePortionBalance",
+      "logical_column": "ReservedBaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ReservedBaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ReservedBaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/2/Columns/8",
+      "table": "SourcePortionBalance",
+      "logical_column": "AvailableBaseQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "AvailableBaseQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "AvailableBaseQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/4/Columns/2",
+      "table": "ValuationPoolHead",
+      "logical_column": "CurrentQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "CurrentQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "CurrentQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/4/Columns/3",
+      "table": "ValuationPoolHead",
+      "logical_column": "CurrentUnroundedValue",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "CurrentUnroundedValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "CurrentUnroundedValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/5/Columns/12",
+      "table": "ValueLayer",
+      "logical_column": "OriginalQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "OriginalQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "OriginalQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/5/Columns/13",
+      "table": "ValueLayer",
+      "logical_column": "OriginalUnroundedValue",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "OriginalUnroundedValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "OriginalUnroundedValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/5/Columns/14",
+      "table": "ValueLayer",
+      "logical_column": "UnitValue",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "UnitValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "UnitValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/6/Columns/2",
+      "table": "ValueLayerBalance",
+      "logical_column": "OriginalQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "OriginalQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "OriginalQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/6/Columns/3",
+      "table": "ValueLayerBalance",
+      "logical_column": "ConsumedQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ConsumedQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ConsumedQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/6/Columns/4",
+      "table": "ValueLayerBalance",
+      "logical_column": "ReversedQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ReversedQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ReversedQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/6/Columns/5",
+      "table": "ValueLayerBalance",
+      "logical_column": "ReservedQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ReservedQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ReservedQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/6/Columns/6",
+      "table": "ValueLayerBalance",
+      "logical_column": "AvailableQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "AvailableQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "AvailableQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/3",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "BeforeQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "BeforeQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "BeforeQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/4",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "BeforeUnroundedValue",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "BeforeUnroundedValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "BeforeUnroundedValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/5",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DeltaQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "DeltaQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "DeltaQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/6",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DeltaUnroundedValue",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "DeltaUnroundedValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "DeltaUnroundedValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/7",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "AfterQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "AfterQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "AfterQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/8",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "AfterUnroundedValue",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "AfterUnroundedValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "AfterUnroundedValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/10",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "ExactAverageNumerator",
+      "old_storage_type": "decimal(76,0)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "ExactAverageNumeratorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ExactAverageNumeratorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            0
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/11",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "ExactAverageDenominator",
+      "old_storage_type": "decimal(76,0)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "ExactAverageDenominatorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ExactAverageDenominatorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            0
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/12",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DisplayAverage18",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "DisplayAverage18UnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "DisplayAverage18Scale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/13",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DiscardedRemainderNumerator",
+      "old_storage_type": "decimal(76,0)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "DiscardedRemainderNumeratorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "DiscardedRemainderNumeratorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            0
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/7/Columns/14",
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DiscardedRemainderDenominator",
+      "old_storage_type": "decimal(76,0)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "DiscardedRemainderDenominatorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "DiscardedRemainderDenominatorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            0
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/11/Columns/7",
+      "table": "ValueLine",
+      "logical_column": "Qty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "QtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "QtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/11/Columns/9",
+      "table": "ValueLine",
+      "logical_column": "UnitValue",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "UnitValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "UnitValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/11/Columns/10",
+      "table": "ValueLine",
+      "logical_column": "RawAmount",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RawAmountUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RawAmountScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/11/Columns/11",
+      "table": "ValueLine",
+      "logical_column": "RoundedBeforeResidue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RoundedBeforeResidueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RoundedBeforeResidueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/11/Columns/12",
+      "table": "ValueLine",
+      "logical_column": "ResidueApplied",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ResidueAppliedUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ResidueAppliedScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/11/Columns/13",
+      "table": "ValueLine",
+      "logical_column": "FinalAmount",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "FinalAmountUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "FinalAmountScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/12/Columns/5",
+      "table": "LayerConsumption",
+      "logical_column": "BeforeQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "BeforeQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "BeforeQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/12/Columns/6",
+      "table": "LayerConsumption",
+      "logical_column": "TakeQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "TakeQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "TakeQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/12/Columns/7",
+      "table": "LayerConsumption",
+      "logical_column": "AfterQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "AfterQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "AfterQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/12/Columns/9",
+      "table": "LayerConsumption",
+      "logical_column": "RawAmount",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RawAmountUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RawAmountScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/12/Columns/10",
+      "table": "LayerConsumption",
+      "logical_column": "RoundedBeforeResidue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RoundedBeforeResidueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RoundedBeforeResidueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/12/Columns/11",
+      "table": "LayerConsumption",
+      "logical_column": "ResidueApplied",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ResidueAppliedUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ResidueAppliedScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/12/Columns/12",
+      "table": "LayerConsumption",
+      "logical_column": "FinalAmount",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "FinalAmountUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "FinalAmountScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/13/Columns/5",
+      "table": "RoundingTrace",
+      "logical_column": "RawTotal",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RawTotalUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RawTotalScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/13/Columns/6",
+      "table": "RoundingTrace",
+      "logical_column": "TargetTotal",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "TargetTotalUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "TargetTotalScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/13/Columns/7",
+      "table": "RoundingTrace",
+      "logical_column": "LineRoundedTotalBeforeResidue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "LineRoundedTotalBeforeResidueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "LineRoundedTotalBeforeResidueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/13/Columns/8",
+      "table": "RoundingTrace",
+      "logical_column": "Residue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ResidueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ResidueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/13/Columns/11",
+      "table": "RoundingTrace",
+      "logical_column": "FinalTotal",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "FinalTotalUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "FinalTotalScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/10",
+      "table": "ReconciliationLine",
+      "logical_column": "Quantity",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "QuantityUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "QuantityScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/11",
+      "table": "ReconciliationLine",
+      "logical_column": "InventoryValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "InventoryValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "InventoryValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/12",
+      "table": "ReconciliationLine",
+      "logical_column": "InTransitValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "InTransitValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "InTransitValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/13",
+      "table": "ReconciliationLine",
+      "logical_column": "WipValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "WipValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "WipValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/14",
+      "table": "ReconciliationLine",
+      "logical_column": "FgValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "FgValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "FgValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/15",
+      "table": "ReconciliationLine",
+      "logical_column": "GrniValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "GrniValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "GrniValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/16",
+      "table": "ReconciliationLine",
+      "logical_column": "ApValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "ApValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ApValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/17",
+      "table": "ReconciliationLine",
+      "logical_column": "CogsValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "CogsValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "CogsValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/18",
+      "table": "ReconciliationLine",
+      "logical_column": "GlValue",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "GlValueUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "GlValueScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/20/Columns/19",
+      "table": "ReconciliationLine",
+      "logical_column": "Difference",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": true,
+      "new_columns": [
+        {
+          "name": "DifferenceUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "DifferenceScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/37/Columns/2",
+      "table": "SourcePortionRange",
+      "logical_column": "FromQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "FromQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "FromQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/37/Columns/3",
+      "table": "SourcePortionRange",
+      "logical_column": "ToQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "ToQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "ToQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/38/Columns/6",
+      "table": "FxRateFact",
+      "logical_column": "RateNumerator",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RateNumeratorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RateNumeratorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/38/Columns/7",
+      "table": "FxRateFact",
+      "logical_column": "RateDenominator",
+      "old_storage_type": "decimal(38,18)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "RateDenominatorUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "RateDenominatorScale",
+          "type": "smallint",
+          "range": [
+            0,
+            18
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/41/Columns/4",
+      "table": "ProvisionalValueFact",
+      "logical_column": "MaxQty",
+      "old_storage_type": "decimal(38,12)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "MaxQtyUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "MaxQtyScale",
+          "type": "smallint",
+          "range": [
+            0,
+            12
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    },
+    {
+      "source_pointer": "/Tables/41/Columns/5",
+      "table": "ProvisionalValueFact",
+      "logical_column": "MaxAmount",
+      "old_storage_type": "decimal(38,8)",
+      "nullable": false,
+      "new_columns": [
+        {
+          "name": "MaxAmountUnscaledDigits",
+          "sql_server_type": "varchar(max)",
+          "postgres_type": "text",
+          "encoding": "canonical signed integer ASCII; exact BigInteger; no exponent/leading plus/negative zero"
+        },
+        {
+          "name": "MaxAmountScale",
+          "type": "smallint",
+          "range": [
+            0,
+            8
+          ]
+        }
+      ],
+      "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+      "conversion": "validate exact native field schema first; no rounding, truncation or cast through finite decimal; wire range not enlarged by storage representation"
+    }
+  ],
+  "inventory_rational": "unbounded signed numerator/positive denominator canonical integer text, reduced gcd, exact BigInteger; division only at original policy rounding point",
+  "indexing": "do not index or CAST arbitrary digits as numeric; identity uses original stable IDs; all arithmetic through validated exact codec inside original transaction/lock boundary",
+  "legacy_rollout": "append new representation and compare full exact old original; values formerly representable must round-trip, original receipt bytes unchanged; switch all writers together after verified backfill; migration NOT_RUN",
+  "business_runtime": "NOT_RUN"
+}

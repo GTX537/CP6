@@ -1,0 +1,137 @@
+{
+  "role": "ISOLATED_COMPILE_EVIDENCE_REUSED_FOR_IDENTICAL_FINAL_DERIVED_BYTES",
+  "original_exact_derivative_compilation": "FAIL",
+  "original_result": "D:/CP6-archives/design-revision-20261011-checks/commercial-codec-compile/run-20261011T113050112469Z/result.json",
+  "runtime_tests": "NOT_RUN",
+  "at_utc": "2026-10-11T11:32:16.819946+00:00",
+  "versions": {
+    "dotnet": {
+      "command": [
+        "C:/Program Files/dotnet/dotnet.exe",
+        "--version"
+      ],
+      "cwd": "D:\\CP6-archives\\design-revision-20261011-checks\\commercial-codec-compile\\run-20261011T113050112469Z",
+      "exit_code": 0,
+      "output": "10.0.302\n"
+    },
+    "node": {
+      "command": [
+        "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+        "--version"
+      ],
+      "cwd": "D:\\CP6-archives\\design-revision-20261011-checks\\commercial-codec-compile\\run-20261011T113050112469Z",
+      "exit_code": 0,
+      "output": "v20.19.0\n"
+    },
+    "typescript": {
+      "command": [
+        "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+        "D:/CP6/cp6.web/node_modules/typescript/lib/tsc.js",
+        "--version"
+      ],
+      "cwd": "D:\\CP6-archives\\design-revision-20261011-checks\\commercial-codec-compile\\run-20261011T113050112469Z",
+      "exit_code": 0,
+      "output": "Version 6.0.2\n"
+    }
+  },
+  "proposals": [
+    {
+      "language": "csharp",
+      "original_source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "original_source_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "base_derived_sha256": "630e8e767547f28e37079fc67a426e64507251a7793619f56405dc1a32f28ba5",
+      "proposed_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "proposed_bytes": 53881,
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "return JsonDocument.Parse(raw);",
+          "after": "return JsonDocument.Parse(raw.ToArray());",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "s.TryGetProperty(\"contains\",out var co)&&!a.Any(x=>Matches(x,co,resolver,current,path))",
+          "after": "s.TryGetProperty(\"contains\",out var containsSchema)&&!a.Any(x=>Matches(x,containsSchema,resolver,current,path))",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "var from=Fixed.Parse(r.GetProperty(\"from\").GetString()!),to=Fixed.Parse(r.GetProperty(\"to\").GetString()!);",
+          "after": "Fixed from=Fixed.Parse(r.GetProperty(\"from\").GetString()!),to=Fixed.Parse(r.GetProperty(\"to\").GetString()!);",
+          "expected_count": 2
+        },
+        {
+          "op": "replace_text",
+          "before": "var n=a.GetProperty(\"net\"),t=a.GetProperty(\"tax\"),g=a.GetProperty(\"gross\");",
+          "after": "JsonElement n=a.GetProperty(\"net\"),t=a.GetProperty(\"tax\"),g=a.GetProperty(\"gross\");",
+          "expected_count": 1
+        }
+      ]
+    },
+    {
+      "language": "typescript",
+      "original_source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "original_source_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "base_derived_sha256": "591188bfdd0103ffb6b314e8ce3a1d91ed14796936dd021223885cb25bc92bb2",
+      "proposed_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "proposed_bytes": 46854,
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "const z=add(a,b);const neg=z.n<0n,n=neg?-z.n:z.n,p=10n**BigInt(z.s);return z.s?`${neg?\"-\":\"\"}${n/p}.${String(n%p).padStart(z.s,\"0\")}`:`${z.n}`",
+          "after": "const z=add(a,b);const neg=z.x<0n,n=neg?-z.x:z.x,p=10n**BigInt(z.s);return z.s?`${neg?\"-\":\"\"}${n/p}.${String(n%p).padStart(z.s,\"0\")}`:`${z.x}`",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "crypto.subtle.digest(\"SHA-256\",raw)",
+          "after": "crypto.subtle.digest(\"SHA-256\",new Uint8Array(raw))",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "if(result.kind!==\"PENDING\")throw new WireError(\"A26_PENDING_RESULT_REQUIRED\",\"$\");return{result,commandId:result.commandId",
+          "after": "if(result.kind!==\"PENDING\")throw new WireError(\"A26_PENDING_RESULT_REQUIRED\",\"$\");return{result:{...result,kind:\"PENDING\"},commandId:result.commandId",
+          "expected_count": 1
+        }
+      ]
+    }
+  ],
+  "results": {
+    "csharp": {
+      "command": [
+        "C:/Program Files/dotnet/dotnet.exe",
+        "build",
+        "CurrentV1.csproj",
+        "--configuration",
+        "Release",
+        "--nologo",
+        "--disable-build-servers"
+      ],
+      "exit_code": 0,
+      "result": "PASS",
+      "log": "D:/CP6-archives/design-revision-20261011-checks/commercial-codec-compile/run-20261011T113050112469Z/minimal-revision-proposal/csharp.log",
+      "log_sha256": "983874a47b0b7068310de2a5e2e7c2278663b2d449a0f5093b86fc50df52849e"
+    },
+    "typescript": {
+      "command": [
+        "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+        "D:/CP6/cp6.web/node_modules/typescript/lib/tsc.js",
+        "--project",
+        "tsconfig.json",
+        "--pretty",
+        "false"
+      ],
+      "exit_code": 0,
+      "result": "PASS",
+      "log": "D:/CP6-archives/design-revision-20261011-checks/commercial-codec-compile/run-20261011T113050112469Z/minimal-revision-proposal/typescript.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "result": "PASS_COMPILE_ONLY",
+  "required_final_hashes": {
+    "csharp": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+    "typescript": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d"
+  }
+}

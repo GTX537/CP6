@@ -1,5 +1,21 @@
 # PUR-RETURN-01 采购退货与供应商结算调整
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION | ADOPTION_PENDING：退货实物不VOID原GR，E=100不变；PENDING_RETURN MRX禁新forward但不自动FENCE旧admission；MATCH/RETURN/manual共享OriginalObligation budget，RETURNED_RETIRED不随credit/refund消失。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-CURRENT-KNOWLEDGE-CUT | ADOPTION_PENDING：current集合是递归lineage terminal leaf的active/actual/unresolved union，非所有历史行；T15先generation失效，T16精确query/attempt/worker/CAS；新frontier必须新capture。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-H31-COMPOSITE-RESOURCES | ADOPTION_PENDING：全部warehouse祖先后location；DETAIL全局owner/key最强锁；每location metricSet含N/A取X，CONTROLLED完整metric/domain/head/occupancy/mapping/rule；一Part一Uow。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-RETURN-CHILD-ALLOWANCE-QUANTITY | ARTIFACT_CONFLICT：G6R07 quantity6、L2R07 quantity2、EP[11] quantity4、EP[25] quantity6；校验298摘要原像，有向依赖闭包重算127摘要，保留171未变化节点及历史附录。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| PE-HANDOFF-NAMESPACE | DOCUMENT_STALE：H编号必须用来源+合同名+版本解释；采购H31与工程H41独立。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 业务目的、操作者和五条独立事实链
 
 采购员从真实原收货行提出退货，保持原PO商业修订、ReceiptDomain、Root原坐标及批次谱系。供应商Owner签确切协议，审批Owner批准准确业务版本；采购授权并保护原范围，仓库人员在OUT完成封包、开始和实际退运，Finance人员按真实原义务作价值/应付调整。恢复人员只能沿原Part/Settlement工作查原结果，对账人员重建本域观察。 [原文 L14](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md:14>)、[原文 L16](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md:16>)

@@ -1,5 +1,13 @@
 # WMS-RSV-01 库存预留与批次分配
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本轮115项登记问题未要求修改本模块合同，复用原必要材料阅读与范围记录；不宣称重新全文阅读所有原件或运行已通过。
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。本册主文4070行全部业务语义、当前接受及共享合同已通过直接阅读和精确复用闭合；包括32个JSON、手选批准追加规则及全部AC。真实Owner接入、O-RSV实例及业务场景仍未验证。
 
 ## 1. 业务目的、操作者与模块边界

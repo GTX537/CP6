@@ -1,5 +1,24 @@
 # WMS-RMA-01 客户退货实物处理
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE | ADOPTION_PENDING：现金退款完整current source proposal只作提议；真实5S/rights/currency/lineage原目录（含legacy/import/manual/alias/inflight/reservation/end）；新demand需原owner/node25真实source。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-CREDIT-CURRENT-BODY-MONEY-FIELD | ARTIFACT_CONFLICT：四个public body共18 Money改为closed value/currency；保数字字符串与货币并更新MULTI lookup binding、5正文身份、Store7 canonical摘要和全部列明current消费者。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| OPS-IF-003 | DESIGN_GAP：显式替代RMA §9.1在Stock组合事务中的完整取锁序（含Scope-first与source/claim/IN位置）；F−1→F0→所有Canonical→所有Scope父到子→DETAIL owner/key ordinal→终态，按注册DAG验证完整闭包。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-004 | ADOPTION_PENDING：五类disposition逐一登记owner/route/capability/query/seal/correction；QA-NCR设计通过不构成报废/返修/转移运行授权，IN收货receipt不替代处置效果。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-017 | SUPERSEDED：R12闭合旧profile/Uow proof gap：UTF8 domain+NUL+JCS完整非digest proof、INPUT9 current generation、真实同Uow；RETURN_TO_SOURCE仍不在Finance R10 H30枚举。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-048 | DESIGN_GAP：Select original closed enums: qualification/slices REQUIRED_FENCED; aggregate PENDING (PARTIAL for existing confirmed facts); Work/checkpoint BLOCKED. New named detail projection and native D05 typed result, no enum expansion/Stock call. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| OPS-IF-049 | ARTIFACT_CONFLICT：New exclusive H30 binding/proof/receipt binds exact FIN-INV effect, physical receipt, environment, purpose and ranges; atomic permanent fence prevents new claims/late apply. Other consumer claims cannot be released. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| OPS-IF-050 | ARTIFACT_CONFLICT：Independent hashed DEMO shipment-line evidence, version and source cut establish SHIP-100-L1, separate from SHIP-100 header; four claims regenerated and same-SKU different-line/invoice keys stay distinct. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前准确接受的正文、canonical、API、数据、围栏、AC、追踪、连续案例及必要上游窗口已完成语义整理；完整基例、全部递归差异与同 SHA 原件复用的边界见§12。五种终端处置仍是本地 REQUIRED_FENCED 资格门；52项业务验收 NOT_RUN，实际 Owner 采用 UNPROVEN。
 
 ## 1. 目的、操作者与Owner边界

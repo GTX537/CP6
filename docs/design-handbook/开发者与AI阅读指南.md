@@ -1,5 +1,9 @@
 # 开发者与AI阅读指南
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+**当前版本：设计修订R1。** 115个原编号已逐项处置，去重后114个问题族，125个目标均有覆盖记录。新增设计与修订资产从[设计修订入口](remediation/README.md)阅读，按[编码交接](remediation/09-implementation-handoff.md)实施。实际采用 UNPROVEN、业务运行验收 NOT_RUN；缺失历史原件保持缺失。下方保留原归档整理的范围说明。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 第一次进入项目
 
 先读[系统边界与开发地图](D:/CP6/docs/CP6_开发设计文档_20261010/architecture/01-系统边界与开发地图.md)，再读[资料版本与接受边界](D:/CP6/docs/CP6_开发设计文档_20261010/architecture/03-资料版本与接受边界.md)和[事务、回执与恢复](D:/CP6/docs/CP6_开发设计文档_20261010/architecture/02-事务回执与恢复.md)。这三页解释模块关系、当前输入如何选定，以及跨域副作用如何可靠地产生与查询。

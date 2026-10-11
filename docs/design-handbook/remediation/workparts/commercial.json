@@ -1,0 +1,879 @@
+{
+  "findings": [
+    {
+      "source_finding_ids": [
+        "COM-ACC-PHYSICAL-WIRE"
+      ],
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "CRM-ACC-01",
+        "CRM-LEAD-01",
+        "ERP-BP-01"
+      ],
+      "decision": "New ACC v2 A01-A13 and ACC-MAPPING-DECISION/1; independent C03/seven-field preserved; complete scope/owner selection/account binding/current qualification required.",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ab/ab181510eef18279__OPS-ACCOUNT.md",
+          "sha256": "ab181510eef182790812b8fb3aebe803c4e8c52a0d69fdde061b5b410d624c5d",
+          "line": 1,
+          "end_line": 80
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/bed32d5ca99a24a2__RECEIPT-MAPPING.md",
+          "sha256": "bed32d5ca99a24a2253e31e0aaf2b0ffc5791cc345da7654dac765be1aecbee7",
+          "line": 1,
+          "end_line": 60
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3e4af65be952562__ACCEPTANCE.md",
+          "sha256": "a3e4af65be952562f16761a70b2c24349a3d79069f10103439cb6b9991d0f4f7",
+          "line": 1,
+          "end_line": 40
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bd97dd191196cc6a__CONTRACT-CARDS.md",
+          "sha256": "bd97dd191196cc6aa46f78ca0c0776239a242279287a2a33e43b9138c1e7a7e5",
+          "line": 1,
+          "end_line": 96
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/80/8029ab7aa847c9d1__PAGES-DELTA.md",
+          "sha256": "8029ab7aa847c9d1f6d854bafad457a6f120872b69e18d6c4b706a6357eb5c47",
+          "line": 1,
+          "end_line": 52
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5f63cf5d7f27627__RULES-RECOVERY.md",
+          "sha256": "c5f63cf5d7f27627ccb07ff8f484c3b7ea5a73013b49f2112f9d2a944e098c93",
+          "line": 95,
+          "end_line": 115
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/05/05f59b2151c73245__FIELDS-ACTIONS.md",
+          "sha256": "05f59b2151c73245ce9b74631621b3377b905370349dd485f7e3f733bf2fa39b",
+          "line": 1,
+          "end_line": 42
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11aeb11f6a3b717b__CRM-ACC-01_客户关系账户_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "11aeb11f6a3b717b05673c19f7a660b5c1122ad58d829b828b7fad138c0609ae",
+          "line": 180,
+          "end_line": 217
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11aeb11f6a3b717b__CRM-ACC-01_客户关系账户_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "11aeb11f6a3b717b05673c19f7a660b5c1122ad58d829b828b7fad138c0609ae",
+          "line": 583,
+          "end_line": 642
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11aeb11f6a3b717b__CRM-ACC-01_客户关系账户_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "11aeb11f6a3b717b05673c19f7a660b5c1122ad58d829b828b7fad138c0609ae",
+          "line": 918,
+          "end_line": 962
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "92c20d1ee1dc090fdff5425bba68bf44f67a3f513400bd875c7c1d605d159280",
+          "line": 1008,
+          "end_line": 1040
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/23/23151de8bc435698__CRM-LEAD-01_CP22_FULL-FIVE-SPEC-REVIEW-CANDIDATE.md",
+          "sha256": "23151de8bc435698c04dbed3004683db14eee5bad9f77f315b168cabac2c8cb1",
+          "line": 238,
+          "end_line": 275
+        }
+      ],
+      "outputs": [
+        "remediation/02-commercial-physical-contracts.md",
+        "remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+        "remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+        "remediation/assets/commercial/ord-dem-fields-1.0.0.json"
+      ],
+      "acceptance": [
+        {
+          "id": "W1-ACC-01",
+          "scenario": "A03 response lost; account now inactive, write right removed but RQ retained",
+          "expected": "Original receipt returned safely; one Account, one command, no second quota debit.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ACC-02",
+          "scenario": "Same command key targets another account or actor",
+          "expected": "Conflict or neutral deny under current RQ; no alias bypass.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ACC-03",
+          "scenario": "BP seven-field LINKED revision14 arrives for R03 account",
+          "expected": "History/passive projection only; cannot manufacture scope decision, bound account version or Effective.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ACC-04",
+          "scenario": "M2a/M2b share predecessor M1; owner has not selected",
+          "expected": "WAIT_OWNER_RESOLUTION; valid M1 retained only while current proof and local eligibility valid.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ACC-05",
+          "scenario": "Same scope/epoch/position contains contrary signed decision",
+          "expected": "Scope CONFLICT; no new use until complete owner resolution covers both digests.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ACC-06",
+          "scenario": "A13 races deactivate or identity-relevant update",
+          "expected": "Conditional commit detects local stamp or later change invalidates use; never reactivates account.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ACC-07",
+          "scenario": "Local account current, Main changes mapping after projection",
+          "expected": "New commercial use synchronously checks Main current mapping and BP; cached eligibility is not permit.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ACC-08",
+          "scenario": "H02 source notice arrives without original Manifest or account target",
+          "expected": "WAITING evidence, zero Account/Lead/Contact/Opportunity creation.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-STATIC-01",
+          "scenario": "Local schema references, 140 original field IDs, exact source hashes and boundary checks",
+          "expected": "All structural checks pass without running archived code or business tests",
+          "verification_level": "STATIC_ASSET",
+          "result": "PASS_STATIC_ONLY"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_ASSETS_PASS; REQUIRED_RUNTIME_NOT_RUN"
+    },
+    {
+      "source_finding_ids": [
+        "COM-ORD-FUNCTIONAL-PHYSICAL-BOUNDARY"
+      ],
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "ERP-ORD-01",
+        "PLAN-DEM-01"
+      ],
+      "decision": "New ORD-DEM-SOURCE/1, typed lifecycle plans, local receipt/lineage/control/membership identities; complete 140-field disposition; no historical physical approval invented.",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 1,
+          "end_line": 23
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 79,
+          "end_line": 101
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 278,
+          "end_line": 310
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 2100,
+          "end_line": 2285
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 101,
+          "end_line": 150
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 152,
+          "end_line": 253
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 255,
+          "end_line": 304
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 305,
+          "end_line": 355
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 357,
+          "end_line": 407
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 428,
+          "end_line": 453
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 460,
+          "end_line": 559
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 562,
+          "end_line": 611
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 631,
+          "end_line": 644
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 664,
+          "end_line": 711
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+          "sha256": "6174494a5420f95a80667513336de69bbcea61c154a97022cbc3bbe0dcdddbba",
+          "line": 56,
+          "end_line": 73
+        }
+      ],
+      "outputs": [
+        "remediation/02-commercial-physical-contracts.md",
+        "remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+        "remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+        "remediation/assets/commercial/ord-dem-fields-1.0.0.json"
+      ],
+      "acceptance": [
+        {
+          "id": "W1-DEM-01",
+          "scenario": "Target30 revised40 on same lineage",
+          "expected": "Current target40; delta10; not total70. One current Demand.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-02",
+          "scenario": "v1 accepted; v2 rejected; v3 expected accepted v1",
+          "expected": "Accepted only with v2 actual terminal proof; v2 UNKNOWN blocks ordinary v3.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-03",
+          "scenario": "Cancel/control arrives before initial release",
+          "expected": "Source control exists without Demand ID; delayed old release denied by same gate.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-04",
+          "scenario": "Demand100 but coverage60",
+          "expected": "Receive target100; independent coverage60/shortage40; no silent partial acceptance.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-05",
+          "scenario": "A100 shipped30; activate B40+C30; C unknown",
+          "expected": "Prepared B/C excluded; no double-effective70+70. Atomic activation only when all proofs current.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-06",
+          "scenario": "Cancel evaluated at shipped40, actual shipped50 before commit",
+          "expected": "Old plan rejected stale; original60 cancellation not applied.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-07",
+          "scenario": "Planning reason removed but QA hold retained",
+          "expected": "Only owned reason removed; action still blocked by QA.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-08",
+          "scenario": "Source result not found after timeout",
+          "expected": "noEffectProven=false; query/replay original only, no new key or scan-create.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-READ-01",
+          "scenario": "Authorized current Demand read then same-version own control",
+          "expected": "Return atomic ETag/controlSetRevision; current final authorization and If-Match required at mutation",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-READ-02",
+          "scenario": "Control changes between read and mutation or read permission revoked",
+          "expected": "412 stale ETag or 403/hidden404; no new business effect",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-RECOVER-01",
+          "scenario": "Lost manual command or activation response, query original key",
+          "expected": "Return exact original receipt/group decision; UNKNOWN does not activate or prove no effect",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-RECOVER-02",
+          "scenario": "Wrong operation/manifest or unauthorized original-target query",
+          "expected": "Reject without disclosure or mutation; do not guess a new command",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-ABORT-01",
+          "scenario": "Abort wins same group transaction before activation",
+          "expected": "Permanent exact group fence; empty activated/retired; unchanged membership; late writers blocked",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-DEM-ABORT-02",
+          "scenario": "Activation wins or abort commit unknown",
+          "expected": "Already committed cannot abort; unknown queries original key and preserves original facts",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-STATIC-01",
+          "scenario": "Local schema references, 140 original field IDs, exact source hashes and boundary checks",
+          "expected": "All structural checks pass without running archived code or business tests",
+          "verification_level": "STATIC_ASSET",
+          "result": "PASS_STATIC_ONLY"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_ASSETS_PASS; REQUIRED_RUNTIME_NOT_RUN"
+    },
+    {
+      "source_finding_ids": [
+        "COM-ORD-QTN-H07-SUCCESSOR"
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "ERP-ORD-01",
+        "ERP-QTN-01"
+      ],
+      "decision": "Adopt exact QTN R2 I10/Allocation at actual DRAFT commit; Confirm consumes no second H/C account; immutable source quantities, bounded I11 full release.",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 1,
+          "end_line": 23
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 79,
+          "end_line": 101
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 278,
+          "end_line": 310
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+          "line": 2100,
+          "end_line": 2285
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 101,
+          "end_line": 150
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 152,
+          "end_line": 253
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 255,
+          "end_line": 304
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 305,
+          "end_line": 355
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 357,
+          "end_line": 407
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 428,
+          "end_line": 453
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 460,
+          "end_line": 559
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 562,
+          "end_line": 611
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 631,
+          "end_line": 644
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+          "line": 664,
+          "end_line": 711
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 322,
+          "end_line": 322
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 348,
+          "end_line": 374
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 475,
+          "end_line": 550
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 652,
+          "end_line": 664
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 681,
+          "end_line": 725
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 745,
+          "end_line": 782
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 910,
+          "end_line": 927
+        }
+      ],
+      "outputs": [
+        "remediation/02-commercial-physical-contracts.md",
+        "remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+        "remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+        "remediation/assets/commercial/ord-dem-fields-1.0.0.json"
+      ],
+      "acceptance": [
+        {
+          "id": "W1-ORD-01",
+          "scenario": "QTN Q24 commits; HTTP response lost",
+          "expected": "Q25 returns original OrderDraft/Fact/Allocation; same Intent cannot make another Order.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-02",
+          "scenario": "Confirm QTN-sourced draft",
+          "expected": "Current Fact and Sales/BP/Finance/approval gates checked; no H-to-C call and no second allocation.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-03",
+          "scenario": "QTN allocated draft quantity changes",
+          "expected": "No in-place source quantity edit; original draft permanently cancelled under I11 proof, then explicit new Intent, or changes stay blocked.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-04",
+          "scenario": "Original evidence A/Fact1 corrected to B/Fact3",
+          "expected": "Old command returns A/Fact1 bytes; new Intent uses B/Fact3. Reuse key with B conflicts.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-05",
+          "scenario": "Fact becomes UNPROVEN before delayed impact arrives",
+          "expected": "Synchronous source guard blocks new Sales effect; old orders/Confirm/Allocation retained.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-06",
+          "scenario": "Two distinct responsibility groups share Opportunity",
+          "expected": "Distinct owner-approved source slots can create two Orders; same slot alias still one. No Opportunity-wide uniqueness.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-STATIC-01",
+          "scenario": "Local schema references, 140 original field IDs, exact source hashes and boundary checks",
+          "expected": "All structural checks pass without running archived code or business tests",
+          "verification_level": "STATIC_ASSET",
+          "result": "PASS_STATIC_ONLY"
+        }
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_ASSETS_PASS; REQUIRED_RUNTIME_NOT_RUN"
+    },
+    {
+      "source_finding_ids": [
+        "COM-HO-OLD-FACTORY"
+      ],
+      "classification": "SUPERSEDED",
+      "targets": [
+        "CRM-OPP-01",
+        "CRM-HO-01",
+        "INT-COM-01",
+        "ERP-ORD-01"
+      ],
+      "decision": "Replace Opportunity-wide uniqueness only in new single-writer adapter with exact source intent/responsibility identities; legacy remains observation and explicit migration gate.",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "affc1caf67bbf423989dbdf184ca7308a56fb313c9ffec95959b7379940becca",
+          "line": 397,
+          "end_line": 412
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "affc1caf67bbf423989dbdf184ca7308a56fb313c9ffec95959b7379940becca",
+          "line": 704,
+          "end_line": 722
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 322,
+          "end_line": 322
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 348,
+          "end_line": 374
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 475,
+          "end_line": 550
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 652,
+          "end_line": 664
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 681,
+          "end_line": 725
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 745,
+          "end_line": 782
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 910,
+          "end_line": 927
+        }
+      ],
+      "outputs": [
+        "remediation/02-commercial-physical-contracts.md",
+        "remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+        "remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+        "remediation/assets/commercial/ord-dem-fields-1.0.0.json"
+      ],
+      "acceptance": [
+        {
+          "id": "W1-ORD-01",
+          "scenario": "QTN Q24 commits; HTTP response lost",
+          "expected": "Q25 returns original OrderDraft/Fact/Allocation; same Intent cannot make another Order.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-02",
+          "scenario": "Confirm QTN-sourced draft",
+          "expected": "Current Fact and Sales/BP/Finance/approval gates checked; no H-to-C call and no second allocation.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-03",
+          "scenario": "QTN allocated draft quantity changes",
+          "expected": "No in-place source quantity edit; original draft permanently cancelled under I11 proof, then explicit new Intent, or changes stay blocked.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-04",
+          "scenario": "Original evidence A/Fact1 corrected to B/Fact3",
+          "expected": "Old command returns A/Fact1 bytes; new Intent uses B/Fact3. Reuse key with B conflicts.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-05",
+          "scenario": "Fact becomes UNPROVEN before delayed impact arrives",
+          "expected": "Synchronous source guard blocks new Sales effect; old orders/Confirm/Allocation retained.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-06",
+          "scenario": "Two distinct responsibility groups share Opportunity",
+          "expected": "Distinct owner-approved source slots can create two Orders; same slot alias still one. No Opportunity-wide uniqueness.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-STATIC-01",
+          "scenario": "Local schema references, 140 original field IDs, exact source hashes and boundary checks",
+          "expected": "All structural checks pass without running archived code or business tests",
+          "verification_level": "STATIC_ASSET",
+          "result": "PASS_STATIC_ONLY"
+        }
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_ASSETS_PASS; REQUIRED_RUNTIME_NOT_RUN"
+    },
+    {
+      "source_finding_ids": [
+        "COM-QTN-FACT-H07-R2"
+      ],
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ERP-QTN-01",
+        "ERP-ORD-01",
+        "INT-COM-01"
+      ],
+      "decision": "Persist exact historical Fact/source/receipt; synchronously join current Fact before new Sales effects; I19 projections never cancel order/release allocation or assert customer revocation.",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 322,
+          "end_line": 322
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 348,
+          "end_line": 374
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 475,
+          "end_line": 550
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 652,
+          "end_line": 664
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 681,
+          "end_line": 725
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 745,
+          "end_line": 782
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 910,
+          "end_line": 927
+        }
+      ],
+      "outputs": [
+        "remediation/02-commercial-physical-contracts.md",
+        "remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+        "remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+        "remediation/assets/commercial/ord-dem-fields-1.0.0.json"
+      ],
+      "acceptance": [
+        {
+          "id": "W1-ORD-01",
+          "scenario": "QTN Q24 commits; HTTP response lost",
+          "expected": "Q25 returns original OrderDraft/Fact/Allocation; same Intent cannot make another Order.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-02",
+          "scenario": "Confirm QTN-sourced draft",
+          "expected": "Current Fact and Sales/BP/Finance/approval gates checked; no H-to-C call and no second allocation.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-03",
+          "scenario": "QTN allocated draft quantity changes",
+          "expected": "No in-place source quantity edit; original draft permanently cancelled under I11 proof, then explicit new Intent, or changes stay blocked.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-04",
+          "scenario": "Original evidence A/Fact1 corrected to B/Fact3",
+          "expected": "Old command returns A/Fact1 bytes; new Intent uses B/Fact3. Reuse key with B conflicts.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-05",
+          "scenario": "Fact becomes UNPROVEN before delayed impact arrives",
+          "expected": "Synchronous source guard blocks new Sales effect; old orders/Confirm/Allocation retained.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-ORD-06",
+          "scenario": "Two distinct responsibility groups share Opportunity",
+          "expected": "Distinct owner-approved source slots can create two Orders; same slot alias still one. No Opportunity-wide uniqueness.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "W1-STATIC-01",
+          "scenario": "Local schema references, 140 original field IDs, exact source hashes and boundary checks",
+          "expected": "All structural checks pass without running archived code or business tests",
+          "verification_level": "STATIC_ASSET",
+          "result": "PASS_STATIC_ONLY"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_ASSETS_PASS; REQUIRED_RUNTIME_NOT_RUN"
+    }
+  ],
+  "assets": [
+    {
+      "path": "remediation/assets/commercial/acceptance-1.0.0.json",
+      "sha256": "22ab5dfe451933e202de6f53b1547f774c57d7e178ff29c776fce1612e4be87a",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/build-commercial-assets.py",
+      "sha256": "4c66696746a3f2288b887028fa0b2b4cd0670e4ef6af7c89c42535f7babf69f2",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+      "sha256": "7134441829d2d044bbb044885e29b0af319b319d7c52acbce42793bf1175b8f0",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+      "sha256": "62de10ff91f7e36c56693f034a5852d552a40a19e903e268cfaf11a7a4526411",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/evidence-reading.json",
+      "sha256": "18efb0a361089b51e9db0d194acdde4f6c97f6959ecfb2bc1e1627a56033c70e",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/examples-1.0.0.json",
+      "sha256": "a755942c5fee0fc27eb9cc6bf28f81a0091bb99002bd2f56c1a9aecd56503093",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/ord-dem-fields-1.0.0.json",
+      "sha256": "25a6189122d54a164c690ae52009efcd7e78ffce34ff33372f087a064736eaa7",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/validate-commercial-assets.py",
+      "sha256": "9f2d2d626fa6456515f081176d455e2e1cc4257ebc7d007ff1f005bad3dc7a61",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    },
+    {
+      "path": "remediation/assets/commercial/validation-1.0.0.json",
+      "sha256": "c5805ed73f13db04e476e473908b19f13dc33219e01ed3bfee9a0b833fba03f9",
+      "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0"
+    }
+  ]
+}

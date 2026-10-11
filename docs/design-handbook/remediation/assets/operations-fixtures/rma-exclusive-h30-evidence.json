@@ -1,0 +1,476 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "NEW_SYNTHETIC_DEMO_ONLY",
+  "native_contract_source_sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+  "documents": [
+    {
+      "ref": {
+        "owner": "DEMO_IDENTITY",
+        "id": "OPS-H30-SEAL-AUTHORITY",
+        "version": "1",
+        "digest": "67e0308cbae2f71d0bfe0e2448cdb17feef04489cc957d932e07b38027e85e69"
+      },
+      "body": {
+        "schema": "OPS-H30-SEAL-AUTHORITY-1",
+        "mode": "DEMO",
+        "actorId": "RMA-SEAL-OPERATOR",
+        "action": "H30_EXCLUSIVE_SEAL",
+        "scope": {
+          "tenantId": "CP6-DEMO",
+          "environmentId": "RMA-OPERATIONS-R1",
+          "mode": "DEMO",
+          "consumer": "FIN-INV-01",
+          "stableEffectKey": "FININV|RMA-1|0-5",
+          "physicalReturnReceiptRef": {
+            "owner": "WMS-RMA-01",
+            "id": "PHYS-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "purpose": "RETURN_VALUE_SOURCE",
+          "ranges": [
+            {
+              "from": "0",
+              "to": "5"
+            }
+          ],
+          "baseUom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "validFrom": "2026-10-02T03:00:00Z",
+        "validTo": "2026-10-02T04:00:00Z",
+        "securityStamp": "1",
+        "grantVersion": "1"
+      }
+    },
+    {
+      "ref": {
+        "owner": "WMS-RMA-01",
+        "id": "OPS-H30-SCOPE-49",
+        "version": "1",
+        "digest": "5c7d14aadf72909f04713c47a8b17f5e527d49e2095c09231f0b6c828c74ba98"
+      },
+      "body": {
+        "schema": "OPS-H30-EXCLUSIVE-SCOPE-1",
+        "scope": {
+          "tenantId": "CP6-DEMO",
+          "environmentId": "RMA-OPERATIONS-R1",
+          "mode": "DEMO",
+          "consumer": "FIN-INV-01",
+          "stableEffectKey": "FININV|RMA-1|0-5",
+          "physicalReturnReceiptRef": {
+            "owner": "WMS-RMA-01",
+            "id": "PHYS-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "purpose": "RETURN_VALUE_SOURCE",
+          "ranges": [
+            {
+              "from": "0",
+              "to": "5"
+            }
+          ],
+          "baseUom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "mode": "DEMO"
+      }
+    },
+    {
+      "ref": {
+        "owner": "WMS-RMA-01",
+        "id": "OPS-H30-GUARD-49",
+        "version": "1",
+        "digest": "174eb003ab16928a138c81e1f3143e7fc6d8b9b945e47386c2a6d8cb4374ba20"
+      },
+      "body": {
+        "schema": "OPS-H30-DEMO-RANGE-GUARD-1",
+        "scope": {
+          "tenantId": "CP6-DEMO",
+          "environmentId": "RMA-OPERATIONS-R1",
+          "mode": "DEMO",
+          "consumer": "FIN-INV-01",
+          "stableEffectKey": "FININV|RMA-1|0-5",
+          "physicalReturnReceiptRef": {
+            "owner": "WMS-RMA-01",
+            "id": "PHYS-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "purpose": "RETURN_VALUE_SOURCE",
+          "ranges": [
+            {
+              "from": "0",
+              "to": "5"
+            }
+          ],
+          "baseUom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "physicalReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "coverage": "COMPLETE",
+        "mode": "DEMO"
+      }
+    },
+    {
+      "ref": {
+        "owner": "WMS-RMA-01",
+        "id": "OPS-H30-PRODUCER-HEAD-49",
+        "version": "1",
+        "digest": "dacfebbef519025fb578187d8c942522b7b5d51e4c68d952982d3ef302719a72"
+      },
+      "body": {
+        "schema": "OPS-H30-DEMO-PRODUCER-HEAD-1",
+        "physicalReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "revision": "1",
+        "mode": "DEMO"
+      }
+    },
+    {
+      "ref": {
+        "owner": "WMS-RMA-01",
+        "id": "OPS-H30-BIND-49",
+        "version": "1",
+        "digest": "b4f54e4709d38ac7f8bf9952c412146f4ebb211c3091751ff911c56ac6f23776"
+      },
+      "body": {
+        "commandId": "b1000000-0000-4000-8000-000000000049",
+        "scope": {
+          "environmentId": "RMA-OPERATIONS-R1",
+          "siteId": "b1000000-0000-4000-8000-000000000001",
+          "warehouseId": "b1000000-0000-4000-8000-000000000002",
+          "mode": "DEMO",
+          "scopeRef": {
+            "owner": "WMS-RMA-01",
+            "id": "OPS-H30-SCOPE-49",
+            "version": "1",
+            "digest": "5c7d14aadf72909f04713c47a8b17f5e527d49e2095c09231f0b6c828c74ba98"
+          }
+        },
+        "principalRef": {
+          "owner": "DEMO_IDENTITY",
+          "id": "OPS-H30-SEAL-AUTHORITY",
+          "version": "1",
+          "digest": "67e0308cbae2f71d0bfe0e2448cdb17feef04489cc957d932e07b38027e85e69"
+        },
+        "method": "POST",
+        "routeTemplate": "/internal/wms/rma/v1/h30/consumer-claims",
+        "actorCapability": "wms.rma.h30.consume",
+        "businessOperation": "RMA-H30C1",
+        "businessTargetRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "sourceVersions": [
+          {
+            "owner": "WMS-RMA-01",
+            "id": "PHYS-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "owner": "WMS-RMA-01",
+            "id": "OPS-H30-GUARD-49",
+            "version": "1",
+            "digest": "174eb003ab16928a138c81e1f3143e7fc6d8b9b945e47386c2a6d8cb4374ba20"
+          }
+        ],
+        "bodyDigest": "876f3924e5115b47d60bfb6a14675596621e7f4adce026999871a003d0c44651",
+        "effectKeys": [
+          "FININV|RMA-1|0-5"
+        ],
+        "expectedHeadRefs": [
+          {
+            "owner": "WMS-RMA-01",
+            "id": "OPS-H30-PRODUCER-HEAD-49",
+            "version": "1",
+            "digest": "dacfebbef519025fb578187d8c942522b7b5d51e4c68d952982d3ef302719a72"
+          }
+        ],
+        "createdAt": "2026-10-02T03:00:00Z"
+      }
+    },
+    {
+      "ref": {
+        "owner": "WMS-RMA-01",
+        "id": "OPS-H30-PERMANENT-SEAL-49",
+        "version": "1",
+        "digest": "4293ddfdd51fb1246dc80dd653d6a353f0d89e5c08fb82d59eac26dab1ee9005"
+      },
+      "body": {
+        "schema": "OPS-H30-EXCLUSIVE-SEAL-1",
+        "bindingRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-H30-BIND-49",
+          "version": "1",
+          "digest": "b4f54e4709d38ac7f8bf9952c412146f4ebb211c3091751ff911c56ac6f23776"
+        },
+        "query": {
+          "consumer": "FIN-INV-01",
+          "stableEffectKey": "FININV|RMA-1|0-5",
+          "physicalReturnReceiptRef": {
+            "owner": "WMS-RMA-01",
+            "id": "PHYS-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        "scope": {
+          "tenantId": "CP6-DEMO",
+          "environmentId": "RMA-OPERATIONS-R1",
+          "mode": "DEMO",
+          "consumer": "FIN-INV-01",
+          "stableEffectKey": "FININV|RMA-1|0-5",
+          "physicalReturnReceiptRef": {
+            "owner": "WMS-RMA-01",
+            "id": "PHYS-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "purpose": "RETURN_VALUE_SOURCE",
+          "ranges": [
+            {
+              "from": "0",
+              "to": "5"
+            }
+          ],
+          "baseUom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "authorityRef": {
+          "owner": "DEMO_IDENTITY",
+          "id": "OPS-H30-SEAL-AUTHORITY",
+          "version": "1",
+          "digest": "67e0308cbae2f71d0bfe0e2448cdb17feef04489cc957d932e07b38027e85e69"
+        },
+        "originalApplyRequest": {
+          "commandId": "b1000000-0000-4000-8000-000000000049",
+          "consumer": "FIN-INV-01",
+          "purpose": "RETURN_VALUE_SOURCE",
+          "physicalReturnReceiptRef": {
+            "owner": "WMS-RMA-01",
+            "id": "PHYS-1",
+            "version": "1",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "physicalReturnResultDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "rangeGuardRef": {
+            "owner": "WMS-RMA-01",
+            "id": "OPS-H30-GUARD-49",
+            "version": "1",
+            "digest": "174eb003ab16928a138c81e1f3143e7fc6d8b9b945e47386c2a6d8cb4374ba20"
+          },
+          "ranges": [
+            {
+              "from": "0",
+              "to": "5"
+            }
+          ],
+          "quantity": {
+            "value": "5",
+            "uom": {
+              "code": "EA",
+              "version": "1"
+            }
+          },
+          "qualityOwnerResultRef": null,
+          "commercialOwnerResultRef": null,
+          "stableEffectKey": "FININV|RMA-1|0-5",
+          "expectedProducerHeadRef": {
+            "owner": "WMS-RMA-01",
+            "id": "OPS-H30-PRODUCER-HEAD-49",
+            "version": "1",
+            "digest": "dacfebbef519025fb578187d8c942522b7b5d51e4c68d952982d3ef302719a72"
+          },
+          "expectedConsumerClaimHeadRef": null
+        },
+        "bindingBodyDigest": "876f3924e5115b47d60bfb6a14675596621e7f4adce026999871a003d0c44651",
+        "originalCommand": {
+          "endpoint": "H30/RETURN_VALUE_SOURCE",
+          "requestKey": "b1000000-0000-4000-8000-000000000049",
+          "writerEpoch": 1
+        },
+        "stateBefore": {
+          "claim": null,
+          "ack": null,
+          "consumerEffect": null,
+          "completeCoverage": true
+        },
+        "stateAfter": {
+          "newClaimsPermanentlyFenced": true,
+          "lateApplyPermanentlyFenced": true,
+          "existingActiveClaimReleased": false
+        },
+        "uniqueFenceKey": "8945926621d0d4890f8c7761414d7479a537da8fa3cd68b969ba6157e4c381d6",
+        "sameUow": {
+          "lock": "exact environment+consumer+stableEffectKey+physicalReturnReceipt identity",
+          "writes": [
+            "durable unique fence",
+            "exclusive seal proof",
+            "original binding terminal receipt"
+          ],
+          "allOrNothing": true
+        },
+        "recordedAt": "2026-10-02T03:02:00Z",
+        "mode": "DEMO"
+      }
+    }
+  ],
+  "positive": {
+    "status": "SEALED_NO_EFFECT",
+    "query": {
+      "consumer": "FIN-INV-01",
+      "stableEffectKey": "FININV|RMA-1|0-5",
+      "physicalReturnReceiptRef": {
+        "owner": "WMS-RMA-01",
+        "id": "PHYS-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    "claim": null,
+    "ack": null,
+    "terminalReceipt": {
+      "receiptId": "b1000000-0000-4000-8000-000000000050",
+      "commandBindingRef": {
+        "owner": "WMS-RMA-01",
+        "id": "OPS-H30-BIND-49",
+        "version": "1",
+        "digest": "b4f54e4709d38ac7f8bf9952c412146f4ebb211c3091751ff911c56ac6f23776"
+      },
+      "status": "SEALED_NO_EFFECT",
+      "resultRefs": [],
+      "effectKeys": [
+        "FININV|RMA-1|0-5"
+      ],
+      "noAdditionalEffectProofRef": {
+        "owner": "WMS-RMA-01",
+        "id": "OPS-H30-PERMANENT-SEAL-49",
+        "version": "1",
+        "digest": "4293ddfdd51fb1246dc80dd653d6a353f0d89e5c08fb82d59eac26dab1ee9005"
+      },
+      "recordedAt": "2026-10-02T03:02:00Z",
+      "replayed": false
+    },
+    "observedAt": "2026-10-02T03:03:00Z",
+    "canInferNoEffect": true,
+    "reasonCodes": [
+      "AUTHORIZED_SEAL"
+    ]
+  },
+  "native_apply_request": {
+    "commandId": "b1000000-0000-4000-8000-000000000049",
+    "consumer": "FIN-INV-01",
+    "purpose": "RETURN_VALUE_SOURCE",
+    "physicalReturnReceiptRef": {
+      "owner": "WMS-RMA-01",
+      "id": "PHYS-1",
+      "version": "1",
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "physicalReturnResultDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "rangeGuardRef": {
+      "owner": "WMS-RMA-01",
+      "id": "OPS-H30-GUARD-49",
+      "version": "1",
+      "digest": "174eb003ab16928a138c81e1f3143e7fc6d8b9b945e47386c2a6d8cb4374ba20"
+    },
+    "ranges": [
+      {
+        "from": "0",
+        "to": "5"
+      }
+    ],
+    "quantity": {
+      "value": "5",
+      "uom": {
+        "code": "EA",
+        "version": "1"
+      }
+    },
+    "qualityOwnerResultRef": null,
+    "commercialOwnerResultRef": null,
+    "stableEffectKey": "FININV|RMA-1|0-5",
+    "expectedProducerHeadRef": {
+      "owner": "WMS-RMA-01",
+      "id": "OPS-H30-PRODUCER-HEAD-49",
+      "version": "1",
+      "digest": "dacfebbef519025fb578187d8c942522b7b5d51e4c68d952982d3ef302719a72"
+    },
+    "expectedConsumerClaimHeadRef": null
+  },
+  "native_binding_schema": "CommandBinding",
+  "seal_boundary": "This fixture specifies an authorized durable internal cancellation of the original H30C1 binding; it does not add a public seal endpoint or claim existing runtime support. Exact quality/valuation authority is still required before any apply; absence seal creates no application.",
+  "negative_wrong_effect": {
+    "status": "SEALED_NO_EFFECT",
+    "query": {
+      "consumer": "FIN-INV-01",
+      "stableEffectKey": "FININV|RMA-1|0-5",
+      "physicalReturnReceiptRef": {
+        "owner": "WMS-RMA-01",
+        "id": "PHYS-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    "claim": null,
+    "ack": null,
+    "terminalReceipt": {
+      "receiptId": "a0000000-0000-4000-8000-000000000003",
+      "commandBindingRef": {
+        "owner": "WMS-RMA-01",
+        "id": "BIND-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "status": "SEALED_NO_EFFECT",
+      "resultRefs": [],
+      "effectKeys": [
+        "RMA-1|DSP-1|EFFECT"
+      ],
+      "noAdditionalEffectProofRef": {
+        "owner": "WMS-RMA-01",
+        "id": "SEAL-PROOF-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "recordedAt": "2026-10-02T03:02:00Z",
+      "replayed": false
+    },
+    "observedAt": "2026-10-02T03:03:00Z",
+    "canInferNoEffect": true,
+    "reasonCodes": [
+      "AUTHORIZED_SEAL"
+    ]
+  },
+  "recovery_rules": [
+    "Exact original query replays the immutable receipt",
+    "Any scope/body/authority mismatch rejects before writes",
+    "NOT_OBSERVED/UNAVAILABLE/UNKNOWN never imply absence",
+    "An existing active claim or ack/effect rejects this absence-seal transaction; it requires its own Owner resolution",
+    "Serially lock and permanently fence this exact consumer key in the same Uow as proof and receipt; racing claim or late apply loses against the permanent fence",
+    "Other consumers, effects and physical receipts retain their own claims; this proof never releases their ranges"
+  ],
+  "runtime_status": "NOT_RUN"
+}

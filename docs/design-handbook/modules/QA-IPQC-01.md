@@ -1,5 +1,21 @@
 # QA-IPQC-01 过程、成品及试制检验
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-015 | ARTIFACT_CONFLICT：IPQC未绑定Evidence/Uom按准确QapEvidence/QapUom成员定义修，独立TS严格编译通过。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+| OPS-IF-016 | SUPERSEDED：NCR准确后继已无损采用IPQC旧SourceEnvelope、standalone和Resolution27；保原字段/摘要/Scope。 | [设计](../remediation/05-planning-material-mapping.md) |
+| IPQC-CONT-01 | ARTIFACT_CONFLICT：Add100 native InitialClaim rows for I09 INITIAL observations using exact tenant/environment/mode/task/slot PK and original recordedAt; replay F02 full DB snapshots/Audit/terminal ledgers through1067 final rows. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| IPQC-CONT-02 | ARTIFACT_CONFLICT：Use exact fixed Owner source OUT-QA-F03 for I05 and both I29 calls; retain TRIAL stage/purpose and negative case; regenerate payload/request/response/Command/Audit/full-state digests and every current mirror. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| IPQC-CONT-03 | ARTIFACT_CONFLICT：F07 resend response uses immutable existing Delivery canonicalKey F07:OWNER-SEQUENCE and sequence3; payload/message/delivery/lease9 unchanged; regenerate terminal/Command/Audit/full-state digests and full-step mirror. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前必要设计、类型字段、关系约束、前端动作、载荷、连续案例、F01及来源治理已按完整业务内容整理；历史程序/隔离旧版按用途保留。设计接受不等业务AC或Owner实际采用，三项当前案例采用澄清及类型绑定问题见第11节。
 
 ## 1. 业务目的、操作者和Owner边界

@@ -1,5 +1,20 @@
 # PUR-GR-01 采购收货商业单据
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION | ADOPTION_PENDING：采用GR逐叶原Domain/有效RangeSet/当前ScopeSet和Quality，Stock/PO专业后继完整共同ResourcePlan；非前缀VOID保持当前已修设计。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION | ADOPTION_PENDING：退货实物不VOID原GR，E=100不变；PENDING_RETURN MRX禁新forward但不自动FENCE旧admission；MATCH/RETURN/manual共享OriginalObligation budget，RETURNED_RETIRED不随credit/refund消失。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-SUB-COST-RECEIPT-VS-ACCEPTANCE | INTENTIONAL_DIFFERENCE：Finance approved RECEIPT完整累计Q作cost，Pcum+sameM仅一次、累计舍入取delta；消耗依据独立COMMERCIAL_ACCEPTANCE_GROSS与冻结Qplan、unitUsage。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-013 | INTENTIONAL_DIFFERENCE：QA-POL采购按准确source/part叶总体；制造按原完整总体，不能母单100覆盖采购40/60。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 目的、操作者与明确业务边界
 
 采购收货人员依据可信到货和已授权PO逐行登记、匹配、冻结、准备、开始并确认本次实际收货；Quality专业人员出具独立决定，GR只应用商业验收；恢复人员查询原操作和有据续办。GR拥有商业收货与验收事实，WMS拥有物理库存，Quality拥有判定，三个结果不能互相代签。保存登记不增库存，WMS收到不等GR验收，Quality合格也不等AP/资产确认。 [原文 L17](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md:17>)、[原文 L28](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md:28>)、[原文 L29](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md:29>)、[原文 L30](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md:30>)、[原文 L31](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md:31>)、[原文 L32](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md:32>)、[原文 L33](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md:33>)

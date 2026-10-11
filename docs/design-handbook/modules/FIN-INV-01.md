@@ -1,5 +1,25 @@
 # FIN-INV-01 库存计价与业务对账
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-017 | SUPERSEDED：R12闭合旧profile/Uow proof gap：UTF8 domain+NUL+JCS完整非digest proof、INPUT9 current generation、真实同Uow；RETURN_TO_SOURCE仍不在Finance R10 H30枚举。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-026 | INTENTIONAL_DIFFERENCE：AR总体UNRESOLVED下policy-ready INVOICE可独立完成；INV独占COGS source，AR只是观察协调；不套AP整manifest完成门。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-029 | SUPERSEDED：仅handlercontext/cold C09争议由R10替代；cold按Table/Row重建三durable Uow一致，六TransactionUowId只write envelope；API final-gate引用按R10精确schema解析。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| OPS-IF-030 | ARTIFACT_CONFLICT：INV开放整数位采用大整数文本+scale；66个有限decimal列给出准确替代，MAVG分子分母不使用decimal(76,0)，原wire和摘要字节独立保存。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+| OPS-IF-038 | ARTIFACT_CONFLICT：New FIN-INV schema identity: page state fields are native state string\|null, never Money or a Work object. Consumer pins revised schema and keeps missing-state reason. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| OPS-IF-039 | ARTIFACT_CONFLICT：SC12 C01 persisted binding equals H(original binding); C09 repeats exact C03 receipt/binding/result and regenerates canonical response bytes/hash. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| OPS-IF-040 | ARTIFACT_CONFLICT：SC20 consumption carries exact correction effect id, null reverseOfConsumptionId because no original consumption exists; preserve original receipt/layer lineage and original result digest domain. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| OPS-IF-041 | ARTIFACT_CONFLICT：SC20 OwnerFactSnapshot PK wrapper equals its actual Row ObjectId OWNERFACT-AP-SC20-RETURN; no business-row identity rewrite. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+| OPS-IF-049 | ARTIFACT_CONFLICT：New exclusive H30 binding/proof/receipt binds exact FIN-INV effect, physical receipt, environment, purpose and ranges; atomic permanent fence prevents new claims/late apply. Other consumer claims cannot be released. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前27项必要组合角色已整理：正文、202 Schema、48表、10页面、六条连续场景/全部案例族、接受评审与静态支持；直接阅读、逐值复用和目录身份分列。已发现同组合字段差异仍需Owner对齐；102业务AC为NOT_RUN，真实政策/采用/运行UNPROVEN。
 
 ## 1. 业务目的、操作者和Owner边界

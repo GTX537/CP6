@@ -1,5 +1,19 @@
 # PLM-REL-01 · 用途授权、受控发布、目标采用与额度结清
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| PE-HANDOFF-NAMESPACE | DOCUMENT_STALE：H编号必须用来源+合同名+版本解释；采购H31与工程H41独立。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| PE-ENG-MULTI-OUTPUT-MANIFEST | DESIGN_GAP：新增独立输出Occurrence RelationSet及BaselineOutputBinding；原单PRODUCT技术Manifest及摘要不变，同Freeze事务生成完整新绑定，旧Baseline不能事后补造。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME | SUPERSEDED：CP22 role15内专业设计已有准确ADOPT；总17角色、实际provider/adoption0保持，不扩旧RC1批准。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。当前八页、LR03执行计量合同、LR02发布采用合同与相关批准全文已读；独立旧REL原册/旧48项AC仍缺，不把本册视为原件恢复或已实现。
 
 ## 1. 目的、操作者和业务Owner

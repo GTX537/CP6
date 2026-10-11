@@ -1,0 +1,86 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "result": "PASS",
+  "checks": [
+    {
+      "check": "RETURN-298-preimages-and-transitive-127-hashes",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": {
+        "nodes": 298,
+        "changed": 127,
+        "leaf_edits": 4,
+        "historical_blocks_unchanged": true
+      }
+    },
+    {
+      "check": "EST-policy-and-ten-domain-hashes",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": {
+        "lookup_contexts": 8,
+        "seal_plans": 2,
+        "ttl_seconds": 600,
+        "historical_policy_preserved": true
+      }
+    },
+    {
+      "check": "CREDIT-public-Money-and-full-identity-cascade",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": {
+        "money_fields": 18,
+        "canonical_bodies": 5,
+        "typed_existing_target_sources": 324,
+        "actual_writes": 0
+      }
+    },
+    {
+      "check": "CREDIT-single-OpenAPI-and-replay",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": {
+        "paths": 29,
+        "stage_metadata_blocks": 10,
+        "refs_resolved": 192,
+        "replay_routes": 2
+      }
+    },
+    {
+      "check": "CREDIT-current-v1-codec-pin-and-qualified-unions",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": {
+        "type_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+        "codecs": 2,
+        "native_schema_pins_unchanged": true,
+        "verification": "bounded source + schema union checks; not compilation/runtime"
+      }
+    },
+    {
+      "check": "six-root-commercial-patches-preimage-and-JSON",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": {
+        "patches": 6,
+        "operations": 118,
+        "reexecuted": "exact in-memory data application only"
+      }
+    },
+    {
+      "check": "bounded-patch-negative-preimages",
+      "result": "PASS",
+      "verification_level": "LOCAL_DESIGN_DATA",
+      "detail": {
+        "rejected": 21
+      }
+    }
+  ],
+  "patch_count": 15,
+  "operations": 931,
+  "source_files_rechecked": 15,
+  "original_programs_executed": false,
+  "derived_code_compilation": "SEPARATE_HASH_BOUND_REPORT_codec-compile-validation.json",
+  "runtime_acceptance": "NOT_RUN",
+  "actual_adoption_status": "UNPROVEN"
+}

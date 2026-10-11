@@ -1,0 +1,141 @@
+{
+  "result": "PASS",
+  "scope": "sidecar meta-schema, 61 source field mappings and concrete DTO paths, permission algebra, output graph and candidate-set design examples only",
+  "schemas": 24,
+  "field_count": 61,
+  "dto_paths": 78,
+  "policy_checks": [
+    {
+      "case": "S5 actual-row aggregation",
+      "roles": [
+        null,
+        3
+      ],
+      "registry_known": true,
+      "expected": 3,
+      "result": "PASS"
+    },
+    {
+      "case": "S5 actual-row aggregation",
+      "roles": [
+        null,
+        2
+      ],
+      "registry_known": true,
+      "expected": 2,
+      "result": "PASS"
+    },
+    {
+      "case": "S5 actual-row aggregation",
+      "roles": [
+        2,
+        3
+      ],
+      "registry_known": true,
+      "expected": 2,
+      "result": "PASS"
+    },
+    {
+      "case": "S5 actual-row aggregation",
+      "roles": [
+        null,
+        null
+      ],
+      "registry_known": true,
+      "expected": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "S5 actual-row aggregation",
+      "roles": [
+        1,
+        3
+      ],
+      "registry_known": true,
+      "expected": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "S5 actual-row aggregation",
+      "roles": [
+        null,
+        null
+      ],
+      "registry_known": false,
+      "expected": null,
+      "result": "PASS"
+    },
+    {
+      "case": "S5 actual-row aggregation",
+      "roles": [
+        4
+      ],
+      "registry_known": true,
+      "expected": null,
+      "result": "PASS"
+    },
+    {
+      "case": "whole grant clause, no cross-clause union",
+      "result": "PASS"
+    },
+    {
+      "case": "two grants keep independent versions",
+      "result": "PASS"
+    },
+    {
+      "case": "missing current grant member rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "shared policy versions must agree",
+      "result": "PASS"
+    },
+    {
+      "case": "changed policy marks old vector stale",
+      "result": "PASS"
+    },
+    {
+      "case": "legitimate no-policy grant preserves null/zero boundary",
+      "result": "PASS"
+    },
+    {
+      "case": "baseline-relation complete tuple equality",
+      "result": "PASS"
+    },
+    {
+      "case": "wrong original primary PRODUCT rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "baseline configuration drift rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "aggregate exactly equals frozen package candidate set",
+      "result": "PASS"
+    },
+    {
+      "case": "missing candidate rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "same candidate wrong version rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "complete OA binding shape",
+      "result": "PASS"
+    },
+    {
+      "case": "oversized Round wire key rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "Subject snapshot digest distinct from aggregate/native package digest",
+      "result": "PASS"
+    }
+  ],
+  "examples": 10,
+  "runtime_acceptance": "NOT_RUN",
+  "original_owner_manifest_bytes_modified": false
+}

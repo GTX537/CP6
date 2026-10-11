@@ -1,0 +1,123 @@
+{
+  "cases": [
+    {
+      "id": "OA-CANDIDATE-SET",
+      "scenario": "PLM two native candidates in one frozen Round",
+      "expected": "one aggregate with two exact members; neither first-only selection nor duplicate submission",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "OA-REJECT-MISSING",
+      "scenario": "REJECTED with no frozen rejectDisposition",
+      "expected": "BLOCKED_POLICY_MAPPING; no stage write",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "OA-LATE-APPROVED",
+      "scenario": "withdraw commits before old APPROVED arrives",
+      "expected": "STALE_RECEIPT and no new-round mutation",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "OA-REPLAY",
+      "scenario": "same decision with another transport event",
+      "expected": "original ApplicationReceipt, one application unit",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "OA-CHANGED-BODY",
+      "scenario": "same event ID with different bytes",
+      "expected": "CONFLICT; retain both audit observations",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "OA-APPLIED-WITHDRAW",
+      "scenario": "apply commits first then withdrawal",
+      "expected": "409 plus original receipt; no erase",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-MIN-MISSING",
+      "scenario": "role A absent, role B Access3",
+      "expected": "3 then omit full composite paths",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-MIN-REAL",
+      "scenario": "role A2, role B3",
+      "expected": "2; external write still false",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-MIN-DEFAULT",
+      "scenario": "all roles absent, complete registry",
+      "expected": "1 with independent action/row/purpose checks",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-UNKNOWN",
+      "scenario": "unknown registry or member mapping",
+      "expected": "UNAVAILABLE/DENY no cache fallback",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-CLAUSE",
+      "scenario": "different grants separately match site and resource",
+      "expected": "DENY; no clause stitching",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-REVOKE",
+      "scenario": "membership changes after export but before download",
+      "expected": "deny download despite original success and URL",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "SPACE-CURSOR",
+      "scenario": "current authority vector differs from cursor",
+      "expected": "412 and new read",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "ENG-MULTI",
+      "scenario": "same product generated at two operations",
+      "expected": "two distinct output occurrences; original v1 manifest hash unchanged",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "ENG-ORPHAN",
+      "scenario": "output references absent operation or input",
+      "expected": "reject freeze; no baseline",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "ENG-OLD-BASELINE",
+      "scenario": "attempt to attach relations to frozen old baseline",
+      "expected": "reject mutation; follow successor baseline process",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "ENG-UNKNOWN-COMMIT",
+      "scenario": "freeze response lost",
+      "expected": "query original command, no second baseline",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN"
+    }
+  ]
+}

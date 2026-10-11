@@ -1,0 +1,438 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "findings": [
+    "OPS-IF-038",
+    "OPS-IF-039",
+    "OPS-IF-040",
+    "OPS-IF-041",
+    "OPS-IF-042",
+    "OPS-IF-043",
+    "OPS-IF-044",
+    "OPS-IF-045",
+    "OPS-IF-046",
+    "OPS-IF-047",
+    "OPS-IF-048",
+    "OPS-IF-049",
+    "OPS-IF-050",
+    "IPQC-CONT-01",
+    "IPQC-CONT-02",
+    "IPQC-CONT-03"
+  ],
+  "sources": [
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "bytes": 487645
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+      "bytes": 1437013
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "sha256": "dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2",
+      "bytes": 406690
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+      "bytes": 747328
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+      "bytes": 448940
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+      "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+      "bytes": 12699093
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+      "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+      "bytes": 7833773
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+      "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+      "bytes": 685163
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+      "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+      "bytes": 299269
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+      "bytes": 173155
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "sha256": "561c763d68c1f87a6ae8118e1d1e782175d0821774c597fb3e28fe9125dfc98a",
+      "bytes": 70317
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+      "bytes": 166788
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99bf7b7371715a62__fixture-F03-I29-request.json",
+      "sha256": "99bf7b7371715a62b9400021b018431e66c603e8266ab7bddf521ab101b2e3ab",
+      "bytes": 8500
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c603f220fd83336d__fixture-F03-I29-response.json",
+      "sha256": "c603f220fd83336dedd15fec1518d111905836807131aca5eb5fe20342fc63b9",
+      "bytes": 6631
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "sha256": "420ebe12bc2aec9509e781236d57baecf25b02bb23a03c3eace2fb9a82c626a5",
+      "bytes": 30080
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "sha256": "eba9b5010c3181a3b3c1a603fcb1315dca10c96c16393ec2afdd332160812415",
+      "bytes": 44877
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "9a3c4c7f7927e1bdee13915c836692e863ec4499a4fb32971105eca66a47b8f1",
+      "bytes": 1037351
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+      "bytes": 138327
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "sha256": "38a6c24482eb54fc4c9e9002ce5a1c9d40b26bad47154b44b06e26f15c497428",
+      "bytes": 164376
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "sha256": "2bf87130cde5b1fedaa86a386fc619decd1248d792f324dc14f90cd827016219",
+      "bytes": 35826
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "sha256": "a044573d078160c1e806b562e38fa5438eba541d7f1ffaec6a9a45a3b172e5a6",
+      "bytes": 35368
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "sha256": "67dcc3fb406be18f786ebea5054add54482647f61cf20199cf417947f8c8e240",
+      "bytes": 35763
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5e/5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "sha256": "5e0b3a55dcdf6cd2630d3d734cb1ee3d784999eb40d222c751ef164de11082e6",
+      "bytes": 31585
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99e39a74d448a789__FRONTEND-CONTRACT_R10.json",
+      "sha256": "99e39a74d448a7891d96d317c92ff840de97f9d521a8eec5861a6164537a44d5",
+      "bytes": 54515
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+      "sha256": "9442439f12ceb101fb49f469f596a529f061526d0a7b504289ef5fd3185e9349",
+      "bytes": 359236
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+      "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+      "bytes": 1387961
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ad6645097bc3509__QA-IQC-01_R5_EXACT-REVIEW-WINDOWS.md",
+      "sha256": "3ad6645097bc350904252f1b279346d044402aad73c7b25ae419e94bfe061c00",
+      "bytes": 1488523
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/48/48abc6d0c555d9c6__CONTINUOUS_FIXTURES_RECOVERY_R2.json",
+      "sha256": "48abc6d0c555d9c6628b459775a33279ebb92877f6a0f2c4704476cd928de355",
+      "bytes": 3682968
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3b/3bc85fd485a91ddb__CONTINUOUS_FIXTURES_RECOVERY_R3.json",
+      "sha256": "3bc85fd485a91ddb0b0f6dad87ea33c90dd11120f6f65b66df16a377be317033",
+      "bytes": 11367979
+    }
+  ],
+  "products": [
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/IPQC-CONTINUOUS-OPERATIONS-R1.json",
+      "sha256": "ed86ae0391cc526ccc6ba1744f998b05de19bdeda4680f904d305091b570595d",
+      "bytes": 9429656,
+      "source_finding_ids": [
+        "IPQC-CONT-01",
+        "IPQC-CONT-02",
+        "IPQC-CONT-03"
+      ],
+      "role": "REVISED_INDEPENDENT_DEMO_FIXTURE_WORLD",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/IQC-CONTINUOUS-OPERATIONS-R1.json",
+      "sha256": "d84d7e0ef096b6fa15c2088696680fa5c28452bb79b497bf9d12be9677d0fe7c",
+      "bytes": 4805963,
+      "source_finding_ids": [
+        "OPS-IF-045",
+        "OPS-IF-046",
+        "OPS-IF-047"
+      ],
+      "role": "REVISED_INDEPENDENT_DEMO_FIXTURE_WORLD",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/IQC-INLINE-OPERATIONS-R1.json",
+      "sha256": "934eff2740fdbf87e03fc89b20dae1eeb1442f167236ee14683bd309f108160f",
+      "bytes": 300737,
+      "source_finding_ids": [
+        "OPS-IF-045",
+        "OPS-IF-046",
+        "OPS-IF-047"
+      ],
+      "role": "REVISED_DEMO_INLINE_EXAMPLES_WITH_FROZEN_GR_STOCK_PAYLOADS",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "sha256": "b742a5a2d73cba80ce73d2658894de1788c5ba993d23152a113a0febc6c8fe35",
+      "bytes": 488171,
+      "source_finding_ids": [
+        "OPS-IF-038"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "sha256": "7f79b60270191e240e5e92097dd83610cab7426695ee5de15a8d6edce6e0572f",
+      "bytes": 1437001,
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+      "sha256": "a008e32600304533e7dafc9b7d34dcc927c5289fda6ce632528cf0ead8a5cffb",
+      "bytes": 406690,
+      "source_finding_ids": [
+        "OPS-IF-042"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "sha256": "2e289cd50b440fb9df6b0f1974918551570ddbe0379956f11050c635b18ee9ed",
+      "bytes": 747383,
+      "source_finding_ids": [
+        "OPS-IF-043"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "sha256": "c40bdd59af4c2f720773d539dea852835a5c6db595fdd675a083820b0d4605e3",
+      "bytes": 448940,
+      "source_finding_ids": [
+        "OPS-IF-044"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "sha256": "272e68a41f75bd01ba5b57d0018eadbb5fbd656e1bad2d65de1b7c14e1380733",
+      "bytes": 173323,
+      "source_finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+      "sha256": "68fecc754a5568f0c2ef74abe37d41031ceeceecf88db345d7107c4e1986f6f7",
+      "bytes": 70437,
+      "source_finding_ids": [
+        "OPS-IF-048"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+      "sha256": "987c173fea8056d6d8d237c112e3f3309e4de9c5a73a5819aa59fce9cb5e5376",
+      "bytes": 166936,
+      "source_finding_ids": [
+        "OPS-IF-048"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-99bf7b7371715a62__fixture-F03-I29-request.json",
+      "sha256": "461c6d0e3357744f5c9ce5ba9afb777016ce100f0aad22dcd1fc27d9961114cc",
+      "bytes": 6358,
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-c603f220fd83336d__fixture-F03-I29-response.json",
+      "sha256": "9ffb97d74a477bb083754054c12ff83f0c9e0ac16ae9d046550ff2b3440b46db",
+      "bytes": 6229,
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-420ebe12bc2aec95__fixture-F03-I29-writes.json",
+      "sha256": "66b565e5b553f44e83a185fc7ed9f66a5c48cbb04fe6eefad2b946b5d74c6851",
+      "bytes": 28353,
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-eba9b5010c3181a3__fixture-F07-gap-recovery-full-step.json",
+      "sha256": "c157f9a06801bd05f66ca696c2be73b6a7f8e5c3b97c6b1b8f68ee71a46bb1db",
+      "bytes": 39978,
+      "source_finding_ids": [
+        "IPQC-CONT-03"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-9a3c4c7f7927e1bd__FRONTEND_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "5f0075cd375a8258e6fb59ed8a5751090b3217566b142f67744eb9ace4a4fd68",
+      "bytes": 1037345,
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-27edb910bb416a4f__PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "9fd03e7e6412bf814335a7495830d96d6da1686368f5d8cd1610f28159257d0f",
+      "bytes": 138318,
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-38a6c24482eb54fc__WMS-RMA-01_CONTINUOUS-EXAMPLES(2).json",
+      "sha256": "1854032552b01c361bf85f030bb33fc12a1530c8f0791cde6ddb0416cf82784b",
+      "bytes": 164488,
+      "source_finding_ids": [
+        "OPS-IF-048",
+        "OPS-IF-049",
+        "OPS-IF-050"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-2bf87130cde5b1fe__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_02-of-08.md",
+      "sha256": "8751d43275bdd2456d0505971875f680e4ebc7fbb6886159da30a6257f4577fc",
+      "bytes": 35826,
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-a044573d078160c1__FIN-INV-R10-O1-B1-01-SC12-FULL-CHAIN_04-of-08.md",
+      "sha256": "a8e2e641a911ef25bd1829d9a5b2946a0c21933df9d009ec04d62dd17606fb75",
+      "bytes": 35368,
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-67dcc3fb406be18f__FIN-INV-R10-O1-B2-01-SC20-ALL_03-of-04.md",
+      "sha256": "0257464b46a32d50c6e683c3d15d62d59d2cfe0a0245aa7bf6d92fe9bb15716f",
+      "bytes": 35751,
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    },
+    {
+      "path": "D:/CP6-archives/design-revision-20261011-checks/operations/derived-5e0b3a55dcdf6cd2__FIN-INV-R10-O1-B2-01-SC20-ALL_04-of-04.md",
+      "sha256": "a8e0c2d337db3bc11caedafe91c8c8f1963747df936cf703cb287c702484997d",
+      "bytes": 31585,
+      "source_finding_ids": [
+        "OPS-IF-039",
+        "OPS-IF-040",
+        "OPS-IF-041"
+      ],
+      "role": "DERIVED_SHA_PINNED_BOUNDED_PATCH",
+      "business_execution": "NOT_RUN",
+      "runtime_adoption": "UNPROVEN"
+    }
+  ],
+  "small_patch_count": 19,
+  "large_recipe_count": 2,
+  "business_execution": "NOT_RUN",
+  "runtime_adoption": "UNPROVEN",
+  "consumer_rule": "Pin manifest + complete product SHA; no mixing original/derived parts. Original archive is immutable, old check reports stay historical.",
+  "source_boundary": "Only source bytes were read; no archive script or business code executed"
+}

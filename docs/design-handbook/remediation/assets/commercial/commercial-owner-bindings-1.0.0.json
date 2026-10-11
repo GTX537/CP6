@@ -1,0 +1,371 @@
+{
+  "version": "CP6-COMMERCIAL-PHYSICAL/1.0.0",
+  "bindings": [
+    {
+      "binding_id": "QTN-H07-R2",
+      "owner": "Main.QTN",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+      "line": 348,
+      "end_line": 374,
+      "exact_types_or_contracts": [
+        "QuoteOrderSource",
+        "OrderSourceLine",
+        "OrderDraftReceipt",
+        "OrderAllocation"
+      ],
+      "consumer_requirement": "I10 reads full original; persists exact ranges, signed roundingAdjustment, Fact snapshot and customerEvidence. No new H/C ledger.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "QTN-FACT-R2",
+      "owner": "Main.QTN",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+      "line": 496,
+      "end_line": 539,
+      "exact_types_or_contracts": [
+        "AcceptanceFactHead",
+        "AcceptanceCorrectionRecord",
+        "AcceptanceFactImpact",
+        "AcceptanceFactCurrentRead",
+        "AcceptanceImpactReceipt"
+      ],
+      "consumer_requirement": "I19 asynchronous projection plus synchronous Fact participant before every new Sales effect; never update old source snapshot.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "QTN-I11-R2",
+      "owner": "Main.QTN",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+      "line": 702,
+      "end_line": 710,
+      "exact_types_or_contracts": [
+        "OrderSourceCorrectionInput",
+        "OrderSourceCorrectionProof",
+        "OrderSourceCorrectionReceipt"
+      ],
+      "consumer_requirement": "Call only in actual cancellation DbTransaction; full original allocation, never confirmed, no Demand/inventory/unknown effects.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ACC-C03-V1",
+      "owner": "Main.C03",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bd97dd191196cc6a__CONTRACT-CARDS.md",
+      "sha256": "bd97dd191196cc6aa46f78ca0c0776239a242279287a2a33e43b9138c1e7a7e5",
+      "line": 26,
+      "end_line": 38,
+      "exact_types_or_contracts": [
+        "ErpEventContracts.cs@c778a3052a4416b82facb07b1244fc98fb6ad8a1"
+      ],
+      "consumer_requirement": "Native BusinessPartnerKey case retained; proof reference resolver uses exact archived native decoder. No inferred current qualification.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ACC-SEVEN-FIELD-DRAFT",
+      "owner": "Main.BP",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11aeb11f6a3b717b__CRM-ACC-01_客户关系账户_前后端开发Spec_v1.0_DRAFT.md",
+      "sha256": "11aeb11f6a3b717b05673c19f7a660b5c1122ad58d829b828b7fad138c0609ae",
+      "line": 925,
+      "end_line": 951,
+      "exact_types_or_contracts": [
+        "POST /internal/crm/v1/account-erp-mappings"
+      ],
+      "consumer_requirement": "Exactly eventId/accountId/legalEntityKey/mappingRevision/state/businessPartnerKey/sourceAsOf. Separate passive projection only.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "LEAD-H02-CP22",
+      "owner": "CRM.LEAD",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/23/23151de8bc435698__CRM-LEAD-01_CP22_FULL-FIVE-SPEC-REVIEW-CANDIDATE.md",
+      "sha256": "23151de8bc435698c04dbed3004683db14eee5bad9f77f315b168cabac2c8cb1",
+      "line": 238,
+      "end_line": 275,
+      "exact_types_or_contracts": [
+        "AccountChoice",
+        "CreateAccountRequest",
+        "ATOMIC_SHARED_TRANSACTION"
+      ],
+      "consumer_requirement": "Keep exact native create body and native X-Command-Id adapter; owner identity mapped from conversionId/participant kind/clientRef, no HTTP self-call.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON005",
+      "owner": "Main.Sales/Main.Planning",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 305,
+      "end_line": 351,
+      "exact_types_or_contracts": [
+        "SourceOperation",
+        "SourceControl",
+        "OperationResult",
+        "CurrentEffectivity",
+        "CoverageAndFinality"
+      ],
+      "consumer_requirement": "Physical successor is ORD-DEM-SOURCE/1. No source integer comparison across different lineage/tenant.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON012",
+      "owner": "Main.Planning",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 664,
+      "end_line": 709,
+      "exact_types_or_contracts": [
+        "ActivationManifest",
+        "PrepareMemberResult",
+        "EffectiveMembershipDecision",
+        "ExecutionGateProof"
+      ],
+      "consumer_requirement": "New physical successor requires local authoritative membership gate, immutable full manifest and real execution fences.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON002",
+      "owner": "Main.BP/Main.Finance",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 152,
+      "end_line": 198,
+      "exact_types_or_contracts": [
+        "TradingPartyScope",
+        "CreditCheckInput",
+        "CreditDecision",
+        "ExposureCommitment",
+        "PrepaymentCoverage",
+        "CreditReleaseDecision"
+      ],
+      "consumer_requirement": "Confirm/release/change bind actual roles, action, money/currency and exposure stage. CHECK_ONLY never substitutes COMMITMENT_REQUIRED.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON003",
+      "owner": "OA/Main.Sales",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 204,
+      "end_line": 249,
+      "exact_types_or_contracts": [
+        "ApplyIntent",
+        "ApprovalOutcome",
+        "ParticipantGuarantee",
+        "ApplicationOutcome",
+        "AbortFinality"
+      ],
+      "consumer_requirement": "Persist exact operation/version/scope/digest and participants. Sales commitment requires current guarantees or a proved local shared transaction.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON004",
+      "owner": "Main.Planning/Logistics/Main.Sales",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 255,
+      "end_line": 299,
+      "exact_types_or_contracts": [
+        "AtpRequestScope",
+        "DateNodeDerivation",
+        "AtpResult",
+        "AdoptionBinding",
+        "SelfExclusionProof"
+      ],
+      "consumer_requirement": "Only exact own Demand excluded; evaluation does not reserve or release; adoption binds current editing version and all relevant watermarks.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-R02-COMPOSITES",
+      "owner": "Respective original Owner",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+      "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+      "line": 288,
+      "end_line": 308,
+      "exact_types_or_contracts": [
+        "TypedScope",
+        "VersionedEvidence",
+        "Condition",
+        "FactWatermark",
+        "Conversion",
+        "PriceTerms",
+        "TransitDerivation",
+        "ApprovalBinding",
+        "CommercialSupplyScopeMap",
+        "RequestedControl",
+        "BusinessResult",
+        "ImpactItem",
+        "Transfer",
+        "CancelSlice",
+        "ClosureEvidence",
+        "QuerySelection",
+        "ExportSelection",
+        "Import/ExportSnapshot"
+      ],
+      "consumer_requirement": "Exact composite member lists at the named original range. Import/export remain external-owner capability, no new W1 import/export mutation.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON006",
+      "owner": "WMS/PUR/MES/QA/PLM",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 357,
+      "end_line": 404,
+      "exact_types_or_contracts": [
+        "ImpactScopeManifest",
+        "ControlRequest",
+        "ControlProof",
+        "DispositionResult",
+        "HandoffAcceptance",
+        "ClosureAssessment"
+      ],
+      "consumer_requirement": "Action/entry/key coverage and current in-flight results mandatory; no arbitrary owner can release another reason.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON007",
+      "owner": "Main.Planning/WMS",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 428,
+      "end_line": 453,
+      "exact_types_or_contracts": [
+        "CoverageRequest",
+        "SupplyOccurrence",
+        "RunResultScope",
+        "ReservationResult",
+        "CoveragePresentation"
+      ],
+      "consumer_requirement": "Exact input Demand versions, supply stage and watermark; Reservation contains Allocation; stale run never current.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON008",
+      "owner": "WMS/Shipping",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 460,
+      "end_line": 505,
+      "exact_types_or_contracts": [
+        "FulfillmentFact",
+        "ResponsibilityMap",
+        "DeliveryEvidence",
+        "CorrectionAuthority",
+        "PostClosureReview"
+      ],
+      "consumer_requirement": "Fact ID/version independent from OrderVersion; snapshot/delta explicit, ordinary returns never correction.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON009",
+      "owner": "Main.Sales/Main.Finance",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 511,
+      "end_line": 556,
+      "exact_types_or_contracts": [
+        "BillingSourceScope",
+        "PriceBasisSnapshot",
+        "BillingResult",
+        "SettlementAllocation",
+        "CommercialFinanceDelta"
+      ],
+      "consumer_requirement": "Price and finance references resolve complete original scope/value/units/policy records. No client totals or invented invoice/settlement status.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON010",
+      "owner": "Main.Sales/CRM.OPP",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 562,
+      "end_line": 607,
+      "exact_types_or_contracts": [
+        "CommercialFact",
+        "ContributionMap",
+        "OpportunityProgress",
+        "CurrencyView",
+        "ProjectionReceipt"
+      ],
+      "consumer_requirement": "Use downstream accepted OPP-COMMERCIAL/1 exact consumer, no second Won or contribution writer in Sales/HO.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ORD-CON011",
+      "owner": "PLM",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "line": 631,
+      "end_line": 644,
+      "exact_types_or_contracts": [
+        "ActivityAssessmentRequest",
+        "ConditionSet",
+        "EngineeringChangeNotice",
+        "BusinessImpactResponse",
+        "AdoptionProof"
+      ],
+      "consumer_requirement": "Purpose and activity-specific original proof required; no free-form approval JSON or generic READY.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Resolve reference to complete immutable original under current access; verify full type and native digest, retain original bytes and verifier/trust. Reference alone is never a permit."
+    },
+    {
+      "binding_id": "ACC-MAPPING-AUTHORITY-PROOF",
+      "owner": "New supplement Main.BP / CRM.Account contract",
+      "source_path": "D:/CP6-worktrees/design-completion-1011/docs/design-handbook/remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+      "sha256": "62de10ff91f7e36c56693f034a5852d552a40a19e903e268cfaf11a7a4526411",
+      "json_pointer": "/components/schemas/MappingAuthorityProof",
+      "exact_types_or_contracts": [
+        "MappingAuthorityProof"
+      ],
+      "consumer_requirement": "Exact newly authored schema; actual registered producer/key and host adoption remain UNPROVEN. Historical protocols are unchanged.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Full exact original, current authorized verifier and tenant/scope binding mandatory; no client self-issued proof."
+    },
+    {
+      "binding_id": "ACC-IDENTITY-IMPACT",
+      "owner": "New supplement Main.BP / CRM.Account contract",
+      "source_path": "D:/CP6-worktrees/design-completion-1011/docs/design-handbook/remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+      "sha256": "62de10ff91f7e36c56693f034a5852d552a40a19e903e268cfaf11a7a4526411",
+      "json_pointer": "/components/schemas/IdentityImpactPolicy",
+      "exact_types_or_contracts": [
+        "IdentityImpactPolicy"
+      ],
+      "consumer_requirement": "Exact newly authored schema; actual registered producer/key and host adoption remain UNPROVEN. Historical protocols are unchanged.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Full exact original, current authorized verifier and tenant/scope binding mandatory; no client self-issued proof."
+    },
+    {
+      "binding_id": "DEM-ACTIVATION-FENCE",
+      "owner": "Main.Planning",
+      "source_path": "D:/CP6-worktrees/design-completion-1011/docs/design-handbook/remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+      "sha256": "62de10ff91f7e36c56693f034a5852d552a40a19e903e268cfaf11a7a4526411",
+      "line": 1,
+      "end_line": 1,
+      "exact_types_or_contracts": [
+        "#/components/schemas/ActivationFence"
+      ],
+      "consumer_requirement": "New R1 binding only: contractId DEM-ACTIVATION-FENCE, contractVersion 1, evidenceId decisionId, evidenceVersion groupVersion; contentDigest SHA256(DEM-ACTIVATION-FENCE-1 + LF + sorted compact UTF8 complete body). Verify trusted tenantId and exact group/version/manifest; immutable resolver keeps full body and denies cross-tenant queries. Never add permission to activate.",
+      "adoption_status": "UNPROVEN",
+      "payload_policy": "Read full immutable fence from exact registered Main.Planning resolver under current scope/read permission; no same-named foreign Ref"
+    }
+  ],
+  "external_owner_policy": "OwnerRef.contractId MUST match the field/action allowlist in the supplement. No arbitrary owner JSON or client signed approval. Exact external schemas are imported by named original type, not silently redefined."
+}

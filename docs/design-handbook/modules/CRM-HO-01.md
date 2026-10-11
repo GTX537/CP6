@@ -1,5 +1,20 @@
 # CRM-HO-01 商业交接、投递恢复与工程受理
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-HO-OLD-FACTORY | SUPERSEDED：Replace Opportunity-wide uniqueness only in new single-writer adapter with exact source intent/responsibility identities; legacy remains observation and explicit migration gate. | [设计](../remediation/02-commercial-physical-contracts.md) |
+| COM-IC-PROTECTION-ADOPTION | ADOPTION_PENDING：仅 MAIN_INTAKE_NEW_EFFECT 与 CRM_RESULT_PROJECTION 两purpose采用；durable grant不因超时自行释放；本地COMMITTED/ABORTED原终态结算，权限即时撤销独立。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| COM-IC-ORIGINAL-TRANSPORT | INTENTIONAL_DIFFERENCE：新HO/OPP运输原封闭bytes和opaque版本；旧C03删敏感字段/int版本不可无损替代。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-IC-BOUNDED-REBUILD | ADOPTION_PENDING：固定原H/V目录、完整CRM handoff/attribution/group/conflict与Main Intake/Quote/Commercial/Resolution集合，分页代际与CAS重核；UNCHANGED只刷新checkedAt。 | [设计](../remediation/03-transactions-and-recovery.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。当前已接受 v1.0 原件411969字节、7204行，SHA-256 `affc1caf67bbf423989dbdf184ca7308a56fb313c9ffec95959b7379940becca`。后继 UA 接受同一原字节及全部12项D-HO设计选择；主文保留的DRAFT/FROZEN/PROPOSED标签属于接受前状态。真实Owner采用、数据库并发和运行未证，64项业务AC全部NOT_RUN。[精确接受][U11]
 
 ## 1. 目的、操作者与唯一事实 Owner

@@ -1,5 +1,17 @@
 # ERP-FSC-01 FSC 清单与行业证明
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-FSC-FACT-GUARD-EXTENSION | ADOPTION_PENDING：采用FSC R2 EST事实读与QTN关系双守卫；EST I03原Usage不扩域。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 目的、操作者与职责
 
 Main ERP 根据准确报价／估算关系和已核模板，签发有来源的行业检查清单并保留原成品下载。查询员读范围内来源，签发员以 issue＋完整明细／金额读权发起，格式维护与业务签发分责，下载员每次核当前文档／来源／文件披露。系统不替外部机构作 FSC 认证、工程 PASS、客户接受或法律合规结论。 [原文 L3](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md:3>)、[原文 L20](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md:20>)、[原文 L22](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md:22>)

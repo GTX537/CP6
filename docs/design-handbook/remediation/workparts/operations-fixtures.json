@@ -1,0 +1,1646 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "findings": [
+    {
+      "issue_id": "DR-OPS-IF-038",
+      "source_finding_ids": [
+        "OPS-IF-038"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "New FIN-INV schema identity: page state fields are native state string|null, never Money or a Work object. Consumer pins revised schema and keeps missing-state reason.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+          "line": 6622,
+          "end_line": 6622,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+          "line": 7328,
+          "end_line": 7328,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99e39a74d448a789__FRONTEND-CONTRACT_R10.json",
+          "sha256": "99e39a74d448a7891d96d317c92ff840de97f9d521a8eec5861a6164537a44d5",
+          "line": 502,
+          "end_line": 502,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/99e39a74d448a789__FRONTEND-CONTRACT_R10.json",
+          "sha256": "99e39a74d448a7891d96d317c92ff840de97f9d521a8eec5861a6164537a44d5",
+          "line": 821,
+          "end_line": 821,
+          "reading": "Original finding evidence"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-038-POS",
+          "polarity": "POS",
+          "scenario": "Decode native state page fields",
+          "input": "Revised OutboundValueRow.valueExitState=\"APPLIED\" from ValueEffect.State; ReverseExceptionRow.inventoryValueState is the exact native Work.state string, or null with the missing-source reason.",
+          "expected": "The revised schema accepts the native string|null and the page displays the independent state axis without converting it to Money or a Work object.",
+          "expected_write_set_and_effects": "Read projection only; no ValueEffect, posting, inventory or command write.",
+          "expected_receipt": "Return the existing page response; do not create a business receipt.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-038-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject Money in a state field",
+          "input": "Supply {\"amount\":\"0.00\",\"currency\":\"CNY\",\"scale\":2} as valueExitState or inventoryValueState, as admitted by the old erroneous Money|null definition.",
+          "expected": "Closed revised field validation rejects the object; neither zero money nor null may be used to manufacture an applied state.",
+          "expected_write_set_and_effects": "No business write or effect; invalid data cannot be persisted through the page adapter.",
+          "expected_receipt": "No success receipt or successful state projection.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-039",
+      "source_finding_ids": [
+        "OPS-IF-039"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "SC12 C01 persisted binding equals H(original binding); C09 repeats exact C03 receipt/binding/result and regenerates canonical response bytes/hash.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 493,
+          "end_line": 493,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 711,
+          "end_line": 711,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 731,
+          "end_line": 731,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 1947,
+          "end_line": 1947,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 2193,
+          "end_line": 2193,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 2345,
+          "end_line": 2345,
+          "reading": "Original finding evidence"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-039-POS",
+          "polarity": "POS",
+          "scenario": "SC12 original command receipt replay",
+          "input": "Replay SC12 C01 and C03, then issue C09 for the original C03 binding. C01 binding digest is 7b87f069191c40e447eb327b3924e830c6a7998bd4a8b0e29dee5a3a9b261be2; C03 binding digest is 395846b388973070162965e2656c7e746a95ac091e9e582ef81da0e715f7d570.",
+          "expected": "C01 persisted BindingDigest equals H(Request.binding). C09 returns exactly C03 receipt/result/binding, with regenerated canonical response bytes and hash.",
+          "expected_write_set_and_effects": "Only the original command effect may exist; C09/retry adds no ValueEffect, LayerConsumption or posting.",
+          "expected_receipt": "C09 receipt is structurally identical to C03 receipt, including its original resultDigest.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-039-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject the stale SC12 binding copies",
+          "input": "Use C01 persisted 43ab6ea8b88ba0e7554fc1abe1a9b532899a22f4b88a62fb178169bb7d3d06f7 or C09 receipt binding 66cbde781045fb3575af79f1f80ec57f53d396fe4cde700032abcce6ecd246ab against the original requests.",
+          "expected": "Binding/preimage validation rejects the mismatched persisted or returned evidence; C09 cannot claim an exact replay merely because the command names match.",
+          "expected_write_set_and_effects": "No replacement effect, second consumption or re-posting is allowed to repair the mismatch.",
+          "expected_receipt": "Do not accept the stale receipt as the original C03 terminal receipt.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-040",
+      "source_finding_ids": [
+        "OPS-IF-040"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "SC20 consumption carries exact correction effect id, null reverseOfConsumptionId because no original consumption exists; preserve original receipt/layer lineage and original result digest domain.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 14152,
+          "end_line": 14152,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 14188,
+          "end_line": 14188,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 13475,
+          "end_line": 13475,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 12336,
+          "end_line": 12336,
+          "reading": "Original finding evidence"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-040-POS",
+          "polarity": "POS",
+          "scenario": "SC20 exact correction consumption lineage",
+          "input": "Use SC20 effect cb852aba-05ba-563b-afc0-32d44630941e and the original receipt layer; InitialPersistedRows contains no original LayerConsumption.",
+          "expected": "Nested consumption and final ReverseLayerConsumption use that correction effectId and reverseOfConsumptionId=null. Result hash is 817fd246bf816181cd08f194fe58b14c08283ffe822a885cae119d82e3d34d03 under the original exclusion of resultDigest/adoptionMode.",
+          "expected_write_set_and_effects": "Persist only the correction consumption and its declared identity/outbox/audit rows; preserve original receipt, value-line and CorrectionLink lineage.",
+          "expected_receipt": "Original-command retries repeat the correction receipt and digest without another withdrawal.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-040-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject an invented reverse consumption",
+          "input": "Set nested/final effectId=2738c8a7-bfa6-5931-8dcf-69f06f749d87 or reverseOfConsumptionId=\"CONS-RCPT-20-ORIGINAL\" while no such original consumption exists.",
+          "expected": "Reject the lineage/digest inconsistency before applying the correction; an original receipt is not an original consumption that can be reversed.",
+          "expected_write_set_and_effects": "No compensating consumption, fabricated predecessor or duplicate inventory-value effect.",
+          "expected_receipt": "No correction success receipt for the mismatched identity; old digest cannot validate the changed result.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-041",
+      "source_finding_ids": [
+        "OPS-IF-041"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "SC20 OwnerFactSnapshot PK wrapper equals its actual Row ObjectId OWNERFACT-AP-SC20-RETURN; no business-row identity rewrite.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+          "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+          "line": 13137,
+          "end_line": 13137,
+          "reading": "Original finding evidence"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-041-POS",
+          "polarity": "POS",
+          "scenario": "SC20 row image and wrapper address the same fact",
+          "input": "Use /Scenarios/SC20/Steps/1/PersistedRows/2 with PrimaryKey.ObjectId and Row.ObjectId both OWNERFACT-AP-SC20-RETURN, retaining the original ScopeDigest/ObjectType.",
+          "expected": "The persistence adapter identifies exactly the return OwnerFactSnapshot row; wrapper and actual primary-key column values agree.",
+          "expected_write_set_and_effects": "Write only that declared return fact row in the original Uow; unrelated OwnerFact rows remain unchanged.",
+          "expected_receipt": "Preserve the original command/receipt identity; this repair does not allocate a new command.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-041-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject a wrapper targeting another OwnerFact",
+          "input": "Keep Row.ObjectId=OWNERFACT-AP-SC20-RETURN but restore PrimaryKey.ObjectId=OWNERFACT-AP-SC20.",
+          "expected": "Reject the fixture/persistence image as an inconsistent row address instead of silently overwriting or aliasing the earlier OwnerFact.",
+          "expected_write_set_and_effects": "Neither OwnerFact row is changed by the rejected write; no correction effect is applied from this invalid image.",
+          "expected_receipt": "No successful persistence/command receipt may cite the mismatched row image.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-042",
+      "source_finding_ids": [
+        "OPS-IF-042"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "FIN-CREDIT-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "MAT R4 section11 HTTP400 INVALID_FIELD is normative; update the single stale 422 vector description without claiming an executed HTTP result.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+          "sha256": "9442439f12ceb101fb49f469f596a529f061526d0a7b504289ef5fd3185e9349",
+          "line": 500,
+          "end_line": 500,
+          "reading": "HTTP400 INVALID_FIELD"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/dfc3c4002d5c9381__FIN-CREDIT-R4-SCHEMA-VECTORS.json",
+          "sha256": "dfc3c4002d5c93811a2d17b028315e0ae4ec968b0a6ddb16f0025d00292c4ab2",
+          "line": 154,
+          "end_line": 154,
+          "reading": "SV02 why writes422"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-042-POS",
+          "polarity": "POS",
+          "scenario": "Accept the closed MAT wire shape",
+          "input": "Decode the valid R4 vector using its declared fields and native numeric/string types, with no additional root member.",
+          "expected": "Closed input validation succeeds and dispatches only the original MAT operation; the error-code correction does not alter its quantity semantics.",
+          "expected_write_set_and_effects": "Decoding itself writes nothing; any subsequent operation uses only its original declared write set.",
+          "expected_receipt": "Preserve the original operation response; do not invent an HTTP/business success from a schema-only check.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-042-NEG",
+          "polarity": "NEG",
+          "scenario": "Unknown root field is HTTP400",
+          "input": "Replay vectors[1], adding the unknown root member identified by its original JSON Pointer.",
+          "expected": "The R4 endpoint returns HTTP400 INVALID_FIELD with that JSON Pointer, not the stale 422 description.",
+          "expected_write_set_and_effects": "Reject before business writes, resource claims or Stock calls.",
+          "expected_receipt": "Return the validation problem; no accepted command or effect receipt.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-043",
+      "source_finding_ids": [
+        "OPS-IF-043"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "WMS-OUT-01",
+        "WMS-STOCK-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "MAT MC-RCAP02 prose uses first-location40→36 and exact two b310 Package members; schema/quantity/Stock effects remain unchanged.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+          "line": 4993,
+          "end_line": 4993,
+          "reading": "标题与40→36字段"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+          "line": 20521,
+          "end_line": 20521,
+          "reading": "旧具体Package旁注"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+          "line": 18022,
+          "end_line": 18022,
+          "reading": "准确两Package身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+          "sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+          "line": 11601,
+          "end_line": 11601,
+          "reading": "START完整60资源"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-043-POS",
+          "polarity": "POS",
+          "scenario": "MC-RCAP02 exact first-location capacity and members",
+          "input": "After the same SHIP, first-location capacity changes 40→36; predicate reads enlist Package b3100000-0000-4000-8000-000000001300 and b3100000-0000-4000-8000-000000002300.",
+          "expected": "Capacity and predicate evidence use those exact facts. The capacity observation does not reduce outstanding unreceived quantity.",
+          "expected_write_set_and_effects": "Enlist both concrete Package rows; retain the original Stock quantities, movement and outstanding amount.",
+          "expected_receipt": "The existing SHIP receipt remains authoritative; no new receipt from a capacity-only observation.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-043-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject incomplete predicate coverage",
+          "input": "Use the old 100→90 narrative and claim predicate coverage from only Package b3000000-0000-4000-8000-000000001300.",
+          "expected": "Reject the claimed complete read/predicate set because neither the exact location values nor the two concrete members match the fixture.",
+          "expected_write_set_and_effects": "No outstanding-quantity reduction, additional SHIP or replacement Package write may be inferred.",
+          "expected_receipt": "Do not emit a new Stock receipt or mark the original SHIP undone.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-044",
+      "source_finding_ids": [
+        "OPS-IF-044"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "MES-MAT-01",
+        "WMS-STOCK-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "MES-MAT original-locator receipt query repeats the operationId in the committed Stock receipt and movement; never allocates another operation.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "line": 4139,
+          "end_line": 4139,
+          "reading": "查询例operationId"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "line": 4142,
+          "end_line": 4142,
+          "reading": "原Consumption键"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "line": 4150,
+          "end_line": 4150,
+          "reading": "同StockReceipt"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "line": 7160,
+          "end_line": 7160,
+          "reading": "调用响应operationId"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "line": 7164,
+          "end_line": 7164,
+          "reading": "同回执身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+          "line": 648,
+          "end_line": 648,
+          "reading": "假设fixture摘要"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-044-POS",
+          "polarity": "POS",
+          "scenario": "MES-MAT original locator returns its committed operation",
+          "input": "Query the original MES-MAT Stock locator whose committed receipt and movement carry operationId=72305281-7790-5c74-a80c-dc3da2e6f0d5.",
+          "expected": "The query returns that exact operationId and the original receipt/movement identities and semantic digest.",
+          "expected_write_set_and_effects": "Read-only lookup; no new Stock command, material movement or semantic-key allocation.",
+          "expected_receipt": "Return the original committed receipt; retry uses the same locator.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-044-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject a receipt projection with another operationId",
+          "input": "Return operationId=a1c16cf6-9a0d-576e-9653-f74581f5f917 for that same original locator and otherwise unchanged receipt/movement.",
+          "expected": "Reject the contradictory projection; retain unresolved/query-required status until the original receipt identity is read consistently.",
+          "expected_write_set_and_effects": "Do not create a second operation or movement to make the erroneous projection appear true.",
+          "expected_receipt": "The mismatched projection cannot be accepted as proof of the committed Stock result.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-045",
+      "source_finding_ids": [
+        "OPS-IF-045"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "QA-IQC-01",
+        "QA-POL-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Create explicitly NEW DEMO POLICY1@2, PLAN1@2, technical binding and separated-author approval/activation fixture for exact40..100 population. Preserve POLICY1@1 100-only and frozen original source. Four resolutions migrate with REASSESS_REQUIRED context and digest closure. No actual policy approval/adoption claimed.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 5800,
+          "end_line": 5800,
+          "reading": "POLICY1 scope.quantityBand为INSPECTION_POPULATION且minimum=maximum=100"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 140423,
+          "end_line": 140423,
+          "reading": "C解析quantity40"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 140428,
+          "end_line": 140428,
+          "reading": "C仍引用POLICY1"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 160638,
+          "end_line": 160638,
+          "reading": "D解析quantity60"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 160643,
+          "end_line": 160643,
+          "reading": "D仍引用POLICY1"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+          "line": 669,
+          "end_line": 669,
+          "reading": "量带按完整检验总体P重算"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+          "line": 690,
+          "end_line": 690,
+          "reading": "采购合法40叶为P40"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "line": 114,
+          "end_line": 114,
+          "reading": "IQC按完整source/part叶人口消费Q28"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 97139,
+          "end_line": 97139,
+          "reading": "E05-RESOLUTION保持同POLICY1但quantity80"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 197402,
+          "end_line": 197402,
+          "reading": "R2-D-RESOLUTION保持同POLICY1但quantity50"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-045-POS",
+          "polarity": "POS",
+          "scenario": "Four exact populations use the new approved DEMO cut",
+          "input": "Resolve LEAF-C=40, LEAF-D=60, E05=80 and R2-D=50 using POLICY1@2, PLAN1@2, OPS-TECH-BIND2, the two exact-content DEMO approvals and the distinct author/approver activation at catalog/control2.",
+          "expected": "Every population is within40..100 and uses its exact source scope. New family contexts carry REASSESS_REQUIRED and preserve prior families; POLICY1@1 remains100-only and immutable.",
+          "expected_write_set_and_effects": "Within the isolated DEMO branch write only the version2 content/control/resolution evidence and its declared descendants; do not rewrite the original source or create a physical Stock/GR effect merely from policy approval.",
+          "expected_receipt": "Return the exact new resolution/approval evidence; no REAL policy adoption or quality acceptance receipt is inferred.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-045-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject a leaf authorized only by the old100-only policy",
+          "input": "Resolve the40-unit LEAF-C population against POLICY1@1 quantityBand100..100, or present the new DEMO approval as REAL authority.",
+          "expected": "Reject the population-scope/authority mismatch. The mother100 population cannot stand in for the leaf40, and DEMO authority cannot satisfy REAL approval.",
+          "expected_write_set_and_effects": "No policy activation, resolved quality decision, GR acceptance or Stock effect; retain the original policy/source records.",
+          "expected_receipt": "No successful resolution/final-guard/acceptance receipt for the rejected scope.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-046",
+      "source_finding_ids": [
+        "OPS-IF-046"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "QA-IQC-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Repair102 input/evaluation scan mismatches among213 measurement versions; recompute entire evidence-reference closure plus slot obligation digests and downstream content approvals.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 172001,
+          "end_line": 172001,
+          "reading": "LEAF-D-M91 input引用LEAF-D-SCAN-91"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 172031,
+          "end_line": 172031,
+          "reading": "其evaluationBasisRefs仍指SCAN-091"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 26226,
+          "end_line": 26226,
+          "reading": "原SCAN-091 observedFields.lot=WRONG"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 171958,
+          "end_line": 171958,
+          "reading": "新LEAF-D-SCAN-91 observedFields.lot=L1"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "line": 143,
+          "end_line": 143,
+          "reading": "观察枚举与规格接受集合分别判定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "line": 539,
+          "end_line": 539,
+          "reading": "MeasurementBody保evaluationBasisRefs"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-046-POS",
+          "polarity": "POS",
+          "scenario": "Repaired observation provenance reaches every dependent digest",
+          "input": "Load all213 measurement versions with the102 repaired R1-RETEST/LEAF-C/LEAF-D entries; each evaluationBasisRefs[2] is an exact member of its input.evidenceRefs.",
+          "expected": "Measurement bodies, complete ordered SlotEntry obligation hashes, submission/review/draft/approval/decision refs, GR frozen payloads and native Stock semantic hashes all recompute from the revised preimages.",
+          "expected_write_set_and_effects": "Persist the declared revised evidence once in the isolated fixture world; retain original archived observations and do not duplicate a measurement or physical effect.",
+          "expected_receipt": "Approval/decision receipts reference the complete revised digest chain, with exact-command replay returning the same result.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-046-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject LEAF-D-M91 scan substitution",
+          "input": "Restore LEAF-D-M91@1 evaluationBasisRefs[2] to old SCAN-091 while input.evidenceRefs retains the corrected L1 scan, or keep an old downstream obligation/approval/payload digest.",
+          "expected": "Reject provenance or digest closure before accepting the PASS observation/result review; a valid digest of a different scan does not establish the declared measurement basis.",
+          "expected_write_set_and_effects": "No new accepted submission/approval/quality decision or downstream application; existing evidence remains immutable.",
+          "expected_receipt": "No PASS/decision receipt may cite the mismatched scan or a mixed old/new digest chain.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-047",
+      "source_finding_ids": [
+        "OPS-IF-047"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "QA-IQC-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Use complete100-item MeasurementBatch slot/head fields; ResultSubmit takes observationSnapshotRef in input, not measurementRefs; return complete native ResultSubmission with slotEntries/obligationDigest.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 28122,
+          "end_line": 28122,
+          "reading": "批量首项完整对象未含两个槽前置字段，其余项同形"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 41520,
+          "end_line": 41520,
+          "reading": "RESULT-SUBMIT-REQUEST.input采用旧measurementRefs形状"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "line": 537,
+          "end_line": 537,
+          "reading": "MeasurementInput必填slotRef和expectedSlotHeadRevision"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "line": 541,
+          "end_line": 541,
+          "reading": "ResultSubmit必填observationSnapshotRef，没有measurementRefs"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+          "line": 542,
+          "end_line": 542,
+          "reading": "ResultSubmission必须包含slotEntries与obligationDigest"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 229142,
+          "end_line": 229142,
+          "reading": "末尾完整100批已按新MeasurementInput含槽字段"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba.json",
+          "sha256": "263c8313c8b6c6f39c20f8b4e42784f17d548044227ffef41143bbcfb930d7ba",
+          "line": 227371,
+          "end_line": 227371,
+          "reading": "同文件J05提供合法新槽输入"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-047-POS",
+          "polarity": "POS",
+          "scenario": "Native batch slots and snapshot-based submission",
+          "input": "Send complete_measurement_batch with100 items, each containing exact slotRef and expectedSlotHeadRevision; submit {expected,observationSnapshotRef,declaredRanges,reason} for the resulting frozen snapshot.",
+          "expected": "Validate every slot/head CAS; ResultSubmission returns observationSnapshotRef, obligationDigest and complete slotEntries as well as the native measurement/result fields.",
+          "expected_write_set_and_effects": "Write only the valid original batch observation/claim/head rows and the single snapshot-bound submission in their declared Uows; duplicate command replay writes no extra observation or submission.",
+          "expected_receipt": "Return the original native batch/submission receipts and exact frozen snapshot identity.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-047-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject missing slot fields and obsolete ResultSubmit input",
+          "input": "Omit slotRef or expectedSlotHeadRevision from an item, or send measurementRefs with observationSnapshotRef outside ResultSubmit.input as in the old request.",
+          "expected": "Reject closed-shape/CAS validation before business execution; measurementRefs cannot replace the required complete snapshot binding.",
+          "expected_write_set_and_effects": "No Observation, InitialClaim, SlotHead or ResultSubmission write from the invalid request; no partial accepted batch.",
+          "expected_receipt": "Return validation/CAS rejection, never a successful batch or submission receipt.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-048",
+      "source_finding_ids": [
+        "OPS-IF-048"
+      ],
+      "batch": "W5",
+      "classification": "DESIGN_GAP",
+      "classification_basis": "Original D05 assigns a value absent from aggregate/Work enums; the original contract lacks a legal cross-axis mapping, now explicitly selected without enum expansion.",
+      "targets": [
+        "WMS-RMA-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Select original closed enums: qualification/slices REQUIRED_FENCED; aggregate PENDING (PARTIAL for existing confirmed facts); Work/checkpoint BLOCKED. New named detail projection and native D05 typed result, no enum expansion/Stock call.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+          "line": 357,
+          "end_line": 357,
+          "reading": "DispositionState闭合集合不含REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+          "line": 414,
+          "end_line": 414,
+          "reading": "WorkState闭合集合不含REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+          "line": 1985,
+          "end_line": 1985,
+          "reading": "Slice state分支包含REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/561c763d68c1f87a__WMS-RMA-01_API-CATALOG.json",
+          "sha256": "561c763d68c1f87a6ae8118e1d1e782175d0821774c597fb3e28fe9125dfc98a",
+          "line": 1021,
+          "end_line": 1021,
+          "reading": "D05文字要求slice/head及Work保REQUIRED_FENCED"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+          "line": 458,
+          "end_line": 458,
+          "reading": "主文D05同要求"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-048-POS",
+          "polarity": "POS",
+          "scenario": "Missing Owner qualification maps to legal independent states",
+          "input": "Apply the five current disposition branches with effectOwner/ownerContractRef absent; use native D05 RmaDispositionApplyResult and the new detail projection.",
+          "expected": "Qualification and new slices remain REQUIRED_FENCED; aggregate is PENDING, Work/checkpoint BLOCKED. If separately confirmed historical slices exist, preserve their receipts and aggregate PARTIAL without promoting any fenced slice.",
+          "expected_write_set_and_effects": "Atomically record only local qualification observation, fenced slices/head projection, blocked Work/checkpoint and audit; preserve occupied claims. Owner/Stock call count is zero.",
+          "expected_receipt": "D05 returns the original local REQUIRED_FENCED observation and typed blocked Work, with all new Owner/Stock/application receipt refs null.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-048-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject illegal head/Work state or invented application",
+          "input": "Set DispositionState or Work.state to REQUIRED_FENCED, or mark a current fenced slice APPLIED while Owner/Stock/application receipt refs are null.",
+          "expected": "Reject the closed-enum or applied-evidence invariant; do not expand the old enums or infer an Owner result from qualification absence.",
+          "expected_write_set_and_effects": "No APPLIED transition, claim release, Owner/Stock call, locator allocation or quantity effect.",
+          "expected_receipt": "No Stock/application success receipt; retain the original blocked qualification observation.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-049",
+      "source_finding_ids": [
+        "OPS-IF-049"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "WMS-RMA-01",
+        "FIN-INV-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "New exclusive H30 binding/proof/receipt binds exact FIN-INV effect, physical receipt, environment, purpose and ranges; atomic permanent fence prevents new claims/late apply. Other consumer claims cannot be released.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+          "line": 2468,
+          "end_line": 2468,
+          "reading": "H30查询原FIN-INV效果键"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+          "line": 2489,
+          "end_line": 2489,
+          "reading": "复用处置效果键的terminalReceipt"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+          "line": 4251,
+          "end_line": 4251,
+          "reading": "schemaPositive又收录同一例"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-049-POS",
+          "polarity": "POS",
+          "scenario": "Exclusive H30 seal binds one consumer effect and original command",
+          "input": "Query FIN-INV-01 / FININV|RMA-1|0-5 / PHYS-1 with the new native OPS-H30-BIND-49, exact H30C1 bodyDigest, scope0..5 and OPS-H30-PERMANENT-SEAL-49; complete locked state shows no claim, ack or consumer effect.",
+          "expected": "Binding/proof/receipt agree on environment, consumer, effect, physical receipt, purpose and ranges. Same-Uow permanent fence wins against a later new claim or late apply; exact replay returns the same sealed result.",
+          "expected_write_set_and_effects": "Atomically write only this key’s durable unique fence, exclusive proof and terminal receipt. Do not release an existing active claim or any other consumer/effect/receipt range.",
+          "expected_receipt": "Return SEALED_NO_EFFECT with claim=null, ack=null, effectKeys=[FININV|RMA-1|0-5] and the exact binding/proof refs.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-049-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject another effect’s seal proof and an already-active claim",
+          "input": "For that H30 query supply the old terminalReceipt.effectKeys=[RMA-1|DSP-1|EFFECT], or change physical receipt to PHYS-OTHER; also reject absence sealing if the locked state contains an active claim/ack/effect.",
+          "expected": "Fail exact query/binding/proof or absence validation. NOT_OBSERVED, missing contract and a disposition seal cannot prove this FIN-INV effect absent.",
+          "expected_write_set_and_effects": "No no-effect fence/receipt committed from the invalid proof, no claim release, no consumer apply and no other key affected; an existing claim requires its own Owner resolution.",
+          "expected_receipt": "Do not return canInferNoEffect=true or accept the old disposition receipt as an H30 no-effect receipt.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-050",
+      "source_finding_ids": [
+        "OPS-IF-050"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "WMS-RMA-01",
+        "WMS-OUT-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Independent hashed DEMO shipment-line evidence, version and source cut establish SHIP-100-L1, separate from SHIP-100 header; four claims regenerated and same-SKU different-line/invoice keys stay distinct.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+          "line": 80,
+          "end_line": 80,
+          "reading": "shipmentRef头身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+          "line": 84,
+          "end_line": 84,
+          "reading": "shipmentLineId独立行身份"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+          "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+          "line": 999,
+          "end_line": 999,
+          "reading": "claim.shipmentLineRef采用头样值"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+          "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+          "line": 814,
+          "end_line": 814,
+          "reading": "规范coordinate key必须ShipmentLine owner/id"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-050-POS",
+          "polarity": "POS",
+          "scenario": "Four return claims use independently evidenced shipment-line identity",
+          "input": "Use the independent SHIP-100-L1/version1 body, OPS-SHIP-100-L1-V1 and OPS-SHIP-100-L1-CUT-1 in all four revised claim locations; compare a same-product SHIP-100-L2 or INV-100-L2 coordinate.",
+          "expected": "Line body hash differs from the SHIP-100 header digest. Each claimDigest recomputes from the complete claim excluding only claimDigest; different line/invoice identities remain distinct coordinate keys.",
+          "expected_write_set_and_effects": "Reserve only each exact line/invoice/schedule/UOM range with its original quantity. Do not merge the two lines’ claims or create a physical Stock movement.",
+          "expected_receipt": "Return the corresponding exact claim evidence; no header-only reference is accepted as line authority.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-050-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject header-as-line and header digest reused for a line",
+          "input": "Use shipmentLineRef.id=SHIP-100 with the header digest, or change only id to SHIP-100-L1 while retaining the header’s a*64 digest instead of the independent line-body digest.",
+          "expected": "Reject missing exact line evidence/hash binding before allocating a ReturnRangeClaim; matching SKU or shipment header does not establish line identity.",
+          "expected_write_set_and_effects": "No claim insertion, occupied-range merge, authorization change or Stock effect; existing claims on both lines remain unchanged.",
+          "expected_receipt": "No successful claim/return-authorization receipt for the invalid coordinate.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-IPQC-CONT-01",
+      "source_finding_ids": [
+        "IPQC-CONT-01"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Add100 native InitialClaim rows for I09 INITIAL observations using exact tenant/environment/mode/task/slot PK and original recordedAt; replay F02 full DB snapshots/Audit/terminal ledgers through1067 final rows.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 17601,
+          "end_line": 17601,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 20140,
+          "end_line": 20140,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 20170,
+          "end_line": 20170,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 73702,
+          "end_line": 73702,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 96205,
+          "end_line": 96205,
+          "reading": "Original finding evidence"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "IPQC-CONT-01-POS",
+          "polarity": "POS",
+          "scenario": "I09 persists one permanent INITIAL claim per slot",
+          "input": "Run F02 step2 I09 with100 INITIAL observations. For each, use TenantId|EnvironmentId|Mode|TaskId|SlotId as InitialClaim key and the original terminal recordedAt as ClaimedAt.",
+          "expected": "Exactly100 claims match their ObservationId and slot. The step has311 writes (309 business plus Command/Audit2), and F02 final state has1067 rows with complete replayable state/Audit digests.",
+          "expected_write_set_and_effects": "Commit the100 InitialClaim rows with the matching observations/heads and terminal ledgers in the original Uow; same-command replay creates no extra claims or observations.",
+          "expected_receipt": "Return the original I09 terminal result; permanent claims survive response loss and replay.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "IPQC-CONT-01-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject missing permanent claims and a competing INITIAL observation",
+          "input": "Use the old F02 write set with100 INITIAL observations but zero InitialClaim rows, or race a different command/ObservationId for the same E+TaskId+SlotId after the first INITIAL commit.",
+          "expected": "The old write set fails the native persistence invariant; the competing INITIAL must lose the permanent unique claim and cannot be treated as a second first observation.",
+          "expected_write_set_and_effects": "One winning claim/observation per slot only; loser writes no observation/head/claim effect, and no terminal success can be committed without the required claim row.",
+          "expected_receipt": "Replay returns the original winner receipt; the competing command returns a rejection rather than another INITIAL success.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-IPQC-CONT-02",
+      "source_finding_ids": [
+        "IPQC-CONT-02"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "Use exact fixed Owner source OUT-QA-F03 for I05 and both I29 calls; retain TRIAL stage/purpose and negative case; regenerate payload/request/response/Command/Audit/full-state digests and every current mirror.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 94099,
+          "end_line": 94099,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 91313,
+          "end_line": 91313,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 107060,
+          "end_line": 107060,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 104069,
+          "end_line": 104069,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 113408,
+          "end_line": 113408,
+          "reading": "Original finding evidence"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "IPQC-CONT-02-POS",
+          "polarity": "POS",
+          "scenario": "I05/I29 use the exact fixed Owner source",
+          "input": "Use sourceRef MES-OUTPUT/OUT-QA-F03/version1/digest8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4 in I05 and both I29 requests, while retaining TRIAL stage/purpose and the original I29 negative branch.",
+          "expected": "Source identity matches fixedOwnerReads with no alias inference. Payload, request, response, Command, Audit and full-state digests reproduce; publication/frontend/request/response/writes mirrors agree.",
+          "expected_write_set_and_effects": "Successful original I29 writes its one PlmEvidenceHandoff, DeliveryPayload/Delivery and terminal ledgers; the original negative I29 branch performs no handoff/application effect.",
+          "expected_receipt": "Successful replay returns the original handoff/delivery result with the corrected payload digest; the negative branch remains a rejection.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "IPQC-CONT-02-NEG",
+          "polarity": "NEG",
+          "scenario": "Equal digest does not authorize OUT-TRIAL-F03 alias",
+          "input": "Send OUT-TRIAL-F03 with the same8aacdd... digest while fixedOwnerReads resolves OUT-QA-F03 and originalSourceAliases is empty.",
+          "expected": "Reject the Owner/id/version identity mismatch; TRIAL purpose and equal body bytes cannot create an authoritative source alias.",
+          "expected_write_set_and_effects": "No PlmEvidenceHandoff, DeliveryPayload, Delivery or consumer application for the rejected source; preserve any already committed original handoff.",
+          "expected_receipt": "Return identity/dependency rejection, not a successful I05/I29 receipt for an invented alias.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-IPQC-CONT-03",
+      "source_finding_ids": [
+        "IPQC-CONT-03"
+      ],
+      "batch": "W5",
+      "classification": "ARTIFACT_CONFLICT",
+      "classification_basis": "Existing normative state, identity, exact-source, quantity-scope or persistence contract contradicts the current fixture/schema/text asset; new revision repairs the artifact rather than claiming a runtime bug.",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "source_version": "Exact original SHA plus CP6-DESIGN-REVISION-20261011/R1",
+      "decision": "F07 resend response uses immutable existing Delivery canonicalKey F07:OWNER-SEQUENCE and sequence3; payload/message/delivery/lease9 unchanged; regenerate terminal/Command/Audit/full-state digests and full-step mirror.",
+      "preserved_constraints": [
+        "Original source bytes remain immutable",
+        "Independent revised DEMO fixtures do not prove actual Owner authority or runtime adoption",
+        "Native fields/enums, complete effect identity and original digest domains retained; new domains have explicit names",
+        "No business implementation, build, Actions, deployment or external send"
+      ],
+      "consumer_adoption": {
+        "required": [
+          "Pin this manifest/source SHA/derived SHA; consume revised asset or recipe output as a unit",
+          "Reject old/new mixed hashes, stale ref versions, wrong JSON preimages and unreproducible recipe output",
+          "Run required Owner/business acceptance before promoting runtime status"
+        ],
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 167002,
+          "end_line": 167002,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 167076,
+          "end_line": 167076,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 168351,
+          "end_line": 168351,
+          "reading": "Original finding evidence"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "line": 168038,
+          "end_line": 168038,
+          "reading": "Original finding evidence"
+        }
+      ],
+      "outputs": [
+        "remediation/assets/operations-fixtures/manifest.json",
+        "remediation/assets/operations-fixtures/bounded-patches.json",
+        "remediation/assets/operations-fixtures/recipes.json",
+        "remediation/assets/operations-fixtures/static-validation.json",
+        "remediation/assets/operations-fixtures/independent-validation.json",
+        "remediation/assets/operations-fixtures/consumer-index.json",
+        "remediation/assets/operations-fixtures/DECISIONS.md",
+        "tools/build_operations_fixture_patches.py"
+      ],
+      "acceptance": [
+        {
+          "id": "IPQC-CONT-03-POS",
+          "polarity": "POS",
+          "scenario": "I26 resend preserves the immutable Delivery identity",
+          "input": "Replay F07 step3 I26 for delivery22a15a95-a62a-557b-9970-8adaeb4e9e02, messageb692c0d4-a8f5-57e2-a612-8ea1b2087562 and the existing payload/lease9.",
+          "expected": "FrozenDelivery returns canonicalKey=F07:OWNER-SEQUENCE and wire sequence=\"3\" corresponding to SQL Sequence3. Terminal digest is416b392ac2fa74673049a4a0c261215b385b352ddde7e66a087911ed644a48eb and complete response digest is582be7783096fa70a3bb97ddc220c487e7e50cef2632fecaab55de6ce8a4309e.",
+          "expected_write_set_and_effects": "Only the declared recovery/Command/Audit writes occur; no Delivery identity, message, payload or sequence rewrite and no duplicate consumer effect.",
+          "expected_receipt": "Return the original immutable delivery identity; acknowledgement/application observations remain separate from resend acceptance.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "IPQC-CONT-03-NEG",
+          "polarity": "NEG",
+          "scenario": "Reject a response inventing another canonical delivery sequence",
+          "input": "For the same persisted delivery/message/payload and no Delivery write, return canonicalKey=F07:I26 and sequence=\"4\" as in the old response.",
+          "expected": "Reject the FrozenDelivery projection as inconsistent with immutable persisted identity; an attempt is not a newly allocated business delivery sequence.",
+          "expected_write_set_and_effects": "Do not insert/update Delivery, allocate sequence4, regenerate payload or repeat the business application to justify the response.",
+          "expected_receipt": "The contradictory resend response cannot serve as an application success or as evidence of a new delivery.",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED_BY_THIS_DESIGN_TASK",
+      "verification_status": "STATIC_DESIGN_CHECKS_ONLY_RUNTIME_NOT_RUN"
+    }
+  ]
+}

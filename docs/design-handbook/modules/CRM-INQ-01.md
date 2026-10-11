@@ -1,5 +1,17 @@
 # CRM-INQ-01 公开询盘与受理
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-INQ-GENERATED-CONTRACT-ADOPTION | ARTIFACT_CONFLICT：按六组子问题修OpenAPI引用、TS事件与decoder声明、C#结构相等及空数组、隐私终态expiresAt、下载proof/ETag及长度负例前置；完整派生C#/TS独立编译，严格wire未放宽。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。这是接受设计的开发说明，未实施、未运行验收。当前正文、物理 SQL、接受记录已补读；大型 fixture 与生成语言实现仍保留精确入口和未读范围，不能据此标记必需材料全部整理完。
 
 ## 1. 业务目的、使用者与边界

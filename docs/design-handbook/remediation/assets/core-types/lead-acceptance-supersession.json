@@ -1,0 +1,591 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "CURRENT_READING_MAP_NOT_HISTORICAL_REVIEW_OVERRIDE",
+  "sources": [
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ae/aeda22b512c5c620__CP20-60-AC-MAPPING.json",
+      "sha256": "aeda22b512c5c6202749c23f4e11b06ae4917ac558b432ff9c05c0dd0067909e"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f8fd4357559f8d2__AC-CATALOGUE.json",
+      "sha256": "9f8fd4357559f8d246614fe8c9b89f1948cc6afcc6f42327c96f60d2d9f5cc94"
+    }
+  ],
+  "preserved": "All original 60 AC identities and historical review outcomes; this map is not an independent whole-five-spec acceptance",
+  "records": [
+    {
+      "acceptance_id": "AC-LEAD-035",
+      "historical_record": {
+        "acId": "AC-LEAD-035",
+        "status": "NOT_RUN",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-04"
+        ],
+        "anchors": [
+          "CUR-CRM-007"
+        ],
+        "rule": "Every duplicate candidate is independently authorized for the current subject.",
+        "schemaRefs": [
+          "DuplicateCandidatePage",
+          "authorization-matrix"
+        ],
+        "fixtureRefs": [
+          "FX17-S03"
+        ],
+        "expected": "Hidden candidate id/PII omitted; hiddenCount only; zero writes"
+      },
+      "current_mapping_record": {
+        "acId": "AC-LEAD-035",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-04"
+        ],
+        "anchors": [
+          "CUR-CRM-007"
+        ],
+        "originalReturnedR3Rule": "Every duplicate candidate is independently authorized for the current subject.",
+        "currentRule": "Every duplicate candidate is independently authorized for the current subject.",
+        "applicability": "APPLICABLE",
+        "currentRefs": [
+          "CP20-04-DUPLICATE-INTEGRATION.md",
+          "BASELINES/B-CRM-LEAD-R4-CP19-REVISION-FROZEN.zip",
+          "NORMAL_DATA/S04_DUPLICATE_REVIEWED.json",
+          "OPERATIONS/CP22-CONTEXT-DEPENDENCIES.md",
+          "CONTRACTS/CP20-physical-model.json",
+          "NORMAL_DATA/CP21-CONTEXT-REFRESH-RELATIONS.json",
+          "NORMAL_DATA/CP20-FULL-QUERY-NORMAL-PAGES.json",
+          "OPERATIONS/CP22-END-TO-END-RECOVERY.md",
+          "CP21-CODEC-V2-RESPONSE.json",
+          "NORMAL_DATA/CP20-BYTE-ENCODING-REGISTRY.json",
+          "OPERATIONS/CP22-GRAPH-SCOPE-AND-RECOVERY.md",
+          "CP22-RETURN-RESPONSE.json",
+          "CONTRACTS/CP22-SOURCE-SCHEMA-CATALOG.json",
+          "NORMAL_DATA/CP22-NONEMPTY-SOURCE-SCOPE-RELATIONS.json",
+          "PREIMAGES/CP22-CONTEXT-BYTE-RELATIONS.json"
+        ],
+        "missingRefs": [],
+        "execution": "NOT_RUN",
+        "designReview": "PENDING_INDEPENDENT_WHOLE_FIVE_SPEC_RECHECK",
+        "expected": "Precisely stated current rule and normal/error/recovery outputs in referenced contracts; this catalogue is traceability, not execution/pass evidence.",
+        "cp20ReturnGroups": [
+          "R05"
+        ],
+        "cp20IndependentStatus": "DESIGN_REVISION_REQUIRED",
+        "authorStatus": "CP22_COMPLETE_STATIC_REVISION_PENDING_INDEPENDENT_RECHECK",
+        "withdrawnReviewBasis": [],
+        "activeReviewGroups": [
+          "R05"
+        ],
+        "sourceCodecC01Applicability": "NO_NEW_DIRECT_COMMAND_CODEC_BASIS_ASSERTED",
+        "cp21IndependentStatus": "STATIC_INTEGRATION_RETURN",
+        "cp21ReturnGroups": [
+          "CP21-R02"
+        ],
+        "cp22AuthorRevision": "STATIC_SUCCESSOR_PROVIDED_FOR_INDEPENDENT_RECHECK_NOT_PASS"
+      },
+      "current_expectation": "Every duplicate candidate is independently authorized for the current subject.",
+      "required_positive": "Current exact subject authorization; atomic H02/Manifest and one original terminal receipt where applicable",
+      "required_negative": "No hidden candidate fields/count outside current closed schema; no Saga/202/partial conversion under atomic H02",
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "acceptance_id": "AC-LEAD-042",
+      "historical_record": {
+        "acId": "AC-LEAD-042",
+        "status": "NOT_RUN",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "P01"
+        ],
+        "rule": "A successful ConversionMap prevents contradictory later qualification.",
+        "schemaRefs": [
+          "LeadConversionMap",
+          "LeadQualificationHead"
+        ],
+        "fixtureRefs": [
+          "FX29-S02"
+        ],
+        "expected": "409; zero writes."
+      },
+      "current_mapping_record": {
+        "acId": "AC-LEAD-042",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "P01"
+        ],
+        "originalReturnedR3Rule": "A successful ConversionMap prevents contradictory later qualification.",
+        "currentRule": "A successful ConversionManifest prevents contradictory later qualification.",
+        "applicability": "APPLICABLE",
+        "currentRefs": [
+          "CP20-05-QUALIFICATION-H02.md",
+          "OPERATIONS/CP20-ENLISTED-CALLER-CONTRACT.md",
+          "OPERATIONS/CP20-enlisted-writes.sql",
+          "CONTRACTS/CP20-qualification-h02.schema.json",
+          "NORMAL_DATA/S03_QUALIFIED.json",
+          "NORMAL_DATA/CP20-REJECTED-COMPLETE-BRANCH.json",
+          "NORMAL_DATA/CP20-ALL-NEW-OWNER-MAPPING.json",
+          "OPERATIONS/CP22-END-TO-END-RECOVERY.md",
+          "CP21-CODEC-V2-RESPONSE.json",
+          "NORMAL_DATA/CP20-BYTE-ENCODING-REGISTRY.json"
+        ],
+        "missingRefs": [],
+        "execution": "NOT_RUN",
+        "designReview": "PENDING_INDEPENDENT_WHOLE_FIVE_SPEC_RECHECK",
+        "expected": "Precisely stated current rule and normal/error/recovery outputs in referenced contracts; this catalogue is traceability, not execution/pass evidence.",
+        "cp20ReturnGroups": [],
+        "cp20IndependentStatus": "NO_NEW_STATIC_BLOCKER_IDENTIFIED_NOT_RUNTIME_PASS",
+        "authorStatus": "CP22_COMPLETE_STATIC_REVISION_PENDING_INDEPENDENT_RECHECK",
+        "withdrawnReviewBasis": [],
+        "activeReviewGroups": [],
+        "sourceCodecC01Applicability": "NO_NEW_DIRECT_COMMAND_CODEC_BASIS_ASSERTED",
+        "cp21IndependentStatus": "STATIC_RULE_AND_CONTRACT_SUPPORTED",
+        "cp21ReturnGroups": [],
+        "cp22AuthorRevision": "STATIC_SUCCESSOR_PROVIDED_FOR_INDEPENDENT_RECHECK_NOT_PASS"
+      },
+      "current_expectation": "A successful ConversionManifest prevents contradictory later qualification.",
+      "required_positive": "Current exact subject authorization; atomic H02/Manifest and one original terminal receipt where applicable",
+      "required_negative": "No hidden candidate fields/count outside current closed schema; no Saga/202/partial conversion under atomic H02",
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "acceptance_id": "AC-LEAD-048",
+      "historical_record": {
+        "acId": "AC-LEAD-048",
+        "status": "NOT_RUN",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "rule": "ConversionBatch persists immutable intent and stable participant request identities.",
+        "schemaRefs": [
+          "LeadConversionBatch",
+          "LeadConversionParticipant"
+        ],
+        "fixtureRefs": [
+          "FX26-S00",
+          "FX26-S01",
+          "FX26-S03"
+        ],
+        "expected": "Timeout preserves OwnerRequestId and intent bytes."
+      },
+      "current_mapping_record": {
+        "acId": "AC-LEAD-048",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "originalReturnedR3Rule": "ConversionBatch persists immutable intent and stable participant request identities.",
+        "currentRule": "Prepared immutable intent and stable reserved conversion/participant/Owner operation identities are persisted; commit uses one shared DbTransaction, not a durable Saga batch.",
+        "applicability": "SUPERSEDED_RETURNED_SAGA_RULE_BY_ACCEPTED_ATOMIC_H02",
+        "currentRefs": [
+          "CP20-H02-SOURCE-DECISION.md",
+          "OPERATIONS/CP20-ENLISTED-CALLER-CONTRACT.md",
+          "NORMAL_DATA/S05_PREVIEW_READY.json",
+          "NORMAL_DATA/S06_ATOMIC_COMMITTED.json",
+          "NORMAL_DATA/CP20-ATOMIC-RECOVERY-RELATIONS.json",
+          "PREIMAGES/CP20-h02-selection.json",
+          "CONTRACTS/CP20-qualification-h02.schema.json",
+          "CONTRACTS/CP20-qualification-h02.types.ts",
+          "CONTRACTS/CP20-qualification-h02.openapi.json",
+          "CONTRACTS/CrmLeadCp20Contracts.cs",
+          "OPERATIONS/CP22-AUDIT-AND-KEY-PROTOCOL.md",
+          "PREIMAGES/CP22-KEY-AND-AUDIT-RELATIONS.json",
+          "PREIMAGES/CP20-COMMAND-BYTE-RELATIONS.json",
+          "NORMAL_DATA/CP20-ALL-NEW-COMPLETE-WORLD.json",
+          "OPERATIONS/CP22-audit-enlisted.sql",
+          "CONTRACTS/CP22-AUDIT-PROJECTION.json",
+          "CONTRACTS/CP20-additive-schema.sql",
+          "OPERATIONS/CP22-END-TO-END-RECOVERY.md",
+          "CP21-CODEC-V2-RESPONSE.json",
+          "NORMAL_DATA/CP20-BYTE-ENCODING-REGISTRY.json",
+          "OPERATIONS/CP22-GRAPH-SCOPE-AND-RECOVERY.md",
+          "CP22-RETURN-RESPONSE.json",
+          "PREIMAGES/CP22-PROTECTED-FINAL-SOURCE-RELATIONS.json"
+        ],
+        "missingRefs": [],
+        "execution": "NOT_RUN",
+        "designReview": "PENDING_INDEPENDENT_WHOLE_FIVE_SPEC_RECHECK",
+        "expected": "Precisely stated current rule and normal/error/recovery outputs in referenced contracts; this catalogue is traceability, not execution/pass evidence.",
+        "cp20ReturnGroups": [
+          "R01",
+          "R02",
+          "R03"
+        ],
+        "cp20IndependentStatus": "DESIGN_REVISION_REQUIRED",
+        "authorStatus": "CP22_COMPLETE_STATIC_REVISION_PENDING_INDEPENDENT_RECHECK",
+        "withdrawnReviewBasis": [
+          "R02"
+        ],
+        "activeReviewGroups": [
+          "R01",
+          "R03"
+        ],
+        "sourceCodecC01Applicability": "NEW_COMMAND_ETAG_RECEIPT_RESULT_OUTBOX_RELATION",
+        "cp21IndependentStatus": "STATIC_INTEGRATION_RETURN",
+        "cp21ReturnGroups": [
+          "CP21-R01"
+        ],
+        "cp22AuthorRevision": "STATIC_SUCCESSOR_PROVIDED_FOR_INDEPENDENT_RECHECK_NOT_PASS"
+      },
+      "current_expectation": "Prepared immutable intent and stable reserved conversion/participant/Owner operation identities are persisted; commit uses one shared DbTransaction, not a durable Saga batch.",
+      "required_positive": "Current exact subject authorization; atomic H02/Manifest and one original terminal receipt where applicable",
+      "required_negative": "No hidden candidate fields/count outside current closed schema; no Saga/202/partial conversion under atomic H02",
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "acceptance_id": "AC-LEAD-049",
+      "historical_record": {
+        "acId": "AC-LEAD-049",
+        "status": "NOT_RUN",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "rule": "Owner timeout is RESULT_UNKNOWN and only original request query/resend is allowed.",
+        "schemaRefs": [
+          "LeadConversionParticipant"
+        ],
+        "fixtureRefs": [
+          "FX26-S00",
+          "FX26-S01",
+          "FX26-S03"
+        ],
+        "expected": "No new key or intent; overall non-success."
+      },
+      "current_mapping_record": {
+        "acId": "AC-LEAD-049",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "originalReturnedR3Rule": "Owner timeout is RESULT_UNKNOWN and only original request query/resend is allowed.",
+        "currentRule": "Commit-unknown queries/retries only original command and original conversion business slot. NOT_OBSERVED is not proof of no late arrival.",
+        "applicability": "SUPERSEDED_RETURNED_SAGA_RULE_BY_ACCEPTED_ATOMIC_H02",
+        "currentRefs": [
+          "CP20-H02-SOURCE-DECISION.md",
+          "OPERATIONS/CP20-ENLISTED-CALLER-CONTRACT.md",
+          "NORMAL_DATA/S05_PREVIEW_READY.json",
+          "NORMAL_DATA/S06_ATOMIC_COMMITTED.json",
+          "NORMAL_DATA/CP20-ATOMIC-RECOVERY-RELATIONS.json",
+          "PREIMAGES/CP20-h02-selection.json",
+          "CONTRACTS/CP20-qualification-h02.schema.json",
+          "CONTRACTS/CP20-qualification-h02.types.ts",
+          "CONTRACTS/CP20-qualification-h02.openapi.json",
+          "CONTRACTS/CrmLeadCp20Contracts.cs",
+          "OPERATIONS/CP22-AUDIT-AND-KEY-PROTOCOL.md",
+          "PREIMAGES/CP22-KEY-AND-AUDIT-RELATIONS.json",
+          "PREIMAGES/CP20-COMMAND-BYTE-RELATIONS.json",
+          "NORMAL_DATA/CP20-ALL-NEW-COMPLETE-WORLD.json",
+          "OPERATIONS/CP22-END-TO-END-RECOVERY.md",
+          "CP21-CODEC-V2-RESPONSE.json",
+          "NORMAL_DATA/CP20-BYTE-ENCODING-REGISTRY.json",
+          "OPERATIONS/CP22-GRAPH-SCOPE-AND-RECOVERY.md",
+          "CP22-RETURN-RESPONSE.json",
+          "PREIMAGES/CP22-PROTECTED-FINAL-SOURCE-RELATIONS.json"
+        ],
+        "missingRefs": [],
+        "execution": "NOT_RUN",
+        "designReview": "PENDING_INDEPENDENT_WHOLE_FIVE_SPEC_RECHECK",
+        "expected": "Precisely stated current rule and normal/error/recovery outputs in referenced contracts; this catalogue is traceability, not execution/pass evidence.",
+        "cp20ReturnGroups": [
+          "R01",
+          "R02"
+        ],
+        "cp20IndependentStatus": "DESIGN_REVISION_REQUIRED",
+        "authorStatus": "CP22_COMPLETE_STATIC_REVISION_PENDING_INDEPENDENT_RECHECK",
+        "withdrawnReviewBasis": [
+          "R02"
+        ],
+        "activeReviewGroups": [
+          "R01"
+        ],
+        "sourceCodecC01Applicability": "NEW_COMMAND_ETAG_RECEIPT_RESULT_OUTBOX_RELATION",
+        "cp21IndependentStatus": "STATIC_INTEGRATION_RETURN",
+        "cp21ReturnGroups": [
+          "CP21-R01"
+        ],
+        "cp22AuthorRevision": "STATIC_SUCCESSOR_PROVIDED_FOR_INDEPENDENT_RECHECK_NOT_PASS"
+      },
+      "current_expectation": "Commit-unknown queries/retries only original command and original conversion business slot. NOT_OBSERVED is not proof of no late arrival.",
+      "required_positive": "Current exact subject authorization; atomic H02/Manifest and one original terminal receipt where applicable",
+      "required_negative": "No hidden candidate fields/count outside current closed schema; no Saga/202/partial conversion under atomic H02",
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "acceptance_id": "AC-LEAD-050",
+      "historical_record": {
+        "acId": "AC-LEAD-050",
+        "status": "NOT_RUN",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "rule": "Partial owner success remains internal evidence and cannot be exposed as overall success.",
+        "schemaRefs": [
+          "ConversionStateView"
+        ],
+        "fixtureRefs": [
+          "FX26-S03"
+        ],
+        "expected": "RESULT_UNKNOWN advances participant/batch/gate/status to RECOVERY_REQUIRED with map=null"
+      },
+      "current_mapping_record": {
+        "acId": "AC-LEAD-050",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "originalReturnedR3Rule": "Partial owner success remains internal evidence and cannot be exposed as overall success.",
+        "currentRule": "Any participant failure before commit rolls back all local and Owner effects; no externally visible partial success. Conditional Blueprint batch requirement NOT_APPLICABLE_TO_ATOMIC_MODE.",
+        "applicability": "SUPERSEDED_RETURNED_SAGA_RULE_BY_ACCEPTED_ATOMIC_H02",
+        "currentRefs": [
+          "CP20-H02-SOURCE-DECISION.md",
+          "OPERATIONS/CP20-ENLISTED-CALLER-CONTRACT.md",
+          "NORMAL_DATA/S05_PREVIEW_READY.json",
+          "NORMAL_DATA/S06_ATOMIC_COMMITTED.json",
+          "NORMAL_DATA/CP20-ATOMIC-RECOVERY-RELATIONS.json",
+          "PREIMAGES/CP20-h02-selection.json",
+          "CONTRACTS/CP20-qualification-h02.schema.json",
+          "CONTRACTS/CP20-qualification-h02.types.ts",
+          "CONTRACTS/CP20-qualification-h02.openapi.json",
+          "CONTRACTS/CrmLeadCp20Contracts.cs",
+          "OPERATIONS/CP22-AUDIT-AND-KEY-PROTOCOL.md",
+          "PREIMAGES/CP22-KEY-AND-AUDIT-RELATIONS.json",
+          "PREIMAGES/CP20-COMMAND-BYTE-RELATIONS.json",
+          "NORMAL_DATA/CP20-ALL-NEW-COMPLETE-WORLD.json",
+          "OPERATIONS/CP22-audit-enlisted.sql",
+          "CONTRACTS/CP22-AUDIT-PROJECTION.json",
+          "CONTRACTS/CP20-additive-schema.sql",
+          "OPERATIONS/CP22-END-TO-END-RECOVERY.md",
+          "CP21-CODEC-V2-RESPONSE.json",
+          "NORMAL_DATA/CP20-BYTE-ENCODING-REGISTRY.json",
+          "OPERATIONS/CP22-GRAPH-SCOPE-AND-RECOVERY.md",
+          "CP22-RETURN-RESPONSE.json",
+          "PREIMAGES/CP22-PROTECTED-FINAL-SOURCE-RELATIONS.json"
+        ],
+        "missingRefs": [],
+        "execution": "NOT_RUN",
+        "designReview": "PENDING_INDEPENDENT_WHOLE_FIVE_SPEC_RECHECK",
+        "expected": "Precisely stated current rule and normal/error/recovery outputs in referenced contracts; this catalogue is traceability, not execution/pass evidence.",
+        "cp20ReturnGroups": [
+          "R01",
+          "R02",
+          "R03"
+        ],
+        "cp20IndependentStatus": "DESIGN_REVISION_REQUIRED",
+        "authorStatus": "CP22_COMPLETE_STATIC_REVISION_PENDING_INDEPENDENT_RECHECK",
+        "withdrawnReviewBasis": [
+          "R02"
+        ],
+        "activeReviewGroups": [
+          "R01",
+          "R03"
+        ],
+        "sourceCodecC01Applicability": "NEW_COMMAND_ETAG_RECEIPT_RESULT_OUTBOX_RELATION",
+        "cp21IndependentStatus": "STATIC_INTEGRATION_RETURN",
+        "cp21ReturnGroups": [
+          "CP21-R01"
+        ],
+        "cp22AuthorRevision": "STATIC_SUCCESSOR_PROVIDED_FOR_INDEPENDENT_RECHECK_NOT_PASS"
+      },
+      "current_expectation": "Any participant failure before commit rolls back all local and Owner effects; no externally visible partial success. Conditional Blueprint batch requirement NOT_APPLICABLE_TO_ATOMIC_MODE.",
+      "required_positive": "Current exact subject authorization; atomic H02/Manifest and one original terminal receipt where applicable",
+      "required_negative": "No hidden candidate fields/count outside current closed schema; no Saga/202/partial conversion under atomic H02",
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "acceptance_id": "AC-LEAD-051",
+      "historical_record": {
+        "acId": "AC-LEAD-051",
+        "status": "NOT_RUN",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "rule": "All required participants must be APPLIED with exact common identity before one immutable ConversionMap is committed.",
+        "schemaRefs": [
+          "LeadConversionMap",
+          "ParticipantReceiptView"
+        ],
+        "fixtureRefs": [
+          "FX28-S01"
+        ],
+        "expected": "One local finalization UoW."
+      },
+      "current_mapping_record": {
+        "acId": "AC-LEAD-051",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "originalReturnedR3Rule": "All required participants must be APPLIED with exact common identity before one immutable ConversionMap is committed.",
+        "currentRule": "All required same-transaction Owner effects and exact shared identity precede one immutable Manifest and sole top-level commit.",
+        "applicability": "SUPERSEDED_RETURNED_SAGA_RULE_BY_ACCEPTED_ATOMIC_H02",
+        "currentRefs": [
+          "CP20-H02-SOURCE-DECISION.md",
+          "OPERATIONS/CP20-ENLISTED-CALLER-CONTRACT.md",
+          "NORMAL_DATA/S05_PREVIEW_READY.json",
+          "NORMAL_DATA/S06_ATOMIC_COMMITTED.json",
+          "NORMAL_DATA/CP20-ATOMIC-RECOVERY-RELATIONS.json",
+          "PREIMAGES/CP20-h02-selection.json",
+          "CONTRACTS/CP20-qualification-h02.schema.json",
+          "CONTRACTS/CP20-qualification-h02.types.ts",
+          "CONTRACTS/CP20-qualification-h02.openapi.json",
+          "CONTRACTS/CrmLeadCp20Contracts.cs",
+          "OPERATIONS/CP22-AUDIT-AND-KEY-PROTOCOL.md",
+          "PREIMAGES/CP22-KEY-AND-AUDIT-RELATIONS.json",
+          "PREIMAGES/CP20-COMMAND-BYTE-RELATIONS.json",
+          "NORMAL_DATA/CP20-ALL-NEW-COMPLETE-WORLD.json",
+          "OPERATIONS/CP22-audit-enlisted.sql",
+          "CONTRACTS/CP22-AUDIT-PROJECTION.json",
+          "CONTRACTS/CP20-additive-schema.sql",
+          "OPERATIONS/CP22-END-TO-END-RECOVERY.md",
+          "CP21-CODEC-V2-RESPONSE.json",
+          "NORMAL_DATA/CP20-BYTE-ENCODING-REGISTRY.json",
+          "OPERATIONS/CP22-GRAPH-SCOPE-AND-RECOVERY.md",
+          "CP22-RETURN-RESPONSE.json",
+          "PREIMAGES/CP22-PROTECTED-FINAL-SOURCE-RELATIONS.json"
+        ],
+        "missingRefs": [],
+        "execution": "NOT_RUN",
+        "designReview": "PENDING_INDEPENDENT_WHOLE_FIVE_SPEC_RECHECK",
+        "expected": "Precisely stated current rule and normal/error/recovery outputs in referenced contracts; this catalogue is traceability, not execution/pass evidence.",
+        "cp20ReturnGroups": [
+          "R01",
+          "R02",
+          "R03"
+        ],
+        "cp20IndependentStatus": "DESIGN_REVISION_REQUIRED",
+        "authorStatus": "CP22_COMPLETE_STATIC_REVISION_PENDING_INDEPENDENT_RECHECK",
+        "withdrawnReviewBasis": [
+          "R02"
+        ],
+        "activeReviewGroups": [
+          "R01",
+          "R03"
+        ],
+        "sourceCodecC01Applicability": "NEW_COMMAND_ETAG_RECEIPT_RESULT_OUTBOX_RELATION",
+        "cp21IndependentStatus": "STATIC_INTEGRATION_RETURN",
+        "cp21ReturnGroups": [
+          "CP21-R01"
+        ],
+        "cp22AuthorRevision": "STATIC_SUCCESSOR_PROVIDED_FOR_INDEPENDENT_RECHECK_NOT_PASS"
+      },
+      "current_expectation": "All required same-transaction Owner effects and exact shared identity precede one immutable Manifest and sole top-level commit.",
+      "required_positive": "Current exact subject authorization; atomic H02/Manifest and one original terminal receipt where applicable",
+      "required_negative": "No hidden candidate fields/count outside current closed schema; no Saga/202/partial conversion under atomic H02",
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "acceptance_id": "AC-LEAD-052",
+      "historical_record": {
+        "acId": "AC-LEAD-052",
+        "status": "NOT_RUN",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "rule": "Same conversion slot/body replays immutable original 202 admission while GET returns current/terminal result; changed body conflicts.",
+        "schemaRefs": [
+          "LeadCommand",
+          "LeadAdmissionReceipt",
+          "LeadCommandStatus",
+          "LeadTerminalReceipt"
+        ],
+        "fixtureRefs": [
+          "FX26-S00",
+          "FX28-S02",
+          "FX28-S03",
+          "FX28-S05"
+        ],
+        "expected": "POST replay same 202 handle and zero delta; authorized GET returns exact terminal map; changed hash 409"
+      },
+      "current_mapping_record": {
+        "acId": "AC-LEAD-052",
+        "specIds": [
+          "SPEC-CRM-LEAD-01-05"
+        ],
+        "anchors": [
+          "H02"
+        ],
+        "originalReturnedR3Rule": "Same conversion slot/body replays immutable original 202 admission while GET returns current/terminal result; changed body conflicts.",
+        "currentRule": "Same stable key returns immutable non-PII admission; current GET returns complete authorized terminal. Different transport/same business selection returns original Manifest; different selection conflicts.",
+        "applicability": "SUPERSEDED_RETURNED_SAGA_RULE_BY_ACCEPTED_ATOMIC_H02",
+        "currentRefs": [
+          "CP20-H02-SOURCE-DECISION.md",
+          "OPERATIONS/CP20-ENLISTED-CALLER-CONTRACT.md",
+          "NORMAL_DATA/S05_PREVIEW_READY.json",
+          "NORMAL_DATA/S06_ATOMIC_COMMITTED.json",
+          "NORMAL_DATA/CP20-ATOMIC-RECOVERY-RELATIONS.json",
+          "PREIMAGES/CP20-h02-selection.json",
+          "CONTRACTS/CP20-qualification-h02.schema.json",
+          "CONTRACTS/CP20-qualification-h02.types.ts",
+          "CONTRACTS/CP20-qualification-h02.openapi.json",
+          "CONTRACTS/CrmLeadCp20Contracts.cs",
+          "OPERATIONS/CP22-AUDIT-AND-KEY-PROTOCOL.md",
+          "PREIMAGES/CP22-KEY-AND-AUDIT-RELATIONS.json",
+          "PREIMAGES/CP20-COMMAND-BYTE-RELATIONS.json",
+          "NORMAL_DATA/CP20-ALL-NEW-COMPLETE-WORLD.json",
+          "OPERATIONS/CP22-audit-enlisted.sql",
+          "CONTRACTS/CP22-AUDIT-PROJECTION.json",
+          "CONTRACTS/CP20-additive-schema.sql",
+          "OPERATIONS/CP22-END-TO-END-RECOVERY.md",
+          "CP21-CODEC-V2-RESPONSE.json",
+          "NORMAL_DATA/CP20-BYTE-ENCODING-REGISTRY.json",
+          "OPERATIONS/CP22-GRAPH-SCOPE-AND-RECOVERY.md",
+          "CP22-RETURN-RESPONSE.json",
+          "PREIMAGES/CP22-PROTECTED-FINAL-SOURCE-RELATIONS.json"
+        ],
+        "missingRefs": [],
+        "execution": "NOT_RUN",
+        "designReview": "PENDING_INDEPENDENT_WHOLE_FIVE_SPEC_RECHECK",
+        "expected": "Precisely stated current rule and normal/error/recovery outputs in referenced contracts; this catalogue is traceability, not execution/pass evidence.",
+        "cp20ReturnGroups": [
+          "R01",
+          "R02",
+          "R03"
+        ],
+        "cp20IndependentStatus": "DESIGN_REVISION_REQUIRED",
+        "authorStatus": "CP22_COMPLETE_STATIC_REVISION_PENDING_INDEPENDENT_RECHECK",
+        "withdrawnReviewBasis": [
+          "R02"
+        ],
+        "activeReviewGroups": [
+          "R01",
+          "R03"
+        ],
+        "sourceCodecC01Applicability": "NEW_COMMAND_ETAG_RECEIPT_RESULT_OUTBOX_RELATION",
+        "cp21IndependentStatus": "STATIC_INTEGRATION_RETURN",
+        "cp21ReturnGroups": [
+          "CP21-R01"
+        ],
+        "cp22AuthorRevision": "STATIC_SUCCESSOR_PROVIDED_FOR_INDEPENDENT_RECHECK_NOT_PASS"
+      },
+      "current_expectation": "Same stable key returns immutable non-PII admission; current GET returns complete authorized terminal. Different transport/same business selection returns original Manifest; different selection conflicts.",
+      "required_positive": "Current exact subject authorization; atomic H02/Manifest and one original terminal receipt where applicable",
+      "required_negative": "No hidden candidate fields/count outside current closed schema; no Saga/202/partial conversion under atomic H02",
+      "runtime_result": "NOT_RUN"
+    }
+  ]
+}

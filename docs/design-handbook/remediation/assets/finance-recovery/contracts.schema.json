@@ -1,0 +1,1653 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:finance-recovery:1.0.0",
+  "title": "New CP6 W2/W3 supplement; original wire unchanged",
+  "$defs": {
+    "Key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "LongKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "Digest": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "Seq": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 19,
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "Counter": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 19,
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "Uuid": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "Utc": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "Proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "id",
+        "version",
+        "digest",
+        "contract"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/Key"
+        },
+        "id": {
+          "$ref": "#/$defs/Key"
+        },
+        "version": {
+          "$ref": "#/$defs/Seq"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "contract": {
+          "$ref": "#/$defs/Key"
+        }
+      }
+    },
+    "MatchRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "id",
+        "version"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/Key"
+        },
+        "id": {
+          "$ref": "#/$defs/Key"
+        },
+        "version": {
+          "$ref": "#/$defs/Key"
+        }
+      }
+    },
+    "MatchProofRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "digest",
+        "contractRef"
+      ],
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/MatchRef"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "contractRef": {
+          "$ref": "#/$defs/MatchRef"
+        }
+      }
+    },
+    "NativeScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant",
+        "environment",
+        "mode",
+        "legalEntity",
+        "site",
+        "warehouse",
+        "binding"
+      ],
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/LongKey"
+        },
+        "environment": {
+          "$ref": "#/$defs/LongKey"
+        },
+        "mode": {
+          "enum": [
+            "REAL",
+            "DEMO"
+          ]
+        },
+        "legalEntity": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LongKey"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "site": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LongKey"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "warehouse": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LongKey"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "binding": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "NativeUow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "databaseBinding",
+        "connectionHandle",
+        "transactionHandle",
+        "transactionId",
+        "principal",
+        "isolation",
+        "ownership",
+        "provenance"
+      ],
+      "properties": {
+        "databaseBinding": {
+          "$ref": "#/$defs/Proof"
+        },
+        "connectionHandle": {
+          "$ref": "#/$defs/Key"
+        },
+        "transactionHandle": {
+          "$ref": "#/$defs/Key"
+        },
+        "transactionId": {
+          "$ref": "#/$defs/Key"
+        },
+        "principal": {
+          "$ref": "#/$defs/Key"
+        },
+        "isolation": {
+          "const": "SERIALIZABLE"
+        },
+        "ownership": {
+          "const": "OUTER_TRANSACTION"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "Resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resourceId",
+        "physicalIdentity",
+        "owner",
+        "kind",
+        "mode",
+        "scopeDepth",
+        "orderKey",
+        "expectedRevision",
+        "membershipProof",
+        "writerCoverage",
+        "storage",
+        "aliases"
+      ],
+      "properties": {
+        "resourceId": {
+          "$ref": "#/$defs/Key"
+        },
+        "physicalIdentity": {
+          "$ref": "#/$defs/LongKey"
+        },
+        "owner": {
+          "$ref": "#/$defs/Key"
+        },
+        "kind": {
+          "enum": [
+            "CATALOGUE_F_MINUS_1",
+            "MOVEMENT_F0",
+            "CANONICAL",
+            "SCOPE",
+            "DETAIL",
+            "LOCAL_TERMINAL"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "S",
+            "X"
+          ]
+        },
+        "scopeDepth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "orderKey": {
+          "$ref": "#/$defs/LongKey"
+        },
+        "expectedRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Counter"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "membershipProof": {
+          "$ref": "#/$defs/Proof"
+        },
+        "writerCoverage": {
+          "$ref": "#/$defs/Proof"
+        },
+        "storage": {
+          "enum": [
+            "APPLICATION_LOCK",
+            "ROW",
+            "KEY_RANGE",
+            "PREDICATE_GATE"
+          ]
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LongKey"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before",
+        "after",
+        "reason"
+      ],
+      "properties": {
+        "before": {
+          "$ref": "#/$defs/Key"
+        },
+        "after": {
+          "$ref": "#/$defs/Key"
+        },
+        "reason": {
+          "$ref": "#/$defs/Key"
+        }
+      }
+    },
+    "ResourcePlanBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "operationKey",
+        "scope",
+        "registry",
+        "nativeUow",
+        "resources",
+        "dependencies",
+        "acquisitionOrder",
+        "writerSetDigest",
+        "sourceSetDigest",
+        "capturedAt"
+      ],
+      "properties": {
+        "contract": {
+          "const": "CP6-COMPOSED-RESOURCE-PLAN/1"
+        },
+        "operationKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "scope": {
+          "$ref": "#/$defs/NativeScope"
+        },
+        "registry": {
+          "$ref": "#/$defs/Proof"
+        },
+        "nativeUow": {
+          "$ref": "#/$defs/NativeUow"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Resource"
+          },
+          "minItems": 1,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Edge"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "acquisitionOrder": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Key"
+          },
+          "minItems": 1,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "writerSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "sourceSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "capturedAt": {
+          "$ref": "#/$defs/Utc"
+        }
+      }
+    },
+    "ResourcePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "body",
+        "digest"
+      ],
+      "properties": {
+        "body": {
+          "$ref": "#/$defs/ResourcePlanBody"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "Acquisition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resourceId",
+        "physicalIdentity",
+        "mode",
+        "transactionId",
+        "heldThroughCommit"
+      ],
+      "properties": {
+        "resourceId": {
+          "$ref": "#/$defs/Key"
+        },
+        "physicalIdentity": {
+          "$ref": "#/$defs/LongKey"
+        },
+        "mode": {
+          "enum": [
+            "S",
+            "X"
+          ]
+        },
+        "transactionId": {
+          "$ref": "#/$defs/Key"
+        },
+        "heldThroughCommit": {
+          "const": true
+        }
+      }
+    },
+    "LockReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "planDigest",
+        "nativeUow",
+        "acquisitions",
+        "terminal",
+        "receipt"
+      ],
+      "properties": {
+        "contract": {
+          "const": "CP6-COMPOSED-LOCK-RECEIPT/1"
+        },
+        "planDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "nativeUow": {
+          "$ref": "#/$defs/NativeUow"
+        },
+        "acquisitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Acquisition"
+          },
+          "minItems": 1,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "terminal": {
+          "enum": [
+            "COMMITTED",
+            "ROLLED_BACK",
+            "OUTCOME_UNKNOWN"
+          ]
+        },
+        "receipt": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "CreditScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenantId",
+        "legalEntityId",
+        "ledgerId",
+        "environmentId",
+        "mode"
+      ],
+      "properties": {
+        "tenantId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "legalEntityId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "ledgerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "environmentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "mode": {
+          "enum": [
+            "PRODUCTION",
+            "SIMULATION"
+          ]
+        }
+      }
+    },
+    "CreditRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "type",
+        "id",
+        "version",
+        "purpose",
+        "digest"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "GLKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "GLScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environmentId",
+        "tenantId",
+        "legalEntityKey",
+        "ledgerKey",
+        "mode"
+      ],
+      "properties": {
+        "environmentId": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "tenantId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "legalEntityKey": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "ledgerKey": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "mode": {
+          "enum": [
+            "REAL",
+            "DEMO"
+          ]
+        }
+      }
+    },
+    "GLRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "id",
+        "version",
+        "digest",
+        "purpose"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "id": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "version": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "purpose": {
+          "$ref": "#/$defs/GLKey"
+        }
+      }
+    },
+    "IdentityAlias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "axis",
+        "source",
+        "target",
+        "assignment"
+      ],
+      "properties": {
+        "axis": {
+          "enum": [
+            "TENANT",
+            "ENVIRONMENT",
+            "LEGAL_ENTITY",
+            "LEDGER",
+            "REF_OWNER",
+            "REF_TYPE",
+            "REF_ID",
+            "REF_VERSION",
+            "REF_PURPOSE"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "target": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "assignment": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "ScopeBindingBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "bindingId",
+        "revision",
+        "state",
+        "source",
+        "target",
+        "aliases",
+        "sourceAuthority",
+        "targetAuthority",
+        "validFrom",
+        "predecessor"
+      ],
+      "properties": {
+        "contract": {
+          "const": "FIN-CREDIT-GL-SCOPE-BINDING/1"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "revision": {
+          "$ref": "#/$defs/Seq"
+        },
+        "state": {
+          "enum": [
+            "ACTIVE",
+            "RETIRED"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/CreditScope"
+        },
+        "target": {
+          "$ref": "#/$defs/GLScope"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IdentityAlias"
+          },
+          "minItems": 4,
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "sourceAuthority": {
+          "$ref": "#/$defs/Proof"
+        },
+        "targetAuthority": {
+          "$ref": "#/$defs/Proof"
+        },
+        "validFrom": {
+          "$ref": "#/$defs/Utc"
+        },
+        "predecessor": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Proof"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ScopeBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "body",
+        "digest"
+      ],
+      "properties": {
+        "body": {
+          "$ref": "#/$defs/ScopeBindingBody"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "RefBindingBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "bindingId",
+        "revision",
+        "scopeBinding",
+        "original",
+        "originalWireUtf8Base64",
+        "originalWireDigest",
+        "originalContentProof",
+        "consumerContract",
+        "allowedType",
+        "allowedPurpose",
+        "adapterOwner",
+        "adapterId",
+        "adapterVersion",
+        "adapterPurpose",
+        "aliases",
+        "accountingAuthority"
+      ],
+      "properties": {
+        "contract": {
+          "const": "FIN-CREDIT-GL-REF-BINDING/1"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "revision": {
+          "$ref": "#/$defs/Seq"
+        },
+        "scopeBinding": {
+          "$ref": "#/$defs/Proof"
+        },
+        "original": {
+          "$ref": "#/$defs/CreditRef"
+        },
+        "originalWireUtf8Base64": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536,
+          "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+        },
+        "originalWireDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "originalContentProof": {
+          "$ref": "#/$defs/Proof"
+        },
+        "consumerContract": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "allowedType": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "allowedPurpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "adapterOwner": {
+          "const": "CP6-CREDIT-GL-BINDING"
+        },
+        "adapterId": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "adapterVersion": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "adapterPurpose": {
+          "$ref": "#/$defs/GLKey"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IdentityAlias"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "accountingAuthority": {
+          "enum": [
+            "NONE"
+          ]
+        }
+      }
+    },
+    "RefBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "body",
+        "digest",
+        "target"
+      ],
+      "properties": {
+        "body": {
+          "$ref": "#/$defs/RefBindingBody"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "target": {
+          "$ref": "#/$defs/GLRef"
+        }
+      }
+    },
+    "BindingUse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "scopeBinding",
+        "refBinding",
+        "operationKey",
+        "requestDigest",
+        "sourceScope",
+        "targetScope",
+        "sourceRef",
+        "targetRef",
+        "purpose",
+        "receipt"
+      ],
+      "properties": {
+        "contract": {
+          "const": "FIN-CREDIT-GL-BINDING-USE/1"
+        },
+        "scopeBinding": {
+          "$ref": "#/$defs/Proof"
+        },
+        "refBinding": {
+          "$ref": "#/$defs/Proof"
+        },
+        "operationKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "requestDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "sourceScope": {
+          "$ref": "#/$defs/CreditScope"
+        },
+        "targetScope": {
+          "$ref": "#/$defs/GLScope"
+        },
+        "sourceRef": {
+          "$ref": "#/$defs/CreditRef"
+        },
+        "targetRef": {
+          "$ref": "#/$defs/GLRef"
+        },
+        "purpose": {
+          "enum": [
+            "IDENTITY_ADAPTATION_ONLY"
+          ]
+        },
+        "receipt": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "CorrectionIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correctionKey",
+        "inputDigest",
+        "correctionEpoch",
+        "planRef",
+        "planDigest",
+        "scopeDigest",
+        "originalRequestKey",
+        "originalForwardFence",
+        "originalPostingSetDigest",
+        "currentSourceChangeSetDigest",
+        "authoritySetDigest"
+      ],
+      "properties": {
+        "correctionKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "inputDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "correctionEpoch": {
+          "$ref": "#/$defs/Seq"
+        },
+        "planRef": {
+          "$ref": "#/$defs/MatchProofRef"
+        },
+        "planDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "scopeDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "originalRequestKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "originalForwardFence": {
+          "$ref": "#/$defs/MatchProofRef"
+        },
+        "originalPostingSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "currentSourceChangeSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "authoritySetDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "CloseRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "closeKey",
+        "identity",
+        "correctionFence",
+        "expectedControlRevision",
+        "reason"
+      ],
+      "properties": {
+        "contract": {
+          "const": "MATCH-CORRECTION-CLOSE/1"
+        },
+        "closeKey": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "identity": {
+          "$ref": "#/$defs/CorrectionIdentity"
+        },
+        "correctionFence": {
+          "$ref": "#/$defs/MatchProofRef"
+        },
+        "expectedControlRevision": {
+          "$ref": "#/$defs/Counter"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "CloseQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "closeKey",
+        "requestDigest"
+      ],
+      "properties": {
+        "contract": {
+          "const": "MATCH-CORRECTION-CLOSE-QUERY/1"
+        },
+        "closeKey": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "requestDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "ClosePath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pathId",
+        "owner",
+        "route",
+        "capabilityVersion",
+        "registrationEpoch",
+        "aliasOf",
+        "bookId",
+        "legKey",
+        "admission",
+        "closeProof",
+        "writerCoverage"
+      ],
+      "properties": {
+        "pathId": {
+          "$ref": "#/$defs/Key"
+        },
+        "owner": {
+          "$ref": "#/$defs/Key"
+        },
+        "route": {
+          "$ref": "#/$defs/Key"
+        },
+        "capabilityVersion": {
+          "$ref": "#/$defs/Key"
+        },
+        "registrationEpoch": {
+          "$ref": "#/$defs/Seq"
+        },
+        "aliasOf": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Key"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bookId": {
+          "$ref": "#/$defs/Key"
+        },
+        "legKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "admission": {
+          "const": "FENCED"
+        },
+        "closeProof": {
+          "$ref": "#/$defs/Proof"
+        },
+        "writerCoverage": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "DraftDisposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dispositionKey",
+        "sourceRoot",
+        "originalDraft",
+        "originalDraftWireDigest",
+        "state",
+        "prevents",
+        "receipt"
+      ],
+      "properties": {
+        "dispositionKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "sourceRoot": {
+          "$ref": "#/$defs/MatchProofRef"
+        },
+        "originalDraft": {
+          "$ref": "#/$defs/Proof"
+        },
+        "originalDraftWireDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "state": {
+          "const": "SEALED_UNPOSTED"
+        },
+        "prevents": {
+          "const": "ALL_FUTURE_EFFECTS_FROM_THIS_SOURCE_ROOT"
+        },
+        "receipt": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "LegClose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bookId",
+        "legKey",
+        "sourceRoot",
+        "required",
+        "effectState",
+        "originalEffects",
+        "draftDispositions",
+        "ownerApplyReceipts",
+        "noEffectProof",
+        "notApplicableProof",
+        "paths",
+        "coveredExecutionKeys",
+        "executionSetProof"
+      ],
+      "properties": {
+        "bookId": {
+          "$ref": "#/$defs/Key"
+        },
+        "legKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "sourceRoot": {
+          "$ref": "#/$defs/MatchProofRef"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "effectState": {
+          "enum": [
+            "NO_EFFECT",
+            "DRAFT_RETAINED",
+            "POSTED_RETAINED",
+            "POSTED_AND_REVERSED_RETAINED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "originalEffects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Proof"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "draftDispositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DraftDisposition"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "ownerApplyReceipts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Proof"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "noEffectProof": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Proof"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notApplicableProof": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Proof"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ClosePath"
+          },
+          "minItems": 1,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "coveredExecutionKeys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Key"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "executionSetProof": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "CloseTerminalBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "closeKey",
+        "requestDigest",
+        "identity",
+        "correctionFence",
+        "fencedThroughRevision",
+        "catalogueGeneration",
+        "catalogueDigest",
+        "catalogueProof",
+        "originalObligationClaimRefs",
+        "coveredLegs",
+        "uncoveredLegKeys",
+        "outstandingEffectRefs",
+        "unresolvedExecutionKeys",
+        "retainedHistoricalEffectRefs",
+        "originalResultSnapshot",
+        "originalForwardAdmission",
+        "futureEffectsClosed",
+        "allowsReopen",
+        "allowsReleaseOriginalObligation",
+        "result",
+        "completedAt"
+      ],
+      "properties": {
+        "contract": {
+          "const": "MATCH-CORRECTION-CLOSE-RECEIPT/1"
+        },
+        "closeKey": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "requestDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "identity": {
+          "$ref": "#/$defs/CorrectionIdentity"
+        },
+        "correctionFence": {
+          "$ref": "#/$defs/MatchProofRef"
+        },
+        "fencedThroughRevision": {
+          "$ref": "#/$defs/Counter"
+        },
+        "catalogueGeneration": {
+          "$ref": "#/$defs/Seq"
+        },
+        "catalogueDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "catalogueProof": {
+          "$ref": "#/$defs/Proof"
+        },
+        "originalObligationClaimRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Proof"
+          },
+          "minItems": 1,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "coveredLegs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LegClose"
+          },
+          "minItems": 1,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "uncoveredLegKeys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Key"
+          },
+          "minItems": 0,
+          "maxItems": 0,
+          "uniqueItems": true
+        },
+        "outstandingEffectRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Proof"
+          },
+          "minItems": 0,
+          "maxItems": 0,
+          "uniqueItems": true
+        },
+        "unresolvedExecutionKeys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Key"
+          },
+          "minItems": 0,
+          "maxItems": 0,
+          "uniqueItems": true
+        },
+        "retainedHistoricalEffectRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Proof"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "originalResultSnapshot": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Proof"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "originalForwardAdmission": {
+          "const": "FENCED"
+        },
+        "futureEffectsClosed": {
+          "const": true
+        },
+        "allowsReopen": {
+          "const": false
+        },
+        "allowsReleaseOriginalObligation": {
+          "const": false
+        },
+        "result": {
+          "enum": [
+            "CLOSED_NO_EFFECT",
+            "CLOSED_WITH_RETAINED_HISTORY"
+          ]
+        },
+        "completedAt": {
+          "$ref": "#/$defs/Utc"
+        }
+      }
+    },
+    "CloseTerminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "body",
+        "receipt"
+      ],
+      "properties": {
+        "body": {
+          "$ref": "#/$defs/CloseTerminalBody"
+        },
+        "receipt": {
+          "$ref": "#/$defs/Proof"
+        }
+      }
+    },
+    "ClosePending": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "closeKey",
+        "requestDigest",
+        "identity",
+        "fencedThroughRevision",
+        "reason",
+        "outstandingEffectRefs",
+        "uncoveredLegKeys",
+        "query",
+        "canInferNoEffect"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "PENDING",
+            "UNKNOWN"
+          ]
+        },
+        "closeKey": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "requestDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "identity": {
+          "$ref": "#/$defs/CorrectionIdentity"
+        },
+        "fencedThroughRevision": {
+          "$ref": "#/$defs/Counter"
+        },
+        "reason": {
+          "enum": [
+            "DRAINING",
+            "DRAFT_DISPOSITION_PENDING",
+            "OWNER_APPLY_PENDING",
+            "COVERAGE_UNPROVEN",
+            "DEPENDENCY_UNAVAILABLE",
+            "COMMIT_CONFIRMATION_UNAVAILABLE"
+          ]
+        },
+        "outstandingEffectRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Proof"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "uncoveredLegKeys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Key"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "query": {
+          "$ref": "#/$defs/CloseQuery"
+        },
+        "canInferNoEffect": {
+          "const": false
+        }
+      }
+    },
+    "CloseClosed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "closeKey",
+        "requestDigest",
+        "terminal",
+        "canInferNoEffect"
+      ],
+      "properties": {
+        "state": {
+          "const": "CLOSED"
+        },
+        "closeKey": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "requestDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "terminal": {
+          "$ref": "#/$defs/CloseTerminal"
+        },
+        "canInferNoEffect": {
+          "const": false
+        }
+      }
+    },
+    "CloseStatus": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ClosePending"
+        },
+        {
+          "$ref": "#/$defs/CloseClosed"
+        }
+      ]
+    },
+    "QueryFound": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "status",
+        "canInferNoEffect"
+      ],
+      "properties": {
+        "kind": {
+          "const": "FOUND"
+        },
+        "status": {
+          "$ref": "#/$defs/CloseStatus"
+        },
+        "canInferNoEffect": {
+          "const": false
+        }
+      }
+    },
+    "QueryMissing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "closeKey",
+        "requestDigest",
+        "canInferNoEffect"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "NOT_OBSERVED",
+            "UNAVAILABLE"
+          ]
+        },
+        "closeKey": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "requestDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "canInferNoEffect": {
+          "const": false
+        }
+      }
+    },
+    "CloseQueryResult": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/QueryFound"
+        },
+        {
+          "$ref": "#/$defs/QueryMissing"
+        }
+      ]
+    },
+    "Problem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "status",
+        "code",
+        "retry",
+        "query",
+        "canInferNoEffect",
+        "traceId"
+      ],
+      "properties": {
+        "contract": {
+          "const": "CP6-FINANCE-RECOVERY-PROBLEM/1"
+        },
+        "status": {
+          "enum": [
+            400,
+            401,
+            403,
+            404,
+            409,
+            422,
+            503
+          ]
+        },
+        "code": {
+          "enum": [
+            "INVALID_WIRE",
+            "AUTHENTICATION_REQUIRED",
+            "FORBIDDEN",
+            "NOT_VISIBLE",
+            "CLOSE_KEY_CONFLICT",
+            "CORRECTION_IDENTITY_MISMATCH",
+            "FENCE_STALE",
+            "SCOPE_BINDING_MISSING",
+            "SCOPE_BINDING_AMBIGUOUS",
+            "BINDING_RETIRED",
+            "REFERENCE_TYPE_UNREGISTERED",
+            "REFERENCE_PROOF_INVALID",
+            "LOCK_PLAN_UNPROVEN",
+            "RESOURCE_SET_CHANGED",
+            "NATIVE_UOW_UNPROVEN",
+            "COVERAGE_UNPROVEN",
+            "DEPENDENCY_UNAVAILABLE"
+          ]
+        },
+        "retry": {
+          "enum": [
+            "NONE",
+            "QUERY_ORIGINAL",
+            "REPREPARE"
+          ]
+        },
+        "query": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CloseQuery"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canInferNoEffect": {
+          "const": false
+        },
+        "traceId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/ResourcePlan"
+    },
+    {
+      "$ref": "#/$defs/LockReceipt"
+    },
+    {
+      "$ref": "#/$defs/ScopeBinding"
+    },
+    {
+      "$ref": "#/$defs/RefBinding"
+    },
+    {
+      "$ref": "#/$defs/BindingUse"
+    },
+    {
+      "$ref": "#/$defs/CloseRequest"
+    },
+    {
+      "$ref": "#/$defs/CloseQuery"
+    },
+    {
+      "$ref": "#/$defs/CloseStatus"
+    },
+    {
+      "$ref": "#/$defs/CloseQueryResult"
+    },
+    {
+      "$ref": "#/$defs/Problem"
+    }
+  ]
+}

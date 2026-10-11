@@ -1,0 +1,79 @@
+{
+  "contract": "CP6-COMPOSED-RESOURCE-REGISTRY/1",
+  "status": "DESIGN_ONLY_RUNTIME_UNPROVEN",
+  "profiles": [
+    {
+      "profile": "RMA_STOCK_COMPOSITE_1",
+      "rank": [
+        "CATALOGUE_F_MINUS_1",
+        "MOVEMENT_F0",
+        "CANONICAL",
+        "SCOPE_PARENT_BEFORE_CHILD",
+        "DETAIL_OWNER_KEY_ORDINAL",
+        "LOCAL_TERMINAL"
+      ],
+      "supersedes": "RMA §9.1 acquisition sequence only when composed with Stock, including Scope-first and fine-resource positions; preserve all original resource identities, predicates and held-gate requirements",
+      "writer_families": [
+        "POSTING",
+        "CLAIM_CREATE",
+        "CLAIM_BACKING",
+        "CLAIM_ALLOCATE",
+        "CLAIM_PICK",
+        "CLAIM_RELEASE",
+        "CLAIM_REBIND",
+        "HOLD_PLACE",
+        "HOLD_RELEASE",
+        "CORRECTION_APPLY",
+        "RECONCILIATION_APPLY",
+        "SOURCE_APPLICATION",
+        "RMA_AUTH_SOURCE_ENTITLEMENT",
+        "RMA_RECEIPT_SEAL_CORRECTION_H30",
+        "IN_ALL_SOURCE_ADAPTERS",
+        "OUT_RSV_DEL",
+        "QA_PLM_CONTROLS",
+        "MASTER_CAPACITY_METRIC_MEMBERSHIP",
+        "MAT_EXEC_OUTPUT",
+        "LEGACY_IMPORT_MANUAL_WORKER_CUTOVER"
+      ],
+      "missing_path": "LOCK_PLAN_UNPROVEN"
+    },
+    {
+      "profile": "BP_EST_QTN_1",
+      "rank": [
+        "IAM",
+        "BP_SCOPE_AND_MAPPING",
+        "EST_SOURCE_AND_SCOPE",
+        "QTN",
+        "LOCAL_TERMINAL"
+      ],
+      "rule": "Import the exact original per-owner dependency DAG; the coarse rank does not remove original command/reverse-claim/root constraints; reject unresolved union cycles."
+    },
+    {
+      "profile": "FINANCE_CORRECTION_1",
+      "rank": [
+        "AUTHORITY",
+        "MATCH_CORRECTION_AND_ORIGINAL_FORWARD_SOURCE_CONTROLS",
+        "PERIOD_BANK_BUDGET",
+        "FM_SCOPE",
+        "BP_SCOPE",
+        "REGISTERED_POST",
+        "BUSINESS",
+        "LOCAL_TERMINAL"
+      ],
+      "rule": "Expand exact FIN-AP RequiredGate orderGroup/orderKey and GL accepted local dependency graph, validate full union; do not claim this profile uses Stock fine-key ordering."
+    }
+  ],
+  "resource_identity": "Physical databaseBinding + database principal + exact lock resource bytes or row/range predicate identity; owner alias strings never create distinct locks for the same resource.",
+  "lock_rules": [
+    "Precollect complete canonical/source/route/metric/claim/authority membership including absent-key guards",
+    "Coalesce physical aliases and use strongest S/X before first acquisition",
+    "Include implicit UPDATE/FK/trigger/unique-index/predicate locks and allocator locks in the registry DAG",
+    "Acquire deterministic registered topological order; mandatory rank edges are not removable",
+    "SCOPE parent before all children across every warehouse/site; DETAIL use accepted global ordinal owner/key ordering",
+    "No upgrades, no acquire earlier rank after later; reentry allowed only same native outer transaction, same physical resource and sufficient held mode",
+    "Membership changed under gate: rollback entire operation, recollect outside locks, retry same business identity",
+    "Cross database/connection/provider/unknown writer coverage: REQUIRED_FENCED, no distributed atomicity inference",
+    "New writer route may register only under exclusive catalogue/control gate; tombstoned correction root cannot gain executable aliases",
+    "No automatic fairness or timeout expiry inference: lock failure rolls back; outcome unknown queries original operation"
+  ]
+}

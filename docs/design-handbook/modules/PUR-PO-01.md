@@ -1,5 +1,20 @@
 # PUR-PO-01 采购订单与履约
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-RFQ-PR-SOURCE-STATE-ADAPTER | INTENTIONAL_DIFFERENCE：内部EXECUTED_PENDING_LEDGER与ClaimRecord wire CONSUMED属于不同层；PR P→E和RFQ异步P→C保各自receipt推进。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION | ADOPTION_PENDING：采用GR逐叶原Domain/有效RangeSet/当前ScopeSet和Quality，Stock/PO专业后继完整共同ResourcePlan；非前缀VOID保持当前已修设计。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-SUB-COST-RECEIPT-VS-ACCEPTANCE | INTENTIONAL_DIFFERENCE：Finance approved RECEIPT完整累计Q作cost，Pcum+sameM仅一次、累计舍入取delta；消耗依据独立COMMERCIAL_ACCEPTANCE_GROSS与冻结Qplan、unitUsage。 | [设计](../remediation/04-finance-correction-contracts.md) |
+| COM-PR-N01-AUTHORITY-VERSION | ARTIFACT_CONFLICT：ClaimPrepareRequest 使用冻结 bundle 的 PR approval revision 2；两处 authorityScope/sourceBusinessVersion 从3改2，独立 acceptedWireExamples revision3不变。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 目的、操作者与业务责任
 
 采购员承接已授权来源和冻结商业内容，形成可审批、发出、接受、确认的真实采购订单；随后按具体交期／来源份额处理变更、取消与独立关闭。采购审核人、供应商凭证核验者、接收守卫服务和各事实生产者分别操作。这里的 PO 是商业采购订单，PLAN-PO 是计划建议及真实转单，两者不能混用。 [原文 L7](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md:7>)、[原文 L32](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md:32>)、[原文 L33](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md:33>)、[原文 L34](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md:34>)、[原文 L35](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md:35>)、[原文 L36](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md:36>)、[原文 L37](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md:37>)

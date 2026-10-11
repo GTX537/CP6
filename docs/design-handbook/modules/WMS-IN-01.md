@@ -1,5 +1,21 @@
 # WMS-IN-01 入库计划与物理收货
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| OPS-IF-003 | DESIGN_GAP：显式替代RMA §9.1在Stock组合事务中的完整取锁序（含Scope-first与source/claim/IN位置）；F−1→F0→所有Canonical→所有Scope父到子→DETAIL owner/key ordinal→终态，按注册DAG验证完整闭包。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-004 | ADOPTION_PENDING：五类disposition逐一登记owner/route/capability/query/seal/correction；QA-NCR设计通过不构成报废/返修/转移运行授权，IN收货receipt不替代处置效果。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-010 | ADOPTION_PENDING：E真实IdentityDomain/measurement budget在Basis/work前；Stock Canonical→Scope→E→Output grant→Stock fine→IN local，E B writer不得反向取Stock/WO。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-011 | ADOPTION_PENDING：缩量先在同allowance/source gate关闭所有可能Stock执行/aliases含空集合，禁新SP01/SP02，已POSTED/SEALED消费保留；version+1只更新净allowance。 | [设计](../remediation/03-transactions-and-recovery.md) |
+| OPS-IF-013 | INTENTIONAL_DIFFERENCE：QA-POL采购按准确source/part叶总体；制造按原完整总体，不能母单100覆盖采购40/60。 | [设计](../remediation/05-planning-material-mapping.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前主文 18006 行的全部业务语义、完整 PO/STK/GR 镜像、94 条 AC 和当前接受/复审已通过直接阅读与同 SHA 精确复用闭合；113 个 JSON 包括 111 个连续实例、105 个模拟原件的载荷数组和 3 个摘要对象的数组均已读。94 条 AC、真实 Owner 采用及运行迁移仍为 NOT_RUN / UNVERIFIED。
 
 ## 1. 业务目的、操作者与职责

@@ -1,5 +1,17 @@
 # CRM-CON-01 独立联系人与账户关系
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-LEAD-AC-ATOMIC-SUPERSESSION | SUPERSEDED：CP22保R3原60AC身份，AC042/048–052改同事务H02+Manifest；AC035 hiddenCount不是当前closed字段，旧Saga/202/部分成功预期不再作当前验收。 | [设计](../remediation/06-wire-types-and-fixtures.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：`core_semantics_consolidated`。当前接受版本是 v1.1.1，SHA-256 `6a000d26d7a638a47000b85c6f97c1b96a9efd29da7fe2650d2f8859672d4407`，245,926 bytes / 2,573 行。正文文件名和末尾的 REVIEW/待接受是编制时状态，后继 UA 明确接受完整开发 Spec，包括 API/DTO、数据模型、页面、事务和三项 COR 补正。文本接受不证明生产 Owner 接入、数据库适配或业务测试完成。[当前接受][U7] [状态覆盖][U25]
 
 ## 1. 目的、操作者与事实权威

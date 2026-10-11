@@ -1,5 +1,20 @@
 # PUR-PR-01 采购申请、审批与来源份额
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-PR-CP22-NATIVE-OWNER-ADOPTION | SUPERSEDED：CP22 port14已有PR R3原生intake专业ADOPT；保原Digest结构、版本与namespace，实际实例另证。 | [设计](../remediation/07-shared-consumer-mappings.md) |
+| COM-RFQ-PR-SOURCE-STATE-ADAPTER | INTENTIONAL_DIFFERENCE：内部EXECUTED_PENDING_LEDGER与ClaimRecord wire CONSUMED属于不同层；PR P→E和RFQ异步P→C保各自receipt推进。 | [设计](../remediation/05-planning-material-mapping.md) |
+| COM-PR-N01-AUTHORITY-VERSION | ARTIFACT_CONFLICT：ClaimPrepareRequest 使用冻结 bundle 的 PR approval revision 2；两处 authorityScope/sourceBusinessVersion 从3改2，独立 acceptedWireExamples revision3不变。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+| COM-PR-N08-PREVIEW-TIMELINE | ARTIFACT_CONFLICT：首次成功与同命令重放的 recordedAt 均固定11:28，落在11:20创建/11:30到期之间；三处12:08修为11:28，读取时钟不得覆盖首次事务记录。 | [设计](../remediation/assets/commercial-fixtures/current-v1-adoption.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 ## 1. 目的、操作者与责任
 
 采购申请把人工需求、已 Firm 的采购计划和有充分证据的存量来源组织成真实 PR，再经本域审批应用、拆合与商业准备转为 PO。申请人负责需求，采购员负责兼容组及商业依据，审批人在 OA 处理任务，采购服务负责共同来源账与原键恢复；这些角色都不替其他 Owner 签发事实。PR 成功不表示已采购承诺、已到货或已质检。 [原文 L23](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md:23>)、[原文 L25](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md:25>)、[原文 L556](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md:556>)、[原文 L558](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md:558>)

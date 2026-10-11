@@ -1,5 +1,13 @@
 # WMS-DISP-01 过期、损坏与库存处置
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本轮115项登记问题未要求修改本模块合同，复用原必要材料阅读与范围记录；不宣称重新全文阅读所有原件或运行已通过。
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**，限当前本册11必需原件及共享场景/任务材料。正文870行及3个完整JSON、其内嵌样本文本全部实读；准确跨Owner wire/环境采用仍需独立落实，静态接受不证明已执行报废或财务过账。
 
 ## 1. 业务目的、操作者与职责

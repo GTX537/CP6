@@ -1,0 +1,3559 @@
+{
+  "contract": "CP6-W2-W3-ADOPTION-REGISTER/1",
+  "enable_rule": "Every named consumer and every conflicting writer has exact physical-resource/native-Uow/current-authority evidence; missing coverage stays REQUIRED_FENCED. This task proves no runtime adoption.",
+  "findings": [
+    {
+      "issue_id": "DR-COM-OWNER-LOCK-ORDER",
+      "source_finding_ids": [
+        "COM-OWNER-LOCK-ORDER"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ERP-BP-01",
+        "ERP-EST-01",
+        "ERP-QTN-01"
+      ],
+      "source_version": "BP R3 + EST + QTN accepted dependency DAG",
+      "decision": "采用 IAM→BP（含Mapping/ReverseClaim）→EST→QTN 已登记依赖；闭包预收集、循环或遗漏 LOCK_PLAN_UNPROVEN；禁止持EST回调BP。",
+      "preserved_constraints": [
+        "BP/EST/QTN的CRUD、导入、legacy、映射及全部权限撤销writer使用同一门；逐域native连接证明。"
+      ],
+      "consumer_adoption": {
+        "required": "BP/EST/QTN的CRUD、导入、legacy、映射及全部权限撤销writer使用同一门；逐域native连接证明。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "92c20d1ee1dc090fdff5425bba68bf44f67a3f513400bd875c7c1d605d159280",
+          "line": 76,
+          "end_line": 80,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "92c20d1ee1dc090fdff5425bba68bf44f67a3f513400bd875c7c1d605d159280",
+          "line": 886,
+          "end_line": 890,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+          "line": 543,
+          "end_line": 547,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+          "line": 752,
+          "end_line": 756,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-OWNER-LOCK-ORDER-POS",
+          "scenario": "BP writer与QTN消费同gate竞争",
+          "expected": "串行成功或重新准备，完整原依赖闭包持至提交",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-OWNER-LOCK-ORDER-NEG",
+          "scenario": "EST先锁后调用BP，或import绕门",
+          "expected": "LOCK_PLAN_UNPROVEN，零新效果",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-IC-PROTECTION-ADOPTION",
+      "source_finding_ids": [
+        "COM-IC-PROTECTION-ADOPTION"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "INT-COM-01",
+        "CRM-HO-01",
+        "CRM-OPP-01",
+        "ERP-ORD-01"
+      ],
+      "source_version": "INT-COM v1.0.2 IC-SOURCE-PROTECTION/1",
+      "decision": "仅 MAIN_INTAKE_NEW_EFFECT 与 CRM_RESULT_PROJECTION 两purpose采用；durable grant不因超时自行释放；本地COMMITTED/ABORTED原终态结算，权限即时撤销独立。",
+      "preserved_constraints": [
+        "CRM/Main 全Control→ActiveGrant变更、policy/stream/反向索引及Execution消费；要求立即撤销在途效果的purpose禁用本协议。"
+      ],
+      "consumer_adoption": {
+        "required": "CRM/Main 全Control→ActiveGrant变更、policy/stream/反向索引及Execution消费；要求立即撤销在途效果的purpose禁用本协议。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 586,
+          "end_line": 590,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 590,
+          "end_line": 594,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 625,
+          "end_line": 629,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 633,
+          "end_line": 637,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 634,
+          "end_line": 638,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 637,
+          "end_line": 641,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-IC-PROTECTION-ADOPTION-POS",
+          "scenario": "撤销请求与已经获得grant的本地commit竞争",
+          "expected": "允许原grant先commit；source根据原终态结算，结果有证据",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-IC-PROTECTION-ADOPTION-NEG",
+          "scenario": "用grant超时推导ABORTED或复活权限",
+          "expected": "拒绝释放，不输出过期敏感数据",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-IC-BOUNDED-REBUILD",
+      "source_finding_ids": [
+        "COM-IC-BOUNDED-REBUILD"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "INT-COM-01",
+        "CRM-HO-01",
+        "CRM-OPP-01",
+        "ERP-ORD-01"
+      ],
+      "source_version": "INT-COM v1.0.2 bounded rebuild",
+      "decision": "固定原H/V目录、完整CRM handoff/attribution/group/conflict与Main Intake/Quote/Commercial/Resolution集合，分页代际与CAS重核；UNCHANGED只刷新checkedAt。",
+      "preserved_constraints": [
+        "目录所有增删改writer与重建同commit；完整页/切口/权限/取消/rebuild头；向量cut不宣称全局同时当前。"
+      ],
+      "consumer_adoption": {
+        "required": "目录所有增删改writer与重建同commit；完整页/切口/权限/取消/rebuild头；向量cut不宣称全局同时当前。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 673,
+          "end_line": 677,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 679,
+          "end_line": 683,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 681,
+          "end_line": 685,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 685,
+          "end_line": 689,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 686,
+          "end_line": 690,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+          "line": 687,
+          "end_line": 691,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-IC-BOUNDED-REBUILD-POS",
+          "scenario": "完成全部页且代际未变",
+          "expected": "原结果可被CAS采用，UNCHANGED不产生新商业事实",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-IC-BOUNDED-REBUILD-NEG",
+          "scenario": "中途漏页或新的成员加入",
+          "expected": "废弃当前候选重建；空页不证明无效果",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-FUL-CATALOGUE-AND-CURRENT-FENCE",
+      "source_finding_ids": [
+        "COM-FUL-CATALOGUE-AND-CURRENT-FENCE"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ERP-FUL-01",
+        "ERP-ORD-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01"
+      ],
+      "source_version": "ERP-FUL v1.4 R3 FUL-SCHEDULE-CATALOGUE-1",
+      "decision": "采用完整Sales母集合和预建空site F−1门；F−1→全部F0→owner heads，严格当前仅native同库Serializable；跨库返回UNKNOWN。",
+      "preserved_constraints": [
+        "ORD confirm/increase/decrease/cancel/transfer/recommit/correction、schedule拆合删建、过滤属性/时间生效/权限/import/admin/迟到writer均X；跨site按序。"
+      ],
+      "consumer_adoption": {
+        "required": "ORD confirm/increase/decrease/cancel/transfer/recommit/correction、schedule拆合删建、过滤属性/时间生效/权限/import/admin/迟到writer均X；跨site按序。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "sha256": "735749099f867bc985456d1a9ee42415f0751527e308cb090642bafe277cebef",
+          "line": 7307,
+          "end_line": 7311,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "sha256": "735749099f867bc985456d1a9ee42415f0751527e308cb090642bafe277cebef",
+          "line": 7328,
+          "end_line": 7332,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "sha256": "735749099f867bc985456d1a9ee42415f0751527e308cb090642bafe277cebef",
+          "line": 7330,
+          "end_line": 7334,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "sha256": "735749099f867bc985456d1a9ee42415f0751527e308cb090642bafe277cebef",
+          "line": 7332,
+          "end_line": 7336,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-FUL-CATALOGUE-AND-CURRENT-FENCE-POS",
+          "scenario": "空site快照与首次schedule加入竞争",
+          "expected": "成员门保护完整集合，结果可重核",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-FUL-CATALOGUE-AND-CURRENT-FENCE-NEG",
+          "scenario": "Stock先拿F0再回头拿F−1或跨库冒充strict",
+          "expected": "拒绝重入；UNKNOWN且仅允许明确lastConfirmed视图",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-S6-PRECHECKPOINT-FINALAUTH",
+      "source_finding_ids": [
+        "COM-S6-PRECHECKPOINT-FINALAUTH"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "INT-ID-01",
+        "INT-OPS-01",
+        "INT-COM-01",
+        "OA-APP-01",
+        "PLT-DEL-01"
+      ],
+      "source_version": "S6 v0.2 CRM precheckpoint + OwnerFinalAuthorizationGateV1",
+      "decision": "重复/旧/同版本成功前先真事务持久化checkpoint，transport/raw与content摘要独立；Reconciliation→Published→Projection→Inbox→checkpoint；最终授权必须真实native held。",
+      "preserved_constraints": [
+        "Core权限撤销writer、CRM投影/intake/reconciliation所有writer；历史读取、可信接收登记、技术重投、新业务分别授权。"
+      ],
+      "consumer_adoption": {
+        "required": "Core权限撤销writer、CRM投影/intake/reconciliation所有writer；历史读取、可信接收登记、技术重投、新业务分别授权。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 220,
+          "end_line": 224,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 227,
+          "end_line": 231,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 234,
+          "end_line": 238,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 245,
+          "end_line": 249,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 249,
+          "end_line": 253,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 251,
+          "end_line": 255,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 256,
+          "end_line": 260,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+          "line": 258,
+          "end_line": 262,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-S6-PRECHECKPOINT-FINALAUTH-POS",
+          "scenario": "重复外部事务且原checkpoint完备",
+          "expected": "当前读权限下返回原receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-S6-PRECHECKPOINT-FINALAUTH-NEG",
+          "scenario": "同txId不同摘要或最终授权无真实gate",
+          "expected": "DRIFT quarantine撤销allow；无gate BLOCKED",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-003",
+      "source_finding_ids": [
+        "OPS-IF-003"
+      ],
+      "batch": "W2",
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "WMS-RMA-01",
+        "WMS-STOCK-01",
+        "WMS-OUT-01",
+        "WMS-IN-01"
+      ],
+      "source_version": "New CP6-COMPOSED-RESOURCE-PLAN/1",
+      "decision": "显式替代RMA §9.1在Stock组合事务中的完整取锁序（含Scope-first与source/claim/IN位置）；F−1→F0→所有Canonical→所有Scope父到子→DETAIL owner/key ordinal→终态，按注册DAG验证完整闭包。",
+      "preserved_constraints": [
+        "Stock十二WriteKind、RMA source/auth/claim/IN/QA/H30/correction、OUT/RSV/MAT/OUTPUT/PLM/MASTER/metric/capacity及legacy/import/worker全覆盖。"
+      ],
+      "consumer_adoption": {
+        "required": "Stock十二WriteKind、RMA source/auth/claim/IN/QA/H30/correction、OUT/RSV/MAT/OUTPUT/PLM/MASTER/metric/capacity及legacy/import/worker全覆盖。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+          "line": 699,
+          "end_line": 703,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a5/a5a4316bf2aa0d30__WMS-RMA-01_DATA-DICTIONARY.json",
+          "sha256": "a5a4316bf2aa0d30bfd32d08d7df1ad8739d41b35e4e361c77a97b2e94ae300a",
+          "line": 314,
+          "end_line": 318,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5a/5aed7ccb52e1878b__WMS-STOCK-01_库存数量账与移动_前后端开发Spec_v1.1.1_REVIEW.md",
+          "sha256": "5aed7ccb52e1878b80dc45324e467437314f9157e55a17c10094a25e35421700",
+          "line": 1414,
+          "end_line": 1418,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7e/7e25b78ea1261553__WMS-OUT-01_出库拣配包装与发运_前后端开发Spec_v1.3_R3_REVIEW_CANDIDATE.md",
+          "sha256": "7e25b78ea1261553bb139c12b89f7d43394845aaaf752a93ba25e1b4762152f9",
+          "line": 905,
+          "end_line": 909,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+          "line": 350,
+          "end_line": 359,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+          "line": 699,
+          "end_line": 715,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5a/5aed7ccb52e1878b__WMS-STOCK-01_库存数量账与移动_前后端开发Spec_v1.1.1_REVIEW.md",
+          "sha256": "5aed7ccb52e1878b80dc45324e467437314f9157e55a17c10094a25e35421700",
+          "line": 474,
+          "end_line": 477,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5a/5aed7ccb52e1878b__WMS-STOCK-01_库存数量账与移动_前后端开发Spec_v1.1.1_REVIEW.md",
+          "sha256": "5aed7ccb52e1878b80dc45324e467437314f9157e55a17c10094a25e35421700",
+          "line": 1414,
+          "end_line": 1455,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "sha256": "735749099f867bc985456d1a9ee42415f0751527e308cb090642bafe277cebef",
+          "line": 7328,
+          "end_line": 7332,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "sha256": "c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403",
+          "line": 15270,
+          "end_line": 15322,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7e/7e25b78ea1261553__WMS-OUT-01_出库拣配包装与发运_前后端开发Spec_v1.3_R3_REVIEW_CANDIDATE.md",
+          "sha256": "7e25b78ea1261553bb139c12b89f7d43394845aaaf752a93ba25e1b4762152f9",
+          "line": 905,
+          "end_line": 929,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a86201bc6969186__WMS-IN-01_入库计划与物理收货_前后端开发Spec_v1.0.3_DRAFT.md",
+          "sha256": "9a86201bc6969186fbd7721bf175c799e97738933718d8c73dee6f6372c1426c",
+          "line": 440,
+          "end_line": 453,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-003-POS",
+          "scenario": "RMA receipt与Stock correction同资源竞争",
+          "expected": "同native Uow按统一次序串行，Stock+IN+RMA/H30+claim一并提交",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-003-NEG",
+          "scenario": "漏canonical/物理alias分裂/先Scope后Canonical/中途增资源",
+          "expected": "LOCK_PLAN_UNPROVEN或RESOURCE_SET_CHANGED，全回滚重收集",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-004",
+      "source_finding_ids": [
+        "OPS-IF-004"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "WMS-RMA-01",
+        "QA-NCR-01",
+        "WMS-IN-01"
+      ],
+      "source_version": "RMA original five disposition adapters REQUIRED_FENCED",
+      "decision": "五类disposition逐一登记owner/route/capability/query/seal/correction；QA-NCR设计通过不构成报废/返修/转移运行授权，IN收货receipt不替代处置效果。",
+      "preserved_constraints": [
+        "RMA五adapter及其Stock/H30/QA owner原命令query/close全路径证据齐全才逐项解门。"
+      ],
+      "consumer_adoption": {
+        "required": "RMA五adapter及其Stock/H30/QA owner原命令query/close全路径证据齐全才逐项解门。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+          "line": 277,
+          "end_line": 281,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+          "line": 371,
+          "end_line": 375,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dc/dc0ca1dd23d08f92__WMS-RMA-01_客户退货实物处理_前后端开发Spec_v1.0_DRAFT(3).md",
+          "sha256": "dc0ca1dd23d08f92a59d87739c0dda33fc8c6f0e50f7b34d83ff62b5a47b1a82",
+          "line": 699,
+          "end_line": 703,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-004-POS",
+          "scenario": "一个adapter全采用且当前授权有效",
+          "expected": "只开启该处置目的，原物理证据完整",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-004-NEG",
+          "scenario": "用IN收货成功推导QA报废可执行",
+          "expected": "对应处置保持REQUIRED_FENCED，不伪造no-effect",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-005",
+      "source_finding_ids": [
+        "OPS-IF-005"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "WMS-DEL-01",
+        "WMS-STOCK-01",
+        "WMS-OUT-01"
+      ],
+      "source_version": "WMS-DEL v1.3 R3 F0 integration",
+      "decision": "采用F0→K1→S2→S3→E4→D5→L6→O7原序及Movement解释epoch；Stock相关更正预收全Movement F0；新鲜Stock发现cut与OUT应用集合比较。",
+      "preserved_constraints": [
+        "DEL/OUT/Stock全部相关correction、permit/closure/late apply writer同数据库连接Serializable；采用CP6组合计划的物理alias登记。"
+      ],
+      "consumer_adoption": {
+        "required": "DEL/OUT/Stock全部相关correction、permit/closure/late apply writer同数据库连接Serializable；采用CP6组合计划的物理alias登记。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "sha256": "c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403",
+          "line": 15270,
+          "end_line": 15274,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "sha256": "c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403",
+          "line": 15276,
+          "end_line": 15280,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "sha256": "c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403",
+          "line": 15278,
+          "end_line": 15282,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "sha256": "c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403",
+          "line": 15290,
+          "end_line": 15294,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+          "sha256": "c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403",
+          "line": 15320,
+          "end_line": 15324,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-005-POS",
+          "scenario": "permit commit先于closure赢得同F0",
+          "expected": "恢复原已提交事实，再关闭未来effect",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-005-NEG",
+          "scenario": "漏notify且OUT自称nogap或关闭时遗漏新Movement",
+          "expected": "WAITING_SOURCE/UNKNOWN，不接受旧permit",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-009",
+      "source_finding_ids": [
+        "OPS-IF-009"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "MES-MAT-01",
+        "MES-EXEC-01"
+      ],
+      "source_version": "MAT PENDING-BASIS-SUCCESSION/1 + EXEC X44 CURRENT",
+      "decision": "保留PENDING_BASIS_SUCCESSION与NEW_CONSUMPTION分purpose；same EXEC-BASIS-DOMAIN保护未满足义务无gap转移，旧 CLOSED_SUPERSEDED_BEFORE_EFFECT保留历史。",
+      "preserved_constraints": [
+        "MAT/EXEC normal consumption、correction、succession、queue/obligation/WO cursor全writer同quantityUow；M35–37设计后继不重开。"
+      ],
+      "consumer_adoption": {
+        "required": "MAT/EXEC normal consumption、correction、succession、queue/obligation/WO cursor全writer同quantityUow；M35–37设计后继不重开。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/89826583e0cd6992__MAT-SUPP-PENDING-BASIS-SUCCESSION-01_v1.0_R1_PROPOSED.md",
+          "sha256": "89826583e0cd6992027f947f5182a75da84ad27e249ff541801115852e310053",
+          "line": 80,
+          "end_line": 84,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/89826583e0cd6992__MAT-SUPP-PENDING-BASIS-SUCCESSION-01_v1.0_R1_PROPOSED.md",
+          "sha256": "89826583e0cd6992027f947f5182a75da84ad27e249ff541801115852e310053",
+          "line": 133,
+          "end_line": 137,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f4/f44092bdd0d9f07c__CURRENT.json",
+          "sha256": "f44092bdd0d9f07c29fd9f85cedb4a0a255da59c4b332f9bd8fc2e0492613996",
+          "line": 55,
+          "end_line": 59,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f4/f44092bdd0d9f07c__CURRENT.json",
+          "sha256": "f44092bdd0d9f07c29fd9f85cedb4a0a255da59c4b332f9bd8fc2e0492613996",
+          "line": 74,
+          "end_line": 78,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f4/f44092bdd0d9f07c__CURRENT.json",
+          "sha256": "f44092bdd0d9f07c29fd9f85cedb4a0a255da59c4b332f9bd8fc2e0492613996",
+          "line": 105,
+          "end_line": 107,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "6da10c05475492fb41660d8242a3ff868871064c04f271dfd56bc9af6285344c",
+          "line": 829,
+          "end_line": 833,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "6da10c05475492fb41660d8242a3ff868871064c04f271dfd56bc9af6285344c",
+          "line": 831,
+          "end_line": 835,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "6da10c05475492fb41660d8242a3ff868871064c04f271dfd56bc9af6285344c",
+          "line": 836,
+          "end_line": 840,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "6da10c05475492fb41660d8242a3ff868871064c04f271dfd56bc9af6285344c",
+          "line": 843,
+          "end_line": 847,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-009-POS",
+          "scenario": "旧未满足义务转新basis，集合CAS一致",
+          "expected": "旧终态+新义务同Uow，数量不丢失",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-009-NEG",
+          "scenario": "把superseded解释为物理no-effect或遗漏在途消费",
+          "expected": "拒绝；未知继续保护",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-010",
+      "source_finding_ids": [
+        "OPS-IF-010"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "MES-OUTPUT-01",
+        "MES-EXEC-01",
+        "WMS-STOCK-01",
+        "WMS-IN-01"
+      ],
+      "source_version": "MES-OUTPUT R1 E identity and measurement budget",
+      "decision": "E真实IdentityDomain/measurement budget在Basis/work前；Stock Canonical→Scope→E→Output grant→Stock fine→IN local，E B writer不得反向取Stock/WO。",
+      "preserved_constraints": [
+        "T-REPORT/CORRECTION-SOURCE/COMPLETE、late closure/retraction/gap/fence/migration/correction-settle全writer登记；Facade仍受控新契约。"
+      ],
+      "consumer_adoption": {
+        "required": "T-REPORT/CORRECTION-SOURCE/COMPLETE、late closure/retraction/gap/fence/migration/correction-settle全writer登记；Facade仍受控新契约。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 297,
+          "end_line": 301,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 309,
+          "end_line": 313,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 311,
+          "end_line": 315,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 313,
+          "end_line": 317,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 315,
+          "end_line": 319,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 317,
+          "end_line": 321,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 424,
+          "end_line": 428,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 648,
+          "end_line": 652,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c47569f1836ecf6f__HISTORY__handoffs__PLAN-REUSE-01B__documentation__MD02__acceptances__C-RES__MES-OUTPUT-01__UA-20260930-C-MES-OUTPUT-MD01.md.txt",
+          "sha256": "c47569f1836ecf6fd202a09bc03714b9a6eb818be25b0ad92409d63a73af6cdc",
+          "line": 39,
+          "end_line": 43,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-010-POS",
+          "scenario": "同物理identity的normal与late report竞争",
+          "expected": "measurement budget只消费一次",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-010-NEG",
+          "scenario": "仅锁Basis或E writer反调Stock",
+          "expected": "拒绝不完整resourcePlan，无109AC运行通过声明",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-011",
+      "source_finding_ids": [
+        "OPS-IF-011"
+      ],
+      "batch": "W2",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "MES-OUTPUT-01",
+        "MES-EXEC-01",
+        "WMS-STOCK-01",
+        "WMS-IN-01"
+      ],
+      "source_version": "MES-OUTPUT R1 cumulative allowance close",
+      "decision": "缩量先在同allowance/source gate关闭所有可能Stock执行/aliases含空集合，禁新SP01/SP02，已POSTED/SEALED消费保留；version+1只更新净allowance。",
+      "preserved_constraints": [
+        "所有执行注册/查询/seal/late posting、source registration与缩量writer同门；每grant seal不是全路径closure。"
+      ],
+      "consumer_adoption": {
+        "required": "所有执行注册/查询/seal/late posting、source registration与缩量writer同门；每grant seal不是全路径closure。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 428,
+          "end_line": 432,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 439,
+          "end_line": 443,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 441,
+          "end_line": 445,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+          "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+          "line": 443,
+          "end_line": 447,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c47569f1836ecf6f__HISTORY__handoffs__PLAN-REUSE-01B__documentation__MD02__acceptances__C-RES__MES-OUTPUT-01__UA-20260930-C-MES-OUTPUT-MD01.md.txt",
+          "sha256": "c47569f1836ecf6fd202a09bc03714b9a6eb818be25b0ad92409d63a73af6cdc",
+          "line": 39,
+          "end_line": 43,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-011-POS",
+          "scenario": "allowance100已消费40后缩90且所有执行已闭",
+          "expected": "consumed40保持、remaining50，无物理逆转",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-011-NEG",
+          "scenario": "遗漏一个inflight执行或把缩量当退货",
+          "expected": "继续PENDING/UNKNOWN，不释放数量",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-017",
+      "source_finding_ids": [
+        "OPS-IF-017"
+      ],
+      "batch": "W2",
+      "classification": "SUPERSEDED",
+      "targets": [
+        "QA-NCR-01",
+        "FIN-INV-01",
+        "FIN-COST-01",
+        "WMS-RMA-01"
+      ],
+      "source_version": "QA-NCR R12 root decision + proof addendum2",
+      "decision": "R12闭合旧profile/Uow proof gap：UTF8 domain+NUL+JCS完整非digest proof、INPUT9 current generation、真实同Uow；RETURN_TO_SOURCE仍不在Finance R10 H30枚举。",
+      "preserved_constraints": [
+        "QA-NCR与26专业设计adoption须逐实际consumer证明；旧proof原字节保留。"
+      ],
+      "consumer_adoption": {
+        "required": "QA-NCR与26专业设计adoption须逐实际consumer证明；旧proof原字节保留。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 458,
+          "end_line": 462,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 462,
+          "end_line": 466,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 466,
+          "end_line": 470,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 470,
+          "end_line": 474,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 489,
+          "end_line": 493,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 496,
+          "end_line": 500,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 498,
+          "end_line": 502,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 500,
+          "end_line": 504,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 502,
+          "end_line": 506,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 505,
+          "end_line": 509,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 550,
+          "end_line": 554,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b341a22f91328370__QA-NCR-01_六SPEC统一详细设计_R12_CANDIDATE.md",
+          "sha256": "b341a22f91328370e92bd7817664fd12cfd71fb3724b410a8a5e6748e2e2b29c",
+          "line": 562,
+          "end_line": 566,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/389806299e2681bc__UA-20261004-A-QA-NCR-R12-ROOT-DECISION.txt",
+          "sha256": "389806299e2681bc5d2754bdac645eaa9cfdec9741825e453c8d7764962083ae",
+          "line": 6,
+          "end_line": 10,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-017-POS",
+          "scenario": "REACCEPT/SCRAP/REWORK/HOLD按R12 proof核验",
+          "expected": "按已接受语义消费，记录真实Uow",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-017-NEG",
+          "scenario": "RETURN_TO_SOURCE映射成HOLD或事后补注册证明原Uow",
+          "expected": "H30_QA_RETURN_SEMANTIC_UNMAPPED/PENDING",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-001",
+      "source_finding_ids": [
+        "OPS-IF-001"
+      ],
+      "batch": "W3",
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "FIN-CREDIT-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "New FIN-CREDIT-GL scope/ref binding /1",
+      "decision": "完整Credit五维scope与GL五维scope经双向唯一不可变registry映射；PRODUCTION→REAL、SIMULATION→DEMO；六字段Ref原bytes及type/purpose经binding保存，五字段GL Ref引用新binding。",
+      "preserved_constraints": [
+        "Credit/GL及全部中间consumer只用受信scope、批准alias和精确type/purpose注册；绑定不赋予会计生产者资格。"
+      ],
+      "consumer_adoption": {
+        "required": "Credit/GL及全部中间consumer只用受信scope、批准alias和精确type/purpose注册；绑定不赋予会计生产者资格。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+          "sha256": "9442439f12ceb101fb49f469f596a529f061526d0a7b504289ef5fd3185e9349",
+          "line": 139,
+          "end_line": 143,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+          "sha256": "dabe7fa5cc4da4e422a86eb64c1950be8802a64f2ce008009291c849e798abfd",
+          "line": 26,
+          "end_line": 30,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+          "sha256": "dabe7fa5cc4da4e422a86eb64c1950be8802a64f2ce008009291c849e798abfd",
+          "line": 255,
+          "end_line": 259,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+          "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+          "line": 215,
+          "end_line": 337,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+          "sha256": "9442439f12ceb101fb49f469f596a529f061526d0a7b504289ef5fd3185e9349",
+          "line": 123,
+          "end_line": 145,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+          "sha256": "dabe7fa5cc4da4e422a86eb64c1950be8802a64f2ce008009291c849e798abfd",
+          "line": 26,
+          "end_line": 50,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+          "sha256": "dabe7fa5cc4da4e422a86eb64c1950be8802a64f2ce008009291c849e798abfd",
+          "line": 250,
+          "end_line": 266,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-001-POS",
+          "scenario": "200字符Credit身份且存在合法可逆alias",
+          "expected": "无截断进入GL≤128及tenant UUID；原Ref可完整回溯",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-001-NEG",
+          "scenario": "未知环境/跨mode/两个binding/丢type或套用原digest给新body",
+          "expected": "默认拒绝，无业务或财务效果",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-024",
+      "source_finding_ids": [
+        "OPS-IF-024"
+      ],
+      "batch": "W3",
+      "classification": "DESIGN_GAP",
+      "targets": [
+        "FIN-AP-01",
+        "PUR-MATCH-01"
+      ],
+      "source_version": "New MATCH-CORRECTION-CLOSE/1",
+      "decision": "CorrectionAdmission独立close/query/receipt：先自身FENCED，完整plan所有book/leg及route/alias/inflight闭合；Draft保留并SEALED_UNPOSTED；Posted先恢复OwnerApply，终态保留历史轴。",
+      "preserved_constraints": [
+        "MATCH/AP/GL所有correction create/post/retry/import/manual/bridge/recovery writer用原source root控制门和原义务claim；原forward持续FENCED。"
+      ],
+      "consumer_adoption": {
+        "required": "MATCH/AP/GL所有correction create/post/retry/import/manual/bridge/recovery writer用原source root控制门和原义务claim；原forward持续FENCED。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 85,
+          "end_line": 89,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 406,
+          "end_line": 410,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 588,
+          "end_line": 592,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 699,
+          "end_line": 703,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "11fae598ec00ef49b68ed3f8140105933a3385703bb8fab63add7d1d8812f4ce",
+          "line": 89,
+          "end_line": 103,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "11fae598ec00ef49b68ed3f8140105933a3385703bb8fab63add7d1d8812f4ce",
+          "line": 232,
+          "end_line": 246,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "11fae598ec00ef49b68ed3f8140105933a3385703bb8fab63add7d1d8812f4ce",
+          "line": 458,
+          "end_line": 468,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+          "sha256": "11fae598ec00ef49b68ed3f8140105933a3385703bb8fab63add7d1d8812f4ce",
+          "line": 515,
+          "end_line": 529,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 241,
+          "end_line": 266,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 306,
+          "end_line": 346,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 790,
+          "end_line": 843,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+          "sha256": "dabe7fa5cc4da4e422a86eb64c1950be8802a64f2ce008009291c849e798abfd",
+          "line": 285,
+          "end_line": 354,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-024-POS",
+          "scenario": "close与迟到GL Posted竞争，AP未Apply",
+          "expected": "回收原事实/OwnerApply，返回CLOSED_WITH_RETAINED_HISTORY，绝不再次post",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-024-NEG",
+          "scenario": "只一条leg关闭或将Draft当NO_EFFECT/自动reverse",
+          "expected": "PENDING/UNKNOWN；无原义务释放，无自动reopen",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE",
+      "source_finding_ids": [
+        "COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "ERP-CREDIT-01",
+        "WMS-RMA-01",
+        "FIN-AR-01",
+        "PLAN-DEM-01"
+      ],
+      "source_version": "ERP-CREDIT + unified detailed design stage100",
+      "decision": "现金退款完整current source proposal只作提议；真实5S/rights/currency/lineage原目录（含legacy/import/manual/alias/inflight/reservation/end）；新demand需原owner/node25真实source。",
+      "preserved_constraints": [
+        "FIN-AR R2/RMA R3精确owner消费；QA仅carried不可直接；退款owner完整原集合，需求节点25的owner接受单独证明。"
+      ],
+      "consumer_adoption": {
+        "required": "FIN-AR R2/RMA R3精确owner消费；QA仅carried不可直接；退款owner完整原集合，需求节点25的owner接受单独证明。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "ff64b2393cf2c752bdb599d014c658dd8bfc30cb461b94026bce4b1232ca9800",
+          "line": 69,
+          "end_line": 73,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+          "sha256": "ff64b2393cf2c752bdb599d014c658dd8bfc30cb461b94026bce4b1232ca9800",
+          "line": 546,
+          "end_line": 550,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9418bec946ecd225__01_UNIFIED_BUSINESS_DETAILED_DESIGN.md",
+          "sha256": "9418bec946ecd2253f5d4f9798762918d7aebff7428dcbf147ed8748618c9091",
+          "line": 59,
+          "end_line": 63,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14fa47244e2e57d4__UA-20261008-D-ERP-CREDIT-STAGE100.md",
+          "sha256": "14fa47244e2e57d4bd4d67ed3a3712c0e7cc7cc5401e549c89ed1ca4edb11b9f",
+          "line": 68,
+          "end_line": 68,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE-POS",
+          "scenario": "原履行100与新真实需求分别记录",
+          "expected": "旧履行不被覆盖，新demand有独立真实来源",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE-NEG",
+          "scenario": "伪造newDemandCreated Ref或建空cash目录声称完备",
+          "expected": "保持RequiredFenced，不创造商业需求/现金事实",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION",
+      "source_finding_ids": [
+        "COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "PUR-MATCH-01",
+        "PUR-RETURN-01",
+        "PUR-GR-01",
+        "WMS-OUT-01",
+        "FIN-AP-01"
+      ],
+      "source_version": "PUR-RETURN R3 + MRX v0.2 shared acceptance",
+      "decision": "退货实物不VOID原GR，E=100不变；PENDING_RETURN MRX禁新forward但不自动FENCE旧admission；MATCH/RETURN/manual共享OriginalObligation budget，RETURNED_RETIRED不随credit/refund消失。",
+      "preserved_constraints": [
+        "Stock→PhysicalFact→MRX→SourceReceipt→OUTResult真实同Uow；MRX原forward fence和共享AP义务claim全部writer采用。"
+      ],
+      "consumer_adoption": {
+        "required": "Stock→PhysicalFact→MRX→SourceReceipt→OUTResult真实同Uow；MRX原forward fence和共享AP义务claim全部writer采用。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 384,
+          "end_line": 388,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 443,
+          "end_line": 447,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 435,
+          "end_line": 439,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d6/d69d65cde52092ea__SHARED_ACCEPTANCE.md",
+          "sha256": "d69d65cde52092eafe49b99c0ac35c102722f2cb15fe9fb18eac122df3c6c591",
+          "line": 21,
+          "end_line": 25,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION-POS",
+          "scenario": "已退货后收到finance credit/refund",
+          "expected": "实物退役和原义务保护保持",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION-NEG",
+          "scenario": "把退货当GR VOID或credit释放原MATCH allocation",
+          "expected": "拒绝；只能经独立完整REOPEN批准链",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-RETURN-CURRENT-KNOWLEDGE-CUT",
+      "source_finding_ids": [
+        "COM-RETURN-CURRENT-KNOWLEDGE-CUT"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "PUR-RETURN-01",
+        "PUR-MATCH-01",
+        "WMS-OUT-01",
+        "WMS-STOCK-01"
+      ],
+      "source_version": "PUR-RETURN R3 T15/T16",
+      "decision": "current集合是递归lineage terminal leaf的active/actual/unresolved union，非所有历史行；T15先generation失效，T16精确query/attempt/worker/CAS；新frontier必须新capture。",
+      "preserved_constraints": [
+        "PUR-RETURN/OUT/Stock全部case/head/lineage/discovery writer与分页cut协调；迟到旧回复保历史且高frontier必须失效current。"
+      ],
+      "consumer_adoption": {
+        "required": "PUR-RETURN/OUT/Stock全部case/head/lineage/discovery writer与分页cut协调；迟到旧回复保历史且高frontier必须失效current。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 358,
+          "end_line": 362,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 365,
+          "end_line": 369,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 618,
+          "end_line": 622,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 620,
+          "end_line": 624,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 622,
+          "end_line": 626,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 624,
+          "end_line": 628,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 626,
+          "end_line": 630,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 632,
+          "end_line": 636,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 90422,
+          "end_line": 90426,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-RETURN-CURRENT-KNOWLEDGE-CUT-POS",
+          "scenario": "旧请求晚到携带更高frontier14且目标需15",
+          "expected": "拒绝旧current，追赶后重新capture完整cut",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-RETURN-CURRENT-KNOWLEDGE-CUT-NEG",
+          "scenario": "OUT局部nogap直接将原旧cut标current",
+          "expected": "继续UNKNOWN，不触发新effect",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-RETURN-H31-COMPOSITE-RESOURCES",
+      "source_finding_ids": [
+        "COM-RETURN-H31-COMPOSITE-RESOURCES"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "PUR-RETURN-01",
+        "PUR-MATCH-01",
+        "WMS-OUT-01",
+        "WMS-STOCK-01"
+      ],
+      "source_version": "PUR-RETURN R3 H31 composite adopted design",
+      "decision": "全部warehouse祖先后location；DETAIL全局owner/key最强锁；每location metricSet含N/A取X，CONTROLLED完整metric/domain/head/occupancy/mapping/rule；一Part一Uow。",
+      "preserved_constraints": [
+        "Stock/OUT/RETURN/MASTER/capacity/metricSet所有writer；集合数随地点变化（例60），不是固定49；SourceCapacityResult复用原Stock receipt。"
+      ],
+      "consumer_adoption": {
+        "required": "Stock/OUT/RETURN/MASTER/capacity/metricSet所有writer；集合数随地点变化（例60），不是固定49；SourceCapacityResult复用原Stock receipt。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 512,
+          "end_line": 516,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 54347,
+          "end_line": 54351,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 54358,
+          "end_line": 54362,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 54369,
+          "end_line": 54373,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 54377,
+          "end_line": 54381,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 54379,
+          "end_line": 54383,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 54381,
+          "end_line": 54385,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+          "line": 54383,
+          "end_line": 54387,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-RETURN-H31-COMPOSITE-RESOURCES-POS",
+          "scenario": "多location+N/A metric并发改metric membership",
+          "expected": "完整resourcePlan串行或整Part回滚",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-RETURN-H31-COMPOSITE-RESOURCES-NEG",
+          "scenario": "只锁target位置/固定49/重复计SourceCapacity",
+          "expected": "拒绝；已永久REJECTED以原全路径no-effect证明，无假Closure",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-COM-SUB-COST-RECEIPT-VS-ACCEPTANCE",
+      "source_finding_ids": [
+        "COM-SUB-COST-RECEIPT-VS-ACCEPTANCE"
+      ],
+      "batch": "W3",
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "PUR-SUB-01",
+        "PUR-GR-01",
+        "PUR-PO-01",
+        "FIN-COST-01"
+      ],
+      "source_version": "PUR-SUB Recovery R2 cost/consumption cuts",
+      "decision": "Finance approved RECEIPT完整累计Q作cost，Pcum+sameM仅一次、累计舍入取delta；消耗依据独立COMMERCIAL_ACCEPTANCE_GROSS与冻结Qplan、unitUsage。",
+      "preserved_constraints": [
+        "PUR-SUB/Finance cost/acceptance owners分别完整cut；真实return不VOID原receipt，pending/unknown分别表示。"
+      ],
+      "consumer_adoption": {
+        "required": "PUR-SUB/Finance cost/acceptance owners分别完整cut；真实return不VOID原receipt，pending/unknown分别表示。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+          "line": 232,
+          "end_line": 236,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+          "line": 238,
+          "end_line": 242,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+          "line": 262,
+          "end_line": 266,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+          "line": 264,
+          "end_line": 268,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+          "line": 270,
+          "end_line": 274,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+          "line": 276,
+          "end_line": 280,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+          "line": 278,
+          "end_line": 282,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "COM-SUB-COST-RECEIPT-VS-ACCEPTANCE-POS",
+          "scenario": "PO100→80，已验60待40且原Qplan100",
+          "expected": "旧消耗分母100，cost使用approved cumulative receipt",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "COM-SUB-COST-RECEIPT-VS-ACCEPTANCE-NEG",
+          "scenario": "用finishedQty或新PO80替代冻结消耗basis",
+          "expected": "拒绝推算，缺cut为PENDING/UNKNOWN",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-012",
+      "source_finding_ids": [
+        "OPS-IF-012"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-COST-01",
+        "FIN-GL-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01"
+      ],
+      "source_version": "FIN-COST R2 source/GL completion controls",
+      "decision": "全部pre-source/Cost controls→FM/BP→cost heads真实sameUow；GL source完整原envelope；GL CompletionCurrent S到成本Apply，reverse writer X。",
+      "preserved_constraints": [
+        "MAT/EXEC/OUTPUT/source domains、D06与D16各自revision、FIN-COST和GL reversal全部writer注册，不共享假revision。"
+      ],
+      "consumer_adoption": {
+        "required": "MAT/EXEC/OUTPUT/source domains、D06与D16各自revision、FIN-COST和GL reversal全部writer注册，不共享假revision。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 482,
+          "end_line": 486,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 486,
+          "end_line": 490,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 508,
+          "end_line": 512,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 514,
+          "end_line": 518,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 515,
+          "end_line": 519,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 528,
+          "end_line": 532,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 552,
+          "end_line": 556,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 554,
+          "end_line": 558,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+          "line": 873,
+          "end_line": 877,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-012-POS",
+          "scenario": "GL完成读与reversal竞争",
+          "expected": "先apply原成本或见reverse后拒绝新apply",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-012-NEG",
+          "scenario": "只读旧GL receipt或source门跨库",
+          "expected": "RequiredFenced，不声称原子Apply",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-020",
+      "source_finding_ids": [
+        "OPS-IF-020"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-CLOSE-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "S2 RP-CLOSE-03 bounded closed-period adjustment",
+      "decision": "新GL consumer扩展仅精确close adjustment授权：effect/date/period真status/fence/target/policy/approval/SOD/bankbudget和gl.close-adjustment.post；不将已关period OPEN。",
+      "preserved_constraints": [
+        "GL及close源owner采用扩展新版本；旧wire保持closed，不加字段绕过period检查。"
+      ],
+      "consumer_adoption": {
+        "required": "GL及close源owner采用扩展新版本；旧wire保持closed，不加字段绕过period检查。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 219,
+          "end_line": 223,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 676,
+          "end_line": 680,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 690,
+          "end_line": 694,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 692,
+          "end_line": 696,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 694,
+          "end_line": 698,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-020-POS",
+          "scenario": "已关期且exact RP-CLOSE-03授权全部齐",
+          "expected": "仅批准的adjustment腿可执行，period仍closed",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-020-NEG",
+          "scenario": "普通AP/AR凭close包绕过锁期",
+          "expected": "LOCKED_PERIOD_EXTENSION_UNPROVEN/拒绝",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-021",
+      "source_finding_ids": [
+        "OPS-IF-021"
+      ],
+      "batch": "W3",
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "FIN-CLOSE-01",
+        "FIN-FX-01",
+        "FIN-GL-01",
+        "FIN-REPORT-01"
+      ],
+      "source_version": "S2 FX_SCHEDULED_CHAIN",
+      "decision": "仅预登记FX次期计划镜像：原period immutable post+精确次期mirror、current original REVERSED、Owner applied、mirror current有效；period fulfillment、forward current、lifecycle三轴分离。",
+      "preserved_constraints": [
+        "S2 FX/GL/period owner按purpose采用；DURABLE_NOT_DUE仅original仍Posted且未到期的特定policy，不扩散AP/AR。"
+      ],
+      "consumer_adoption": {
+        "required": "S2 FX/GL/period owner按purpose采用；DURABLE_NOT_DUE仅original仍Posted且未到期的特定policy，不扩散AP/AR。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 247,
+          "end_line": 251,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 257,
+          "end_line": 261,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 261,
+          "end_line": 265,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 265,
+          "end_line": 269,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 509,
+          "end_line": 513,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 511,
+          "end_line": 515,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 513,
+          "end_line": 517,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 921,
+          "end_line": 925,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 923,
+          "end_line": 927,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-021-POS",
+          "scenario": "FX原期已完成、次期mirror完成且原current反转",
+          "expected": "历史期fulfilled保持，current显示reversed",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-021-NEG",
+          "scenario": "普通错误更正套FX例外或镜像失效仍fulfilled current",
+          "expected": "拒绝该例外，按各自purpose重新评估",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-022",
+      "source_finding_ids": [
+        "OPS-IF-022"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-FX-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-REPORT-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "S2 RP-REPORT-01 + FX historical exposure",
+      "decision": "report读完整ledger immutable forward/reverse effectiveDate+cut与opening覆盖，GL-only/manual/source-null也包含；FX取as-of历史敞口+owner全集+rates+signed credits。",
+      "preserved_constraints": [
+        "GL所有角色/手工journal/银行及各敞口owner提供完整历史，缺任一required owner使整plan阻断。"
+      ],
+      "consumer_adoption": {
+        "required": "GL所有角色/手工journal/银行及各敞口owner提供完整历史，缺任一required owner使整plan阻断。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 302,
+          "end_line": 306,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 352,
+          "end_line": 356,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 354,
+          "end_line": 358,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 469,
+          "end_line": 473,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 475,
+          "end_line": 479,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 479,
+          "end_line": 483,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 481,
+          "end_line": 485,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 485,
+          "end_line": 489,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 677,
+          "end_line": 681,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+          "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+          "line": 678,
+          "end_line": 682,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-022-POS",
+          "scenario": "当前reversed原分录属于历史报告区间",
+          "expected": "原分录按有效日仍纳入、逆转在自己有效日纳入",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-022-NEG",
+          "scenario": "opening缺失置0/只取今日open/负敞口夹0",
+          "expected": "报告/FX计划不完整，禁止提交",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-023",
+      "source_finding_ids": [
+        "OPS-IF-023"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-AP-01",
+        "FIN-GL-01",
+        "FIN-BANK-01"
+      ],
+      "source_version": "FIN-AP R1 seven source branches + AP-FUNDS-EVIDENCE-1",
+      "decision": "保留七封闭source union（MATCH_FORWARD/CORRECTION、RETURN、PAYMENT、ALLOCATION、REVERSAL、REFUND），EffectTarget精确绑定；funds evidence为读，RECORD事实与未来GL目标分离。",
+      "preserved_constraints": [
+        "AP/Bank/Cash/check owner按method的真实状态和current root/account/control gate采用；每branch原source/plan/manifest/leg绑定。"
+      ],
+      "consumer_adoption": {
+        "required": "AP/Bank/Cash/check owner按method的真实状态和current root/account/control gate采用；每branch原source/plan/manifest/leg绑定。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 790,
+          "end_line": 794,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 828,
+          "end_line": 832,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 850,
+          "end_line": 854,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 864,
+          "end_line": 868,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 893,
+          "end_line": 897,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 905,
+          "end_line": 909,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-023-POS",
+          "scenario": "银行真实入账或已清算支票证据匹配",
+          "expected": "允许对应源判断，不执行现金",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-023-NEG",
+          "scenario": "未清算check当真实carry或泛化成统一source形状",
+          "expected": "阻断财务新效果，保留原branch错误",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-025",
+      "source_finding_ids": [
+        "OPS-IF-025"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-AP-01",
+        "FIN-GL-01",
+        "FIN-CLOSE-01"
+      ],
+      "source_version": "FIN-AP R1 batch bridge/allocation reversal",
+      "decision": "batch reservation跨独立GL到全AP余额OwnerApply，GL成功本地失败保留bridge+reservation；A28只反allocation component，A29 paymentGL独立，cash refund独立。",
+      "preserved_constraints": [
+        "AP各batch/GL bridge/OwnerApply/付款/分配/退款及manual writer共享原义务claim；同cut signed liability invoice−unallocated payment−bridge，prepayment asset独立。"
+      ],
+      "consumer_adoption": {
+        "required": "AP各batch/GL bridge/OwnerApply/付款/分配/退款及manual writer共享原义务claim；同cut signed liability invoice−unallocated payment−bridge，prepayment asset独立。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 143,
+          "end_line": 147,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 145,
+          "end_line": 149,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 147,
+          "end_line": 151,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 159,
+          "end_line": 163,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 163,
+          "end_line": 167,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 177,
+          "end_line": 181,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+          "line": 533,
+          "end_line": 537,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-025-POS",
+          "scenario": "GL成功AP Apply失败后query恢复",
+          "expected": "只补原OwnerApply，bridge不提前消失",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-025-NEG",
+          "scenario": "数据库rollback宣称GL也撤销或allocation reverse自动退款",
+          "expected": "禁止；保留原已过账事实与保护",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-026",
+      "source_finding_ids": [
+        "OPS-IF-026"
+      ],
+      "batch": "W3",
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "FIN-AR-01",
+        "FIN-GL-01",
+        "FIN-INV-01"
+      ],
+      "source_version": "FIN-AR R2 per-event readiness",
+      "decision": "AR总体UNRESOLVED下policy-ready INVOICE可独立完成；INV独占COGS source，AR只是观察协调；不套AP整manifest完成门。",
+      "preserved_constraints": [
+        "FIN-AR/GL按各event全部腿及policy验证；INV COGS owner独立证据，UI清楚区分总轴与event轴。"
+      ],
+      "consumer_adoption": {
+        "required": "FIN-AR/GL按各event全部腿及policy验证；INV COGS owner独立证据，UI清楚区分总轴与event轴。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 93,
+          "end_line": 97,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 95,
+          "end_line": 99,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 598,
+          "end_line": 602,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 604,
+          "end_line": 608,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-026-POS",
+          "scenario": "INVOICE ready但COGS source缺失",
+          "expected": "仅合法INVOICE event推进，AR总体仍unresolved",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-026-NEG",
+          "scenario": "AR自行生成COGS或总UNRESOLVED一概视无GL效应",
+          "expected": "拒绝COGS伪造，保留已完成event",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-027",
+      "source_finding_ids": [
+        "OPS-IF-027"
+      ],
+      "batch": "W3",
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "FIN-AR-01",
+        "FIN-GL-01",
+        "FIN-REPORT-01",
+        "FIN-CLOSE-01"
+      ],
+      "source_version": "FIN-AR R2 R-GL-AR-LEDGER-CUT-1",
+      "decision": "全历史role mapping+GL-only/manual source-null入账，原reversed仍留历史；strict切口需要同native snapshot，CUT_VECTOR_ONLY必须明确诊断选择。",
+      "preserved_constraints": [
+        "AR/GL账本所有角色历史与开账范围完整，100k上限超出阻断而非截断；跨owner读取不能静默降级。"
+      ],
+      "consumer_adoption": {
+        "required": "AR/GL账本所有角色历史与开账范围完整，100k上限超出阻断而非截断；跨owner读取不能静默降级。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 895,
+          "end_line": 899,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 899,
+          "end_line": 903,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 909,
+          "end_line": 913,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 913,
+          "end_line": 917,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 915,
+          "end_line": 919,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 917,
+          "end_line": 921,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-027-POS",
+          "scenario": "完整同native切口包含历史原+逆转",
+          "expected": "严格对账可采用",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-027-NEG",
+          "scenario": "独立向量假冒strict或超过100k悄悄截断",
+          "expected": "拒绝strict，需显式诊断模式/缩小有效范围",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-028",
+      "source_finding_ids": [
+        "OPS-IF-028"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-AR-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "FIN-AR R2 AR_RECEIPT_CONFIRM + D25/D12/D13",
+      "decision": "真实funds/GL Posted不替代业务OA；独立receipt确认新baseline+claims+receipt same finalUow；未Apply compensation不恢复余额，已Apply allocation走inverse。",
+      "preserved_constraints": [
+        "AR/OA/Core/GL/funds owner分别current gates；旧decision/plan stale不得携带，blocked保留GL及claims。"
+      ],
+      "consumer_adoption": {
+        "required": "AR/OA/Core/GL/funds owner分别current gates；旧decision/plan stale不得携带，blocked保留GL及claims。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 620,
+          "end_line": 624,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 624,
+          "end_line": 628,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 1005,
+          "end_line": 1009,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 1009,
+          "end_line": 1013,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 1017,
+          "end_line": 1021,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 1027,
+          "end_line": 1031,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 1029,
+          "end_line": 1033,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 1035,
+          "end_line": 1039,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+          "line": 1037,
+          "end_line": 1041,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-028-POS",
+          "scenario": "GL已Posted、OA暂缺后获得新批准",
+          "expected": "先保留原事实；新完整批准后只Apply一次",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-028-NEG",
+          "scenario": "复用旧OA或把未Apply补偿当余额恢复",
+          "expected": "阻断Apply且不释放claims",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-029",
+      "source_finding_ids": [
+        "OPS-IF-029"
+      ],
+      "batch": "W3",
+      "classification": "SUPERSEDED",
+      "targets": [
+        "FIN-INV-01"
+      ],
+      "source_version": "FIN-INV R10 narrow R8 reference supersession",
+      "decision": "仅handlercontext/cold C09争议由R10替代；cold按Table/Row重建三durable Uow一致，六TransactionUowId只write envelope；API final-gate引用按R10精确schema解析。",
+      "preserved_constraints": [
+        "INV/AP/Cost consumer用R10闭wire与原语义；scope slot policy不进入economic key；提供精确API R8→R10引用patch，不全盘覆盖R8。"
+      ],
+      "consumer_adoption": {
+        "required": "INV/AP/Cost consumer用R10闭wire与原语义；scope slot policy不进入economic key；提供精确API R8→R10引用patch，不全盘覆盖R8。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+          "sha256": "c9d7ce48b1b68c529cf1f83db03b92cb6c9a1881c40d3792d1bacd92f42c5f41",
+          "line": 1244,
+          "end_line": 1248,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+          "sha256": "c9d7ce48b1b68c529cf1f83db03b92cb6c9a1881c40d3792d1bacd92f42c5f41",
+          "line": 1252,
+          "end_line": 1256,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+          "sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+          "line": 3,
+          "end_line": 7,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+          "sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+          "line": 602,
+          "end_line": 606,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+          "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+          "line": 3,
+          "end_line": 7,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+          "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+          "line": 6079,
+          "end_line": 6083,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+          "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+          "line": 6088,
+          "end_line": 6089,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+          "sha256": "c9d7ce48b1b68c529cf1f83db03b92cb6c9a1881c40d3792d1bacd92f42c5f41",
+          "line": 1244,
+          "end_line": 1252,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f31bcf82ae23555c__API-CATALOG_R10.json",
+          "sha256": "f31bcf82ae23555ccb53379ce49fa2a929c788cbac160f8a9c2b28f0e5e06ada",
+          "line": 598,
+          "end_line": 623,
+          "reading": "DIRECT_PRIMARY_CONTRACT_READ"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json",
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-029-POS",
+          "scenario": "R10冷重建与三Uow一致，FinalGateProblem原code一致",
+          "expected": "接受该窄profile，保留其他历史字段语义",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-029-NEG",
+          "scenario": "要求cold持六write envelope事务id或使用旧schema文件解析R10",
+          "expected": "拒绝错误reader；不能扩大supersession范围",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "SUPERSESSION_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-031",
+      "source_finding_ids": [
+        "OPS-IF-031"
+      ],
+      "batch": "W3",
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "FIN-BANK-01",
+        "FIN-ASSET-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "Finance shared X5 GL measurement profiles",
+      "decision": "货币component qty=abs(amount)、unitprice1需已支持currencyunit basis；UOP实际qty+未舍入rate+residual最终舍入amount；allocation按posting incidence purpose分侧。",
+      "preserved_constraints": [
+        "GL profile registry按真实source/purpose采用；不加NA/额外unit字段，missing qty仍unresolved，不能统一qty1。"
+      ],
+      "consumer_adoption": {
+        "required": "GL profile registry按真实source/purpose采用；不加NA/额外unit字段，missing qty仍unresolved，不能统一qty1。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "sha256": "6271f981bb9187c12b578ca6ef7259c5b37ebe09d71e0cfa3cd7554f14e1b7ce",
+          "line": 63,
+          "end_line": 67,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "sha256": "6271f981bb9187c12b578ca6ef7259c5b37ebe09d71e0cfa3cd7554f14e1b7ce",
+          "line": 67,
+          "end_line": 71,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "sha256": "6271f981bb9187c12b578ca6ef7259c5b37ebe09d71e0cfa3cd7554f14e1b7ce",
+          "line": 69,
+          "end_line": 73,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "sha256": "6271f981bb9187c12b578ca6ef7259c5b37ebe09d71e0cfa3cd7554f14e1b7ce",
+          "line": 89,
+          "end_line": 93,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+          "sha256": "6271f981bb9187c12b578ca6ef7259c5b37ebe09d71e0cfa3cd7554f14e1b7ce",
+          "line": 91,
+          "end_line": 94,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-031-POS",
+          "scenario": "货币profile与真实UOP分别解析",
+          "expected": "各自精确守恒且不重复业务qty",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-031-NEG",
+          "scenario": "UOP缺qty补1或两会计侧累计双份数量",
+          "expected": "UNRESOLVED/拒绝profile",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-032",
+      "source_finding_ids": [
+        "OPS-IF-032"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-BANK-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "FIN-BANK RESTORE_OWNERSHIP_AND_APPLY",
+      "decision": "全冲突组G原claim恢复无FREE间隙，所有maker SOD及AND capabilities；原GL current不变，不生成mirror更正；step receipt重放从apply继续。",
+      "preserved_constraints": [
+        "Bank全组claim/recovery/apply、权限writer和原GL当前性；不可只恢复一个member。"
+      ],
+      "consumer_adoption": {
+        "required": "Bank全组claim/recovery/apply、权限writer和原GL当前性；不可只恢复一个member。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "sha256": "2b0d57e32e36e239e9b6b133776078343517a5718e0e7c56bac4e7eaeeee8143",
+          "line": 84,
+          "end_line": 88,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "sha256": "2b0d57e32e36e239e9b6b133776078343517a5718e0e7c56bac4e7eaeeee8143",
+          "line": 90,
+          "end_line": 94,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "sha256": "2b0d57e32e36e239e9b6b133776078343517a5718e0e7c56bac4e7eaeeee8143",
+          "line": 94,
+          "end_line": 98,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "sha256": "2b0d57e32e36e239e9b6b133776078343517a5718e0e7c56bac4e7eaeeee8143",
+          "line": 96,
+          "end_line": 100,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "sha256": "2b0d57e32e36e239e9b6b133776078343517a5718e0e7c56bac4e7eaeeee8143",
+          "line": 98,
+          "end_line": 102,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+          "sha256": "2b0d57e32e36e239e9b6b133776078343517a5718e0e7c56bac4e7eaeeee8143",
+          "line": 100,
+          "end_line": 104,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-032-POS",
+          "scenario": "restore已提交后apply失败重试",
+          "expected": "读原step receipt，仅补apply，无再次释放",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-032-NEG",
+          "scenario": "部分组恢复、漏maker或新建反向GL",
+          "expected": "拒绝，整组原claim持续保护",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-033",
+      "source_finding_ids": [
+        "OPS-IF-033"
+      ],
+      "batch": "W3",
+      "classification": "INTENTIONAL_DIFFERENCE",
+      "targets": [
+        "FIN-ASSET-01",
+        "FIN-CLOSE-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "FIN-ASSET final depreciation current chain",
+      "decision": "区分current完整链与历史period fulfilled；REUSE_CURRENT/REUSE_CORRECTED/BLOCKED/CREATE_EXCLUSIVE；缺mirror阻断不重造，借用普通run不属处置。",
+      "preserved_constraints": [
+        "ASSET/GL/final depreciation/ordinary run与disposal ownership全部current gates，逆转仅本处置独占final。"
+      ],
+      "consumer_adoption": {
+        "required": "ASSET/GL/final depreciation/ordinary run与disposal ownership全部current gates，逆转仅本处置独占final。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "sha256": "a3439f4c10e41b163e157dd606ef3f98567be6830f3c31088641a70317bd9e62",
+          "line": 99,
+          "end_line": 103,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "sha256": "a3439f4c10e41b163e157dd606ef3f98567be6830f3c31088641a70317bd9e62",
+          "line": 101,
+          "end_line": 105,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "sha256": "a3439f4c10e41b163e157dd606ef3f98567be6830f3c31088641a70317bd9e62",
+          "line": 103,
+          "end_line": 107,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "sha256": "a3439f4c10e41b163e157dd606ef3f98567be6830f3c31088641a70317bd9e62",
+          "line": 123,
+          "end_line": 127,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "sha256": "a3439f4c10e41b163e157dd606ef3f98567be6830f3c31088641a70317bd9e62",
+          "line": 125,
+          "end_line": 129,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+          "sha256": "a3439f4c10e41b163e157dd606ef3f98567be6830f3c31088641a70317bd9e62",
+          "line": 176,
+          "end_line": 180,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-033-POS",
+          "scenario": "普通run已存在且当前有效",
+          "expected": "复用并记录借用，处置reverse不反普通run",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-033-NEG",
+          "scenario": "mirror不完整却新建final或反借用run",
+          "expected": "BLOCKED，禁止重复折旧/错误逆转",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-OPS-IF-034",
+      "source_finding_ids": [
+        "OPS-IF-034"
+      ],
+      "batch": "W3",
+      "classification": "ADOPTION_PENDING",
+      "targets": [
+        "FIN-BUD-01",
+        "FIN-GL-01"
+      ],
+      "source_version": "FIN-BUD shared final gate",
+      "decision": "policy显式NA/required；同budget共享gate持到GL commit，normal/automatic/inverse/policy变更全writer；read预检不是permit。",
+      "preserved_constraints": [
+        "FIN-BUD/GL全部预算影响及policy writer登记，真实sameUow/同资源；无登记维持fenced。"
+      ],
+      "consumer_adoption": {
+        "required": "FIN-BUD/GL全部预算影响及policy writer登记，真实sameUow/同资源；无登记维持fenced。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4793a84b5a7d4d0e__FIN-BUD-01.md",
+          "sha256": "4793a84b5a7d4d0e5361cf173a00f9032aa3e5806ed173ac12612be99a38e02f",
+          "line": 76,
+          "end_line": 80,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4793a84b5a7d4d0e__FIN-BUD-01.md",
+          "sha256": "4793a84b5a7d4d0e5361cf173a00f9032aa3e5806ed173ac12612be99a38e02f",
+          "line": 78,
+          "end_line": 82,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4793a84b5a7d4d0e__FIN-BUD-01.md",
+          "sha256": "4793a84b5a7d4d0e5361cf173a00f9032aa3e5806ed173ac12612be99a38e02f",
+          "line": 79,
+          "end_line": 83,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/04-finance-correction-contracts.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json"
+      ],
+      "acceptance": [
+        {
+          "id": "OPS-IF-034-POS",
+          "scenario": "remaining100，两笔各60并发",
+          "expected": "只有一笔提交，另一重新评估拒绝",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "OPS-IF-034-NEG",
+          "scenario": "预算预检后释放gate再post",
+          "expected": "拒绝新GL效果",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "BOUNDARY_RECORDED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-PLAN-IF-005",
+      "source_finding_ids": [
+        "PLAN-IF-005"
+      ],
+      "batch": "W2",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-ATP-01"
+      ],
+      "source_version": "PLAN-ATP recovery R11 source patch",
+      "decision": "终结入口改成同组织evaluation关联ReplayRecord按完整自然键序锁定后Evaluation；缺replay拒绝；保留授权ticket与后续CAS、原stage/helper序。",
+      "preserved_constraints": [
+        "A02/A04、binder、recovery、intake所有涉及双方的入口共同Replay→Evaluation；禁止绑定后重新关联新ReplayRecord，原包SQL不执行。"
+      ],
+      "consumer_adoption": {
+        "required": "A02/A04、binder、recovery、intake所有涉及双方的入口共同Replay→Evaluation；禁止绑定后重新关联新ReplayRecord，原包SQL不执行。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-DATA-CONSTRAINTS.json",
+          "sha256": "269ddd3c34ff3d3e2021a62de75e92bb3bf2304ca6e8a17f5212d08e36126de0",
+          "line": 1,
+          "end_line": 5,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "line": 2215,
+          "end_line": 2219,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-DIRECT-REPAIR-EVIDENCE.json",
+          "sha256": "1eb9fb9ed9bb9765fa4e908857164c4b1782a5bdd6fb5e002e369d96e0a150c4",
+          "line": 1,
+          "end_line": 1,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "line": 903,
+          "end_line": 950,
+          "reading": "DIRECT_CALL_CHAIN_READ; includes implicit Evaluation lock in recovery validators"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "line": 1336,
+          "end_line": 1355,
+          "reading": "DIRECT_CALL_CHAIN_READ; includes implicit Evaluation lock in recovery validators"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "line": 2020,
+          "end_line": 2053,
+          "reading": "DIRECT_CALL_CHAIN_READ; includes implicit Evaluation lock in recovery validators"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "line": 2062,
+          "end_line": 2109,
+          "reading": "DIRECT_CALL_CHAIN_READ; includes implicit Evaluation lock in recovery validators"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "line": 2163,
+          "end_line": 2195,
+          "reading": "DIRECT_CALL_CHAIN_READ; includes implicit Evaluation lock in recovery validators"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+          "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+          "line": 2271,
+          "end_line": 2290,
+          "reading": "DIRECT_CALL_CHAIN_READ; includes implicit Evaluation lock in recovery validators"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json",
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "PLAN-IF-005-POS",
+          "scenario": "A02终结与bind_snapshot同时针对同evaluation",
+          "expected": "两者Replay→Evaluation，不形成原ABBA",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-005-NEG",
+          "scenario": "终结仍Evaluation→Replay或缺replay",
+          "expected": "静态patch匹配；未来并发门禁必须无死锁且拒绝缺绑定",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-PLAN-IF-010",
+      "source_finding_ids": [
+        "PLAN-IF-010"
+      ],
+      "batch": "W2",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "source_version": "PLAN-PO CP18 C#/TS replay authorization patch",
+      "decision": "old-result分支parse后、外事务commit前补原Authorized/authenticated；confirmed后输出前再次检查时效；过期不输出，保留原receipt，不重跑业务。",
+      "preserved_constraints": [
+        "C#/TS所有PO11–14重放分支与现有current Core/provider门共同采用；原权限目录回放fresh对象/action/field mask保持。"
+      ],
+      "consumer_adoption": {
+        "required": "C#/TS所有PO11–14重放分支与现有current Core/provider门共同采用；原权限目录回放fresh对象/action/field mask保持。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+          "sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+          "line": 22,
+          "end_line": 23,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+          "sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+          "line": 106,
+          "end_line": 110,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PERMISSION_CATALOGUE.json",
+          "sha256": "315bf5b73660de0972939289eb296e475f6b7ad861acfa2aa1cd3c0d3b880e19",
+          "line": 128,
+          "end_line": 132,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PERMISSION_CATALOGUE.json",
+          "sha256": "315bf5b73660de0972939289eb296e475f6b7ad861acfa2aa1cd3c0d3b880e19",
+          "line": 138,
+          "end_line": 142,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PERMISSION_CATALOGUE.json",
+          "sha256": "315bf5b73660de0972939289eb296e475f6b7ad861acfa2aa1cd3c0d3b880e19",
+          "line": 167,
+          "end_line": 171,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json",
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "PLAN-IF-010-POS",
+          "scenario": "权限有效且原请求identity匹配",
+          "expected": "返回原canonical bytes，replayed字段不改",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-010-NEG",
+          "scenario": "capture/commit等待中授权过期",
+          "expected": "403/404按原目录，旧结果零泄露、原receipt不删除",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    },
+    {
+      "issue_id": "DR-PLAN-IF-011",
+      "source_finding_ids": [
+        "PLAN-IF-011"
+      ],
+      "batch": "W2",
+      "classification": "ARTIFACT_CONFLICT",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "source_version": "PLAN-PO CP18 ApplyOwnerIntermediate SQL patch",
+      "decision": "新success在COMMIT后返回已校验且写入CommandSlot的@LocalTerminalCanonical及Replayed=0；与replay相同一结果集一行两列，consumer只取原TerminalCanonical。",
+      "preserved_constraints": [
+        "PrWoRecovery C#/TS Execute结果shape与outer CommitConfirmed保持；SQL内COMMIT不替代外层确认，enqueue子过程不得额外结果集。"
+      ],
+      "consumer_adoption": {
+        "required": "PrWoRecovery C#/TS Execute结果shape与outer CommitConfirmed保持；SQL内COMMIT不替代外层确认，enqueue子过程不得额外结果集。",
+        "runtime_status": "UNPROVEN",
+        "design_acceptance_is_runtime_adoption": false
+      },
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+          "sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+          "line": 35,
+          "end_line": 39,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+          "sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+          "line": 130,
+          "end_line": 148,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PR_WO_RECOVERY_HTTP_DESIGN.cs",
+          "sha256": "25b07ef8df1d3d7dd7f961abc6afee94a385423b155282318dc88acef968d993",
+          "line": 16,
+          "end_line": 17,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.cs",
+          "sha256": "781441c2bb3ff35617bcdd0ba7ef77b12e8d4e8522f26f30dc4bc9de39efb30a",
+          "line": 10,
+          "end_line": 13,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+          "sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+          "line": 268,
+          "end_line": 272,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+          "sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+          "line": 333,
+          "end_line": 335,
+          "reading": "DIRECT_PRIMARY_CLAUSE_AND_RELATED_CONTRACT_READ; source SHA checked again by local static validation"
+        }
+      ],
+      "outputs": [
+        "remediation/03-transactions-and-recovery.md",
+        "remediation/assets/finance-recovery/owner-adoption.json",
+        "remediation/assets/finance-recovery/contracts.schema.json",
+        "remediation/assets/finance-recovery/source-patches.json"
+      ],
+      "acceptance": [
+        {
+          "id": "PLAN-IF-011-POS",
+          "scenario": "新success与重放读取相同CommandOutcome bytes",
+          "expected": "均一结果集/一行，业务terminal完全相同",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        },
+        {
+          "id": "PLAN-IF-011-NEG",
+          "scenario": "遗漏结果集/子过程额外结果集/外commit unknown",
+          "expected": "SQL_RESULT_SHAPE或503 query原key，不伪造成功",
+          "verification_level": "REQUIRED_RUNTIME",
+          "result": "NOT_RUN"
+        }
+      ],
+      "design_status": "DESIGN_RESOLVED",
+      "actual_adoption_status": "UNPROVEN",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "verification_status": "STATIC_DATA_CHECK_ONLY; RUNTIME_NOT_RUN"
+    }
+  ]
+}

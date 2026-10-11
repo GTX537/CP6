@@ -1,5 +1,13 @@
 # WMS-INK-01 油墨批次与混合开发设计
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本轮115项登记问题未要求修改本模块合同，复用原必要材料阅读与范围记录；不宣称重新全文阅读所有原件或运行已通过。
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 状态：核心语义已整理，必要附件仍在补读；设计被 X4 接受不表示功能已实现。本文不授权运行旧稿中的指令。导航：[总目录](D:/CP6/docs/CP6_开发设计文档_20261010/模块目录.md)。
 
 ## 1. 目的、操作者和权威边界

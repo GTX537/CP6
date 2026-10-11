@@ -1,5 +1,21 @@
 # QA-POL-01 检验策略与检验计划
 
+<!-- CP6-DESIGN-REVISION-ENTRY:START -->
+## 当前设计修订入口（2026-10-11 R1）
+
+本模块有以下明确处置。编码时把本补充与准确原合同共同固定；下方归档整理中的旧待核描述保留来源背景，当前范围以本表决定为准。
+
+| 原登记编号 | 分类与当前决定 | 设计入口 |
+|---|---|---|
+| COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION | ADOPTION_PENDING：采用GR逐叶原Domain/有效RangeSet/当前ScopeSet和Quality，Stock/PO专业后继完整共同ResourcePlan；非前缀VOID保持当前已修设计。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-013 | INTENTIONAL_DIFFERENCE：QA-POL采购按准确source/part叶总体；制造按原完整总体，不能母单100覆盖采购40/60。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-014 | SUPERSEDED：IQC R5已对QAP EffectLocator准确追加ORDINARY_STOCK_USE；镜像通用说明不能覆盖此有界后继。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-016 | SUPERSEDED：NCR准确后继已无损采用IPQC旧SourceEnvelope、standalone和Resolution27；保原字段/摘要/Scope。 | [设计](../remediation/05-planning-material-mapping.md) |
+| OPS-IF-045 | ARTIFACT_CONFLICT：Create explicitly NEW DEMO POLICY1@2, PLAN1@2, technical binding and separated-author approval/activation fixture for exact40..100 population. Preserve POLICY1@1 100-only and frozen original source. Four resolutions migrate with REASSESS_REQUIRED context and digest closure. No actual policy approval/adoption claimed. | [设计](../remediation/assets/operations-fixtures/DECISIONS.md) |
+
+[统一处置表](../remediation/00-disposition-register.json) / [验收目录](../remediation/08-acceptance-catalog.json) / [编码交接](../remediation/09-implementation-handoff.md)。实际采用仍 UNPROVEN、业务验收 NOT_RUN；原历史接受和缺件边界不变。
+<!-- CP6-DESIGN-REVISION-ENTRY:END -->
+
 整理状态：**required_materials_consolidated**。当前45362行主文全部规范、97连续JSON、298证据原件及全部116验收条件已完成语义阅读；395节点可逆还原与298原件摘要核对均0差。当前5项必要规范/接受组合已读，六项真实采用门和业务AC仍未证/未运行。
 
 ## 1. 业务目的、操作者、触发与边界

@@ -1,0 +1,661 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "schema": "OPS-RMA-DISPOSITION-DETAIL-PROJECTION-1",
+  "qualification": {
+    "ref": {
+      "owner": "WMS-RMA-01",
+      "id": "OPS-RMA-QUALIFICATION-48",
+      "version": "1",
+      "digest": "df1a82c50918182f794a8cd5094c998606ec3b3c824dcd30d938b3e1d61c335c"
+    },
+    "body": {
+      "schema": "OPS-RMA-QUALIFICATION-1",
+      "mode": "DEMO",
+      "effectOwner": null,
+      "ownerContractRef": null,
+      "state": "REQUIRED_FENCED",
+      "stockCallMade": false,
+      "canInferNoEffect": false,
+      "recordedAt": "2026-10-02T03:00:00Z"
+    }
+  },
+  "detailProjection": {
+    "qualification": "REQUIRED_FENCED",
+    "dispositionState": "PENDING",
+    "work": {
+      "workId": "b1000000-0000-4000-8000-000000000048",
+      "rmaId": "50000000-0000-4000-8000-000000000001",
+      "operation": "DISPOSITION_APPLY",
+      "revision": 1,
+      "leaseEpoch": 1,
+      "writerEpoch": 1,
+      "state": "BLOCKED",
+      "bindingRef": {
+        "owner": "WMS-RMA-01",
+        "id": "BIND-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "checkpoints": [
+        {
+          "name": "EFFECT_OWNER_QUALIFICATION",
+          "ordinal": 1,
+          "state": "BLOCKED",
+          "owner": "WMS-RMA-01",
+          "queryLocator": "OPS-RMA-QUALIFICATION-48",
+          "lastConfirmedRef": null,
+          "attemptCount": 1,
+          "lastAttemptAt": "2026-10-02T03:00:00Z",
+          "reasonCodes": [
+            "DISPOSITION_ADAPTER_REQUIRED_FENCED"
+          ]
+        }
+      ],
+      "nextActions": [],
+      "createdAt": "2026-10-02T03:00:00Z",
+      "updatedAt": "2026-10-02T03:01:00Z"
+    },
+    "slices": [
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000048",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-RESALE_STOCK",
+          "version": "1",
+          "digest": "3475e85bd5ae229e619f359bf4a6543aeb4c68abc06d40dc4b51dd319aa2e726"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "ACCEPTED",
+        "ranges": [
+          {
+            "from": "0",
+            "to": "1"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "RESALE_STOCK",
+        "adapterId": "RMA-DSP-RESALE-MOVE-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|RESALE_STOCK",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000049",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-REPAIR",
+          "version": "1",
+          "digest": "231d41776386ea6d82b10af7de73ed29c6256715440403073579810fb038a121"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "1",
+            "to": "2"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "REPAIR",
+        "adapterId": "RMA-DSP-REPAIR-MOVE-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|REPAIR",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000050",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-SCRAP",
+          "version": "1",
+          "digest": "bfa005b21b5995615c77a98f020add8eb42557d69c0b1e24723678ffa9c2f02b"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "2",
+            "to": "3"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "SCRAP",
+        "adapterId": "RMA-DSP-SCRAP-ADJUST-LOSS-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|SCRAP",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000051",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-SUPPLIER_RETURN",
+          "version": "1",
+          "digest": "2433304f59655c0c02e847772ba1650eed92390ec1f403af5f2937e5484a9dd5"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "3",
+            "to": "4"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "SUPPLIER_RETURN",
+        "adapterId": "RMA-DSP-SUPPLIER-RETURN-SHIP-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|SUPPLIER_RETURN",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000052",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-RETURN_TO_CUSTOMER",
+          "version": "1",
+          "digest": "7deadd3017fcc7130841976305082cba0d4b11b9c97f752ee53927f06e853472"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "4",
+            "to": "5"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "RETURN_TO_CUSTOMER",
+        "adapterId": "RMA-DSP-CUSTOMER-RETURN-SHIP-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|RETURN_TO_CUSTOMER",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      }
+    ]
+  },
+  "nativeApplyResult": {
+    "state": "REQUIRED_FENCED",
+    "work": {
+      "workId": "b1000000-0000-4000-8000-000000000048",
+      "rmaId": "50000000-0000-4000-8000-000000000001",
+      "operation": "DISPOSITION_APPLY",
+      "revision": 1,
+      "leaseEpoch": 1,
+      "writerEpoch": 1,
+      "state": "BLOCKED",
+      "bindingRef": {
+        "owner": "WMS-RMA-01",
+        "id": "BIND-1",
+        "version": "1",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "checkpoints": [
+        {
+          "name": "EFFECT_OWNER_QUALIFICATION",
+          "ordinal": 1,
+          "state": "BLOCKED",
+          "owner": "WMS-RMA-01",
+          "queryLocator": "OPS-RMA-QUALIFICATION-48",
+          "lastConfirmedRef": null,
+          "attemptCount": 1,
+          "lastAttemptAt": "2026-10-02T03:00:00Z",
+          "reasonCodes": [
+            "DISPOSITION_ADAPTER_REQUIRED_FENCED"
+          ]
+        }
+      ],
+      "nextActions": [],
+      "createdAt": "2026-10-02T03:00:00Z",
+      "updatedAt": "2026-10-02T03:01:00Z"
+    },
+    "slices": [
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000048",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-RESALE_STOCK",
+          "version": "1",
+          "digest": "3475e85bd5ae229e619f359bf4a6543aeb4c68abc06d40dc4b51dd319aa2e726"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "ACCEPTED",
+        "ranges": [
+          {
+            "from": "0",
+            "to": "1"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "RESALE_STOCK",
+        "adapterId": "RMA-DSP-RESALE-MOVE-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|RESALE_STOCK",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000049",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-REPAIR",
+          "version": "1",
+          "digest": "231d41776386ea6d82b10af7de73ed29c6256715440403073579810fb038a121"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "1",
+            "to": "2"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "REPAIR",
+        "adapterId": "RMA-DSP-REPAIR-MOVE-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|REPAIR",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000050",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-SCRAP",
+          "version": "1",
+          "digest": "bfa005b21b5995615c77a98f020add8eb42557d69c0b1e24723678ffa9c2f02b"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "2",
+            "to": "3"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "SCRAP",
+        "adapterId": "RMA-DSP-SCRAP-ADJUST-LOSS-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|SCRAP",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000051",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-SUPPLIER_RETURN",
+          "version": "1",
+          "digest": "2433304f59655c0c02e847772ba1650eed92390ec1f403af5f2937e5484a9dd5"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "3",
+            "to": "4"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "SUPPLIER_RETURN",
+        "adapterId": "RMA-DSP-SUPPLIER-RETURN-SHIP-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|SUPPLIER_RETURN",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      },
+      {
+        "sliceId": "b1000000-0000-4000-8000-000000000052",
+        "rmaId": "50000000-0000-4000-8000-000000000001",
+        "proposalRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-PROPOSAL-48",
+          "version": "1",
+          "digest": "322fc65401864684f1f3283d07b9869a99a1f9bcae30cb3d6f374f54a13acc33"
+        },
+        "selectionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-SELECTION-RETURN_TO_CUSTOMER",
+          "version": "1",
+          "digest": "7deadd3017fcc7130841976305082cba0d4b11b9c97f752ee53927f06e853472"
+        },
+        "sourceReceiptRef": {
+          "owner": "WMS-RMA-01",
+          "id": "PHYS-1",
+          "version": "1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "qualityDecisionRef": {
+          "owner": "WMS-RMA-01",
+          "id": "OPS-QUALITY-48",
+          "version": "1",
+          "digest": "ca95dad4e3e59a28392edb4da0e1e45d01e934afa8d9e534d7aa85b123fa9d60"
+        },
+        "quality": "REJECTED",
+        "ranges": [
+          {
+            "from": "4",
+            "to": "5"
+          }
+        ],
+        "quantity": {
+          "value": "1",
+          "uom": {
+            "code": "EA",
+            "version": "1"
+          }
+        },
+        "disposition": "RETURN_TO_CUSTOMER",
+        "adapterId": "RMA-DSP-CUSTOMER-RETURN-SHIP-1",
+        "destinationRef": null,
+        "repairRef": null,
+        "supplierReturnRef": null,
+        "customerReturnRef": null,
+        "effectKey": "OPS-RMA-48|RETURN_TO_CUSTOMER",
+        "state": "REQUIRED_FENCED",
+        "ownerWorkRef": null,
+        "ownerResultRef": null,
+        "stockReceiptRef": null,
+        "applicationReceiptRef": null,
+        "previousSliceRef": null
+      }
+    ],
+    "qualificationObservationRef": {
+      "owner": "WMS-RMA-01",
+      "id": "OPS-RMA-QUALIFICATION-48",
+      "version": "1",
+      "digest": "df1a82c50918182f794a8cd5094c998606ec3b3c824dcd30d938b3e1d61c335c"
+    },
+    "recordedAt": "2026-10-02T03:00:00Z"
+  },
+  "partialRule": "If exact previously confirmed slices exist, retain their APPLIED facts and aggregate PARTIAL; new fenced slices stay REQUIRED_FENCED and current Work/checkpoint BLOCKED. Never demote prior receipts.",
+  "noEffectsRule": "PENDING aggregate, BLOCKED Work and checkpoint, REQUIRED_FENCED qualification and slices; preserve occupied claims; no Owner/Stock send",
+  "uiRule": "Render qualification reason separately from DispositionState; BLOCKED is not terminal effect failure or success",
+  "contractRule": "Original closed enums unchanged; the detail projection is a new named read projection, native D05 returns the existing RmaDispositionApplyResult",
+  "runtime_status": "NOT_RUN"
+}
