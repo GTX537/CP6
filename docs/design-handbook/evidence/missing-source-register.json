@@ -5,20 +5,21 @@
   "counts": {
     "exact_original_missing": 21,
     "blocked_containers": 3,
-    "newly_found_exact_originals": 0
+    "newly_found_exact_originals": 0,
+    "user_confirmed_unrecoverable_originals": 1
   },
   "records": [
     {
       "编号": "M04",
-      "优先级": "优先找：当前指定独审",
+      "优先级": "已处置：用户确认无法找回，不再索取",
       "所属目标": "WMS-DEL-01",
       "原文件名或准确描述": "DEL_INDEPENDENT_R3_REVIEW_c30b6885.md",
       "期望字节数": "3461",
       "期望SHA256": "4a30103ef981273ecd9e0d920d4b798e19ca1724850a34413c09a8b25b16621f",
       "记录来源": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/D-WMS/WMS-DEL-01/CURRENT.json",
       "来源字段": "/IndependentFinalReview",
-      "状态": "2026-10-10仍未定位精确原件；身份线索补充不计恢复",
-      "找到后核对": "文件名仅供检索，须按完整SHA256及适用字节数核原件；新生成说明/摘要不代原件",
+      "状态": "2026-10-11用户确认无法找回；找回行动关闭，独审证据缺口保留",
+      "找到后核对": "不再要求找回或重建历史原件；如未来意外发现，仅完整SHA256和3461字节吻合才可更新实物状态",
       "历史检索路径": "",
       "期望行数": "",
       "补充来源": "",
@@ -435,6 +436,20 @@
       "找到后核对": "准确原ZIP身份及范围；不以新生成替代包当历史原件",
       "本轮本地复核": "unlocated_source_reported_blocked",
       "本地路径": null
+    }
+  ],
+  "user_dispositions": [
+    {
+      "target_id": "WMS-DEL-01",
+      "component_id": "R01071",
+      "register_id": "M04",
+      "status": "unrecoverable_user_confirmed",
+      "decision_date": "2026-10-11",
+      "user_statement": "缺失的指定文档已经没有了，我找不回来了，你就当已经无法找回",
+      "retrieval_action_closed": true,
+      "original_present": false,
+      "independent_review_verified": false,
+      "effect": "Stop requesting recovery of this original. Continue using located materials; preserve the historical independent-review evidence gap. New implementation review and applicable acceptance remain separate."
     }
   ]
 }

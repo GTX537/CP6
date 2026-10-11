@@ -18799,7 +18799,19 @@
       "current_L1_L2_material_closure": "incomplete",
       "all_declared_layers_material_closure": "incomplete",
       "semantic_consolidation": "core_semantics_consolidated",
-      "semantic_consolidation_note": "All located required content consolidated; exact R01071 review original remains missing."
+      "semantic_consolidation_note": "All located required content consolidated; user confirmed exact R01071 review original unrecoverable on 2026-10-11. Recovery action closed; independent-review evidence remains absent.",
+      "missing_evidence_disposition": {
+        "target_id": "WMS-DEL-01",
+        "component_id": "R01071",
+        "register_id": "M04",
+        "status": "unrecoverable_user_confirmed",
+        "decision_date": "2026-10-11",
+        "user_statement": "缺失的指定文档已经没有了，我找不回来了，你就当已经无法找回",
+        "retrieval_action_closed": true,
+        "original_present": false,
+        "independent_review_verified": false,
+        "effect": "Stop requesting recovery of this original. Continue using located materials; preserve the historical independent-review evidence gap. New implementation review and applicable acceptance remain separate."
+      }
     },
     {
       "target_id": "WMS-RMA-01",

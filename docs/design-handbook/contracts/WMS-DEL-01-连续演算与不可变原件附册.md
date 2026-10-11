@@ -1,6 +1,6 @@
 # WMS-DEL-01 连续演算、不可变原件与恢复附册
 
-本册依据 v1.3_R3 原件 SHA c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403，补齐147个连续DEMO对象及181个R-CORE原件的字段与流程语义。全部夹具均为离线DEMO，外部Owner preimage不是真实提供方证据。主规范语义已闭合；指定27行独立R3复审原件的身份仍待核准，不能以接受记录转述代替原件阅读。[D L403](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md:403) [D L15602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md:15602)
+本册依据 v1.3_R3 原件 SHA c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403，补齐147个连续DEMO对象及181个R-CORE原件的字段与流程语义。全部夹具均为离线DEMO，外部Owner preimage不是真实提供方证据。主规范语义已闭合；用户于2026-10-11确认指定27行独立R3复审原件R01071无法找回，不再要求补找。现有材料可继续使用，独审证据缺口仍保留，不能以接受记录转述代替原件阅读或据此认定独审通过。[D L403](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md:403) [D L15602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md:15602)
 
 [主册](D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-DEL-01.md)保留API、表/写集、权限和实施顺序；[补读账](D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-DEL-01-supplement-reading.json)给出每个对象原行、SHA、复用关系及当前材料缺口。
 
@@ -89,4 +89,4 @@ J141/J142的原隔离Work和J143的成功后继Work是两个不可变core，payl
 
 准确接受覆盖原文和INDEX中的历史候选名称；当前冻结仍以c30b6885原字节及UA/CURRENT为准。共享H31 v0.7、OUT-EFFECTIVE v3、Stock discovery v1、RETURN observation及三长fixture已按各独立SHA精确复用Stock/RSV与operations已完成的语义阅读；共同补充不提升原目标分数，也不自动采用DEL额外F0合同。
 
-原71AC仍NOT_RUN，O-DEL01–08全部真实采用未证；指定独审R01071的3461字节/27行/SHA4a30103…经与根及operations核对仍未定位。原总审和接受中的PASS是历史来源事实，不能替代这份未定位原件或真实业务验证。
+原71AC仍NOT_RUN，O-DEL01–08全部真实采用未证。补读时，指定独审R01071（3461字节、27行、SHA256 4a30103ef981273ecd9e0d920d4b798e19ca1724850a34413c09a8b25b16621f）经与根及operations核对未定位；用户于2026-10-11确认该原件无法找回，不再列找回待办。原总审和接受中的PASS保留为历史来源事实，不能替代缺失独审的结论、范围及问题关闭细节核验，也不能替代真实业务验证。主册继续保持core_semantics_consolidated，不标required_materials_consolidated；现有材料可继续作为开发输入，后续实际实现的独立审查、71AC和8个采用门仍须另有证据，新审查不能冒充历史独审。

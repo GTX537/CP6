@@ -9,7 +9,8 @@
     },
     "available_current_materials_consolidated": true,
     "all_required_materials_present": false,
-    "interpretation": "Located current design consolidation, missing original evidence, implementation and runtime acceptance are separate states."
+    "interpretation": "Located current design consolidation, missing original evidence, implementation and runtime acceptance are separate states.",
+    "gap_disposition_updated_at_utc": "2026-10-11T07:10:19.996190+00:00"
   },
   "targets": [
     {
@@ -576,8 +577,9 @@
       "version": "# WMS-DEL-01 承运与交付证明",
       "module_written": true,
       "document_status": "core_semantics_consolidated",
-      "next_action": "全部已定位必要材料语义已读；独审R01071 SHA4a30103ef981273e仍未定位，保留有界缺件继续其余整理",
-      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-DEL-01.md"
+      "next_action": "指定独审R01071用户于2026-10-11确认无法找回，关闭找回行动；按现有材料推进，保留独审证据缺口及实现验收要求",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-DEL-01.md",
+      "missing_evidence_disposition": "unrecoverable_user_confirmed"
     },
     {
       "target_id": "WMS-RMA-01",

@@ -106,6 +106,62 @@
     "release_tags_pushed": false,
     "workflow_configuration_changes": 0,
     "actions_started": 0,
-    "actions_cancelled": 0
+    "actions_cancelled": 0,
+    "rechecked_at_utc": "2026-10-11T07:11:33Z",
+    "rechecked_main_unchanged": true,
+    "pr_169_at_recheck": {
+      "state": "OPEN",
+      "merge_state": "CLEAN",
+      "head": "da642793fa591adf5cb58a75496376cdcfa8e5b0",
+      "branch_workflow_runs": 0,
+      "candidate_and_main_workflow_blobs_equal": 13
+    }
+  },
+  "final_gap_disposition": {
+    "target_id": "WMS-DEL-01",
+    "component_id": "R01071",
+    "register_id": "M04",
+    "status": "unrecoverable_user_confirmed",
+    "decision_date": "2026-10-11",
+    "user_statement": "缺失的指定文档已经没有了，我找不回来了，你就当已经无法找回",
+    "retrieval_action_closed": true,
+    "original_present": false,
+    "independent_review_verified": false,
+    "effect": "Stop requesting recovery of this original. Continue using located materials; preserve the historical independent-review evidence gap. New implementation review and applicable acceptance remain separate."
+  },
+  "gap_disposition_targeted_validation": {
+    "at_utc": "2026-10-11T07:15:16.748099+00:00",
+    "files": [
+      "docs/design-handbook/README.md",
+      "docs/design-handbook/contracts/WMS-DEL-01-连续演算与不可变原件附册.md",
+      "docs/design-handbook/evidence/missing-source-register.csv",
+      "docs/design-handbook/evidence/missing-source-register.json",
+      "docs/design-handbook/evidence/task-delivery-review.json",
+      "docs/design-handbook/evidence/资料缺口与集成待核.md",
+      "docs/design-handbook/indexes/module-navigation.json",
+      "docs/design-handbook/indexes/required-inputs.json",
+      "docs/design-handbook/modules/WMS-DEL-01.md",
+      "docs/design-handbook/tools/refresh_navigation.py",
+      "docs/design-handbook/开发者与AI阅读指南.md",
+      "docs/design-handbook/整理交付报告.md",
+      "docs/design-handbook/整理计划.md",
+      "docs/design-handbook/模块目录.md",
+      "docs/project-memory/05-Completed.md",
+      "docs/project-memory/06-Todo.md",
+      "docs/project-memory/CHANGELOG-AI.md",
+      "docs/project-memory/PROJECT_STATE.md"
+    ],
+    "checks": {
+      "json_parsed": 4,
+      "csv_parsed": 1,
+      "markdown_link_sequences_unchanged": 12,
+      "python_syntax": 1
+    },
+    "other_124_module_records_unchanged": true,
+    "original_reference_artifacts_unchanged": true,
+    "other_missing_records_unchanged": true,
+    "csv_json_match_after_string_and_absent_cell_normalization": true,
+    "initial_check_failure": "The first comparison incorrectly assumed every historical JSON register cell was already a string and present; existing M28 has an integer and absent optional fields. Corrected only comparison normalization; source records unchanged.",
+    "errors": []
   }
 }

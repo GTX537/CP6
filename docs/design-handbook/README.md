@@ -1,6 +1,6 @@
 # CP6开发设计文档
 
-**状态：现有资料的本地设计整理已完成，缺失原件明确保留。** 125份模块正文已形成，124个目标必要材料已整理，WMS-DEL-01现有必要内容已整理但仍缺指定独审R01071；不声明全部原件齐备或运行通过。 本地快照更新于2026-10-10T16:11:39.052826+00:00；具体范围和后续事项在模块末节与阅读记录中保留。
+**状态：现有资料的本地设计整理已完成，缺失原件明确保留。** 125份模块正文已形成，124个目标必要材料已整理，WMS-DEL-01现有必要内容已整理；指定独审R01071已于2026-10-11由用户确认无法找回，不再要求补找；不声明全部原件齐备或运行通过。 本地快照更新于2026-10-10T16:11:39.052826+00:00；具体范围和后续事项在模块末节与阅读记录中保留。
 
 从[开发者与AI阅读指南](D:/CP6/docs/CP6_开发设计文档_20261010/开发者与AI阅读指南.md)开始，再按[125目标模块目录](D:/CP6/docs/CP6_开发设计文档_20261010/模块目录.md)进入业务模块。
 
@@ -28,7 +28,7 @@
 | ZIP内部原始成员 | [容器索引](D:/CP6/docs/CP6_开发设计文档_20261010/indexes/container-members.json) |
 | 精确SHA到本地文件 | [真实路径映射](D:/CP6/docs/CP6_开发设计文档_20261010/indexes/materialized-content-paths.json) |
 | 最新增补319固定身份 | [来源登记](D:/CP6/docs/CP6_开发设计文档_20261010/indexes/supplement-source-register.csv) |
-| 仍需找回的准确原件 | [缺件清单](D:/CP6/docs/CP6_开发设计文档_20261010/evidence/missing-source-register.csv) |
+| 缺失原件及无法找回处置 | [缺件清单](D:/CP6/docs/CP6_开发设计文档_20261010/evidence/missing-source-register.csv) |
 | 商业 / 执行 / 公共平台合同 | [商业](D:/CP6/docs/CP6_开发设计文档_20261010/contracts/commercial-contracts.json) / [执行](D:/CP6/docs/CP6_开发设计文档_20261010/contracts/operations-contracts.json) / [平台工程](D:/CP6/docs/CP6_开发设计文档_20261010/contracts/platform-engineering-contracts.json) |
 
 原件保存在`D:/CP6/docs/CP6_完整成果归档_20261009`，展开阅读对象保存在`D:/CP6-archives/consolidation-20261010`。本目录是可追溯的设计整理成果，用户已明确授权上传 CP6 公开仓库。原归档与展开阅读对象仍保留本地，引用这些材料须使用本地资料；没有业务编码、业务测试、Actions、数据库迁移、发布或部署。

@@ -12,6 +12,8 @@ p.add_argument('--delivery', required=True, type=Path)
 p.add_argument('--available-content-complete', action='store_true', help='Finalize located current design material; preserves the explicitly missing DEL review')
 a = p.parse_args()
 matrix = json.loads(a.matrix.read_text(encoding='utf-8'))['targets']
+missing_register = json.loads((a.handbook / 'evidence/missing-source-register.json').read_text(encoding='utf-8'))
+del_decision = next((d for d in missing_register.get('user_dispositions', []) if d.get('component_id') == 'R01071' and d.get('status') == 'unrecoverable_user_confirmed'), None)
 progress = {}
 for path in sorted((a.handbook / 'worklogs').glob('*-progress.json'), key=lambda x: (x.name.startswith('root-'), x.name)):
     d = json.loads(path.read_text(encoding='utf-8'))
@@ -32,6 +34,10 @@ for target in matrix:
     version = basis.get('effective_version_and_precedence') or basis.get('version_and_combination') or basis.get('selected_version') or basis.get('version_label')
     assert version, (tid, list(basis))
     records.append({'target_id': tid, 'name': target['name'], 'version': version, 'module_written': file.is_file(), 'document_status': status, 'next_action': state.get('next_action'), 'module_path': (a.delivery / 'modules' / file.name).as_posix() if file.is_file() else None})
+if del_decision:
+    record = next(r for r in records if r['target_id'] == 'WMS-DEL-01')
+    record['next_action'] = '指定独审R01071用户确认无法找回，关闭找回行动；按现有材料推进，保留独审证据缺口及实现验收要求'
+    record['missing_evidence_disposition'] = del_decision['status']
 counts = Counter(r['document_status'] for r in records)
 stamp = datetime.now(timezone.utc).isoformat()
 if a.available_content_complete:
@@ -50,20 +56,27 @@ if a.available_content_complete:
         target['semantic_consolidation'] = states[target['target_id']]
         if target['target_id'] == 'WMS-DEL-01':
             target['semantic_consolidation_note'] = 'All located required content consolidated; exact R01071 review original remains missing.'
+            if del_decision:
+                target['semantic_consolidation_note'] = 'All located required content consolidated; exact R01071 review original is user-confirmed unrecoverable. Recovery action closed; independent-review evidence remains absent.'
+                target['missing_evidence_disposition'] = del_decision
     required_path.write_text(json.dumps(required, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 scope_text = '已定位的当前必要内容已整理；WMS-DEL独审R01071仍缺原件。' if a.available_content_complete else '其余继续整理。'
+if del_decision:
+    scope_text += ' 用户确认该独审无法找回，找回行动关闭，证据缺口保留。'
 lines = ['# 125目标模块目录', '', f'快照时间：{stamp}。已形成{summary["written_modules"]}份模块正文。{scope_text}状态由实际作者记录，不将有文件视为必要附件已全部核完。', '', '每个版本说明继承固定输入矩阵；准确SHA/组合见required-inputs。版本文字不取代接受限定。', '', '| 目标 | 名称与文档 | 当前选定组合 | 整理状态 |', '|---|---|---|---|']
 for r in records:
     name = f'[{r["name"]}]({r["module_path"]})' if r['module_written'] else r['name']
     status = labels.get(r['document_status'], r['document_status'])
     if a.available_content_complete and r['target_id'] == 'WMS-DEL-01':
-        status = '已定位必要内容已整理；指定独审原件R01071仍缺失'
+        status = '已定位必要内容已整理；指定独审R01071用户确认无法找回；不再索取' if del_decision else '已定位必要内容已整理；指定独审原件R01071仍缺失'
     if not r['module_written']:
         status += '；尚未生成正文'
     lines.append('| ' + ' | '.join(x.replace('|', '\\|').replace('\n', ' ') for x in (r['target_id'], name, r['version'], status)) + ' |')
 (a.handbook / '模块目录.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 root = a.delivery.as_posix()
 opening = ('**状态：现有资料的本地设计整理已完成，缺失原件明确保留。** 125份模块正文已形成，124个目标必要材料已整理，WMS-DEL-01现有必要内容已整理但仍缺指定独审R01071；不声明全部原件齐备或运行通过。' if a.available_content_complete else '**状态：持续整理中，尚未完成全部125个目标及其必要附件。**')
+if del_decision:
+    opening += ' 用户已于' + del_decision['decision_date'] + '确认该独审无法找回，不再要求补找。'
 scope_status = '现有必要内容已整理；历史、元数据、候选源码/工具、视觉母版及未取得原件按原阅读账区分，不能据此声称所有历史源码/示例均已全文审查。' if a.available_content_complete else '当前仍有未读必要材料，本任务保持进行中。'
 readme = f'''# CP6开发设计文档
 
@@ -95,7 +108,7 @@ readme = f'''# CP6开发设计文档
 | ZIP内部原始成员 | [容器索引]({root}/indexes/container-members.json) |
 | 精确SHA到本地文件 | [真实路径映射]({root}/indexes/materialized-content-paths.json) |
 | 最新增补319固定身份 | [来源登记]({root}/indexes/supplement-source-register.csv) |
-| 仍需找回的准确原件 | [缺件清单]({root}/evidence/missing-source-register.csv) |
+| 缺失原件及无法找回处置 | [缺件清单]({root}/evidence/missing-source-register.csv) |
 | 商业 / 执行 / 公共平台合同 | [商业]({root}/contracts/commercial-contracts.json) / [执行]({root}/contracts/operations-contracts.json) / [平台工程]({root}/contracts/platform-engineering-contracts.json) |
 
 原件保存在`D:/CP6/docs/CP6_完整成果归档_20261009`，展开阅读对象保存在`D:/CP6-archives/consolidation-20261010`。本目录是可追溯的设计整理成果，用户已明确授权上传 CP6 公开仓库。原归档与展开阅读对象仍保留本地，引用这些材料须使用本地资料；没有业务编码、业务测试、Actions、数据库迁移、发布或部署。

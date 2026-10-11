@@ -1,6 +1,6 @@
 # WMS-DEL-01 承运与交付证明
 
-整理状态：**core_semantics_consolidated**。主体规则、DTO/API、全部71项AC、147个连续演算对象和181份R-CORE已完成业务字段语义阅读，共享H31必要规范与夹具按准确SHA复用已完成阅读。指定独立R3审查原文仍未定位，故不标 required_materials_consolidated；真实采用与运行验证仍未完成。
+整理状态：**core_semantics_consolidated**。主体规则、DTO/API、全部71项AC、147个连续演算对象和181份R-CORE已完成业务字段语义阅读，共享H31必要规范与夹具按准确SHA复用已完成阅读。用户于2026-10-11确认指定独立R3审查原文无法找回；该证据缺口保留，不再列找回任务，仍不标 required_materials_consolidated。现有材料可继续使用，真实采用与运行验证仍未完成。
 
 ## 1. 业务目的、操作者与边界
 
@@ -14,7 +14,7 @@ DEL拥有Shipment级累计Proof版本流、不可变Fact、Carrier Attempt/Obser
 
 强制依赖包括已接受OUT R3及H31-RETURN-OUT-R3-BOUNDED-01共同补充CURRENT/SHARED_ACCEPTANCE。DEL-SOURCE-FENCE-1是额外有界共同采用合同，不能当作已部署表/接口或任意修改Stock/OUT旧语义的授权。[交付原文L16](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md:16>) [准确接受L169](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:169>) [准确接受L285](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:285>)
 
-历史审查记录称C01–06、R1三问题、R2时点问题已关闭；指定独审`DEL_INDEPENDENT_R3_REVIEW_c30b6885.md`应为3461字节、27行、SHA256 `4a30103ef981273ecd9e0d920d4b798e19ca1724850a34413c09a8b25b16621f`，本地未定位，故此处只引用已读接受/最终审查中的转述，不冒称已实读该独审。71AC全NOT_RUN、0业务执行、8个生产门UNPROVEN。[准确接受L84](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:84>) [准确接受L103](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:103>) [准确接受L182](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:182>)
+历史审查记录称C01–06、R1三问题、R2时点问题已关闭；指定独审R01071 `DEL_INDEPENDENT_R3_REVIEW_c30b6885.md`登记为3461字节、27行、SHA256 `4a30103ef981273ecd9e0d920d4b798e19ca1724850a34413c09a8b25b16621f`。用户于2026-10-11确认该原件无法找回，此处只保留已读接受/最终审查中的转述，不声称已实读或独立核验该独审的结论、范围及问题关闭细节。71AC全NOT_RUN、0业务执行、8个生产门UNPROVEN。[准确接受L84](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:84>) [准确接受L103](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:103>) [准确接受L182](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:182>)
 
 ## 3. 实体、业务键、单位与版本轴
 
@@ -132,7 +132,7 @@ DS03用有权当前快照计算可选`E−D−activeAttemptCoverage−未经处�
 
 O-DEL01–08均需真实采用：Shipping份额/签收/纠正政策，OUT来源/当前cut适配，隐私/证据/保留，ERP H26、Finance H27，carrier身份/签名/完整查询，RMA/IN/Stock处置读，旧新writer清单。缺采用按原文明确WAITING/BLOCKED/历史读，不自动扩大Owner写权。共同F0须全部相关writer加入，不能一个入口声明同UoW就放开全链。[交付原文L26](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md:26>) [准确接受L169](<D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1fd0c2f53e99a13c__DEL_acceptance.md:169>)
 
-指定27行独审原件R01071仍未定位：3461字节、SHA256 4a30103ef981273ecd9e0d920d4b798e19ca1724850a34413c09a8b25b16621f。原主正文、准确接受及最终审查记录完整在库，不能拿它们的PASS转述替代独审原文。当前已定位必要材料无剩余语义阅读队列；此独审缺件独立阻止强制组合关闭。
+指定27行独审原件R01071（3461字节、SHA256 4a30103ef981273ecd9e0d920d4b798e19ca1724850a34413c09a8b25b16621f）已由用户于2026-10-11确认无法找回，不再要求补找。原主正文、准确接受及最终审查记录完整在库，当前已定位必要材料无剩余语义阅读队列，可以继续用于设计整理和后续开发输入。关闭找回待办不代表独审通过、已补读或强制组合齐备，不能用现有PASS转述代替缺失原文。后续编码仍须对实际实现保留适用的独立审查、71项AC及8个采用门的验证证据；新审查须有自己的身份和范围，不能冒充这份历史独审。
 
 ## 12. 来源与实际阅读
 
