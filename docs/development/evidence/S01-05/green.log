@@ -1,0 +1,13 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/exact/profiles.test.ts
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-05-20261012/cp6.web
+
+
+ Test Files  1 passed (1)
+      Tests  202 passed (202)
+   Start at  06:51:53
+   Duration  467ms (transform 92ms, setup 0ms, import 209ms, tests 25ms, environment 0ms)
+

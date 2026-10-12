@@ -1,0 +1,21 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/exact/profiles.test.ts
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-05-20261012/cp6.web
+
+ ❯ src/contracts/exact/profiles.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts [ src/contracts/exact/profiles.test.ts ]
+TypeError: Do not know how to serialize a BigInt
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  06:50:29
+   Duration  721ms (transform 150ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+
