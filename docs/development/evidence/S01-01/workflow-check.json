@@ -1,0 +1,145 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T06:17:08.072533+00:00",
+  "candidate_sha": "5377342f3560590a4d966698b3361fd28f10dea8",
+  "base_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+  "prior_attempt": {
+    "result": "FAIL",
+    "cause": "One-off inspection assertion assumed a single-quoted tag glob; actual YAML uses double quotes. Inspection corrected without changing workflows."
+  },
+  "workflow_definitions_checked": 26,
+  "branch_and_pr_auto_triggers": false,
+  "pipeline_dependency_diff": false,
+  "checks": [
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/client-contract.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/r2-candidate.yml",
+      "events": "on:\n  push:\n    tags:\n      - \"v*.*.*\""
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/r2-deploy.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/r2-freeze.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/client-contract.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/r2-candidate.yml",
+      "events": "on:\n  push:\n    tags:\n      - \"v*.*.*\""
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/r2-deploy.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/r2-freeze.yml",
+      "events": "on:\n  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "events": "on:\n  workflow_dispatch:"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "events": "on:\n  workflow_dispatch:"
+    }
+  ]
+}

@@ -17,7 +17,7 @@
 
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
-| [S01-01 冻结采用输入和共用向量](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | 无任务前置，仍需准入核对 | DESIGN / S | 未领取 |
+| [S01-01 冻结采用输入和共用向量](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 验收中 | 无任务前置，仍需准入核对 | DESIGN / S | A / S01-01（兼协调） |
 | [S01-02 严格 JSON、NullOnly 与结构相等](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-01 | CODE / M | 未领取 |
 | [S01-03 FIN-CREDIT 精确金额](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |
 | [S01-04 FIN-INV 数量、金额与分数](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |
