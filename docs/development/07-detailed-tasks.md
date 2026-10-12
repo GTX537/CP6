@@ -2,7 +2,7 @@
 
 台账日期：2026-10-12。由 roadmap.json 生成；S01 已交付：1/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 1 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 4 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -29,7 +29,7 @@
 | [S01-10 PostgreSQL 精确存储适配](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-03, S01-04, S01-06 | CODE / L | 未领取 |
 | [S01-11 ERP-CREDIT 原生金额与冻结重放](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |
 | [S01-12 采用证据与消费者交接](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07, S01-08, S01-09, S01-10, S01-11 | DESIGN / M | 未领取 |
-| [S02-00 PostgreSQL 多租户存储与事务布局设计](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 验收中 | 无任务前置，仍需准入核对 | DESIGN / M | B / S02-00 |
+| [S02-00 PostgreSQL 多租户存储与事务布局设计](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | B / S02-00 |
 | [WP02-01 Platform可信请求、消息与后台租户上下文](../../docs/development/task-plans/WP02.md#wp02-01) | Platform | 待安排 | S01-02 | CODE / M | 未领取 |
 | [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 待安排 | S02-00, WP02-01 | CODE / M | 未领取 |
 | [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | 未领取 |
@@ -138,7 +138,7 @@
 
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
-| [WP05-01 S00：ITER/REL缺失原验收的替代依据设计](../../docs/development/task-plans/WP05.md#wp05-01) | Main | 验收中 | 无任务前置，仍需准入核对 | DESIGN / M | C / WP05-01 |
+| [WP05-01 S00：ITER/REL缺失原验收的替代依据设计](../../docs/development/task-plans/WP05.md#wp05-01) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | C / WP05-01 |
 | [WP05-02 工程产品身份与经营料号双Owner映射](../../docs/development/task-plans/WP05.md#wp05-02) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP04-33 | CODE / M | 未领取 |
 | [WP05-03 工程修订、工作快照与组成候选](../../docs/development/task-plans/WP05.md#wp05-03) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP05-02 | CODE / L | 未领取 |
 | [WP05-04 旧版模写入口的版本与原事务兼容](../../docs/development/task-plans/WP05.md#wp05-04) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13 | CODE / L | 未领取 |
@@ -440,7 +440,7 @@
 
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
-| [WP14-01 全链验收映射、数据责任与证据索引](../../docs/development/task-plans/WP14.md#wp14-01) | Main | 验收中 | 无任务前置，仍需准入核对 | DESIGN / M | D / WP14-01 |
+| [WP14-01 全链验收映射、数据责任与证据索引](../../docs/development/task-plans/WP14.md#wp14-01) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | D / WP14-01 |
 | [WP14-02 CRM入站、转化与商业交接闭环](../../docs/development/task-plans/WP14.md#wp14-02) | Main | 待安排 | 共62项，详见任务卡 | VALIDATION / M | 未领取 |
 | [WP14-03 报价订单、需求释放与计划转单闭环](../../docs/development/task-plans/WP14.md#wp14-03) | Main | 待安排 | 共48项，详见任务卡 | VALIDATION / M | 未领取 |
 | [WP14-04 采购来料、检验入库与供给更新闭环](../../docs/development/task-plans/WP14.md#wp14-04) | Main | 待安排 | 共93项，详见任务卡 | VALIDATION / M | 未领取 |
