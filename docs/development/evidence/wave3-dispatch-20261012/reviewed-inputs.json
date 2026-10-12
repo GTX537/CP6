@@ -1,0 +1,166 @@
+{
+  "result": "PASS",
+  "baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+  "scope": "Full task review and static checks; files below bind exact staged reviewed inputs. This manifest is the only excluded self-reference.",
+  "review": "main-dispatch-review.md",
+  "observed_at": "2026-10-12T15:15:55.368359+00:00",
+  "files": [
+    {
+      "path": "docs/development/07-detailed-tasks.md",
+      "blob": "74edc5a9011338eb071d2a12b591fce95c56f1b8",
+      "sha256": "f7b21ee4fa134e89a1aedebb7028dbe9a72f434e127d2942d8cc8fa1499ea7e8",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/dispatch/20261012-wave3/README.md",
+      "blob": "423758581ee0a8b9e68b4fbda175991e984f8822",
+      "sha256": "109b205933bda0b99b090eaa30b247aefcbfdb2bef9c1205a6dfd6994a872fe7",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/dispatch/20261012-wave3/S01-03.md",
+      "blob": "a9f551804e557ec48e9993ca18d0af832c745ef5",
+      "sha256": "c201939c4c04975b296a7e0eece09e193e6170772730ad2ba22b9dc5d3885b83",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/dispatch/20261012-wave3/S01-04.md",
+      "blob": "df877f47e1ec3380040697ece0e7b3d28dbc3811",
+      "sha256": "b186a9d4aaa64b00b44506dc3c9aff7fef60af2cf5dae939a607997f032075c0",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/dispatch/20261012-wave3/S01-06.md",
+      "blob": "65f7ce549c2270c4f1c3cc490f68f6c997cde8d6",
+      "sha256": "f079eb1a2fd42d8146ac1b81b8eaf728d0222ecde2ddbcf1a10271b6ef803321",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "blob": "c924efbdb3b7d367449a43491b5a5395ba36115a",
+      "sha256": "fa5e724ea69bbe5c933e8cc58b8a824c45292d68c7991f82a0af55cfa501e16d",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/dispatch/20261012-wave3/dispatch.json",
+      "blob": "f3d9c566979a4ad5ae88444356255ffaf07bb617",
+      "sha256": "647af8195eb691c19738d1e70542980504af885e1ba2d1698fccd7736641867f",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "blob": "2e533c4ab84616cabd1e3b2e74e76e03cca6685c",
+      "sha256": "f4dde9585619ddf8803f97fffac75976521f395b05c8b6cbb84506e0d6720340",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/admission.json",
+      "blob": "ae3a0082b9502553e36a8515d739cf9c5a15c0b5",
+      "sha256": "dc52d91e5a82a10f4dd9f017d04e2662598cd5fa233e38199bc84ec7842a6bed",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/crm-admission.md",
+      "blob": "587c1aee473ffb07cab48d6f25e5307d8bc510b6",
+      "sha256": "1f7eafade874a06ba9ee4c483de8b5561be9a619dbbe91f8872411009df9bc31",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/crm-ci-prerequisite.json",
+      "blob": "13b9b8b5f1da5fd723dfd4f7d8064e3acf83d85d",
+      "sha256": "e21ab821b12fa5e45d9ac1deb9b0f96fbd9570533995c91c1615065fa614fcd1",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/crm-policy-review.md",
+      "blob": "f60bc0d848b6998294fee7ca21a70e8b3709f145",
+      "sha256": "31d895f8ac65f2cae6149a0cea69299bc854541be700399b8f080af04448127b",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-before-merge.json",
+      "blob": "7c248fe0e223f3b1310987c9961d4d77ee19aa72",
+      "sha256": "afa1a0e746fe91fa3eacdba8ae90d2272f1fef4a7eace970ca96f254942eaa6e",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-before-pr.json",
+      "blob": "2d86e54f9588859b2fecf5a728ad5829fc4a1d99",
+      "sha256": "6a5ad5c89e000b4f0707c144e1da8d577f06d0f94e73aad26512d560e48ca547",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-before-push.json",
+      "blob": "6708fa22daf2febad4e374096256c6171eee14b2",
+      "sha256": "7d58404bc53542331adc38946843fcc3b10acfb67719923d166149f23fc5116b",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-final-manual-entry.json",
+      "blob": "77643e4941f4dd4b29bdc6324eb10562fca73521",
+      "sha256": "1b5fea507e631dbb728c387e110ee15754ec7d0815a9d14b683b9d18f7e585c2",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/dispatch-check.json",
+      "blob": "6c92497a0613a281bf3698dd65a1a49cec3b1b8f",
+      "sha256": "3200bbff97740be5e9d131ab0f7402b2166019945222fc006dcffa975d9167a7",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/ledger-check.json",
+      "blob": "efd331bca180fac27babfe54fe34532b67809ade",
+      "sha256": "7cbb3e59eb1908e7641224cbde5cb93e5955b3858c53bd4f1bd7f0c87db873d7",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/main-dispatch-review.md",
+      "blob": "33aa491f72341724335f715304e07634c6c55e75",
+      "sha256": "950449c003fdb2faeb1ac0b48e1c99144109ddd1714a32c68b81156d3ee8a40f",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/wave3-dispatch-20261012/numeric-admission.md",
+      "blob": "7d9fe7e0e36476b3235b291293ed9e1ad5d8efa0",
+      "sha256": "e7dd260000895ae9e7d3ff80e538419bce8f84d1d3c0d8c38fa9df496a78b542",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "blob": "9e2247e05bd8255df2ff2dc6ec7b1d48e9dce103",
+      "sha256": "b919154645d35daa3597c581b2150bd9e10fd08f381b876fd6adc983fe871d72",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "blob": "619417397da1648fbf0415197fa1e8431377cc9b",
+      "sha256": "155aeff30bb27e1828b4036804ebd0d09cdd009bca058134c0302fabef655a31",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "blob": "58d1459c800c34fc513bcb4c51711941bd4bf657",
+      "sha256": "bf498ad40c0315dcf48f97d66bf8a7ffe4b9f8c86b62376f86cf3ab18e2e13e2",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/project-memory/CHANGELOG-AI.md",
+      "blob": "17ff632989f3d164e8a7dddfb220f80e75d7dcc6",
+      "sha256": "de85b466b3aa92917c090a6a4a50964a93d80cb873d12fd475234c18015b4431",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "blob": "232743c12bbd17c58d177d514655a1a42b99bdd1",
+      "sha256": "613ed1e12599be7342d2349033361a2d491d11cbb5ae2d40e64684abe9c26712",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-12-wave3-dispatch.md",
+      "blob": "ab6acf519c33f4a3b0a84faadf46322dff2814a3",
+      "sha256": "dc1a9771422ef60d171d041ee840af18a649d62ae873a0ee828dd11395deacc4",
+      "representation": "STAGED_GIT_BLOB_BYTES"
+    }
+  ],
+  "business_validation": "NOT_RUN"
+}

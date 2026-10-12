@@ -19,12 +19,12 @@
 |---|---|---|---|---|---|
 | [S01-01 冻结采用输入和共用向量](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / S | A / S01-01（兼协调） |
 | [S01-02 严格 JSON、NullOnly 与结构相等](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-01 | CODE / M | A / S01-02（沿用原S01-01对话） |
-| [S01-03 FIN-CREDIT 精确金额](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |
-| [S01-04 FIN-INV 数量、金额与分数](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |
+| [S01-03 FIN-CREDIT 精确金额](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 可开工 | S01-02 | CODE / M | A / S01-03（沿用原S01-02对话） |
+| [S01-04 FIN-INV 数量、金额与分数](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 可开工 | S01-02 | CODE / M | B / S01-04（沿用原S01-05对话） |
 | [S01-05 Main TypeScript 精确值](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-01 | CODE / M | B / S01-05（沿用原S02-00对话） |
-| [S01-06 ATP StableId](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |
+| [S01-06 ATP StableId](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 可开工 | S01-02 | CODE / M | C / S01-06（沿用原S01-09对话） |
 | [S01-07 原生 Ref/Scope 与 NCR/IPQC 类型](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |
-| [S01-08 CRM INQ/LEAD 合同采用](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | CRM | 待安排 | S01-02 | CODE / L | 未领取 |
+| [S01-08 CRM INQ/LEAD 合同采用](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | CRM | 可开工 | S01-02 | CODE / L | D / S01-08（沿用原WP14-01对话） |
 | [S01-09 Platform 准确合同路由与原字节](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Platform | 已交付 | S01-01 | CODE / M | C / S01-09（沿用原WP05-01对话） |
 | [S01-10 PostgreSQL 精确存储适配](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-03, S01-04, S01-06 | CODE / L | 未领取 |
 | [S01-11 ERP-CREDIT 原生金额与冻结重放](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02 | CODE / M | 未领取 |

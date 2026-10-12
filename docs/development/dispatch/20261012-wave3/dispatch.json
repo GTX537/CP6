@@ -1,0 +1,1326 @@
+{
+  "version": "CP6-WAVE3-DISPATCH/1",
+  "issued_at": "2026-10-12T15:09:40.430541+00:00",
+  "main_baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+  "crm_baseline": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+  "input_package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "input_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+    },
+    {
+      "path": "eng/contracts/s01/README.md",
+      "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "S01-03",
+      "lane": "A",
+      "previous_task": "S01-02",
+      "repo": "Main",
+      "worktree": "D:/CP6-worktrees/s01-03-20261012",
+      "branch": "codex/s01-03-credit-amount-20261012",
+      "baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "write_paths": [
+        "CP6.Entity/Contracts/FinCredit/",
+        "eng/contracts/exact-values-tests/CreditAmountTests.cs",
+        "docs/development/evidence/S01-03/"
+      ],
+      "commands": [
+        "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~CreditAmountTests"
+      ],
+      "checks": [
+        "按原生FIN-CREDIT signedDecimal/nonNegativeDecimal/positiveDecimal三个域分别解析和输出，使用BigInteger系数及scale。明确最终字段profile，不凭字段名称猜测；包内4个signed、33个nonnegative、5个positive字段指针均有绑定记录。",
+        "接受38位整数及30位整数+8位小数；拒绝39位整数、31+8、scale9、负零、尾部小数零、指数、前导零、加号和空白。signed允许负数，nonnegative允许0，positive不允许0。",
+        "精确比较、对齐scale及加减/累加；中间值任意精度，max38+1-1成功而最终max38+1拒绝；负中间量后正结果合法。不使用decimal/double/float中转，不舍入、截断或钳位。",
+        "JSON标量必须是符合profile的字符串；必填标量拒绝null/number/boolean/object/array，nullable/optional由所在字段决定。以既有Wire处理重复键和转义等价键；原UTF8独立保存，不能用解码后字符串证明原字节。",
+        "25条固定向量逐ID/期望系数/scale执行；另加profile误用、未知profile、算术中间溢出、最终越界、不同scale、错误token和原字节测试。"
+      ],
+      "notes": "CreditAmount.cs、CreditAmountJsonConverter.cs及必要域内profile/helper仅写FinCredit目录。CreditControlService.CheckCreditAsync(string, decimal)、ICreditControlService、现有账务舍入与授信决策保持原合同，Owner采用属于后续任务。本任务交付精确值库，不宣称授信业务已切换。",
+      "profiles": [
+        "fin-credit-signed",
+        "fin-credit-nonnegative",
+        "fin-credit-positive"
+      ],
+      "case_ids": [
+        "NUM-001",
+        "NUM-002",
+        "NUM-003",
+        "NUM-004",
+        "NUM-005",
+        "NUM-006",
+        "NUM-007",
+        "NUM-008",
+        "NUM-009",
+        "NUM-010",
+        "NUM-011",
+        "CREDIT-001",
+        "CREDIT-002",
+        "CREDIT-003",
+        "CREDIT-004",
+        "CREDIT-005",
+        "CREDIT-006",
+        "CREDIT-007",
+        "CREDIT-008",
+        "CREDIT-009",
+        "CREDIT-010",
+        "CREDIT-011",
+        "CREDIT-JS-001",
+        "CREDIT-JS-002",
+        "CREDIT-JS-003"
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-03",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-03/messages/",
+      "selected_profiles": [
+        {
+          "id": "fin-credit-signed",
+          "owner": {
+            "target_id": "FIN-CREDIT-01",
+            "repository": "Main",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "Main:S01-03",
+            "Main:S01-05",
+            "Main:S01-10"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "numeric-0",
+              "variant": "original"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "numeric-0",
+            "variant": "original",
+            "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+            "json_pointer": "/$defs/signedDecimal",
+            "definition": {
+              "type": "string",
+              "pattern": "^(?:0|(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9])|-(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9]))$"
+            }
+          },
+          "scope": "38 total digits / up to 8 fractional digits, native sign profile per exact field. R1 unscaled integer plus scale; no decimal/double intermediary.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/28"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/12"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/244",
+              "case_id": "DR-OPS-IF-002::OPS-IF-002-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/245",
+              "case_id": "DR-OPS-IF-002::OPS-IF-002-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/28"
+          },
+          "native_field_bindings": [
+            "/$defs/absorptionLink/properties/signedPolicyAmount",
+            "/$defs/representationTransfer/properties/deltaPolicyAmount",
+            "/$defs/subject/properties/exposureDeltaPolicyAmount",
+            "/$defs/moneySigned/properties/amount"
+          ],
+          "storage_decision_ref": {
+            "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+            "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+            "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/credit"
+          }
+        },
+        {
+          "id": "fin-credit-nonnegative",
+          "owner": {
+            "target_id": "FIN-CREDIT-01",
+            "repository": "Main",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "Main:S01-03",
+            "Main:S01-05",
+            "Main:S01-10"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "numeric-0",
+              "variant": "original"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "numeric-0",
+            "variant": "original",
+            "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+            "json_pointer": "/$defs/nonNegativeDecimal",
+            "definition": {
+              "type": "string",
+              "pattern": "^(?:0|(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9]))$"
+            }
+          },
+          "scope": "38 total digits / up to 8 fractional digits, native sign profile per exact field. R1 unscaled integer plus scale; no decimal/double intermediary.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/28"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/12"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/244",
+              "case_id": "DR-OPS-IF-002::OPS-IF-002-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/245",
+              "case_id": "DR-OPS-IF-002::OPS-IF-002-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/28"
+          },
+          "native_field_bindings": [
+            "/$defs/moneyNonNegative/properties/amount",
+            "/$defs/arObligationAggregate/properties/openPolicyAmount",
+            "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+            "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+            "/$defs/arCut/properties/arBookedExposure",
+            "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+            "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+            "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+            "/$defs/reservationSet/properties/activeReservedDelta",
+            "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+            "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+            "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+            "/$defs/creditExposureSnapshot/properties/totalExposure",
+            "/$defs/subject/properties/currentCommittedPolicyAmount",
+            "/$defs/subject/properties/targetCommittedPolicyAmount",
+            "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+            "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+            "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+            "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+            "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+            "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+            "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+            "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+            "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+            "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+            "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+            "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+            "/$defs/postedOpenContribution/properties/policyAmount",
+            "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+            "/$defs/effectiveCreditContribution/properties/policyAmount",
+            "/$defs/appliedReceiptContribution/properties/policyAmount",
+            "/$defs/unbilledOrderContribution/properties/policyAmount",
+            "/$defs/activeReservationContribution/properties/policyAmount"
+          ],
+          "storage_decision_ref": {
+            "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+            "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+            "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/credit"
+          }
+        },
+        {
+          "id": "fin-credit-positive",
+          "owner": {
+            "target_id": "FIN-CREDIT-01",
+            "repository": "Main",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "Main:S01-03",
+            "Main:S01-05",
+            "Main:S01-10"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "numeric-0",
+              "variant": "original"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "numeric-0",
+            "variant": "original",
+            "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+            "json_pointer": "/$defs/positiveDecimal",
+            "definition": {
+              "type": "string",
+              "pattern": "^(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9])$"
+            }
+          },
+          "scope": "38 total digits / up to 8 fractional digits, native sign profile per exact field. R1 unscaled integer plus scale; no decimal/double intermediary.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/28"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/12"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/244",
+              "case_id": "DR-OPS-IF-002::OPS-IF-002-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/245",
+              "case_id": "DR-OPS-IF-002::OPS-IF-002-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/28"
+          },
+          "native_field_bindings": [
+            "/$defs/moneyPositive/properties/amount",
+            "/$defs/fxEvidence/properties/rate",
+            "/$defs/planAtpObservationInput/properties/requestedQuantity",
+            "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+            "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+          ],
+          "storage_decision_ref": {
+            "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+            "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+            "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/credit"
+          }
+        }
+      ]
+    },
+    {
+      "id": "S01-04",
+      "lane": "B",
+      "previous_task": "S01-05",
+      "repo": "Main",
+      "worktree": "D:/CP6-worktrees/s01-04-20261012",
+      "branch": "codex/s01-04-inventory-values-20261012",
+      "baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "write_paths": [
+        "CP6.Entity/Contracts/FinInventory/",
+        "eng/contracts/exact-values-tests/InventoryDecimalTests.cs",
+        "docs/development/evidence/S01-04/"
+      ],
+      "commands": [
+        "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~InventoryDecimalTests"
+      ],
+      "checks": [
+        "Decimal18/Qty12分别绑定原生R10域，小数上限18/12；整数没有新增长度上限。使用BigInteger系数、数值scale与独立OriginalWire；-0.000数值可规范为0，但原字符串必须保持。",
+        "精确比较和中间计算，最终输出显式校验目标域；>90位整数、18/12通过、19/13失败，负数/零/尾零保留，指数/加号/前导零/空白/错误JSON token拒绝。90位只是已有样例，不是最大合法长度。",
+        "InventoryRatio内部采用任意精度有符号分子及正分母，拒绝0/负分母，约分与余数精确。覆盖>90位、符号、零、正负7/3、整除/非整除及numerator=quotient*denominator+remainder；声明除法余数符号语义，不创造显示舍入或成本过账规则。",
+        "原生Rational对象要求正分子、正分母和basisRef；MAVG分子却允许^-?[0-9]+$（含00/-0），分母为正规范整数。base可null，ACTIVE必须有值，EMPTY必须null。内部约分不能缩小或重写原始wire。若提供MAVG字串codec须保留原片段并测试；仅提供内部算术时明确完整Rational/MAVG对象采用仍待后续。",
+        "9条固定向量逐ID执行，核数值与originalWire；新增算术/比例/域误用/错误token/原字节测试。全部ratio用例位于InventoryDecimalTests过滤范围，不能测试文件存在却未执行。"
+      ],
+      "notes": "InventoryDecimal.cs、InventoryRatio.cs及域内helper仅写FinInventory目录。NonNegativeQty12及状态字段约束独立保留；标量正确不等于完整对象合规。StockFinBridge既有decimal过账桥是只读参照，本轮不改成本Owner、库存台账、数据库或前端。",
+      "profiles": [
+        "fin-inv-decimal18",
+        "fin-inv-qty12"
+      ],
+      "case_ids": [
+        "NUM-012",
+        "NUM-013",
+        "NUM-014",
+        "NUM-015",
+        "NUM-016",
+        "INV-001",
+        "INV-002",
+        "INV-003",
+        "INV-004"
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-04",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-04/messages/",
+      "selected_profiles": [
+        {
+          "id": "fin-inv-decimal18",
+          "owner": {
+            "target_id": "FIN-INV-01",
+            "repository": "Main",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "Main:S01-04",
+            "Main:S01-05",
+            "Main:S01-10"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "numeric-1",
+              "variant": "original"
+            },
+            {
+              "source_id": "numeric-2",
+              "variant": "original"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "numeric-1",
+            "variant": "original",
+            "schema_id": "urn:cp6:fin-inv:r10:wire",
+            "json_pointer": "/$defs/Decimal18",
+            "definition": {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+            }
+          },
+          "scope": "Unbounded integer digits; native 18/12 fractional boundary. Arithmetic normalization never rewrites original wire, negative zero or digest/replay bytes.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/70"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/21"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/246",
+              "case_id": "DR-OPS-IF-030::OPS-IF-030-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/247",
+              "case_id": "DR-OPS-IF-030::OPS-IF-030-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/70"
+          },
+          "native_field_bindings": [
+            "/$defs/Money/properties/amount",
+            "/$defs/ValueLayer/properties/unroundedOriginalValue",
+            "/$defs/LayerConsumption/properties/rawAmount",
+            "/$defs/MovingAveragePoolRevision/properties/beforeUnroundedValue",
+            "/$defs/MovingAveragePoolRevision/properties/deltaUnroundedValue",
+            "/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue",
+            "/$defs/MovingAveragePoolRevision/properties/displayAverage18/anyOf/0",
+            "/$defs/RoundingTrace/properties/rawTotal",
+            "/$defs/RoundingTrace/properties/targetTotal",
+            "/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+            "/$defs/RoundingTrace/properties/residue",
+            "/$defs/RoundingTrace/properties/assignments/items/properties/amount",
+            "/$defs/RoundingTrace/properties/finalTotal",
+            "/$defs/ValueEffectResult/properties/lines/items/properties/rawAmount",
+            "/$defs/OutMoney/properties/value"
+          ],
+          "storage_decision_ref": {
+            "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+            "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+            "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/inventory_mappings"
+          }
+        },
+        {
+          "id": "fin-inv-qty12",
+          "owner": {
+            "target_id": "FIN-INV-01",
+            "repository": "Main",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "Main:S01-04",
+            "Main:S01-05",
+            "Main:S01-10"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "numeric-1",
+              "variant": "original"
+            },
+            {
+              "source_id": "numeric-2",
+              "variant": "original"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "numeric-1",
+            "variant": "original",
+            "schema_id": "urn:cp6:fin-inv:r10:wire",
+            "json_pointer": "/$defs/Qty12",
+            "definition": {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,12})?$"
+            }
+          },
+          "scope": "Unbounded integer digits; native 18/12 fractional boundary. Arithmetic normalization never rewrites original wire, negative zero or digest/replay bytes.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/70"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/21"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/246",
+              "case_id": "DR-OPS-IF-030::OPS-IF-030-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/247",
+              "case_id": "DR-OPS-IF-030::OPS-IF-030-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/70"
+          },
+          "native_field_bindings": [
+            "/$defs/Quantity/properties/value",
+            "/$defs/MovingAveragePoolRevision/properties/beforeQty",
+            "/$defs/MovingAveragePoolRevision/properties/deltaQty",
+            "/$defs/MovingAveragePoolRevision/properties/afterQty",
+            "/$defs/OutQuantity/properties/value"
+          ],
+          "storage_decision_ref": {
+            "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+            "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+            "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/inventory_mappings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "S01-06",
+      "lane": "C",
+      "previous_task": "S01-09",
+      "repo": "Main",
+      "worktree": "D:/CP6-worktrees/s01-06-20261012",
+      "branch": "codex/s01-06-atp-stable-id-20261012",
+      "baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "write_paths": [
+        "CP6.Entity/Contracts/PlanAtp/",
+        "eng/contracts/exact-values-tests/StableIdTests.cs",
+        "cp6.web/src/contracts/plan-atp/",
+        "eng/contracts/s01/atp-stable-id.schema.json",
+        "docs/development/evidence/S01-06/"
+      ],
+      "commands": [
+        "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~StableIdTests",
+        "npm --prefix cp6.web test -- src/contracts/plan-atp/stableId.test.ts",
+        "npm --prefix cp6.web run type-check"
+      ],
+      "checks": [
+        "采用ATP-STABLEID-LEXICAL/20261011-R1：字符串1..128字符，首字符ASCII字母或数字，后续可字母数字._:/-。C#用\\A[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}\\z；TS/Schema用^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])，拒绝尾换行，不能用会接受尾LF的$。",
+        "C#、TS与Schema从同一22条固定向量读取原输入与原预期，逐ID证明三端一致；另覆盖16/17/128/129边界、空值、前导标点、Unicode、LF/CRLF及错误token，不保留旧16字符截断。",
+        "新atp-stable-id.schema.json仅准确提取原版本$defs/StableId，保留类型string/minLength1/maxLength128/pattern与出处；原完整Schema身份urn:cp6:plan-atp:wire:design-revision-20261011-r1是来源身份，不把局部Schema伪称完整ATP wire。",
+        "采用composed-13 C#、14 PG DDL、24 Schema、25 TS的完整已登记patch set；DDL不仅有PLAN-IF-004长度，还含PLAN-IF-005关系约束。只读核对5个PG UOM列映射，数据库采用留S01-10，不执行DDL。"
+      ],
+      "notes": "Schema一致性测试可由TS测试读取仓内新schema；C#只读已有复制vectors，不修改共享csproj或wave2 dispatch复制设置。当前ISupplyService是旧标量供应接口，不能据此宣称新ATP Owner已接入。C从Platform任务切换到Main的新工作树，不在旧Platform树继续写代码。",
+      "profiles": [
+        "atp-stableid-r1"
+      ],
+      "case_ids": [
+        "NUM-017",
+        "NUM-018",
+        "NUM-019",
+        "NUM-020",
+        "NUM-021",
+        "NUM-022",
+        "NUM-023",
+        "ATP-R1-001",
+        "ATP-R1-002",
+        "ATP-R1-003",
+        "ATP-R1-004",
+        "ATP-R1-005",
+        "ATP-R1-006",
+        "ATP-R1-007",
+        "ATP-R1-008",
+        "ATP-R1-009",
+        "ATP-R1-010",
+        "ATP-LEADING-001",
+        "ATP-LEADING-002",
+        "ATP-LEADING-003",
+        "ATP-LEADING-004",
+        "ATP-LEADING-005"
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-06",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-06/messages/",
+      "selected_profiles": [
+        {
+          "id": "atp-stableid-r1",
+          "owner": {
+            "target_id": "PLAN-ATP-01",
+            "repository": "Main",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "Main:S01-06",
+            "Main:S01-10"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "composed-13",
+              "variant": "composed"
+            },
+            {
+              "source_id": "composed-14",
+              "variant": "composed"
+            },
+            {
+              "source_id": "composed-24",
+              "variant": "composed"
+            },
+            {
+              "source_id": "composed-25",
+              "variant": "composed"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "composed-24",
+            "variant": "composed",
+            "schema_id": "urn:cp6:plan-atp:wire:design-revision-20261011-r1",
+            "profile_version": "ATP-STABLEID-LEXICAL/20261011-R1",
+            "json_pointer": "/$defs/StableId",
+            "definition": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])"
+            }
+          },
+          "scope": "Explicit lexical successor. Five PostgreSQL UOM columns use full PLAN-IF-004 + PLAN-IF-005 composed DDL; no migration here.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/27"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/operations.json",
+              "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+              "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/1"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/248",
+              "case_id": "DR-PLAN-IF-004::PLAN-IF-004-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/249",
+              "case_id": "DR-PLAN-IF-004::PLAN-IF-004-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/27"
+          }
+        }
+      ]
+    },
+    {
+      "id": "S01-08",
+      "lane": "D",
+      "previous_task": "WP14-01",
+      "repo": "CRM",
+      "worktree": "D:/CP6.CRM-worktrees/s01-08-20261012",
+      "branch": "codex/s01-08-crm-contracts-20261012",
+      "baseline": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+      "write_paths": [
+        "contracts/s01/",
+        "scripts/import-s01-contracts.py",
+        "src/CP6.CRM.Application/Contracts/Wire/",
+        "src/CP6.CRM.Application/Contracts/Inquiry/",
+        "src/CP6.CRM.Application/Contracts/Lead/",
+        "apps/web/src/contracts/inquiry/",
+        "apps/web/src/contracts/lead/",
+        "apps/web/src/contracts/wire/",
+        "tests/CP6.CRM.UnitTests/Contracts/InquiryContractAdoptionTests.cs",
+        "tests/CP6.CRM.UnitTests/Contracts/S01/",
+        "apps/web/tests/contracts-exact.test.ts",
+        "apps/web/tests/s01/",
+        "docs/evidence/s01-08/",
+        "docs/delivery/S01-08.md",
+        "tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj",
+        "apps/web/package.json",
+        "apps/web/tsconfig.test.json"
+      ],
+      "commands": [
+        "python scripts/import-s01-contracts.py --check",
+        "python scripts/generate-crm-api.py --check",
+        "python tests/ci/first-slice-implementation.Tests.py",
+        "dotnet test tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj --filter FullyQualifiedName~InquiryContractAdoptionTests --logger \"trx;LogFileName=s01-08.trx\"",
+        "(apps/web) npx --no-install tsc -p tsconfig.test.json",
+        "(apps/web) node --test .test-dist/tests/contracts-exact.test.js",
+        "(apps/web) npm run typecheck"
+      ],
+      "checks": [
+        "Native 38 definitions / 55 repaired references / all 257 resolve; first-slice 44-schema API remains independent.",
+        "All 30 selected vectors invoke adopted production boundary; arbitrary-precision semantic numbers, original bytes separately retained."
+      ],
+      "configuration_limits": {
+        "tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj": "Only portable S01 resource copy; no dependencies/TFM",
+        "apps/web/package.json": "Only append new test to existing explicit test list; no dependencies",
+        "apps/web/tsconfig.test.json": "Only if new tests/sources otherwise excluded"
+      },
+      "notes": "Full bounded obligations and import/source provenance are in S01-08.md and crm-admission.md. Native library adoption, not actual HTTP/S03 business adoption.",
+      "profiles": [
+        "strict-json",
+        "null-only",
+        "json-semantic-equality",
+        "crm-inq-r3-v15",
+        "crm-lead-cp20"
+      ],
+      "case_ids": [
+        "JSON-001",
+        "JSON-002",
+        "JSON-003",
+        "JSON-004",
+        "JSON-005",
+        "JSON-006",
+        "JSON-007",
+        "NULL-001",
+        "NULL-002",
+        "NULL-003",
+        "NULL-004",
+        "NULL-005",
+        "NULL-006",
+        "NULL-007",
+        "LEAD-OWNER-001",
+        "LEAD-OWNER-002",
+        "LEAD-OWNER-003",
+        "LEAD-OWNER-004",
+        "LEAD-OWNER-005",
+        "INQ-VERSION-001",
+        "INQ-VERSION-002",
+        "INQ-VERSION-003",
+        "INQ-VERSION-004",
+        "EQUAL-001",
+        "EQUAL-002",
+        "EQUAL-003",
+        "EQUAL-004",
+        "EQUAL-005",
+        "EQUAL-006",
+        "EQUAL-007"
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-08",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-08/messages/",
+      "selected_profiles": [
+        {
+          "id": "strict-json",
+          "owner": {
+            "target_id": null,
+            "repository": null,
+            "authority": "Shared contract utility; no business Owner or write authority."
+          },
+          "target_consumers": [
+            "Main:S01-02",
+            "CRM:S01-08",
+            "Platform:S01-09"
+          ],
+          "selected_sources": [],
+          "schema_or_type_identity": {
+            "type_name": "StrictJson (S01-02 implementation pending)",
+            "support_asset": {
+              "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+              "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+              "git_blob": "9725563155f695d923532ee7c136f88e15942469",
+              "hash_basis": "git_blob_bytes"
+            }
+          },
+          "scope": "Strict duplicate-key boundary and required-null / schema equality helpers only. Semantic equality is never a signing, hashing or replay canonicalizer.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/250",
+              "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/251",
+              "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/258",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/259",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "rule_ref": {
+            "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+            "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+            "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+            "hash_basis": "git_blob_bytes"
+          }
+        },
+        {
+          "id": "null-only",
+          "owner": {
+            "target_id": null,
+            "repository": null,
+            "authority": "Shared contract utility; no business Owner or write authority."
+          },
+          "target_consumers": [
+            "Main:S01-02",
+            "CRM:S01-08",
+            "Platform:S01-09"
+          ],
+          "selected_sources": [],
+          "schema_or_type_identity": {
+            "type_name": "Cp6.DesignRevision.NullOnly",
+            "support_asset": {
+              "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+              "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+              "git_blob": "9725563155f695d923532ee7c136f88e15942469",
+              "hash_basis": "git_blob_bytes"
+            }
+          },
+          "scope": "Strict duplicate-key boundary and required-null / schema equality helpers only. Semantic equality is never a signing, hashing or replay canonicalizer.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/250",
+              "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/251",
+              "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/258",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/259",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "rule_ref": {
+            "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+            "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+            "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+            "hash_basis": "git_blob_bytes"
+          }
+        },
+        {
+          "id": "json-semantic-equality",
+          "owner": {
+            "target_id": null,
+            "repository": null,
+            "authority": "Shared contract utility; no business Owner or write authority."
+          },
+          "target_consumers": [
+            "Main:S01-02",
+            "CRM:S01-08",
+            "Platform:S01-09"
+          ],
+          "selected_sources": [],
+          "schema_or_type_identity": {
+            "type_name": "Cp6.DesignRevision.JsonSemanticEquality",
+            "support_asset": {
+              "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+              "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+              "git_blob": "9725563155f695d923532ee7c136f88e15942469",
+              "hash_basis": "git_blob_bytes"
+            }
+          },
+          "scope": "Strict duplicate-key boundary and required-null / schema equality helpers only. Semantic equality is never a signing, hashing or replay canonicalizer.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/250",
+              "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/251",
+              "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/258",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/259",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "rule_ref": {
+            "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+            "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+            "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+            "hash_basis": "git_blob_bytes"
+          }
+        },
+        {
+          "id": "crm-inq-r3-v15",
+          "owner": {
+            "target_id": "CRM-INQ-01",
+            "repository": "CRM",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "CRM:S01-08",
+            "Platform:S01-09"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "composed-20",
+              "variant": "composed"
+            },
+            {
+              "source_id": "composed-21",
+              "variant": "composed"
+            },
+            {
+              "source_id": "composed-22",
+              "variant": "composed"
+            },
+            {
+              "source_id": "composed-23",
+              "variant": "composed"
+            },
+            {
+              "source_id": "composed-26",
+              "variant": "composed"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "composed-20",
+            "variant": "composed",
+            "openapi": "3.1.0",
+            "info": {
+              "title": "CRM-INQ-01 RECOVERY-R3 V15",
+              "version": "1.0-recovery-r3",
+              "description": "Design-only exact wire/transport contract; runtime adoption UNPROVEN"
+            },
+            "schema_root": "/components/schemas"
+          },
+          "scope": "Generated contract subset: references, boolean extensions, structural uniqueItems and code-point length. Full H01, permissions, download proof/session/ETag and terminal-page flows remain untested.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/0"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/0"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/258",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/259",
+              "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/0"
+          },
+          "selected_original_subassertions": [
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/0/cases/8",
+              "case_id": "AC-INQ-009",
+              "original_source_sha256": "fa7d0f3388911b30992162f693b8f3340739171d17ae6256c4e72fc569f7890d",
+              "original_source_line": 437,
+              "scope": "Field identity across generated contracts; no business fixture execution",
+              "whole_case_state": "NOT_RUN"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/0/cases/47",
+              "case_id": "AC-INQ-048",
+              "original_source_sha256": "fa7d0f3388911b30992162f693b8f3340739171d17ae6256c4e72fc569f7890d",
+              "original_source_line": 476,
+              "scope": "Strict schema before decode; no real permission projection",
+              "whole_case_state": "NOT_RUN"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/0/cases/52",
+              "case_id": "AC-INQ-053",
+              "original_source_sha256": "fa7d0f3388911b30992162f693b8f3340739171d17ae6256c4e72fc569f7890d",
+              "original_source_line": 481,
+              "scope": "Unicode code-point length; no full endpoint or UI validation",
+              "whole_case_state": "NOT_RUN"
+            }
+          ]
+        },
+        {
+          "id": "crm-lead-cp20",
+          "owner": {
+            "target_id": "CRM-LEAD-01",
+            "repository": "CRM",
+            "authority": "Original native business Owner; this package grants no write authority."
+          },
+          "target_consumers": [
+            "CRM:S01-08"
+          ],
+          "selected_sources": [
+            {
+              "source_id": "composed-18",
+              "variant": "composed"
+            },
+            {
+              "source_id": "lead-query-schema",
+              "variant": "original"
+            }
+          ],
+          "schema_or_type_identity": {
+            "source_id": "composed-18",
+            "variant": "composed",
+            "filename_identity": "CrmLeadCp20Contracts.cs",
+            "actual_csharp_namespace": "CP6.CRM.CP21.Contracts",
+            "field": "ownerId"
+          },
+          "scope": "Filename CP20 is a locator, actual namespace CP21; current required combination is separately pinned. OwnerId UUID/unassigned/null schema remains required; string? does not authorize arbitrary strings.",
+          "adoption_state": "NOT_RUN",
+          "original_acceptance_refs": [
+            {
+              "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+              "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+              "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/1"
+            },
+            {
+              "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+              "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+              "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/targets/1"
+            }
+          ],
+          "revision_acceptance_refs": [
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/254",
+              "case_id": "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-POS",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            },
+            {
+              "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+              "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+              "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+              "hash_basis": "git_blob_bytes",
+              "json_pointer": "/cases/255",
+              "case_id": "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-NEG",
+              "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+              "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+            }
+          ],
+          "required_combination_ref": {
+            "path": "docs/design-handbook/indexes/required-inputs.json",
+            "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+            "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+            "hash_basis": "git_blob_bytes",
+            "json_pointer": "/targets/1"
+          },
+          "owner_id_field_schema": {
+            "source_id": "lead-query-schema",
+            "variant": "original",
+            "schema_id": "urn:cp6:crm-lead:cp21:contracts:1",
+            "json_pointer": "/$defs/LeadQueryFilters/properties/ownerId",
+            "definition": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                    },
+                    {
+                      "const": "unassigned"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": true,
+            "scope": "LeadQueryFilters only; ContactCreateInput.ownerId is independently optional."
+          }
+        }
+      ]
+    }
+  ],
+  "worker_acknowledgements": [],
+  "business_result": "NOT_RUN",
+  "shared_write_owner": "COORD",
+  "formal_wp05_adoption": "PROPOSED"
+}

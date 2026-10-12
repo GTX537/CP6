@@ -1,0 +1,88 @@
+{
+  "result": "PASS",
+  "scope": "Only dependency/source/write-scope/worktree admission, no consumer runtime",
+  "observed_at": "2026-10-12T15:09:40.430541+00:00",
+  "main": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+  "crm": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+  "input_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+    },
+    {
+      "path": "eng/contracts/s01/README.md",
+      "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+    }
+  ],
+  "tasks": [
+    {
+      "task": "S01-03",
+      "baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "branch": "codex/s01-03-credit-amount-20261012",
+      "worktree": "D:/CP6-worktrees/s01-03-20261012",
+      "clean_worktree": true,
+      "dependencies": [
+        "S01-02"
+      ],
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "task": "S01-04",
+      "baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "branch": "codex/s01-04-inventory-values-20261012",
+      "worktree": "D:/CP6-worktrees/s01-04-20261012",
+      "clean_worktree": true,
+      "dependencies": [
+        "S01-02"
+      ],
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "task": "S01-06",
+      "baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "branch": "codex/s01-06-atp-stable-id-20261012",
+      "worktree": "D:/CP6-worktrees/s01-06-20261012",
+      "clean_worktree": true,
+      "dependencies": [
+        "S01-02"
+      ],
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "task": "S01-08",
+      "baseline": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+      "branch": "codex/s01-08-crm-contracts-20261012",
+      "worktree": "D:/CP6.CRM-worktrees/s01-08-20261012",
+      "clean_worktree": true,
+      "dependencies": [
+        "S01-02"
+      ],
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "runtime_result": "NOT_RUN"
+    }
+  ],
+  "write_windows_pairwise_disjoint": true,
+  "done_tasks_before": 8,
+  "done_tasks_after": 8,
+  "business_targets_completed": 0,
+  "business_target_count": 125,
+  "runtime_revision_scenarios": "247 NOT_RUN",
+  "reference_only_historical_scenarios": 41
+}
