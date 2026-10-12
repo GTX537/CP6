@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T07:33:24.730979+00:00",
+  "current_main": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
+  "preparation_baseline": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+  "changed_source_files": [
+    "AGENTS.md",
+    "docs/development/09-parallel-development.md",
+    "docs/development/roadmap.json"
+  ],
+  "identical_consumed_subset_sha256": {
+    "targets": "c9c7de784b75171add08b422fef5e50ff8fc381368b7fb1822482253192ccae6",
+    "revision_acceptances": "803b0e30e1e24744ee6789c06d04c494ed33b52d815ceea9f5fe42bbfd8f04b1",
+    "target_task_coverage": "a4b1faf41c2ab18323d0321d1f59cdb6f8210e00042e8ebebd7c13008d88c5df"
+  },
+  "scope": "Current input compatibility only. Original snapshot/validation and original business NOT_RUN states preserved.",
+  "reused_evidence": "docs/development/deliveries/WP14-01/evidence/validation.json",
+  "independent_review": "review.md",
+  "preparation_diagnostics": [
+    "Initial coordinator probe omitted explicit encoding and failed under Windows GBK before comparison; corrected UTF-8, original task evidence unchanged."
+  ]
+}

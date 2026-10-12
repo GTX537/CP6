@@ -1,0 +1,17 @@
+{
+  "preparation_baseline_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+  "observed_remote_main_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+  "remote_change": "PR175 establishes user-authorized direct conversation handoff through CP6.AI-Handoff; AGENTS, 09-parallel-development and four project state documents only",
+  "handoff_entry_commit": "e476bc58b05349c34c9361b4af2f0cde1ce92aea",
+  "handoff_entry_path": "handoffs/CP6-DEV-20261012/README.md",
+  "first_push_precheck": "STOPPED: remote SHA changed; no push executed",
+  "unchanged_scope_checked": ["GitHub workflows", "Azure pipeline definitions", "roadmap.json", "task-definitions.json", "implementation assessment and original catalogs", "design-handbook", "CP6.Core", "CP6.Space.Application", "CP6.Space.Infrastructure", "CP6.Api"],
+  "scope_diff_result": "EMPTY",
+  "validation_reuse": "Reuse exact local mapping/source/ledger checks; changed communication prose gets local link/diff review only",
+  "business_tests_executed": false,
+  "task_entry_gate_observed": "NOT_CHECKED",
+  "task_assignment_observed": null,
+  "handoff_actions_enabled_observed": false,
+  "handoff_private_observed": true,
+  "coordinator_reply_at_read": "No WP14-01 replies path yet; 404, not an approval"
+}

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-12：WP14-01 设计准备接收与集中审查
+
+COORD实际读取Handoff固定消息后在当前时点确认领取/交付窗口并登记VERIFYING，不回填虚构早期准入。125目标、13404原验收关联、247修订场景及599消费者的验收准备；当前源子集未变，保留固定快照，所有运行NOT_RUN。 [接收依据](../development/deliveries/WP14-01/evidence/coordination/intake.json)。本轮不改变125目标交付状态、原清单缺口或247运行场景；无Actions、数据库迁移或部署。
+
 ## 2026-10-12：S02-00 设计准备接收与集中审查
 
 COORD实际读取Handoff固定消息后在当前时点确认领取/交付窗口并登记VERIFYING，不回填虚构早期准入。共享 schema + 租户业务 schema、专用角色/连接池与事务恢复设计；27个运行场景保持NOT_RUN。协调审查补齐UPDATE旧行USING及PGT-008反例。 [接收依据](../development/evidence/S02-00/coordination/intake.json)。本轮不改变125目标交付状态、原清单缺口或247运行场景；无Actions、数据库迁移或部署。

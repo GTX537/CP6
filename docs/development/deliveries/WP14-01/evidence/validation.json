@@ -1,0 +1,167 @@
+{
+  "result": "PASS",
+  "scope": "WP14-01 private preparation documentation only",
+  "business_tests_executed": false,
+  "main_baseline_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+  "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+  "commands": [
+    {
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "docs/development/deliveries/WP14-01/prepare.py"
+      ],
+      "observed_at": "2026-10-12T05:57:30.449780+00:00",
+      "exit_code": 0,
+      "output": "mapping-check.json",
+      "output_sha256": "d0fd50d74f55e506cd85d7614e650766243d41e5feb0c7e4b430e226ae517d85"
+    },
+    {
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "docs/development/tools/manage_roadmap.py"
+      ],
+      "observed_at": "2026-10-12T05:57:40.372084+00:00",
+      "exit_code": 0,
+      "output": "ledger-check.json",
+      "output_sha256": "e8b9a3eb2bcfa4647b525e2cc4f3ce241370e0decd53873e6606c121a3d17778"
+    },
+    {
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "docs/development/deliveries/WP14-01/evidence/verify-docs.py"
+      ],
+      "observed_at": "2026-10-12T05:58:29.339415+00:00",
+      "exit_code": 0,
+      "output": "document-check.json",
+      "output_sha256": "193ae2a1124b01e5b2627c4c9c9d2cf23fb6814438d40d3c79315ed6ea72e5f1"
+    }
+  ],
+  "artifacts_at_validation": [
+    {
+      "path": "docs/development/deliveries/WP14-01/.gitattributes",
+      "sha256": "1b14100a704354c4e6e3ad4f960f084ba862eeae389e848fbd4d99a107dc82ff"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/chains.csv",
+      "sha256": "3483fcc7c67a7a169a6f56a622d02dd21381235d7a76f53d51a23e492204e12d"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/ENVIRONMENT.md",
+      "sha256": "bedde6c750eeb2e43ea46920224eb3068b06c706e11b382bfcb13cc51dc63c58"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/delivery-check.json",
+      "sha256": "e0e11c15a21e1ac9a7397a60c1bf77134b99e9fea0a32b6e70c85810b4fbc5dc"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/document-check.initial.json",
+      "sha256": "ae8f3dc49c0d211c6c1dd1315f5df3dd54b2606c666d19e833169f92dcff12b7"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/document-check.json",
+      "sha256": "193ae2a1124b01e5b2627c4c9c9d2cf23fb6814438d40d3c79315ed6ea72e5f1"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/ledger-check.json",
+      "sha256": "e8b9a3eb2bcfa4647b525e2cc4f3ce241370e0decd53873e6606c121a3d17778"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/main-refresh.json",
+      "sha256": "28b240eb43b956df8c2c9603ffd3ed4be2673e64d59303ee755a150b84f72eb7"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/mapping-check.json",
+      "sha256": "d0fd50d74f55e506cd85d7614e650766243d41e5feb0c7e4b430e226ae517d85"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/preparation-failures.txt",
+      "sha256": "9768e91980b24645dfe5f841e056985edcff7e77cebb415958024248d9b2a825"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/review.md",
+      "sha256": "de5262e60aeae3eaa771f45ce8396037de0a227229f4ed2c6719d2e71f9edea9"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/validation.initial.json",
+      "sha256": "9a688e8303100974fb76753b355a2ada8b6c935f8873e79c6369ac1b12beef88"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/evidence/verify-docs.py",
+      "sha256": "d614a28ca535f57e96059ba7078d0b6d526188d903eb9ac9c40c3be56b8aacf8"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/EVIDENCE.md",
+      "sha256": "b6b22fdf62209459139f9c6e228c219b1aa967a13a903621654f4ed9ebbf338c"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/historical-reference.csv",
+      "sha256": "66d2bd6ea7759dd230839fa4ce26e3bcaa77a25972e2731e1915dcc5c18865e6"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/input-manifest.json",
+      "sha256": "ac345d674103c321065caa57f57104f834ae54f24b108a436e27de0d62faeb67"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/original-assignments.csv",
+      "sha256": "7e4ff940c470710ded857b1f9b92497d79807d6ab81ec3f3fee6a6742a541e68"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/PLAN.md",
+      "sha256": "595b0c40e225ef2095e2cdb8e75f8a2e2f197dfde02fb67831b7ca660c8f23f7"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/prepare.py",
+      "sha256": "82d7abfc4f2d95c5334b7eefb40ec22846c524752e1d74ab4d1b135cc8b51dfa"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/README.md",
+      "sha256": "94c0684dad9cb97409ee12b2a72d41a65ce74ba82cf80d27af1699e83f7a1c72"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/REPORT.md",
+      "sha256": "283684ba897b3c1f46522a24ca3ad625a928dd98e59c9c606f5ab9d81260f8a0"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/requirements.json",
+      "sha256": "a82e1945b14a702a0924e289f3bf0c91e67c48f98f8702aa5d25e2f63d8d3731"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/revision-runtime.csv",
+      "sha256": "b4ce5c64c68e473aefb534f222cdb1180e00c03563aebf377c1837e43f8533f8"
+    },
+    {
+      "path": "docs/development/deliveries/WP14-01/targets.csv",
+      "sha256": "de64a37673a3e0406b50cbae36050ac11767f0b576ec12f9d04f983609bb766f"
+    }
+  ],
+  "unverified": [
+    "business_runtime",
+    "PostgreSQL_environment",
+    "cross_repository_latest_packages",
+    "external_archive_bytes",
+    "coordinator_assignment_and_shared_state",
+    "remote_main_task_delivery"
+  ],
+  "prior_failure": {
+    "validation": "validation.initial.json",
+    "document_check": "document-check.initial.json",
+    "reason": "first output link not yet materialized; source/identity checks already succeeded"
+  },
+  "reused_checks": [
+    "mapping-check.json and ledger-check.json from original execution; their inputs unchanged"
+  ],
+  "final_diff_check": {
+    "command": "git diff --cached --check",
+    "observed_at": "2026-10-12T05:59:32.914678+00:00",
+    "exit_code": 0,
+    "scope": "all staged task files"
+  },
+  "newline_policy": "Task-private .gitattributes pins LF for generated indexes and evidence; final index bytes checked against local files. No shared attributes/config changed.",
+  "post_main_refresh": {
+    "observed_at": "2026-10-12T06:01:49.687961+00:00",
+    "remote_main_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+    "report_local_links_checked": 12,
+    "result": "PASS",
+    "scope": "Changed communication prose and main-refresh record only; fixed catalogs/matrix/source checks reused without re-execution"
+  }
+}
