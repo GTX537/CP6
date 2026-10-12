@@ -1,0 +1,78 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T13:50:20.814412+00:00",
+  "scope": "Coordinator documentation only: exact three task-state changes, preserved all other task/business/acceptance fields, 8/375 DONE, relative links and allowlist. No application test executed.",
+  "checked_links": [
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "intake.json"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-02/review.md"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-02/original-validation.json"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-02/remote-main.json"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-05/review.md"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-05/original-validation.json"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-05/remote-main.json"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-09/review.md"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-09/original-validation.json"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "S01-09/remote-main.json"
+    },
+    {
+      "source": "docs/development/evidence/wave2-integration-20261012/README.md",
+      "target": "merge-input-check.json"
+    }
+  ],
+  "changed_paths": [
+    "docs/development/03-progress.md",
+    "docs/development/07-detailed-tasks.md",
+    "docs/development/evidence/wave2-integration-20261012/README.md",
+    "docs/development/evidence/wave2-integration-20261012/S01-02/original-validation.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-02/remote-main.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-02/review.md",
+    "docs/development/evidence/wave2-integration-20261012/S01-02/workflow-pre-merge.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-05/original-validation.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-05/remote-main.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-05/review.md",
+    "docs/development/evidence/wave2-integration-20261012/S01-05/workflow-pre-merge.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-09/original-validation.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json",
+    "docs/development/evidence/wave2-integration-20261012/S01-09/review.md",
+    "docs/development/evidence/wave2-integration-20261012/S01-09/workflow-pre-merge.json",
+    "docs/development/evidence/wave2-integration-20261012/intake-ledger-check.json",
+    "docs/development/evidence/wave2-integration-20261012/intake.json",
+    "docs/development/evidence/wave2-integration-20261012/ledger-check.json",
+    "docs/development/evidence/wave2-integration-20261012/merge-input-check.json",
+    "docs/development/roadmap.json",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "docs/project-memory/CHANGELOG-AI.md",
+    "docs/project-memory/PROJECT_STATE.md"
+  ],
+  "business_tests_executed": false
+}

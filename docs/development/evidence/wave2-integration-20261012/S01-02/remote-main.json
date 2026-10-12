@@ -1,0 +1,182 @@
+{
+  "task": "S01-02",
+  "repository": "GTX537/CP6",
+  "source_sha": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+  "remote_main_sha": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+  "pr_url": "https://github.com/GTX537/CP6/pull/184",
+  "pr": {
+    "baseRefOid": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+    "headRefOid": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+    "mergeCommit": {
+      "oid": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17"
+    },
+    "mergedAt": "2026-10-12T13:45:28Z",
+    "number": 184,
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/184"
+  },
+  "observed_at": "2026-10-12T13:45:22.652158+00:00",
+  "result": "PASS",
+  "candidate_ancestor": true,
+  "merged_file_checks": [
+    {
+      "path": "CP6.Entity/Contracts/Wire/.gitattributes",
+      "blob": "a510aa72d92aefc5cb751784fdedef3ec42ecfbc",
+      "remote_main_blob": "a510aa72d92aefc5cb751784fdedef3ec42ecfbc"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs",
+      "blob": "b31ed4d5155ecfed8fbe062f8e9186919af72619",
+      "remote_main_blob": "b31ed4d5155ecfed8fbe062f8e9186919af72619"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/NullOnly.cs",
+      "blob": "ae8d2442efa64c3de6dc309ee572639a63ddcc0b",
+      "remote_main_blob": "ae8d2442efa64c3de6dc309ee572639a63ddcc0b"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "blob": "ff7d32199f4250edfc54e9b48d9761c69742d325",
+      "remote_main_blob": "ff7d32199f4250edfc54e9b48d9761c69742d325"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/.gitattributes",
+      "blob": "6ddcbb96a0d3dfaf39832a0d19fd6af5d60aae2d",
+      "remote_main_blob": "6ddcbb96a0d3dfaf39832a0d19fd6af5d60aae2d"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/PLAN.md",
+      "blob": "55c2ddee62254db408e0a058bdb0a459ad2a03b6",
+      "remote_main_blob": "55c2ddee62254db408e0a058bdb0a459ad2a03b6"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/README.md",
+      "blob": "6e2b2a73316e5b6e14c2d2d046b699bfa1abdfef",
+      "remote_main_blob": "6e2b2a73316e5b6e14c2d2d046b699bfa1abdfef"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/delivery.md",
+      "blob": "fe9a289acf978b171a0a6b7864b63cf3745d58eb",
+      "remote_main_blob": "fe9a289acf978b171a0a6b7864b63cf3745d58eb"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/entry-check.json",
+      "blob": "af113b5f36c86f57b5f896ffd41897aac27993b6",
+      "remote_main_blob": "af113b5f36c86f57b5f896ffd41897aac27993b6"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/SELF-REVIEW.md",
+      "blob": "22b61d3049f23c114a804bf894c2cd09b0a77097",
+      "remote_main_blob": "22b61d3049f23c114a804bf894c2cd09b0a77097"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/green-environment.log",
+      "blob": "c6e5af88f841113d61adf6c0f52e7b05eef713f3",
+      "remote_main_blob": "c6e5af88f841113d61adf6c0f52e7b05eef713f3"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/green-metadata.json",
+      "blob": "bb68e2f9b17beef7951782a3c524098833801912",
+      "remote_main_blob": "bb68e2f9b17beef7951782a3c524098833801912"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/green.log",
+      "blob": "0e965b08b1e7eba3fdc3f14666993cc2be616b1b",
+      "remote_main_blob": "0e965b08b1e7eba3fdc3f14666993cc2be616b1b"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/green.trx",
+      "blob": "08a5a2772acc1d3781a924a74a8a0b9d9483ccba",
+      "remote_main_blob": "08a5a2772acc1d3781a924a74a8a0b9d9483ccba"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red-api-stubs.txt",
+      "blob": "ccc70a6a00c7a9b45d074e5c505bddf925c265ce",
+      "remote_main_blob": "ccc70a6a00c7a9b45d074e5c505bddf925c265ce"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red-environment.log",
+      "blob": "c6e5af88f841113d61adf6c0f52e7b05eef713f3",
+      "remote_main_blob": "c6e5af88f841113d61adf6c0f52e7b05eef713f3"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red-final-environment.log",
+      "blob": "c6e5af88f841113d61adf6c0f52e7b05eef713f3",
+      "remote_main_blob": "c6e5af88f841113d61adf6c0f52e7b05eef713f3"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red-final-metadata.json",
+      "blob": "c8ed3aaf15b46f5c78d4a8ac385425a3615ace1b",
+      "remote_main_blob": "c8ed3aaf15b46f5c78d4a8ac385425a3615ace1b"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red-final.log",
+      "blob": "fb3f7f72c059d691247adf82ab3a7ee2d509a2f1",
+      "remote_main_blob": "fb3f7f72c059d691247adf82ab3a7ee2d509a2f1"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red-final.trx",
+      "blob": "544e106dd1553b79f6262773cbf4d6d29ca5803e",
+      "remote_main_blob": "544e106dd1553b79f6262773cbf4d6d29ca5803e"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red-metadata.json",
+      "blob": "08f8b85ed8e1b9130e1a85382afd6681635219e2",
+      "remote_main_blob": "08f8b85ed8e1b9130e1a85382afd6681635219e2"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red.log",
+      "blob": "14ea588e2ab64604a6d1b6974ede4adbf0f9ac82",
+      "remote_main_blob": "14ea588e2ab64604a6d1b6974ede4adbf0f9ac82"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/red.trx",
+      "blob": "96d50a3c7fd3db4da29f2bc86e8f4991b32c1149",
+      "remote_main_blob": "96d50a3c7fd3db4da29f2bc86e8f4991b32c1149"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/implementation/run-tests.ps1",
+      "blob": "f3a180c491dceacac78523268a021eddcbf42f55",
+      "remote_main_blob": "f3a180c491dceacac78523268a021eddcbf42f55"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/review.md",
+      "blob": "fcffdf95392c20ec7ddf3dc16ff1d1e6774847fc",
+      "remote_main_blob": "fcffdf95392c20ec7ddf3dc16ff1d1e6774847fc"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/source-receipt.json",
+      "blob": "c78d6993a055ab03755b5d8a215db5f124e61e1a",
+      "remote_main_blob": "c78d6993a055ab03755b5d8a215db5f124e61e1a"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/validation.json",
+      "blob": "ccf13df634ef051a5eed676bea13b5c496b83b20",
+      "remote_main_blob": "ccf13df634ef051a5eed676bea13b5c496b83b20"
+    },
+    {
+      "path": "docs/development/evidence/S01-02/workflow-check.json",
+      "blob": "e58ca5eaa1c53297c8eba0169626c481911084fc",
+      "remote_main_blob": "e58ca5eaa1c53297c8eba0169626c481911084fc"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/.gitattributes",
+      "blob": "9517054746c835c7a72c12b1f3994f2668da6ab3",
+      "remote_main_blob": "9517054746c835c7a72c12b1f3994f2668da6ab3"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "blob": "9a577b3cbd93a3964ec62e27e2c4365a99c73aa6",
+      "remote_main_blob": "9a577b3cbd93a3964ec62e27e2c4365a99c73aa6"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StrictJsonTests.cs",
+      "blob": "5237b1dd100b417e9ee83c73968239e6c75c8cb0",
+      "remote_main_blob": "5237b1dd100b417e9ee83c73968239e6c75c8cb0"
+    }
+  ],
+  "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+  "actions_triggered": 0,
+  "actions_cancelled": 0,
+  "business_acceptance": "NOT_RUN"
+}

@@ -1,0 +1,154 @@
+{
+  "observed_at": "2026-10-12T13:36:47.756214+00:00",
+  "coordinator": "COORD",
+  "scope": "Read actual START and DELIVERY after workers completed under already CONFIRMED assignment. No historical coordinator acknowledgement is fabricated.",
+  "main_baseline": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+  "platform_baseline": "30bd23af6808d217a23878bd9437513043c52834",
+  "messages": [
+    {
+      "task": "S01-02",
+      "ref": "origin/codex/dev-handoff-s01-02",
+      "sha": "384786dcaed451c15869954516ec2b4a833406bc",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-02/messages/20261012T104701Z-start/MESSAGE.md",
+      "content": "# S01-02 START\n\n- 类型：START；任务：S01-02；作者：对话A（原S01-01）；收件：COORD。\n- UTC：2026-10-12T10:47:01Z。\n- 业务仓：GTX537/CP6；分支：codex/s01-02-strict-json-20261012；worktree：D:/CP6-worktrees/s01-02-20261012。\n- 实际HEAD、main和已fetch的origin/main：4ab979e2f391c5a5645da0d1586781e824a9f8cd。预建分支已含协调文档快进，无本任务旧改动。\n- 依据回复：a0429a8975367aa8a8dae5e7492bbddd35425da6 / handoffs/CP6-DEV-20261012/tasks/S01-02/replies/20261012T091211Z-wave2-assignment/MESSAGE.md；同时已读原S01-01 next-task回复和完整执行包。\n\n用户已在本对话明确指派S01-02；已读取最新唯一台账，assignment为本对话、READY/CONFIRMED，S01-01前置DONE。7份合同/现有项目/设计来源Git blob pin全部匹配；包CP6-S01-CONTRACT-INPUTS/1.0.0保持，manifest SHA 2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e，vectors SHA b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01。\n\n本轮实现仅写CP6.Entity/Contracts/Wire/、eng/contracts/exact-values-tests/、docs/development/evidence/S01-02/。消费strict-json/null-only/json-semantic-equality三profile的JSON-001..007、NULL-001..007、EQUAL-001..007全部21条固定向量；增加独立边界断言，不改共用预期。严格重复键先于类型验证，NullOnly与required存在性分开，BigInteger结构相等不用于摘要/签名/重放规范化。\n\n采用原net8.0项目和指定xUnit/Test SDK版本，测试只引用CP6.Entity。先保留真实失败测试，再实现和局部回归；收尾一次任务级审查。当前SDK10.0.302，已安装.NET8.0.29运行时，目标保持net8.0。未经核对不增加输入限额，不新增数据库/SQL Server实现，不改根项目/锁文件或其他任务窗口。\n\n请COORD据本START登记IN_PROGRESS；共享台账、生成页、四状态页及串行合并继续由COORD处理。本对话按已CONFIRMED窗口推进代码，不把消息上传当接收ACK或业务验收。任务分支Actions运行列表为空，没有运行或取消Actions；后续每次发布仍核候选与受保护主线触发器。"
+    },
+    {
+      "task": "S01-02",
+      "ref": "origin/codex/dev-handoff-s01-02",
+      "sha": "384786dcaed451c15869954516ec2b4a833406bc",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-02/messages/20261012T110635Z-delivery/MESSAGE.md",
+      "content": "# S01-02 DELIVERY — 已发布候选，待COORD合并\n\n- 类型：DELIVERY；任务：S01-02；作者：对话A（原S01-01）；收件：COORD。\n- UTC：2026-10-12T11:06:35Z。\n- 业务仓：GTX537/CP6；分支：codex/s01-02-strict-json-20261012；worktree：D:/CP6-worktrees/s01-02-20261012。\n- 实际开工与最后核对的远端main：4ab979e2f391c5a5645da0d1586781e824a9f8cd。\n- 前序START：23e84612dc3562ece912f03af2d0fcd04873b47b / handoffs/CP6-DEV-20261012/tasks/S01-02/messages/20261012T104701Z-start/MESSAGE.md。\n- 准入依据：a0429a8975367aa8a8dae5e7492bbddd35425da6 / handoffs/CP6-DEV-20261012/tasks/S01-02/replies/20261012T091211Z-wave2-assignment/MESSAGE.md。交付前刷新仍为该协调提交，无新回复；按已CONFIRMED窗口完成实现，不把消息上传当ACK。\n\n## 准确候选身份\n\n- 实现与原始测试证据：2c0ef2129012a8117b0b5b058ac3c470e12d73fd。\n- 已发布候选HEAD：3890b4fdbda47c3762b9f51ea75b8c156540c69f，已用远端ref API核对与本地一致。\n- 草稿PR：https://github.com/GTX537/CP6/pull/184 。草稿供COORD同步共享状态和安排正常保护合并；本对话没有标READY-for-merge或绕过协调窗口。\n- 只新增分配的CP6.Entity/Contracts/Wire/、eng/contracts/exact-values-tests/、docs/development/evidence/S01-02/；未改共用输入、既有项目/根sln/依赖锁、台账、生成页、四份状态或其他任务文件。\n\n## 实际行为与验证\n\n新增NullOnly及转换器、StrictJson/StrictJsonDocument、JsonSemanticEquality。任意层重复键按解码后名字ordinal拒绝，预检完整结束后才运行目标转换器；required存在性与null值分别保障。原始UTF-8独立持有并防御性复制；结构Key仅用于Schema语义，不作摘要/签名/重放编码。数字系数保留准确十进制串、指数用BigInteger，不经浮点、不展开巨大指数。\n\n实际命令：`dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~StrictJsonTests`。SDK10.0.302，目标net8.0，实际测试进程.NET8.0.29。GREEN为77执行/77通过/0失败/0跳过，无编译警告；全部JSON-001..007、NULL-001..007、EQUAL-001..007原21条固定向量直接读取原输入/预期，另56条覆盖无效语法、UTF-8/Unicode、转换器顺序、原字节所有权、2048层深度、任意精度和运行环境。\n\nRED及RED-final分别为76个未实现接口桩失败+1运行环境断言通过；缺类型编译失败未计为RED。原日志/TRX/环境/源码和制品摘要均保留。一次完整任务级独立规范/质量审查通过，无阻止交付的P0/P1/P2发现；未重复做全仓测试。\n\n证据均在候选业务提交的`docs/development/evidence/S01-02/`：\n\n- `README.md`：调用示例、生命周期、验证和能力边界。\n- `entry-check.json`：READY/CONFIRMED、S01-01 DONE、7份来源pin与21个case ID。\n- `validation.json`与`implementation/green.trx`：真实逐case结果；`implementation/*-metadata.json`保留原执行基线及文件身份。\n- `source-receipt.json`：实现提交2c0ef212的五份已测源码/项目Git blob与GREEN输入逐项一致；原运行发生在未提交工作树，未把后续提交SHA伪称当时执行HEAD。\n- `review.md`及`implementation/SELF-REVIEW.md`：集中审查、定向UTF-8框架探针、失败修正和资源限制。\n- `delivery.md`与`workflow-check.json`：发布/协调范围、触发器审计及传输失败记录。\n\n源码、依赖及本地环境未变，后续只有文档/传输记录提交；按规则复用GREEN结果，不因SHA变化重跑同样测试。共用包版本CP6-S01-CONTRACT-INPUTS/1.0.0、manifest 2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e、vectors b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01保持不变。\n\n## 未覆盖与发布事实\n\n深层语义Key存在重复复制开销；默认64深度已解除，但连续数组/框架元数据/可用内存仍有限。目标反序列化仍受合同metadata、自定义转换器及显式MaxDepth约束。转义孤立UTF-16 code unit在严格扫描/相等中保真，STJ目标字符串访问器可能拒绝；语法通过不等于任意业务类型通过。\n\n没有验证真实Owner、CRM/Platform采用、权限/事务、数据库、页面或生产验收；共用包NOT_RUN和业务总状态不回写。未运行/取消Actions，未改触发器/保护，未迁库/部署/发布NuGet。push/PR前核对两端仍为普通手动/R2版本Tag入口。\n\n前两次通过当前Git本机代理的push返回HTTP408，随后查询确认远端分支不存在，失败未报成功。诊断包约96KB后采用仅本命令`http.proxy=`，第三次非强推成功并远端核对；没有修改全局Git/代理配置或关闭TLS。候选已发布，不是LOCAL_ONLY；当前main尚未包含本任务，实现不标DONE。\n\n## 请COORD处理\n\n请读取前序START和本固定提交，串行登记实际进展、接收审查证据，将共享roadmap/生成页/四份状态纳入本任务交付窗口，再按正常保护流程完成PR #184和远端main包含性核对。执行对话没有越权修改这些共享文件或独立合并。后续依赖在真实交付后另核准入，本消息不自动启动新任务。"
+    },
+    {
+      "task": "S01-05",
+      "ref": "origin/codex/dev-handoff-s01-05",
+      "sha": "3c40f31e056dda3639978f563d76be61b30057ee",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-05/messages/20261012T104846Z-start/MESSAGE.md",
+      "content": "# S01-05 START\n\n- Type: START; From: B; To: COORD; Task: S01-05.\n- Business repository: GTX537/CP6; branch: codex/s01-05-ts-exact-20261012.\n- Worktree: D:/CP6-worktrees/s01-05-20261012; actual HEAD / confirmed origin/main: 4ab979e2f391c5a5645da0d1586781e824a9f8cd.\n- Assignment reference: a0429a8975367aa8a8dae5e7492bbddd35425da6 / handoffs/CP6-DEV-20261012/tasks/S01-05/replies/20261012T091211Z-wave2-assignment/MESSAGE.md.\n- Input package CP6-S01-CONTRACT-INPUTS/1.0.0 at dfc043b1473dcea51d34ff87a7808692349c278a; profile-inputs git-blob SHA256 2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e; vectors b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01.\n- Confirmed window: cp6.web/src/contracts/exact/ and docs/development/evidence/S01-05/ only. Five numeric profiles / 34 fixed shared vectors; read input and expected together, fail on unsupported operations.\n- Starting TDD for distinct FIN-CREDIT / FIN-INV lexical rules, immutable BigInt arithmetic, original inventory wire preservation, explicit final-field validation. No UI migration, shared state edits, DB change or dependency upgrade.\n- Local npm ci restored the existing lock; Node 20.19.0 / npm 10.8.2. Will run the assigned Vitest file and frontend type-check, retain RED/GREEN evidence, perform one task review, then send DELIVERY for COORD shared-state/merge window.\n- No Actions dispatched. Business branch has no queued/running task runs; Handoff is private with Actions disabled and no workflows in candidate/default.\n- Please record worker START / IN_PROGRESS; implementation proceeds under the confirmed assignment. Original package/business acceptance remain NOT_RUN until separately adopted.\n- UTC: 20261012T104846Z"
+    },
+    {
+      "task": "S01-05",
+      "ref": "origin/codex/dev-handoff-s01-05",
+      "sha": "3c40f31e056dda3639978f563d76be61b30057ee",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-05/messages/20261012T105749Z-delivery/MESSAGE.md",
+      "content": "# S01-05 DELIVERY\n\n- Type: DELIVERY; From: B; To: COORD; Task: S01-05; repository GTX537/CP6.\n- Branch: codex/s01-05-ts-exact-20261012; worktree D:/CP6-worktrees/s01-05-20261012.\n- Delivery commit: b1f5206d3a0ca1af6513c4984700823c81dea210; non-force pushed, remote branch SHA verified identical; worktree clean.\n- Confirmed source baseline and latest fetched origin/main: 4ab979e2f391c5a5645da0d1586781e824a9f8cd. No merge or shared-state mutation performed by B.\n- Assignment reference: a0429a8975367aa8a8dae5e7492bbddd35425da6 / handoffs/CP6-DEV-20261012/tasks/S01-05/replies/20261012T091211Z-wave2-assignment/MESSAGE.md.\n- START reference: 5c7eb281e7ce232a0e67cd466a73b18e4d002644 / handoffs/CP6-DEV-20261012/tasks/S01-05/messages/20261012T104846Z-start/MESSAGE.md. Latest COORD branch has no additional response yet; confirmed assignment permitted implementation.\n\n## Result\n\nImplemented CreditAmount signed/nonnegative/positive (38 total digits, max scale 8), separate InventoryDecimal decimal18/qty12 (unbounded integer digits, original wire preserved), immutable BigInt arithmetic (add/subtract/compare), explicit destination-profile validation, canonical arithmetic display and safe string JSON output. No float amount conversion, no rounding, no UI/DB integration, no shared input edits. Only the two assigned write prefixes changed (12 new files).\n\nLocal validation:\n- npm ci --prefix cp6.web --no-audit --no-fund: existing lock, 426 packages, exit 0; Node v20.19.0 / npm 10.8.2. No dependency changes.\n- npm --prefix cp6.web test -- src/contracts/exact/profiles.test.ts: 202 passed, 0 skipped, exit 0. Includes all 34 fixed shared cases / 5 profiles with input and expected read together, exact ID and operation guards. Supplemental checks include 200-digit inventory, safe-integer boundary, original negative-zero/trailing-zero wire, wrong JSON token types, arithmetic and final-field overflow.\n- npm --prefix cp6.web run type-check: vue-tsc --build, exit 0.\n- Retained genuine initial collection failure and RED (100 failed / 102 passed), plus GREEN/type-check logs. Complete task diff review found no blocking issue. Input/config pins, tested source identities, stored Git blob hashes, case IDs/results and review are in evidence below.\n- Raw CLI logs retain terminal EOF blank lines; full diff whitespace check with blank-at-eof disabled and non-log normal check both pass. This is documented, not hidden.\n\nEvidence at delivery commit:\n- docs/development/evidence/S01-05/DELIVERY.md\n- docs/development/evidence/S01-05/verification.json\n- docs/development/evidence/S01-05/REVIEW.md\n- cp6.web/src/contracts/exact/README.md\n\nInput CP6-S01-CONTRACT-INPUTS/1.0.0 at dfc043b1473dcea51d34ff87a7808692349c278a: profile-inputs git-blob SHA256 2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e; vectors b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01; README 9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3. All pins and five source/config pins reverified.\n\n## Integration request and limits\n\nPlease take the serialized S01-05 delivery window: acknowledge START, review candidate, synchronize roadmap/generated views/four state pages in this task scope, and perform protected merge/push and remote-main inclusion verification. B has not modified these shared files or declared DONE. Reuse local results when tested files/input/config identities remain unchanged; later SHA-only changes do not represent a new test execution.\n\nThis is TypeScript contract unit adoption plus frontend type-check, not C#/TS/PG cross-language validation, real Owner acceptance, permission/transaction/database proof, page migration or deployment. Original input package remains NOT_RUN; downstream work such as S01-12 retains its independent scope.\n\nBefore business push, candidate and latest origin/main all 13 workflow event blocks were checked identical: 12 manual-only; R2 candidate v*.*.* tag-only; Azure trigger/pr none. No matching branch/PR automatic compilation, task runs, cancellations, manual dispatch, trigger changes, tags or deployment. Handoff remains private, Actions disabled, no workflows on candidate/default.\n- UTC: 20261012T105749Z"
+    },
+    {
+      "task": "S01-09",
+      "ref": "origin/codex/dev-handoff-s01-09",
+      "sha": "4c90b648765a43dddc6216bda2688d2d35b9c24c",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-09/messages/20261012T105010Z-c-start/MESSAGE.md",
+      "content": "# S01-09 START\n\n- Task: S01-09; Type: START; From: C (original WP05-01 conversation); To: COORD.\n- Business repo: GTX537/CP6.Platform; branch: codex/s01-09-native-routing-20261012; worktree: D:/CP6.Platform-worktrees/s01-09-20261012.\n- Actual clean HEAD and fetched origin/main: 30bd23af6808d217a23878bd9437513043c52834.\n- Main ledger read: 4ab979e2f391c5a5645da0d1586781e824a9f8cd; READY, entry_gate=CONFIRMED, assigned C, exclusive Platform:s01-09.\n- Fixed input source: CP6 dfc043b1473dcea51d34ff87a7808692349c278a; CP6-S01-CONTRACT-INPUTS/1.0.0; profile-inputs SHA256 2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e; vectors SHA256 b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01.\n- Reply basis: Handoff a0429a8975367aa8a8dae5e7492bbddd35425da6 / handoffs/CP6-DEV-20261012/tasks/S01-09/replies/20261012T091211Z-wave2-assignment/MESSAGE.md. Old WP05 closeout and next-task replies read.\n\nS01-01 dependency delivery and WP01-02 admission read. I acknowledge the full S01 task plan and wave2 S01-09 write allowlist: Cp6ContractBundle.cs, Cp6CloudEventValidator.cs, Messaging/NativeContracts, the two designated test files, TestData/S01, task-private evidence, and only S01 resource output settings in UnitTests.csproj. No changes to Main shared status/input package or other worktrees.\n\nPlan: import exact fixed input blobs; preserve existing eventType/schemaId/schemaVersion and asset-hash checks; test then implement pinned native OpenAPI/registry routing and owned original UTF8 bytes/digest; account for all 35 vectors (21 foundational semantics and 14 route/byte cases). Do not use pending S01-02 code. Record focused local failures and final checks plus one task-level diff review. No database, package publication, deployment or remote Actions. Current workflow review confirms RFC3161 PR filters do not match this allowlist; recheck before publishing.\n\nPlease record actual worker START / IN_PROGRESS when received. This message does not claim ACK, consumer business acceptance, or DONE. Implementation proceeds within the already CONFIRMED window; deliver candidate and evidence for COORD's serial integration/state synchronization.\nUTC: 2026-10-12T10:50:10.4320379Z"
+    },
+    {
+      "task": "S01-09",
+      "ref": "origin/codex/dev-handoff-s01-09",
+      "sha": "4c90b648765a43dddc6216bda2688d2d35b9c24c",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-09/messages/20261012T111351Z-c-delivery/MESSAGE.md",
+      "content": "# S01-09 DELIVERY — verified local contract candidate\n\n- Task: S01-09; Type: DELIVERY; From: C (original WP05-01 conversation); To: COORD.\n- Business repository: GTX537/CP6.Platform; branch: codex/s01-09-native-routing-20261012; worktree: D:/CP6.Platform-worktrees/s01-09-20261012.\n- Confirmed starting and current remote main: 30bd23af6808d217a23878bd9437513043c52834.\n- Tested/reviewed source commit: 708253360269396a43c2b25cce1c87cd9f59f9d2.\n- Delivered candidate, including retained evidence: 753696c8333325d9faa5d80ea429ab8b9480e71c. Remote task branch verified at this exact SHA; remote main does not yet contain it. No PR/merge performed by this worker; serial integration remains with COORD.\n- Assignment basis: Main 4ab979e2f391c5a5645da0d1586781e824a9f8cd; fixed input source CP6 dfc043b1473dcea51d34ff87a7808692349c278a; CP6-S01-CONTRACT-INPUTS/1.0.0.\n- Reply basis: Handoff a0429a8975367aa8a8dae5e7492bbddd35425da6 / handoffs/CP6-DEV-20261012/tasks/S01-09/replies/20261012T091211Z-wave2-assignment/MESSAGE.md.\n- Prior START: caf861009fa6a67d419f3896b9af324c79b744a5 / handoffs/CP6-DEV-20261012/tasks/S01-09/messages/20261012T105010Z-c-start/MESSAGE.md. No later coordinator reply observed on refresh; no ACK or IN_PROGRESS is inferred from transport.\n\n## Delivered behavior\n\nExact INQ OpenAPI and ERP current/frozen registry/codec routing uses the pinned S01 manifest and real asset bytes; unknown profiles/version/identity/hash and cross-use reject. Profiles stay outside native wire envelopes. Existing CloudEvent strict triple/schema/example validation remains, with an optional explicit bundle version/manifest hash overload. The bundle still forbids duplicate event types; no unneeded CloudEvent multi-version router was introduced.\n\nOriginal JSON snapshot owns bytes and returns copies; its SHA256 and byte comparison preserve CRLF, whitespace, key order, Unicode and numeric spelling. Strict native JSON rejects decoded duplicate names at any level and invalid UTF8. Required-null projection and arbitrary-precision schema equality adopt pinned design semantics; equality never becomes a byte/digest normalization API. No pending S01-02 implementation is referenced.\n\nOne compatibility regression discovered during focused consumer tests was corrected: P08 explicitly discards duplicate root traceparent/tracestate rather than rejecting the business event. That existing rule remains; native JSON and nested business duplicate keys still reject. Failed intermediate outputs are retained.\n\n## Evidence and review\n\n[Delivery report](https://github.com/GTX537/CP6.Platform/blob/753696c8333325d9faa5d80ea429ab8b9480e71c/docs/development/evidence/S01-09/README.md)\n\n[Machine report and all 35 case IDs](https://github.com/GTX537/CP6.Platform/blob/753696c8333325d9faa5d80ea429ab8b9480e71c/docs/development/evidence/S01-09/validation.json)\n\n[Final local TRX](https://github.com/GTX537/CP6.Platform/blob/753696c8333325d9faa5d80ea429ab8b9480e71c/docs/development/evidence/S01-09/test-results/task-pass.trx)\n\n[Independent task review](https://github.com/GTX537/CP6.Platform/blob/753696c8333325d9faa5d80ea429ab8b9480e71c/docs/development/evidence/S01-09/review.md)\n\nLocal Windows .NET SDK 8.0.424, net8.0: 110 executed, 110 passed, 0 skipped. Includes all 35 fixed vectors (21 foundational +14 native route/bytes), CloudEvent regression, MessagingTelemetry, DaprKafka, TraceContext and the filter-matched TransactionalMessagingTelemetry unit class. This is not database transaction acceptance. The source was tested in the working tree at baseline HEAD, then committed unchanged as 7082533; final candidate adds evidence only. Machine report retains source SHA, actual execution times, build hashes, exact input hashes and this distinction. No rebuild/retest claimed for evidence-only commits.\n\nFive imported assets verified against exact Main Git blobs/original-composed byte pins, with repository and test-output byte preservation; test execution does not depend on archives. Independent complete source review found no blocking correctness/compatibility/scope findings; task diff and later evidence additions passed local checks. All 36 files remain in the assignment allowlist. UnitTests.csproj only adds S01 resource-copy settings; no dependency/TFM/SDK/workflow changes.\n\nBefore publication, candidate and current origin/main workflows, full diff paths and committed TRX hashes were rechecked. Seven workflows remain dispatch-only; RFC3161 PR filter covers only its own YAML and ReleaseTests file, neither changed here. No queued/in-progress Platform runs were present. Actions triggered/cancelled: 0; trigger changes: 0. No package publication, DB access/migration or deployment.\n\n## Requested coordinator action\n\nPlease read this fixed candidate, record actual START/receipt state, perform serial integration through the normal protected PR path, synchronize Main roadmap/generated views/four project-state files, and verify Platform remote-main inclusion before DONE. Platform main is separately tracked; a Main state commit cannot substitute for Platform merge. The existing successful source/test evidence can be reused if code/dependency/environment inputs remain unchanged; no Actions authorization was granted.\n\nNative command validation/codec instantiation, real Owner acceptance, current/frozen business mapping, INQ UI, permissions, Inbox/Outbox atomicity, persistence, real replay, downstream package adoption and production release remain NOT_RUN. Constructed BYTES fixtures prove byte retention only. No global target or original/R1 business case is marked complete by this delivery.\nUTC: 2026-10-12T11:13:51.4922766Z"
+    }
+  ],
+  "candidates": [
+    {
+      "task": "S01-02",
+      "head": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+      "status": "",
+      "files": [
+        "CP6.Entity/Contracts/Wire/.gitattributes",
+        "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs",
+        "CP6.Entity/Contracts/Wire/NullOnly.cs",
+        "CP6.Entity/Contracts/Wire/StrictJson.cs",
+        "docs/development/evidence/S01-02/.gitattributes",
+        "docs/development/evidence/S01-02/PLAN.md",
+        "docs/development/evidence/S01-02/README.md",
+        "docs/development/evidence/S01-02/delivery.md",
+        "docs/development/evidence/S01-02/entry-check.json",
+        "docs/development/evidence/S01-02/implementation/SELF-REVIEW.md",
+        "docs/development/evidence/S01-02/implementation/green-environment.log",
+        "docs/development/evidence/S01-02/implementation/green-metadata.json",
+        "docs/development/evidence/S01-02/implementation/green.log",
+        "docs/development/evidence/S01-02/implementation/green.trx",
+        "docs/development/evidence/S01-02/implementation/red-api-stubs.txt",
+        "docs/development/evidence/S01-02/implementation/red-environment.log",
+        "docs/development/evidence/S01-02/implementation/red-final-environment.log",
+        "docs/development/evidence/S01-02/implementation/red-final-metadata.json",
+        "docs/development/evidence/S01-02/implementation/red-final.log",
+        "docs/development/evidence/S01-02/implementation/red-final.trx",
+        "docs/development/evidence/S01-02/implementation/red-metadata.json",
+        "docs/development/evidence/S01-02/implementation/red.log",
+        "docs/development/evidence/S01-02/implementation/red.trx",
+        "docs/development/evidence/S01-02/implementation/run-tests.ps1",
+        "docs/development/evidence/S01-02/review.md",
+        "docs/development/evidence/S01-02/source-receipt.json",
+        "docs/development/evidence/S01-02/validation.json",
+        "docs/development/evidence/S01-02/workflow-check.json",
+        "eng/contracts/exact-values-tests/.gitattributes",
+        "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+        "eng/contracts/exact-values-tests/StrictJsonTests.cs"
+      ]
+    },
+    {
+      "task": "S01-05",
+      "head": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+      "status": "",
+      "files": [
+        "cp6.web/src/contracts/exact/README.md",
+        "cp6.web/src/contracts/exact/creditAmount.ts",
+        "cp6.web/src/contracts/exact/exactDecimal.ts",
+        "cp6.web/src/contracts/exact/inventoryDecimal.ts",
+        "cp6.web/src/contracts/exact/profiles.test.ts",
+        "docs/development/evidence/S01-05/DELIVERY.md",
+        "docs/development/evidence/S01-05/REVIEW.md",
+        "docs/development/evidence/S01-05/collection-failure.log",
+        "docs/development/evidence/S01-05/green.log",
+        "docs/development/evidence/S01-05/red.log",
+        "docs/development/evidence/S01-05/type-check.log",
+        "docs/development/evidence/S01-05/verification.json"
+      ]
+    },
+    {
+      "task": "S01-09",
+      "head": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+      "status": "",
+      "files": [
+        "docs/development/evidence/S01-09/.gitattributes",
+        "docs/development/evidence/S01-09/PLAN.md",
+        "docs/development/evidence/S01-09/README.md",
+        "docs/development/evidence/S01-09/consumer-regression-output.txt",
+        "docs/development/evidence/S01-09/contracts-pass-output.txt",
+        "docs/development/evidence/S01-09/green-initial-output.txt",
+        "docs/development/evidence/S01-09/import-inputs.py",
+        "docs/development/evidence/S01-09/input-provenance.json",
+        "docs/development/evidence/S01-09/red-bundle-output.txt",
+        "docs/development/evidence/S01-09/red-output.txt",
+        "docs/development/evidence/S01-09/red-utf8-output.txt",
+        "docs/development/evidence/S01-09/review.md",
+        "docs/development/evidence/S01-09/task-pass-output.txt",
+        "docs/development/evidence/S01-09/test-results/consumer-regression.trx",
+        "docs/development/evidence/S01-09/test-results/contracts-pass.trx",
+        "docs/development/evidence/S01-09/test-results/green-initial.trx",
+        "docs/development/evidence/S01-09/test-results/red-bundle.trx",
+        "docs/development/evidence/S01-09/test-results/red-utf8.trx",
+        "docs/development/evidence/S01-09/test-results/red.trx",
+        "docs/development/evidence/S01-09/test-results/task-pass.trx",
+        "docs/development/evidence/S01-09/validation.json",
+        "docs/development/evidence/S01-09/verify-delivery.py",
+        "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+        "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+        "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+        "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeJson.cs",
+        "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+        "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+        "tests/CP6.Platform.UnitTests/CloudEventContractTests.cs",
+        "tests/CP6.Platform.UnitTests/NativeProfileContractTests.cs",
+        "tests/CP6.Platform.UnitTests/TestData/S01/.gitattributes",
+        "tests/CP6.Platform.UnitTests/TestData/S01/crm-inq.openapi.json",
+        "tests/CP6.Platform.UnitTests/TestData/S01/erp-current.registry.json",
+        "tests/CP6.Platform.UnitTests/TestData/S01/erp-frozen.registry.json",
+        "tests/CP6.Platform.UnitTests/TestData/S01/profile-inputs.json",
+        "tests/CP6.Platform.UnitTests/TestData/S01/vectors.json"
+      ]
+    }
+  ],
+  "business_acceptance": "NOT_RUN"
+}
