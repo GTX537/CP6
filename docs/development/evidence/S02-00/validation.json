@@ -1,0 +1,691 @@
+{
+  "task_id": "S02-00",
+  "scope": "Document structure, local links, exact source and normative input identities only",
+  "observed_at_utc": "2026-10-12T06:01:04.743374+00:00",
+  "interpreter": "3.13.13",
+  "command": [
+    "docs/development/evidence/S02-00/verify.py",
+    "--crm-root",
+    "D:/CP6.CRM",
+    "--platform-root",
+    "D:/CP6/CP6.Platform",
+    "--archive-root",
+    "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs",
+    "--out",
+    "docs/development/evidence/S02-00/validation.json"
+  ],
+  "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+  "result": "PASS",
+  "checks": [
+    {
+      "check": "task_and_design_identity",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "postgresql_only",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "unique_case_ids",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "planned_case_set",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "all_runtime_cases_not_run",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-001_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-001_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-002_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-002_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-003_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-003_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-004_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-004_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-005_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-005_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-006_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-006_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-007_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-007_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-008_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-008_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-009_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-009_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-010_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-010_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-011_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-011_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-012_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-012_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-013_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-013_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-014_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-014_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-015_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-015_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-016_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-016_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-017_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-017_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-018_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-018_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-019_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-019_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-020_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-020_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-021_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-021_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-022_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-022_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-023_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-023_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-024_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-024_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-025_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-025_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-026_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-026_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-027_complete",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "PGT-027_implementation_task",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Services/Common/ITenantContext.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Services/Common/TenantScope.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.WebApi/Middleware/TenantMiddleware.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/EFDbContext/CP6Context.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Entity/DomainModels/Sys/Sys_User.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Entity/DomainModels/Sys/Sys_Menu.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/Persistence/PostgreSqlModelIdentifiers.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:CP6.Core/CP6.Core.csproj",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:docs/development/08-postgresql-baseline.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:docs/development/09-parallel-development.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:docs/design-handbook/remediation/01-version-and-authority.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:docs/design-handbook/remediation/assets/composed-derivatives.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Main:docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:CRM:src/CP6.CRM.Infrastructure/Persistence/CrmDbContext.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:CRM:src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeDbContext.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:CRM:src/CP6.CRM.Infrastructure/Messaging/CrmBusinessOutbox.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:CRM:src/CP6.CRM.Infrastructure/Identity/IdentityProjectionContext.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:CRM:src/CP6.CRM.Infrastructure/Identity/IdentityProjectionStore.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:CRM:src/CP6.CRM.Infrastructure/Identity/IdentityEventConsumer.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:CRM:src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Platform:src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Platform:src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Platform:src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "source:Platform:src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "normative:SYS-TENANT-01:accepted_primary_body_or_exact_carrier",
+      "result": "PASS",
+      "detail": "originals/4b/4b2226985953845f__S5_SYS-TENANT-01_完整设计候选_v0.1.md"
+    },
+    {
+      "check": "normative:SYS-TENANT-01:mandatory_current_combination_or_attachment",
+      "result": "PASS",
+      "detail": "originals/f2/f26d44198c63995c__COMPOSITION-INDEX-v0.2.json"
+    },
+    {
+      "check": "normative:SYS-TENANT-01:required_acceptance_and_decision",
+      "result": "PASS",
+      "detail": "originals/f5/f5dd2c4328512cdc__UA-20261008-S5-SYS-TENANT-01-STATIC-MD02.json"
+    },
+    {
+      "check": "normative:SYS-IAM-01:accepted_primary_body_or_exact_carrier",
+      "result": "PASS",
+      "detail": "originals/d8/d84f5873e46c4c98__S5_SYS-IAM-01_完整设计候选_v0.2.md"
+    },
+    {
+      "check": "normative:SYS-IAM-01:mandatory_current_combination_or_attachment",
+      "result": "PASS",
+      "detail": "originals/f2/f26d44198c63995c__COMPOSITION-INDEX-v0.2.json"
+    },
+    {
+      "check": "normative:SYS-IAM-01:required_acceptance_and_decision",
+      "result": "PASS",
+      "detail": "originals/4c/4c4103c34f2f17e8__UA-20261008-S5-SYS-IAM-01-STATIC-MD02.json"
+    },
+    {
+      "check": "normative:PLT-CTX-01:accepted_primary_body_or_exact_carrier",
+      "result": "PASS",
+      "detail": "originals/26/265aecc406e50ca8__PLT-CTX-01_完整静态设计_v0.1.md"
+    },
+    {
+      "check": "normative:PLT-CTX-01:mandatory_current_combination_or_attachment",
+      "result": "PASS",
+      "detail": "originals/3e/3ec93373fda65d46__S7_PLATFORM_COMBINED_FREEZE_v0.2.1.json"
+    },
+    {
+      "check": "normative:PLT-CTX-01:required_acceptance_and_decision",
+      "result": "PASS",
+      "detail": "originals/be/bef16a902d6fb364__UA-20261008-S7-PLT-CTX-01-STATIC-MD02.json"
+    },
+    {
+      "check": "normative:PLT-DEL-01:accepted_primary_body_or_exact_carrier",
+      "result": "PASS",
+      "detail": "originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md"
+    },
+    {
+      "check": "normative:PLT-DEL-01:mandatory_current_combination_or_attachment",
+      "result": "PASS",
+      "detail": "originals/3e/3ec93373fda65d46__S7_PLATFORM_COMBINED_FREEZE_v0.2.1.json"
+    },
+    {
+      "check": "normative:PLT-DEL-01:required_acceptance_and_decision",
+      "result": "PASS",
+      "detail": "originals/1f/1f932c5ce46ae9e0__UA-20261008-S7-PLT-DEL-01-STATIC-MD02.json"
+    },
+    {
+      "check": "authored_exists:02-postgresql-tenancy.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:02-postgresql-tenancy.md:../../development/acceptance/postgresql-tenancy.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:02-postgresql-tenancy.md:../../development/evidence/S02-00/README.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:02-postgresql-tenancy.md:../../development/08-postgresql-baseline.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:02-postgresql-tenancy.md:../remediation/01-version-and-authority.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:02-postgresql-tenancy.md:../../development/evidence/S02-00/source-inventory.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:02-postgresql-tenancy.md:../../development/acceptance/postgresql-tenancy.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "fences_balanced:02-postgresql-tenancy.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "authored_exists:postgresql-tenancy.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "authored_exists:source-inventory.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "authored_exists:README.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:README.md:../../../design-handbook/architecture/02-postgresql-tenancy.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:README.md:../../acceptance/postgresql-tenancy.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:README.md:source-inventory.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:README.md:review.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:README.md:verify.py",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "fences_balanced:README.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "authored_exists:review.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:review.md:../../../design-handbook/architecture/02-postgresql-tenancy.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "link:review.md:../../acceptance/postgresql-tenancy.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "fences_balanced:review.md",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "authored_exists:verify.py",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "git_diff_check",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "git_staged_diff_check",
+      "result": "PASS",
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "authored_files": [
+    {
+      "path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
+      "sha256_utf8_lf": "6328585ab458cb8984ce91b1f36a91e442cde33ee6f3d4f5b74e969bac70b450"
+    },
+    {
+      "path": "docs/development/acceptance/postgresql-tenancy.json",
+      "sha256_utf8_lf": "541370e119c32b435c082663fe45daaaaef925f1752dc7041bd173a6ecde788c"
+    },
+    {
+      "path": "docs/development/evidence/S02-00/source-inventory.json",
+      "sha256_utf8_lf": "1aaa1da6283c9590cc5d10cb4664449e0a525df3c3e3b31fec3d6128d2d7c6bb"
+    },
+    {
+      "path": "docs/development/evidence/S02-00/README.md",
+      "sha256_utf8_lf": "e4bc30d4d90c515f9d68f1a2a34d5f85ecfa0ef1a63f0ab5578f1f2c851fd788"
+    },
+    {
+      "path": "docs/development/evidence/S02-00/review.md",
+      "sha256_utf8_lf": "b7cdb158c04a8f252f6c9e992110198de09fbd3df96405e4fc2bc053f75c9c7f"
+    },
+    {
+      "path": "docs/development/evidence/S02-00/verify.py",
+      "sha256_utf8_lf": "c6870b403dd009c9b300196378370cea0fe8e36958aba3bb01c5fbd86eda1b89"
+    }
+  ],
+  "runtime_cases": {
+    "total": 27,
+    "NOT_RUN": 27
+  },
+  "not_run": [
+    "build",
+    "business tests",
+    "database connections/schema/roles/migrations",
+    "runtime package verification",
+    "capacity/backup/restore",
+    "GitHub Actions",
+    "deployment"
+  ]
+}
