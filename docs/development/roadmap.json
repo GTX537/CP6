@@ -417,7 +417,7 @@
         "变更/偏离/发布采用",
         "反馈与生命周期"
       ],
-      "existing_baseline": "PLM WP0仍为未合入Main候选；需要按当前双库及专业合同评估移植",
+      "existing_baseline": "PLM WP0仍为未合入Main候选；按后续PostgreSQL基线及专业合同评估移植，保留双库历史证据",
       "risk_focus": [
         "技术冻结不等于生产许可",
         "配置及多输出身份",
@@ -158556,6 +158556,11 @@
       "date": "2026-10-11",
       "change": "WP01逐目标源码对照125/125；105CHANGE_REQUIRED、20NEW_REQUIRED；原清单完整123/125，登记13404条目标-来源验收关联，全部NOT_RUN；首批实施切片另页。",
       "reason": "用户要求继续全量评估与按实际情况安排开发；明确静态盘点、历史缺件、实施交付及运行通过的边界。"
+    },
+    {
+      "date": "2026-10-11",
+      "change": "登记12项S01任务及S02-00多租户设计前置，全部PLANNED；增加任务证据/依赖检查与独立进度视图。后续数据库统一PostgreSQL。",
+      "reason": "用户要求继续细拆任务，并明确后续pgsql及schema多租户方向。此更新不提升业务交付/验收状态。"
     }
   ],
   "implementation_assessment": {
@@ -158578,5 +158583,280 @@
       "runtime_pass": 0,
       "count_unit": "target-to-source acceptance assignments; shared native cases appear under every responsible target and must not be summed as unique business tests"
     }
+  },
+  "implementation_tasks": [
+    {
+      "id": "S01-01",
+      "title": "冻结采用输入和共用向量",
+      "repository": "Main",
+      "dependencies": [],
+      "target_ids": [
+        "FIN-CREDIT-01",
+        "FIN-INV-01",
+        "ERP-CREDIT-01",
+        "PLAN-ATP-01",
+        "QA-NCR-01",
+        "QA-IPQC-01",
+        "CRM-INQ-01",
+        "CRM-LEAD-01"
+      ],
+      "relative_size": "S",
+      "kind": "DESIGN",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-02",
+      "title": "严格 JSON、NullOnly 与结构相等",
+      "repository": "Main",
+      "dependencies": [
+        "S01-01"
+      ],
+      "target_ids": [
+        "QA-NCR-01",
+        "CRM-INQ-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-03",
+      "title": "FIN-CREDIT 精确金额",
+      "repository": "Main",
+      "dependencies": [
+        "S01-02"
+      ],
+      "target_ids": [
+        "FIN-CREDIT-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-04",
+      "title": "FIN-INV 数量、金额与分数",
+      "repository": "Main",
+      "dependencies": [
+        "S01-02"
+      ],
+      "target_ids": [
+        "FIN-INV-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-05",
+      "title": "Main TypeScript 精确值",
+      "repository": "Main",
+      "dependencies": [
+        "S01-01"
+      ],
+      "target_ids": [
+        "FIN-CREDIT-01",
+        "FIN-INV-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-06",
+      "title": "ATP StableId",
+      "repository": "Main",
+      "dependencies": [
+        "S01-02"
+      ],
+      "target_ids": [
+        "PLAN-ATP-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-07",
+      "title": "原生 Ref/Scope 与 NCR/IPQC 类型",
+      "repository": "Main",
+      "dependencies": [
+        "S01-02"
+      ],
+      "target_ids": [
+        "QA-NCR-01",
+        "QA-IPQC-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-08",
+      "title": "CRM INQ/LEAD 合同采用",
+      "repository": "CRM",
+      "dependencies": [
+        "S01-02"
+      ],
+      "target_ids": [
+        "CRM-INQ-01",
+        "CRM-LEAD-01"
+      ],
+      "relative_size": "L",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-09",
+      "title": "Platform 准确合同路由与原字节",
+      "repository": "Platform",
+      "dependencies": [
+        "S01-01"
+      ],
+      "target_ids": [
+        "PLT-MSG-01",
+        "INT-COM-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-10",
+      "title": "PostgreSQL 精确存储适配",
+      "repository": "Main",
+      "dependencies": [
+        "S01-03",
+        "S01-04",
+        "S01-06"
+      ],
+      "target_ids": [
+        "FIN-CREDIT-01",
+        "FIN-INV-01",
+        "PLAN-ATP-01"
+      ],
+      "relative_size": "L",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-11",
+      "title": "ERP-CREDIT 原生金额与冻结重放",
+      "repository": "Main",
+      "dependencies": [
+        "S01-02"
+      ],
+      "target_ids": [
+        "ERP-CREDIT-01"
+      ],
+      "relative_size": "M",
+      "kind": "CODE",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S01-12",
+      "title": "采用证据与消费者交接",
+      "repository": "Main",
+      "dependencies": [
+        "S01-02",
+        "S01-03",
+        "S01-04",
+        "S01-05",
+        "S01-06",
+        "S01-07",
+        "S01-08",
+        "S01-09",
+        "S01-10",
+        "S01-11"
+      ],
+      "target_ids": [
+        "FIN-CREDIT-01",
+        "FIN-INV-01",
+        "ERP-CREDIT-01",
+        "PLAN-ATP-01",
+        "QA-NCR-01",
+        "QA-IPQC-01",
+        "CRM-INQ-01",
+        "CRM-LEAD-01",
+        "PLT-MSG-01"
+      ],
+      "relative_size": "M",
+      "kind": "DESIGN",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    },
+    {
+      "id": "S02-00",
+      "title": "PostgreSQL 多租户存储与事务布局设计",
+      "repository": "Main",
+      "dependencies": [],
+      "target_ids": [
+        "SYS-TENANT-01",
+        "SYS-IAM-01",
+        "PLT-CTX-01",
+        "PLT-DEL-01"
+      ],
+      "relative_size": "M",
+      "kind": "DESIGN",
+      "state": "PLANNED",
+      "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null
+    }
+  ],
+  "database_decision": {
+    "date": "2026-10-11",
+    "target": "PostgreSQL",
+    "decision_path": "docs/development/08-postgresql-baseline.md",
+    "tenancy_direction": "优先评估 schema 多租户；物理布局由 S02-00 明确，不能自动删除 TenantId/授权。",
+    "historical_evidence": "保留原始范围；后续新增任务不要求 SQL Server/双库验收。"
   }
 }

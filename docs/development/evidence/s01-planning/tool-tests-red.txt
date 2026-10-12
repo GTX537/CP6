@@ -1,0 +1,98 @@
+........F.E.....FFFFF.F...
+======================================================================
+ERROR: test_evidenced_task_delivery_does_not_close_targets_or_cases (test_manage_roadmap.ProgressIntegrityTests.test_evidenced_task_delivery_does_not_close_targets_or_cases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 184, in test_evidenced_task_delivery_does_not_close_targets_or_cases
+    view = roadmap.render(self.data)["07-detailed-tasks.md"]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: '07-detailed-tasks.md'
+
+======================================================================
+FAIL: test_empty_task_inventory_rejected (test_manage_roadmap.ProgressIntegrityTests.test_empty_task_inventory_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 149, in test_empty_task_inventory_rejected
+    self.reject("task inventory")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 36, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_task_blocked_and_missing_plan_rejected (test_manage_roadmap.ProgressIntegrityTests.test_task_blocked_and_missing_plan_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 169, in test_task_blocked_and_missing_plan_rejected
+    self.reject("task BLOCKED needs a reason")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 36, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_task_cannot_start_before_dependencies_done (test_manage_roadmap.ProgressIntegrityTests.test_task_cannot_start_before_dependencies_done)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 160, in test_task_cannot_start_before_dependencies_done
+    self.reject("unfinished task dependencies")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 36, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_task_done_requires_validation_and_remote_receipt (test_manage_roadmap.ProgressIntegrityTests.test_task_done_requires_validation_and_remote_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 164, in test_task_done_requires_validation_and_remote_receipt
+    self.reject("task DONE lacks validation")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 36, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_task_plan_cannot_escape_repository (test_manage_roadmap.ProgressIntegrityTests.test_task_plan_cannot_escape_repository)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 174, in test_task_plan_cannot_escape_repository
+    self.reject("task plan missing")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 36, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_tasks_need_unique_ids_and_valid_targets (test_manage_roadmap.ProgressIntegrityTests.test_tasks_need_unique_ids_and_valid_targets)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 142, in test_tasks_need_unique_ids_and_valid_targets
+    self.reject("tasks: duplicate id")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 36, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_unknown_task_dependency_and_cycle_rejected (test_manage_roadmap.ProgressIntegrityTests.test_unknown_task_dependency_and_cycle_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 154, in test_unknown_task_dependency_and_cycle_rejected
+    self.reject("task dependency")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\s01-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 36, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+----------------------------------------------------------------------
+Ran 26 tests in 2.391s
+
+FAILED (failures=7, errors=1)
