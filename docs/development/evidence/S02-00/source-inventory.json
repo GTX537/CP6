@@ -1,0 +1,403 @@
+{
+  "schema_version": "1.0.0",
+  "task_id": "S02-00",
+  "design_version": "cp6-pg-tenancy-v1",
+  "observed_date": "2026-10-12",
+  "byte_scope": "Git blob原字节；归档原件独立SHA-256，不以Windows换行副本代替。",
+  "reading_scope": "源码仅核对租户、映射、唯一键、消息/事务和包引用相关段；原模块采用已归并手册并定向阅读原正文相关章节。组合/接受记录做精确字节与身份字段核对，不声称全文重审或重新接受。",
+  "repositories": [
+    {
+      "repository": "Main",
+      "url": "https://github.com/GTX537/CP6",
+      "main_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "remote_main_observed": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "package_status": "project declarations only; package restore/runtime NOT_RUN"
+    },
+    {
+      "repository": "CRM",
+      "url": "https://github.com/GTX537/CP6.CRM",
+      "main_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "remote_main_observed": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "package_status": "project declarations only; package restore/runtime NOT_RUN"
+    },
+    {
+      "repository": "Platform",
+      "url": "https://github.com/GTX537/CP6.Platform",
+      "main_sha": "30bd23af6808d217a23878bd9437513043c52834",
+      "remote_main_observed": "30bd23af6808d217a23878bd9437513043c52834",
+      "package_status": "project declarations only; package restore/runtime NOT_RUN"
+    }
+  ],
+  "source_files": [
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Services/Common/ITenantContext.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "14de0ac54355cdad653dcc04fa35ab04ee5d5a458c40dbf5d0ba456f17dc08e3",
+      "bytes": 920,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Services/Common/ITenantContext.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Services/Common/TenantScope.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "4cc783c97544ef87d875e7c0dc4703f406b9248749f3d2f94249e3ebefd1e1d7",
+      "bytes": 815,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Services/Common/TenantScope.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.WebApi/Middleware/TenantMiddleware.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "9583e84be04a63259cbde1ec2ed07a4fe45e7af8a0ab7f69cd828116d7135d96",
+      "bytes": 850,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.WebApi/Middleware/TenantMiddleware.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "85be931fb3a13ef469ba874f249c0100470454fe0f4213beac91b7d233b37e0e",
+      "bytes": 146356,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/EFDbContext/CP6Context.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "c9cd8d08cea9810b5679298331d95045de37d64476f5404e6b860ec1b8c41c9d",
+      "bytes": 1992,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Entity/DomainModels/Sys/Sys_Tenant.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Entity/DomainModels/Sys/Sys_User.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "2bef57cf9f7dfe744218f5b1166e27764839f77d84a5c1701d2dc66a7752da53",
+      "bytes": 4329,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Entity/DomainModels/Sys/Sys_User.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Entity/DomainModels/Sys/Sys_Menu.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "c31e1dae955483d3e212695970526c08e06e89bdea6ccea6501262ccd9359b71",
+      "bytes": 1605,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Entity/DomainModels/Sys/Sys_Menu.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "47ecfcde241ab41e118860bf14539aef1a24b51b8750d10117c1c1e6aadab927",
+      "bytes": 8362,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "f9e196aa4d27dc11df5df694e3d4546b319fee2022cdc1d99b7a57f6290f565b",
+      "bytes": 19708,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "cdaa7041baf247a40de1c0a6ebc0152d002f7ac1da30cfdcbb6a63cdc984901f",
+      "bytes": 746,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "a2fac8a0efbc278082698e67c1088b1f37e6fd5801b640ea4638e39a26d3c472",
+      "bytes": 14035,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "17938c6f13cd7cb5d23dfd2d7807e0397042a18091fb673594a8762233d3d59d",
+      "bytes": 4601,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/Persistence/PostgreSqlModelIdentifiers.cs",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "04b2e8c76938c3c88e784ccd068327b957ce0d1790c60ae2df3590f9cddee19b",
+      "bytes": 5470,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/Persistence/PostgreSqlModelIdentifiers.cs"
+    },
+    {
+      "repository": "Main",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+      "bytes": 2840,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/CP6.Core/CP6.Core.csproj"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/development/08-postgresql-baseline.md",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "b07b25829750b6c25b22472ac6834f961a627cc80146e1750597af7654ab699c",
+      "bytes": 4470,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/docs/development/08-postgresql-baseline.md"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/development/09-parallel-development.md",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "2a9602c79060b309713819f8ceed4d94a55cf3f40ca51c113ea04a41114de862",
+      "bytes": 7875,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/docs/development/09-parallel-development.md"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+      "bytes": 24101,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/docs/superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/design-handbook/remediation/01-version-and-authority.md",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "495c8a2b821d3c5aed2b7d40e743351db6b3b8e4615f8d8f9bc25cd998fd1a7e",
+      "bytes": 3512,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/docs/design-handbook/remediation/01-version-and-authority.md"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+      "bytes": 53328,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/docs/design-handbook/remediation/assets/composed-derivatives.json"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+      "source_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+      "blob_sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+      "bytes": 16851,
+      "url": "https://github.com/GTX537/CP6/blob/df5553fd04ec4fc516602a4e2843650c38ae5006/docs/design-handbook/remediation/07-shared-consumer-mappings.md"
+    },
+    {
+      "repository": "CRM",
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmDbContext.cs",
+      "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "blob_sha256": "1d88f30d091cce3d037e779060b9a7d21915e48fdfe50e454b26d74ae9a81d6f",
+      "bytes": 8612,
+      "url": "https://github.com/GTX537/CP6.CRM/blob/c778a3052a4416b82facb07b1244fc98fb6ad8a1/src/CP6.CRM.Infrastructure/Persistence/CrmDbContext.cs"
+    },
+    {
+      "repository": "CRM",
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeDbContext.cs",
+      "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "blob_sha256": "5836cec814b4f585ad04e7a0254d852bd0d8bd0ed2a0cc38b08449389c0db94e",
+      "bytes": 9016,
+      "url": "https://github.com/GTX537/CP6.CRM/blob/c778a3052a4416b82facb07b1244fc98fb6ad8a1/src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeDbContext.cs"
+    },
+    {
+      "repository": "CRM",
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessOutbox.cs",
+      "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "blob_sha256": "64c055d5818cb18a96e5fc17d4da1143c1346c3e79123001707d00a223d8d36e",
+      "bytes": 2769,
+      "url": "https://github.com/GTX537/CP6.CRM/blob/c778a3052a4416b82facb07b1244fc98fb6ad8a1/src/CP6.CRM.Infrastructure/Messaging/CrmBusinessOutbox.cs"
+    },
+    {
+      "repository": "CRM",
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityProjectionContext.cs",
+      "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "blob_sha256": "fd2e60189ec4b0f6b4ac0e6d51883c3530db624d846e51be822d0b6713c15801",
+      "bytes": 5368,
+      "url": "https://github.com/GTX537/CP6.CRM/blob/c778a3052a4416b82facb07b1244fc98fb6ad8a1/src/CP6.CRM.Infrastructure/Identity/IdentityProjectionContext.cs"
+    },
+    {
+      "repository": "CRM",
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityProjectionStore.cs",
+      "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "blob_sha256": "1cafe56eaa36ca0cf0297853eb7f96d694d52fa8df41f6f93410b022dbf05e95",
+      "bytes": 8987,
+      "url": "https://github.com/GTX537/CP6.CRM/blob/c778a3052a4416b82facb07b1244fc98fb6ad8a1/src/CP6.CRM.Infrastructure/Identity/IdentityProjectionStore.cs"
+    },
+    {
+      "repository": "CRM",
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityEventConsumer.cs",
+      "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "blob_sha256": "2595bddb439e183506fc681477a1fb2d066c8e44b8feb908dfacd77f8b3270fa",
+      "bytes": 6279,
+      "url": "https://github.com/GTX537/CP6.CRM/blob/c778a3052a4416b82facb07b1244fc98fb6ad8a1/src/CP6.CRM.Infrastructure/Identity/IdentityEventConsumer.cs"
+    },
+    {
+      "repository": "CRM",
+      "path": "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
+      "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "blob_sha256": "1411f641dbedcd450a315d80efa7f25aa1e65818fca4c06d35f4c9cf34300704",
+      "bytes": 2827,
+      "url": "https://github.com/GTX537/CP6.CRM/blob/c778a3052a4416b82facb07b1244fc98fb6ad8a1/src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj"
+    },
+    {
+      "repository": "Platform",
+      "path": "src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs",
+      "source_sha": "30bd23af6808d217a23878bd9437513043c52834",
+      "blob_sha256": "0a586bbf0fe0b983514b4e45e8124729f38aa065ebee3b92a8c446e2dc95e211",
+      "bytes": 1520,
+      "url": "https://github.com/GTX537/CP6.Platform/blob/30bd23af6808d217a23878bd9437513043c52834/src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs"
+    },
+    {
+      "repository": "Platform",
+      "path": "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+      "source_sha": "30bd23af6808d217a23878bd9437513043c52834",
+      "blob_sha256": "9975e7a95d9759552c0fe88a753d2e0372177e323df369808803be986930e577",
+      "bytes": 15787,
+      "url": "https://github.com/GTX537/CP6.Platform/blob/30bd23af6808d217a23878bd9437513043c52834/src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs"
+    },
+    {
+      "repository": "Platform",
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "source_sha": "30bd23af6808d217a23878bd9437513043c52834",
+      "blob_sha256": "6719ee9fbd678ef907b0d92052b695a2785deae5788658d52a96ac433727a1ba",
+      "bytes": 10005,
+      "url": "https://github.com/GTX537/CP6.Platform/blob/30bd23af6808d217a23878bd9437513043c52834/src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs"
+    },
+    {
+      "repository": "Platform",
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs",
+      "source_sha": "30bd23af6808d217a23878bd9437513043c52834",
+      "blob_sha256": "ca15dd53295f441fe11797c98368de50b02b16341b633d624f8b0941c7e97264",
+      "bytes": 5367,
+      "url": "https://github.com/GTX537/CP6.Platform/blob/30bd23af6808d217a23878bd9437513043c52834/src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs"
+    }
+  ],
+  "normative_inputs": [
+    {
+      "target_id": "SYS-TENANT-01",
+      "role": "accepted_primary_body_or_exact_carrier",
+      "archive_path": "originals/4b/4b2226985953845f__S5_SYS-TENANT-01_完整设计候选_v0.1.md",
+      "sha256": "4b2226985953845f50345374e36af1a2a91319d1ae8cef388db18bdbdf79b1a7",
+      "bytes": 21770,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S5/SYS-TENANT-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedBody",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "SYS-TENANT-01",
+      "role": "mandatory_current_combination_or_attachment",
+      "archive_path": "originals/f2/f26d44198c63995c__COMPOSITION-INDEX-v0.2.json",
+      "sha256": "f26d44198c63995c725f5ce703b00749cdc600ff63b4dffcd685e589398ee891",
+      "bytes": 21357,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S5/SYS-TENANT-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedCurrentCombination/Index",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "SYS-TENANT-01",
+      "role": "required_acceptance_and_decision",
+      "archive_path": "originals/f5/f5dd2c4328512cdc__UA-20261008-S5-SYS-TENANT-01-STATIC-MD02.json",
+      "sha256": "f5dd2c4328512cdc0f6038fbf6101ad3306bf2163e7dfbcb7f9b90d74b81a36f",
+      "bytes": 16470,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S5/SYS-TENANT-01/CURRENT.json",
+      "source_json_pointer": "/Acceptance",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "SYS-IAM-01",
+      "role": "accepted_primary_body_or_exact_carrier",
+      "archive_path": "originals/d8/d84f5873e46c4c98__S5_SYS-IAM-01_完整设计候选_v0.2.md",
+      "sha256": "d84f5873e46c4c98185677b9e8695b48bea4fed0a20b811c8433fa0fbbb90840",
+      "bytes": 61836,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S5/SYS-IAM-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedBody",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "SYS-IAM-01",
+      "role": "mandatory_current_combination_or_attachment",
+      "archive_path": "originals/f2/f26d44198c63995c__COMPOSITION-INDEX-v0.2.json",
+      "sha256": "f26d44198c63995c725f5ce703b00749cdc600ff63b4dffcd685e589398ee891",
+      "bytes": 21357,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S5/SYS-IAM-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedCurrentCombination/Index",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "SYS-IAM-01",
+      "role": "required_acceptance_and_decision",
+      "archive_path": "originals/4c/4c4103c34f2f17e8__UA-20261008-S5-SYS-IAM-01-STATIC-MD02.json",
+      "sha256": "4c4103c34f2f17e807f6a2d1ea583347d2d09d379ad5215c24aedf106d4d0eb9",
+      "bytes": 21509,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S5/SYS-IAM-01/CURRENT.json",
+      "source_json_pointer": "/Acceptance",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "PLT-CTX-01",
+      "role": "accepted_primary_body_or_exact_carrier",
+      "archive_path": "originals/26/265aecc406e50ca8__PLT-CTX-01_完整静态设计_v0.1.md",
+      "sha256": "265aecc406e50ca8117d1823d09fac61fa5694894baecdaff31df87013f8eb6f",
+      "bytes": 21355,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S7/PLT-CTX-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedBody",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "PLT-CTX-01",
+      "role": "mandatory_current_combination_or_attachment",
+      "archive_path": "originals/3e/3ec93373fda65d46__S7_PLATFORM_COMBINED_FREEZE_v0.2.1.json",
+      "sha256": "3ec93373fda65d46d0389a1c5e65d5779d99911bfd4a86b53388fe0e9581f47c",
+      "bytes": 9034,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S7/PLT-CTX-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedCurrentCombination/Index",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "PLT-CTX-01",
+      "role": "required_acceptance_and_decision",
+      "archive_path": "originals/be/bef16a902d6fb364__UA-20261008-S7-PLT-CTX-01-STATIC-MD02.json",
+      "sha256": "bef16a902d6fb3649653066c37721533d7ebc03a8bb332b5127d3554ee493585",
+      "bytes": 18322,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S7/PLT-CTX-01/CURRENT.json",
+      "source_json_pointer": "/Acceptance",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "PLT-DEL-01",
+      "role": "accepted_primary_body_or_exact_carrier",
+      "archive_path": "originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+      "sha256": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84",
+      "bytes": 57043,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S7/PLT-DEL-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedBody",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "PLT-DEL-01",
+      "role": "mandatory_current_combination_or_attachment",
+      "archive_path": "originals/3e/3ec93373fda65d46__S7_PLATFORM_COMBINED_FREEZE_v0.2.1.json",
+      "sha256": "3ec93373fda65d46d0389a1c5e65d5779d99911bfd4a86b53388fe0e9581f47c",
+      "bytes": 9034,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S7/PLT-DEL-01/CURRENT.json",
+      "source_json_pointer": "/AcceptedCurrentCombination/Index",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    },
+    {
+      "target_id": "PLT-DEL-01",
+      "role": "required_acceptance_and_decision",
+      "archive_path": "originals/1f/1f932c5ce46ae9e0__UA-20261008-S7-PLT-DEL-01-STATIC-MD02.json",
+      "sha256": "1f932c5ce46ae9e0d30feab8f26f68e2b446b5524213861676479da40c1ee107",
+      "bytes": 22521,
+      "source_url": "https://github.com/GTX537/CP6.AI-Handoff/blob/61238af1f4264e1c79693abd0b2a0ca9b1682354/handoffs/PLAN-REUSE-01B/documentation/MD02/acceptances/S7/PLT-DEL-01/CURRENT.json",
+      "source_json_pointer": "/Acceptance",
+      "semantic_scope": "相关正文段落/已归并模块；组合和接受记录仅身份字段，不提升历史接受或运行结果"
+    }
+  ]
+}
