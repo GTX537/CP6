@@ -158607,6 +158607,11 @@
       "date": "2026-10-12",
       "change": "WP01-02 dispatch design delivered through PR182 and remote-main verified; task DONE. S01-02/05/09 remain READY awaiting actual START.",
       "evidence": "docs/development/evidence/WP01-02/remote-main.json"
+    },
+    {
+      "date": "2026-10-12",
+      "change": "Wave3: S01-03/04/06/08 READY with CONFIRMED entry and independent write windows; 8/375 DONE unchanged; no START received; runtime/business unchanged.",
+      "evidence": "docs/development/dispatch/20261012-wave3/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158861,15 +158866,32 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "A / S01-03（沿用原S01-02对话）",
+        "repository": "Main",
+        "branch": "codex/s01-03-credit-amount-20261012",
+        "worktree": "D:/CP6-worktrees/s01-03-20261012",
+        "claimed_at": "2026-10-12T15:09:40.430541+00:00",
+        "baseline_sha": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+        "entry_evidence": "docs/development/evidence/wave3-dispatch-20261012/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "CP6.Entity/Contracts/FinCredit/",
+          "eng/contracts/exact-values-tests/CreditAmountTests.cs",
+          "docs/development/evidence/S01-03/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-03",
+        "coordination_baseline_sha": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -158890,15 +158912,32 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "B / S01-04（沿用原S01-05对话）",
+        "repository": "Main",
+        "branch": "codex/s01-04-inventory-values-20261012",
+        "worktree": "D:/CP6-worktrees/s01-04-20261012",
+        "claimed_at": "2026-10-12T15:09:40.430541+00:00",
+        "baseline_sha": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+        "entry_evidence": "docs/development/evidence/wave3-dispatch-20261012/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "CP6.Entity/Contracts/FinInventory/",
+          "eng/contracts/exact-values-tests/InventoryDecimalTests.cs",
+          "docs/development/evidence/S01-04/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-04",
+        "coordination_baseline_sha": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -158988,15 +159027,34 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / S01-06（沿用原S01-09对话）",
+        "repository": "Main",
+        "branch": "codex/s01-06-atp-stable-id-20261012",
+        "worktree": "D:/CP6-worktrees/s01-06-20261012",
+        "claimed_at": "2026-10-12T15:09:40.430541+00:00",
+        "baseline_sha": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+        "entry_evidence": "docs/development/evidence/wave3-dispatch-20261012/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "CP6.Entity/Contracts/PlanAtp/",
+          "eng/contracts/exact-values-tests/StableIdTests.cs",
+          "cp6.web/src/contracts/plan-atp/",
+          "eng/contracts/s01/atp-stable-id.schema.json",
+          "docs/development/evidence/S01-06/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-06",
+        "coordination_baseline_sha": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -159048,15 +159106,46 @@
       ],
       "relative_size": "L",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "D / S01-08（沿用原WP14-01对话）",
+        "repository": "CRM",
+        "branch": "codex/s01-08-crm-contracts-20261012",
+        "worktree": "D:/CP6.CRM-worktrees/s01-08-20261012",
+        "claimed_at": "2026-10-12T15:09:40.430541+00:00",
+        "baseline_sha": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+        "entry_evidence": "docs/development/evidence/wave3-dispatch-20261012/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "contracts/s01/",
+          "scripts/import-s01-contracts.py",
+          "src/CP6.CRM.Application/Contracts/Wire/",
+          "src/CP6.CRM.Application/Contracts/Inquiry/",
+          "src/CP6.CRM.Application/Contracts/Lead/",
+          "apps/web/src/contracts/inquiry/",
+          "apps/web/src/contracts/lead/",
+          "apps/web/src/contracts/wire/",
+          "tests/CP6.CRM.UnitTests/Contracts/InquiryContractAdoptionTests.cs",
+          "tests/CP6.CRM.UnitTests/Contracts/S01/",
+          "apps/web/tests/contracts-exact.test.ts",
+          "apps/web/tests/s01/",
+          "docs/evidence/s01-08/",
+          "docs/delivery/S01-08.md",
+          "tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj",
+          "apps/web/package.json",
+          "apps/web/tsconfig.test.json"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-08",
+        "coordination_baseline_sha": "d7a210256783e45291a5e724ea068ed4fc165ecc"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"

@@ -1,0 +1,33 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T14:54:18.533625+00:00",
+  "head": "ed295e59e5a8b0498cb5d6964d6f81c85f320daf",
+  "protected_main": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+  "workflow_id": 342904669,
+  "workflow_state": "disabled_manually",
+  "workflows": [
+    {
+      "ref": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "path": ".github/workflows/crm-validation.yml",
+      "blob": "5c058b526cda6ba8599ecfe26059829b41bfe86b",
+      "events": [
+        "workflow_dispatch",
+        "pull_request",
+        "push"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      include_legacy_s03:\n        description: Also replay the historical S03 temporary artifact\n        required: false\n        type: boolean\n        default: false\n  pull_request:\n  push:\n    branches:\n      - main\n\n"
+    },
+    {
+      "ref": "ed295e59e5a8b0498cb5d6964d6f81c85f320daf",
+      "path": ".github/workflows/crm-validation.yml",
+      "blob": "b1781daf55e5392253b6589d5eda2d9e6ed3b7c2",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      include_legacy_s03:\n        description: Also replay the historical S03 temporary artifact\n        required: false\n        type: boolean\n        default: false\n\n"
+    }
+  ],
+  "queued_or_running": [],
+  "purpose": "Existing seven validation/consumer jobs unchanged; producer identity/hash guards retained. Manual-only; no Actions execution.",
+  "dependency_diff": ".github/workflows/crm-validation.yml\nscripts/ci/approved-addenda-contract.ps1\nscripts/ci/workflow-contract.ps1\nscripts/verify-product-freeze.ps1\ntests/ci/approved-addenda.Tests.ps1\ntests/ci/workflow.Tests.ps1"
+}

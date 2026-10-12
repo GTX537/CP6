@@ -1,0 +1,334 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T15:13:36.183280+00:00",
+  "scope": "Static dispatch/ledger/pins/native input availability/link check only; no future consumer implementation run",
+  "tasks": 4,
+  "assigned_case_associations": 86,
+  "unique_assigned_cases": 86,
+  "source_reads": [
+    {
+      "task": "S01-03",
+      "profile": "fin-credit-signed",
+      "source": "numeric-0",
+      "variant": "original",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-03",
+      "profile": "fin-credit-nonnegative",
+      "source": "numeric-0",
+      "variant": "original",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-03",
+      "profile": "fin-credit-positive",
+      "source": "numeric-0",
+      "variant": "original",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-04",
+      "profile": "fin-inv-decimal18",
+      "source": "numeric-1",
+      "variant": "original",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-04",
+      "profile": "fin-inv-decimal18",
+      "source": "numeric-2",
+      "variant": "original",
+      "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-04",
+      "profile": "fin-inv-qty12",
+      "source": "numeric-1",
+      "variant": "original",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-04",
+      "profile": "fin-inv-qty12",
+      "source": "numeric-2",
+      "variant": "original",
+      "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-06",
+      "profile": "atp-stableid-r1",
+      "source": "composed-13",
+      "variant": "composed",
+      "sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-06",
+      "profile": "atp-stableid-r1",
+      "source": "composed-14",
+      "variant": "composed",
+      "sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-06",
+      "profile": "atp-stableid-r1",
+      "source": "composed-24",
+      "variant": "composed",
+      "sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-06",
+      "profile": "atp-stableid-r1",
+      "source": "composed-25",
+      "variant": "composed",
+      "sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-08",
+      "profile": "crm-inq-r3-v15",
+      "source": "composed-20",
+      "variant": "composed",
+      "sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-08",
+      "profile": "crm-inq-r3-v15",
+      "source": "composed-21",
+      "variant": "composed",
+      "sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-08",
+      "profile": "crm-inq-r3-v15",
+      "source": "composed-22",
+      "variant": "composed",
+      "sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-08",
+      "profile": "crm-inq-r3-v15",
+      "source": "composed-23",
+      "variant": "composed",
+      "sha256": "b5cd3840d288f191ed213e348ae2fed4d01f26c2c28812ab92d3e4ed323b989b",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-08",
+      "profile": "crm-inq-r3-v15",
+      "source": "composed-26",
+      "variant": "composed",
+      "sha256": "4087f29215dd4de47dedc4b2e7d9e34eb0dcd63a645bae8f032364b2cc8a3ac8",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-08",
+      "profile": "crm-lead-cp20",
+      "source": "composed-18",
+      "variant": "composed",
+      "sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-08",
+      "profile": "crm-lead-cp20",
+      "source": "lead-query-schema",
+      "variant": "original",
+      "sha256": "2428190864cfd501096d4816a4fa6dfdb4473cdea9ebb8dc2e8b27691df291e8",
+      "actual_file_hash_matches": true
+    }
+  ],
+  "pin_count": 9,
+  "link_checks": [
+    {
+      "source": "docs/development/dispatch/20261012-wave3/README.md",
+      "link": "S01-03.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/README.md",
+      "link": "S01-04.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/README.md",
+      "link": "S01-06.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/README.md",
+      "link": "S01-08.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/README.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/README.md",
+      "link": "../../evidence/wave3-dispatch-20261012/admission.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/README.md",
+      "link": "../../evidence/wave3-dispatch-20261012/crm-ci-prerequisite.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-03.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-03.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-03.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-03.md",
+      "link": "../../evidence/wave3-dispatch-20261012/admission.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-03.md",
+      "link": "../../evidence/wave3-dispatch-20261012/numeric-admission.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-04.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-04.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-04.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-04.md",
+      "link": "../../evidence/wave3-dispatch-20261012/admission.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-04.md",
+      "link": "../../evidence/wave3-dispatch-20261012/numeric-admission.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-06.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-06.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-06.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-06.md",
+      "link": "../../evidence/wave3-dispatch-20261012/admission.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-06.md",
+      "link": "../../evidence/wave3-dispatch-20261012/numeric-admission.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../roadmap.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../09-parallel-development.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../../../eng/contracts/s01/README.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../evidence/wave3-dispatch-20261012/crm-ci-prerequisite.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../../design-handbook/remediation/06-wire-types-and-fixtures.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../../design-handbook/remediation/assets/core-types/bounded-patches.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../../../eng/contracts/s01/profile-inputs.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261012-wave3/S01-08.md",
+      "link": "../../s01-input-index.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "admission.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "numeric-admission.md"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "crm-admission.md"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "crm-ci-prerequisite.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "../../dispatch/20261012-wave3/README.md"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "crm-publication/crm-before-push.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "crm-publication/crm-before-pr.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "crm-publication/crm-before-merge.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "crm-publication/crm-final-manual-entry.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "ledger-check.json"
+    },
+    {
+      "source": "docs/development/evidence/wave3-dispatch-20261012/README.md",
+      "link": "dispatch-check.json"
+    },
+    {
+      "source": "docs/superpowers/plans/2026-10-12-wave3-dispatch.md",
+      "link": "../../development/dispatch/20261012-wave3/README.md"
+    }
+  ],
+  "business_result": "NOT_RUN"
+}

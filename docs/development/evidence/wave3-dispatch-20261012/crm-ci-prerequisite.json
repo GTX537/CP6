@@ -1,0 +1,172 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6.CRM",
+  "source_sha": "ed295e59e5a8b0498cb5d6964d6f81c85f320daf",
+  "baseline": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+  "remote_main_sha": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+  "pr_url": "https://github.com/GTX537/CP6.CRM/pull/89",
+  "merged_at": "2026-10-12T14:54:38Z",
+  "observed_at": "2026-10-12T14:54:56.399726+00:00",
+  "candidate_files_match": [
+    {
+      "path": ".github/workflows/crm-validation.yml",
+      "blob": "b1781daf55e5392253b6589d5eda2d9e6ed3b7c2"
+    },
+    {
+      "path": "CHANGELOG-AI.md",
+      "blob": "ced5478ce71e150e073db29b297acdcc34864ce6"
+    },
+    {
+      "path": "docs/decisions/solo-m0-approved-addenda.v1.json",
+      "blob": "a6acc40fb3642cbd723adc14bf3095d6d26583a4"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/README.md",
+      "blob": "1ac7ba8a4155afbe03cf5e498f600d2c400fe698"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/accepted-addendum-provenance.txt",
+      "blob": "90a48b4883100f0ed3559eadd1d947dcb2a13f2c"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/approved-addenda-green.txt",
+      "blob": "3b955debb90e42dc4ff56d45e333eaebe31c2f04"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/approved-addenda-red.txt",
+      "blob": "09d867036c654ccbe727363a2f8aa21ee8a0d686"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/approved-addenda-self-review.txt",
+      "blob": "ae0b1cba5c2d275d41fbd8c590a08cfde3dad926"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/c01-offline.txt",
+      "blob": "b475daf71278658cf2eec559836b2e02f7404c69"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/final-source-inputs.json",
+      "blob": "1f1a54553a45c30b662b82d7557b54ecdd851257"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/governance-approved-addendum.txt",
+      "blob": "03a65782ed9f3a2a60817a4bdd6313a80a9cfc63"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/governance-auto-trigger-rejection.txt",
+      "blob": "936ae15946162663e66624d1d56d4d156fa80a66"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/governance-baseline.txt",
+      "blob": "1bf00f7f1a9d5ca70571526c0cfce893b4dd1175"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/governance-before-alignment.txt",
+      "blob": "2c6f7dc4b0b26a30fd56ae4d1354b1fd500b8c18"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/governance-final.txt",
+      "blob": "4eaedced17fde94f20247aa745e090a427df4257"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/governance-review-final.txt",
+      "blob": "3493fb008461cb686ac17a9af9476b7b39f7b10c"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/p10-offline.txt",
+      "blob": "f6d9374026d817c637b5c984af8e454c9d2c85f1"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/provenance-capture-invocation-failure.txt",
+      "blob": "8c8cd39c62ac04a6e30d0c75ec20ea841a9edf87"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/scope.txt",
+      "blob": "968101026d98da17277c2403f7a9c8fb638bc916"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/shared-trx.txt",
+      "blob": "3ff92986c37235dff302d81a870bbc27ba574876"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/static-review-failure.txt",
+      "blob": "979ee356522ce4185e430d43db8c2d3cbf01bfab"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/static-self-review.txt",
+      "blob": "9f86ad2f7e74120d429f4a1567d77520e4ebd032"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/workflow-green-initial.txt",
+      "blob": "476151dd897e7b832b6bc7e58600013c13492f3e"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/workflow-green.txt",
+      "blob": "0a0a7b7199366452667cc76d6e17298593b01988"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/workflow-red.txt",
+      "blob": "00015d9ddf376132a6c1477cd588d4c1d45cb3d3"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/workflow-review-green.txt",
+      "blob": "0a359d94a79fabc611b82decce8b8203ea792a09"
+    },
+    {
+      "path": "docs/development/evidence/coord-manual-validation-20261012/workflow-review-red.txt",
+      "blob": "0415a95ff816e171cfce32e2bb94e996c578f531"
+    },
+    {
+      "path": "docs/handbook/14-DEVOPS-RELEASE-AND-ROLLBACK.md",
+      "blob": "c48973a8b721482bffd8f0c9e8d58f0ea6ad68da"
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "blob": "6f2dd8474d4b7c0f28298a1655ed65b146bc48a6"
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "blob": "22ac951bff38784907d9933ef4907554145d44f4"
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "blob": "ea9299bd740ed0a4c1480281fee381679ea97195"
+    },
+    {
+      "path": "scripts/ci/approved-addenda-contract.ps1",
+      "blob": "027cbfe272ea20182f09c81b2a528d15d230c6f7"
+    },
+    {
+      "path": "scripts/ci/workflow-contract.ps1",
+      "blob": "a56430276bb0279f9c14c9b5ff3567654d934035"
+    },
+    {
+      "path": "scripts/verify-product-freeze.ps1",
+      "blob": "1f4ee28ae18dab3dc5fa17963553a9b76a34f313"
+    },
+    {
+      "path": "tests/ci/approved-addenda.Tests.ps1",
+      "blob": "aac43b4c49b059116054036f440121c6efb57681"
+    },
+    {
+      "path": "tests/ci/workflow.Tests.ps1",
+      "blob": "28c5e2a0aded98b3411fac68867800b3d3bf6e0b"
+    }
+  ],
+  "workflow_transition": "Preserved pre-existing disabled_manually state; no remote enable/disable was performed. Tracked workflow is now workflow_dispatch only.",
+  "actions_executed": 0,
+  "actions_cancelled": 0,
+  "branch_protection_changed": false,
+  "business_validation": "NOT_RUN",
+  "local_checks": {
+    "workflow": 71,
+    "risk_scope": 115,
+    "shared_trx": 32,
+    "p10_negative": 33,
+    "p10_evidence": 43,
+    "c01_negative": 44,
+    "approved_addenda": 22,
+    "product_freeze_exit": 0
+  },
+  "review": "crm-policy-review.md"
+}
