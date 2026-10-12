@@ -1,0 +1,27 @@
+{
+  "scope": "STATIC_DOCUMENT_INTEGRITY_AND_COVERAGE_ONLY",
+  "result": "PASS",
+  "checked_at_utc": "2026-10-12T06:09:59.051461+00:00",
+  "source_main_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+  "basis_manifest_sha256": "4c406fb89046d14e3ad1fa838ca9780167a9b4587717871c0c1ef4f55bf74e62",
+  "checker_sha256": "1ac94a27fbec20f1b386ae800a4973f48844ba025beb01bdcdc81b58ef6df3a7",
+  "source_count": 39,
+  "case_summary": {
+    "PLM-ITER-01::RECOVERED_SCENARIO": 99,
+    "PLM-REL-01::RECOVERED_SCENARIO": 122,
+    "PLM-REL-01::R1_REQUIRED_SCENARIO": 6,
+    "PLM-ITER-01::R1_REQUIRED_SCENARIO": 2,
+    "PLM-ITER-01::R1_DETAIL_VECTOR": 6,
+    "PLM-REL-01::R1_DETAIL_VECTOR": 4
+  },
+  "body_locations": 295,
+  "passed_checks": 5576,
+  "errors": [],
+  "runtime_result": "NOT_RUN",
+  "adoption": "PROPOSED",
+  "limitations": [
+    "No business/database/UI/Office visual tests or runtime provider adoption.",
+    "Does not certify legal authority, semantic completeness of missing originals, approval, task entry or remote-main delivery.",
+    "Repository source pins read exact historical Git blobs; final diff and later main changes require a separate task review."
+  ]
+}

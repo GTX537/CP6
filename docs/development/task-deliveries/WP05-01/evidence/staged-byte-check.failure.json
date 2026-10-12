@@ -1,0 +1,9 @@
+{
+  "scope": "STAGED_NORMATIVE_ARTIFACT_BYTES",
+  "result": "FAIL",
+  "observed_error": "AssertionError: sources.json",
+  "cause": "Python write_text used Windows CRLF despite intended LF; worktree manifest matched raw CRLF, Git staging normalized JSON to LF and therefore changed artifact hashes.",
+  "original_manifest_sha256": "4c406fb89046d14e3ad1fa838ca9780167a9b4587717871c0c1ef4f55bf74e62",
+  "fix": "Serialize all task documents explicitly as UTF-8 LF, regenerate normative manifest, compare exact staged blobs and rerun static artifact check. Original external archive bytes remain unchanged.",
+  "business_result": "NOT_RUN"
+}
