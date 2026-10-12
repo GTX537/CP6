@@ -1,0 +1,1301 @@
+{
+  "schema": "CP6-WP05-01-ACCEPTANCE-BASIS-SUPPLEMENT/1",
+  "status": "PROPOSED",
+  "reviewed_candidate": "306b1f3ba61456b5dc117189710b37031bf57a19",
+  "confirmed_main": "8570384f1e28065afee4ce416c9f492dde734131",
+  "preserved_proposed_manifest_sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+  "preserve_existing_counts": {
+    "recovered": 221,
+    "r1": 8,
+    "detail": 10,
+    "body_locations": 295
+  },
+  "counting_rule": "This proposed successor supplements the byte-preserved 1.0.0-proposed basis. The 43 rows are source mappings/observations, not additional original ACs or unique whole-system test counts. Reuse mappings add no obligation. Legacy30/48 remain unrecoverable; formal adoption and WP01-01 completion-gate implementation are separate.",
+  "scope": "Workbook known parameter/UI/security/in-out source classes, bounded CP22 role15 consumer/REL dependencies, and exact R1 conditions beyond summary vectors. Not Office visual or business runtime acceptance.",
+  "sheet_count": 37,
+  "rows": [
+    {
+      "id": "WP05-01-REVIEW/WB-01",
+      "target": "PLM-ITER-01",
+      "title": "稳定路由ID及对象授权",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "引数説明",
+          "cells": {
+            "B10": "ProjectId/IterationId",
+            "P10": "Route由稳定ID定位；不可从名称推断。",
+            "AP10": "逐对象Tenant/权限验证；无权限按统一404掩码。"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/REQ-PLM-ITER-01-024",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-028"
+      ],
+      "gap_or_reuse_reason": "语义已在旧295中，补准确工作簿来源映射，不重复计原AC。",
+      "scenario": "按名称伪造路由或访问另一Tenant的Project/Iteration。",
+      "required_observation": "仅稳定ID定位；当前逐对象授权；统一掩码不泄漏对象存在。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-02",
+      "target": "PLM-ITER-01",
+      "title": "mode不是动作权限",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "引数説明",
+          "cells": {
+            "B14": "mode",
+            "P14": "新建/只读等仅控制展示，不是安全凭证。",
+            "AP14": "实际允许动作以服务端阶段和权限为准。"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-028"
+      ],
+      "gap_or_reuse_reason": "已有通用权限检查未定位mode这个客户端输入反例。",
+      "scenario": "更改mode为编辑并直接调用受禁动作。",
+      "required_observation": "只改变展示；服务端仍按当前阶段和权限拒绝且无新业务写入。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-03",
+      "target": "PLM-ITER-01",
+      "title": "缺并发前置428与技术/业务版本分离",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "引数説明",
+          "cells": {
+            "B18": "ExpectedVersion / If-Match",
+            "P18": "客户端使用最近查询ETag作为并发前置。",
+            "AP18": "写命令缺失428；不匹配412；禁止用业务Revision代替。"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-030"
+      ],
+      "gap_or_reuse_reason": "旧295覆盖不匹配412，但未包含缺失428；不能仅测试过期令牌。",
+      "scenario": "写命令分别省略ExpectedVersion/If-Match、给过期ETag、以业务Revision替代并发令牌。",
+      "required_observation": "按适用命令返回缺失428/不匹配412；原业务状态/回执写集不产生未经授权变化；合法当前ETag才继续。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-04",
+      "target": "PLM-ITER-01",
+      "title": "RequestKey生命周期及秘密排除",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "引数説明",
+          "cells": {
+            "B22": "RequestKey",
+            "P22": "创建/状态动作每次逻辑请求生成并保留；重试同键。",
+            "AP22": "同键同载荷复用；异载荷409；密钥/token不用于此键。"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-029",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-020"
+      ],
+      "gap_or_reuse_reason": "重放语义已覆盖；秘密不得作为RequestKey这一精确约束需补观察。",
+      "scenario": "同一逻辑动作超时重试、同键异载荷及使用密钥/token充当请求键。",
+      "required_observation": "重试保原键，同体回原结果、异体409；不把认证秘密作为业务键或持久回执索引。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-05",
+      "target": "PLM-ITER-01",
+      "title": "SourceRevision与Unknown",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "引数説明",
+          "cells": {
+            "B26": "SourceRevision",
+            "P26": "从PLM-REQ/ENG等精确版本选择带入。",
+            "AP26": "不接受latest；不可达显示Unknown并阻塞受依赖动作。"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/REQ-PLM-ITER-01-006",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-033"
+      ],
+      "gap_or_reuse_reason": "已有明确义务，补来源链接即可。",
+      "scenario": "传latest或断开源Owner后请求依赖动作。",
+      "required_observation": "拒绝latest；不可得显示Unknown并阻所依赖动作，不默认为无漂移。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-06",
+      "target": "PLM-ITER-01",
+      "title": "ReturnTo及源Owner深链",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "引数説明",
+          "cells": {
+            "B30": "ReturnTo",
+            "P30": "仅受控内部路由枚举；携带原筛选游标。",
+            "AP30": "禁止任意外部URL跳转；返回前刷新权限和状态。"
+          }
+        },
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "画面遷移",
+          "cells": {
+            "AT48": "保留原筛选；再次查询真实阶段。源Owner深链按授权解析，不用任意URL。",
+            "AT80": "保留原筛选；再次查询真实阶段。源Owner深链按授权解析，不用任意URL。",
+            "AT124": "保留原筛选；再次查询真实阶段。源Owner深链按授权解析，不用任意URL。"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-028",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-001"
+      ],
+      "gap_or_reuse_reason": "候选239/295均无ReturnTo、内部枚举或外部URL拒绝定位。",
+      "scenario": "ReturnTo或源Owner深链给外部URL/未知路由；合法返回前发生撤权或状态变更。",
+      "required_observation": "仅受控内部路由枚举；保原筛选游标；深链按当前授权解析，返回重查权限和真实状态；拒绝任意外部跳转。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-07",
+      "target": "PLM-ITER-01",
+      "title": "日期时间与审计事实不可由客户端覆写",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "項目説明 (入力値)",
+          "cells": {
+            "B50": "日期时间",
+            "P50": "计划日期不带时区；事实UTC；界面显示本地时区",
+            "AM50": "解析拒绝歧义；FactTime不可由客户端自报覆盖服务端审计。"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/REQ-PLM-ITER-01-026",
+        "WP05-01/1/BODY/FLD-PLM-ITER-01-005"
+      ],
+      "gap_or_reuse_reason": "旧字段只读/UTC并未把输入歧义与FactTime注入列成精确观察。",
+      "scenario": "提交有歧义的日期时间或注入FactTime/审计发生时点。",
+      "required_observation": "计划日期不带时区；事实UTC并本地时区展示；歧义拒绝；客户端不能覆盖服务器审计时间。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-08",
+      "target": "PLM-ITER-01",
+      "title": "授权前置稳定分页及未定容量",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "項目説明 (入力値)",
+          "cells": {
+            "B46": "分页建议",
+            "P46": "默认50 / 上限200；关键集上限见DP-ITER-05",
+            "AM46": "授权在分页前；稳定排序updatedAt DESC,id DESC。"
+          }
+        },
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "検索入出力仕様",
+          "cells": {
+            "O10": "q,owner,stage,cursor / Project",
+            "AF10": "Tenant+成员授权 → 稳定排序 → 分页；状态/计划版本/水位。",
+            "BA10": "未知不当0；最大建议200"
+          }
+        },
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "根拠・未決事項",
+          "cells": {
+            "P76": "本稿建议页长50、最大200、对象引用上限500、评审人50、附件引用50；须专项容量确认。",
+            "AU76": "API/检查\n候选参数非已批准生产SLO"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-001",
+        "WP05-01/1/BODY/DP-ITER-05"
+      ],
+      "gap_or_reuse_reason": "排序已明确覆盖；补工作簿关联并保留容量未定，勿制造重复缺陷。",
+      "scenario": "同updatedAt多ID跨页、无权项目混入、limit边界。",
+      "required_observation": "先权限过滤再按updatedAt DESC,id DESC稳定排序；未知非0；50/200等须DP后继决定，不自动当已批SLO。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-09",
+      "target": "PLM-ITER-01",
+      "title": "20动作的真实页面归属",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "画面項目制御",
+          "cells": {
+            "S56": "P01；project.read；已认证且项目可见",
+            "S71": "P02；project.write；有建档权限；编号策略可用",
+            "S86": "P02；project.write；项目Draft/Active；ExpectedVersion有效",
+            "S101": "P03；iteration.write；项目Active；H40输入可访问",
+            "S116": "P03；iteration.write；Planned/InDesign且未暂停",
+            "S131": "P03；iteration.manage；开始:Planned；暂停/恢复:非终态",
+            "S146": "P04；candidate.write；InDesign且未暂停",
+            "S161": "P03；task.confirm；任务Submitted；确认人有权限",
+            "S176": "P05；review.submit；InDesign且无阻塞漂移；未暂停",
+            "S191": "P05；review.comment；轮次可访问；终态只允许更正说明",
+            "S206": "P05；review.decide / trusted.callback；当前InReview且摘要一致",
+            "S221": "P05；review.withdraw；InReview；决定应用前；有权限",
+            "S236": "P06；verification.request；评审已通过；被评审内容未漂移",
+            "S251": "P06；iteration.read；对象可读且关联证据有权",
+            "S266": "P07；iteration.evaluate；Verification完成或评审REJECT/适用验证豁免；未暂停",
+            "S281": "P06；baseline.request；当前候选评审已通过且内容未漂移；允许在验证前冻结受测基线，不要求先有验证通过或最终评价；ENG-REV最终校验。",
+            "S296": "P07；iteration.close / iteration.manage；Close:Evaluated；Cancel:非终态",
+            "S311": "P07；iteration.write；Evaluated/Closed且源可读",
+            "S326": "P08；iteration.amend / iteration.export；更正:终态且授权；导出:可读",
+            "S341": "P06；iteration.recover；对象范围可读；原请求可恢复"
+          }
+        },
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "画面遷移",
+          "cells": {
+            "B48": "P01 / ACT-01",
+            "B52": "P02 / ACT-02",
+            "B56": "P02 / ACT-03",
+            "B60": "P03 / ACT-04",
+            "B64": "P03 / ACT-05",
+            "B68": "P03 / ACT-06",
+            "B72": "P04 / ACT-07",
+            "B76": "P03 / ACT-08",
+            "B80": "P05 / ACT-09",
+            "B84": "P05 / ACT-10",
+            "B88": "P05 / ACT-11",
+            "B92": "P05 / ACT-12",
+            "B96": "P06 / ACT-13",
+            "B100": "P06 / ACT-14",
+            "B104": "P07 / ACT-15",
+            "B108": "P06 / ACT-16",
+            "B112": "P07 / ACT-17",
+            "B116": "P07 / ACT-18",
+            "B120": "P08 / ACT-19",
+            "B124": "P06 / ACT-20"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXACT_SOURCE_MAPPING",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-001",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-002",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-003",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-004",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-005",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-006",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-007",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-008",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-009",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-010",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-011",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-012",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-013",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-014",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-015",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-016",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-017",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-018",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-019",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-020"
+      ],
+      "gap_or_reuse_reason": "旧295只有PROC正文，未有工作簿直接声明的页面/动作映射。",
+      "scenario": "逐ACT01..20由准确页面和角色进入对应PROC。",
+      "required_observation": "按原工作簿已明确页面—ACT—PROC关系核对，拒绝只靠字段归属反推；这是已存工作簿定位，绝非旧30AC恢复。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-10",
+      "target": "PLM-ITER-01",
+      "title": "修改动作确认摘要与输入保留",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "画面項目制御",
+          "cells": {
+            "S89": "修改或不可逆状态动作显示确认摘要、版本和原因输入；重复点击禁用，但幂等仍在后端。",
+            "S95": "412过期；409非法阶段/存在关系；保留输入、返回真实回执链接；不假报外部完成。",
+            "S179": "修改或不可逆状态动作显示确认摘要、版本和原因输入；重复点击禁用，但幂等仍在后端。",
+            "S185": "409漂移/开放冲突；422缺配置；保留输入、返回真实回执链接；不假报外部完成。",
+            "S299": "修改或不可逆状态动作显示确认摘要、版本和原因输入；重复点击禁用，但幂等仍在后端。",
+            "S305": "409阻塞/外部执行未知；保留输入、返回真实回执链接；不假报外部完成。",
+            "S344": "修改或不可逆状态动作显示确认摘要、版本和原因输入；重复点击禁用，但幂等仍在后端。",
+            "S350": "409永久拒绝/原请求已终结；保留输入、返回真实回执链接；不假报外部完成。"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-003",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-009",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-017",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-020"
+      ],
+      "gap_or_reuse_reason": "旧矩阵泛称页面反馈，未保留这些明确页面异常恢复义务。",
+      "scenario": "修改/不可逆动作确认及412/409/503失败、重复点击。",
+      "required_observation": "确认显示摘要/版本/原因输入；重复按钮禁用不代服务端幂等；失败保留输入和真实原回执链接，不假报外部完成。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-11",
+      "target": "PLM-ITER-01",
+      "title": "状态与HELD界面控制仍有服务端门",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "画面項目制御",
+          "cells": {
+            "L20": "送审内容只读；意见可追加",
+            "AU20": "禁PATCH送审包；不以UI只读作唯一防线",
+            "L35": "历史与更正可读；主记录只读",
+            "AU35": "无重新保存覆盖/删除/自动重开",
+            "L40": "所有原阶段区域可读",
+            "AD40": "恢复、查询、备注、受控取消",
+            "AU40": "隐藏/禁用提交/冻结/评价；服务端仍拒绝",
+            "L45": "不展示标题、数量、附件或深链",
+            "AD45": "统一拒绝与返回授权首页",
+            "AU45": "不因404/导出结果泄漏存在性"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-007",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-025",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-027",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-028"
+      ],
+      "gap_or_reuse_reason": "核心语义已有；将控件位置绑定原义务。",
+      "scenario": "在审、终态、HELD和跨租户页面绕UI直调命令。",
+      "required_observation": "冻结内容不可PATCH；终态不可覆盖/删除；HELD禁止新增提交/评价/冻结；所有拒绝由后端执行，隐藏存在性。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-12",
+      "target": "PLM-ITER-01",
+      "title": "查询遮蔽、源水位与历史排序",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "検索入出力仕様",
+          "cells": {
+            "AF20": "按Occurrence和源版本比较，显示源Owner；无自动合并。",
+            "BA20": "源不可达标UNKNOWN",
+            "AF25": "返回冻结摘要、当前轮次、意见和历史决定。",
+            "BA25": "旧轮次只读，无权不列成员",
+            "AF30": "实际受测基线、源报告与复用评价；返回asOf与缺证状态。",
+            "BA30": "不泄漏裸下载地址",
+            "AF35": "UTC发生时间+ID稳定排序，追加更正并列原值。",
+            "BA35": "终态可查；删除非默认入口"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXACT_SOURCE_MAPPING",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-014",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-028",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-033"
+      ],
+      "gap_or_reuse_reason": "大部分读授权已有；精确查询输出与历史稳定顺序需连到工作簿，避免通用查询观察遗漏。",
+      "scenario": "无权读旧评审成员/源文件、源不可达、同UTC事件历史查询。",
+      "required_observation": "旧轮只读且不列无权成员；源Unknown/asOf保留，不泄漏裸下载地址；历史UTC+ID稳定顺序。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-13",
+      "target": "PLM-ITER-01",
+      "title": "文件导出、冻结引用、报告真相",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "ファイル入出力仕様",
+          "cells": {
+            "AI10": "只输出已授权引用、修订、摘要、水位与状态。文本按文本存储，避免公式被执行；下载再次授权。",
+            "AI16": "PLM-DOC拥有文件版本；SYS-FILE存字节。文件缺失显示EvidenceUnavailable；禁止替换已冻结引用。",
+            "AI22": "实际受测基线、样件、方法和原报告哈希可查；不是ITER直接上传即PASS。"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-034",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-019",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-016"
+      ],
+      "gap_or_reuse_reason": "原295已覆盖，不把它误列为新义务；补直接来源即可。",
+      "scenario": "公式样式文本导出、下载前撤权、缺技术文件或上传截图冒充VER结果。",
+      "required_observation": "文本不执行公式；下载重验权；EvidenceUnavailable显式；PLM-DOC文件版本不替换，ITER不直接上传成PASS。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-14",
+      "target": "PLM-ITER-01",
+      "title": "旧记录导入不自动生成合格历史",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "ファイル入出力仕様",
+          "cells": {
+            "P28": "本册不批准批量导入",
+            "AI28": "先形成来源/状态映射和缺证列表；不能自动伪造工程迭代或通过记录。"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/REQ-PLM-ITER-01-030",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-038"
+      ],
+      "gap_or_reuse_reason": "历史缺口已保留；附旧导入禁止条款而不新增导入能力。",
+      "scenario": "只有旧产品/生产记录而无可信迭代证据，尝试批量导入为通过。",
+      "required_observation": "本册不批准批量导入；先来源/状态映射和缺证列表；不得伪造迭代或通过。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-15",
+      "target": "PLM-ITER-01",
+      "title": "角色最小权限与服务受众",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "権限・監査",
+          "cells": {
+            "N10": "项目、目标、责任与里程碑；iteration.manage",
+            "AO10": "不能作为任何技术门自动批准者",
+            "N15": "candidate.write、任务提交、引用源技术对象",
+            "AO15": "不能直接改权威图纸/BOM/验证结果",
+            "N20": "review.comment/decide、核验关闭问题",
+            "AO20": "自批默认拒绝；旧Round结果不改新轮",
+            "N25": "iteration.evaluate/close；按配置复核",
+            "AO25": "必须有可核对证据；不能跳过外部未决",
+            "N30": "授权项目时间线、版本与受控导出",
+            "AO30": "不获得编辑、恢复或原始文件权限",
+            "N35": "指定Owner回执接收/派发",
+            "AO35": "验证issuer/tenant/action；不能伪造用户决定",
+            "B42": "所有读写、深链接、回执与导出再次做Tenant/对象/Site/动作检查。审计保存Actor、授权角色、Source/TargetVersion、RequestKey、原因、结果；不记录token/Secret/裸密链。失败请求日志不得泄漏受限对象。"
+          }
+        }
+      ],
+      "revision_action": "ADD_EXACT_SOURCE_MAPPING",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-028",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-011",
+        "WP05-01/1/BODY/PROC-PLM-ITER-01-020"
+      ],
+      "gap_or_reuse_reason": "已有一般授权与自批门；独立角色/服务输入反例需显式绑定。",
+      "scenario": "只读/审计角色尝试恢复或下载原文件；服务回执错issuer/tenant/action；失败请求带受限信息。",
+      "required_observation": "角色职责分离；读取不附送编辑/恢复/原文件权限；服务身份核issuer/tenant/action且不能伪造用户决定；审计及失败日志不漏敏感对象。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-16",
+      "target": "PLM-ITER-01",
+      "title": "错误矩阵和拒绝写集",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "処理詳細(チェック仕様)",
+          "cells": {
+            "N310": "无权限请求不得通过错误信息泄漏其他租户对象。\n拒绝后本次业务写入为0；已独立发生的外部事实保留，按原请求回执恢复。",
+            "N313": "MSG-PLM-ITER-01-028；对应BR-PLM-ITER-01-028；状态冲突409、并发412、字段422、权限403/404掩码。",
+            "N329": "状态迁移与条件更新、审计、回执在本地事务完成；ExpectedVersion不匹配不产生副作用。",
+            "N332": "UI刷新后携旧ETag提交返回412。\n拒绝后本次业务写入为0；已独立发生的外部事实保留，按原请求回执恢复。",
+            "N335": "MSG-PLM-ITER-01-030；对应BR-PLM-ITER-01-030；状态冲突409、并发412、字段422、权限403/404掩码。",
+            "N365": "无权限不返回预签名地址或敏感成本摘要。\n拒绝后本次业务写入为0；已独立发生的外部事实保留，按原请求回执恢复。",
+            "N368": "MSG-PLM-ITER-01-033；对应BR-PLM-ITER-01-033；状态冲突409、并发412、字段422、权限403/404掩码。"
+          }
+        },
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "メッセージ一覧",
+          "cells": {
+            "Y118": "安全读写检查未通过。无权限请求不得通过错误信息泄漏其他租户对象。\n请按问题详情处理后重新查询版本；不得更换幂等键规避重复保护。",
+            "Y126": "并发写保护检查未通过。UI刷新后携旧ETag提交返回412。\n请按问题详情处理后重新查询版本；不得更换幂等键规避重复保护。",
+            "Y138": "权限与缓存检查未通过。无权限不返回预签名地址或敏感成本摘要。\n请按问题详情处理后重新查询版本；不得更换幂等键规避重复保护。"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-028",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-030",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-033"
+      ],
+      "gap_or_reuse_reason": "对应BR/PROC已保留；无需新增40个重复AC，仅明确同源CHK/MSG链接。",
+      "scenario": "权限、状态、并发、字段错误及已发生外部事实后本地拒绝。",
+      "required_observation": "按原403/404掩码、409/412/422分类；无新增业务写入；已独立发生外部事实保留，查原请求；不换键逃避。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-17",
+      "target": "PLM-ITER-01",
+      "title": "状态/选择/问题转移与默认值",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "項目説明 (入力値)",
+          "cells": {
+            "P10": "Planned / InDesign / InReview / Verification / Evaluated / Closed / Cancelled",
+            "AM10": "按独立动作转换，不接受Update.Status；终态不可普通编辑。",
+            "P14": "NORMAL / HELD",
+            "AM14": "独立于阶段；恢复回原阶段并复核，不重启真实试制。",
+            "P18": "ADOPT / REJECT / CONTINUE / TERMINATE",
+            "AM18": "结论不是验证值；REJECT+Closed合法。",
+            "P22": "每轮当前评价至多一个选定CandidateVersion",
+            "AM22": "多产品作为同一配置包；换选产生新评价，不覆盖历史。",
+            "P26": "UNCHANGED / CHANGED / UNKNOWN",
+            "AM26": "无法读取源Owner不是UNCHANGED。",
+            "P30": "Todo / InProgress / Blocked / Submitted / Done / Cancelled",
+            "AM30": "Done独立确认；任务完成不改变验证和发布。",
+            "P34": "Open / Responded / VerifiedClosed / Transferred",
+            "AM34": "转移有受理责任和期限，原问题继续可追；Blocking不可无据转移。",
+            "P38": "Pending / Accepted / Rejected / Conflict / Unknown / Cancelled",
+            "AM38": "技术尝试单独记录；不能以HTTP 200或Broker ACK当业务接受。",
+            "P42": "标题200；说明4000；原因1000或4000；ID opaque",
+            "AM42": "均为本册待审建议，不伪称已按数据库约束验证。"
+          }
+        }
+      ],
+      "revision_action": "REUSE_WITH_EXACT_WORKBOOK_LINK",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/BR-PLM-ITER-01-005",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-013",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-018",
+        "WP05-01/1/BODY/BR-PLM-ITER-01-032",
+        "WP05-01/1/BODY/DP-ITER-03"
+      ],
+      "gap_or_reuse_reason": "主要语义在原矩阵；建议补workbook到既有条目映射并在实现决策处收口。",
+      "scenario": "通用Update.Status、两个ActiveSelection、无责任Blocking转移、HTTP200代业务接受、将建议长度当获批上限。",
+      "required_observation": "按专用动作和原完整枚举；至多一当前选定；转移需受理责任期限；技术尝试独立；未知/建议参数仍留边界。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/WB-18",
+      "target": "PLM-ITER-01",
+      "title": "ECO冲突不放宽义务",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "処理詳細(項目・任務)",
+          "cells": {
+            "N85": "核验要求修订与父基线来源；新品空父基线必须给理由，改型检查ECO。"
+          }
+        },
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+          "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+          "sheet": "追跡マトリクス",
+          "cells": {
+            "AL149": "N/A：历史保全约束；本册不批准旧库导入命令"
+          }
+        }
+      ],
+      "revision_action": "REUSE_CONFLICT_DISPOSITION",
+      "prior_basis_ids": [
+        "WP05-01/1/BODY/REQ-PLM-ITER-01-023"
+      ],
+      "gap_or_reuse_reason": "README30已准确保留；补精确双单元格及既有义务即可。",
+      "scenario": "改型迭代缺ECO并援引追踪表N/A。",
+      "required_observation": "按正文REQ023和处理细则核ECR/ECO；保留原AL149冲突，不能凭N/A删核验或批准导入。",
+      "owner_scope": "ITER UI/API/worker; references and external facts remain with their original Owner",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-01",
+      "target": "PLM-REL-01",
+      "title": "CP22 registry与真实前驱链",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 113,
+          "line_end": 114,
+          "excerpt": "- 采用MES实际Owner出具完整MesSourceRegistryCutCp18/OwnerNamespaceObservationCp18与准确PLAN_MAKE registry cut；原native SourceDescriptor全文/digest/current sourceBodyDigest与实际Owner namespace保完整\n- accepted native五步保持Source search → Preparation完整CommandResult → EngineeringCheck → Snapshot完整CommandResult → CREATE_ROOT_WORK_ORDER完整CommandResult；未来preparation/check/candidate/root IDs只来自原真实前驱"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "错registry cut、用未来伪造preparation/check/root ID推进后继。",
+      "required_observation": "固定完整原Owner SourceDescriptor/digest/current body与namespace；仅Source search→真实Preparation→EngineeringCheck→Snapshot→CREATE原五步；不得编造前驱结果。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-02",
+      "target": "PLM-REL-01",
+      "title": "前置capture集合及preparation绑定",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 115,
+          "line_end": 116,
+          "excerpt": "- PREPARE恰四capture：PLANNING_SOURCE_COVERAGE、PLANNING_MAKE_SOURCE、PLM_PURPOSE_POLICY、REL_PURPOSE_AUTHORIZATION，所有preparationRef=null\n- CHECK/SNAPSHOT/CREATE各恰十一capture：上述四加CFG_REQUEST、CFG_RESOLVED、ENG_BASELINE、ENG_UOM_USAGE、ENG_PRECONDITION、DEV_APPLICABILITY、ENG_MANIFEST；builder逐capture比真实已建preparationId/revision，不允许合并不同cut或旧preparation"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "PREPARE混入第五项；CHECK缺一/多一/混用旧preparation。",
+      "required_observation": "PREPARE恰四且preparationRef=null；CHECK/SNAPSHOT/CREATE各恰十一，同真实preparationId/revision；缺项多项或跨cut不得后继派发。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-03",
+      "target": "PLM-REL-01",
+      "title": "原issuer与authenticated SDK tuple",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 117,
+          "line_end": 118,
+          "excerpt": "- MES仅transport；issuerOwner与documentRef.owner须原PLM/CFG/ENG/DEV/REL。每项authenticated SDK sidecar绑定E/T、executionKey、actual preparationRef、sourceDescriptorDigest、documentRef/version/bodyDigest、captureId/version/time、providerId及真实providerContractId/version/digest\n- SDK pin核Owner/provider/contractId/version/digest、AdoptedByOwner、生产capture有效期与未撤销；body完整canonical/digest关系独立核。没有accepted supporting HTTP endpoint，不造一个；actual provider values当前未证并保持fence"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "MES替签REL truth、错E/T或executionKey、provider pin缺失/撤销、只给digest无正文。",
+      "required_observation": "MES仅运输；issuer/documentRef.owner为原Owner；完整tuple及真实providerContractId/version/digest、AdoptedByOwner/有效期/未撤销验证，canonical全文digest独立核；不造未接受HTTP入口。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-04",
+      "target": "PLM-REL-01",
+      "title": "current capture head及RequiredFenced",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 119,
+          "line_end": 120,
+          "excerpt": "- current capture head资源为SHA JCS{documentKind,executionKey,preparationRef,sourceDescriptorDigest}；保旧immutable captures但不回退或跨cut混用。缺issuer/provider/body或未知applicability报WO_SUPPORTING_OWNER_REQUIRED_FENCED，零后继native派发\n- PLAN-PO只生产两个本地allocation/source projections，不签PLM/CFG/ENG/DEV/REL上游truth。REL_RESERVATION由真root后Owner原结果产生，不能计入PREPARE/CHECK/SNAPSHOT/CREATE前置十一capture"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "旧capture回退、跨cut拼接、缺issuer/provider/body或适用性未知。",
+      "required_observation": "current head准确绑定documentKind/executionKey/preparationRef/sourceDescriptorDigest；保不可变旧capture但不可回退；WO_SUPPORTING_OWNER_REQUIRED_FENCED，零后继native派发；PLAN-PO不得签上游truth。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-05",
+      "target": "PLM-REL-01",
+      "title": "PLM PurposePolicy依赖精确匹配",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 127,
+          "line_end": 133,
+          "excerpt": "#### PLM/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId 412b81e2-fc64-4292-a2ab-2d4be6ae6b7e；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest b6109a0c93ba485edb24f723eaf1bdee036b37d614c79bf25fbdd968a55e323f；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- PLM独立truth负责plm.wo-purpose-policy/1.0-proposed全body：itemRef/siteRef、PRODUCTION/NEW_MANUFACTURE、APPLICABLE/NOT_APPLICABLE/UNKNOWN、requiredAuthorizationOwner=REL、validFrom/validTo、sourceTechnicalBasisRef\n- 采用实际PLM purpose policy与source descriptor原purposePolicyRef，并保独立technical basis引用；普通policyRef不能充PLM purposePolicyRef\n- 准行仅当前APPLICABLE、准确Site/用途及有效窗口，与REL用途授权同cut；NOT_APPLICABLE/UNKNOWN不凭Main/MES布尔放行\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "普通policyRef冒充purposePolicyRef、NOT_APPLICABLE/UNKNOWN或与REL不同cut。",
+      "required_observation": "只接受原PLM全body、PRODUCTION/NEW_MANUFACTURE、当前APPLICABLE、准确Site/窗口和technical basis；与REL同cut；不可用MES布尔绕过。",
+      "owner_scope": "REL只验证其授权引用的PLM依赖；PLM产生原truth，不在REL复制PLM主账。",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-06",
+      "target": "PLM-REL-01",
+      "title": "CFG完整解析依赖",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 134,
+          "line_end": 140,
+          "excerpt": "#### CFG/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId f659eafa-38cb-4c08-bdfd-2c2241abd6f5；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest 41ad174da5e88a5ae150e34091ee42fee7c32907f8bfc29df2c9d79296902293；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- CFG独立truth负责配置request完整baselineRef/purposePolicyRef/itemRef/siteRef/variables/requestedAt/state/resolvedRef，以及resolved requestRef/baselineRef/variables/resolutionCount/state/effectiveOperations/materials/outputs\n- 实际consumer准行request.state=RESOLVED、resolved.state=UNIQUE、resolutionCount=1；baseline/request/source candidate refs精确匹配\n- 完整配置结果与ENG technicalContent三全数组canonical相等，变量来源保真；PENDING/AMBIGUOUS/REJECTED/UNKNOWN继续fence，不让MES resolve或丢问题行凑唯一\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "CFG非唯一、baseline/request/source refs不匹配，删除问题行凑resolutionCount=1。",
+      "required_observation": "request RESOLVED、resolved UNIQUE且count1；完整variables/operations/materials/outputs与ENG canonical相等；其他状态fence。",
+      "owner_scope": "CP22跨Owner依赖观察；CFG负责解析，REL不取得CFG决策权限。",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-07",
+      "target": "PLM-REL-01",
+      "title": "ENG released内容与DAG依赖",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 141,
+          "line_end": 145,
+          "excerpt": "#### ENG/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId a4fba3b7-b4b3-4a38-ae56-b27f2bd01506；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest cb9c52c920a2b444982f3ceeeccb5d5462fdff4b69638b0d7ff3f4872f4630ea；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- ENG独立truth负责当前RELEASED baseline/item/site/purpose及完整technicalContent、technicalDigest、有效窗口。完整operation occurrence/DAG/材料EBOM-MBOM映射/输出TechnicalSpec、指令/参数/资源/质量关系保原身份\n- 实际consumer逐operation id、依赖与consumptionPoint/material关联，全DAG无环；effectiveOperations/materials/outputs等于CFG完整解析，普通路径PRIMARY count恰1；不宣称任意工程方案均可放行"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "普通路径PRIMARY数非1、DAG循环、材料/操作/输出与CFG不一致或过期baseline。",
+      "required_observation": "固定原RELEASED baseline/item/site/purpose/窗口和全technicalContent；操作身份、依赖、consumptionPoint和材料关系无损；完整三数组相等。",
+      "owner_scope": "仅CP22当前采用的普通路径；不能据此缩小其他已接受工程合同。",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-08",
+      "target": "PLM-REL-01",
+      "title": "单位和量义映射依赖",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 146,
+          "line_end": 146,
+          "excerpt": "- ENG_UOM_USAGE完整target/material usages/output targets，versioned units、正rational numerator/denominator、EXACT整数比例及loss逐项守恒；数量相同不能替代量义映射"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "相同数值不同量义、无版本单位、非正比例、EXACT非整数或loss不守恒。",
+      "required_observation": "保完整target/material/output usages和versioned units、正rational、EXACT整数比例及loss逐项守恒；数值相同不代量义证明。",
+      "owner_scope": "ENG提供原单位映射；REL授权quantity/ranges消费同一量义。",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-09",
+      "target": "PLM-REL-01",
+      "title": "ENG前置与五member manifest",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 147,
+          "line_end": 148,
+          "excerpt": "- ENG_PRECONDITION完整操作/指令/QC来源，missingInstructions/missingQualityRequirements空且complete经独立auth/bodies后才有意义，manifest技术hash不能代正文\n- ENG_MANIFEST完整五member：CFG_RESOLVED、ENG_BASELINE、ENG_UOM_USAGE、ENG_PRECONDITION、DEV_APPLICABILITY，ref/kind/bodyDigest逐一对独立capture，coverage=COMPLETE、missingRefs为空"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "complete=true但缺独立正文/auth；五member缺项、ref/kind/bodyDigest错配。",
+      "required_observation": "missingInstructions/missingQualityRequirements为空仍须独立可信body；完整五member逐项对独立capture，coverage COMPLETE/missingRefs空；技术hash不代正文。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-10",
+      "target": "PLM-REL-01",
+      "title": "native EngineeringCheck和Snapshot链",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 149,
+          "line_end": 150,
+          "excerpt": "- native EngineeringCheck的七CREATE_WO gates、source version、baseline/resolved refs、manifestDigest/technicalDigest、validUntil与capture源逐一绑定；Snapshot/CREATE保原candidate/preparation/check，不改accepted native wire\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "七CREATE_WO gate或source version/baseline/resolved refs/digest/validUntil任一错，Snapshot替换candidate/preparation/check。",
+      "required_observation": "全部准确匹配原capture和真实前驱；保accepted native wire，错配不后继派发；未证provider仍fence。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-11",
+      "target": "PLM-REL-01",
+      "title": "DEV仅当前有界正常路径",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 151,
+          "line_end": 157,
+          "excerpt": "#### DEV/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId 9a6ec6f3-d236-47fb-ad12-0804fdd1c181；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest 45e1890bc5f3dbd3e9ccd0ddab5210c2521d8ec8e8775a6ec15af27e9576004c；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- DEV独立truth负责dev.wo-applicability/1.0-proposed全body：executionKey、scopeRef、PRODUCTION、siteRef、technicalDigest、state、完整applicableDeviationRefs、checkedAt\n- 本candidate实际consumer仅采用有原DEV依据的NOT_APPLICABLE_PROVEN且applicableDeviationRefs=[]的正常路径，并与REL scope/execution及ENG technicalDigest一致\n- APPLICABLE或UNKNOWN仍RequiredFenced；此采用不授权偏差Claim/余额/适用性替代流程，不用MES或本地complete:true签不适用\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "DEV APPLICABLE/UNKNOWN或本地complete=true伪造不适用。",
+      "required_observation": "本CP22 candidate只采用独立DEV NOT_APPLICABLE_PROVEN且空refs，与REL scope/execution和ENG digest相同；其他情况RequiredFenced；不批准替代Claim/余额流程。",
+      "owner_scope": "限定CP22已接受candidate；REL其他合法偏差流程不因此取消。",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-12",
+      "target": "PLM-REL-01",
+      "title": "REL用途授权全body及当前效力",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 158,
+          "line_end": 162,
+          "excerpt": "#### REL/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId 8a2721f4-cd83-431c-aa8c-b84bfa4949a8；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest febcc2a5d4ce1138abed6c47052c3aec6ca84fe2c0f0d5fe778d6f7e8583bbd1；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- REL独立truth负责rel.wo-purpose-authorization/1.0-proposed全body：PRODUCTION、purposePolicyRef/siteRef/executionKey/scopeRef、完整authorizedRanges/authorizedQuantity、GRANTED/REVOKED/UNKNOWN及validFrom/validTo\n- PREPARE/CHECK/SNAPSHOT/CREATE前置采用精确GRANTED/current有效用途授权及范围量义；candidate executionScope等于其准确scope/version/ranges/quantity，不扩大授权"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "REVOKED/UNKNOWN、窗口外、错PurposePolicy/Site/execution或擅扩scope/version/ranges/quantity。",
+      "required_observation": "原REL全body无损；仅PRODUCTION GRANTED/current有效窗，candidate executionScope与准确授权scope/version/ranges/quantity相等；任何错配拒绝本CP22路径。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-13",
+      "target": "PLM-REL-01",
+      "title": "post-root预约独立事实",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 163,
+          "line_end": 165,
+          "excerpt": "- REL_RESERVATION采用post-root独立观测schema，authorizationRef/executionKey/scopeRef/reservedRanges/quantity/state/workOrderId/reservationVersion全量保留；真root原result.relReservationRefs只作为原Owner关联，不能假造reservation\n- REL原余额/预约/释放truth不由MES或PLAN-PO自产，提前授予R/P或把Root准备当reserve均不在采用scope内\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "把Root preparation当reserve、把REL_RESERVATION塞进前置十一项、MES/PLAN-PO自产R/P或伪造root refs。",
+      "required_observation": "只接受真root后原Owner post-root全schema；authorization/execution/scope/ranges/quantity/state/WO/reservationVersion齐全；保真root.relReservationRefs，零自产预约/释放。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-14",
+      "target": "PLM-REL-01",
+      "title": "Owner receipt流与历史真实链",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 121,
+          "line_end": 126,
+          "excerpt": "- 五nested责任的本次设计采用按各独立实际技术职责记录于本role15内部；不造第18顶层合同。原真实历史receipt消费其记录native前驱链，不要求今日supporting源重造\n- 设计采用OWNER_RECEIPT_DELIVERY/OWNER_RECEIPT_STREAM行动权限归属于现有OWNER_CURRENT_WIRE合同；不新增顶层producer role\n- 完整OwnerReceiptInputCp18保原native ordinal/status/body；eventId/streamId/sequence/previousDigest/conversionLegId/stepOrdinal/ownerCommandKey/ownerQueryKey/requestDigest/ownerResultDigest/observedAt不可变\n- E/T、authenticatedProducerOwner、principalId、admissionId、validTo由独立authenticated metadata提供；canIngest与canReadOwnEvents分离，app不能自己生成Owner/admission\n- gap持久WAITING_PREDECESSOR；仅原bytes在APPLIED前驱后续办；同event同bytes重放、异文冲突，intermediate APPLIED仅观测已存不授权后继派发\n- 原observedAt不换今时；consumer Now是当前可信本地时点。noncommanded registered read/evaluation才允许且要求null OwnerCommandKey。WO/WMS负native结果单独不能当永久noeffect"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "错authenticated Producer/E/T/admission，sequence gap，同event异bytes，intermediate APPLIED当后继授权，改observedAt，负MES结果当永久noeffect。",
+      "required_observation": "nested仍role15；完整原native body/ordinal/status及所有键/digest保真；canIngest与canReadOwnEvents分离；gap持久WAITING_PREDECESSOR；重放原bytes，异文冲突；APPLIED仅观测，Now与原observedAt分离；noncommanded已注册read/eval才null command key；历史链不要求重造今日支持源。",
+      "owner_scope": "有REL关联原回执的CP22消费链；不能把PLAN/MES实现算作REL已采用。",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/CP22-15",
+      "target": "PLM-REL-01",
+      "title": "历史批准与实际采用分轴",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line_start": 167,
+          "line_end": 176,
+          "excerpt": "## Accepted 源与历史范围保留\n- PUR88732B SHAc3cf448a16a4a8fecb562e844c42da2ee0db7dbd5fbe6b094a0e695bad2e17c1，NOT_OBSERVED含convertRequestId；旧R04撤回保持。MES282332B SHAa2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a，WMS5239383B SHA9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830，准源accepted/CURRENT身份原样保留。\n- Accepted schemas69334B SHAcda6210baa7174629c7f28bf27a547a7e7bb3678d31a0b5c2392727d3ca71c24、extract12132B SHA2bc275748346d7f3614f69b793184d87138d200c9fecfd239e44f05043acdcd5完整相等。\n- 原CP20/CP21精确6合同及5nested意见原bytes保留，CP22内professional_input/CP21_EXACT_SCOPE/OWNER_TECH各MD/JSON与原件字节相等；本次每role真实新recordId/time/Run/source/scope另列。\n- 本轮最小delta审读不是重读全WMS176215行或全573 ZIP成员；完整byte/pin再观察结合原本人真实专业语义审读，当前publisher/Bridge消费及27实值前提按准确delta复读。\n\n## 实际运行与接受边界\n- enabled=false；17 actualAdopted=0；Core providerGrant=0；runtimeUNPROVEN；37AC NOT_RUN；正式58/61、formalIncrement0，EXC未开始。\n- 专业设计ADOPT与当前实际注册/认证/部署分开；无候选SQL/code/fixture/checker/编译/DB/CI/业务/安全复现，无真实授权/注册/部署/GitHub写。\n- 原六SPEC37AC的整册后继独审与根接受不由本组六合同意见代替；没有自动采用新freeze。"
+        }
+      ],
+      "revision_action": "ADD_EXPLICIT_OBSERVATION",
+      "prior_basis_ids": [
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-POS",
+        "WP05-01/1/REL/R1/PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME-NEG"
+      ],
+      "gap_or_reuse_reason": "Existing CP22 pair verifies role15 design-scope/status statements; it does not enumerate these exact source fields, native sequence, authenticated evidence or fail-closed observations. README post-root note alone does not supply executable per-source coverage.",
+      "scenario": "仅设计recordId/签署或静态检查通过即要求放开Required路径。",
+      "required_observation": "保准确accepted pins/历史批准范围；actual provider未证、17 actualAdopted=0、providerGrant=0、37AC NOT_RUN；完整后继独审/根接受不可由本意见替代。",
+      "owner_scope": "REL CP22 role15 bounded producer/consumer responsibility; other nested Owners remain independent",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-01",
+      "target": "PLM-ITER-01",
+      "title": "OA注册受众及完整集合/容量",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 7,
+          "line_end": 11,
+          "excerpt": "采用 `ITER-OA-APPLICATION/1`。Owner 注册主键为准确环境/租户、原 PLM Owner、业务类型及 `SubjectKind=PLM_ITER_REVIEW`；服务身份和回调路由由部署注册表固定。浏览器不能传入 Owner、Tenant 或回调地址改变受众。\n\n### 冻结主体和候选集合\n\nITER 候选是集合，不能用首项冒充 OA 的一个 Candidate。新增不可变 `ReviewCandidateAggregate`，在原冻结 Round/ReviewPackage 的事务内分配本地 UUID 小写文本 `aggregateId`（36字符，符合 OA Key1..100）和十进制 `aggregateVersion`。完整 `members` 保留每项原 candidateId、candidateVersion、准确原技术/文档引用及摘要；按原身份 UTF-8 字节序排序并拒绝身份重复。成员原值不截断、不转 UUID。集合过大不能截为前1000项；超过 OA 原传输上限时阻发起，使用原支持的不可变快照引用及分包能力必须另注册准确协议，不能自行增字段。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "浏览器换Owner/Tenant/callback；双候选漏一项/身份重复；集合超上限截前1000。",
+      "required_observation": "注册受众来自真实可信注册；完整成员保原ID/version/ref/digest及排序；不截断；超原路由能力阻提交，分包另有协议。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-02",
+      "target": "PLM-ITER-01",
+      "title": "聚合canonical与双向集合相等",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 13,
+          "line_end": 13,
+          "excerpt": "`aggregateDigest` 是本新合同 `ITER-CANDIDATE-AGGREGATE/1\\n` 加 canonical JSON UTF-8 的 SHA-256；预映像含 schema、Scope、Iteration、Round、aggregateId/version、全部 members，排除自身 digest。canonical规则固定对象键按Unicode codepoint升序、UTF-8、不转义非ASCII合法字符，ASCII控制字符用JSON标准转义，无空白；拒绝重复键和孤立surrogate。数组按已经冻结的顺序，原业务数字用字符串，Unicode不做隐式标准化。它不是原 ReviewPackageDigest，也不重写任何原 Candidate Digest。members必须与冻结ReviewPackage的实际候选集合按完整ID/version/技术引用/摘要双向相等，缺项、多项或同ID异版均不能提交；Binding的Scope、Round和aggregate全身份必须同时等于该集合及原Package证据。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "重复JSON键、孤立surrogate、Unicode静默normalize、数字改Number、同ID异版/多缺成员。",
+      "required_observation": "严格domain+canonical完整字节摘要；Scope/Round/aggregate/Package双向相等；原业务摘要不覆写。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-03",
+      "target": "PLM-ITER-01",
+      "title": "OA round与外域Ref别名无损",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 15,
+          "line_end": 17,
+          "excerpt": "OA `engineering.candidateId/version` = 本聚合 ID/版本；`engineering.digest` 和 `reviewPackageDigest` 均来自原冻结评审包的准确 Digest 结构，`technicalManifestDigest` 保原独立可空值。Subject.subjectId、Submit.roundId 和 engineering.roundId 均为绑定中的 `oaRoundKey`：原 RoundId 合乎 OA Key 域时原样保存，否则使用本轮首次建立并持久的 UUID 别名，完整原 Round 身份不变。`businessRevision` 使用本地生成的不可变 `roundBindingId`（UUID文本），映射整条 `(Round, aggregateId/version/digest, PackageRef/Digest, PolicyRef/version/digest, technicalManifestDigest, mappingVersion, rejectDisposition)`。它是映射身份，不拼接或截短外域键。原 Ref 超域时由准确 PLM 注册解析器提供不可变别名 Ref，存完整原字节、原 Schema 和双向身份；不冒充原 Owner 自己签出的新 Ref。未注册 Digest 算法仍阻本路由，绝不把非sha256内容塞入sha256字段。\n\n完整逐字段来源见 [OA 映射登记](assets/shared-consumers/oa-field-mapping-1.0.0.json)。新 Snapshot 封闭内容为 `{schema:\"ITER-OA-SNAPSHOT/1\",aggregate,binding}`，按本节 canonical规则保存完整字节；snapshot.digest 与 Subject.contentDigest 都是这些准确字节的 SHA-256，canonicalizationVersion 为 ITER-OA-SNAPSHOT/1，不能与原评审包摘要混为一谈。OA 原 256KiB Snapshot、1MiB body、1000 项 ID 限制依旧有效。原命令/Submission/Outbox ID、可信 starter/SOD/授权证据、业务 rowversion、政策及完整 Engineering 各自按映射登记保存；任何缺项都不能以同名字段猜值。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "原Round/Ref超OA域、别名冲突/未注册、非sha256算法塞sha256、256KiB snapshot或1MiB body越界。",
+      "required_observation": "合法原键保原值，否则真实持久不可变别名+完整原字节/schema双向解析；拒错误算法；Snapshot独立摘要；大小限制无截断。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-04",
+      "target": "PLM-ITER-01",
+      "title": "OA封闭字段和reject策略",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 19,
+          "line_end": 19,
+          "excerpt": "OA SubmitCommand、DecisionEnvelope、ApplicationReceipt 的字段、大小写及必需/可空规则逐字采用 OA R2 §4。新增 `rejectDisposition=RETURN|REJECT` 只存本地冻结映射/策略快照，不能加入 OA 封闭 Engineering 对象，更不能新增 OA 决定枚举 RETURN。审批回调必须精确匹配完整绑定；仅 IterationId、同一截图或同摘要并不足够。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "将RETURN新增到OA enum或rejectDisposition塞入Engineering。",
+      "required_observation": "字段/大小写/null逐字遵OA R2；rejectDisposition仅本地冻结；绑定精确匹配，拒非法wire。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-05",
+      "target": "PLM-ITER-01",
+      "title": "OA接收与应用不同事务/去重身份",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 25,
+          "line_end": 29,
+          "excerpt": "| ITER 发起 | 原 `review.submit`、当前 InDesign、无暂停/漂移、SOD；冻结 Package+Aggregate+Binding+Round+InReview+Owner OA Outbox+原 CommandReceipt+Audit | 同命令同体返回原回执；异体409；未知提交只查原键，不重新造 Round |\n| OA 接收/启动/决定 | 保原 Tx S/E/D、AppSubmission、StartOutbox、DecisionOutbox；engineStartId=SubmissionId | START_UNKNOWN 查原实例；不因超时起第二实例 |\n| ITER 接包 | Scope/服务/版本/原bytes摘要合格后先持久 Inbox；UQ Scope+Producer+EventId，另按 Instance+SubjectRevision+Decision 去重 | 同Event异body隔离；缺序列保 GAP；HTTP接收不等业务 APPLIED |\n| ITER 应用 | 当前控制头→Round/Binding→Inbox/Fact→ApplicationReceipt→OwnerApplicationOutbox→Audit；业务阶段/问题处置、原命令结果和回执同commit | 当前 Round、完整 Binding、当前权限/用途/SOD和全部 Blocking 已 VerifiedClosed 才允许 APPROVED 应用；任一失败不写业务成功 |\n| OA 回执投影 | 原 Tx R 消费Owner完整ApplicationReceipt，最高连续revision CAS | 仅更新展示；不再次驱动 ITER 状态 |"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "同Event异体、同决定异运输、sequence gap、只有HTTP接收/trace、应用前权限或Blocking变化。",
+      "required_observation": "按原Tx及独立唯一性持久Inbox/原包；GAP不跳过；当前绑定/SOD/全部Blocking核验，应用与Receipt/Outbox/Audit同commit；OA投影不再次驱动Owner。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-06",
+      "target": "PLM-ITER-01",
+      "title": "OA回执恢复和旧路由禁止重复应用",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 31,
+          "line_end": 35,
+          "excerpt": "APPROVED 应用原批准后的阶段；REJECTED 只依据已冻结 rejectDisposition 映射 RETURN→InDesign 或 REJECT→待评价，不能自动Closed。缺映射为 BLOCKED_POLICY_MAPPING，保决定原事实。WITHDRAWN 只应用准确原撤回轮次。`action=PLM_ITER_REVIEW_DECISION` 对应一个应用单元，不能换 action 名再次应用同一次决定。\n\n撤回与应用争用同一控制头/轮次 CAS。应用先commit：撤回409并给原回执；撤回先commit：迟到APPROVED只能记 STALE_RECEIPT，不能改变新一轮。Owner 已应用而发送回执失败时只重投相同不可变回执；BLOCKED 恢复依原 OA 规则追加新 revision/previousReceiptId，既有 APPLIED/STALE/CONFLICT 不改写。网络投递在锁外，禁止持业务锁跨服务等待。\n\n本地映射不另设绕过原授权的HTTP入口。新增持久记录的读取、重派和恢复沿原受控 Owner command/query 能力，受众/权限/错误/幂等完整继承 OA §4/6/17；mappingVersion 未注册、原候选集合不完整、传输域不能无损承载时阻相关新发起。旧直接同库 callback/内存事件只有完成全部持久协议后才可接入新路由，不能与新worker重复应用。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "应用回执发送失败重试、BLOCKED恢复、换action名重复应用、旧同步callback与新worker并存。",
+      "required_observation": "一个固定应用单元；相同不可变回执重投；仅许可BLOCKED追加revision/previousReceiptId，终态不覆写；锁外投递；不新增旁路HTTP，未注册/不完整/不无损阻新提交。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-07",
+      "target": "PLM-REL-01",
+      "title": "多输出输入/配置与合法无输入依据",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 67,
+          "line_end": 69,
+          "excerpt": "原 `plm.technical-manifest/1` 恰一个 PRODUCT、其 BOM/ROUTING 同 productCd；不修改原wire或旧签名黄金向量。新增两份独立不可变资产：`ENG-OUTPUT-RELATIONS/1` 与 `ENG-BASELINE-OUTPUT-BINDING/1`。\n\nRelationSet 有准确 Scope、relationId/version、完整配置Ref、每个输入 occurrence 的原 ItemRevision/SpecRef，以及每个**输出 occurrence** 的 outputOccurrenceId、原产品/ItemRevision/SpecRef、生成 OperationOccurrence、配置Ref、inputOccurrenceIds 和准确关系证据。相同产品在两个工序产生两次也保两条 occurrence；不能按产品去重。所有被引用input/operation必须在完整注册集合内且配置精确一致；不靠输出行号反推工艺顺序，不凭字符串相似补关系。没有输入的合法生成操作必须有显式原工程依据，不默认为可空输入。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "同产品两工序去重、缺生成操作/输入、配置不一致、无输入直接默认合法。",
+      "required_observation": "保独立输出occurrence及完整注册input/operation集合和配置；合法无输入有明确原工程依据；原single-PRODUCT wire不修改。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-08",
+      "target": "PLM-REL-01",
+      "title": "RelationSet/Binding/原PRODUCT交叉身份",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 71,
+          "line_end": 73,
+          "excerpt": "BaselineOutputBinding 固定新BaselineRef/version、原完整技术ManifestRef/digest（保持原bytes）、RelationSetRef/version/独立bodyDigest、准确FreezeCommand和完整技术配置证据。原 Manifest 的 PRODUCT 是兼容主产品，不代表所有输出；消费者解析多输出必须同时验证两份引用，旧消费者不能因已读原 PRODUCT 就声称支持PG03。\n\nBinding与RelationSet的Scope/id/version/bodyDigest必须逐项相等；configurationEvidence须证明与新Baseline所属配置和每个生成操作/输出的配置相同。原兼容主PRODUCT必须准确对应RelationSet中至少一个输出的原productIdentity（允许同产品多次输出，不强行只一项），不能将别的产品的旧Manifest挂到该Baseline。缺这条身份关系不允许Freeze。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "Binding错Scope/version/bodyDigest、原兼容PRODUCT不是任一真实输出、只读PRODUCT就声称多输出支持。",
+      "required_observation": "同时验证原Manifest和新RelationSet/Binding，准确跨引用/配置/主PRODUCT至少匹配一输出；缺任一不给完整输出。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-09",
+      "target": "PLM-REL-01",
+      "title": "多输出摘要canonical及原字节",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 75,
+          "line_end": 75,
+          "excerpt": "摘要各用本schema名加换行作为domain，再对闭合body（排除自身bodyDigest）做canonical JSON SHA-256。关系集数组按精确 occurrence 身份排序、输入引用数组排序并拒绝重复；保业务ID原字节。原Manifest仍用其自己的摘要算法，不能套新domain。存储原完整字节和长度，hash只作加速/完整性，身份比较保Scope+完整原Ref/version。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "乱序/重复输入引用、混用新domain到原Manifest、仅hash代完整Ref身份。",
+      "required_observation": "新schema域分离canonical；数组按occurrence排序并拒绝重复输入引用；保原字节/长度，Scope+完整Ref/version精确比较。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    },
+    {
+      "id": "WP05-01-REVIEW/R1-10",
+      "target": "PLM-REL-01",
+      "title": "冻结写集/错误/未知及消费者采用",
+      "source_refs": [
+        {
+          "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+          "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+          "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+          "line_start": 77,
+          "line_end": 79,
+          "excerpt": "冻结在原ENG Freeze当前授权/Owner HoldExact/全技术头和Policy复核后，同事务追加新Baseline、原Manifest绑定、新RelationSet、BaselineOutputBinding、Receipt和Outbox；已有历史Baseline不附加一份新关系谎称原时点已有。旧Baseline需要补多输出能力时，生成合法后继Baseline并走原评审/变更/Freeze要求；不自动扩大原批准范围。\n\n同命令同body返回原回执，异体409；来源或配置漂移412；缺映射/不支持的旧消费者422 REQUIRED_OUTPUT_MAPPING；Owner不可得503，无新Baseline。未知提交只查原Freeze命令，不重新Freeze。新读者按Baseline准确固定的两份digest读取；缺一项不返回不完整“全部输出”。这些错误为本适配能力目录的定义，既有封闭错误wire经有版本错误适配投影，不在旧枚举中暗加值。"
+        }
+      ],
+      "revision_action": "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING",
+      "prior_basis_ids": [],
+      "gap_or_reuse_reason": "Existing R1 summary/detail cases and generic overlays cover the principal mechanism, but the pinned bounded revision has more exact field, capacity, canonicalization and recovery conditions; link each condition to an executable observation instead of treating vector count as full coverage.",
+      "scenario": "原Baseline事后补关系、Freeze提交后响应丢失、旧consumer缺输出映射、Owner不可得。",
+      "required_observation": "ENG本地完整同事务后继冻结；原key查回；缺映射422 REQUIRED_OUTPUT_MAPPING、源配置漂移412、异体409、Owner503且无新Baseline；旧封闭wire只经版本化错误适配；REL实际读用证据另列。",
+      "owner_scope": "Only target responsibility; original OA/ENG providers supply independently verified source facts",
+      "runtime_state": "NOT_RUN",
+      "approval_state": "PROPOSED"
+    }
+  ],
+  "summary": {
+    "REUSE_WITH_EXACT_WORKBOOK_LINK": 8,
+    "ADD_EXPLICIT_OBSERVATION": 21,
+    "ADD_EXACT_SOURCE_MAPPING": 3,
+    "REUSE_CONFLICT_DISPOSITION": 1,
+    "ADD_EXACT_OBSERVATION_OR_EXPLICIT_REUSE_MAPPING": 10
+  },
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.1.0-proposed",
+  "base_version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.0.0-proposed",
+  "base_manifest_sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+  "decision_record": null,
+  "runtime_state": "NOT_RUN",
+  "approval_evidence": [],
+  "review_suggestion_sha256": "ef017002d8fbc01f155dbd315d2b1c59ae7765b5840f912822fc86c87af314bb"
+}

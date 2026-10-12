@@ -1,0 +1,33 @@
+{
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.1.0-proposed",
+  "status": "PROPOSED",
+  "decision_record": null,
+  "base_manifest": {
+    "path": "../../basis-manifest.json",
+    "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee"
+  },
+  "artifacts": [
+    {
+      "path": "README.md",
+      "sha256": "cd19b246f1763c123ab66c0a34ba8b55185eec6eaea097d468470f3a2ec17fcc",
+      "representation": "RAW_FILE_BYTES_UTF8"
+    },
+    {
+      "path": "test-wp05-supplement-checker.py",
+      "sha256": "9be105ae86646db9ab11c12d0a42aa0502ff06ee4a200ac1197389bf2374c60e",
+      "representation": "RAW_FILE_BYTES_UTF8"
+    },
+    {
+      "path": "verify-wp05-supplement.py",
+      "sha256": "843dc0cd305e56c6867c2bf2e4ab9e9c699a0bc9446b42308e8388cd74ebebff",
+      "representation": "RAW_FILE_BYTES_UTF8"
+    },
+    {
+      "path": "wp05-supplement-proposed.json",
+      "sha256": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+      "representation": "RAW_FILE_BYTES_UTF8"
+    }
+  ],
+  "runtime_state": "NOT_RUN",
+  "gate_implementation": "NOT_CHANGED"
+}

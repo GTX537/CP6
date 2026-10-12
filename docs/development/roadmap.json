@@ -158587,6 +158587,11 @@
       "date": "2026-10-12",
       "change": "WP14-01 preparation received and registered for coordinator review/integration now; no retroactive claim, no business PASS.",
       "evidence": "docs/development/deliveries/WP14-01/evidence/coordination/intake.json"
+    },
+    {
+      "date": "2026-10-12",
+      "change": "WP05-01 preparation received and registered for coordinator review/integration now; no retroactive claim, no business PASS.",
+      "evidence": "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json"
     }
   ],
   "implementation_assessment": {
@@ -162558,11 +162563,21 @@
         "Main:engineering-acceptance-basis"
       ],
       "coverage_role": "DESIGN",
-      "state": "PLANNED",
+      "state": "VERIFYING",
       "plan_path": "docs/development/task-plans/WP05.md",
       "card_anchor": "wp05-01",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / WP05-01",
+        "repository": "Main",
+        "branch": "codex/wp05-01-acceptance-basis-20261012",
+        "worktree": "D:/CP6-worktrees/wp05-01-20261012",
+        "claimed_at": "2026-10-12T07:43:09.907345+00:00",
+        "baseline_sha": "2a8dd0eeae27b885f136991b2b215ee7539677d6",
+        "entry_evidence": "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json",
+        "coordination_branch": "codex/integrate-wp05-01-20261012",
+        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation."
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,

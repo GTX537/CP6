@@ -1,0 +1,29 @@
+{
+  "task_id": "WP05-01",
+  "observed_at": "2026-10-12T07:43:09.907345+00:00",
+  "result": "PREPARATION_RECEIVED_FOR_COORDINATED_REVIEW",
+  "preparation_source_sha": "306b1f3ba61456b5dc117189710b37031bf57a19",
+  "main_at_intake": "2a8dd0eeae27b885f136991b2b215ee7539677d6",
+  "coordination_branch": "codex/integrate-wp05-01-20261012",
+  "handoff_messages": [
+    {
+      "task": "wp05-01",
+      "ref": "origin/codex/dev-handoff-wp05-01",
+      "sha": "7d7a53271011dfcc867e5b5c02d23a5740e114cb",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP05-01/messages/20261012T060646Z-c-start/MESSAGE.md"
+    },
+    {
+      "task": "wp05-01",
+      "ref": "origin/codex/dev-handoff-wp05-01",
+      "sha": "7d7a53271011dfcc867e5b5c02d23a5740e114cb",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP05-01/messages/20261012T061531Z-c-design-delivery/MESSAGE.md"
+    }
+  ],
+  "entry_gate": "CONFIRMED",
+  "scope": "Private preparation received; present-time coordinator registration, no retroactive implementation authorization. Only this task review/integration window. No downstream implementation, database or deployment.",
+  "shared_state_writer": "COORD in this integration branch only",
+  "exclusive_resources": [
+    "Main:engineering-acceptance-basis"
+  ],
+  "business_tests": "NOT_RUN"
+}

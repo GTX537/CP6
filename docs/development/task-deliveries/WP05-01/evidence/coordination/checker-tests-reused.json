@@ -1,0 +1,281 @@
+{
+  "scope": "SUPPLEMENT_CHECKER_ONLY; no business tests",
+  "result": "PASS",
+  "tests": 24,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "positive",
+      "test_result": "PASS",
+      "expected_checker_result": "PASS",
+      "checker_exit": 0,
+      "checker_result": "PASS",
+      "errors": []
+    },
+    {
+      "name": "wrong_cell_text",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: exact workbook cell mismatch: 引数説明!P10"
+      ]
+    },
+    {
+      "name": "missing_cell",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: exact workbook cell mismatch: 引数説明!ZZ9999"
+      ]
+    },
+    {
+      "name": "wrong_excerpt",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/CP22-01: exact line excerpt mismatch"
+      ]
+    },
+    {
+      "name": "wrong_line_range",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/CP22-01: exact line excerpt mismatch"
+      ]
+    },
+    {
+      "name": "wrong_source_hash",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/CP22-01: source pin differs from registered source"
+      ]
+    },
+    {
+      "name": "git_revision_drift",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/R1-01: Git revision must match registered fixed blob"
+      ]
+    },
+    {
+      "name": "unknown_prior_id",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: unknown predecessor ID"
+      ]
+    },
+    {
+      "name": "runtime_pass",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: must remain PROPOSED/NOT_RUN"
+      ]
+    },
+    {
+      "name": "approval_record",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "no formal adoption decision permitted"
+      ]
+    },
+    {
+      "name": "row_approval",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: must remain PROPOSED/NOT_RUN"
+      ]
+    },
+    {
+      "name": "row_evidence",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: no approval/runtime evidence permitted"
+      ]
+    },
+    {
+      "name": "missing_row",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "exact 43 supplement IDs required",
+        "supplement action summary differs from actual rows"
+      ]
+    },
+    {
+      "name": "changed_counts",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "declared predecessor counts changed"
+      ]
+    },
+    {
+      "name": "duplicate_json_key",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "input/structure error: duplicate JSON key: status"
+      ]
+    },
+    {
+      "name": "output_overlaps_input",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "output path overlaps a read-only input; report not written"
+      ]
+    },
+    {
+      "name": "missing_archive",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-02: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-03: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-04: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-05: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-06: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-06: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-07: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-08: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-08: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-08: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-09: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-09: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-10: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-11: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-12: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-13: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-14: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-15: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-16: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-16: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-17: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-18: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/WB-18: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\26\\\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx'",
+        "WP05-01-REVIEW/CP22-01: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-02: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-03: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-04: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-05: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-06: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-07: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-08: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-09: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-10: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-11: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-12: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-13: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-14: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'",
+        "WP05-01-REVIEW/CP22-15: source locator error: [Errno 2] No such file or directory: 'C:\\\\Users\\\\tt\\\\CP6-planning-reports\\\\20261012-first-wave-review\\\\wp05-checker-tests-green\\\\nonexistent-archive\\\\docs\\\\CP6_完整成果归档_20261009\\\\完整成果\\\\docs\\\\originals\\\\cb\\\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md'"
+      ]
+    },
+    {
+      "name": "unregistered_source",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: source locator error: unsafe source path"
+      ]
+    },
+    {
+      "name": "changed_base_manifest",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "base manifest byte hash changed"
+      ]
+    },
+    {
+      "name": "changed_old_artifact",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "base artifact byte hash changed: README.md"
+      ]
+    },
+    {
+      "name": "git_pin_ignores_same_name_current_file",
+      "test_result": "PASS",
+      "expected_checker_result": "PASS",
+      "checker_exit": 0,
+      "checker_result": "PASS",
+      "errors": []
+    },
+    {
+      "name": "json_pointer_positive",
+      "test_result": "PASS",
+      "expected_checker_result": "PASS",
+      "checker_exit": 0,
+      "checker_result": "PASS",
+      "errors": []
+    },
+    {
+      "name": "json_pointer_wrong_value",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: exact JSON pointer value mismatch"
+      ]
+    },
+    {
+      "name": "json_pointer_invalid_index",
+      "test_result": "PASS",
+      "expected_checker_result": "FAIL",
+      "checker_exit": 1,
+      "checker_result": "FAIL",
+      "errors": [
+        "WP05-01-REVIEW/WB-01: source locator error: invalid JSON array index"
+      ]
+    }
+  ]
+}

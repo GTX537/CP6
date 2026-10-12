@@ -1,0 +1,32 @@
+{
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.0.0-proposed",
+  "status": "PROPOSED",
+  "serialization": "UTF-8 LF; .gitattributes fixes task artifact line endings. External source files retain original raw bytes.",
+  "artifacts": [
+    {
+      "path": "README.md",
+      "sha256": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976"
+    },
+    {
+      "path": "sources.json",
+      "sha256": "c2b160e90dbce013cca1990b7189b68e8e3f51998ae891d1f364b4db4da165fc"
+    },
+    {
+      "path": "cases.json",
+      "sha256": "385c4dd12cb13a9efda4485d0b2a8b3810b85d189683caa97ca6e9829f46b563"
+    },
+    {
+      "path": "normative-coverage.json",
+      "sha256": "64f4eed670dd8cf1c56905c51e3aa2ec1122757e6761f0a49af5a2b2bbd4b90a"
+    },
+    {
+      "path": "coverage.md",
+      "sha256": "ab8f1a4208755966acb2ca0e27b978b958262ac29e48087071fa85726162cb6a"
+    },
+    {
+      "path": "adoption.json",
+      "sha256": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403"
+    }
+  ],
+  "approval_rule": "Future adoption record binds this manifest SHA-256; append the decision separately, never fill approval fields by rewriting this proposal."
+}

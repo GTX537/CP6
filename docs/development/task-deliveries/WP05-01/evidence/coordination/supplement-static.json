@@ -1,0 +1,99 @@
+{
+  "scope": "WP05_SUPPLEMENT_STATIC_INTEGRITY_ONLY",
+  "result": "PASS",
+  "checked_at_utc": "2026-10-12T07:52:01.151991+00:00",
+  "checker_sha256": "843dc0cd305e56c6867c2bf2e4ab9e9c699a0bc9446b42308e8388cd74ebebff",
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.1.0-proposed",
+  "base_manifest_sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+  "input_hashes": [
+    {
+      "role": "SUPPLEMENT",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\supplements\\review-r1\\wp05-supplement-proposed.json",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+      "bytes": 98184
+    },
+    {
+      "role": "BASE_MANIFEST",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\basis-manifest.json",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+      "bytes": 1161
+    },
+    {
+      "role": "BASE_NORMATIVE_ARTIFACT",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\README.md",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+      "bytes": 16704
+    },
+    {
+      "role": "BASE_NORMATIVE_ARTIFACT",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\sources.json",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "c2b160e90dbce013cca1990b7189b68e8e3f51998ae891d1f364b4db4da165fc",
+      "bytes": 20958
+    },
+    {
+      "role": "BASE_NORMATIVE_ARTIFACT",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\cases.json",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "385c4dd12cb13a9efda4485d0b2a8b3810b85d189683caa97ca6e9829f46b563",
+      "bytes": 489455
+    },
+    {
+      "role": "BASE_NORMATIVE_ARTIFACT",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\normative-coverage.json",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "64f4eed670dd8cf1c56905c51e3aa2ec1122757e6761f0a49af5a2b2bbd4b90a",
+      "bytes": 481601
+    },
+    {
+      "role": "BASE_NORMATIVE_ARTIFACT",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\coverage.md",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "ab8f1a4208755966acb2ca0e27b978b958262ac29e48087071fa85726162cb6a",
+      "bytes": 54722
+    },
+    {
+      "role": "BASE_NORMATIVE_ARTIFACT",
+      "path": "D:\\CP6-worktrees\\fw-s02-1012\\docs\\development\\task-deliveries\\WP05-01\\adoption.json",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+      "bytes": 1778
+    },
+    {
+      "role": "PINNED_SOURCE",
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\26\\262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+      "bytes": 1345291
+    },
+    {
+      "role": "PINNED_SOURCE",
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\cb\\cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+      "representation": "RAW_FILE_BYTES",
+      "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+      "bytes": 26575
+    },
+    {
+      "role": "PINNED_SOURCE",
+      "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "git_object": "92fb94db40c54be90f2fbb18b0922d264c060796:docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+      "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+      "bytes": 16851
+    }
+  ],
+  "checks": 581,
+  "source_refs_checked": 49,
+  "errors": [],
+  "runtime_result": "NOT_RUN",
+  "adoption": "PROPOSED",
+  "limitations": [
+    "No source program, Office formula, business service, database or GitHub Actions executed.",
+    "Only source integrity, locator equality and stated boundaries checked; not semantic completeness or formal approval.",
+    "No WP01-01 completion gate implementation, task delivery or remote-main inclusion certified."
+  ]
+}

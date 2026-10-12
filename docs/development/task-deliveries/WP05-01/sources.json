@@ -1,0 +1,444 @@
+{
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.0.0-proposed",
+  "source_main_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+  "resolution": "REPOSITORY_ROOT is the exact Git blob at source_main_sha (not CRLF worktree bytes); EXTERNAL_ARCHIVE_ROOT is an explicitly supplied read-only archive root containing the recorded docs/ path. Missing files or mismatched raw bytes fail verification, never fetch/execute archive scripts.",
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/08/089216a4b4fea2d5__089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397.md",
+      "sha256": "089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "R1_PINNED_ORIGINAL_EVIDENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0cc2a482fd1dc879__OA-APP-01_业务审批绑定与回调_前后端开发Spec_v1.1.2_R2_REVIEW.md",
+      "sha256": "0cc2a482fd1dc8790f19239f5965e437948c6c9c92929f94b4e32fdd6319891c",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "R1_PINNED_ORIGINAL_EVIDENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1799cd319ae35310__03_ENG_当前阅读主册.md",
+      "sha256": "1799cd319ae35310f55906982709a48c70fe2704561dc9860174b485b1822046",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "R1_PINNED_ORIGINAL_EVIDENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1c/1c6dc5f451727af6__APR-CP6-PLM-PG05-001.md",
+      "sha256": "1c6dc5f451727af6b7c9ccf0a32162b56e5d8bb79b3ab681f12cef8836404ed5",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "HISTORICAL_ACCEPTANCE_SCOPE; not approval of this proposal",
+        "PG05_CURRENT_INTERPRETATION"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1e/1e38c856658a90ee__APR-CP6-PLM-LR02-001.md",
+      "sha256": "1e38c856658a90ee0bd2f2df4801ea3e9d43f5610b69fe44f5a79ffc2d5a36bb",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "HISTORICAL_ACCEPTANCE_SCOPE; not approval of this proposal"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+      "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "EXISTING_WORKBOOK_IDENTITY_ONLY; reuse handbook structural reading; no new spreadsheet inspection"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/49/494874d64b6ea002__494874d64b6ea00296952b1ee5f5a354aa65dfef7ba28dc1345569ce67861413.md",
+      "sha256": "494874d64b6ea00296952b1ee5f5a354aa65dfef7ba28dc1345569ce67861413",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "RECOVERED_ASSERTION_SOURCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735eb6730e4b3da9__APR-CP6-PLM-ITER-001.md",
+      "sha256": "735eb6730e4b3da980bb5b2c6fd0019060632589212a3475d3ceffc9095fc592",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "HISTORICAL_ACCEPTANCE_SCOPE; not approval of this proposal"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/91/91d8e410e97efec2__APR-CP6-PLM-LR03-001.md",
+      "sha256": "91d8e410e97efec292caff9ddcadf2f237c0fcfbc173d2ae8eca459ed415b4df",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "HISTORICAL_ACCEPTANCE_SCOPE; not approval of this proposal"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/af24ff3fcb3afc74__af24ff3fcb3afc740e6cf48f44c71405ba05e011ac10296c421867556af4cf00.md",
+      "sha256": "af24ff3fcb3afc740e6cf48f44c71405ba05e011ac10296c421867556af4cf00",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "RECOVERED_ASSERTION_SOURCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/afa3c98b659bf428__afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992.html",
+      "sha256": "afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "R1_PINNED_ORIGINAL_EVIDENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c2/c2dee1a8a4fe99ba__APR-CP6-PLM-PG03-001.md",
+      "sha256": "c2dee1a8a4fe99ba34beda2b70ac08b106290ed5bebb8a36dbc79b2644fbd889",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "HISTORICAL_ACCEPTANCE_SCOPE; not approval of this proposal"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+      "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "R1_PINNED_ORIGINAL_EVIDENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d91d16d032b72581__d91d16d032b7258126df131c273ce66609ce2b4ba8f8c01a7b62166466da1570.md",
+      "sha256": "d91d16d032b7258126df131c273ce66609ce2b4ba8f8c01a7b62166466da1570",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "RECOVERED_ASSERTION_SOURCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e7/e701805556f66fec__APR-CP6-PLM-FB01-001.md",
+      "sha256": "e701805556f66fec32128607d1f3aa242a05799902aa076c8f01fea7d2a9c38a",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "HISTORICAL_ACCEPTANCE_SCOPE; not approval of this proposal"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ea/eabf3c93fcbba8b3__APR-CP6-PLM-FB02-001.md",
+      "sha256": "eabf3c93fcbba8b39dc41f281cfa3f5f9b8c7eebc84dbb7ce1317291a966a3dd",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "HISTORICAL_ACCEPTANCE_SCOPE; not approval of this proposal"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+      "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "CURRENT_BODY_AND_LEGACY_GAP_DECLARATION",
+        "R1_PINNED_ORIGINAL_EVIDENCE",
+        "RECOVERED_ASSERTION_SOURCE",
+        "NORMATIVE_REFERENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb9e104758448081__05_REL_当前阅读主册.md",
+      "sha256": "eb9e1047584480810b58fdf17ea102ad986c4a2252c66dfb66c7f62fcbe23d26",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "CURRENT_BODY_AND_LEGACY_GAP_DECLARATION",
+        "NORMATIVE_REFERENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8187487d223de16__f8187487d223de16d39b5717c08264e42964b0b4bb5083e40b3dea765bd13bc3.md",
+      "sha256": "f8187487d223de16d39b5717c08264e42964b0b4bb5083e40b3dea765bd13bc3",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "RECOVERED_ASSERTION_SOURCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbea5fc28e708764__fbea5fc28e708764dd16175b9392279fa1cddf5ea90fb97feaff9bafb0d74860.md",
+      "sha256": "fbea5fc28e708764dd16175b9392279fa1cddf5ea90fb97feaff9bafb0d74860",
+      "representation": "RAW_FILE_BYTES",
+      "git_revision": null,
+      "location": "EXTERNAL_ARCHIVE_ROOT",
+      "roles": [
+        "RECOVERED_ASSERTION_SOURCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+      "sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-REL-01.md",
+      "sha256": "40590a31aabf147120b36327da53be30cd85a5696a49a83c85254699c3a6981d",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/00-disposition-register.json",
+      "sha256": "328eba952efffba44ad0ae2e3361f97a0bf10237902750887e1d4307ee47886b",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "BOUNDED_REVISION_AUTHORITY"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/01-version-and-authority.md",
+      "sha256": "495c8a2b821d3c5aed2b7d40e743351db6b3b8e4615f8d8f9bc25cd998fd1a7e",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+      "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+      "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "R1_CASE_CATALOG",
+        "NORMATIVE_REFERENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/shared-consumers/acceptance.json",
+      "sha256": "4e589811ec08e50b2c847515eaa9b779f45ed1aeb041bc96667b60d142640f68",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "R1_DETAIL_VECTORS",
+        "NORMATIVE_REFERENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/shared-consumers/oa-field-mapping-1.0.0.json",
+      "sha256": "35202e7e4d4b84b8ce383fe52e6b24e96cd79ba6ef1a0f0a768a2ff63b14880e",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+      "sha256": "ac9800c525e96c9164f6728f4174fbac8f099159d73cab5c0f4ff67d01b46178",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/shared-consumers/validation.json",
+      "sha256": "bb7392e70c455ed47f0e0eeaafe40763e5ac4306c138f0ad4b46d6a2580dec0a",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/06-first-slices.md",
+      "sha256": "d1f2be263c3b13a1570608fbe5d849b0f37a97edec25b241cd7c153ab9897636",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/08-postgresql-baseline.md",
+      "sha256": "b07b25829750b6c25b22472ac6834f961a627cc80146e1750597af7654ab699c",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/09-parallel-development.md",
+      "sha256": "5d5da99193c5c08df8774268a6eff59fbd9111601a0cfbf52b352c315b253c38",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+      "sha256": "7cda9eaf0a7bc91338e61672e5a6a0a4059d2f52f6388bdccd3c16022f07bd6b",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "RECOVERED_CASE_CATALOG",
+        "NORMATIVE_REFERENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/assessments/20261011/implementation-assessment.json",
+      "sha256": "ebab2fbbc2ffdc02abcf58b4eb75358ea3db3d03e5529f47886dd58bce100cb8",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "sha256": "271b76471f4c35f3f1eaa0abf9394c4316dd78e391805ecf4e2b033a77e2ba62",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "BASELINE_STATE_REFERENCE"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/task-definitions.json",
+      "sha256": "5905f378d49459427801c27b7779bae1715164895958c8a0a5f8a9b880728195",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    },
+    {
+      "path": "docs/development/tools/manage_roadmap.py",
+      "sha256": "e1a86a1c26cb2fc928d4eb2a5baf1261e46cd60ab9735846fdfc476a03db2e4a",
+      "representation": "GIT_BLOB_BYTES",
+      "git_revision": "92fb94db40c54be90f2fbb18b0922d264c060796",
+      "location": "REPOSITORY_ROOT",
+      "roles": [
+        "CONTEXT_OR_BOUNDED_NORMATIVE_INPUT"
+      ],
+      "reading_scope": "IDENTITY_AND_REFERENCED_EXCERPTS_ONLY; not a new full-text or Office visual review"
+    }
+  ]
+}

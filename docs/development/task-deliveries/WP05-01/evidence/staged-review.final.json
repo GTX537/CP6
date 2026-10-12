@@ -1,0 +1,32 @@
+{
+  "scope": "FINAL_STAGED_TASK_REVIEW",
+  "result": "PASS",
+  "checked_at_utc": "2026-10-12T06:12:30.745039+00:00",
+  "reviewed_base_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+  "normative_manifest_sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+  "staged_paths": [
+    "docs/development/task-deliveries/WP05-01/.gitattributes",
+    "docs/development/task-deliveries/WP05-01/README.md",
+    "docs/development/task-deliveries/WP05-01/adoption.json",
+    "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+    "docs/development/task-deliveries/WP05-01/cases.json",
+    "docs/development/task-deliveries/WP05-01/coverage.md",
+    "docs/development/task-deliveries/WP05-01/delivery.md",
+    "docs/development/task-deliveries/WP05-01/evidence/staged-byte-check.failure.json",
+    "docs/development/task-deliveries/WP05-01/evidence/static-check.final.json",
+    "docs/development/task-deliveries/WP05-01/evidence/static-check.initial.json",
+    "docs/development/task-deliveries/WP05-01/normative-coverage.json",
+    "docs/development/task-deliveries/WP05-01/sources.json",
+    "docs/development/task-deliveries/WP05-01/verify.py"
+  ],
+  "checks": [
+    "Only task-owned files staged; no global status, business code, original design, gate or workflow edits.",
+    "All six normative artifacts hash-match exact Git staged bytes.",
+    "git diff --cached --check passed.",
+    "No credential-pattern matches.",
+    "Self-review: no blocking design defect; historical gaps and undecided parameters retained; formal adoption and completion-gate implementation still pending."
+  ],
+  "business_runtime": "NOT_RUN",
+  "adoption": "PROPOSED",
+  "remote_main_contains_task": false
+}
