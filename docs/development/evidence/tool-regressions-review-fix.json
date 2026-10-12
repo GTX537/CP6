@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-12T00:42:05.294685+00:00",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "docs/development/tools",
+    "-p",
+    "test_*.py"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "..................\n----------------------------------------------------------------------\nRan 18 tests in 0.603s\n\nOK\n",
+  "scope": "Registrar tests after WP01 inventory guard fix; in-memory fixtures only; previous 15-test report retained in tool-regressions.json",
+  "business_tests_executed": false,
+  "file_sha256": {
+    "docs/development/tools/manage_roadmap.py": "342241589716b26a1aeeaa7bf2e5d50c12afdbef7d3b3e96940cd8834326f02a",
+    "docs/development/tools/test_manage_roadmap.py": "bae41db0a1d3898411149b28ea872b964f9b4876e387f6852f4e2339bee53965"
+  },
+  "interpreter_version": "CPython 3.13"
+}

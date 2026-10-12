@@ -25,7 +25,7 @@
     {
       "id": "MAIN",
       "source_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
-      "scope": "本轮固定提交的路径存在性盘点，非逐方法正确性/运行验证",
+      "scope": "本轮固定提交的路径存在性盘点；tracked_file_count为指定目录下全部受跟踪文件数，不按扩展名筛选；非逐方法正确性/运行验证",
       "entries": [
         {
           "prefix": "CP6.Core/Services/Erp/",
@@ -129,7 +129,7 @@
         },
         {
           "prefix": "CP6.Space.Application/",
-          "tracked_file_count": 85,
+          "tracked_file_count": 86,
           "examples": [
             "CP6.Space.Application/SpaceAiAdministration.cs",
             "CP6.Space.Application/SpaceAiAtomicApply.cs",
@@ -147,11 +147,11 @@
     {
       "id": "CRM",
       "source_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
-      "scope": "本轮固定提交的路径存在性盘点，非逐方法正确性/运行验证",
+      "scope": "本轮固定提交的路径存在性盘点；tracked_file_count为指定目录下全部受跟踪文件数，不按扩展名筛选；非逐方法正确性/运行验证",
       "entries": [
         {
           "prefix": "apps/web/app/",
-          "tracked_file_count": 13,
+          "tracked_file_count": 23,
           "examples": [
             "apps/web/app/(crm)/crm/leads/[leadId]/page.tsx",
             "apps/web/app/(crm)/crm/leads/intake/[submissionId]/page.tsx",
@@ -172,11 +172,11 @@
     {
       "id": "PLATFORM",
       "source_sha": "30bd23af6808d217a23878bd9437513043c52834",
-      "scope": "本轮固定提交的路径存在性盘点，非逐方法正确性/运行验证",
+      "scope": "本轮固定提交的路径存在性盘点；tracked_file_count为指定目录下全部受跟踪文件数，不按扩展名筛选；非逐方法正确性/运行验证",
       "entries": [
         {
           "prefix": "src/CP6.Platform.EntityFramework/",
-          "tracked_file_count": 8,
+          "tracked_file_count": 9,
           "examples": [
             "src/CP6.Platform.EntityFramework/Cp6EntityFrameworkTelemetry.cs",
             "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",

@@ -53,6 +53,8 @@ python -m unittest discover -s docs/development/tools -p "test_*.py"
 - `implementation_evidence`记载实际代码和相关验证；`delivery_evidence`包含`path/source_sha/scope/remote_main_sha/pr_url`，报告能证明目标仓库远端主线包含交付，并记录必要合并后检查或准确复用范围。
 - 人工任务级审查已确认范围完整、证据有效。工具只检查结构、来源和引用，不替代审查、不查询外部运行结果，也不自动认证远端包含性。
 
+WP01完成要求全部125目标的实现评估和待决策事项关闭，原验收清单全部为`COMPLETE`且非空、无重复。此处完成的是盘点，清单里的业务场景仍可为`NOT_RUN`；业务目标交付时才要求实际通过。
+
 ## 验收目录边界
 
 [本轮修订验收目录](../design-handbook/remediation/08-acceptance-catalog.json)共288条：247条运行/采用场景、41条已执行的历史静态检查。台账保留全部映射，后41条为`REFERENCE_ONLY`，永不计入新运行通过数。

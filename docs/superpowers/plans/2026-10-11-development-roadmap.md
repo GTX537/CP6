@@ -18,7 +18,9 @@
 - [x] 创建`docs/development/roadmap.json`，14包分别写明成果、子范围、粗略规模及风险；125目标唯一归属；247运行场景和41历史静态记录分开登记。
 - [x] 创建`docs/development/{README,01-work-packages,02-target-coverage,03-progress,04-batches}.md`，定义依赖、切片准入、状态和证据规则。
 - [x] 创建`docs/development/tools/manage_roadmap.py`及定向回归，验证重复归属、缺失范围、无证据通过、静态/运行混淆及空验收假完成，生成三份视图。
-- [ ] 集中审查完整diff，执行本地结构与相关回归检查，按正常保护流程交付；实际回执另存，不以此复选项推断远端状态。
+- [x] 集中审查完整diff并定向复审修正：WP01关闭必须完成原验收盘点，源码入口计数采用目录全部受跟踪文件。18项工具回归及结构/生成视图检查通过，140个本地链接检查按未变更链接范围复用。
+
+审查记录见`docs/development/evidence/task-review.json`。后续交付采用正常受保护PR流程；实际远端包含性回执另存，不以本地检查复选项推断远端状态。
 
 项目状态入口同步更新`PROJECT_STATE.md`、`05-Completed.md`、`06-Todo.md`、`CHANGELOG-AI.md`及设计手册导航。原归档、R1资产与历史接受不修改。
 

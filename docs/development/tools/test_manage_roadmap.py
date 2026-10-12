@@ -82,6 +82,35 @@ class ProgressIntegrityTests(unittest.TestCase):
         self.data["targets"][0]["delivery_state"] = "BLOCKED"
         self.reject("BLOCKED requires a concrete blocker")
 
+    def prepare_assessed_wp01(self):
+        # In-memory metadata only; inventory completion does not mean runtime PASS.
+        evidence = {"path": "docs/development/README.md", "source_sha": self.data["main_baseline_sha"], "scope": "unit fixture only"}
+        package = next(p for p in self.data["work_packages"] if p["id"] == "WP01")
+        package.update(state="DONE", evidence=[evidence])
+        for target in self.data["targets"]:
+            target.update(assessment="REUSE_CONFIRMED", assessment_evidence=[evidence])
+
+    def test_wp01_cannot_close_without_original_inventories(self):
+        self.prepare_assessed_wp01()
+        self.reject("WP01: original acceptance inventory remains open")
+
+    def test_wp01_cannot_close_with_empty_or_duplicate_inventory(self):
+        self.prepare_assessed_wp01()
+        for target in self.data["targets"]:
+            target["original_acceptance_inventory"].update(state="COMPLETE", cases=[{"id": "fixture-ac", "state": "NOT_RUN"}])
+        inventory = self.data["targets"][0]["original_acceptance_inventory"]
+        for cases in ([], [{"id": "duplicate", "state": "NOT_RUN"}] * 2):
+            with self.subTest(cases=cases):
+                inventory["cases"] = cases
+                self.reject("original acceptance inventory empty/duplicated")
+
+    def test_wp01_inventory_completion_does_not_require_runtime_pass(self):
+        self.prepare_assessed_wp01()
+        for target in self.data["targets"]:
+            target["original_acceptance_inventory"].update(state="COMPLETE", cases=[{"id": "fixture-ac", "state": "NOT_RUN"}])
+        self.assertEqual(roadmap.validate(self.data, ROOT, check_pins=False), [])
+        self.assertEqual(roadmap.metrics(self.data)["runtime_states"], {"NOT_RUN": 247})
+
     def test_count_each_runtime_case_once(self):
         metrics = roadmap.metrics(self.data)
         consumer_count = sum(len(t["runtime_case_ids"]) for t in self.data["targets"])

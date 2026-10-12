@@ -90,6 +90,8 @@ def validate(data, root: Path, *, check_pins=True):
                 errors.append(f"{p['id']}: DONE requires completion evidence")
             if p["id"] == "WP01" and any(t["assessment"] in {"PENDING", "DECISION_REQUIRED"} for t in targets.values()):
                 errors.append("WP01: detailed assessment or decision remains open")
+            if p["id"] == "WP01" and any(t["original_acceptance_inventory"]["state"] != "COMPLETE" for t in targets.values()):
+                errors.append("WP01: original acceptance inventory remains open")
             if p["id"] == "WP14" and any(t["delivery_state"] != "DONE" for t in targets.values()):
                 errors.append("WP14: full-baseline closeout requires all target deliveries")
     for c in cases.values():
