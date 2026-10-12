@@ -66,6 +66,10 @@
       "sha256": "e8b9a3eb2bcfa4647b525e2cc4f3ce241370e0decd53873e6606c121a3d17778"
     },
     {
+      "path": "docs/development/deliveries/WP14-01/evidence/main-refresh.json",
+      "sha256": "28b240eb43b956df8c2c9603ffd3ed4be2673e64d59303ee755a150b84f72eb7"
+    },
+    {
       "path": "docs/development/deliveries/WP14-01/evidence/mapping-check.json",
       "sha256": "d0fd50d74f55e506cd85d7614e650766243d41e5feb0c7e4b430e226ae517d85"
     },
@@ -115,7 +119,7 @@
     },
     {
       "path": "docs/development/deliveries/WP14-01/REPORT.md",
-      "sha256": "7a62f2796c43bf15125980497f1e92e9f0ef1538e15277ab1ed6116c2eff59de"
+      "sha256": "283684ba897b3c1f46522a24ca3ad625a928dd98e59c9c606f5ab9d81260f8a0"
     },
     {
       "path": "docs/development/deliveries/WP14-01/requirements.json",
@@ -152,5 +156,12 @@
     "exit_code": 0,
     "scope": "all staged task files"
   },
-  "newline_policy": "Task-private .gitattributes pins LF for generated indexes and evidence; final index bytes checked against local files. No shared attributes/config changed."
+  "newline_policy": "Task-private .gitattributes pins LF for generated indexes and evidence; final index bytes checked against local files. No shared attributes/config changed.",
+  "post_main_refresh": {
+    "observed_at": "2026-10-12T06:01:49.687961+00:00",
+    "remote_main_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+    "report_local_links_checked": 12,
+    "result": "PASS",
+    "scope": "Changed communication prose and main-refresh record only; fixed catalogs/matrix/source checks reused without re-execution"
+  }
 }

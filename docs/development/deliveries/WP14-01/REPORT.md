@@ -27,7 +27,9 @@ git diff --check
 
 ## 协调交接
 
-本对话按执行对话 D 的范围准备私有材料。观察到最新主线 WP14-01 的 assignment 为空、entry_gate=NOT_CHECKED；协调对话归属/共享写入与合并窗口尚未确认，因此没有在其他任务并行工作时自行改 roadmap、生成页或四份项目状态文件，也没有自行登记 DONE。
+本对话按执行对话 D 的范围准备私有材料。推送前主线更新为 `92fb94db40c54be90f2fbb18b0922d264c060796`（PR175），新增用户指定的 CP6.AI-Handoff 直接交接通道。已读取协调入口固定提交 `e476bc58b05349c34c9361b4af2f0cde1ce92aea` 的 `handoffs/CP6-DEV-20261012/README.md`，按本人资料分支 `codex/dev-handoff-wp14-01` 直接提交 START/DELIVERY，无需用户转述。最新台账中本任务 assignment 仍为空、entry_gate=NOT_CHECKED，故保留为私有准备候选，未自行改共享状态或登记 DONE。
+
+本轮主线更新仅改 AGENTS、协作入口和四份状态页，原验收/修订目录、台账、任务定义、业务源码及工作流均未变；既有文档验证仍适用。首次推送前安全检查发现远端 SHA 改变后停止，未执行推送；随后明确核对新增沟通规则和两端工作流，记录见 [主线刷新](evidence/main-refresh.json)。本任务准备快照继续保留原 df5553fd 来源身份，不把新协调规则混写成原验收来源。
 
 协调者接收后，在一个串行窗口完成以下事项，不能省略后声称全任务已交付：
 
