@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-12：第二轮代码候选接收与协调审查
+
+COORD已实际读取S01-02、S01-05、S01-09的START和DELIVERY，三项登记VERIFYING；不回填此前协调ACK。候选分别报告77、202、110项本地检查，本轮独立核对实际源码、固定向量及测试证据后再正常保护合并。共享状态串行维护，远端main包含前不登记DONE。业务目标0/125及247运行NOT_RUN保持。 [固定接收记录](../development/evidence/wave2-integration-20261012/intake.json)。
+
 ## 2026-10-12：WP01-02派工设计交付确认
 
 WP01-02经PR182及真实远端回执登记DONE；A/B/C的S01-02、S01-05、S01-09保持READY并等待实际START，D本轮未分配。共享台账继续由COORD串行处理；业务目标/运行状态及WP05采纳未提升。 [交付与复用](../development/evidence/WP01-02/README.md)。

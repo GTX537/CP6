@@ -158792,7 +158792,7 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "READY",
+      "state": "VERIFYING",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
@@ -158808,15 +158808,18 @@
         "claimed_at": "2026-10-12T09:00:02.772472+00:00",
         "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
-        "dispatch_scope": "Coordinator assignment authorized by user continuation; worker START not received. READY does not mean IN_PROGRESS.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual worker START and candidate DELIVERY read by COORD at coordinator_received_at; independent review and serial integration pending. worker_ack_at is the worker-reported START time, not a backdated COORD ACK.",
+        "worker_ack_at": "2026-10-12T10:47:01Z",
         "allowed_write_paths": [
           "CP6.Entity/Contracts/Wire/",
           "eng/contracts/exact-values-tests/",
           "docs/development/evidence/S01-02/"
         ],
         "handoff_branch": "codex/dev-handoff-s01-02",
-        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+        "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
+        "execution_baseline_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -158897,7 +158900,7 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "READY",
+      "state": "VERIFYING",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
@@ -158913,14 +158916,17 @@
         "claimed_at": "2026-10-12T09:00:02.772472+00:00",
         "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
-        "dispatch_scope": "Coordinator assignment authorized by user continuation; worker START not received. READY does not mean IN_PROGRESS.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual worker START and candidate DELIVERY read by COORD at coordinator_received_at; independent review and serial integration pending. worker_ack_at is the worker-reported START time, not a backdated COORD ACK.",
+        "worker_ack_at": "2026-10-12T10:48:46Z",
         "allowed_write_paths": [
           "cp6.web/src/contracts/exact/",
           "docs/development/evidence/S01-05/"
         ],
         "handoff_branch": "codex/dev-handoff-s01-05",
-        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+        "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
+        "execution_baseline_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -159032,7 +159038,7 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "READY",
+      "state": "VERIFYING",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
@@ -159048,8 +159054,8 @@
         "claimed_at": "2026-10-12T09:00:02.772472+00:00",
         "baseline_sha": "30bd23af6808d217a23878bd9437513043c52834",
         "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
-        "dispatch_scope": "Coordinator assignment authorized by user continuation; worker START not received. READY does not mean IN_PROGRESS.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual worker START and candidate DELIVERY read by COORD at coordinator_received_at; independent review and serial integration pending. worker_ack_at is the worker-reported START time, not a backdated COORD ACK.",
+        "worker_ack_at": "2026-10-12T10:50:10.4320379Z",
         "allowed_write_paths": [
           "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
           "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
@@ -159061,7 +159067,10 @@
           "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj"
         ],
         "handoff_branch": "codex/dev-handoff-s01-09",
-        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+        "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
+        "execution_baseline_sha": "30bd23af6808d217a23878bd9437513043c52834",
+        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
