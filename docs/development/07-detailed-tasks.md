@@ -138,7 +138,7 @@
 
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
-| [WP05-01 S00：ITER/REL缺失原验收的替代依据设计](../../docs/development/task-plans/WP05.md#wp05-01) | Main | 待安排 | 无任务前置，仍需准入核对 | DESIGN / M | 未领取 |
+| [WP05-01 S00：ITER/REL缺失原验收的替代依据设计](../../docs/development/task-plans/WP05.md#wp05-01) | Main | 验收中 | 无任务前置，仍需准入核对 | DESIGN / M | C / WP05-01 |
 | [WP05-02 工程产品身份与经营料号双Owner映射](../../docs/development/task-plans/WP05.md#wp05-02) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP04-33 | CODE / M | 未领取 |
 | [WP05-03 工程修订、工作快照与组成候选](../../docs/development/task-plans/WP05.md#wp05-03) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP05-02 | CODE / L | 未领取 |
 | [WP05-04 旧版模写入口的版本与原事务兼容](../../docs/development/task-plans/WP05.md#wp05-04) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13 | CODE / L | 未领取 |

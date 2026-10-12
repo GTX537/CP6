@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-12：WP05-01 设计准备接收与集中审查
+
+COORD实际读取Handoff固定消息后在当前时点确认领取/交付窗口并登记VERIFYING，不回填虚构早期准入。ITER/REL版本化替代依据与覆盖矩阵；不可恢复旧30/48仍保留缺口，新依据的正式采纳和WP01-01完成门独立处理，运行NOT_RUN。 [接收依据](../development/task-deliveries/WP05-01/evidence/coordination/intake.json)。本轮不改变125目标交付状态、原清单缺口或247运行场景；无Actions、数据库迁移或部署。
+
 ## 2026-10-12：WP14-01 设计准备接收与集中审查
 
 COORD实际读取Handoff固定消息后在当前时点确认领取/交付窗口并登记VERIFYING，不回填虚构早期准入。125目标、13404原验收关联、247修订场景及599消费者的验收准备；当前源子集未变，保留固定快照，所有运行NOT_RUN。 [接收依据](../development/deliveries/WP14-01/evidence/coordination/intake.json)。本轮不改变125目标交付状态、原清单缺口或247运行场景；无Actions、数据库迁移或部署。
