@@ -1,0 +1,93 @@
+COMMAND: python -B -m unittest test_manage_roadmap.TaskDefinitionTests -v
+EXIT: 1
+test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) ... ok
+test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) ... ok
+test_binding_requires_supported_mode_and_condition (test_manage_roadmap.TaskDefinitionTests.test_binding_requires_supported_mode_and_condition) ... ok
+test_card_content_changes_when_definition_changes (test_manage_roadmap.TaskDefinitionTests.test_card_content_changes_when_definition_changes) ... ok
+test_cli_invalid_definition_does_not_generate_cards (test_manage_roadmap.TaskDefinitionTests.test_cli_invalid_definition_does_not_generate_cards) ... ok
+test_cli_write_bootstraps_cards_and_check_detects_manual_drift (test_manage_roadmap.TaskDefinitionTests.test_cli_write_bootstraps_cards_and_check_detects_manual_drift) ... ok
+test_conditional_consumer_does_not_create_unconditional_dependency (test_manage_roadmap.TaskDefinitionTests.test_conditional_consumer_does_not_create_unconditional_dependency) ... ok
+test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) ... 
+  test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='state') ... FAIL
+  test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='assignment') ... FAIL
+  test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='validation_evidence') ... FAIL
+  test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='delivery_evidence') ... FAIL
+  test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='entry_gate') ... FAIL
+test_definition_matches_metadata_and_external_evidence_need_not_be_a_task (test_manage_roadmap.TaskDefinitionTests.test_definition_matches_metadata_and_external_evidence_need_not_be_a_task) ... ok
+test_definitions_must_cover_exactly_the_new_wp_tasks (test_manage_roadmap.TaskDefinitionTests.test_definitions_must_cover_exactly_the_new_wp_tasks) ... ok
+test_duplicate_definition_ids_are_rejected (test_manage_roadmap.TaskDefinitionTests.test_duplicate_definition_ids_are_rejected) ... ok
+test_existing_s01_task_must_not_be_redefined (test_manage_roadmap.TaskDefinitionTests.test_existing_s01_task_must_not_be_redefined) ... ok
+test_generated_card_can_be_bootstrapped_without_an_existing_file (test_manage_roadmap.TaskDefinitionTests.test_generated_card_can_be_bootstrapped_without_an_existing_file) ... ok
+test_invalid_definition_schema_is_rejected (test_manage_roadmap.TaskDefinitionTests.test_invalid_definition_schema_is_rejected) ... ok
+test_legacy_policy_without_definition_path_keeps_pure_validation (test_manage_roadmap.TaskDefinitionTests.test_legacy_policy_without_definition_path_keeps_pure_validation) ... ok
+test_malformed_definition_file_reports_validation_error (test_manage_roadmap.TaskDefinitionTests.test_malformed_definition_file_reports_validation_error) ... ok
+test_render_all_package_cards_without_repeating_ledger_state (test_manage_roadmap.TaskDefinitionTests.test_render_all_package_cards_without_repeating_ledger_state) ... ok
+test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) ... ok
+test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) ... ok
+test_task_anchor_and_plan_must_match_the_generated_card (test_manage_roadmap.TaskDefinitionTests.test_task_anchor_and_plan_must_match_the_generated_card) ... ok
+test_task_delivery_binding_must_be_a_direct_dependency (test_manage_roadmap.TaskDefinitionTests.test_task_delivery_binding_must_be_a_direct_dependency) ... ok
+
+======================================================================
+FAIL: test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='state')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 437, in test_definition_cannot_be_a_second_state_ledger
+    self.reject("mutable ledger field in definition")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 327, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='assignment')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 437, in test_definition_cannot_be_a_second_state_ledger
+    self.reject("mutable ledger field in definition")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 327, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='validation_evidence')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 437, in test_definition_cannot_be_a_second_state_ledger
+    self.reject("mutable ledger field in definition")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 327, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='delivery_evidence')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 437, in test_definition_cannot_be_a_second_state_ledger
+    self.reject("mutable ledger field in definition")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 327, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_definition_cannot_be_a_second_state_ledger (test_manage_roadmap.TaskDefinitionTests.test_definition_cannot_be_a_second_state_ledger) (field='entry_gate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 437, in test_definition_cannot_be_a_second_state_ledger
+    self.reject("mutable ledger field in definition")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 327, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.420s
+
+FAILED (failures=5)

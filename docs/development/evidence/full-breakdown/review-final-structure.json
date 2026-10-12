@@ -1,0 +1,50 @@
+{
+  "scope": "Independent planning review: final ledger/cards/DAG/source mappings and immutable baseline only. No business tests or remote actions.",
+  "baseline_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
+  "ledger_sha256": "6fc783374ae3631d7c80b00fe696a89dd5e132ae0e18544f873d5106f6d95138",
+  "definitions_sha256": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+  "task_count": 375,
+  "new_task_count": 362,
+  "tasks_by_package": {
+    "WP01": 2,
+    "WP02": 42,
+    "WP03": 27,
+    "WP04": 37,
+    "WP05": 44,
+    "WP06": 13,
+    "WP07": 15,
+    "WP08": 18,
+    "WP09": 12,
+    "WP10": 52,
+    "WP11": 66,
+    "WP12": 20,
+    "WP13": 17,
+    "WP14": 10
+  },
+  "kinds": {
+    "DESIGN": 10,
+    "CODE": 356,
+    "VALIDATION": 9
+  },
+  "task_states": {
+    "PLANNED": 375
+  },
+  "original_tasks_preserved": 13,
+  "topological_nodes": 375,
+  "dependency_edges": 3554,
+  "target_count": 125,
+  "target_task_coverage": 125,
+  "original_acceptance_associations": 13404,
+  "original_inventories_complete": 123,
+  "runtime_states": {
+    "NOT_RUN": 247
+  },
+  "historical_static_states": {
+    "REFERENCE_ONLY": 41
+  },
+  "generated_view_count": 19,
+  "markdown_files_checked": 28,
+  "local_links_checked": 8999,
+  "errors": [],
+  "result": "PASS"
+}

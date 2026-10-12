@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-12T04:07:44.056598+00:00",
+  "planning_baseline": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
+  "result": "FAIL",
+  "scope": "Full task cards, original ledger state preservation, pinned code-path existence, document links and in-scope diff; no business/DB/runtime validation.",
+  "tasks": 372,
+  "kinds": {
+    "DESIGN": 9,
+    "CODE": 354,
+    "VALIDATION": 9
+  },
+  "package_tasks": {
+    "WP01": 2,
+    "WP02": 42,
+    "WP03": 27,
+    "WP04": 34,
+    "WP05": 44,
+    "WP06": 13,
+    "WP07": 15,
+    "WP08": 18,
+    "WP09": 12,
+    "WP10": 52,
+    "WP11": 66,
+    "WP12": 20,
+    "WP13": 17,
+    "WP14": 10
+  },
+  "owning_target_coverage": 125,
+  "code_entry_paths": 358,
+  "proposed_new_paths": 318,
+  "code_pins": {
+    "Main": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+    "CRM": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+    "Platform": "30bd23af6808d217a23878bd9437513043c52834"
+  },
+  "markdown_links": 8379,
+  "checked_docs": [
+    "AGENTS.md",
+    "docs/development/03-progress.md",
+    "docs/development/04-batches.md",
+    "docs/development/07-detailed-tasks.md",
+    "docs/development/09-parallel-development.md",
+    "docs/development/10-work-package-tasks.md",
+    "docs/development/README.md",
+    "docs/development/task-plans/WP01.md",
+    "docs/development/task-plans/WP02.md",
+    "docs/development/task-plans/WP03.md",
+    "docs/development/task-plans/WP04.md",
+    "docs/development/task-plans/WP05.md",
+    "docs/development/task-plans/WP06.md",
+    "docs/development/task-plans/WP07.md",
+    "docs/development/task-plans/WP08.md",
+    "docs/development/task-plans/WP09.md",
+    "docs/development/task-plans/WP10.md",
+    "docs/development/task-plans/WP11.md",
+    "docs/development/task-plans/WP12.md",
+    "docs/development/task-plans/WP13.md",
+    "docs/development/task-plans/WP14.md",
+    "docs/superpowers/plans/2026-10-11-full-task-breakdown.md",
+    "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md"
+  ],
+  "business_tests_executed": false,
+  "reused_evidence": [
+    "docs/development/assessments/20261011/evidence/inventory-validation.json",
+    "docs/development/evidence/s01-planning/plan-validation.json"
+  ],
+  "reuse_scope": "Original catalogs, target acceptance definitions, revision assets and s01 selected source index unchanged; prior SHA/catalog checks retain their original provenance, not re-executed.",
+  "errors": [
+    "source path absent from pinned tree: WP05-01:docs/development/06-first-slices.md"
+  ]
+}

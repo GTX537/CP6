@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_worktree_aliases_cannot_hide_an_active_assignment_conflict (test_manage_roadmap.DispatchIntegrityTests.test_worktree_aliases_cannot_hide_an_active_assignment_conflict)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 267, in test_worktree_aliases_cannot_hide_an_active_assignment_conflict
+    self.assertTrue(any("active assignment conflict" in e and "worktree" in e for e in self.errors()))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

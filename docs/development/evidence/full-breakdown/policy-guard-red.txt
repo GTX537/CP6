@@ -1,0 +1,17 @@
+F
+======================================================================
+FAIL: test_wp_tasks_cannot_disable_definition_and_dispatch_checks (test_manage_roadmap.ProgressIntegrityTests.test_wp_tasks_cannot_disable_definition_and_dispatch_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 180, in test_wp_tasks_cannot_disable_definition_and_dispatch_checks
+    self.reject("WP tasks require dispatch policy and definitions")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 42, in reject
+    self.assertTrue(any(phrase in e for e in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.162s
+
+FAILED (failures=1)

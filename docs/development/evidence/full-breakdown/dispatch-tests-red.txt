@@ -1,0 +1,148 @@
+EEEEEEEEEEEE..........................
+======================================================================
+ERROR: test_active_task_requires_claim_and_entry_check (test_manage_roadmap.DispatchIntegrityTests.test_active_task_requires_claim_and_entry_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 223, in test_active_task_requires_claim_and_entry_check
+    errors=self.errors()
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_active_tasks_cannot_share_resources (test_manage_roadmap.DispatchIntegrityTests.test_active_tasks_cannot_share_resources)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 231, in test_active_tasks_cannot_share_resources
+    self.assertTrue(any("active resource conflict" in e for e in self.errors()))
+                                                                 ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_complete_planned_dispatch_is_valid (test_manage_roadmap.DispatchIntegrityTests.test_complete_planned_dispatch_is_valid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 205, in test_complete_planned_dispatch_is_valid
+    self.assertEqual(self.errors(), [])
+                     ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_coordinator_can_have_no_target (test_manage_roadmap.DispatchIntegrityTests.test_coordinator_can_have_no_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 251, in test_coordinator_can_have_no_target
+    self.assertEqual(self.errors(), [])
+                     ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_design_or_support_task_cannot_replace_target_implementation (test_manage_roadmap.DispatchIntegrityTests.test_design_or_support_task_cannot_replace_target_implementation) (kind='DESIGN', role='IMPLEMENTATION')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 211, in test_design_or_support_task_cannot_replace_target_implementation
+    self.assertTrue(any("no owning implementation task" in e for e in self.errors()))
+                                                                      ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_design_or_support_task_cannot_replace_target_implementation (test_manage_roadmap.DispatchIntegrityTests.test_design_or_support_task_cannot_replace_target_implementation) (kind='CODE', role='FOUNDATION')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 211, in test_design_or_support_task_cannot_replace_target_implementation
+    self.assertTrue(any("no owning implementation task" in e for e in self.errors()))
+                                                                      ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_planned_tasks_can_share_future_resources (test_manage_roadmap.DispatchIntegrityTests.test_planned_tasks_can_share_future_resources)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 235, in test_planned_tasks_can_share_future_resources
+    self.assertEqual(self.errors(), [])
+                     ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_same_chat_or_worktree_cannot_hold_two_active_tasks (test_manage_roadmap.DispatchIntegrityTests.test_same_chat_or_worktree_cannot_hold_two_active_tasks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 239, in test_same_chat_or_worktree_cannot_hold_two_active_tasks
+    self.assertTrue(any("active assignment conflict" in e for e in self.errors()))
+                                                                   ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_target_coverage_cannot_drop_a_task (test_manage_roadmap.DispatchIntegrityTests.test_target_coverage_cannot_drop_a_task)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 219, in test_target_coverage_cannot_drop_a_task
+    self.assertTrue(any("target task coverage differs" in e for e in self.errors()))
+                                                                     ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_target_done_requires_owning_tasks_done (test_manage_roadmap.DispatchIntegrityTests.test_target_done_requires_owning_tasks_done)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 243, in test_target_done_requires_owning_tasks_done
+    self.assertTrue(any("target DONE with unfinished implementation tasks" in e for e in self.errors()))
+                                                                                         ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_validation_task_does_not_replace_implementation (test_manage_roadmap.DispatchIntegrityTests.test_validation_task_does_not_replace_implementation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 247, in test_validation_task_does_not_replace_implementation
+    self.assertTrue(any("no owning implementation task" in e for e in self.errors()))
+                                                                      ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+======================================================================
+ERROR: test_wrong_package_cannot_claim_target_implementation (test_manage_roadmap.DispatchIntegrityTests.test_wrong_package_cannot_claim_target_implementation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 215, in test_wrong_package_cannot_claim_target_implementation
+    self.assertTrue(any("no owning implementation task" in e for e in self.errors()))
+                                                                      ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 199, in errors
+    return roadmap.validate_dispatch(self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manage_roadmap' has no attribute 'validate_dispatch'
+
+----------------------------------------------------------------------
+Ran 37 tests in 2.821s
+
+FAILED (errors=12)

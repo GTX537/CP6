@@ -1,0 +1,21 @@
+F
+======================================================================
+FAIL: test_normalized_repository_fixture_generator_is_a_valid_source (test_manage_roadmap.TaskDefinitionTests.test_normalized_repository_fixture_generator_is_a_valid_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 383, in test_normalized_repository_fixture_generator_is_a_valid_source
+    self.assertEqual(self.errors(), [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['WP02-01: invalid definition source reference: tools/build_fixture.py'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'WP02-01: invalid definition source reference: tools/build_fixture.py'
+
+- ['WP02-01: invalid definition source reference: tools/build_fixture.py']
++ []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.021s
+
+FAILED (failures=1)
