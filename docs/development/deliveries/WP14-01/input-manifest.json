@@ -1,0 +1,715 @@
+{
+  "task_id": "WP14-01",
+  "preparation_version": "WP14-01-PREP/1.0",
+  "main_baseline_sha": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+  "scope": "Documentation snapshot; no business execution or delivery claim",
+  "database_target": "PostgreSQL",
+  "metrics": {
+    "targets": 125,
+    "inventories_complete": 123,
+    "original_assignments": 13404,
+    "unique_source_keys": 12635,
+    "original_kind_counts": {
+      "ORIGINAL_AC": 8456,
+      "REQUIRED_SUPPLEMENTAL_SCENARIO": 4948
+    },
+    "revision_runtime_cases": 247,
+    "revision_consumer_assignments": 599,
+    "historical_reference_cases": 41,
+    "chain_tasks": 9,
+    "business_tests_executed": false
+  },
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "d2adf5a3bf9ee55ae863359ba69c1018f03c4d41d73a32e893e993627ffb3bf5",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/CRM-ACC-01.md",
+      "sha256": "96a671cbddd1eb6959d0259333bfc195d386e65675d8fa48296daa2e7331cd0f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/CRM-ACT-01.md",
+      "sha256": "34fc76f682116f364297539f72f3831abff9fe490ab51ea3360776a95601935f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/CRM-CON-01.md",
+      "sha256": "361839c19e3279f81a2e014bc4678749f2f9c571432e4ce085b60558d45721fd",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/CRM-HO-01.md",
+      "sha256": "dc828240279a9edc11fd01055a12b50d95d534161995c6cac8ee2686af8c0eed",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/CRM-INQ-01.md",
+      "sha256": "306e8c275ab2e5e29cc2117e7f5f35dcb32178786ca3f8ef61e6bd8c30b51732",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/CRM-LEAD-01.md",
+      "sha256": "a624084be36817550ce9e9f54edf4c51749380b04791f7884559f66d55a478c6",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/CRM-OPP-01.md",
+      "sha256": "c2fc216fa5cd1f8e9ac01a04a427c0fddb163d7e0ffda52d917bcc1eef55b4c6",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ENG-BOM-01.md",
+      "sha256": "3158ba7058e7e7b74e99cecc9a3b7777533e1aa363437c752f8afc545642dfed",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ENG-PROD-01.md",
+      "sha256": "8a7fbe3b40b96008188a424f6cadc6237fada213beaf1712544dbc34fa2dbacf",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ENG-REV-01.md",
+      "sha256": "579800369d5d9b6bf3cbdd3f7ce7b1cd099345a67a81052cd7aaa8c50ac7473c",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ENG-ROU-01.md",
+      "sha256": "435b42e29cd879208124c7d522fc2a82aeb7a7ddae04eadb689a9296d04a2394",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ENG-TOOL-01.md",
+      "sha256": "1e54e8a642f64b0b7a360e4baa43d21ed5f07ee160dfae4228c6faac3208276f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-BP-01.md",
+      "sha256": "0c242d14efcf7e5f7294ed441644294e50349bf2c738ce5abf83880b383e1fb3",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-CREDIT-01.md",
+      "sha256": "47e2151adeff287ed24cf8d18938de3b758dec0978df00955069eb40f0e6eb14",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-EST-01.md",
+      "sha256": "cb2668335507e24aaf3cdb068ec2dfed4a3bed4bc63717ad2bf5854660887d01",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-FSC-01.md",
+      "sha256": "89d4d4ceb8fc851ffcdb331e489eb1583067ac55a9fbe9a68fa614c87f430eb4",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-FUL-01.md",
+      "sha256": "1176db6bc3a493ba279c5099932c14984e8fd42dba899721205d36bcc06561a1",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-ORD-01.md",
+      "sha256": "e2f106fc61e61b05c9adc6202247b1fd4d9b6367d2e145b535aa845dfb0d8316",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-PRICE-01.md",
+      "sha256": "1719419d0d92e93dfab41e2a26fb3931331c5423aef1e690c837cec40ece5c22",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/ERP-QTN-01.md",
+      "sha256": "c878b801b371a0719693622a24becdfd08ed7cff9d37c9672a0d9ba6547ace4d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-AP-01.md",
+      "sha256": "4189e2f032706f2980171e47ecce2a96489fed1246eea544c10a2c77639f27ba",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-AR-01.md",
+      "sha256": "886b1cc0a9b1c477608f9f86d73dfbd28fe5eb158f66bd9b38e577bfbe02daa7",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-ASSET-01.md",
+      "sha256": "c465108ccf2b3a36ecbaa4142a8ca1b14c2418cd850009dce4fd3c8866027d06",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-BANK-01.md",
+      "sha256": "6908f7a833559d2664d4204948639f2316e6e5c2a2d54897c94d8b441d3eb0d0",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-BUD-01.md",
+      "sha256": "873be6140995d1e9264d13b32cef16a8433dcf4c0357b7742c37750dc53b9609",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-CLOSE-01.md",
+      "sha256": "0e524ef33341094e73d7b30eb8e6a101442f0bf6ac7e41126a4739256af9f20b",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-COST-01.md",
+      "sha256": "ae9c1343148750a2b4bd453d2fcb6f9ff444a2218d71467ebeda4b02eaedbdad",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-CREDIT-01.md",
+      "sha256": "06559999dcad8c7b5e4d2c9c409da49ba85a34dc5e7cb560128e58390c6413a5",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-FX-01.md",
+      "sha256": "2d552cb493be76a2bd2b87ad6e615e4320bf28056c4c21bebe33f4042ac77be4",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-GL-01.md",
+      "sha256": "c2b454a18aebbab21175f46b0760cc2ac4c79eaa95e2f955b5b9e110d4b43db0",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-INV-01.md",
+      "sha256": "2b98084b3ec9077f31ad616d894251464c208f3ab45e2d45668724065f042c3e",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-MASTER-01.md",
+      "sha256": "2b075cd6a7326e631f2ac1f80b24cbce9e6dcaaf953c76f2fcb5743f47fcdf38",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/FIN-REPORT-01.md",
+      "sha256": "35773e5aa7351b8ec2c84d258e2cf097b57575b961c42b07a817a5fc69a67a8e",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/INT-COM-01.md",
+      "sha256": "8a27fd16c8d484804e659756fb2904a0fdcc5608e88d302992f1fa055c234009",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/INT-ID-01.md",
+      "sha256": "792b22f4838049c30fad002d93b3c32783f1b88d0d2d940624a37078f63cfe86",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/INT-OPS-01.md",
+      "sha256": "eec51d1c88ef3b2f602dbb006a6507733cf54983312c9da438c30818ea5b0cde",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/MES-EXEC-01.md",
+      "sha256": "85ffd33e0ddcd6b4a117c2f958c92f37cb54844deeb44bfb12fb338abea95072",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/MES-MAT-01.md",
+      "sha256": "0c52c612d999d3f81ba52f11d9a28760af8580ee634ceb3429112aa9d838c227",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/MES-OUTPUT-01.md",
+      "sha256": "c51c50ebbdfe389536abca77deeb8f5933bc3bc4895182800430298f9beeea23",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/MES-PERF-01.md",
+      "sha256": "585251981586b318c6cd37b9bc2aae467a2b1c45ce88950b97b410159c4efc5a",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/MES-RES-01.md",
+      "sha256": "53510f101c64b4084f441e77e437a86a727116714b20a996910a2e0415b4e757",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/MES-SCHED-01.md",
+      "sha256": "9880e584e1c5a67c790fba595eac2c298944c1bea45e9cf0f4410c6d8c593b58",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/MES-WO-01.md",
+      "sha256": "2438118d5746ffe9a435c53ce73390fca4d678609cb508f0ed1b42ee1ef206f7",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/OA-APP-01.md",
+      "sha256": "202abf7263a8629dfc3c181967ba7c804366e1274bd3940fbec794923c8d4ee5",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/OA-CONN-01.md",
+      "sha256": "a849a3af9b63617cba04d5846ebeae00eed2f7808be25c8a776d0c87cc31a80c",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/OA-DEF-01.md",
+      "sha256": "66bbb3db6ec3b97d05b23f2602e064504a12cc9a41a8766ce0b6041745a87079",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/OA-FORM-01.md",
+      "sha256": "5d9e802edd0571f499caa83fb5feac6ebda9e824da24d49ae6de1d2c773ab812",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/OA-TASK-01.md",
+      "sha256": "f864208b038c7ef6f513def701d12a3054e4287021b24b3ef2e855b9497ed82f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLAN-ATP-01.md",
+      "sha256": "452ece462a926eb4f9a25f448a6fd4b2dab89ce99e05efc26b77d6b64e72ca34",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLAN-DEM-01.md",
+      "sha256": "b7e1eba5aeeb0b7bef8585e0e5b950fc2af6e64f5a898b0631d3ff562a5f634d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLAN-EXC-01.md",
+      "sha256": "f0f0b5d0d9474e2010b5fb9de71674f582933f9d54484583f3ba87daec82b022",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLAN-MRP-01.md",
+      "sha256": "06e1305cc929acca7e1b3d3181e6b795a03bc3ba0f0a1b4d7a926bd98f76582f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLAN-PO-01.md",
+      "sha256": "d28a73cb896502cc811d398ce53498b2751903697ba69c0e4e6608888a712074",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLAN-POL-01.md",
+      "sha256": "9fb65cdfeec70274c40365bd4e26d95ae5dc04b1aa7b16f98040b98941291f85",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLAN-SUP-01.md",
+      "sha256": "4e45420a61de50bde715d9384f556916ca6e8fe0cf8685c265964ea98f5a8f1d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-CHG-01.md",
+      "sha256": "765f3741c1674a5b95cec88bdab5d838750d39e65e7125e54742d0efeb8eadcb",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-DEV-01.md",
+      "sha256": "3b2dfbe21a3118f0cad60d3971b73586e91cfe0f832feb60951994f52cda6d0d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-DOC-01.md",
+      "sha256": "384f1faa6a1f4a4e4cf1f7195568878475dc287cf09e90b1079ce10d86fceb84",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-FBK-01.md",
+      "sha256": "160973b9015b1c6c1d0c8a8f37bedeea20e056fca76f2cfa24b3e471c4ece707",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+      "sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-LIFE-01.md",
+      "sha256": "3d5620dcdc80d7c3de3e8ff9360693e6cbe4249ec97bf0818a2981a649f3dcaa",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-REL-01.md",
+      "sha256": "40590a31aabf147120b36327da53be30cd85a5696a49a83c85254699c3a6981d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-REQ-01.md",
+      "sha256": "5f04c127d1dca9dac591cf2d480ed2793e72665af2f46fa47e62c361737a2388",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-VER-01.md",
+      "sha256": "7ef6bfedc49e041d791e704fd17e88a1312f1d16bcbd42dccb811eaa19345c24",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-CTX-01.md",
+      "sha256": "b7587dd2f62a2810212b8fdc7558cbac65262bd7e8a96418f6e5c0885cda97d4",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-DEL-01.md",
+      "sha256": "89a72c635c743f9f95f33c0a62a14ac32674a8b92fb6313481b1d21f85a929e9",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-HTTP-01.md",
+      "sha256": "a47f667cd3f2d3055ed009433235f77c4065807092b6eeff1505557117f3b04d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-MSG-01.md",
+      "sha256": "faef1b87542871a0e4e841f6763185b849f88f60b22964545080531465bda7a0",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-OBS-01.md",
+      "sha256": "2500ecfa284c694288aecab60c69ca589f45612c0e2608d13570f22ecdb7e77d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-RELEASE-01.md",
+      "sha256": "402ac4d108efb12cfbd5a902751bec5a659578bdd85d999e5025e19080cd2feb",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-TEST-01.md",
+      "sha256": "25693e6bf9eef88dd0192b3e970cc432f02e5be678a2b57b3fbc5c7537405298",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PUR-GR-01.md",
+      "sha256": "38207436cca4edab838af88a59eec8088cb0a163d1ab5f5e92dc03866d647f24",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PUR-MATCH-01.md",
+      "sha256": "f30e0c27592d185538766bf5b266fa290aeab74658a932ad4d781bea962dd904",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PUR-PO-01.md",
+      "sha256": "c3faaa42767e9b6181b74e563f1ee35c14143f86fd8c3c2ec11887b7d0b23c84",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PUR-PR-01.md",
+      "sha256": "18f95fb0c103467475d1c0c6e1bd214392c6681a6574a473fe31fcce9f616967",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PUR-RETURN-01.md",
+      "sha256": "c1b1b340edc8f1a7271051edc9a4498ad70eae22eea799a9a593a2866063bc0d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PUR-RFQ-01.md",
+      "sha256": "fda067b627c6650e9c39db8bd0089d4ef3604c26ec287456578c9c227ede6712",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/PUR-SUB-01.md",
+      "sha256": "b9c114e6d8774fb8b67c92b999f3c2c3b1f5ba5041e88436ed6e190d500d462d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/QA-IPQC-01.md",
+      "sha256": "65ff1f056a5ee5ba6e3d309a262a71f64b2329f552d57d88b0882f10e3328828",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/QA-IQC-01.md",
+      "sha256": "aac87313ded35a67839eb942a7c38b182affefab55366978543fc9d01575c831",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/QA-NCR-01.md",
+      "sha256": "03a7e3a2e9ee50179c75a09568ca6bd215f2a912fc381800feab1363f675a7bd",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/QA-POL-01.md",
+      "sha256": "a5b9bc5819f989b4a9a0613425847273e00d62201a66ba5154849aa39b3fdfa5",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-AI-01.md",
+      "sha256": "de29a62e057486f5e69a708ccc3499cdce383c455f73d6e29196a2ae0bd372d4",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-DES-01.md",
+      "sha256": "efa03a76f4ab58e89a013d32a6b420895b2ab548ac2ef9adb1af4f8a4afec6a9",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-EXT-01.md",
+      "sha256": "92ed3ad5c2ba6bb089446240c73a21f03cf8d88be894856bd544db4b091d74cf",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-IMPORT-01.md",
+      "sha256": "4f0f2700698bfd4cfd86997da94370de19c4b220dcde9f60ed56894154bce5f3",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-MASTER-01.md",
+      "sha256": "fab21b66443d0d15629698f9225a5e3e61aac04a9b55a7130921aae7ea85e35c",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-OPS-01.md",
+      "sha256": "724e403f91650f2bd62c7fbc6820fbb7a92953a25512636e4852b218da9997c2",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-PLAN-01.md",
+      "sha256": "b89935004f6e74ef63880e3d1621bf86601722ff34d7969263d29d9173f56ed1",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SPACE-PUB-01.md",
+      "sha256": "76ceec5e21aee963732d33cefe5f9cb9597ccc340304ea6ca76b5d57a4084651",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-AUD-01.md",
+      "sha256": "1a684982b6c9d7bf9cab5bbe89a89638c2e55365757e8fbd0b018d5dcca232ab",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-CLIENT-01.md",
+      "sha256": "2153e9f59b1f7bd71bc3200109c22ef00ded8e7a83c22bb72f636b36ea914b8d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-FILE-01.md",
+      "sha256": "09f278ddc5af31ff20ed79cc8a95780be80662f9dbb1c344a87fd0dcc2f9b27b",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-IAM-01.md",
+      "sha256": "72ad3824b77eb54d58292827c4d3682ca870d6647ad959cde84b4d124818d1c8",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-JOB-01.md",
+      "sha256": "7d416afc19087576f29fee75a3e18fb726f3fba7f6106366d45da98cad94495e",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-LANG-01.md",
+      "sha256": "090186475176cc1af7ba1d109947c8d9acd4c9b5e4d2de11611d0e7ec4a9a893",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-NUM-01.md",
+      "sha256": "f61d664d88a06cdcf705504bc884bbc542a89ebd5c437f9c782b0cfef36a7c65",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-PRIV-01.md",
+      "sha256": "3b91ae465401f679347107b94c20842fa61fd0af16b5e1b75ed59e39448eadaf",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-TENANT-01.md",
+      "sha256": "5a4488ecbcac45c377f38f8c19ae13051bac58d57a6ca147693aafe7d7545aec",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-WORKSPACE-01.md",
+      "sha256": "0eb8305b59a6fb19dd40865cf7a0193273a785152b202bf7d4d7c5d2de284d29",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-ANALYTICS-01.md",
+      "sha256": "3e15c8febb6953edab8ded8b40dff9cc4a1241b24776fc6a709c402d196b30f4",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-AUTO-01.md",
+      "sha256": "8368775ca18f1815938b018a6399d75a2b123f23902fb5629bef48f0879eaaab",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-COUNT-01.md",
+      "sha256": "ef940eecbfd753dffab4d0ce5da6d0923fa74deec76e036d97e73c7e798c4129",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-CTRL-01.md",
+      "sha256": "f9b3fc3a7f7fe0555c75ef38590dd360dca46f11ae9219c35606079df685829f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-DEL-01.md",
+      "sha256": "b406d9740d3d20a4d15950645f759d9d572f8938ce6cf2b4cc33ba2f2ba817d8",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-DISP-01.md",
+      "sha256": "658b2dd1c915d7f148ee250defdef7ed35b038abe0b73c7378c1162644c15c1d",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-IN-01.md",
+      "sha256": "a27d8ff917edbb10bbaacc9f7b628ecd53cc8d148bdec102a91d36a53fef0dcc",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-INK-01.md",
+      "sha256": "7eb747a681bc56e85667e6700611097aebf01b1c3b538dddefda43d073f89b23",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-KIT-01.md",
+      "sha256": "6548f9ba9c5b336418e44ccf367399aec54c7bc9e89e19577a5b59cab86328db",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-MASTER-01.md",
+      "sha256": "321a4ece6b1e614f9171756827c1d8ea0dc6fc95ff632f298a5e9c6b2c9a393f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-MOBILE-01.md",
+      "sha256": "32598a41f8b308c9b640a498a9cfe13ec9865340e52af085bda24a8c5ffe0b3b",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-OUT-01.md",
+      "sha256": "caa6af2839d3357bf61a76c593ff02fdd57a595481ae8237d12c2a4b2c6eb40a",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-REM-01.md",
+      "sha256": "e55ae1da9692992e94a5a59b22ca782f69b5067eb6e1830a465862192caf0698",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-REP-01.md",
+      "sha256": "82cc515bb59bb2bc09df5f3ada7be526fb0dff647316252ecf0b039ee89c8f21",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-RMA-01.md",
+      "sha256": "d87f9124d48c0c8a3ca202c5fe8c4e0d364d168751575e8a3406e04251542921",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-ROLL-01.md",
+      "sha256": "3a6b748c1ac2fd46d66bac6383694db88cb491ee838c4c9cc2664a23f3792995",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-RSV-01.md",
+      "sha256": "2bd981b471bc4315f7460e057ebe3e192bce71e81b2f5e39e873adc6bb91ed3c",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-SAMPLE-01.md",
+      "sha256": "19470a594df62c9a40dba5cca504346232b6d73c34c2c06ac4ff7e7227e73d34",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-SLOT-01.md",
+      "sha256": "9ef84a30594691a181209a5e8a9694969d7d7bcf88a2d565b67956ccaedcf187",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-STOCK-01.md",
+      "sha256": "ab31ca83359f3317671efd8a03605cb52f59a82a694f489cce15f23aa794bb61",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-TOOL-01.md",
+      "sha256": "b36c74a314d1c09304cde6cad4e898619fb15a1f8f545fc4fd4a30265b79c84a",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-TRACE-01.md",
+      "sha256": "ac91bb1f7d78239c56bdbe0c572f606a7ef01aea32683189aac49e3de542fae8",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-TRANSFER-01.md",
+      "sha256": "edc277f5e107d531403ee744212e24d7cbef2c671e3ec48da8526cb531033c7e",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-VMI-01.md",
+      "sha256": "fdf88b1fc07c205597e6c6714b3d3f25f3aac4f00d215b2fcdd66e746d7f2844",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/modules/WMS-XDOCK-01.md",
+      "sha256": "0323a437ab147f7928fd858132ee610a585f8de48344970720c082e1516b9c15",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+      "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/08-postgresql-baseline.md",
+      "sha256": "b07b25829750b6c25b22472ac6834f961a627cc80146e1750597af7654ab699c",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/09-parallel-development.md",
+      "sha256": "2a9602c79060b309713819f8ceed4d94a55cf3f40ca51c113ea04a41114de862",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/assessments/20261011/acceptance-source-index.json",
+      "sha256": "106a0ae62afb4c8867bf8a434b8152011d1f0ece8d5d68aa516771c763bf6a0c",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+      "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+      "sha256": "7cda9eaf0a7bc91338e61672e5a6a0a4059d2f52f6388bdccd3c16022f07bd6b",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "sha256": "6af601f92d8a3f3b347358313bd6d3c199581a0fd93650b3c6c7090249329417",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/operations.json",
+      "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/assessments/20261011/implementation-assessment.json",
+      "sha256": "ebab2fbbc2ffdc02abcf58b4eb75358ea3db3d03e5529f47886dd58bce100cb8",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+      "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "sha256": "271b76471f4c35f3f1eaa0abf9394c4316dd78e391805ecf4e2b033a77e2ba62",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    },
+    {
+      "path": "docs/development/task-definitions.json",
+      "sha256": "5905f378d49459427801c27b7779bae1715164895958c8a0a5f8a9b880728195",
+      "git_commit": "df5553fd04ec4fc516602a4e2843650c38ae5006"
+    }
+  ],
+  "source_policy": "Complete embedded catalog definitions are indexed; external archive bytes and current cross-repository runtime artifacts were not revalidated. Source records are candidate run groups, not a new accepted test denominator."
+}

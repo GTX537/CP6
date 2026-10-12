@@ -1,0 +1,35 @@
+WP14-01 preparation diagnostics, observed in this conversation on 2026-10-12.
+These are tooling/setup observations, not application test failures.
+
+1. Initial git worktree add without command-local core.longpaths:
+fatal: cannot create directory at 'docs/audits/database-compatibility/wp6-native/wms-final/formal/wp6-sql-formal-matrix-wms-local-transaction-fix/entries/oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication': Filename too long
+Exit code 1. Git removed the incomplete worktree registration; the new branch remained.
+Recovery: git -c core.longpaths=true worktree add with that existing task branch.
+Observed exit code 0; HEAD df5553fd. No global configuration change or manual recursive deletion.
+
+2. Baseline ledger check using bare python:
+File "docs/development/tools/manage_roadmap.py", line 36, in evidence_ok
+    if not path.resolve().is_relative_to(root.resolve()) or not path.is_file():
+AttributeError: 'WindowsPath' object has no attribute 'is_relative_to'
+Recovery: use the already documented CPython 3.13 interpreter. Ledger/source/view validation PASS.
+
+3. Temporary read-only source-field inventory probe:
+TypeError: unsupported operand type(s) for +: 'dict' and 'int'
+Cause: Counter.update received a dict instead of field names.
+Recovery: collect field names into a set; source statistics completed. No ledger/file mutation.
+
+4. Discovery-only reads:
+The optional 08-acceptance-catalog.md path does not exist; the actual source is the JSON catalog.
+py launcher is not installed; the existing CPython 3.13 absolute path was used.
+An initial rg command named nonexistent assess_implementation.py / PowerShell literal *.py paths; no data was changed.
+
+5. Preparation review correction:
+Initial source grouping included namespace_basis, a target-specific explanatory field.
+Removing it coalesced the 36 shared ORD R01 entries. Complete definitions still retain the explanation.
+The final 12,635 source groups are internal scheduling identities, not an approved unique business-test denominator.
+
+6. First document link check:
++ REPORT.md linked evidence/document-check.json while that first output file had not yet been written.
++ Result FAIL (one missing evidence-output link); 138 fixed input hashes, identities and counts had no errors.
++ Original result retained in document-check.initial.json / validation.initial.json.
++ Once the actual first report exists, rerun only this document check; do not rerun unchanged mapping/ledger checks or any business tests.

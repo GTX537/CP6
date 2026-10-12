@@ -1,0 +1,19 @@
+{
+  "result": "PASS",
+  "scope": "WP14-01 document coverage, identities, fixed inputs and local links only",
+  "business_tests_executed": false,
+  "source_baseline": "df5553fd04ec4fc516602a4e2843650c38ae5006",
+  "checks": {
+    "local_links": 29,
+    "fixed_inputs": 138,
+    "source_groups": 12635,
+    "runtime_consumer_assignments": 599,
+    "in_memory_controls": [
+      "reject_static_PASS",
+      "reject_duplicate_runtime_identity",
+      "preserve_123_complete_inventory_limit"
+    ]
+  },
+  "current_source_drift_requiring_adoption_review": [],
+  "errors": []
+}
