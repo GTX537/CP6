@@ -440,7 +440,7 @@
 
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
-| [WP14-01 全链验收映射、数据责任与证据索引](../../docs/development/task-plans/WP14.md#wp14-01) | Main | 待安排 | 无任务前置，仍需准入核对 | DESIGN / M | 未领取 |
+| [WP14-01 全链验收映射、数据责任与证据索引](../../docs/development/task-plans/WP14.md#wp14-01) | Main | 验收中 | 无任务前置，仍需准入核对 | DESIGN / M | D / WP14-01 |
 | [WP14-02 CRM入站、转化与商业交接闭环](../../docs/development/task-plans/WP14.md#wp14-02) | Main | 待安排 | 共62项，详见任务卡 | VALIDATION / M | 未领取 |
 | [WP14-03 报价订单、需求释放与计划转单闭环](../../docs/development/task-plans/WP14.md#wp14-03) | Main | 待安排 | 共48项，详见任务卡 | VALIDATION / M | 未领取 |
 | [WP14-04 采购来料、检验入库与供给更新闭环](../../docs/development/task-plans/WP14.md#wp14-04) | Main | 待安排 | 共93项，详见任务卡 | VALIDATION / M | 未领取 |
