@@ -1,0 +1,6 @@
+# Keep captured evidence byte-exact across checkout platforms.
+*.json -text whitespace=cr-at-eol
+*.log -text whitespace=cr-at-eol
+*.trx -text whitespace=cr-at-eol
+*.md text eol=lf
+*.py text eol=lf
