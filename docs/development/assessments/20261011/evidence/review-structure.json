@@ -1,0 +1,66 @@
+{
+  "review_scope": "Final ledger/catalog exact sets, live state, source pins, pointer resolution, and task file scope only. No business execution.",
+  "as_of": "2026-10-12T01:57:23.177723+00:00",
+  "checks": {
+    "targets": 125,
+    "case_assignments": 13404,
+    "case_kinds": {
+      "ORIGINAL_AC": 8456,
+      "REQUIRED_SUPPLEMENTAL_SCENARIO": 4948
+    },
+    "catalog_states": {
+      "COMPLETE": 123,
+      "NOT_INVENTORIED": 2
+    },
+    "incomplete": [
+      "PLM-ITER-01",
+      "PLM-REL-01"
+    ],
+    "root_fields_changed": [
+      "implementation_assessment",
+      "change_log",
+      "targets",
+      "work_packages"
+    ],
+    "target_fields_changed": {
+      "assessment_evidence": 125,
+      "original_acceptance_inventory": 125,
+      "assessment": 125
+    },
+    "assessment": {
+      "CHANGE_REQUIRED": 105,
+      "NEW_REQUIRED": 20
+    },
+    "git_modified_paths": [
+      "docs/development/01-work-packages.md",
+      "docs/development/02-target-coverage.md",
+      "docs/development/03-progress.md",
+      "docs/development/04-batches.md",
+      "docs/development/README.md",
+      "docs/development/roadmap.json",
+      "docs/project-memory/05-Completed.md",
+      "docs/project-memory/06-Todo.md",
+      "docs/project-memory/CHANGELOG-AI.md",
+      "docs/project-memory/PROJECT_STATE.md"
+    ],
+    "git_untracked_paths": [
+      "docs/development/05-implementation-assessment.md",
+      "docs/development/06-first-slices.md",
+      "docs/development/assessments/20261011/acceptance-source-index.json",
+      "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+      "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+      "docs/development/assessments/20261011/catalogs/foundation.json",
+      "docs/development/assessments/20261011/catalogs/operations.json",
+      "docs/development/assessments/20261011/evidence/code-source-validation.initial.json",
+      "docs/development/assessments/20261011/evidence/code-source-validation.json",
+      "docs/development/assessments/20261011/evidence/code-source-validation.review-fix.json",
+      "docs/development/assessments/20261011/evidence/ledger-validation.json",
+      "docs/development/assessments/20261011/implementation-assessment.json",
+      "docs/development/assessments/20261011/original-acceptance-catalog.json",
+      "docs/development/assessments/20261011/target-assessments.md",
+      "docs/superpowers/plans/2026-10-11-wp01-implementation-assessment.md"
+    ]
+  },
+  "errors": [],
+  "result": "PASS"
+}

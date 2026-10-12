@@ -1,0 +1,1874 @@
+{
+  "inventory_id": "CP6-WP01-ORIGINAL-AC-20261011/R1",
+  "as_of": "2026-10-12T01:56:00.709233+00:00",
+  "baseline_sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+  "scope": "Available accepted source AC/TC and required supplemental executable scenarios. Design schemas/mappings are dependencies, not executable cases. Missing historical originals remain recorded. No business execution.",
+  "summary": {
+    "targets": 125,
+    "inventories_complete": 123,
+    "inventories_incomplete": 2,
+    "case_assignments": 13404,
+    "kind_counts": {
+      "ORIGINAL_AC": 8456,
+      "REQUIRED_SUPPLEMENTAL_SCENARIO": 4948
+    },
+    "runtime_pass": 0,
+    "count_unit": "target-to-source acceptance assignments; shared native cases appear under every responsible target and must not be summed as unique business tests"
+  },
+  "kind_policy": {
+    "ORIGINAL_AC": "Literal original AC/TC identities; paired aliases are one assertion where the source states so.",
+    "REQUIRED_SUPPLEMENTAL_SCENARIO": "Mandatory executable fixture/recovery/continuous assertion from accepted source. Internal registry IDs do not create a native AC identity.",
+    "design_dependencies": "Schemas, tables, mappings and pure examples retained outside the executable denominator."
+  },
+  "completion_policy": "Every listed original and required supplement participates in the target DONE gate through roadmap.json. Attached refinements/preconditions and the complete scenario sequence belong to that case. Empty runtime evidence is NOT_RUN. Original catalog COMPLETE describes inventory only.",
+  "sources": [
+    {
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "sha256": "be0c0ebd8bd961aa912994ba98536bbfa4c46064759b91e54ff1a812882028ea",
+      "targets": 28,
+      "source_report_sha256": "a4ebfcd95751a156130931b610bf0e3f81e93d0dc9344c659f33306f66826e2a",
+      "normalization": "D:/CP6/docs paths become repository-relative archive locators; missing case kind in original explicit-AC lists becomes ORIGINAL_AC. No runtime state changed."
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+      "sha256": "4a60712a9b3baf1fea15ad0f51ebcf90f0d0c5df08ce272c6bcf4cd8b34ae484",
+      "targets": 28,
+      "source_report_sha256": "4a60712a9b3baf1fea15ad0f51ebcf90f0d0c5df08ce272c6bcf4cd8b34ae484",
+      "normalization": "D:/CP6/docs paths become repository-relative archive locators; missing case kind in original explicit-AC lists becomes ORIGINAL_AC. No runtime state changed."
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/operations.json",
+      "sha256": "4558f927f6e96b0f79481a9e29234ee814e4b59b2af9cbc2eb54fe68f360389a",
+      "targets": 50,
+      "source_report_sha256": "462a6fc15d3f1a48bb97094c0d05ce8c3d8e19a06be7e46bd17bbf7d4ed6d233",
+      "normalization": "D:/CP6/docs paths become repository-relative archive locators; missing case kind in original explicit-AC lists becomes ORIGINAL_AC. No runtime state changed."
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+      "sha256": "8f2c4eb654bbb77e7965fc0ffaf98a0f5d1e3e6373a909dd3847b2fb688b45cf",
+      "targets": 19,
+      "source_report_sha256": "d829f0fa422f9c1559d14e67a8e6242f599872f0657e0d137c72813da880b669",
+      "normalization": "D:/CP6/docs paths become repository-relative archive locators; missing case kind in original explicit-AC lists becomes ORIGINAL_AC. No runtime state changed."
+    }
+  ],
+  "targets": [
+    {
+      "id": "CRM-INQ-01",
+      "package_id": "WP03",
+      "inventory_state": "COMPLETE",
+      "case_count": 60,
+      "kind_counts": {
+        "ORIGINAL_AC": 60
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/0"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "CRM-LEAD-01",
+      "package_id": "WP03",
+      "inventory_state": "COMPLETE",
+      "case_count": 60,
+      "kind_counts": {
+        "ORIGINAL_AC": 60
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/1"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "CRM-ACT-01",
+      "package_id": "WP03",
+      "inventory_state": "COMPLETE",
+      "case_count": 78,
+      "kind_counts": {
+        "ORIGINAL_AC": 51,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 27
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/2"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "CRM-ACC-01",
+      "package_id": "WP03",
+      "inventory_state": "COMPLETE",
+      "case_count": 47,
+      "kind_counts": {
+        "ORIGINAL_AC": 47
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/3"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "CRM-CON-01",
+      "package_id": "WP03",
+      "inventory_state": "COMPLETE",
+      "case_count": 75,
+      "kind_counts": {
+        "ORIGINAL_AC": 49,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 26
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/4"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "CRM-OPP-01",
+      "package_id": "WP03",
+      "inventory_state": "COMPLETE",
+      "case_count": 54,
+      "kind_counts": {
+        "ORIGINAL_AC": 54
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/5"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "CRM-HO-01",
+      "package_id": "WP03",
+      "inventory_state": "COMPLETE",
+      "case_count": 64,
+      "kind_counts": {
+        "ORIGINAL_AC": 64
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/6"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-BP-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 124,
+      "kind_counts": {
+        "ORIGINAL_AC": 124
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/7"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-EST-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 170,
+      "kind_counts": {
+        "ORIGINAL_AC": 162,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 8
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/8"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-QTN-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 218,
+      "kind_counts": {
+        "ORIGINAL_AC": 218
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/9"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "INT-COM-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 106,
+      "kind_counts": {
+        "ORIGINAL_AC": 106
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/0"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ENG-PROD-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 9,
+      "kind_counts": {
+        "ORIGINAL_AC": 9
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/0"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ENG-REV-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 114,
+      "kind_counts": {
+        "ORIGINAL_AC": 114
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/1"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ENG-BOM-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 115,
+      "kind_counts": {
+        "ORIGINAL_AC": 115
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/2"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ENG-ROU-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 102,
+      "kind_counts": {
+        "ORIGINAL_AC": 102
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/3"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLM-REQ-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 70,
+      "kind_counts": {
+        "ORIGINAL_AC": 70
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/4"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLM-ITER-01",
+      "package_id": "WP05",
+      "inventory_state": "NOT_INVENTORIED",
+      "case_count": 99,
+      "kind_counts": {
+        "ORIGINAL_AC": 99
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/5"
+      },
+      "remaining_scope": [
+        "原文主册明确列72TC，声明30AC对应的历史工作簿/原件已知永久无法找回；保留NOT_INVENTORIED，不用72TC重构不存在的30AC。"
+      ]
+    },
+    {
+      "id": "PLM-DOC-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 30,
+      "kind_counts": {
+        "ORIGINAL_AC": 30
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/6"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLM-VER-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 144,
+      "kind_counts": {
+        "ORIGINAL_AC": 144
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/7"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLM-CHG-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 92,
+      "kind_counts": {
+        "ORIGINAL_AC": 92
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/8"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLM-DEV-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 108,
+      "kind_counts": {
+        "ORIGINAL_AC": 108
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/9"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLM-REL-01",
+      "package_id": "WP05",
+      "inventory_state": "NOT_INVENTORIED",
+      "case_count": 122,
+      "kind_counts": {
+        "ORIGINAL_AC": 122
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/10"
+      },
+      "remaining_scope": [
+        "RC1主册29行明确旧REL原册及旧48AC未恢复，用户已确认原件永久无法找回；后继LR/FB/PG场景绝不倒填旧48AC。"
+      ]
+    },
+    {
+      "id": "PLM-FBK-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 52,
+      "kind_counts": {
+        "ORIGINAL_AC": 52
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/11"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLM-LIFE-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 76,
+      "kind_counts": {
+        "ORIGINAL_AC": 76
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/12"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-ORD-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 236,
+      "kind_counts": {
+        "ORIGINAL_AC": 236
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/10"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-FUL-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 68,
+      "kind_counts": {
+        "ORIGINAL_AC": 68
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/11"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLAN-DEM-01",
+      "package_id": "WP06",
+      "inventory_state": "COMPLETE",
+      "case_count": 236,
+      "kind_counts": {
+        "ORIGINAL_AC": 236
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/0"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLAN-ATP-01",
+      "package_id": "WP06",
+      "inventory_state": "COMPLETE",
+      "case_count": 341,
+      "kind_counts": {
+        "ORIGINAL_AC": 50,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 291
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/1"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-CREDIT-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 104,
+      "kind_counts": {
+        "ORIGINAL_AC": 104
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/12"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLAN-POL-01",
+      "package_id": "WP06",
+      "inventory_state": "COMPLETE",
+      "case_count": 136,
+      "kind_counts": {
+        "ORIGINAL_AC": 136
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/2"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLAN-SUP-01",
+      "package_id": "WP06",
+      "inventory_state": "COMPLETE",
+      "case_count": 136,
+      "kind_counts": {
+        "ORIGINAL_AC": 136
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/3"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLAN-MRP-01",
+      "package_id": "WP06",
+      "inventory_state": "COMPLETE",
+      "case_count": 140,
+      "kind_counts": {
+        "ORIGINAL_AC": 140
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/4"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLAN-PO-01",
+      "package_id": "WP06",
+      "inventory_state": "COMPLETE",
+      "case_count": 124,
+      "kind_counts": {
+        "ORIGINAL_AC": 37,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 87
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/5"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLAN-EXC-01",
+      "package_id": "WP06",
+      "inventory_state": "COMPLETE",
+      "case_count": 425,
+      "kind_counts": {
+        "ORIGINAL_AC": 103,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 322
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/6"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PUR-PR-01",
+      "package_id": "WP07",
+      "inventory_state": "COMPLETE",
+      "case_count": 87,
+      "kind_counts": {
+        "ORIGINAL_AC": 57,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 30
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/7"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PUR-RFQ-01",
+      "package_id": "WP07",
+      "inventory_state": "COMPLETE",
+      "case_count": 295,
+      "kind_counts": {
+        "ORIGINAL_AC": 248,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 47
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/8"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PUR-PO-01",
+      "package_id": "WP07",
+      "inventory_state": "COMPLETE",
+      "case_count": 242,
+      "kind_counts": {
+        "ORIGINAL_AC": 124,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 118
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/9"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PUR-GR-01",
+      "package_id": "WP07",
+      "inventory_state": "COMPLETE",
+      "case_count": 199,
+      "kind_counts": {
+        "ORIGINAL_AC": 111,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 88
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/10"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PUR-MATCH-01",
+      "package_id": "WP07",
+      "inventory_state": "COMPLETE",
+      "case_count": 192,
+      "kind_counts": {
+        "ORIGINAL_AC": 139,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 53
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/11"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PUR-RETURN-01",
+      "package_id": "WP07",
+      "inventory_state": "COMPLETE",
+      "case_count": 642,
+      "kind_counts": {
+        "ORIGINAL_AC": 168,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 474
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/12"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "MES-RES-01",
+      "package_id": "WP08",
+      "inventory_state": "COMPLETE",
+      "case_count": 205,
+      "kind_counts": {
+        "ORIGINAL_AC": 205
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/14"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "MES-WO-01",
+      "package_id": "WP08",
+      "inventory_state": "COMPLETE",
+      "case_count": 121,
+      "kind_counts": {
+        "ORIGINAL_AC": 115,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 6
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/15"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "MES-MAT-01",
+      "package_id": "WP08",
+      "inventory_state": "COMPLETE",
+      "case_count": 160,
+      "kind_counts": {
+        "ORIGINAL_AC": 106,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 54
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/16"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "MES-EXEC-01",
+      "package_id": "WP08",
+      "inventory_state": "COMPLETE",
+      "case_count": 229,
+      "kind_counts": {
+        "ORIGINAL_AC": 94,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 135
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/17"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "MES-OUTPUT-01",
+      "package_id": "WP08",
+      "inventory_state": "COMPLETE",
+      "case_count": 314,
+      "kind_counts": {
+        "ORIGINAL_AC": 109,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 205
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/18"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-COST-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 89,
+      "kind_counts": {
+        "ORIGINAL_AC": 76,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 13
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/13"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "QA-POL-01",
+      "package_id": "WP09",
+      "inventory_state": "COMPLETE",
+      "case_count": 213,
+      "kind_counts": {
+        "ORIGINAL_AC": 116,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 97
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/21"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "QA-IQC-01",
+      "package_id": "WP09",
+      "inventory_state": "COMPLETE",
+      "case_count": 128,
+      "kind_counts": {
+        "ORIGINAL_AC": 107,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 21
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/22"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "QA-IPQC-01",
+      "package_id": "WP09",
+      "inventory_state": "COMPLETE",
+      "case_count": 205,
+      "kind_counts": {
+        "ORIGINAL_AC": 50,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 155
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/23"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "QA-NCR-01",
+      "package_id": "WP09",
+      "inventory_state": "COMPLETE",
+      "case_count": 335,
+      "kind_counts": {
+        "ORIGINAL_AC": 152,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 183
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/24"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-MASTER-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 236,
+      "kind_counts": {
+        "ORIGINAL_AC": 235,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 1
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/25"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-STOCK-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 157,
+      "kind_counts": {
+        "ORIGINAL_AC": 157
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/26"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-TRANSFER-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 867,
+      "kind_counts": {
+        "ORIGINAL_AC": 112,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 755
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/27"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-RSV-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 109,
+      "kind_counts": {
+        "ORIGINAL_AC": 109
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/28"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-IN-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 209,
+      "kind_counts": {
+        "ORIGINAL_AC": 94,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 115
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/29"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-COUNT-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 25,
+      "kind_counts": {
+        "ORIGINAL_AC": 22,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 3
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/30"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-TRACE-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 28,
+      "kind_counts": {
+        "ORIGINAL_AC": 20,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 8
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/31"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-DISP-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 27,
+      "kind_counts": {
+        "ORIGINAL_AC": 21,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 6
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/32"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-MOBILE-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 32,
+      "kind_counts": {
+        "ORIGINAL_AC": 27,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 5
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/33"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-CTRL-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 28,
+      "kind_counts": {
+        "ORIGINAL_AC": 23,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 5
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/34"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-CREDIT-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 94,
+      "kind_counts": {
+        "ORIGINAL_AC": 46,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 48
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/14"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-OUT-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 842,
+      "kind_counts": {
+        "ORIGINAL_AC": 136,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 706
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/35"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-DEL-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 220,
+      "kind_counts": {
+        "ORIGINAL_AC": 71,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 149
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/36"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-RMA-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 103,
+      "kind_counts": {
+        "ORIGINAL_AC": 52,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 51
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/37"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-MASTER-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 395,
+      "kind_counts": {
+        "ORIGINAL_AC": 156,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 239
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/15"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-GL-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 79,
+      "kind_counts": {
+        "ORIGINAL_AC": 79
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/16"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-CLOSE-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 28,
+      "kind_counts": {
+        "ORIGINAL_AC": 28
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/17"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-REPORT-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 26,
+      "kind_counts": {
+        "ORIGINAL_AC": 26
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/18"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-AP-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 87,
+      "kind_counts": {
+        "ORIGINAL_AC": 87
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/19"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-AR-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 79,
+      "kind_counts": {
+        "ORIGINAL_AC": 79
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/20"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-INV-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 492,
+      "kind_counts": {
+        "ORIGINAL_AC": 102,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 390
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/21"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-FX-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 28,
+      "kind_counts": {
+        "ORIGINAL_AC": 28
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/22"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "OA-DEF-01",
+      "package_id": "WP12",
+      "inventory_state": "COMPLETE",
+      "case_count": 27,
+      "kind_counts": {
+        "ORIGINAL_AC": 27
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/13"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "OA-FORM-01",
+      "package_id": "WP12",
+      "inventory_state": "COMPLETE",
+      "case_count": 35,
+      "kind_counts": {
+        "ORIGINAL_AC": 35
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/14"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "OA-TASK-01",
+      "package_id": "WP12",
+      "inventory_state": "COMPLETE",
+      "case_count": 46,
+      "kind_counts": {
+        "ORIGINAL_AC": 46
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/15"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "OA-APP-01",
+      "package_id": "WP12",
+      "inventory_state": "COMPLETE",
+      "case_count": 88,
+      "kind_counts": {
+        "ORIGINAL_AC": 88
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/16"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-WORKSPACE-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 20,
+      "kind_counts": {
+        "ORIGINAL_AC": 20
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/1"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-LANG-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 20,
+      "kind_counts": {
+        "ORIGINAL_AC": 20
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/2"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-AUD-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 21,
+      "kind_counts": {
+        "ORIGINAL_AC": 21
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/3"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-PRIV-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 22,
+      "kind_counts": {
+        "ORIGINAL_AC": 22
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/4"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-FILE-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 30,
+      "kind_counts": {
+        "ORIGINAL_AC": 30
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/5"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-NUM-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 16,
+      "kind_counts": {
+        "ORIGINAL_AC": 16
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/6"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-CLIENT-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 22,
+      "kind_counts": {
+        "ORIGINAL_AC": 22
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/7"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-JOB-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 25,
+      "kind_counts": {
+        "ORIGINAL_AC": 25
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/8"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-TENANT-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 23,
+      "kind_counts": {
+        "ORIGINAL_AC": 23
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/9"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SYS-IAM-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 40,
+      "kind_counts": {
+        "ORIGINAL_AC": 40
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/10"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "INT-ID-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 35,
+      "kind_counts": {
+        "ORIGINAL_AC": 35
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/11"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "INT-OPS-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 35,
+      "kind_counts": {
+        "ORIGINAL_AC": 35
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/12"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLT-CTX-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 28,
+      "kind_counts": {
+        "ORIGINAL_AC": 28
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/13"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLT-HTTP-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 42,
+      "kind_counts": {
+        "ORIGINAL_AC": 42
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/14"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLT-MSG-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 40,
+      "kind_counts": {
+        "ORIGINAL_AC": 40
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/15"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLT-DEL-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 60,
+      "kind_counts": {
+        "ORIGINAL_AC": 60
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/16"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLT-OBS-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 32,
+      "kind_counts": {
+        "ORIGINAL_AC": 32
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/17"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLT-RELEASE-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 32,
+      "kind_counts": {
+        "ORIGINAL_AC": 32
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/18"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PLT-TEST-01",
+      "package_id": "WP02",
+      "inventory_state": "COMPLETE",
+      "case_count": 24,
+      "kind_counts": {
+        "ORIGINAL_AC": 24
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/19"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ENG-TOOL-01",
+      "package_id": "WP05",
+      "inventory_state": "COMPLETE",
+      "case_count": 38,
+      "kind_counts": {
+        "ORIGINAL_AC": 38
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/17"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-FSC-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 24,
+      "kind_counts": {
+        "ORIGINAL_AC": 24
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/23"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "ERP-PRICE-01",
+      "package_id": "WP04",
+      "inventory_state": "COMPLETE",
+      "case_count": 28,
+      "kind_counts": {
+        "ORIGINAL_AC": 28
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/24"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "PUR-SUB-01",
+      "package_id": "WP07",
+      "inventory_state": "COMPLETE",
+      "case_count": 48,
+      "kind_counts": {
+        "ORIGINAL_AC": 48
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/13"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "MES-SCHED-01",
+      "package_id": "WP08",
+      "inventory_state": "COMPLETE",
+      "case_count": 36,
+      "kind_counts": {
+        "ORIGINAL_AC": 36
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/19"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "MES-PERF-01",
+      "package_id": "WP08",
+      "inventory_state": "COMPLETE",
+      "case_count": 48,
+      "kind_counts": {
+        "ORIGINAL_AC": 48
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/20"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-KIT-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 17,
+      "kind_counts": {
+        "ORIGINAL_AC": 15,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/38"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-SLOT-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 18,
+      "kind_counts": {
+        "ORIGINAL_AC": 15,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 3
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/39"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-REP-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 21,
+      "kind_counts": {
+        "ORIGINAL_AC": 18,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 3
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/40"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-XDOCK-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 20,
+      "kind_counts": {
+        "ORIGINAL_AC": 18,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/41"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-ROLL-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 25,
+      "kind_counts": {
+        "ORIGINAL_AC": 22,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 3
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/42"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-REM-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 26,
+      "kind_counts": {
+        "ORIGINAL_AC": 24,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/43"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-TOOL-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 14,
+      "kind_counts": {
+        "ORIGINAL_AC": 12,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/44"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-INK-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 16,
+      "kind_counts": {
+        "ORIGINAL_AC": 14,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/45"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-VMI-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 18,
+      "kind_counts": {
+        "ORIGINAL_AC": 16,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/46"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-SAMPLE-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 19,
+      "kind_counts": {
+        "ORIGINAL_AC": 17,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/47"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-AUTO-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 20,
+      "kind_counts": {
+        "ORIGINAL_AC": 18,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/48"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "WMS-ANALYTICS-01",
+      "package_id": "WP10",
+      "inventory_state": "COMPLETE",
+      "case_count": 20,
+      "kind_counts": {
+        "ORIGINAL_AC": 18,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 2
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/operations.json",
+        "json_pointer": "/targets/49"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-BUD-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 24,
+      "kind_counts": {
+        "ORIGINAL_AC": 24
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/25"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-BANK-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 28,
+      "kind_counts": {
+        "ORIGINAL_AC": 28
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/26"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "FIN-ASSET-01",
+      "package_id": "WP11",
+      "inventory_state": "COMPLETE",
+      "case_count": 32,
+      "kind_counts": {
+        "ORIGINAL_AC": 32
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "json_pointer": "/targets/27"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "OA-CONN-01",
+      "package_id": "WP12",
+      "inventory_state": "COMPLETE",
+      "case_count": 32,
+      "kind_counts": {
+        "ORIGINAL_AC": 32
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "json_pointer": "/targets/18"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-MASTER-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 8,
+      "kind_counts": {
+        "ORIGINAL_AC": 8
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/20"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-DES-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 9,
+      "kind_counts": {
+        "ORIGINAL_AC": 9
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/21"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-IMPORT-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 8,
+      "kind_counts": {
+        "ORIGINAL_AC": 8
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/22"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-PUB-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 27,
+      "kind_counts": {
+        "ORIGINAL_AC": 27
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/23"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-PLAN-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 7,
+      "kind_counts": {
+        "ORIGINAL_AC": 7
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/24"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-OPS-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 12,
+      "kind_counts": {
+        "ORIGINAL_AC": 12
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/25"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-EXT-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 6,
+      "kind_counts": {
+        "ORIGINAL_AC": 6
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/26"
+      },
+      "remaining_scope": []
+    },
+    {
+      "id": "SPACE-AI-01",
+      "package_id": "WP13",
+      "inventory_state": "COMPLETE",
+      "case_count": 10,
+      "kind_counts": {
+        "ORIGINAL_AC": 10
+      },
+      "definition_ref": {
+        "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "json_pointer": "/targets/27"
+      },
+      "remaining_scope": []
+    }
+  ],
+  "unresolved_inventory": [
+    {
+      "id": "PLM-ITER-01",
+      "reason": "可恢复当前TC/LR/FB/PG已逐项登记；历史指定原件永久无法找回，保留NOT_INVENTORIED，后继不得冒充缺失原AC。",
+      "remaining_scope": [
+        "原文主册明确列72TC，声明30AC对应的历史工作簿/原件已知永久无法找回；保留NOT_INVENTORIED，不用72TC重构不存在的30AC。"
+      ]
+    },
+    {
+      "id": "PLM-REL-01",
+      "reason": "可恢复当前TC/LR/FB/PG已逐项登记；历史指定原件永久无法找回，保留NOT_INVENTORIED，后继不得冒充缺失原AC。",
+      "remaining_scope": [
+        "RC1主册29行明确旧REL原册及旧48AC未恢复，用户已确认原件永久无法找回；后继LR/FB/PG场景绝不倒填旧48AC。"
+      ]
+    }
+  ],
+  "business_tests_executed": false
+}

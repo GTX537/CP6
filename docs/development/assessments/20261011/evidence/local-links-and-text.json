@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-12T02:02:08.167056+00:00",
+  "result": "PASS",
+  "scope": "New Markdown and added lines in changed Markdown: local target existence; changed text files: high-confidence credential signatures only, not a full secret audit.",
+  "local_links_checked": 161,
+  "files_examined": 30,
+  "errors": [],
+  "credential_signature_findings": [],
+  "business_tests_executed": false
+}

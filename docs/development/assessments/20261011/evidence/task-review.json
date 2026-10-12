@@ -1,0 +1,201 @@
+{
+  "review_id": "WP01-TASK-REVIEW-20261011",
+  "review_status": "PASS_WITH_DOCUMENTED_LIMITATIONS",
+  "baseline_main": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+  "read_only_repository": true,
+  "business_tests_executed": false,
+  "scope": [
+    "125 target recommendation/rationale read",
+    "Direct fixed-blob reads: CRM public intake and GET attempt; IdentityEventConsumer; Platform Inbox/Outbox/Dispatcher; Main StockMovement/Backflush/GoodsReceipt/QcInspection/Supply/JournalEntry/ArInvoice/DatabaseContextOptions; PLM candidate freeze and native owner reads",
+    "ENG-REV/ENG-TOOL current design boundaries and legacy PlateMold code/route/model/DI",
+    "Foundation and commercial-finance original/supplement catalog classifications and explicit expected-result samples",
+    "Final task diff and summary documents, first slices, generated views, four project-memory files, task plan, assessment and catalog policy",
+    "Final 125-target catalog-to-roadmap exact case-ID sets and every definition_ref JSON pointer: 13,404 target-source assignments; no mandatory supplemental entries omitted",
+    "Engineering/OA 1,399 case definitions: source hashes/ID anchors and 219 original responsibility/page assignment anchors; FB01/FB02 allocation and ROU CFG20/PG04/LR range",
+    "Original AC/TC versus required supplemental versus pure dependency classifications, including all three corrected findings and native source_record_kind preservation",
+    "Final state boundaries: 123 complete catalogs, 2 historical missing originals, 105 change/20 new, zero business delivery, all runtime validation NOT_RUN; no code/config/workflow changes"
+  ],
+  "not_audited": [
+    "Complete method-by-method semantic audit and complete writer graph for all 125 targets",
+    "Full independent semantic execution review of all 13,404 target-source assertions; structural enumeration is complete, semantic review is risk-targeted",
+    "Live SQL Server/PostgreSQL providers, migrations, external native Owner mappings, production authorization or business execution",
+    "Future implementation, build, DB, integration, UI and production acceptance; all remain NOT_RUN",
+    "Pending parent inventory-validation/task-review evidence copies and eventual commit/PR/merge/remote containment receipt; normal final delivery checks remain parent responsibility"
+  ],
+  "findings": [
+    {
+      "id": "WP01-RV-01",
+      "priority": "P1",
+      "status": "RESOLVED_VERIFIED",
+      "path": "docs/development/assessments/20261011/implementation-assessment.json",
+      "line": 16907,
+      "title": "ENG-TOOL assessment omits implemented legacy PlateMold use cases",
+      "detail": "The recommendation rationale says only ProductProcess plate-number scalars are visible. Fixed main actually contains Erp/PlateMoldService create/revise/update/delete/search/labels, PlateMold native No40/Rev/Base identity, /api/plate-molds routes, two ERP Vue pages, and Program 588/590 registration. Omitting this accepted compatibility surface mis-scopes migration and leaves cross-Owner order relink/delete plus NoOp PE writers out of the actual code assessment.",
+      "evidence": [
+        "CP6.Core/Services/Erp/PlateMoldService.cs:115",
+        "CP6.Core/Services/Erp/PlateMoldService.cs:150",
+        "CP6.Core/Services/Erp/PlateMoldService.cs:202",
+        "CP6.Core/Services/Erp/PlateMoldService.cs:229",
+        "CP6.Core/Services/Erp/PlateMoldService.cs:251",
+        "CP6.Entity/DomainModels/Erp/PlateMold.cs:20",
+        "CP6.WebApi/Controllers/Erp/PlateMoldController.cs:15",
+        "CP6.WebApi/Program.cs:588"
+      ],
+      "required_resolution": "Add existing real service, identity and route evidence; preserve legacy compatibility/migrate old writers to true Owner boundary; normally classify overall target CHANGE_REQUIRED (new sub-Owner capabilities remain explicit).",
+      "resolution": "ENG-TOOL is CHANGE_REQUIRED with actual legacy ERP/WMS use cases and 9 pinned anchors; totals 105/20; Owner decisions are scope-decided and adoption-unproven."
+    },
+    {
+      "id": "WP01-RV-02",
+      "priority": "P1",
+      "status": "RESOLVED_VERIFIED",
+      "path": "commercial-finance-acceptances.json",
+      "location": "targets[FIN-INV-01].design_dependencies",
+      "title": "Executable negative contract/security vectors are excluded from mandatory acceptance gate",
+      "detail": "77 HandlerExecutionContextNegativeCases have Mutation/Context/ExpectedCode; 11 AlgorithmMethodCases and 4 NegativeSchemaCases have explicit Expected acceptance/rejection. They are currently DESIGN_DEPENDENCY without mandatory parent linkage, even though the module is COMPLETE. Pure fixture metadata may remain dependencies, but these expected-result vectors must stay inside a required validation gate.",
+      "required_resolution": "Classify the 92 executable vectors as required supplemental contract/schema/security scenarios, or attach them explicitly to mandatory parent acceptance so parent PASS requires them; do not call internal source IDs new native AC.",
+      "resolution": "All 92 explicit expected-result vectors moved to REQUIRED_SUPPLEMENTAL_SCENARIO with NOT_RUN and no execution evidence; existing mandatory cases preserved."
+    },
+    {
+      "id": "WP01-RV-03",
+      "priority": "P2",
+      "status": "RESOLVED_VERIFIED",
+      "path": "operations-acceptances.json",
+      "title": "Two metadata sections were incorrectly treated as executable supplemental scenarios",
+      "detail": "MES-OUTPUT EVIDENCE catalog lines24715..48740 and WMS-TRANSFER continuous-fixture reading rules lines1537..1540 are source context, not standalone executable acceptance cases.",
+      "resolution": "Both now DESIGN_DEPENDENCY, mandatory=false; original source hash/range preserved; full executable supplemental cases are inside cases list."
+    }
+  ],
+  "planning_decisions_review": {
+    "ENG-REV": "Pure canonical/snapshot/vector extraction with no wholesale SQLServer candidate merge is a reasonable internal implementation decision; no new user product choice required. Runtime adoption stays UNPROVEN/FENCED.",
+    "ENG-TOOL": "Accepted ENG technical / actual WMS asset ownership is already settled, but source assessment must include real legacy ERP PlateMold services before classifying. Native bindings are future implementation gates, not grounds to claim absent services or request the user to reopen accepted Owner policy."
+  },
+  "recheck": {
+    "assessment_sha256": "914c1946da67eb809d1c251727000e18ac4dbf7bd60081f212bf990b54485c0c",
+    "commercial_catalog_sha256": "4a60712a9b3baf1fea15ad0f51ebcf90f0d0c5df08ce272c6bcf4cd8b34ae484",
+    "engineering_catalog_sha256": "d829f0fa422f9c1559d14e67a8e6242f599872f0657e0d137c72813da880b669",
+    "engineering_source_check": {
+      "case_definitions": 1399,
+      "source_files_including_assignment_handbook": 31,
+      "source_hash_or_case_anchor_errors": 0,
+      "original_assignment_anchors_exact": 219,
+      "handbook_assignment_paraphrases": 68,
+      "historical_incomplete_targets": [
+        "PLM-ITER-01",
+        "PLM-REL-01"
+      ]
+    },
+    "remaining": "No open P0/P1/P2 review findings. Historical PLM-ITER/PLM-REL acceptance originals remain NOT_INVENTORIED and WP01 remains ASSESSING; this documented scope limit does not block this assessment-stage document delivery."
+  },
+  "open_findings_count": 0,
+  "review_completed_at": "2026-10-12T02:00:27.982849+00:00",
+  "initial_reviewed_assessment_sha256": "8df04666d1161fdf0784006e9c5562e82a348f7d92d3b79625556923f3d0ba3e",
+  "reviewed_assessment_sha256": "86d1b6c117e7fae86bece8a1e22d6da40d4363c2b4f537d1d2c76a643eadcbe9",
+  "final_structure_check": {
+    "review_scope": "Final ledger/catalog exact sets, live state, source pins, pointer resolution, and task file scope only. No business execution.",
+    "as_of": "2026-10-12T01:57:23.177723+00:00",
+    "checks": {
+      "targets": 125,
+      "case_assignments": 13404,
+      "case_kinds": {
+        "ORIGINAL_AC": 8456,
+        "REQUIRED_SUPPLEMENTAL_SCENARIO": 4948
+      },
+      "catalog_states": {
+        "COMPLETE": 123,
+        "NOT_INVENTORIED": 2
+      },
+      "incomplete": [
+        "PLM-ITER-01",
+        "PLM-REL-01"
+      ],
+      "root_fields_changed": [
+        "implementation_assessment",
+        "change_log",
+        "targets",
+        "work_packages"
+      ],
+      "target_fields_changed": {
+        "assessment_evidence": 125,
+        "original_acceptance_inventory": 125,
+        "assessment": 125
+      },
+      "assessment": {
+        "CHANGE_REQUIRED": 105,
+        "NEW_REQUIRED": 20
+      },
+      "git_modified_paths": [
+        "docs/development/01-work-packages.md",
+        "docs/development/02-target-coverage.md",
+        "docs/development/03-progress.md",
+        "docs/development/04-batches.md",
+        "docs/development/README.md",
+        "docs/development/roadmap.json",
+        "docs/project-memory/05-Completed.md",
+        "docs/project-memory/06-Todo.md",
+        "docs/project-memory/CHANGELOG-AI.md",
+        "docs/project-memory/PROJECT_STATE.md"
+      ],
+      "git_untracked_paths": [
+        "docs/development/05-implementation-assessment.md",
+        "docs/development/06-first-slices.md",
+        "docs/development/assessments/20261011/acceptance-source-index.json",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/development/assessments/20261011/catalogs/engineering-oa.json",
+        "docs/development/assessments/20261011/catalogs/foundation.json",
+        "docs/development/assessments/20261011/catalogs/operations.json",
+        "docs/development/assessments/20261011/evidence/code-source-validation.initial.json",
+        "docs/development/assessments/20261011/evidence/code-source-validation.json",
+        "docs/development/assessments/20261011/evidence/code-source-validation.review-fix.json",
+        "docs/development/assessments/20261011/evidence/ledger-validation.json",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/development/assessments/20261011/original-acceptance-catalog.json",
+        "docs/development/assessments/20261011/target-assessments.md",
+        "docs/superpowers/plans/2026-10-11-wp01-implementation-assessment.md"
+      ]
+    },
+    "errors": [],
+    "result": "PASS"
+  },
+  "final_structure_check_artifact": "wp01-review-structure.json",
+  "diff_check": {
+    "command": "git -c core.longpaths=true diff --check",
+    "result": "PASS",
+    "exit_code": 0,
+    "business_test": false
+  },
+  "open_findings_by_priority": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "resolved_findings_count": 3,
+  "approval_scope": "Documentation/assessment-stage delivery only; not business completion, implementation readiness for every target, production acceptance, or release approval.",
+  "reviewed_final_file_hashes": {
+    "docs/development/01-work-packages.md": "fcfcf1e3ab23439577ce8b377c05ab9d824442ff491134830c4850b1f3f1cd8d",
+    "docs/development/02-target-coverage.md": "bcf625a8a0760b7827cff4599b77f36b560e7b616b74717ed22dc2e7cd0cf96c",
+    "docs/development/03-progress.md": "cc8bfa0a71da82b9fef183f28068fb4b15706f24916f347310414cde3e5b4c50",
+    "docs/development/04-batches.md": "11cb5c1b09dc2068062a72d2c138d17986faea39e45d5e2d0a09e5f971d7a83d",
+    "docs/development/05-implementation-assessment.md": "d3d4a3b55b808d50fb80579e1399f8ba9cffb496e6852269046b7e8547a18b64",
+    "docs/development/06-first-slices.md": "9dd303be58d44d5a220663ada0ea000ac5191143c72fdf577841a137e7b5eddb",
+    "docs/development/README.md": "e2cc691bc03f754df18a8b182ff9f5563dbffa1ce942c5459e6313d180460a59",
+    "docs/development/assessments/20261011/acceptance-source-index.json": "45bf227eb6c3c1bde8db5d6a5a1ff38e3cd2f69650f2604a7b75be50a9f92cfc",
+    "docs/development/assessments/20261011/catalogs/commercial-finance.json": "4a60712a9b3baf1fea15ad0f51ebcf90f0d0c5df08ce272c6bcf4cd8b34ae484",
+    "docs/development/assessments/20261011/catalogs/engineering-oa.json": "8f2c4eb654bbb77e7965fc0ffaf98a0f5d1e3e6373a909dd3847b2fb688b45cf",
+    "docs/development/assessments/20261011/catalogs/foundation.json": "be0c0ebd8bd961aa912994ba98536bbfa4c46064759b91e54ff1a812882028ea",
+    "docs/development/assessments/20261011/catalogs/operations.json": "4558f927f6e96b0f79481a9e29234ee814e4b59b2af9cbc2eb54fe68f360389a",
+    "docs/development/assessments/20261011/evidence/code-source-validation.initial.json": "633d44d1e085b442f895a8abb61c4b2f9dd9a4ebb1e7a9d28be733613564f9e1",
+    "docs/development/assessments/20261011/evidence/code-source-validation.json": "e006088f11c65001153d100690fc58c4e7dc34f9d53791227fcb701f82f039b0",
+    "docs/development/assessments/20261011/evidence/code-source-validation.review-fix.json": "2702c12a3b3d9b990138ee8b388599096aba881477d7cda56faf3cd39d4e4fc1",
+    "docs/development/assessments/20261011/evidence/inventory-validation.initial.json": "b2bf04a3a3cc49d15ed8e179116f2d4817522e84c02e62b7f2a397aa9de820c2",
+    "docs/development/assessments/20261011/evidence/ledger-validation.json": "6988a3f58a39335c5cf75f797496d71c6bb32d1cf906f483f10dfa8e60fc0b0b",
+    "docs/development/assessments/20261011/implementation-assessment.json": "86d1b6c117e7fae86bece8a1e22d6da40d4363c2b4f537d1d2c76a643eadcbe9",
+    "docs/development/assessments/20261011/original-acceptance-catalog.json": "948feb481189bd5f9078be324a4abfb27f9cb5b90cef81ce490dcd61bbd3c6c4",
+    "docs/development/assessments/20261011/target-assessments.md": "42d437a43a4bc111189f57066822aab7036a5f7d8117a7c8cdccb0031973d134",
+    "docs/development/roadmap.json": "ab1afaa256dbb621374be97c57a29aba18177a7de04f079c2276faa2ac68b97c",
+    "docs/project-memory/05-Completed.md": "cfe746c01ac935e2ff7f431784fa436ec8849334eb3bf67f96de0aa0bf0d3967",
+    "docs/project-memory/06-Todo.md": "8b5cd7fdfdef1647744a16533beca4fa806a5f4e127b3afc93cdf357f3103a38",
+    "docs/project-memory/CHANGELOG-AI.md": "d7e27859f52f75b77873bfff028653def2535cfa5f88114ef4e5806a11612855",
+    "docs/project-memory/PROJECT_STATE.md": "49f5d0ea29560e91555b330b94fa798a66b26662486bdcfc33921ca39b0d1569",
+    "docs/superpowers/plans/2026-10-11-wp01-implementation-assessment.md": "3866798b79b45a59fe3e42e29935cd89ead589203848bfc66fce5fdff2997856"
+  }
+}

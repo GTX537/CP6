@@ -2,7 +2,7 @@
 
 本台账按用户确认的顺序管理开发：全量评估、拆分大任务、安排批次、临近实施再细拆。范围对应已有125个设计目标；这是开发规划和证据登记，不改变业务合同或历史接受记录。
 
-日常先看[开发进度](03-progress.md)，再看[14个大任务](01-work-packages.md)、[125目标归属](02-target-coverage.md)和[依赖与开发批次](04-batches.md)。
+日常先看[开发进度](03-progress.md)，再看[实现评估结论](05-implementation-assessment.md)、[首批实施切片](06-first-slices.md)、[14个大任务](01-work-packages.md)、[125目标归属](02-target-coverage.md)和[依赖与开发批次](04-batches.md)。
 
 ## 唯一登记入口与更新方式
 
@@ -63,7 +63,7 @@ WP01完成要求全部125目标的实现评估和待决策事项关闭，原验�
 
 跨工作包的场景由WP14协调，各`consumer_targets`的业务Owner共同参与；单包场景由该包协调。协调人不取得其他Owner的数据写权。同一场景的多消费者引用只统计一次运行结果。
 
-## 本轮初评的依据与限制
+## 台账建立时的初评快照（后续结论见下节）
 
 - [125目标当前覆盖](../design-handbook/remediation/10-target-coverage.json)、[115登记项/114问题族处置](../design-handbook/remediation/00-disposition-register.json)及验收目录按Git blob固定，检查器拒绝静默漂移。
 - Main源码固定`90ea752e9029d171e6a0307fcda06c66c3e04a69`；CRM为`c778a3052a4416b82facb07b1244fc98fb6ad8a1`；Platform为`30bd23af6808d217a23878bd9437513043c52834`。本轮只读核对三仓远端main和源码入口，详细计数见JSON的`code_entry_inventory`。
@@ -71,3 +71,11 @@ WP01完成要求全部125目标的实现评估和待决策事项关闭，原验�
 - 没有业务编码、编译、数据库迁移、环境切换或部署。当前每个目标的逐项实现符合性为`PENDING`，247条运行场景保持`NOT_RUN`。初评可用于安排评估顺序，不能据此承诺精确工期。
 
 本台账建立过程及本地验证范围见[规划任务记录](../superpowers/plans/2026-10-11-development-roadmap.md)。
+
+## WP01当前进展
+
+125/125目标已有固定源码差异判断：105项需改造、20项需新增核心用例。原验收清单完整123/125；PLM-ITER与PLM-REL保留不可恢复的历史原表缺口，WP01整体仍为ASSESSING。
+
+登记13,404条目标—来源验收关联，其中原始AC/TC 8,456条、必需补充校验/连续场景 4,948条。共享条目挂到每个负责目标，不能把这个合计当成全域唯一业务测试数。全部NOT_RUN；247条修订运行场景也保持NOT_RUN，41条历史静态检查仍仅REFERENCE_ONLY。
+
+详细方法、历史缺口及固定源码见[本轮评估](05-implementation-assessment.md)。原清单中的ORIGINAL_AC和REQUIRED_SUPPLEMENTAL_SCENARIO均属于目标完成门；纯设计依赖单独保存。definition_ref指向完整来源定义，禁止只验证标题而遗漏附加refinements、前提和连续步骤。当前已确认业务交付仍为0/125。

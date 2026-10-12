@@ -1,0 +1,1981 @@
+{
+  "at": "2026-10-12T01:59:56.646927+00:00",
+  "result": "PASS",
+  "scope": "Exact 125-target and catalog/ledger case-set agreement; source-file SHA/line/JSON-pointer resolution; all runtime states NOT_RUN. Source readability/structure does not prove runtime conformance.",
+  "target_count": 125,
+  "case_definition_references": 13404,
+  "kind_counts": {
+    "ORIGINAL_AC": 8456,
+    "REQUIRED_SUPPLEMENTAL_SCENARIO": 4948
+  },
+  "design_dependency_records_outside_runtime_denominator": 1738,
+  "local_source_files_checked": 275,
+  "source_locators_checked": 16997,
+  "line_positions_checked": 13660,
+  "json_pointers_checked": 4845,
+  "source_checks": [
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "sha256": "5282d5545f8c9b1db11f649541ca35af8dd1d9df1264af8df6a4ed34f2fd0c63",
+      "bytes": 706603,
+      "locators": 106,
+      "lines": 10758
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fc9da230a15d2a77__S5_SYS-WORKSPACE-01_完整设计候选_v0.1.md",
+      "sha256": "fc9da230a15d2a778d410d750c8aa63a1aa056ef8451c07d35a9802cb9c165a9",
+      "bytes": 12347,
+      "locators": 20,
+      "lines": 85
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/46/4638ed3c19d5f24a__S5_SYS-LANG-01_完整设计候选_v0.1.md",
+      "sha256": "4638ed3c19d5f24a2935edf39e9c7c518725e92b1c96259d282ebf14e6c94580",
+      "bytes": 11556,
+      "locators": 20,
+      "lines": 83
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9943c2bdead2009__S5_SYS-AUD-01_完整设计候选_v0.1.md",
+      "sha256": "c9943c2bdead200996e9ce7cf4e9d6de67c62ab28f435086d8d7fd303f72f623",
+      "bytes": 12476,
+      "locators": 21,
+      "lines": 87
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77aae5c558d86a2a__S5_SYS-PRIV-01_完整设计候选_v0.1.md",
+      "sha256": "77aae5c558d86a2a6b4ab384f0f87386a48dc3021a213adce16ac503c183aa63",
+      "bytes": 14301,
+      "locators": 22,
+      "lines": 81
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15d5aa240b03f6ab__S5_SYS-FILE-01_完整设计候选_v0.1.md",
+      "sha256": "15d5aa240b03f6ab711a1e1bedabee76e11d81e2325247ed55826b34f8c9a22b",
+      "bytes": 18165,
+      "locators": 30,
+      "lines": 122
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bf7ac9ccfb3a59bb__S5_SYS-NUM-01_完整设计候选_v0.1.md",
+      "sha256": "bf7ac9ccfb3a59bb6050aa9cc6fd5f8e531e77977e51df6255bccb6ee98eac13",
+      "bytes": 9865,
+      "locators": 16,
+      "lines": 71
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e86bc515d64622af__S5_SYS-CLIENT-01_完整设计候选_v0.2.md",
+      "sha256": "e86bc515d64622afed314aa67776fa5b26e3c35e234ad1c0ffaa4d067da1f26d",
+      "bytes": 22135,
+      "locators": 22,
+      "lines": 128
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/49/4950396682dc9120__S5_SYS-JOB-01_完整设计候选_v0.1.md",
+      "sha256": "4950396682dc9120f89b79da2c463c7bb4f5cc5225b4bc91628fdcc26c7aa6f8",
+      "bytes": 13868,
+      "locators": 25,
+      "lines": 87
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4b2226985953845f__S5_SYS-TENANT-01_完整设计候选_v0.1.md",
+      "sha256": "4b2226985953845f50345374e36af1a2a91319d1ae8cef388db18bdbdf79b1a7",
+      "bytes": 21770,
+      "locators": 23,
+      "lines": 172
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d8/d84f5873e46c4c98__S5_SYS-IAM-01_完整设计候选_v0.2.md",
+      "sha256": "d84f5873e46c4c98185677b9e8695b48bea4fed0a20b811c8433fa0fbbb90840",
+      "bytes": 61836,
+      "locators": 40,
+      "lines": 375
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+      "bytes": 122794,
+      "locators": 70,
+      "lines": 750
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/265aecc406e50ca8__PLT-CTX-01_完整静态设计_v0.1.md",
+      "sha256": "265aecc406e50ca8117d1823d09fac61fa5694894baecdaff31df87013f8eb6f",
+      "bytes": 21355,
+      "locators": 28,
+      "lines": 122
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d1416cbd7d0ea6e__PLT-HTTP-01_完整静态设计_v0.2.md",
+      "sha256": "9d1416cbd7d0ea6e58a0da79de80dcb2a4e675890345dfb4558194c61048eb3f",
+      "bytes": 28675,
+      "locators": 42,
+      "lines": 133
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7b/7b59ff237b27e8ef__PLT-MSG-01_完整静态设计_v0.2.md",
+      "sha256": "7b59ff237b27e8efc452ae1ecf776ac77002382466a9e7d9744a3bf924e505e2",
+      "bytes": 31358,
+      "locators": 40,
+      "lines": 136
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+      "sha256": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84",
+      "bytes": 57043,
+      "locators": 60,
+      "lines": 275
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/20c9a128b3f2bab0__PLT-OBS-01_完整静态设计_v0.1.md",
+      "sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+      "bytes": 22681,
+      "locators": 32,
+      "lines": 111
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/9246ef6b40f500da__PLT-RELEASE-01_完整静态设计_v0.1.md",
+      "sha256": "9246ef6b40f500da22c570bf3c31a51701442bbbed50250d9f259d12cb1bbdbf",
+      "bytes": 25341,
+      "locators": 32,
+      "lines": 121
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d8/d8b4ef19a1b3a0a5__PLT-TEST-01_完整静态设计_v0.1.md",
+      "sha256": "d8b4ef19a1b3a0a528ddd7831f5159295d75b7eecadfa787e36ad028d362c5aa",
+      "bytes": 19809,
+      "locators": 24,
+      "lines": 102
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ee/ee408792ed8a7f0d__AC-NOT-RUN-INDEX.json",
+      "sha256": "ee408792ed8a7f0dc4e43503718a8b78753d353779685524ef9db5d9ac12ce19",
+      "bytes": 33094,
+      "locators": 87,
+      "lines": 994
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6f/6f8585ca3b85c6aa__SPACE_七专项兼容完整设计_R2_CANDIDATE.md",
+      "sha256": "6f8585ca3b85c6aaafb2a8eaf2dfda7ce8a3b1ae590987b3bcf19b1e3d5f4290",
+      "bytes": 57051,
+      "locators": 60,
+      "lines": 394
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/428444e8694aefa7__R2-AC-REFINEMENTS.json",
+      "sha256": "428444e8694aefa73e0a674997a02b56be1da20bf26b50c407bdcd598875c867",
+      "bytes": 13254,
+      "locators": 117,
+      "lines": 423
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fa/fa7d0f3388911b30__B-CRM-INQ-R3-V15-FINAL-MAIN.md",
+      "sha256": "fa7d0f3388911b30992162f693b8f3340739171d17ae6256c4e72fc569f7890d",
+      "bytes": 104060,
+      "locators": 61,
+      "lines": 530
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f8fd4357559f8d2__AC-CATALOGUE.json",
+      "sha256": "9f8fd4357559f8d246614fe8c9b89f1948cc6afcc6f42327c96f60d2d9f5cc94",
+      "bytes": 33203,
+      "locators": 60,
+      "lines": 1227
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ae/aeda22b512c5c620__CP20-60-AC-MAPPING.json",
+      "sha256": "aeda22b512c5c6202749c23f4e11b06ae4917ac558b432ff9c05c0dd0067909e",
+      "bytes": 131816,
+      "locators": 60,
+      "lines": 2954
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md",
+      "sha256": "67dc3667fb852c5672f73710b80a4af17810cd09fe03ed69cbb2c82dff8dfa91",
+      "bytes": 265104,
+      "locators": 79,
+      "lines": 3434
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3e/3ef2f5a0c2bfce71__ACCEPTANCE.md",
+      "sha256": "3ef2f5a0c2bfce718a69ae3ee08c821b7cbafc4aa9fda215045ea03e181f0908",
+      "bytes": 14665,
+      "locators": 16,
+      "lines": 80
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e5/e51b3ead9274f739__ACCEPTANCE-DELTA.md",
+      "sha256": "e51b3ead9274f739dfda88f453edfb19d60507c7c033d62998377b797edb2432",
+      "bytes": 20361,
+      "locators": 20,
+      "lines": 97
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/12/123cf9b78f7de6ab__ACCEPTANCE-SEQUENCES.md",
+      "sha256": "123cf9b78f7de6abd17504c08276b559795121d4f844f041e5c0337d8560d259",
+      "bytes": 15462,
+      "locators": 11,
+      "lines": 63
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c2/c20ce5cbfb05b5a1__CLARIFICATIONS.md",
+      "sha256": "c20ce5cbfb05b5a144938834bfe0b9631a840ebb3e188d782f48949a185cdebe",
+      "bytes": 4091,
+      "locators": 2,
+      "lines": 31
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3e4af65be952562__ACCEPTANCE.md",
+      "sha256": "a3e4af65be952562f16761a70b2c24349a3d79069f10103439cb6b9991d0f4f7",
+      "bytes": 4123,
+      "locators": 1,
+      "lines": 40
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6a/6a000d26d7a638a4__CRM-CON-01_联系人与账户关系_前后端开发Spec_v1.1.1_REVIEW.md",
+      "sha256": "6a000d26d7a638a47000b85c6f97c1b96a9efd29da7fe2650d2f8859672d4407",
+      "bytes": 245926,
+      "locators": 77,
+      "lines": 2573
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdc91e2093023cf7__CRM-OPP-01_商机与销售管道_前后端开发Spec_v1.1.2_RECOVERY_REVIEW_CANDIDATE.md",
+      "sha256": "bdc91e2093023cf77ff76fc77339f215eb3ffe9ec8c6510a04ca6f605de5530f",
+      "bytes": 350401,
+      "locators": 54,
+      "lines": 3845
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "sha256": "affc1caf67bbf423989dbdf184ca7308a56fb313c9ffec95959b7379940becca",
+      "bytes": 411969,
+      "locators": 64,
+      "lines": 7204
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "sha256": "92c20d1ee1dc090fdff5425bba68bf44f67a3f513400bd875c7c1d605d159280",
+      "bytes": 356627,
+      "locators": 124,
+      "lines": 8628
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "sha256": "f7d7141b4ceffa15b0909fae8d21227b12de4a6ddc28e3369a1b2a2de1c29f03",
+      "bytes": 632861,
+      "locators": 110,
+      "lines": 15296
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/40/40c7dfc986a23e17__AC-AND-SPEC-PROPAGATION.json",
+      "sha256": "40c7dfc986a23e17f56d7b03f94cb00dece3e4668854753fbca3305b8b4f4943",
+      "bytes": 55779,
+      "locators": 110,
+      "lines": 1155
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+      "sha256": "c48a0460236a9a6e596adf138379026f251fc3348098d1a42e646840a5175d2f",
+      "bytes": 97646,
+      "locators": 60,
+      "lines": 870
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "sha256": "45ac9a34dec6e8e49c7fceaa0020e314f2e753f631b93a03cf280eec1fae29da",
+      "bytes": 3628943,
+      "locators": 218,
+      "lines": 60201
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c8e50210c608b24__ORD_R01.md",
+      "sha256": "9c8e50210c608b244d52b68d679ca1c5b59c378da44e9986a537f4756ea357de",
+      "bytes": 46397,
+      "locators": 72,
+      "lines": 366
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+      "sha256": "5096115db2722db7c80fbe461ee437e172cfd10998daa2895746c4ddfa769b01",
+      "bytes": 316915,
+      "locators": 244,
+      "lines": 4746
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "sha256": "24d39db15ecc62889338bde26d80fafab387e4dc83edaf6aa028cf14d6e14933",
+      "bytes": 178755,
+      "locators": 140,
+      "lines": 2865
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "sha256": "735749099f867bc985456d1a9ee42415f0751527e308cb090642bafe277cebef",
+      "bytes": 308025,
+      "locators": 69,
+      "lines": 7460
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9442439f12ceb101__FIN-CREDIT-01_交易信用检查_前后端开发Spec_v1.0_R4_DRAFT.md",
+      "sha256": "9442439f12ceb101fb49f469f596a529f061526d0a7b504289ef5fd3185e9349",
+      "bytes": 359236,
+      "locators": 104,
+      "lines": 8598
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/76c5d0733e1e9512__FIN-COST-01_制造成本归集与结转_前后端开发Spec_v1.0_R2_DRAFT.md",
+      "sha256": "76c5d0733e1e95127e6ed5bc457029d8bc47704750c136625273f9b648518b72",
+      "bytes": 148487,
+      "locators": 76,
+      "lines": 913
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/71/714b62858e245395__SC15-R2-EXAMPLES.json",
+      "sha256": "714b62858e245395e61322f3cd96feeea910ef19c0147e2d09ac86d6b2b7a15b",
+      "bytes": 1765819,
+      "locators": 34,
+      "lines": 47717
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/44/4410c90225575b7c__C65-R2-EXAMPLES.json",
+      "sha256": "4410c90225575b7c68531d0737c19111d5005af6d931530f2fed1a974a461823",
+      "bytes": 4252923,
+      "locators": 49,
+      "lines": 97327
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7c/7cd87ef84615e8fe__ORIGINAL_46AC_R0.json",
+      "sha256": "7cd87ef84615e8fe84e4f41037d724fa71c759d9f14d97fbd8c5ea759fe91ce3",
+      "bytes": 16248,
+      "locators": 46,
+      "lines": 59
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/efdcbea7ca5025b7__ERP-CREDIT-01_AC-CATALOGUE.json",
+      "sha256": "efdcbea7ca5025b7540f424a2f9998d4d7c4fb542f68ca0a1448600b060a5a0d",
+      "bytes": 223713,
+      "locators": 46,
+      "lines": 4404
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/3885b5c1b629e32c__07_ORIGINAL_46_LITERAL_FULL_DESIGN_EVIDENCE_MAP.json",
+      "sha256": "3885b5c1b629e32c76cd8ec138799fce7aca72fcbbda8b5977a1a00f945b9069",
+      "bytes": 95007,
+      "locators": 46,
+      "lines": 2483
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b2afa82fe46698c__ERP-CREDIT-01_API-REGISTRY.json",
+      "sha256": "2b2afa82fe46698c4cf6ffbf930b9b292d4d006a848db79fbfbfa82dcf3ed709",
+      "bytes": 244900,
+      "locators": 63,
+      "lines": 4819
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/44/442598fb45a33cea__11_COMPLETE_PHASE_CUTS_AND_INTENT_RESULT_RECONCILIATION.json",
+      "sha256": "442598fb45a33cea4235ef0247a86544f0524b474f47f808c285122d318a44f3",
+      "bytes": 919705,
+      "locators": 233,
+      "lines": 18638
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fe79c7832a3613a__EFFECTIVE-CURRENT-SELECTION.json",
+      "sha256": "5fe79c7832a3613affa55cbee7334b2342546cae26798def098460cd4cd0259c",
+      "bytes": 9078,
+      "locators": 115,
+      "lines": 181
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfe6aea55e2f09c__06_BOUNDED_FAILURE_PRIOR_PLAN_UNKNOWN_AND_RETRY_BRANCHES.json",
+      "sha256": "fcfe6aea55e2f09c68f8c5f1f6ee91e4446de27fb8a0da83fc3bcfbd69722a5f",
+      "bytes": 76308,
+      "locators": 35,
+      "lines": 1790
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/87/87fe476c55aa8b57__WN11-01_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "87fe476c55aa8b57f3e89fd7faac20c9b0f24ba75d5c0d31825012a9ab935ac4",
+      "bytes": 1869,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4e/4e3e0ad8be93d04a__wn11_original_case_row_binding.json",
+      "sha256": "4e3e0ad8be93d04ac217f68fe2bda8351b295fdaa89b78b0b79d65f05250e1a9",
+      "bytes": 4828,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/653c11b7cf726de5__WN11-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "653c11b7cf726de5409f08a0854553110dc5a3f60b0a9e2dd43753dec4c9cad6",
+      "bytes": 1924,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3d/3ddec695b16b0cb0__wn11_new_whole_approval.json",
+      "sha256": "3ddec695b16b0cb0a0095642dabf132accb09dd8223615a7498baaa0dbdc2e1d",
+      "bytes": 1671,
+      "locators": 2,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/42441d83d35d14ab__wn11_current_full_frontier.json",
+      "sha256": "42441d83d35d14ab0c70d8153355b9f7b6ad981f6f2c23fdab0cfa556bb59bb7",
+      "bytes": 2178,
+      "locators": 5,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/58/58c1b37a8d8f8511__WN11-03_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "58c1b37a8d8f8511eecc449633b6d5f04cc617531eb7ae70a60c1fb299c24076",
+      "bytes": 1952,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d3/d34ddf8a2192731b__WN11-05_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "d34ddf8a2192731bcc1fe257266d9b479c7ad3da5d802c2cd5dd5a8eab1ba9c7",
+      "bytes": 1895,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a7/a7624c9bf555c1b2__WN11-06_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "a7624c9bf555c1b275ed24aa3e6c50b0a0af07b3bf0bb4d56210cd638ade1fef",
+      "bytes": 1941,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4709dd7e3c0a78d__wn11_delta_pending_native_query.json",
+      "sha256": "d4709dd7e3c0a78dd9a961a3c8583e0a3969ccd5f07b74583a71b8f3f92a531e",
+      "bytes": 302,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1f141854b137de2__wn11_fresh_delta_a27_request.json",
+      "sha256": "e1f141854b137de26a346e00a1a087c9b17331a0bd9bd733ce17b4708c597d38",
+      "bytes": 166,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/49/4920cf79e77354d7__WN11-07_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "4920cf79e77354d721f3810e0b63ad77205d0271849acfb3d3c254abe2d4cbcb",
+      "bytes": 492443,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/db/db3250432f362c25__WN11-08_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "db3250432f362c25eacbfb1b845d70179ff58619decc7237a5285713a89d2c92",
+      "bytes": 819383,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/205451faeae15cdd__wn11_same_uow_source_callback.json",
+      "sha256": "205451faeae15cdd166ef9e55aa05827d8276527b4be3b1e7390b2a8e36311cf",
+      "bytes": 12374,
+      "locators": 4,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/60/60f620bfa708338c__WN11-09_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "60f620bfa708338c1cb4938b57164134dc548de8ed7564cc0b52c715ead32f14",
+      "bytes": 34173,
+      "locators": 6,
+      "lines": 1021
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/86/8699533f46dc9e02__WN11-10_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "8699533f46dc9e0203d8c2e16cc463cf4158d9599856af0e5237b89c981e69fd",
+      "bytes": 10833,
+      "locators": 6,
+      "lines": 331
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6b/6b576bc5edd6d066__WN11-11_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "6b576bc5edd6d066f02f0c7a2d4235d9118c1655583ca61d41abac7be89d429b",
+      "bytes": 10030,
+      "locators": 6,
+      "lines": 313
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1e/1e2d00af7f0015c2__WN11-12_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "1e2d00af7f0015c20d36d8cf942f9e96d93c20f1d0fa5f9d16cbeab7c2b57df3",
+      "bytes": 1945,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/84/847f976239a970a0__wn11_c06_exact_saved_202.json",
+      "sha256": "847f976239a970a073ee8bbeb5a6c16d3b10fbc141f1e0bc0106374b0da64bc1",
+      "bytes": 622,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2c/2c1e10d8c3774f43__wn11_c06_exact_saved_200.json",
+      "sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+      "bytes": 7353,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15077a29036ee97f__WN14-01_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "15077a29036ee97f442497d1f07a6d63d1f16babc773e3f7a0324fbf3f0ce994",
+      "bytes": 1884,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/98/98b0c4f2a053846f__wn14_new_genuine_demand_creation_current.json",
+      "sha256": "98b0c4f2a053846f6b72adf2478a8a271e11aff97eddfc69ec2dc32573f6265d",
+      "bytes": 3517,
+      "locators": 3,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/28/284c2766e4334187__WN14-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "284c2766e433418722d73af7b0a0e5c596c70ae4c922df7aa232c65c7ba5c4eb",
+      "bytes": 1951,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6cb1345a3501f7e__wn14_original_executor_identity_binding.json",
+      "sha256": "b6cb1345a3501f7ef38f7daf4ecaa75aea3f64a55ff1904bec711f0832457db6",
+      "bytes": 1249,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4f/4fcaa934e51f5db6__wn14_executor_full_current_closure.json",
+      "sha256": "4fcaa934e51f5db67dad83505b5e04b0cd1c934517d6f9a021547ebd44e9d741",
+      "bytes": 2250,
+      "locators": 4,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/da08a705fbe628b7__WN14-03_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "da08a705fbe628b7f0295f3d5e051b661dd0c24755cbb5f45ea865e4155c27f5",
+      "bytes": 127020,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fda5e1d3f4aac2b__WN14-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "2fda5e1d3f4aac2b96ad8fee5feebda9887075b6ed963392a940f9b7cbe327b6",
+      "bytes": 1966,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a27e82e18b0dcebc__WN14-05_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "a27e82e18b0dcebc994d274efbc70bb12ca385bb354aa47027da879b1d5ab7b8",
+      "bytes": 1934,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7e/7e4bc31859c88cd5__wn14_original_case_row_binding.json",
+      "sha256": "7e4bc31859c88cd5ed4abb749c1f5f696390cb2c331b1ce1e3e2a3956e9ebe63",
+      "bytes": 4728,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3947f4d9a9c0f0f__WN14-06_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "c3947f4d9a9c0f0f718447391dc6bba5016453c0e4dbc56b7e78ae7fc8f415ff",
+      "bytes": 1955,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d8/d8c360fdf1ec85f4__wn14_prior_plan_qualified_lawful_end.json",
+      "sha256": "d8c360fdf1ec85f448b764c993aa77aaa67ff0a4d22f48e5229b49787ec9345e",
+      "bytes": 2049,
+      "locators": 5,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/258a241be67ee40c__WN14-08_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "258a241be67ee40c850d82de7d48b3ca4d7c16baada122f16f098c50d121e782",
+      "bytes": 19693,
+      "locators": 6,
+      "lines": 551
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0c92d58a72c2ce28__WN14-09_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "0c92d58a72c2ce2844a314f922e0b4872a026bc7826de9a19dfbe4dc2a4d4200",
+      "bytes": 7120,
+      "locators": 6,
+      "lines": 185
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3e89116e3bc02a7__WN14-10_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "a3e89116e3bc02a7f52bdf849f315e8231af11220fb7b5c6ef16f1a7362fe7fb",
+      "bytes": 6317,
+      "locators": 6,
+      "lines": 167
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/af875b95e77f5dc0__WN14-11_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "af875b95e77f5dc091851060f7fd5360e9593e4b0a6121fd5a1758d1304b2eae",
+      "bytes": 1862,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/09/09dd0a0ae5212a2b__wn14_new_whole_replacement_approval.json",
+      "sha256": "09dd0a0ae5212a2b632cb5ece2ff250c095e4814a67d2b0c1b66cf40537d23ce",
+      "bytes": 1683,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/de/de5f20797e6ddcf6__WN14-12_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "de5f20797e6ddcf6f3462780f03a6f359bf1ccae0dead195f94a000b1a694612",
+      "bytes": 2043,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabd53694bb571a6__WN14-13_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "dabd53694bb571a6cc9d37a790fbfdda25d7df563b4c62a99065360fe7788543",
+      "bytes": 34464,
+      "locators": 6,
+      "lines": 1022
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f2/f246aad591c5027e__wn14_same_uow_source_callback.json",
+      "sha256": "f246aad591c5027e9af72f60279d1ec864fb3008eae1e863bdd2adace876190b",
+      "bytes": 5572,
+      "locators": 3,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e5/e5343543b0a8b0c6__WN14-14_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "e5343543b0a8b0c6a9412ac00ad91445c3b021e2984052130b2bfe8509f1da4c",
+      "bytes": 9921,
+      "locators": 6,
+      "lines": 296
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fe/fe605561d761bfa7__WN14-15_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "fe605561d761bfa72c39a1007737ed703487bfd9bc5f6cef3c0c53a47a3656d9",
+      "bytes": 9118,
+      "locators": 6,
+      "lines": 278
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e6b260852efb21b__WN14-16_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "8e6b260852efb21b86d68d2fc3ac26fc1fff951706316b609f27db1055fe2b99",
+      "bytes": 1935,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/7254767fe7f255b6__wn14_c06_exact_saved_202.json",
+      "sha256": "7254767fe7f255b6053642f3468b5810a624d998ca050da83ea158b95b861406",
+      "bytes": 622,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dd/dd987fd1ffb17e77__wn14_c06_exact_saved_200.json",
+      "sha256": "dd987fd1ffb17e7744d79228afd1a79f92fdd491c288409c2105801aa9562bd3",
+      "bytes": 3999,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2d/2d3583dd2e30af7b__MULTI-01_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "2d3583dd2e30af7ba1b767835f258204525f933719391b7d29bcadb091ad8c48",
+      "bytes": 2032,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3e/3e03c8c2b0ec313d__multi_mixed_all_member_current_vector.json",
+      "sha256": "3e03c8c2b0ec313d4af674f94804a657a7c701f01c9c03175343e7509bf8ed7d",
+      "bytes": 6977,
+      "locators": 3,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/36/36760ee6cde6a5cf__MULTI-03_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "36760ee6cde6a5cfe99cb3e3d4a98462e0b12bdf6401d95d41a712cc72c64fdf",
+      "bytes": 1954,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a113e9c3dc62a28__MULTI-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "7a113e9c3dc62a28140a38e1f29fe49ea6a943a1cfacaf2e5da1406b94ce4d92",
+      "bytes": 1995,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5c/5c9d29e12fbd0426__multi_public_native_lookup_binding.json",
+      "sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+      "bytes": 3304,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e5/e5c406f0608e2b37__MULTI-05_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "e5c406f0608e2b37898248c60695f87d04f2d155b27f5706190e0a1842adbebe",
+      "bytes": 1900,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7b/7bc5b79a7dbc21f0__multi_mixed_complete_public_q14.json",
+      "sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+      "bytes": 21365,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e0/e0c4cc045dcdde54__MULTI-06_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+      "sha256": "e0c4cc045dcdde54516fd7f15017111f6907e179f4150d2be20ab1982006b2d5",
+      "bytes": 86149,
+      "locators": 6,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9b/9b319436164e0433__multi_same_uow_source_callback.json",
+      "sha256": "9b319436164e043306591488b85cb6e9b3263b1cb8118db9dfa4562f07894f2c",
+      "bytes": 1194,
+      "locators": 1,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/932077285645b823__05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+      "bytes": 32065,
+      "locators": 1,
+      "lines": 952
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fe/fe3093133f8fa6ca__FIN-MASTER-01_财务基础资料_前后端开发Spec_v1.3_REVIEW_R3_CANDIDATE.md",
+      "sha256": "fe3093133f8fa6ca73a051c558dfd3b6141235c5235bbf28f9f5dd132a9310a8",
+      "bytes": 2648582,
+      "locators": 396,
+      "lines": 74205
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/dabe7fa5cc4da4e4__FIN-GL-01_会计事件与凭证过账_前后端开发Spec_v1.0_R2_REVIEW_CANDIDATE.md",
+      "sha256": "dabe7fa5cc4da4e422a86eb64c1950be8802a64f2ce008009291c849e798abfd",
+      "bytes": 1502253,
+      "locators": 79,
+      "lines": 32339
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cde1c179336198ea__CP6_S2_财务共享_完整详设与开发拆分_R1_20261007.md",
+      "sha256": "cde1c179336198ea89e7f95ea073bb6ded0d9880bd172f3695c0b6c50f140aaf",
+      "bytes": 177071,
+      "locators": 85,
+      "lines": 1050
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+      "sha256": "f8bfbd77ef015500328d24cc03c4beb6c6822a8d0e4cc7db60ecfc507780e567",
+      "bytes": 166330,
+      "locators": 87,
+      "lines": 997
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3e/3ee0e30403422de0__AC-REGISTER_R2.md",
+      "sha256": "3ee0e30403422de085dbe1e5d4ff6ca4a72d447855831d0df87ddab894980981",
+      "bytes": 11606,
+      "locators": 79,
+      "lines": 97
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9d7ce48b1b68c52__FIN-INV-01_库存计价与业务对账_前后端开发Spec_v1.0_R10_DRAFT.md",
+      "sha256": "c9d7ce48b1b68c529cf1f83db03b92cb6c9a1881c40d3792d1bacd92f42c5f41",
+      "bytes": 131651,
+      "locators": 103,
+      "lines": 1260
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72ba69312a04f2bb__R10-CONTINUOUS-NORMATIVE-FIXTURES.json",
+      "sha256": "72ba69312a04f2bb7a10fa7ffbc26609d3b5f61bf877d89a77c2a05fd720be3c",
+      "bytes": 1437013,
+      "locators": 501,
+      "lines": 31863
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/70af5fe2921cbede__R10-COLD-C09-VALIDATION-CASES.json",
+      "sha256": "70af5fe2921cbede179cab4c9fdafb9cebdae5857572d8248807b248e8f328b7",
+      "bytes": 14766,
+      "locators": 20,
+      "lines": 341
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+      "sha256": "e2674e740f069490df79b23b90f492122911e2d3ede434cd49d9240444e0940b",
+      "bytes": 36560,
+      "locators": 24,
+      "lines": 221
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a1/a18753ac35341b9b__ERP-PRICE-R2.original.md",
+      "sha256": "a18753ac35341b9bba15837c1c12141b63eab0f26c364213bdf0f017ee690c2c",
+      "bytes": 35108,
+      "locators": 28,
+      "lines": 223
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4793a84b5a7d4d0e__FIN-BUD-01.md",
+      "sha256": "4793a84b5a7d4d0e5361cf173a00f9032aa3e5806ed173ac12612be99a38e02f",
+      "bytes": 30023,
+      "locators": 24,
+      "lines": 149
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b0d57e32e36e239__FIN-BANK-01.md",
+      "sha256": "2b0d57e32e36e239e9b6b133776078343517a5718e0e7c56bac4e7eaeeee8143",
+      "bytes": 50337,
+      "locators": 28,
+      "lines": 218
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3439f4c10e41b16__FIN-ASSET-01.md",
+      "sha256": "a3439f4c10e41b163e157dd606ef3f98567be6830f3c31088641a70317bd9e62",
+      "bytes": 42784,
+      "locators": 32,
+      "lines": 225
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0e/0ee734b209d8281c__CP6_订单与独立需求_R04_画布收口与Review摘要_v0.1.md",
+      "sha256": "0ee734b209d8281c200d122d4a0a1ebcac3313f1c0987c8ffe1f7166a8ffa778",
+      "bytes": 12608,
+      "locators": 8,
+      "lines": 194
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57bcc2cbd1f6ae6a__PLAN-ATP-AC-CATALOG.json",
+      "sha256": "57bcc2cbd1f6ae6a0d1bbae1f71f9eb3a714ca83295e65d425e2e6f6d1b6c658",
+      "bytes": 10613,
+      "locators": 50,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/04/0447783a1e2c2c32__A-PLAN-ATP-R11-CONTINUOUS-FIXTURES.json",
+      "sha256": "0447783a1e2c2c32525e56517c22f70aaaa1b9de9e5b371c4135702cb5395d91",
+      "bytes": 2427888,
+      "locators": 64,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fe/feb10b98093a4fb0__PLAN-ATP-SCHEMA-VECTORS.json",
+      "sha256": "feb10b98093a4fb0f5b0b17c136fba686977d74176febd6d97b17581dbdfa629",
+      "bytes": 906319,
+      "locators": 220,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1b/1b78722672e08dd0__RECOVERY-R11-OWNER-NAME-VECTORS.json",
+      "sha256": "1b78722672e08dd0af30727233645d53475906ec1cf866bb66d7977c3488d3e9",
+      "bytes": 749,
+      "locators": 7,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1a/1a392462da1246cc__PS_R01_44组验收场景_NOT_RUN.md",
+      "sha256": "1a392462da1246ccb432258771e1d145e5995344567f94876ec628fef311401f",
+      "bytes": 15453,
+      "locators": 88,
+      "lines": 531
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7f/7f851186e14ce4a9__ACCEPTANCE.md",
+      "sha256": "7f851186e14ce4a9f66790901da7ab8ab2570a958067d0b2155ac55c5d62ed68",
+      "bytes": 11926,
+      "locators": 104,
+      "lines": 75
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b6b4ac26e32e3a5__ACCEPTANCE.md",
+      "sha256": "2b6b4ac26e32e3a59b66584eb61159f029914021b7e09ba2704d789d6ceb82a1",
+      "bytes": 12736,
+      "locators": 80,
+      "lines": 63
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6c/6c4b8281a1e7b59b__ACCEPTANCE.md",
+      "sha256": "6c4b8281a1e7b59b7fe1fe89f4f3ecff56fe9bc186768d22a4216c1697a28e3b",
+      "bytes": 13410,
+      "locators": 42,
+      "lines": 92
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/652b6311984e396b__ACCEPTANCE.md",
+      "sha256": "652b6311984e396bcb8229c56bfac178fb2f82da75eb431ff3023eb5d37f84b5",
+      "bytes": 13533,
+      "locators": 50,
+      "lines": 75
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ee/ee2516b6cc629af4__ACCEPTANCE.md",
+      "sha256": "ee2516b6cc629af42d0c222a7a7c776f01644d039674c434a380a47e45c51716",
+      "bytes": 15524,
+      "locators": 48,
+      "lines": 71
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/88/88e0db6aedd19f7d__CP22_ORIGINAL_37_AC_CURRENT_MAP.json",
+      "sha256": "88e0db6aedd19f7d65760ff3d147cba765049987b6c6e61b0df659256759c44f",
+      "bytes": 237858,
+      "locators": 37,
+      "lines": 4877
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R02_R03_PR_RELEASE_CONTINUOUS_NORMAL_DATA.json",
+      "sha256": "606e77f05fcc144d941e9fb9465421b9a5868801726675b901917b4d3abbb767",
+      "bytes": 9528692,
+      "locators": 1,
+      "lines": 110847
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/de/deb93a7315005c6f__CP19_R02_SUGGESTED_IGNORE_NORMAL_DATA.json",
+      "sha256": "deb93a7315005c6fc40b42e785d46b0d8c2630640d6e51a54c65e8e56ff32606",
+      "bytes": 805287,
+      "locators": 1,
+      "lines": 11505
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_CROSS_STEP_EPOCH_NORMAL_DATA.json",
+      "sha256": "3cde9f2720882d38080b651c4866cd1c02b18d412c91cf42cc4b9c338a1b3fb3",
+      "bytes": 58459621,
+      "locators": 9,
+      "lines": 678637
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e9/e91d3075ed839457__CP19_R05_PO27_SLOT_TERMINAL_REPLAY_NORMAL_DATA.json",
+      "sha256": "e91d3075ed83945771ac04fd19d2850507a9ba882b14b6e39e20e8b0e5a6fee1",
+      "bytes": 1940723,
+      "locators": 1,
+      "lines": 21732
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f1/f1e6c0f672bec2ca__CP19_R05_R06_WMS_FIRST_ACCEPT_NORMAL_DATA.json",
+      "sha256": "f1e6c0f672bec2ca6ea2b781214513fe2d83707bbaf3e5fb8cf348957694f77d",
+      "bytes": 2557339,
+      "locators": 1,
+      "lines": 29770
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/df66ca6a6d715a97__CP19_R05_WMS_CONTINUOUS_NORMAL_DATA.json",
+      "sha256": "df66ca6a6d715a97af95bdab4859a67fa320fe790d5a608ef105a50f651417cb",
+      "bytes": 3702376,
+      "locators": 2,
+      "lines": 45300
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+      "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+      "bytes": 9251120,
+      "locators": 4,
+      "lines": 109641
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+      "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+      "bytes": 16511479,
+      "locators": 3,
+      "lines": 201555
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c0/c0bd2b12d41148f1__CP19_VALID_PR_ORIGINAL_ABSENCE_NORMAL_DATA.json",
+      "sha256": "c0bd2b12d41148f14d8c9d5d76734c14986af4357a59635448f87f77f3d51049",
+      "bytes": 1020635,
+      "locators": 1,
+      "lines": 12362
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "sha256": "f41b075008395c8612a6c2e08d8ef4b709fc6427fa9a3e75038597c1f5c16b8e",
+      "bytes": 32570574,
+      "locators": 8,
+      "lines": 386393
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d6/d611b467823424d2__CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "sha256": "d611b467823424d2eff18d72fd4af5793f423f72425faae7a501706194fac2ce",
+      "bytes": 4159712,
+      "locators": 4,
+      "lines": 49847
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2c/2ce3d53b3bafc329__CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "sha256": "2ce3d53b3bafc329fe2bc386005ee94f714cd8a3a18df45e276fe964e5d7cbce",
+      "bytes": 1626512,
+      "locators": 1,
+      "lines": 20747
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/894faea26e6a162a__PLAN_PO_R3_CP18_CREATION_CLOSURE_NORMAL_DATA.json",
+      "sha256": "894faea26e6a162aa78320a0e3e2251a9b7e0b1f06b2408f0987e3b3142d9b04",
+      "bytes": 148238,
+      "locators": 2,
+      "lines": 2192
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/240039a78887a8d6__PLAN_PO_R3_CP18_CURRENT_FIRM_IGNORE_NORMAL_DATA.json",
+      "sha256": "240039a78887a8d63685a5fe1ee9e8d47c554b92b5f44ddea5b33cb15c91288d",
+      "bytes": 921219,
+      "locators": 1,
+      "lines": 11753
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_DEFERRED_STATE_NORMAL_DATA.json",
+      "sha256": "f1e9207ead95805db6ae81d462795b1c1ef07b61027614e34c950e6042ae4144",
+      "bytes": 7469804,
+      "locators": 3,
+      "lines": 99155
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ba/ba98958a33ddb8a7__PLAN_PO_R3_CP18_EPOCH_NORMAL_DATA.json",
+      "sha256": "ba98958a33ddb8a74e30fa8cae59c0ec441d41c6e313822e1f3b963de9e2a202",
+      "bytes": 2446675,
+      "locators": 1,
+      "lines": 31242
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5e/5e7dcd493953067d__PLAN_PO_R3_CP18_EXISTING_CLOSURE_READ_NORMAL_DATA.json",
+      "sha256": "5e7dcd493953067d7542c06837448d56fa1ae8fa9d97dee7ec97df67b84cff69",
+      "bytes": 29163,
+      "locators": 2,
+      "lines": 216
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/da/daa6b91382c2135b__PLAN_PO_R3_CP18_IGNORE_NORMAL_DATA.json",
+      "sha256": "daa6b91382c2135b7f7b8587d01e08d529332c27d58d61474e75315c50fa5e04",
+      "bytes": 273899,
+      "locators": 2,
+      "lines": 3496
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b4/b4591e8c1b3c5220__PLAN_PO_R3_CP18_MULTI_START_NORMAL_DATA.json",
+      "sha256": "b4591e8c1b3c5220ce0eff7968527e683d9ea5ebbb7db52628a326bb76689001",
+      "bytes": 1307334,
+      "locators": 1,
+      "lines": 16805
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/29/29e753048b2ce24d__PLAN_PO_R3_CP18_NO_EFFECT_NORMAL_DATA.json",
+      "sha256": "29e753048b2ce24daa00c21019af97cf1ef93b0a0d913c22afb884d3704c7346",
+      "bytes": 360423,
+      "locators": 4,
+      "lines": 4499
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7b/7b0a61a6b3d5f772__PLAN_PO_R3_CP18_OWNER_READ_FAILURE_NORMAL_DATA.json",
+      "sha256": "7b0a61a6b3d5f772b358aa612ac2d5164eed364deb417a2d886ee10b05d2a19b",
+      "bytes": 970727,
+      "locators": 1,
+      "lines": 12717
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cd8266340cca4570__PLAN_PO_R3_CP18_READ_NORMAL_DATA.json",
+      "sha256": "cd8266340cca45703dda86efda5282f62cf4bbd6c7ba351473719e18134c7292",
+      "bytes": 105355,
+      "locators": 1,
+      "lines": 2541
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/255e32f617794ffd__PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "bytes": 939328,
+      "locators": 1,
+      "lines": 12200
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_SC18_THREE_OWNER_NORMAL_DATA.json",
+      "sha256": "64ffd1358897a05772579a37928b4c210761ec9d20edabd325acff0189f35778",
+      "bytes": 18394474,
+      "locators": 10,
+      "lines": 227555
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_WMS_CREATION_AXES_NORMAL_DATA.json",
+      "sha256": "cee5779e1532b13197b573c086d2b93c462533f6a10fb776b878d3bb9c0b4ccd",
+      "bytes": 6623118,
+      "locators": 11,
+      "lines": 75995
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/7262240de4fef6a6__PLAN_PO_R3_CP18_WMS_NEW_SLOT_ROOT_NORMAL_DATA.json",
+      "sha256": "7262240de4fef6a6bc06ef3f999944f45d30cb57427b33a5037716006c84ddbf",
+      "bytes": 1209300,
+      "locators": 3,
+      "lines": 14023
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e20cd80e3cc39e64__PLAN_PO_R3_CP18_WMS_SLOT_LOOKUP_NORMAL_DATA.json",
+      "sha256": "e20cd80e3cc39e642dff8eeca4c478468d8f69835a31bada0194cc4affa9348a",
+      "bytes": 4503138,
+      "locators": 3,
+      "lines": 53322
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/78/783fb667fb58246e__PLAN_PO_R3_CP18_SCENARIO_ROW_IMAGES.json",
+      "sha256": "783fb667fb58246e9747e1008bb4e008b92b4b25f92d5e54e29010fc64413f26",
+      "bytes": 2594402,
+      "locators": 5,
+      "lines": 32815
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0b/0b66435cb93df050__PLAN_PO_R3_CP18_OWNER_PROFILE_NORMAL_DATA.json",
+      "sha256": "0b66435cb93df050b919b9d63be3491b51fbdce08e5b94cfbf5dd5aac5161381",
+      "bytes": 41741,
+      "locators": 1,
+      "lines": 1016
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/59/59e1a4ed7ce14142__PLAN_PO_R3_CP18_SOURCE_NORMAL_DATA.json",
+      "sha256": "59e1a4ed7ce14142aef474981bea5dc26fe58bbe6bc8addab172a3435d68742b",
+      "bytes": 124533,
+      "locators": 1,
+      "lines": 1385
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6e/6eac597166453a44__PLAN_PO_R3_CP18_TRANSFER_BRIDGE_NORMAL_DATA.json",
+      "sha256": "6eac597166453a449b2575981a2470d099dada358be137cbc44e8e0e8f8b3799",
+      "bytes": 78793,
+      "locators": 1,
+      "lines": 1762
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec40c00f8d31882e__PLAN_PO_R3_CP18_WO_SUPPORT_NORMAL_DATA.json",
+      "sha256": "ec40c00f8d31882e6173fa8e023211f7ba917725858f5fe957adf54c53fd1b05",
+      "bytes": 85546,
+      "locators": 1,
+      "lines": 1806
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/66/6619955d7e11d661__EXC_NEW_AC_CATALOGUE.json",
+      "sha256": "6619955d7e11d661981f8c5fab61c235b9978302750c562eb6d1bf4c677f9542",
+      "bytes": 733278,
+      "locators": 103,
+      "lines": 13300
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP03_LOCAL_UOW_LEDGER_INDEX.json",
+      "sha256": "03c9e362bbb51cfd91be49297b81c306a5b43abdeb31bc02906f3bfcc18a97ae",
+      "bytes": 64298575,
+      "locators": 292,
+      "lines": 1154192
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8a/8a39c27ad9f35b1a__CP03_AC_DIFFERENCE_SPECIMENS.json",
+      "sha256": "8a39c27ad9f35b1a6b6c6c6a8b3bafa2e3599516a672615a2eb510a94abd5ac4",
+      "bytes": 476938,
+      "locators": 6,
+      "lines": 9035
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/69/69314bf3a25f3e9d__EXC_NORMAL_CHAIN_PACKETS.json",
+      "sha256": "69314bf3a25f3e9d3586b04b31c25d4a9db5a35801ad49bc8f2087f3b2f7ed3a",
+      "bytes": 19909,
+      "locators": 6,
+      "lines": 392
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7f/7fc28b4f7c811675__CP06_CURSOR_PROTOCOL_AND_EXAMPLES.json",
+      "sha256": "7fc28b4f7c811675aa96e3af2e0e893ac6c003ceefe7b3e0500e2aff78873df5",
+      "bytes": 1349665,
+      "locators": 18,
+      "lines": 29547
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP03_PHYSICAL_RECORD_REGISTRY.json",
+      "sha256": "11f539437a29689431689a27d6589b485f2e5e43669a78852c2db637968dd1f2",
+      "bytes": 139492732,
+      "locators": 1,
+      "lines": 1080169
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/current-members/CP03_LOCAL_RECORD_REGISTRY.json",
+      "sha256": "b1364c8c50c1ea4cc04139b8ead0fa48170349703e88ca4a0b868f6150bdaeb4",
+      "bytes": 5603983,
+      "locators": 1,
+      "lines": 41776
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a8/a8ea3acc71e58ef7__EXC_RELATIONAL_NORMAL_WRITESETS.json",
+      "sha256": "a8ea3acc71e58ef79fa04bc9b1c7d79793bcce216edebf22dcb36c8f87768564",
+      "bytes": 7883,
+      "locators": 1,
+      "lines": 147
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/04/04f60a9db8a200ef__AC-REGISTER.json",
+      "sha256": "04f60a9db8a200ef9c96c988228c5f0a2eee23fb466cdef021fe28e45b7427d6",
+      "bytes": 64528,
+      "locators": 77,
+      "lines": 2027
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f1/f1cde2acca50a053__NORMATIVE-EXAMPLES.json",
+      "sha256": "f1cde2acca50a0532193d729d4a0577251043eef7d2044818ec12e699eb74461",
+      "bytes": 838552,
+      "locators": 93,
+      "lines": 15269
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "sha256": "1787bb4e78ef25872d90f5897307f1259208449b9948010e274c45b21cb3a586",
+      "bytes": 492101,
+      "locators": 295,
+      "lines": 3256
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "sha256": "15edbc1dfe25be7ff9450c0c15de39a16e3141801194824bda54a35970289216",
+      "bytes": 536214,
+      "locators": 242,
+      "lines": 10839
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "sha256": "cc20531bdcc61959b77b395e8baa955e65a70fef0d84f4b364c166d3cc89a3ee",
+      "bytes": 323753,
+      "locators": 199,
+      "lines": 7013
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+      "sha256": "11fae598ec00ef49b68ed3f8140105933a3385703bb8fab63add7d1d8812f4ce",
+      "bytes": 299014,
+      "locators": 192,
+      "lines": 6597
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+      "bytes": 4020754,
+      "locators": 420,
+      "lines": 111026
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/4508fb47cead6f26__SC20-H31-SHARED-FIXTURE_v1.6.json",
+      "sha256": "4508fb47cead6f2654dcc9f7ef7de9ac7ba5d7a7a19bdd091ee6ba2be293b993",
+      "bytes": 525256,
+      "locators": 112,
+      "lines": 14460
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57f3a7ec38d3c587__SC20-H31-MULTILOC-FIXTURE_v1.json",
+      "sha256": "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb",
+      "bytes": 747328,
+      "locators": 94,
+      "lines": 20530
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/73bf775cc3d6d728__OUT-EFFECTIVE-SHARED-FIXTURE_v3.json",
+      "sha256": "73bf775cc3d6d728995d221bed587d4f21e2110a1e155d2fb761143b9f1cc615",
+      "bytes": 793805,
+      "locators": 252,
+      "lines": 20909
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "sha256": "951bf766a6f96118cebbc63d7a633875314dab96c5d48ed50bc818d20ab77f51",
+      "bytes": 56310,
+      "locators": 48,
+      "lines": 395
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/31b74d5270af68b4__MES-RES-01_制造资源与运行事实_前后端开发Spec_v1.1.1_REVIEW.md",
+      "sha256": "31b74d5270af68b4e0651d80aac86887a80c8f2c0fe4185d66ed32811156215b",
+      "bytes": 198445,
+      "locators": 66,
+      "lines": 1968
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbb206e646fcff20__ACCEPTANCE.md",
+      "sha256": "cbb206e646fcff20dfdc2450dfebb29d0346342393fac1b041bfc242220f9050",
+      "bytes": 10570,
+      "locators": 48,
+      "lines": 69
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1d/1d3af06933e4f542__ACCEPTANCE.md",
+      "sha256": "1d3af06933e4f54218cb92c9362d7901851be0d2cb8a67735fbcd79a4d1d4446",
+      "bytes": 13962,
+      "locators": 47,
+      "lines": 79
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f0/f0d01f88a607315d__ACCEPTANCE.md",
+      "sha256": "f0d01f88a607315dc118ddd1151870dc24ee6d1c8655fc35c06e229451a10964",
+      "bytes": 11143,
+      "locators": 44,
+      "lines": 73
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a2/a2acf9ec58f2e172__MES-WO-01_生产工单与制造快照_前后端开发Spec_v1.1_DRAFT.md",
+      "sha256": "a2acf9ec58f2e1726c2c1a0799c4cfc5dbd37dde29406443b2c4fb384a93462a",
+      "bytes": 282332,
+      "locators": 121,
+      "lines": 3412
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+      "sha256": "94de90613be087756100f9236c4b3df8befa901dd0f6e59ffd8f877c357945bc",
+      "bytes": 448940,
+      "locators": 140,
+      "lines": 10961
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/89826583e0cd6992__MAT-SUPP-PENDING-BASIS-SUCCESSION-01_v1.0_R1_PROPOSED.md",
+      "sha256": "89826583e0cd6992027f947f5182a75da84ad27e249ff541801115852e310053",
+      "bytes": 73659,
+      "locators": 20,
+      "lines": 1894
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6d/6da10c05475492fb__MES-EXEC-01_工序执行与报工_前后端开发Spec_v1.0_R2_DRAFT.md",
+      "sha256": "6da10c05475492fb41660d8242a3ff868871064c04f271dfd56bc9af6285344c",
+      "bytes": 881948,
+      "locators": 229,
+      "lines": 28859
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bfd8461db7eca7ce__MES-OUTPUT-01_生产产出与关闭_前后端开发Spec_v1.0_R1_DRAFT.md",
+      "sha256": "bfd8461db7eca7ceacea8e40f0ebc10754a7595c0f31e223c5842e753c206baa",
+      "bytes": 1581995,
+      "locators": 316,
+      "lines": 50022
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8c370043f6b542d__MES-SCHED-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "sha256": "e8c370043f6b542d470d814f9a0c3eae421d6904fe812608093bfe113c1b6b98",
+      "bytes": 48809,
+      "locators": 36,
+      "lines": 310
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ffaf577fc2031de9__MES-PERF-01_完整静态详细设计_RECOVERY-R2.1_20261008.md",
+      "sha256": "ffaf577fc2031de9fd8bf52dbcb23fd0767d6ecceba81ff5a468bb5fc93771a3",
+      "bytes": 58539,
+      "locators": 48,
+      "lines": 450
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/2772989f6f6382c7__QA-POL-01_检验策略与检验计划_前后端开发Spec_v1.0_R1_DRAFT.md",
+      "sha256": "2772989f6f6382c7a7c20d43aceaf92c96e19646c9d606df59df0c892fb2b3ee",
+      "bytes": 1387961,
+      "locators": 213,
+      "lines": 45362
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/709e1399a9e1b6c0__QA-IQC-01_来料检验与验收处置_前后端开发Spec_v1.0_DRAFT.md",
+      "sha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+      "bytes": 685163,
+      "locators": 117,
+      "lines": 16318
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/06/06591f283f31da5a__DIGEST_VECTORS.json",
+      "sha256": "06591f283f31da5a67d3f7e7629e704888e6adb7d2154dc6c4066405a31ba7eb",
+      "bytes": 2630,
+      "locators": 8,
+      "lines": 85
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/83/83d560aa8f7de662__SCENARIO_TRACES.json",
+      "sha256": "83d560aa8f7de662e17627dd7ccfd4a427b7632ee95ec853c6d8bb88e7da111c",
+      "bytes": 252029,
+      "locators": 3,
+      "lines": 6906
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4).md",
+      "sha256": "c82ef3d5833b823cc562606af1a8bd8a68653416790bfc09c895df3a9a8c511b",
+      "bytes": 37378,
+      "locators": 51,
+      "lines": 502
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4f/4f9c08e2fa4da4b9__5a3adbef8a385c0f.reassembly.json",
+      "sha256": "4f9c08e2fa4da4b9726f06b70191e9686914e9389209e7970c67b350cebd9a24",
+      "bytes": 1132,
+      "locators": 155,
+      "lines": 23
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ae/ae52063afef997b9__ORIGINAL-50-AC-TRACE.json",
+      "sha256": "ae52063afef997b9d6ed1ed7ec7378ed1d8df07e206d70e99dabbd51f10b0a45",
+      "bytes": 116637,
+      "locators": 50,
+      "lines": 2932
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb482a7626fa54ca__ACCEPTANCE-TRACE.json",
+      "sha256": "eb482a7626fa54ca2d7213c8a60b6ca87cddcaeb39d9bf51d2426d6f57e9e80e",
+      "bytes": 57010,
+      "locators": 102,
+      "lines": 1558
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/79/790d8e2064b68cc8__ACCEPTANCE-TRACE.json",
+      "sha256": "790d8e2064b68cc8a3165f5a7c26b487ec011079737f50671cfb2995efa14331",
+      "bytes": 28719,
+      "locators": 68,
+      "lines": 827
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/08/08d141e6db4ae7c0__STATIC-LIFECYCLE-TRACE.json",
+      "sha256": "08d141e6db4ae7c0cf70ce23798a8365b9ddc63bde1af562486834e7d58bbdf7",
+      "bytes": 7418,
+      "locators": 9,
+      "lines": 184
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/29/29e3d97c07be164c__STATIC-BRANCH-EXAMPLES.json",
+      "sha256": "29e3d97c07be164c9ed9fd28d66f95785bc71b8c900d7aaf74b8ab757c47a259",
+      "bytes": 44733,
+      "locators": 11,
+      "lines": 1096
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/23/23ddd8b3c7ab9151__STATIC-DESIGN-CORRECTION-EXAMPLES.json",
+      "sha256": "23ddd8b3c7ab91511906ed0ae312bd0e3c60dd37a573ce914dfc54331dc56f1a",
+      "bytes": 345478,
+      "locators": 34,
+      "lines": 6814
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4ce1c218487195d__QA-NCR-01_CONTINUOUS-FIXTURES.json",
+      "sha256": "d4ce1c218487195d445411799dc3344beead8bebf51d4ef5ec39d3be63cd0ea2",
+      "bytes": 251237,
+      "locators": 24,
+      "lines": 1
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/98/984c83bf53604b59__CROSS-OWNER-EXAMPLE.json",
+      "sha256": "984c83bf53604b598f4793f53e8c423d4ddae29b85c091cd7835b3682ee76217",
+      "bytes": 1671290,
+      "locators": 246,
+      "lines": 25992
+    },
+    {
+      "path": "D:/CP6-archives/consolidation-20261010/objects/c211637f002e62fb7677c54f7004b09c59d7c546f2f284d7432476e9d40252c9.json",
+      "sha256": "c211637f002e62fb7677c54f7004b09c59d7c546f2f284d7432476e9d40252c9",
+      "bytes": 4017479,
+      "locators": 196,
+      "lines": 52670
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24a01f470ed9009e__NORMAL-DESIGN-DATA.json",
+      "sha256": "24a01f470ed9009ecf778d644dbe18a66b267e8ead6b0c0857bbedfe8568fdc3",
+      "bytes": 2453688,
+      "locators": 295,
+      "lines": 40060
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/df146652520facaf__WMS-MASTER-01_仓库库位与Space采纳_前后端开发Spec_v1.1.1_REVIEW.md",
+      "sha256": "df146652520facaf080762b5320a2872cc93fbed2fcbb193eef38488fe71d354",
+      "bytes": 296405,
+      "locators": 62,
+      "lines": 3886
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/6457003cfc478f5c__WMS-MASTER-01_BASELINE.md",
+      "sha256": "6457003cfc478f5ca233b17bb25de9361908fceaceff510d6bac5849d2af4337",
+      "bytes": 317361,
+      "locators": 191,
+      "lines": 6164
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8e/8e68b87235309b29__TRACE-CELLS.json",
+      "sha256": "8e68b87235309b29f553574dd3429a8ee3e652e352fb02122ba00aed36fbd70c",
+      "bytes": 1169795,
+      "locators": 191,
+      "lines": 26045
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/74/74f51616c30cdde5__ACCEPTANCE.md",
+      "sha256": "74f51616c30cdde5ca7b94c766c1986df534a34b06e71deba274c7e3aefd2304",
+      "bytes": 13417,
+      "locators": 64,
+      "lines": 91
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9b/9b7f44c351031e34__ACCEPTANCE.md",
+      "sha256": "9b7f44c351031e3486501aac6d157cd6f6e104941ad38fa1e0f95703b590ee2f",
+      "bytes": 17793,
+      "locators": 76,
+      "lines": 111
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6f/6f34bd45658c488e__ACCEPTANCE.md",
+      "sha256": "6f34bd45658c488ee94354315405b3eeb185370c09dccdb17422e0da847c9f5c",
+      "bytes": 13662,
+      "locators": 53,
+      "lines": 94
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5a/5aed7ccb52e1878b__WMS-STOCK-01_库存数量账与移动_前后端开发Spec_v1.1.1_REVIEW.md",
+      "sha256": "5aed7ccb52e1878b80dc45324e467437314f9157e55a17c10094a25e35421700",
+      "bytes": 418668,
+      "locators": 157,
+      "lines": 7429
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9c/9c4fbb350b076843__WMS-TRANSFER-01_移库与调拨执行_前后端开发Spec_v1.1_R1_REVIEW_CANDIDATE.md",
+      "sha256": "9c4fbb350b076843c6426edfc4cab34b652dfaf0589d23bfb2ffb59c41004830",
+      "bytes": 5239383,
+      "locators": 1628,
+      "lines": 176215
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43eb8a01d98631be__WMS-RSV-01_库存预留与批次分配_前后端开发Spec_v1.1.2_REPAIR_CANDIDATE.md",
+      "sha256": "43eb8a01d98631beb15c85d524125f2b848cb4f2e106170edf132aa417c50cfd",
+      "bytes": 252094,
+      "locators": 109,
+      "lines": 4070
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a86201bc6969186__WMS-IN-01_入库计划与物理收货_前后端开发Spec_v1.0.3_DRAFT.md",
+      "sha256": "9a86201bc6969186fbd7721bf175c799e97738933718d8c73dee6f6372c1426c",
+      "bytes": 670169,
+      "locators": 210,
+      "lines": 18006
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef23c857c98936d8__ORIGINAL-74-AC.json",
+      "sha256": "ef23c857c98936d8cf63b7162294e4a49b277e72b99527fb9ea44bf431ef9260",
+      "bytes": 23075,
+      "locators": 74,
+      "lines": 672
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c458acc127b12780__R2-ADDITIONAL-AC-TEXT.json",
+      "sha256": "c458acc127b127804ec6586512236f72564b43d22d3ab0aa7a6b5151d42aad0e",
+      "bytes": 12699,
+      "locators": 39,
+      "lines": 357
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4712645968d9de1c__WMS-COUNT-01_R3_CANDIDATE.md",
+      "sha256": "4712645968d9de1cb044dd43426c286d4d38762d0bacbbf3a54606c8b49852b3",
+      "bytes": 75168,
+      "locators": 3,
+      "lines": 693
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fa/fa2bb664412ab829__WMS-TRACE-01_通用托盘后继_R3-GM1.1_CANDIDATE.md",
+      "sha256": "fa2bb664412ab829b78b8fc2fa7fabf219769b26ff5591e7fa56a84337f33a78",
+      "bytes": 172792,
+      "locators": 8,
+      "lines": 2882
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/2608d09ddb5ced6c__WMS-DISP-01_R3_CANDIDATE.md",
+      "sha256": "2608d09ddb5ced6c9a5e9fd049ae95c7eb865021713e57d3c2fcb43554b135c6",
+      "bytes": 87480,
+      "locators": 6,
+      "lines": 870
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/db/dbb44d5be748357d__WMS-MOBILE-01_R3_CANDIDATE.md",
+      "sha256": "dbb44d5be748357dc4c727a60e549b29395f13c647f7c2ae4f499f4025474895",
+      "bytes": 90832,
+      "locators": 5,
+      "lines": 655
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5e/5ee04a7465dc6c31__WMS-CTRL-01_R3_CANDIDATE.md",
+      "sha256": "5ee04a7465dc6c31ef581acf2437dec404fb7e5f3bc39fae33b4882a4a527a28",
+      "bytes": 74887,
+      "locators": 5,
+      "lines": 458
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7e/7e25b78ea1261553__WMS-OUT-01_出库拣配包装与发运_前后端开发Spec_v1.3_R3_REVIEW_CANDIDATE.md",
+      "sha256": "7e25b78ea1261553bb139c12b89f7d43394845aaaf752a93ba25e1b4762152f9",
+      "bytes": 3423710,
+      "locators": 614,
+      "lines": 98913
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c30b6885dde887be__WMS-DEL-01_承运与交付证明_前后端开发Spec_v1.3_R3_REVIEWED.md",
+      "sha256": "c30b6885dde887be7dd1843c444fe95c49f4f7bb490ed03f98404c9673a2f403",
+      "bytes": 797705,
+      "locators": 220,
+      "lines": 23830
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5a/5a90d0ad670765ff__WMS-RMA-01_AC-CATALOG.json",
+      "sha256": "5a90d0ad670765ffa850867a05a1872775d3a043ccd8d4931c0dc70f27aa845b",
+      "bytes": 20534,
+      "locators": 52,
+      "lines": 529
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2159cd0850d66cf1__WMS-RMA-01_CONTINUOUS-EXAMPLES.json",
+      "sha256": "2159cd0850d66cf1504c25ccd72eee8f5a8ef8503027a9e9315a6ea7ae33d6f4",
+      "bytes": 173155,
+      "locators": 51,
+      "lines": 4846
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "7a882fade5d085d5d26e61c074304c7e3befb16e58d00768e978960437c367ed",
+      "bytes": 42871,
+      "locators": 17,
+      "lines": 415
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "ec7dcc5179f0e5844e778102c18e66e840246b68ac7dec34aaa94c505aa1ed13",
+      "bytes": 41851,
+      "locators": 18,
+      "lines": 410
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "9d108fba82cd4683ccc0075f0239f7f3e6ac60cc090672adf8080438bfca83d9",
+      "bytes": 47815,
+      "locators": 21,
+      "lines": 409
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/433993a9448ae3c0__WMS-XDOCK-01_越库作业_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "433993a9448ae3c025ee13654184846e303e83a33072a487a8b8d07bd9acada4",
+      "bytes": 52240,
+      "locators": 20,
+      "lines": 608
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "fcfddec26e2fa8fdd0d5375f029364f82cbb717ec4c4646be4acabd59cafb394",
+      "bytes": 74782,
+      "locators": 25,
+      "lines": 767
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/3192726a41ddd3cf__WMS-REM-01_余料管理_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "3192726a41ddd3cfc63f9e7c9e47392a5eb10f67e29b1f49f6f3a7a65e81126c",
+      "bytes": 61635,
+      "locators": 26,
+      "lines": 604
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+      "sha256": "3a74c705ef05ece0f5e5aa175a49dc818732b9f25765046236ae2f246177ee6e",
+      "bytes": 27710,
+      "locators": 14,
+      "lines": 124
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+      "sha256": "5fbc434a55d2a031418411b1dbfac5838e8673c464ae198fd51f817bdd4f6836",
+      "bytes": 40211,
+      "locators": 16,
+      "lines": 173
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+      "sha256": "b6a79341caa5168a5c910eeb5ce104a6274c95442ee16b1b364b4848dfdead0f",
+      "bytes": 27723,
+      "locators": 18,
+      "lines": 141
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+      "sha256": "4bc78efb8ce7d8653cc6e482f7b314a1843672370831cfff770931c709678a58",
+      "bytes": 27943,
+      "locators": 19,
+      "lines": 148
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+      "sha256": "65c512abcd614f27267119b199b33355bcbb7207e6ebf7515e7eb2a3d501023a",
+      "bytes": 29778,
+      "locators": 20,
+      "lines": 147
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+      "sha256": "2f90c5537845e5cb22f87039021535a4872ad2ff36bb89cc83ffbe1733e221b4",
+      "bytes": 35229,
+      "locators": 20,
+      "lines": 172
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/37/374d1b7782cb72d0__11_SUP_当前阅读主册.md",
+      "sha256": "374d1b7782cb72d004dbc2c541bd865fc6ba6294d39ccd6ee4a56d26dd61c88d",
+      "bytes": 67723,
+      "locators": 18,
+      "lines": 938
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/49/494874d64b6ea002__494874d64b6ea00296952b1ee5f5a354aa65dfef7ba28dc1345569ce67861413.md",
+      "sha256": "494874d64b6ea00296952b1ee5f5a354aa65dfef7ba28dc1345569ce67861413",
+      "bytes": 42825,
+      "locators": 210,
+      "lines": 687
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b0/b066823003eadb18__b066823003eadb1853d50bacba59fb1a42cd7d1968bb3ee48cb80422bd2f088c.md",
+      "sha256": "b066823003eadb1853d50bacba59fb1a42cd7d1968bb3ee48cb80422bd2f088c",
+      "bytes": 77259,
+      "locators": 28,
+      "lines": 1475
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1799cd319ae35310__03_ENG_当前阅读主册.md",
+      "sha256": "1799cd319ae35310f55906982709a48c70fe2704561dc9860174b485b1822046",
+      "bytes": 147798,
+      "locators": 102,
+      "lines": 3207
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/07/0791595ffb0d298a__08_CFG_当前阅读主册.md",
+      "sha256": "0791595ffb0d298aa66ef49417f47b3d61884d5aa621af7b6defc6122e39b347",
+      "bytes": 113142,
+      "locators": 40,
+      "lines": 1407
+    },
+    {
+      "path": "docs/design-handbook/modules/ENG-ROU-01.md",
+      "sha256": "435b42e29cd879208124c7d522fc2a82aeb7a7ddae04eadb689a9296d04a2394",
+      "bytes": 36118,
+      "locators": 68,
+      "lines": 144
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/08/089216a4b4fea2d5__089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397.md",
+      "sha256": "089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397",
+      "bytes": 75790,
+      "locators": 32,
+      "lines": 1243
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/20b2dbf9b6670419__20b2dbf9b66704191955e894640c30de9f28a2103e4f4179abd7da313667f04f.md",
+      "sha256": "20b2dbf9b66704191955e894640c30de9f28a2103e4f4179abd7da313667f04f",
+      "bytes": 58522,
+      "locators": 34,
+      "lines": 1087
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bda9816a2958a298__bda9816a2958a298ffc00cb40ac687286530a2db25b3481a72d9e4e7a1394dad.md",
+      "sha256": "bda9816a2958a298ffc00cb40ac687286530a2db25b3481a72d9e4e7a1394dad",
+      "bytes": 133998,
+      "locators": 88,
+      "lines": 2332
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1c/1c6dc5f451727af6__APR-CP6-PLM-PG05-001.md",
+      "sha256": "1c6dc5f451727af6b7c9ccf0a32162b56e5d8bb79b3ab681f12cef8836404ed5",
+      "bytes": 2750,
+      "locators": 3,
+      "lines": 41
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/db/dbdf07fdec24f7fb__dbdf07fdec24f7fb0c8f023931593da79649c2522e8cbd949c854f831e2ad741.md",
+      "sha256": "dbdf07fdec24f7fb0c8f023931593da79649c2522e8cbd949c854f831e2ad741",
+      "bytes": 38114,
+      "locators": 48,
+      "lines": 464
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8187487d223de16__f8187487d223de16d39b5717c08264e42964b0b4bb5083e40b3dea765bd13bc3.md",
+      "sha256": "f8187487d223de16d39b5717c08264e42964b0b4bb5083e40b3dea765bd13bc3",
+      "bytes": 23953,
+      "locators": 22,
+      "lines": 383
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/84/84bae29f857b9b61__84bae29f857b9b61ab207815e9c679b1728f08e0ad62d57b0efa0c7f37818296.md",
+      "sha256": "84bae29f857b9b61ab207815e9c679b1728f08e0ad62d57b0efa0c7f37818296",
+      "bytes": 69073,
+      "locators": 24,
+      "lines": 1272
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/96/9692b4c3d27437d3__01_REQ_当前阅读主册.md",
+      "sha256": "9692b4c3d27437d3b2b6733b09493788d09d054a326329e7d5d88db925c8a549",
+      "bytes": 68548,
+      "locators": 16,
+      "lines": 936
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/af24ff3fcb3afc74__af24ff3fcb3afc740e6cf48f44c71405ba05e011ac10296c421867556af4cf00.md",
+      "sha256": "af24ff3fcb3afc740e6cf48f44c71405ba05e011ac10296c421867556af4cf00",
+      "bytes": 103577,
+      "locators": 288,
+      "lines": 1510
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+      "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+      "bytes": 96100,
+      "locators": 72,
+      "lines": 2647
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/158daf088ef517b1__158daf088ef517b1e8872b7975f9c02496e71cf4f348538836cee40e69f64542.md",
+      "sha256": "158daf088ef517b1e8872b7975f9c02496e71cf4f348538836cee40e69f64542",
+      "bytes": 36943,
+      "locators": 66,
+      "lines": 1028
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ba/ba3fc706e3b19ec7__06_ECM_当前阅读主册.md",
+      "sha256": "ba3fc706e3b19ec75588ccdc509db9acf3063c7ef60602371c77e7880081c89c",
+      "bytes": 332775,
+      "locators": 124,
+      "lines": 5589
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/56/5613431cf6e48c49__07_DEV_当前阅读主册.md",
+      "sha256": "5613431cf6e48c4986dd6ccb9acdc80c69b8bec819ff32eb946b941a73dfa8b8",
+      "bytes": 102454,
+      "locators": 32,
+      "lines": 1243
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94a0c8dc840ebe5b__94a0c8dc840ebe5b4dd9ea224654f49b0e672c6db7c2b0579392a88169f5ca30.md",
+      "sha256": "94a0c8dc840ebe5b4dd9ea224654f49b0e672c6db7c2b0579392a88169f5ca30",
+      "bytes": 129725,
+      "locators": 42,
+      "lines": 2227
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d91d16d032b72581__d91d16d032b7258126df131c273ce66609ce2b4ba8f8c01a7b62166466da1570.md",
+      "sha256": "d91d16d032b7258126df131c273ce66609ce2b4ba8f8c01a7b62166466da1570",
+      "bytes": 62440,
+      "locators": 40,
+      "lines": 1038
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbea5fc28e708764__fbea5fc28e708764dd16175b9392279fa1cddf5ea90fb97feaff9bafb0d74860.md",
+      "sha256": "fbea5fc28e708764dd16175b9392279fa1cddf5ea90fb97feaff9bafb0d74860",
+      "bytes": 38946,
+      "locators": 16,
+      "lines": 469
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a6/a6697102d2f27a37__a6697102d2f27a37356561ad87011ea53bd9bbb907e5a7ea966d1c26a1ff611d.md",
+      "sha256": "a6697102d2f27a37356561ad87011ea53bd9bbb907e5a7ea966d1c26a1ff611d",
+      "bytes": 76778,
+      "locators": 28,
+      "lines": 1474
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbdcd64985b1694c__09_QCL_当前阅读主册.md",
+      "sha256": "cbdcd64985b1694c4ed694333d4cc0a3038ec6118ea65646e3b30c37a0bea336",
+      "bytes": 67927,
+      "locators": 16,
+      "lines": 937
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/70/70d7c4e00e5a4d2b__70d7c4e00e5a4d2b511a6554409490ed3327f1df9cfc50ac044d9c2518461d91.md",
+      "sha256": "70d7c4e00e5a4d2b511a6554409490ed3327f1df9cfc50ac044d9c2518461d91",
+      "bytes": 97094,
+      "locators": 34,
+      "lines": 1794
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/760cb0be6c4a592c__10_LCM_当前阅读主册.md",
+      "sha256": "760cb0be6c4a592ca3030fbd8602179962a6e335e02b63655a034aaf4f271aea",
+      "bytes": 77420,
+      "locators": 16,
+      "lines": 1039
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/00/00435e88e979f79e__OA-DEF-01-DEVELOPER-SPEC-R1.md",
+      "sha256": "00435e88e979f79e18d012e6d9958a81cdb185ec766b01a2ede83bafc7f12c9c",
+      "bytes": 19663,
+      "locators": 27,
+      "lines": 160
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/1099d259ef39a8e9__OA-FORM-01-DEVELOPER-SPEC-R1.md",
+      "sha256": "1099d259ef39a8e983c17a7c95259c50cb1c57e76b92aa76fac9a3f932cd31d3",
+      "bytes": 25964,
+      "locators": 35,
+      "lines": 189
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f9920ffe400ba98__OA-TASK-01-DEVELOPER-SPEC-R2.md",
+      "sha256": "9f9920ffe400ba982834f2d02276535e5a5654ae6b64236fd366247418084b8d",
+      "bytes": 53890,
+      "locators": 51,
+      "lines": 294
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0cc2a482fd1dc879__OA-APP-01_业务审批绑定与回调_前后端开发Spec_v1.1.2_R2_REVIEW.md",
+      "sha256": "0cc2a482fd1dc8790f19239f5965e437948c6c9c92929f94b4e32fdd6319891c",
+      "bytes": 180801,
+      "locators": 88,
+      "lines": 2499
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/760c35b523260b23__ENG-TOOL-COMPATIBILITY.md",
+      "sha256": "760c35b523260b23a59b22f6fe74838f4a207422c82ce8b7b575fbfcf127bfc2",
+      "bytes": 36150,
+      "locators": 16,
+      "lines": 213
+    },
+    {
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/04/04f7fe716dfe5d69__OA-CONN-01.md",
+      "sha256": "04f7fe716dfe5d69b4ebf7d3b11d4a3d8d0d9184bd931832ccbc2533f77c153c",
+      "bytes": 48148,
+      "locators": 32,
+      "lines": 249
+    }
+  ],
+  "reassembled_member_checks": [
+    {
+      "descriptor": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4f/4f9c08e2fa4da4b9__5a3adbef8a385c0f.reassembly.json",
+      "member": "CONTINUOUS_FIXTURES_RECOVERY_R4.json",
+      "member_sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+      "result": "PASS"
+    },
+    {
+      "descriptor": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4f/4f9c08e2fa4da4b9__5a3adbef8a385c0f.reassembly.json",
+      "member": "checkpoints/F01_PHYSICALIDENTITY_TRANSITION_CHECKPOINT_R4.json",
+      "member_sha256": "5dbc9a77c6468acfd644623f1aebc44982388fbbc122bc8f9d338acfd2057708",
+      "result": "PASS"
+    }
+  ],
+  "special_source_locator_records": 328,
+  "special_source_validation_reuse": "Other exact ZIP fragment/member and workbook-row checks reuse the individual catalog validation recorded before integration; no business tests. Normalization affects only archive locators/classification, not source assertions.",
+  "prior_checker_failure": {
+    "path": "inventory-validation.initial.json",
+    "cause": "394 locators were initially interpreted as standalone JSON, but are 239 pointers into a fenced Markdown appendix and 155 pointers into a verified reassembled ZIP member. Source data unchanged; parser now resolves the correct containers."
+  },
+  "tool_regression_reuse": {
+    "source": "docs/development/evidence/tool-regressions-review-fix.json",
+    "scope": "Prior 18 tests of unchanged validator/test definitions only; current ledger data was freshly structurally checked, not treated as old tested data.",
+    "inputs": [
+      {
+        "path": "docs/development/tools/manage_roadmap.py",
+        "git_blob": "8275a0ba434e568ce00fe00716e9d818b1235004",
+        "unchanged": true
+      },
+      {
+        "path": "docs/development/tools/test_manage_roadmap.py",
+        "git_blob": "d067c8ddcc5bc8d17c6d2c36170fa7dedbf1e530",
+        "unchanged": true
+      }
+    ]
+  },
+  "errors": [],
+  "business_tests_executed": false
+}
