@@ -1,0 +1,347 @@
+{
+  "version": "CP6-WAVE2-DISPATCH/1",
+  "issued_at": "2026-10-12T09:00:02.772472+00:00",
+  "main_baseline": "dfc043b1473dcea51d34ff87a7808692349c278a",
+  "input_package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "input_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+    },
+    {
+      "path": "eng/contracts/s01/README.md",
+      "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "S01-02",
+      "lane": "A",
+      "previous_task": "S01-01",
+      "repo": "Main",
+      "worktree": "D:/CP6-worktrees/s01-02-20261012",
+      "branch": "codex/s01-02-strict-json-20261012",
+      "baseline": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "write_paths": [
+        "CP6.Entity/Contracts/Wire/",
+        "eng/contracts/exact-values-tests/",
+        "docs/development/evidence/S01-02/"
+      ],
+      "read_paths": [
+        "CP6.Entity/CP6.Entity.csproj",
+        "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj",
+        "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+        "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs"
+      ],
+      "commands": [
+        "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~StrictJsonTests"
+      ],
+      "checks": [
+        "必填null缺失拒绝；显式null接受；0/false/string/object拒绝。NullOnly转换器不能凭自身证明required字段存在。",
+        "任意层重复键、转义等价键名拒绝，再进入Schema/类型验证。",
+        "结构相等以任意精度处理数字；对象键序无关、数组顺序相关，字符串1与数字1不同；1和1.0、-0.00和0e1000相等。",
+        "结构相等仅用于Schema语义；原输入字节单独保存，不用于重编码摘要/签名/命令重放。"
+      ],
+      "notes": "新增叶子测试项目只引用CP6.Entity，目标net8.0。沿用已核对Test SDK17.14.1、xunit2.9.3、runner3.1.4；不照抄参考项目中的SQL Server包或迁移Compile条目。SDK默认源码包含已经适用，无需为新增类型改CP6.Entity.csproj或根sln。超大输入限额不能悄悄缩小原合法域。",
+      "profiles": [
+        "strict-json",
+        "null-only",
+        "json-semantic-equality"
+      ],
+      "case_ids": [
+        "JSON-001",
+        "JSON-002",
+        "JSON-003",
+        "JSON-004",
+        "JSON-005",
+        "JSON-006",
+        "JSON-007",
+        "NULL-001",
+        "NULL-002",
+        "NULL-003",
+        "NULL-004",
+        "NULL-005",
+        "NULL-006",
+        "NULL-007",
+        "EQUAL-001",
+        "EQUAL-002",
+        "EQUAL-003",
+        "EQUAL-004",
+        "EQUAL-005",
+        "EQUAL-006",
+        "EQUAL-007"
+      ],
+      "source_reads": [
+        {
+          "path": "CP6.Entity/CP6.Entity.csproj",
+          "sha256": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj",
+          "sha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+          "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+          "sha256": "44e4ceb8b1f0d4b673f4745c2508e1b55fb37cad58b84a9ef160ff9424ec93b2",
+          "representation": "GIT_BLOB_BYTES"
+        }
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-02",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-02/messages/"
+    },
+    {
+      "id": "S01-05",
+      "lane": "B",
+      "previous_task": "S02-00",
+      "repo": "Main",
+      "worktree": "D:/CP6-worktrees/s01-05-20261012",
+      "branch": "codex/s01-05-ts-exact-20261012",
+      "baseline": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "write_paths": [
+        "cp6.web/src/contracts/exact/",
+        "docs/development/evidence/S01-05/"
+      ],
+      "read_paths": [
+        "cp6.web/package.json",
+        "cp6.web/package-lock.json",
+        "cp6.web/vitest.config.ts",
+        "cp6.web/tsconfig.app.json",
+        "docs/design-handbook/remediation/assets/core-types/numeric-validation.json"
+      ],
+      "commands": [
+        "npm --prefix cp6.web test -- src/contracts/exact/profiles.test.ts",
+        "npm --prefix cp6.web run type-check"
+      ],
+      "checks": [
+        "FIN-CREDIT分signed/nonnegative/positive，38总位、最多8位小数；拒绝-0、尾零1.0和指数1e3，positive拒绝0。",
+        "FIN-INV整数无新增上限，decimal18/qty12分域；90位整数与小数边界无损；-0.000及尾零原wire保留。",
+        "使用BigInt系数/scale，JS安全整数两侧及38/90位极值不经Number、parseFloat或隐式浮点转换。",
+        "从同一固定向量读取input和expected；错误JSON token及最终字段越界要拒绝；测试真实发现并执行，不能静默忽略不支持的operation。"
+      ],
+      "notes": "新建creditAmount.ts、inventoryDecimal.ts、profiles.test.ts，可在独占目录增加必要内部帮助文件。现有Vitest已经匹配src/**/*.test.ts，package.json已有test与type-check；不需修改依赖、锁文件或根测试配置。仅实现合同库，页面和WMS/MES输入迁移另做。C#未交付不阻塞本任务，不能拿另一端实现动态生成预期。",
+      "profiles": [
+        "fin-credit-signed",
+        "fin-credit-nonnegative",
+        "fin-credit-positive",
+        "fin-inv-decimal18",
+        "fin-inv-qty12"
+      ],
+      "case_ids": [
+        "NUM-001",
+        "NUM-002",
+        "NUM-003",
+        "NUM-004",
+        "NUM-005",
+        "NUM-006",
+        "NUM-007",
+        "NUM-008",
+        "NUM-009",
+        "NUM-010",
+        "NUM-011",
+        "NUM-012",
+        "NUM-013",
+        "NUM-014",
+        "NUM-015",
+        "NUM-016",
+        "CREDIT-001",
+        "CREDIT-002",
+        "CREDIT-003",
+        "CREDIT-004",
+        "CREDIT-005",
+        "CREDIT-006",
+        "CREDIT-007",
+        "CREDIT-008",
+        "CREDIT-009",
+        "CREDIT-010",
+        "CREDIT-011",
+        "CREDIT-JS-001",
+        "CREDIT-JS-002",
+        "CREDIT-JS-003",
+        "INV-001",
+        "INV-002",
+        "INV-003",
+        "INV-004"
+      ],
+      "source_reads": [
+        {
+          "path": "cp6.web/package.json",
+          "sha256": "01ce340ec4dcac1db3cabecf5e72a497ff544b2c731abfebb9206633877a3d6a",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "cp6.web/package-lock.json",
+          "sha256": "f9e3dc5844c826554cf54e2b30d6b1ae2b4bfa56ea8c3f39ddafd8957d6b21bc",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "cp6.web/vitest.config.ts",
+          "sha256": "43c0f2ba99f80ce2e339fc5dad4df0da51ab040adeaf437df5f36e06ae98ee10",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "cp6.web/tsconfig.app.json",
+          "sha256": "92496d0db20bb707be8b697a9dc316c7ded1011f8a9998a472c89f3e612822f2",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+          "sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+          "representation": "GIT_BLOB_BYTES"
+        }
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-05",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-05/messages/"
+    },
+    {
+      "id": "S01-09",
+      "lane": "C",
+      "previous_task": "WP05-01",
+      "repo": "Platform",
+      "worktree": "D:/CP6.Platform-worktrees/s01-09-20261012",
+      "branch": "codex/s01-09-native-routing-20261012",
+      "baseline": "30bd23af6808d217a23878bd9437513043c52834",
+      "write_paths": [
+        "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+        "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+        "src/CP6.Platform.Messaging/NativeContracts/",
+        "tests/CP6.Platform.UnitTests/CloudEventContractTests.cs",
+        "tests/CP6.Platform.UnitTests/NativeProfileContractTests.cs",
+        "tests/CP6.Platform.UnitTests/TestData/S01/",
+        "docs/development/evidence/S01-09/",
+        "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj"
+      ],
+      "read_paths": [
+        "src/CP6.Platform.Messaging/Cp6CloudEventCodec.cs",
+        "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+        "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        ".github/workflows/p10-rfc3161-preflight.yml"
+      ],
+      "commands": [
+        "dotnet test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj --filter \"FullyQualifiedName~CloudEventContractTests|FullyQualifiedName~NativeProfileContractTests\""
+      ],
+      "checks": [
+        "现有eventType/schemaId/schemaVersion严格匹配及asset hash校验必须复用并回归，不能误报为全新功能。",
+        "原生OpenAPI身份与ERP registry/codec identity分别准确匹配；不强塞入现有CloudEvent envelope，不加未经允许的profile字段，不回退latest。",
+        "未知版本、正确eventType配错schemaId、manifest/hash漂移及current/frozen交叉误用均拒绝。",
+        "同一原UTF8输入保持字节及摘要，语义相同但重排JSON不能声称原字节相同；构造BYTES向量不证明真实业务命令合法或重放成功。",
+        "包声明本任务的strict-json/null-only/semantic-equality共21项也须逐项列入采用结果；原生身份/字节14项另列。复用现有能力或准确设计资产，不引用未交付Main S01-02代码；如真实消费者边界与声明矛盾，提交精确QUESTION而非静默删项。"
+      ],
+      "notes": "本机Platform根目录停在旧候选97df4f65，禁止把它当主线；已创建的独立工作树基于真实远端main30bd23af。Main输入包需由固定提交导出为测试资源并记录来源hash，运行测试不依赖D盘归档。多版本并存只在真实消费者需要时用具名版本适配，保留原bundle行为。Inbox/Outbox事务、租户写入、包发布和部署不属本任务。测试项目已由SDK包含新cs文件，本轮只有此Platform任务，已预留UnitTests.csproj窗口，仅可补TestData/S01资源的包含/输出设置；不得改包引用、TFM、其他测试范围或共享构建配置。",
+      "profiles": [
+        "strict-json",
+        "null-only",
+        "json-semantic-equality",
+        "crm-inq-r3-v15",
+        "erp-credit-current-v1",
+        "erp-credit-frozen-r8"
+      ],
+      "case_ids": [
+        "JSON-001",
+        "JSON-002",
+        "JSON-003",
+        "JSON-004",
+        "JSON-005",
+        "JSON-006",
+        "JSON-007",
+        "NULL-001",
+        "NULL-002",
+        "NULL-003",
+        "NULL-004",
+        "NULL-005",
+        "NULL-006",
+        "NULL-007",
+        "INQ-VERSION-001",
+        "INQ-VERSION-002",
+        "INQ-VERSION-003",
+        "INQ-VERSION-004",
+        "EQUAL-001",
+        "EQUAL-002",
+        "EQUAL-003",
+        "EQUAL-004",
+        "EQUAL-005",
+        "EQUAL-006",
+        "EQUAL-007",
+        "VERSION-001",
+        "VERSION-002",
+        "VERSION-003",
+        "VERSION-004",
+        "VERSION-005",
+        "VERSION-006",
+        "VERSION-007",
+        "VERSION-008",
+        "BYTES-001",
+        "BYTES-002"
+      ],
+      "source_reads": [
+        {
+          "path": "src/CP6.Platform.Messaging/Cp6CloudEventCodec.cs",
+          "sha256": "d8aaec980fb6ac07c509bc225f0f6de3c5ba4f9bde35242b118d283d25133ccf",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+          "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+          "sha256": "6d4d7b28d1dff67cecf324509bc19b2944195bd81c88bc873182f3ff2106c283",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "Directory.Build.props",
+          "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "Directory.Packages.props",
+          "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "global.json",
+          "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": ".github/workflows/p10-rfc3161-preflight.yml",
+          "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1",
+          "representation": "GIT_BLOB_BYTES"
+        }
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-09",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-09/messages/"
+    }
+  ],
+  "not_assigned": [
+    {
+      "lane": "D",
+      "previous_task": "WP14-01",
+      "reason": "No additional ready task required for this wave; retain acceptance preparation, no invented claim."
+    }
+  ],
+  "worker_acknowledgements": [],
+  "business_result": "NOT_RUN",
+  "shared_write_owner": "COORD",
+  "formal_wp05_adoption": "PROPOSED"
+}

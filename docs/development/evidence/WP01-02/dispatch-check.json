@@ -1,0 +1,96 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T09:02:55.455255+00:00",
+  "scope": "New dispatch docs local links, Python import snippet syntax, exact four task-state changes and permitted write-path separation only",
+  "business_tests_executed": false,
+  "changed_task_ids": [
+    "WP01-02",
+    "S01-02",
+    "S01-05",
+    "S01-09"
+  ],
+  "links": [
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\README.md",
+      "target": "../../evidence/first-wave-20261012/README.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\README.md",
+      "target": "../../evidence/WP01-02/admission.json"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\README.md",
+      "target": "S01-02.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\README.md",
+      "target": "S01-05.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\README.md",
+      "target": "S01-09.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-02.md",
+      "target": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-02.md",
+      "target": "../../08-postgresql-baseline.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-02.md",
+      "target": "../../../../eng/contracts/s01/README.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-02.md",
+      "target": "dispatch.json"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-05.md",
+      "target": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-05.md",
+      "target": "../../08-postgresql-baseline.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-05.md",
+      "target": "../../../../eng/contracts/s01/README.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-05.md",
+      "target": "dispatch.json"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-09.md",
+      "target": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-09.md",
+      "target": "../../08-postgresql-baseline.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-09.md",
+      "target": "../../../../eng/contracts/s01/README.md"
+    },
+    {
+      "file": "docs\\development\\dispatch\\20261012-wave2\\S01-09.md",
+      "target": "dispatch.json"
+    },
+    {
+      "file": "docs\\superpowers\\plans\\2026-10-12-wave2-dispatch.md",
+      "target": "../../development/dispatch/20261012-wave2/README.md"
+    },
+    {
+      "file": "docs\\superpowers\\plans\\2026-10-12-wave2-dispatch.md",
+      "target": "../../development/evidence/WP01-02/admission.json"
+    }
+  ],
+  "task_vector_counts": {
+    "S01-02": 21,
+    "S01-05": 34,
+    "S01-09": 35
+  },
+  "worker_start_received": false
+}

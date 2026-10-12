@@ -1,0 +1,331 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T09:00:02.772472+00:00",
+  "main": "dfc043b1473dcea51d34ff87a7808692349c278a",
+  "scope": "Dependency delivery, actual clean assigned worktrees, exact read inputs and write-scope admission only; no code/build/runtime verification",
+  "first_wave": [
+    {
+      "task_id": "S01-01",
+      "state": "DONE",
+      "delivery": {
+        "path": "docs/development/evidence/S01-01/remote-main-check.json",
+        "source_sha": "4258f7b66490f0b49601e5e5033d8508fc5eadbd",
+        "remote_main_sha": "d589af006447132a93ade96f10de07f3c280cb8e",
+        "pr_url": "https://github.com/GTX537/CP6/pull/176",
+        "observed_at": "2026-10-12T06:20:14.015527+00:00",
+        "scope": "Remote-main ancestry and unchanged tested package/verifier Git bytes; local static checks reused, no consumer/business execution"
+      },
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/S01-01/package-check.json",
+          "source_sha": "4258f7b66490f0b49601e5e5033d8508fc5eadbd",
+          "command": "python docs/development/evidence/S01-01/verify-package.py --out docs/development/evidence/S01-01/package-check.json",
+          "environment": "Local CPython 3.13 / Windows; source archives read-only; no consumer, business or database execution",
+          "observed_at": "2026-10-12T06:14:43.315715+00:00",
+          "scope": "Input provenance, exact expected data, portable references and unchanged business state only; no consumer implementation executed; executed against working-tree inputs then matched byte-for-byte to this committed source_sha. Original execution HEAD is retained in report.",
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "task_id": "S02-00",
+      "state": "DONE",
+      "delivery": {
+        "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+        "remote_main_sha": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
+        "pr_url": "https://github.com/GTX537/CP6/pull/178",
+        "observed_at": "2026-10-12T07:31:41.369832+00:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/evidence/S02-00/coordination/remote-main.json"
+      },
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/S02-00/coordination/validation.json",
+          "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+          "command": "python docs/development/evidence/S02-00/verify.py --crm-root D:\\CP6.CRM --platform-root D:\\CP6\\CP6.Platform --archive-root D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs --out docs/development/evidence/S02-00/coordination/validation.json",
+          "environment": "Local Windows / CPython 3.13; documentation or checker-only verification; no business, database, migration, deployment or Actions execution",
+          "observed_at": "2026-10-12T07:28:07.813111+00:00",
+          "scope": "126 document checks on revised design/27 NOT_RUN scenarios. Report source_sha is the pinned design input baseline, not executed HEAD; authored-file UTF8/LF hashes now matched to this delivered source and current main. Targeted review closes UPDATE USING design omission; no runtime result.",
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "task_id": "WP05-01",
+      "state": "DONE",
+      "delivery": {
+        "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+        "remote_main_sha": "38a476dd2e78262060ebbc9123a74b3437ec3867",
+        "pr_url": "https://github.com/GTX537/CP6/pull/180",
+        "observed_at": "2026-10-12T07:56:07.675663+00:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json"
+      },
+      "validation_evidence": [
+        {
+          "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json",
+          "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+          "command": "python docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py --root . --archive-root D:/CP6 --supplement docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json --out docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json",
+          "environment": "Local Windows / CPython 3.13; documentation or checker-only verification; no business, database, migration, deployment or Actions execution",
+          "observed_at": "2026-10-12T07:52:01.151991+00:00",
+          "scope": "581 supplement identity/locator/boundary checks, 49 source references. Independent initial and targeted reviews close known semantic gaps. Original six assets, 221/295 checks and unchanged checker24 tests reused at their recorded hashes; revised input bytes match delivered commit. PROPOSED/NOT_RUN, legacy30/48 retained, completion gate not changed.",
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "task_id": "WP14-01",
+      "state": "DONE",
+      "delivery": {
+        "source_sha": "8d40ccdb9bec774f3ed5c0869756c056858fba61",
+        "remote_main_sha": "2a8dd0eeae27b885f136991b2b215ee7539677d6",
+        "pr_url": "https://github.com/GTX537/CP6/pull/179",
+        "observed_at": "2026-10-12T07:43:07.323460+00:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/deliveries/WP14-01/evidence/coordination/remote-main.json"
+      },
+      "validation_evidence": [
+        {
+          "path": "docs/development/deliveries/WP14-01/evidence/validation.json",
+          "source_sha": "bd8b7528580567f4b66cbbf065fcebfc472c3a14",
+          "command": "python docs/development/deliveries/WP14-01/prepare.py; python docs/development/deliveries/WP14-01/evidence/verify-docs.py",
+          "environment": "Local Windows / CPython 3.13; documentation or checker-only verification; no business, database, migration, deployment or Actions execution",
+          "observed_at": "2026-10-12T05:58:29.339415+00:00",
+          "scope": "Reuse original preparation mapping/document checks at fixed df5553fd input baseline. Current roadmap bytes differ; consumed subsets and fixed source compatibility are separately verified in coordination/current-inputs.json and closeout input identity. No business execution or cross-repository runtime adoption.",
+          "result": "PASS"
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task": "S01-02",
+      "branch": "codex/s01-02-strict-json-20261012",
+      "worktree": "D:/CP6-worktrees/s01-02-20261012",
+      "baseline": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "clean_worktree": true,
+      "dependencies": [
+        "S01-01"
+      ],
+      "source_input_identity": [
+        {
+          "path": "eng/contracts/s01/profile-inputs.json",
+          "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        },
+        {
+          "path": "eng/contracts/s01/vectors.json",
+          "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        },
+        {
+          "path": "eng/contracts/s01/README.md",
+          "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        }
+      ],
+      "code_reads": [
+        {
+          "path": "CP6.Entity/CP6.Entity.csproj",
+          "sha256": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj",
+          "sha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+          "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+          "sha256": "44e4ceb8b1f0d4b673f4745c2508e1b55fb37cad58b84a9ef160ff9424ec93b2",
+          "representation": "GIT_BLOB_BYTES"
+        }
+      ],
+      "runtime_validation": "NOT_RUN",
+      "status": "COORDINATOR_ENTRY_CONFIRMED_WORKER_NOT_STARTED"
+    },
+    {
+      "task": "S01-05",
+      "branch": "codex/s01-05-ts-exact-20261012",
+      "worktree": "D:/CP6-worktrees/s01-05-20261012",
+      "baseline": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "clean_worktree": true,
+      "dependencies": [
+        "S01-01"
+      ],
+      "source_input_identity": [
+        {
+          "path": "eng/contracts/s01/profile-inputs.json",
+          "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        },
+        {
+          "path": "eng/contracts/s01/vectors.json",
+          "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        },
+        {
+          "path": "eng/contracts/s01/README.md",
+          "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        }
+      ],
+      "code_reads": [
+        {
+          "path": "cp6.web/package.json",
+          "sha256": "01ce340ec4dcac1db3cabecf5e72a497ff544b2c731abfebb9206633877a3d6a",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "cp6.web/package-lock.json",
+          "sha256": "f9e3dc5844c826554cf54e2b30d6b1ae2b4bfa56ea8c3f39ddafd8957d6b21bc",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "cp6.web/vitest.config.ts",
+          "sha256": "43c0f2ba99f80ce2e339fc5dad4df0da51ab040adeaf437df5f36e06ae98ee10",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "cp6.web/tsconfig.app.json",
+          "sha256": "92496d0db20bb707be8b697a9dc316c7ded1011f8a9998a472c89f3e612822f2",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+          "sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+          "representation": "GIT_BLOB_BYTES"
+        }
+      ],
+      "runtime_validation": "NOT_RUN",
+      "status": "COORDINATOR_ENTRY_CONFIRMED_WORKER_NOT_STARTED"
+    },
+    {
+      "task": "S01-09",
+      "branch": "codex/s01-09-native-routing-20261012",
+      "worktree": "D:/CP6.Platform-worktrees/s01-09-20261012",
+      "baseline": "30bd23af6808d217a23878bd9437513043c52834",
+      "clean_worktree": true,
+      "dependencies": [
+        "S01-01"
+      ],
+      "source_input_identity": [
+        {
+          "path": "eng/contracts/s01/profile-inputs.json",
+          "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        },
+        {
+          "path": "eng/contracts/s01/vectors.json",
+          "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        },
+        {
+          "path": "eng/contracts/s01/README.md",
+          "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+          "representation": "GIT_BLOB_BYTES",
+          "commit": "dfc043b1473dcea51d34ff87a7808692349c278a"
+        }
+      ],
+      "code_reads": [
+        {
+          "path": "src/CP6.Platform.Messaging/Cp6CloudEventCodec.cs",
+          "sha256": "d8aaec980fb6ac07c509bc225f0f6de3c5ba4f9bde35242b118d283d25133ccf",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+          "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+          "sha256": "6d4d7b28d1dff67cecf324509bc19b2944195bd81c88bc873182f3ff2106c283",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "Directory.Build.props",
+          "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "Directory.Packages.props",
+          "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": "global.json",
+          "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+          "representation": "GIT_BLOB_BYTES"
+        },
+        {
+          "path": ".github/workflows/p10-rfc3161-preflight.yml",
+          "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1",
+          "representation": "GIT_BLOB_BYTES"
+        }
+      ],
+      "runtime_validation": "NOT_RUN",
+      "status": "COORDINATOR_ENTRY_CONFIRMED_WORKER_NOT_STARTED"
+    }
+  ],
+  "platform_workflows": [
+    {
+      "path": ".github/workflows/p10-formal-packages-recovery.yml",
+      "sha256": "a2fec881215515679cdeed382dc62c8c505b5fa65d27812a2cf0d1e6c65c61c2",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      publication_run_id:\n        description: Failed formal publication run whose Windows publication job succeeded\n        required: true\n        type: string\n      publication_run_attempt:\n        description: Exact attempt of the failed formal publication run\n        required: true\n        type: string\n      publication_commit:\n        description: Exact package source commit used by the formal publication run\n        required: true\n        type: string\n      version:\n        description: Immutable published formal package version; must be exactly 0.10.0\n        required: true\n        type: string\n      windows_artifact_id:\n        description: Exact immutable Windows read-back artifact ID from the publication run\n        required: true\n        type: string\n      windows_artifact_digest:\n        description: Exact sha256 digest reported by GitHub for the Windows read-back artifact\n        required: true\n        type: string\n\n"
+    },
+    {
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for formal package publication\n        required: true\n        type: string\n      version:\n        description: Immutable formal patch version; must be exactly 0.10.2\n        required: true\n        type: string\n\n"
+    },
+    {
+      "path": ".github/workflows/p10-formal-signer-revalidation.yml",
+      "sha256": "baa7c7b624e69a79949845cfc4507caf30e62ae1bdceadb2043ad29f63ada747",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit whose protected signer identity must be revalidated\n        required: true\n        type: string\n\n"
+    },
+    {
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1",
+      "on_block": "  workflow_dispatch:\n  pull_request:\n    paths:\n      - \".github/workflows/p10-rfc3161-preflight.yml\"\n      - \"tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs\"\n\n"
+    },
+    {
+      "path": ".github/workflows/p10-test-candidate.yml",
+      "sha256": "dbb726eebac234fc841f82ebed32f98cff4fd070abcb6a298594077186976975",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for the P10 test candidate\n        required: true\n        type: string\n\n"
+    },
+    {
+      "path": ".github/workflows/platform-validation.yml",
+      "sha256": "80f167eca33181d5ed08ffd6824c3772bb1b49d1e8ada0160001a5cd1ac6ff10",
+      "on_block": "  workflow_dispatch:\n\n"
+    },
+    {
+      "path": ".github/workflows/publish-alpha.yml",
+      "sha256": "1e42cbbbd929bb1ec6a257bd50b1b244c1da029035eb27a2f4ff15ecbfc86f13",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable publication\n        required: true\n        type: string\n\n"
+    },
+    {
+      "path": ".github/workflows/publish-p09.yml",
+      "sha256": "a3856f69bb6443f2a630c7da60724bb8159b515cef780a225219add55d6d28a9",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable P09 publication\n        required: true\n        type: string\n\n"
+    }
+  ],
+  "platform_workflow_note": "7 dispatch-only; RFC3161 preflight also pull_request on exactly its workflow file and ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs. Assigned S01-09 paths match neither. No push/pull_request_target. Recheck actual candidate/default paths before every publication. No trigger settings changed.",
+  "diagnostics": [
+    "Initial exploratory JSON reads used profile_id/vectors instead of actual id/cases; corrected by inspecting actual structure. No product validation result inferred.",
+    "Planned Contracts directories do not exist yet; rg missing-path output is discovery, not a product failure."
+  ]
+}

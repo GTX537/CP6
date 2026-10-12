@@ -158597,6 +158597,11 @@
       "date": "2026-10-12",
       "change": "First-wave coordinator closeout: S02-00, WP05-01 and WP14-01 DONE only after reviewed remote-main inclusion; S01-01 DONE unchanged. No target/runtime/adoption promotion.",
       "evidence": "docs/development/evidence/first-wave-20261012/README.md"
+    },
+    {
+      "date": "2026-10-12",
+      "change": "WP01-02 coordinates first-wave receipt reuse and next-wave A/B/C assignments. S01-02/05/09 READY with real isolated worktrees, worker START not received; D remains unassigned. Business results unchanged.",
+      "evidence": "docs/development/dispatch/20261012-wave2/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158669,11 +158674,20 @@
         "coordination:roadmap"
       ],
       "coverage_role": "COORDINATION",
-      "state": "PLANNED",
+      "state": "VERIFYING",
       "plan_path": "docs/development/task-plans/WP01.md",
       "card_anchor": "wp01-02",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD / WP01-02",
+        "repository": "Main",
+        "branch": "codex/wp01-02-nextwave-20261012",
+        "worktree": "D:/CP6-worktrees/fw-s02-1012",
+        "claimed_at": "2026-10-12T09:00:02.772472+00:00",
+        "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+        "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
+        "coordination_scope": "Current user explicitly continued next-wave coordination; sole writer of roadmap/generated views/four state files. No worker business code."
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -158755,15 +158769,32 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "A / S01-02（沿用原S01-01对话）",
+        "repository": "Main",
+        "branch": "codex/s01-02-strict-json-20261012",
+        "worktree": "D:/CP6-worktrees/s01-02-20261012",
+        "claimed_at": "2026-10-12T09:00:02.772472+00:00",
+        "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+        "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
+        "dispatch_scope": "Coordinator assignment authorized by user continuation; worker START not received. READY does not mean IN_PROGRESS.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "CP6.Entity/Contracts/Wire/",
+          "eng/contracts/exact-values-tests/",
+          "docs/development/evidence/S01-02/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-02",
+        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -158843,15 +158874,31 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "B / S01-05（沿用原S02-00对话）",
+        "repository": "Main",
+        "branch": "codex/s01-05-ts-exact-20261012",
+        "worktree": "D:/CP6-worktrees/s01-05-20261012",
+        "claimed_at": "2026-10-12T09:00:02.772472+00:00",
+        "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+        "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
+        "dispatch_scope": "Coordinator assignment authorized by user continuation; worker START not received. READY does not mean IN_PROGRESS.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "cp6.web/src/contracts/exact/",
+          "docs/development/evidence/S01-05/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-05",
+        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -158962,15 +159009,37 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / S01-09（沿用原WP05-01对话）",
+        "repository": "Platform",
+        "branch": "codex/s01-09-native-routing-20261012",
+        "worktree": "D:/CP6.Platform-worktrees/s01-09-20261012",
+        "claimed_at": "2026-10-12T09:00:02.772472+00:00",
+        "baseline_sha": "30bd23af6808d217a23878bd9437513043c52834",
+        "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
+        "dispatch_scope": "Coordinator assignment authorized by user continuation; worker START not received. READY does not mean IN_PROGRESS.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+          "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+          "src/CP6.Platform.Messaging/NativeContracts/",
+          "tests/CP6.Platform.UnitTests/CloudEventContractTests.cs",
+          "tests/CP6.Platform.UnitTests/NativeProfileContractTests.cs",
+          "tests/CP6.Platform.UnitTests/TestData/S01/",
+          "docs/development/evidence/S01-09/",
+          "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-09",
+        "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
