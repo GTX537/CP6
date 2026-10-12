@@ -85,7 +85,9 @@ PG 默认标识符上限是 63 **字节**，未引用名折为小写；不得依
 
 新布局安装时审计并收紧数据库及 public schema 的 PUBLIC 默认权限、TEMP、函数 EXECUTE 和所有者默认 ACL。扩展/函数放受控 schema；runtime 不创建对象。只通过可审查的对象清单授权，新增表默认不开放，迁移显式补所需表/列/sequence 权限。schema 是命名空间，跨 schema 是否能访问仍取决于实际权限；`search_path` 不阻止显式限定访问。[PG schema](https://www.postgresql.org/docs/18/ddl-schemas.html)。
 
-共享的 tenant 数据表强制 ENABLE/FORCE ROW LEVEL SECURITY，并有 SELECT/DELETE 的 USING 与 INSERT/UPDATE 的 WITH CHECK；未定义策略时不开放。过滤依据是**受保护目录中 session_user 所绑定的 TenantId**，不是可由调用方改写的 `app.tenant_id`。运行角色不能修改该绑定或获得其他角色资格。目录查询由极小的无参数 SECURITY DEFINER helper 返回本连接 tenant 或拒绝：固定受控 search_path（pg_catalog、受控 schema、pg_temp 最后）、完全限定对象、撤销 PUBLIC EXECUTE、Owner 只可读取映射、无动态 SQL、无任意 tenant 参数；不将 helper 标为 IMMUTABLE。缺绑定必须拒绝，不能回默认值。[函数安全](https://www.postgresql.org/docs/18/sql-createfunction.html)。
+共享的 tenant 数据表强制 ENABLE/FORCE ROW LEVEL SECURITY：SELECT/DELETE 用 USING 限制旧行，INSERT 用 WITH CHECK 限制新行，UPDATE 必须同时具备 USING（旧行属于当前租户）与 WITH CHECK（新行仍属于当前租户）。四类操作的有效策略都必须保留这些边界；缺少明确适用策略时不开放。UPDATE 的旧行保护不能依赖 SELECT 策略：不读取旧列、没有 WHERE/RETURNING 的常量赋值也要排除他租户行，不能将 B 行改属 A 后仅凭新行检查通过。复核实际生效的 ALL/专属及 permissive/restrictive 策略组合，不允许额外 permissive 策略经 OR 放宽边界。[PG CREATE POLICY](https://www.postgresql.org/docs/18/sql-createpolicy.html)。
+
+过滤依据是**受保护目录中 session_user 所绑定的 TenantId**，不是可由调用方改写的 `app.tenant_id`。运行角色不能修改该绑定或获得其他角色资格。目录查询由极小的无参数 SECURITY DEFINER helper 返回本连接 tenant 或拒绝：固定受控 search_path（pg_catalog、受控 schema、pg_temp 最后）、完全限定对象、撤销 PUBLIC EXECUTE、Owner 只可读取映射、无动态 SQL、无任意 tenant 参数；不将 helper 标为 IMMUTABLE。缺绑定必须拒绝，不能回默认值。[函数安全](https://www.postgresql.org/docs/18/sql-createfunction.html)。
 
 同租户表另保 TenantId NOT NULL 及与绑定租户相等的 CHECK/写入守卫、原复合 FK/唯一键。RLS 不覆盖 TRUNCATE，超级用户/BYPASSRLS 可绕过；唯一/FK 检查可能暴露冲突存在性，API 统一安全错误，不返回数据库 DETAIL 或他租户键值。[PG RLS](https://www.postgresql.org/docs/18/ddl-rowsecurity.html)。
 

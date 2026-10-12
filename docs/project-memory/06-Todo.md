@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-12：S02-00 设计准备接收与集中审查
+
+本任务由COORD核查候选、集中审查及必要定向修正，串行同步共享台账后正常保护合并；远端main实际包含后另据回执登记DONE。共享 schema + 租户业务 schema、专用角色/连接池与事务恢复设计；27个运行场景保持NOT_RUN。协调审查补齐UPDATE旧行USING及PGT-008反例。 [接收依据](../development/evidence/S02-00/coordination/intake.json)。本轮不改变125目标交付状态、原清单缺口或247运行场景；无Actions、数据库迁移或部署。
+
 ## 2026-10-12：S01-01 交付与后续领取
 
 S01-01由对话A兼协调完成，经PR #176及远端main核对后已登记DONE。后续S01-02严格JSON、S01-05 TypeScript精确值、S01-09 Platform版本路由可基于[准确包版本](../../eng/contracts/s01/README.md)各自重新核对准入，当前未领取。

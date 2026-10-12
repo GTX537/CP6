@@ -212,22 +212,25 @@
       "title": "共享表 RLS 与目录最小权限",
       "actor": "runtime A；独立观察员只核数据",
       "preconditions": [
-        "共享 IAM/消息含 A/B，运行身份非 Owner/BYPASSRLS"
+        "共享 IAM/消息含 A/B，运行身份非 Owner/BYPASSRLS；选取已获准 UPDATE 的测试共享表/普通可写列，A/B均有已知且非零行数"
       ],
-      "request": "A 查花名册/密钥；查写 B 消息；插入 TenantId=B；UPDATE A TenantId=B；TRUNCATE",
+      "request": "A 查花名册/密钥；查写 B 消息；插入 TenantId=B；UPDATE A TenantId=B；无 WHERE/RETURNING 且不读取旧列的 UPDATE 常量设置 TenantId=A；TRUNCATE",
       "steps": [
-        "对每类表执行正反 SQL，含 INSERT/UPDATE WITH CHECK"
+        "对每类表执行正反 SQL，逐动作检查 SELECT/DELETE USING、INSERT WITH CHECK、UPDATE USING 与 WITH CHECK",
+        "以 runtime A 对普通获准可写列执行无 WHERE/RETURNING、不读取旧列的常量 UPDATE，记录受影响行数，并由独立观察员核前后 A/B 行",
+        "以 runtime A 对隔离测试共享表执行无 WHERE/RETURNING、不读取旧列的 UPDATE，将 TenantId 设置为常量 A；由独立观察员核对原 B 行没有改属 A，A 的可见行集没有吸入 B",
+        "列出实际 ALL/专属及 permissive/restrictive 策略组合，确认额外策略不会通过 OR 放宽旧行或新行租户限制；运行身份无法增加策略"
       ],
       "expected": [
-        "仅获准 A 行可操作",
-        "B SELECT 无行、UPDATE/DELETE 零行、非法新行拒绝",
+        "普通获准列的合法常量 UPDATE 成功，受影响行数等于预置 A 行数且大于零，B 行无变化；不能以全部更新零行或全拒绝冒充隔离通过",
+        "针对 B 的 SELECT 无行、UPDATE/DELETE 零行，非法新行拒绝；无过滤常量 UPDATE 只可影响获准 A 行，B 行身份与数据保持原样。若TenantId列不允许UPDATE，改属尝试应被ACL拒绝，同时仍须通过普通可写列的合法更新正例",
         "花名册/密钥/TRUNCATE 无权限"
       ],
       "evidence_required": [
-        "策略 USING/WITH CHECK/FORCE",
+        "逐动作有效策略 USING/WITH CHECK/FORCE 及组合表达式",
         "全部角色属性",
         "每条结果",
-        "前后数据"
+        "前后数据及 B 行未改属 A 的独立见证"
       ],
       "implementation_task": "WP02-02",
       "source_scope": "AC-TN01-05;CTX02-A4",
