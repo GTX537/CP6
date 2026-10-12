@@ -1,5 +1,7 @@
 # CP6开发设计文档
 
+开发安排与持续进度从[开发总台账](../development/README.md)进入：14个大任务、125目标唯一归属、分批准入及验收证据登记。设计资料覆盖和实际开发交付分别统计。
+
 <!-- CP6-DESIGN-REVISION-ENTRY:START -->
 **当前版本：设计修订R1。** 115个原编号已逐项处置，去重后114个问题族，125个目标均有覆盖记录。新增设计与修订资产从[设计修订入口](remediation/README.md)阅读，按[编码交接](remediation/09-implementation-handoff.md)实施。实际采用 UNPROVEN、业务运行验收 NOT_RUN；缺失历史原件保持缺失。下方保留原归档整理的范围说明。
 <!-- CP6-DESIGN-REVISION-ENTRY:END -->

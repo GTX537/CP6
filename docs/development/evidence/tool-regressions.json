@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-12T00:36:29.182064+00:00",
+  "command": "python -B -m unittest discover -s docs/development/tools -p test_*.py",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "...............\n----------------------------------------------------------------------\nRan 15 tests in 0.256s\n\nOK\n",
+  "scope": "Registrar integrity regression tests using in-memory metadata fixtures only; no business execution or database",
+  "business_tests_executed": false
+}
