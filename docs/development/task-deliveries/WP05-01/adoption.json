@@ -1,0 +1,43 @@
+{
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.0.0-proposed",
+  "task": "WP05-01",
+  "status": "PROPOSED",
+  "basis_manifest": "basis-manifest.json",
+  "decision_record": null,
+  "effective_at": null,
+  "approved_by": null,
+  "approval_evidence": [],
+  "legacy_gaps": [
+    {
+      "id": "GAP-ITER-LEGACY-30",
+      "target": "PLM-ITER-01",
+      "declared_legacy_count": 30,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    },
+    {
+      "id": "GAP-REL-LEGACY-48",
+      "target": "PLM-REL-01",
+      "declared_legacy_count": 48,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    }
+  ],
+  "runtime_state": "NOT_RUN",
+  "gate_implementation": "NOT_CHANGED",
+  "decision_record_requirements": [
+    "Append a separate record; do not mutate accepted artifact bytes.",
+    "Bind this exact version and basis-manifest SHA-256, target scope, decision actor/time and verifiable authority source.",
+    "Explicitly accept a new basis for current known duties and acknowledge unverifiable equivalence to missing legacy30/48.",
+    "Record reviewed coverage and all unresolved decisions/limits; assignment or design commit does not imply adoption.",
+    "Implement and verify the separate whitelist completion-gate change before using this basis to close targets."
+  ]
+}

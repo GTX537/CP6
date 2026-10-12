@@ -1,0 +1,203 @@
+{
+  "scope": "PUSH_PR_BRANCH_TRIGGER_INSPECTION",
+  "result": "PASS",
+  "inspected_at_utc": "2026-10-12T06:13:37.886853+00:00",
+  "candidate_sha": "8de7e3f556ebf6bd1681c75daf6764e9f61a4cd0",
+  "remote_main_sha": "92fb94db40c54be90f2fbb18b0922d264c060796",
+  "workflow_tree_sha": "3355235636fd45116f5445fca32fc65e49f13003",
+  "workflows": {
+    "HEAD": [
+      {
+        "path": ".github/workflows/client-contract.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/crm-saas-public-contract.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/crm-v1-prd-head.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/crm-v1-prd.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-audit.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-candidate.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-preflight.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-validation.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/r2-candidate.yml",
+        "events": [
+          "push"
+        ],
+        "tag_only": true
+      },
+      {
+        "path": ".github/workflows/r2-deploy.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/r2-freeze.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/space-ga-evidence.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/wms-production-sql.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      }
+    ],
+    "origin/main": [
+      {
+        "path": ".github/workflows/client-contract.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/crm-saas-public-contract.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/crm-v1-prd-head.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/crm-v1-prd.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-audit.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-candidate.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-preflight.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/p10-platform-validation.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/r2-candidate.yml",
+        "events": [
+          "push"
+        ],
+        "tag_only": true
+      },
+      {
+        "path": ".github/workflows/r2-deploy.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/r2-freeze.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/space-ga-evidence.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      },
+      {
+        "path": ".github/workflows/wms-production-sql.yml",
+        "events": [
+          "workflow_dispatch"
+        ],
+        "tag_only": false
+      }
+    ]
+  },
+  "trigger_changes": false,
+  "actions_requested": false,
+  "prior_inspector_failure": {
+    "result": "FAIL",
+    "cause": "Ad hoc parser stopped at top-level permissions only; client-contract has no top-level permissions, so parser incorrectly included job keys as events.",
+    "effect": "Inspection script failed; no workflow configuration changed. Previous direct file inspection had already established dispatch-only ordinary workflows and version-tag-only R2."
+  }
+}
