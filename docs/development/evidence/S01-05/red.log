@@ -1,0 +1,461 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/exact/profiles.test.ts
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-05-20261012/cp6.web
+
+ ❯ src/contracts/exact/profiles.test.ts (202 tests | 100 failed) 50ms
+     × 'NUM-001' / 'fin-credit-signed' 4ms
+     × 'NUM-002' / 'fin-credit-signed' 1ms
+     × 'NUM-003' / 'fin-credit-signed' 0ms
+     × 'NUM-005' / 'fin-credit-signed' 0ms
+     × 'NUM-006' / 'fin-credit-signed' 0ms
+     × 'NUM-012' / 'fin-inv-decimal18' 0ms
+     × 'NUM-013' / 'fin-inv-qty12' 0ms
+     × 'NUM-014' / 'fin-inv-qty12' 0ms
+     × 'CREDIT-001' / 'fin-credit-nonnegative' 0ms
+     × 'CREDIT-002' / 'fin-credit-nonnegative' 0ms
+     × 'CREDIT-003' / 'fin-credit-positive' 1ms
+     × 'CREDIT-007' / 'fin-credit-nonnegative' 0ms
+     × 'CREDIT-008' / 'fin-credit-positive' 0ms
+     × 'CREDIT-JS-001' / 'fin-credit-signed' 0ms
+     × 'CREDIT-JS-002' / 'fin-credit-signed' 0ms
+     × 'CREDIT-JS-003' / 'fin-credit-signed' 0ms
+     × 'INV-002' / 'fin-inv-qty12' 0ms
+     × 'INV-003' / 'fin-inv-decimal18' 0ms
+     × 'INV-004' / 'fin-inv-decimal18' 0ms
+     × rejects token null without coercion 2ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 0 without coercion 0ms
+     × rejects token 1.25 without coercion 0ms
+     × rejects token 9007199254740992 without coercion 0ms
+     × rejects token true without coercion 0ms
+     × rejects token false without coercion 0ms
+     × rejects token {} without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 1n without coercion 0ms
+     × rejects token 1 without coercion 0ms
+     × rejects token null without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 0 without coercion 0ms
+     × rejects token 1.25 without coercion 0ms
+     × rejects token 9007199254740992 without coercion 0ms
+     × rejects token true without coercion 0ms
+     × rejects token false without coercion 0ms
+     × rejects token {} without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 1n without coercion 0ms
+     × rejects token 1 without coercion 0ms
+     × rejects token null without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 0 without coercion 0ms
+     × rejects token 1.25 without coercion 0ms
+     × rejects token 9007199254740992 without coercion 0ms
+     × rejects token true without coercion 0ms
+     × rejects token false without coercion 0ms
+     × rejects token {} without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 1n without coercion 0ms
+     × rejects token 1 without coercion 1ms
+     × rejects token null without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 0 without coercion 0ms
+     × rejects token 1.25 without coercion 0ms
+     × rejects token 9007199254740992 without coercion 0ms
+     × rejects token true without coercion 0ms
+     × rejects token false without coercion 0ms
+     × rejects token {} without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 1n without coercion 0ms
+     × rejects token 1 without coercion 0ms
+     × rejects token null without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 0 without coercion 0ms
+     × rejects token 1.25 without coercion 0ms
+     × rejects token 9007199254740992 without coercion 0ms
+     × rejects token true without coercion 0ms
+     × rejects token false without coercion 0ms
+     × rejects token {} without coercion 0ms
+     × rejects token undefined without coercion 0ms
+     × rejects token 1n without coercion 0ms
+     × rejects token 1 without coercion 0ms
+     × rejects noncanonical -0 0ms
+     × rejects noncanonical -0.0 1ms
+     × rejects noncanonical 0.0 0ms
+     × rejects noncanonical 1.0 0ms
+     × rejects noncanonical 1.2300 0ms
+     × rejects noncanonical 0.000000001 0ms
+     × accepts fin-credit-signed -0.00000001 exactly 0ms
+     × accepts fin-credit-positive 0.1 exactly 0ms
+     × accepts fin-credit-nonnegative 0 exactly 0ms
+     × validates the final sign profile independently of the input profile 0ms
+     × allows exact intermediate overflow and rejects it at the final 38-digit field 0ms
+     × rejects fractional overflow without rounding or truncation 0ms
+     × preserves -0 while normalizing arithmetic 0ms
+     × preserves -0.000 while normalizing arithmetic 0ms
+     × preserves 1.2300 while normalizing arithmetic 0ms
+     × preserves -100.000 while normalizing arithmetic 0ms
+     × preserves 0.000000000001 while normalizing arithmetic 0ms
+     × does not impose an integer digit cap beyond the 90-digit shared example 0ms
+     × enforces the raw fractional boundary before normalizing zeros 0ms
+     × rejects final quantity/decimal overflow without rounding 0ms
+     × adds across the JS safe-integer boundary without losing a unit 0ms
+     × aligns scales and normalizes exact cancellation and carries 2ms
+     × compares signs and different scales using integer coefficients 0ms
+     × keeps 90-digit calculations exact without changing original wire 0ms
+     × validates coefficient and scale metadata 0ms
+     × freezes parsed values and refuses implicit arithmetic coercion 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 100 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-001' / 'fin-credit-signed'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-002' / 'fin-credit-signed'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-003' / 'fin-credit-signed'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-005' / 'fin-credit-signed'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-006' / 'fin-credit-signed'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-001' / 'fin-credit-nonnegative'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-002' / 'fin-credit-nonnegative'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-003' / 'fin-credit-positive'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-007' / 'fin-credit-nonnegative'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-008' / 'fin-credit-positive'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-JS-001' / 'fin-credit-signed'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-JS-002' / 'fin-credit-signed'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'CREDIT-JS-003' / 'fin-credit-signed'
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ parse src/contracts/exact/profiles.test.ts:17:27
+ ❯ src/contracts/exact/profiles.test.ts:43:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-012' / 'fin-inv-decimal18'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-013' / 'fin-inv-qty12'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'NUM-014' / 'fin-inv-qty12'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'INV-002' / 'fin-inv-qty12'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'INV-003' / 'fin-inv-decimal18'
+ FAIL  src/contracts/exact/profiles.test.ts > S01-05 fixed shared input package > 'INV-004' / 'fin-inv-decimal18'
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/inventoryDecimal.ts:3:52
+      1| export type InventoryProfile = 'fin-inv-decimal18' | 'fin-inv-qty12'
+      2| export class InventoryDecimal {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ parse src/contracts/exact/profiles.test.ts:20:31
+ ❯ src/contracts/exact/profiles.test.ts:43:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token null without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token 0 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token 1.25 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token 9007199254740992 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token true without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token false without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token {} without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token 1n without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-signed rejects non-string tokens and malformed wire > rejects token 1 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token null without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token 0 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token 1.25 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token 9007199254740992 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token true without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token false without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token {} without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token 1n without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-nonnegative rejects non-string tokens and malformed wire > rejects token 1 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token null without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token 0 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token 1.25 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token 9007199254740992 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token true without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token false without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token {} without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token 1n without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-credit-positive rejects non-string tokens and malformed wire > rejects token 1 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token null without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token 0 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token 1.25 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token 9007199254740992 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token true without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token false without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token {} without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token 1n without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-decimal18 rejects non-string tokens and malformed wire > rejects token 1 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token null without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token 0 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token 1.25 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token 9007199254740992 without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token true without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token false without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token {} without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token undefined without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token 1n without coercion
+ FAIL  src/contracts/exact/profiles.test.ts > fin-inv-qty12 rejects non-string tokens and malformed wire > rejects token 1 without coercion
+AssertionError: expected error to be instance of TypeError
+
+- Expected:
+[Function TypeError]
+
++ Received:
+Error {
+  "message": "S01-05 not implemented",
+}
+
+ ❯ src/contracts/exact/profiles.test.ts:60:43
+     58|   it.each([null, undefined, 0, 1.25, 9007199254740992, true, false, {}…
+     59|     'rejects token %s without coercion', (input) => {
+     60|       expect(() => parse(profile, input)).toThrow(TypeError)
+       |                                           ^
+     61|     },
+     62|   )
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > rejects noncanonical -0
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > rejects noncanonical -0.0
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > rejects noncanonical 0.0
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > rejects noncanonical 1.0
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > rejects noncanonical 1.2300
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > rejects noncanonical 0.000000001
+AssertionError: expected error to be instance of RangeError
+
+- Expected:
+[Function RangeError]
+
++ Received:
+Error {
+  "message": "S01-05 not implemented",
+}
+
+ ❯ src/contracts/exact/profiles.test.ts:71:52
+     69|   const signed: CreditProfile = 'fin-credit-signed'
+     70|   it.each(['-0', '-0.0', '0.0', '1.0', '1.2300', '0.000000001'])('reje…
+     71|     expect(() => CreditAmount.parse(wire, signed)).toThrow(RangeError)
+       |                                                    ^
+     72|   })
+     73|   it.each([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > accepts fin-credit-signed -0.00000001 exactly
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > accepts fin-credit-positive 0.1 exactly
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > accepts fin-credit-nonnegative 0 exactly
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:78:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > validates the final sign profile independently of the input profile
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:87:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > allows exact intermediate overflow and rejects it at the final 38-digit field
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:93:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-CREDIT field boundaries > rejects fractional overflow without rounding or truncation
+Error: S01-05 not implemented
+ ❯ Function.fromParts src/contracts/exact/exactDecimal.ts:2:56
+      1| export class ExactDecimal {
+      2|   static fromParts(..._args: unknown[]): never { throw new Error('S01-…
+       |                                                        ^
+      3| }
+      4|
+ ❯ src/contracts/exact/profiles.test.ts:104:48
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > preserves -0 while normalizing arithmetic
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > preserves -0.000 while normalizing arithmetic
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > preserves 1.2300 while normalizing arithmetic
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > preserves -100.000 while normalizing arithmetic
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > preserves 0.000000000001 while normalizing arithmetic
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/inventoryDecimal.ts:3:52
+      1| export type InventoryProfile = 'fin-inv-decimal18' | 'fin-inv-qty12'
+      2| export class InventoryDecimal {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:113:36
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > does not impose an integer digit cap beyond the 90-digit shared example
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/inventoryDecimal.ts:3:52
+      1| export type InventoryProfile = 'fin-inv-decimal18' | 'fin-inv-qty12'
+      2| export class InventoryDecimal {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:124:36
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > enforces the raw fractional boundary before normalizing zeros
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/inventoryDecimal.ts:3:52
+      1| export type InventoryProfile = 'fin-inv-decimal18' | 'fin-inv-qty12'
+      2| export class InventoryDecimal {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:132:36
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > FIN-INV arithmetic value and original wire are independent > rejects final quantity/decimal overflow without rounding
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/inventoryDecimal.ts:3:52
+      1| export type InventoryProfile = 'fin-inv-decimal18' | 'fin-inv-qty12'
+      2| export class InventoryDecimal {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:139:36
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > exact BigInt arithmetic > adds across the JS safe-integer boundary without losing a unit
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ credit src/contracts/exact/profiles.test.ts:146:49
+ ❯ src/contracts/exact/profiles.test.ts:148:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > exact BigInt arithmetic > aligns scales and normalizes exact cancellation and carries
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ credit src/contracts/exact/profiles.test.ts:146:49
+ ❯ src/contracts/exact/profiles.test.ts:152:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > exact BigInt arithmetic > compares signs and different scales using integer coefficients
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ credit src/contracts/exact/profiles.test.ts:146:49
+ ❯ src/contracts/exact/profiles.test.ts:158:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > exact BigInt arithmetic > keeps 90-digit calculations exact without changing original wire
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/inventoryDecimal.ts:3:52
+      1| export type InventoryProfile = 'fin-inv-decimal18' | 'fin-inv-qty12'
+      2| export class InventoryDecimal {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:164:39
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > exact BigInt arithmetic > validates coefficient and scale metadata
+AssertionError: expected error to be instance of RangeError
+
+- Expected:
+[Function RangeError]
+
++ Received:
+Error {
+  "message": "S01-05 not implemented",
+}
+
+ ❯ src/contracts/exact/profiles.test.ts:171:55
+    169|   it('validates coefficient and scale metadata', () => {
+    170|     for (const scale of [-1, 0.5, NaN, Infinity, 9007199254740992]) {
+    171|       expect(() => ExactDecimal.fromParts(1n, scale)).toThrow(RangeErr…
+       |                                                       ^
+    172|     }
+    173|     expect(() => ExactDecimal.fromParts(1 as unknown as bigint, 0)).to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/100]⎯
+
+ FAIL  src/contracts/exact/profiles.test.ts > exact BigInt arithmetic > freezes parsed values and refuses implicit arithmetic coercion
+Error: S01-05 not implemented
+ ❯ Function.parse src/contracts/exact/creditAmount.ts:3:52
+      1| export type CreditProfile = 'fin-credit-signed' | 'fin-credit-nonnegat…
+      2| export class CreditAmount {
+      3|   static parse(..._args: unknown[]): never { throw new Error('S01-05 n…
+       |                                                    ^
+      4|   static fromExact(..._args: unknown[]): never { throw new Error('S01-…
+      5| }
+ ❯ src/contracts/exact/profiles.test.ts:177:39
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/100]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  100 failed | 102 passed (202)
+   Start at  06:50:40
+   Duration  868ms (transform 94ms, setup 0ms, import 179ms, tests 50ms, environment 0ms)
+

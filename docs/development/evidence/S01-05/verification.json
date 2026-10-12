@@ -1,0 +1,551 @@
+{
+  "task": "S01-05",
+  "level": "CONTRACT_UNIT_AND_FRONTEND_TYPECHECK",
+  "recorded_utc": "2026-10-12T10:55:04.033491+00:00",
+  "source_baseline_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+  "confirmed_origin_main_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+  "branch": "codex/s01-05-ts-exact-20261012",
+  "input_package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "node": "v20.19.0",
+    "npm": "10.8.2",
+    "vitest": "4.1.11",
+    "restore": "npm ci --prefix cp6.web --no-audit --no-fund",
+    "restore_exit_code": 0,
+    "installed_packages": 426
+  },
+  "input_and_config_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "actual_git_blob_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "working_tree_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "verified": true
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "actual_git_blob_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "working_tree_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "verified": true
+    },
+    {
+      "path": "eng/contracts/s01/README.md",
+      "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "actual_git_blob_sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "working_tree_sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "verified": true
+    },
+    {
+      "path": "cp6.web/package.json",
+      "sha256": "01ce340ec4dcac1db3cabecf5e72a497ff544b2c731abfebb9206633877a3d6a",
+      "representation": "GIT_BLOB_BYTES",
+      "actual_git_blob_sha256": "01ce340ec4dcac1db3cabecf5e72a497ff544b2c731abfebb9206633877a3d6a",
+      "working_tree_sha256": "0bc9e00d33b8aacdae711d77ff1927abe4c1e70312d4da9b8778dc35569e8da3",
+      "verified": true
+    },
+    {
+      "path": "cp6.web/package-lock.json",
+      "sha256": "f9e3dc5844c826554cf54e2b30d6b1ae2b4bfa56ea8c3f39ddafd8957d6b21bc",
+      "representation": "GIT_BLOB_BYTES",
+      "actual_git_blob_sha256": "f9e3dc5844c826554cf54e2b30d6b1ae2b4bfa56ea8c3f39ddafd8957d6b21bc",
+      "working_tree_sha256": "abc239f2460634d4e9417193c500db55959c0022337275be12daa61f8d92dbf7",
+      "verified": true
+    },
+    {
+      "path": "cp6.web/vitest.config.ts",
+      "sha256": "43c0f2ba99f80ce2e339fc5dad4df0da51ab040adeaf437df5f36e06ae98ee10",
+      "representation": "GIT_BLOB_BYTES",
+      "actual_git_blob_sha256": "43c0f2ba99f80ce2e339fc5dad4df0da51ab040adeaf437df5f36e06ae98ee10",
+      "working_tree_sha256": "d00b50a4a8c422ef24e6e63f420a332767a899db97a9f1d87c8e736ee802181f",
+      "verified": true
+    },
+    {
+      "path": "cp6.web/tsconfig.app.json",
+      "sha256": "92496d0db20bb707be8b697a9dc316c7ded1011f8a9998a472c89f3e612822f2",
+      "representation": "GIT_BLOB_BYTES",
+      "actual_git_blob_sha256": "92496d0db20bb707be8b697a9dc316c7ded1011f8a9998a472c89f3e612822f2",
+      "working_tree_sha256": "75d8a9e8a7b917cedfcbfc8a2525177784c9786cee1eefde26fb92285808c337",
+      "verified": true
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+      "sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+      "representation": "GIT_BLOB_BYTES",
+      "actual_git_blob_sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+      "working_tree_sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+      "verified": true
+    }
+  ],
+  "tested_source_files": [
+    {
+      "path": "cp6.web/src/contracts/exact/creditAmount.ts",
+      "sha256": "c054094467778bc7957513d4a5e3a66eb1807b70791592283a3a6702997a1d22",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "c054094467778bc7957513d4a5e3a66eb1807b70791592283a3a6702997a1d22"
+    },
+    {
+      "path": "cp6.web/src/contracts/exact/exactDecimal.ts",
+      "sha256": "8086cb2f12728212a009e429f24d6145b48440f298e97ab16d0434beb9f3562b",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "8086cb2f12728212a009e429f24d6145b48440f298e97ab16d0434beb9f3562b"
+    },
+    {
+      "path": "cp6.web/src/contracts/exact/inventoryDecimal.ts",
+      "sha256": "b9994b231d1e2c39b9511c4dad116202135593e7e98284b9b4c2d652738f0c4e",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "b9994b231d1e2c39b9511c4dad116202135593e7e98284b9b4c2d652738f0c4e"
+    },
+    {
+      "path": "cp6.web/src/contracts/exact/profiles.test.ts",
+      "sha256": "ea3746958a746cbfa04883bf9aa2be656386d2b118591a731c587d6ef6c11b7b",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "ea3746958a746cbfa04883bf9aa2be656386d2b118591a731c587d6ef6c11b7b"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/development/evidence/S01-05/collection-failure.log",
+      "sha256": "525e0eac1107d184fafb7cbae08533c34a4543d2780ac2c6efe545164b1652d4",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "45782047c8b5270afff55c6327e005f39f619f491f21e2200517c38b803c5c60"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/green.log",
+      "sha256": "819dfb4b8a615c1764f0f7ad67f1d3b3d35630157abcf25c906b978f5f357d99",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "d7bfcc469d9a79adc68f22dc290b7470e6093442cbd259c05d595ff63f10afb3"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/red.log",
+      "sha256": "b1caff6912a2e69d1b778544eefd11f32b92e78008d6b76fa380fde2ab027815",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "8b7a4cdc940fa7e9a3bae90320108c33070c94ee39f4c69dd0947c8b03a9ba7b"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/type-check.log",
+      "sha256": "f39358c5d264df40c833ad6cf8f6286b9652d06fe1275645745b8a8de5be4a22",
+      "representation": "WORKTREE_BYTES",
+      "stored_git_blob_sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+    }
+  ],
+  "runs": [
+    {
+      "phase": "COLLECTION_FAILURE",
+      "command": "npm --prefix cp6.web test -- src/contracts/exact/profiles.test.ts",
+      "exit_code": 1,
+      "executed": 0,
+      "cause": "Vitest %j title formatter cannot serialize BigInt; changed title to %s",
+      "log": "collection-failure.log"
+    },
+    {
+      "phase": "RED",
+      "command": "npm --prefix cp6.web test -- src/contracts/exact/profiles.test.ts",
+      "exit_code": 1,
+      "executed": 202,
+      "failed": 100,
+      "passed": 102,
+      "skipped": 0,
+      "cause": "Explicit unimplemented API stubs; no implementation",
+      "log": "red.log"
+    },
+    {
+      "phase": "GREEN",
+      "command": "npm --prefix cp6.web test -- src/contracts/exact/profiles.test.ts",
+      "exit_code": 0,
+      "executed": 202,
+      "failed": 0,
+      "passed": 202,
+      "skipped": 0,
+      "log": "green.log"
+    },
+    {
+      "phase": "TYPECHECK",
+      "command": "npm --prefix cp6.web run type-check",
+      "exit_code": 0,
+      "log": "type-check.log"
+    }
+  ],
+  "shared_vector_results": [
+    {
+      "case_id": "NUM-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-004",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-007",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-008",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-009",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-010",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-012",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-013",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-014",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-015",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "NUM-016",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-001",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-002",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-003",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-004",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-007",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-008",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-009",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-010",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-JS-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-JS-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "CREDIT-JS-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "INV-001",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "expected_accepted": false,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "INV-002",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "INV-003",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    },
+    {
+      "case_id": "INV-004",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "expected_accepted": true,
+      "result": "PASS",
+      "scope": "TypeScript contract subassertion only"
+    }
+  ],
+  "shared_count": 34,
+  "other_tests_count": 168,
+  "case_result_basis": "GREEN executed all 202 tests; suite asserts exact assigned IDs, no duplicates and only supported operations. Inputs and expected pairs read together from fixed package.",
+  "workflow_preflight": [
+    {
+      "path": ".github/workflows/client-contract.yml",
+      "sha256": "50f33cf81307824a7b6accd5eb3417968494cf2ae1aaecaccbe878e1554f00f8",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "sha256": "5024797a8d374361d394c24abccc7f45a2e2314c1113c3deea5518e44c685efc",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "sha256": "70e1a2fb2535bd82a43bdc6d199d18429768ab4e243c2523166a5863eeba85f9",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "sha256": "84bf014626442317ef4f27b6580832162aba444d7d40fc03ed331fe2e6d4bdb5",
+      "on_block": "on:\n  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "sha256": "a3059601bedbd49a8596852d964704305b4eff7030e8bd5a56607e4549e0911c",
+      "on_block": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "sha256": "0c3f53a82e604fd37eb33bb0a952f5a59aea720347c6a5b37721688ae85d1b95",
+      "on_block": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "sha256": "dfa0648be36c85f800c6d475ba44d27313d0f17a7bc7fca2df696b630111316f",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "sha256": "e86a052bde1eebd0cff6d23be32b3cb7f637989880bdb74e3f41c260c11cccb6",
+      "on_block": "on:\n  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/r2-candidate.yml",
+      "sha256": "4cc534fbe26cc22c41875376fc08e6b68137ed30f2097e55d0fc050965151e7d",
+      "on_block": "on:\n  push:\n    tags:\n      - \"v*.*.*\"\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/r2-deploy.yml",
+      "sha256": "6dbb5f13005bbf2f0442c67cc2f5551ef3fa280eceff4706b7596497396b74ea",
+      "on_block": "on:\n  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/r2-freeze.yml",
+      "sha256": "a9b998fff9f6cb4e67a1ddcccc794945007c7bde4eba052fdee79afc5df5e695",
+      "on_block": "on:\n  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "sha256": "5bc15531e10147c6e01637a1c63e4aa7820516c4f78543ba334c84c898301013",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "origin_main_identical": true
+    },
+    {
+      "path": ".github/workflows/wms-production-sql.yml",
+      "sha256": "ca11573d8c2622f08ad4156ae0733a40c5b8cc6d41dc3b227c7b1b509d8ecc3a",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "origin_main_identical": true
+    }
+  ],
+  "actions": {
+    "dispatched": 0,
+    "cancelled": 0,
+    "task_runs_found": 0,
+    "trigger_changes": false,
+    "azure_trigger": "none",
+    "azure_pr": "none"
+  },
+  "not_verified": [
+    "C#/TS/PG cross-implementation adoption",
+    "page and WMS/MES inputs",
+    "actual Owner business execution",
+    "database, migration, authorization or transaction acceptance",
+    "deployment and production"
+  ],
+  "original_package_execution_state": "NOT_RUN_UNCHANGED",
+  "completion_scope": "WORKER_IMPLEMENTATION_AND_LOCAL_VERIFICATION; COORD owns shared state and merge",
+  "reuse_policy": "Only docs/evidence changes after GREEN and type-check. Reuse those results if tested sources, input/config pins and environment are unchanged; no new test execution claimed for a later SHA."
+}
