@@ -1,0 +1,99 @@
+{
+  "at": "2026-10-12T01:48:21.856010+00:00",
+  "scope": "Only changed ENG-TOOL source anchors verified against pinned main. All unchanged anchors reuse prior code-source-validation.json; runtime NOT_RUN.",
+  "result": "PASS",
+  "new_checks": [
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "CP6.Core/Services/Erp/PlateMoldService.cs",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 115,
+      "sha256": "2d634efcbab713770e97d32e5fdc807a86306ad6cf7915fc144dc9004799e751",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "CP6.Core/Services/Erp/PlateMoldService.cs",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 150,
+      "sha256": "2d634efcbab713770e97d32e5fdc807a86306ad6cf7915fc144dc9004799e751",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "CP6.Core/Services/Erp/PlateMoldService.cs",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 251,
+      "sha256": "2d634efcbab713770e97d32e5fdc807a86306ad6cf7915fc144dc9004799e751",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "CP6.WebApi/Program.cs",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 588,
+      "sha256": "e8780458a545023d435abdf8f7b32b620dd7c97eb5ccba8a3b001ecc5fbfeff9",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "CP6.WebApi/Program.cs",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 665,
+      "sha256": "e8780458a545023d435abdf8f7b32b620dd7c97eb5ccba8a3b001ecc5fbfeff9",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "CP6.Entity/DomainModels/Erp/PlateMold.cs",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 15,
+      "sha256": "2341a6e344e432a6de5cfd5c642b26fc75507f2dc8601ad2ed8c92e97687429b",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "CP6.WebApi/Controllers/Erp/PlateMoldController.cs",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 63,
+      "sha256": "7bf9260235fded556aa685ae91749510bc645dfd80b3775fc4e5de212cc4e73a",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "cp6.web/src/views/erp/PlateMoldView.vue",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 1,
+      "sha256": "9761f632c09cc7e3a62a11ce4bcc4f7ca83bbfffac08b4cf263d31d5c2909d3c",
+      "result": "PINNED_SOURCE_LOCATED"
+    },
+    {
+      "target": "ENG-TOOL-01",
+      "kind": "code_evidence",
+      "repo": "MAIN",
+      "path": "cp6.web/src/views/erp/PlateMoldListView.vue",
+      "sha": "5ca90701bfe1e886ea9e179f1e8e5f413bb44f43",
+      "line": 1,
+      "sha256": "f7e80c6f8bf1995b32f192661af51b2edf4b39c11a93573acc4aa821bb45c3c0",
+      "result": "PINNED_SOURCE_LOCATED"
+    }
+  ],
+  "reused_report": "code-source-validation.json",
+  "business_tests_executed": false
+}
