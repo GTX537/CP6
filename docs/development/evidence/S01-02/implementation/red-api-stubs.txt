@@ -1,0 +1,40 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace CP6.Entity.Contracts.Wire;
+
+[JsonConverter(typeof(NullOnlyConverter))]
+public readonly record struct NullOnly;
+
+public sealed class NullOnlyConverter : JsonConverter<NullOnly>
+{
+    public override bool HandleNull => true;
+    public override NullOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotImplementedException();
+    public override void Write(Utf8JsonWriter writer, NullOnly value, JsonSerializerOptions options) => throw new NotImplementedException();
+}
+using System.Text.Json;
+
+namespace CP6.Entity.Contracts.Wire;
+
+public static class StrictJson
+{
+    public static StrictJsonDocument Parse(ReadOnlySpan<byte> utf8Json) => throw new NotImplementedException();
+    public static T? Deserialize<T>(ReadOnlySpan<byte> utf8Json, JsonSerializerOptions? options = null) => throw new NotImplementedException();
+}
+
+public sealed class StrictJsonDocument : IDisposable
+{
+    public JsonElement RootElement => throw new NotImplementedException();
+    public byte[] GetOriginalUtf8() => throw new NotImplementedException();
+    public T? Deserialize<T>(JsonSerializerOptions? options = null) => throw new NotImplementedException();
+    public void Dispose() => throw new NotImplementedException();
+}
+using System.Text.Json;
+
+namespace CP6.Entity.Contracts.Wire;
+
+public static class JsonSemanticEquality
+{
+    public static string Key(JsonElement value) => throw new NotImplementedException();
+    public static bool AreEqual(JsonElement left, JsonElement right) => throw new NotImplementedException();
+}

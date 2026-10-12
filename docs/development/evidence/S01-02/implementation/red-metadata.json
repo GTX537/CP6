@@ -1,0 +1,46 @@
+{
+  "stage": "red",
+  "started_utc": "2026-10-12T10:49:37.4564411Z",
+  "finished_utc": "2026-10-12T10:49:59.7575276Z",
+  "base_head": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+  "source_state": "Uncommitted task files identified by SHA-256 below; base_head alone is not the tested source.",
+  "command": "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~StrictJsonTests",
+  "logging_arguments": "--logger console;verbosity=normal --logger trx;LogFileName=red.trx --results-directory docs/development/evidence/S01-02/implementation",
+  "exit_code": 1,
+  "sources": [
+    {
+      "path": "CP6.Entity/Contracts/Wire/NullOnly.cs",
+      "sha256": "1ae76909581ea0c98bc00cdbfc827e8325a698a7b45854091284163c8d75c3cd"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "sha256": "e4f6668ad6c2d4fbd1bb60cdc72eb33d429a5be879ae848f9f68003cf908d37a"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs",
+      "sha256": "a884639d571f4afd4bd892b91941aa4d23c851412598200d29473b8381661602"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StrictJsonTests.cs",
+      "sha256": "f000fb8c3680840e38d5801694fbe674bc8726e2a279674fb71cf60f2e4c20c4"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "sha256": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.dll",
+      "sha256": "fc479c266ef95f4b91ab9e1f2807b196c0eb5d131213eaa39a9828cd99e63a80"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.Entity.dll",
+      "sha256": "cf19baec58aec9844980bdc28e5e116e97500960488845a9be8a8f542239505b"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.runtimeconfig.json",
+      "sha256": "b9f6ae58ba9393a4833a54c1088ceeb2b6328e311b1be47945c55cfc4de3bc89"
+    }
+  ]
+}

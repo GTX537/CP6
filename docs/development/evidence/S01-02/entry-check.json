@@ -1,0 +1,93 @@
+{
+  "task": "S01-02",
+  "observed_at": "2026-10-12T10:47:01.120669+00:00",
+  "result": "PASS",
+  "scope": "Task admission/source identity only; not runtime validation",
+  "head": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+  "origin_main": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+  "assignment": {
+    "chat_label": "A / S01-02（沿用原S01-01对话）",
+    "repository": "Main",
+    "branch": "codex/s01-02-strict-json-20261012",
+    "worktree": "D:/CP6-worktrees/s01-02-20261012",
+    "claimed_at": "2026-10-12T09:00:02.772472+00:00",
+    "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+    "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
+    "dispatch_scope": "Coordinator assignment authorized by user continuation; worker START not received. READY does not mean IN_PROGRESS.",
+    "worker_ack_at": null,
+    "allowed_write_paths": [
+      "CP6.Entity/Contracts/Wire/",
+      "eng/contracts/exact-values-tests/",
+      "docs/development/evidence/S01-02/"
+    ],
+    "handoff_branch": "codex/dev-handoff-s01-02",
+    "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a"
+  },
+  "entry_gate": "CONFIRMED",
+  "prerequisite": "S01-01 DONE",
+  "checks": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "basis": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "basis": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "eng/contracts/s01/README.md",
+      "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "basis": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "CP6.Entity/CP6.Entity.csproj",
+      "sha256": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+      "basis": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj",
+      "sha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272",
+      "basis": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+      "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+      "basis": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+      "sha256": "44e4ceb8b1f0d4b673f4745c2508e1b55fb37cad58b84a9ef160ff9424ec93b2",
+      "basis": "GIT_BLOB_BYTES"
+    }
+  ],
+  "case_ids": [
+    "JSON-001",
+    "JSON-002",
+    "JSON-003",
+    "JSON-004",
+    "JSON-005",
+    "JSON-006",
+    "JSON-007",
+    "NULL-001",
+    "NULL-002",
+    "NULL-003",
+    "NULL-004",
+    "NULL-005",
+    "NULL-006",
+    "NULL-007",
+    "EQUAL-001",
+    "EQUAL-002",
+    "EQUAL-003",
+    "EQUAL-004",
+    "EQUAL-005",
+    "EQUAL-006",
+    "EQUAL-007"
+  ],
+  "profiles": [
+    "strict-json",
+    "null-only",
+    "json-semantic-equality"
+  ]
+}
