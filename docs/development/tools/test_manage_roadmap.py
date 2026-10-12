@@ -25,6 +25,8 @@ class ProgressIntegrityTests(unittest.TestCase):
             case["execution_evidence"] = []
         for package in self.data["work_packages"]:
             package.update(state="ASSESSING" if package["id"] == "WP01" else "PLANNED", blockers=[], evidence=[])
+        for task in self.data.get("implementation_tasks", []):
+            task.update(state="PLANNED", blockers=[], validation_evidence=[], delivery_evidence=None)
 
     def test_complete_baseline_is_valid(self):
         self.assertEqual(roadmap.validate(self.data, ROOT, check_pins=False), [])
@@ -134,6 +136,54 @@ class ProgressIntegrityTests(unittest.TestCase):
         self.data["work_packages"][2]["state"] = "IN_PROGRESS"
         view = roadmap.render(self.data)["03-progress.md"]
         self.assertIn("当前活动工作包：WP03 CRM客户经营（开发中）", view)
+
+    def test_tasks_need_unique_ids_and_valid_targets(self):
+        self.data["implementation_tasks"].append(copy.deepcopy(self.data["implementation_tasks"][0]))
+        self.reject("tasks: duplicate id")
+        self.data["implementation_tasks"].pop()
+        self.data["implementation_tasks"][0]["target_ids"] = ["UNKNOWN"]
+        self.reject("task target")
+
+    def test_empty_task_inventory_rejected(self):
+        self.data["implementation_tasks"] = []
+        self.reject("task inventory")
+
+    def test_unknown_task_dependency_and_cycle_rejected(self):
+        first = self.data["implementation_tasks"][0]
+        first["dependencies"] = ["UNKNOWN"]
+        self.reject("task dependency")
+        first["dependencies"] = ["S01-02"]
+        self.reject("task dependency cycle")
+
+    def test_task_cannot_start_before_dependencies_done(self):
+        self.data["implementation_tasks"][1]["state"] = "IN_PROGRESS"
+        self.reject("unfinished task dependencies")
+
+    def test_task_done_requires_validation_and_remote_receipt(self):
+        self.data["implementation_tasks"][0]["state"] = "DONE"
+        self.reject("task DONE lacks validation")
+        self.reject("task DONE lacks audited remote-main")
+
+    def test_task_blocked_and_missing_plan_rejected(self):
+        self.data["implementation_tasks"][0].update(state="BLOCKED", plan_path="missing.md")
+        self.reject("task BLOCKED needs a reason")
+        self.reject("task plan missing")
+
+    def test_task_plan_cannot_escape_repository(self):
+        self.data["implementation_tasks"][0]["plan_path"] = str(ROOT.parent / "outside.md")
+        self.reject("task plan missing")
+
+    def test_evidenced_task_delivery_does_not_close_targets_or_cases(self):
+        # Synthetic metadata only exercises registrar logic; it is never persisted.
+        ev = {"path": "docs/development/README.md", "source_sha": self.data["main_baseline_sha"], "scope": "unit fixture only", "command": "unit fixture", "environment": "registrar test", "observed_at": "2026-10-11T00:00:00Z", "result": "PASS"}
+        receipt = {**ev, "remote_main_sha": self.data["main_baseline_sha"], "pr_url": "https://github.com/example/example/pull/1"}
+        self.data["implementation_tasks"][0].update(state="DONE", validation_evidence=[ev], delivery_evidence=receipt)
+        self.assertEqual(roadmap.validate(self.data, ROOT, check_pins=False), [])
+        self.assertEqual(roadmap.metrics(self.data)["targets_delivered"], 0)
+        self.assertEqual(roadmap.metrics(self.data)["runtime_states"], {"NOT_RUN": 247})
+        view = roadmap.render(self.data)["07-detailed-tasks.md"]
+        self.assertIn("S01 已交付：1/12", view)
+        self.assertIn("S02-00", view)
 
 
 if __name__ == "__main__":

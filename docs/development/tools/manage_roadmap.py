@@ -158,6 +158,58 @@ def validate(data, root: Path, *, check_pins=True):
         for path in [t["design_module"], *t["revision_outputs"], t["original_acceptance_inventory"]["source"]]:
             if not (root / path).is_file():
                 errors.append(f"missing source link: {path}")
+    errors.extend(validate_tasks(data, root, targets))
+    return errors
+
+
+def validate_tasks(data, root: Path, targets):
+    """Check task records independently; task delivery never advances business cases."""
+    errors = []
+    rows = data.get("implementation_tasks", [])
+    if not rows:
+        return ["task inventory must not be empty"]
+    tasks = unique(rows, "id", errors, "tasks")
+    for task in tasks.values():
+        tid = task["id"]
+        if task.get("state") not in STATES or task.get("kind") not in {"CODE", "DESIGN"}:
+            errors.append(f"{tid}: invalid task state/kind")
+        if task.get("repository") not in {"Main", "CRM", "Platform"}:
+            errors.append(f"{tid}: invalid task repository")
+        if not task.get("target_ids") or set(task["target_ids"]) - set(targets):
+            errors.append(f"{tid}: invalid task target")
+        plan = (root / task.get("plan_path", "")).resolve()
+        if not plan.is_relative_to(root.resolve()) or not plan.is_file():
+            errors.append(f"{tid}: task plan missing or outside repository")
+        deps = task.get("dependencies", [])
+        if len(set(deps)) != len(deps) or set(deps) - set(tasks) or tid in deps:
+            errors.append(f"{tid}: invalid task dependency")
+        if task["state"] in {"READY", "IN_PROGRESS", "VERIFYING", "DONE"} and any(d not in tasks or tasks[d]["state"] != "DONE" for d in deps):
+            errors.append(f"{tid}: unfinished task dependencies")
+        if task["state"] == "BLOCKED" and not task.get("blockers"):
+            errors.append(f"{tid}: task BLOCKED needs a reason")
+        if task["state"] == "DONE":
+            if not evidence_ok(task.get("validation_evidence"), root, execution=True):
+                errors.append(f"{tid}: task DONE lacks validation evidence")
+            delivery = task.get("delivery_evidence")
+            if not isinstance(delivery, dict) or not evidence_ok([delivery], root) or not re.fullmatch(r"[0-9a-f]{40}", delivery.get("remote_main_sha", "")) or not delivery.get("pr_url", "").startswith("https://github.com/"):
+                errors.append(f"{tid}: task DONE lacks audited remote-main delivery receipt")
+    visiting, visited = set(), set()
+
+    def visit(tid):
+        if tid in visiting:
+            errors.append(f"{tid}: task dependency cycle")
+            return
+        if tid in visited:
+            return
+        visiting.add(tid)
+        for dep in tasks[tid].get("dependencies", []):
+            if dep in tasks:
+                visit(dep)
+        visiting.remove(tid)
+        visited.add(tid)
+
+    for tid in tasks:
+        visit(tid)
     return errors
 
 
@@ -183,7 +235,12 @@ def render(data):
         link = "../../" + t["design_module"]
         target_table.append(f"| [{t['id']}]({link}) | {t['name']} | {t['package_id']} | {t['assessment']} | {LABELS[t['delivery_state']]} | {len(t['runtime_case_ids'])} |")
     target_table += ["", "同一跨域场景可能列入多个目标，整体验收进度按唯一场景ID去重。表内场景数不得直接求和当作总数；场景数为0也必须盘点并通过该模块原始业务验收。", ""]
-    return {"01-work-packages.md": "\n".join(details), "02-target-coverage.md": "\n".join(target_table), "03-progress.md": "\n".join(overview)}
+    tasks = data.get("implementation_tasks", [])
+    s01 = [t for t in tasks if t["id"].startswith("S01-")]
+    delivered = sum(t["state"] == "DONE" for t in s01)
+    task_view = ["# 细分任务进度", "", f"台账日期：{data['as_of']}。由 roadmap.json 生成；S01 已交付：{delivered}/{len(s01)}。另列 S02-00 多租户设计前置。", "", "这是任务交付计数，不是总工时百分比。设计任务完成不代表业务代码或运行验收通过；全部目标/场景的完成门保持独立。", "", "| 任务 | 仓库 | 状态 | 直接前置 | 相对规模 | 类型 |", "|---|---|---|---|---|---|", *[f"| {t['id']} {t['title']} | {t['repository']} | {LABELS[t['state']]} | {', '.join(t['dependencies']) or '无'} | {t['relative_size']} | {t['kind']} |" for t in tasks], "", "任务卡、文件和验收命令见[执行计划](../superpowers/plans/2026-10-11-s01-task-breakdown.md)。状态、阻塞和验证/交付证据只在 JSON 中更新；每次启动从届时确认的 main 建分支。", "", "[PostgreSQL 基线与多租户方向](08-postgresql-baseline.md)适用于后续新增开发。S01-10 独立测试库不采用正式租户布局；真实业务布局/迁移须先完成 S02-00 设计及对应实现验收。", "", "最快 CRM 路径是 S01-01 → S01-02 → S01-08；消息接线另需 S01-09，真实 Owner 写入另需 S02-00 与 S02 事务/授权准入。无需等待全部财务精度任务。", ""]
+    overview += ["", f"细分任务：S01 已交付 {delivered}/{len(s01)}；另有 S02-00 多租户设计前置。见[细分任务进度](07-detailed-tasks.md)，不计入业务目标交付。", ""]
+    return {"01-work-packages.md": "\n".join(details), "02-target-coverage.md": "\n".join(target_table), "03-progress.md": "\n".join(overview), "07-detailed-tasks.md": "\n".join(task_view)}
 
 
 def main():

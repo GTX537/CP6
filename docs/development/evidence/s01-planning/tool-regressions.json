@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-12T02:54:24.597790+00:00",
+  "source_baseline": "2df45097c8ba18728d30bc85f12cc874921c25e4",
+  "scope": "26 registrar tests only; no business build/runtime or database",
+  "command": "& 'C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe' -m unittest discover -s docs/development/tools -p 'test_*.py'",
+  "environment": "Windows; CPython 3.13",
+  "result": "PASS",
+  "tests": 26,
+  "failures": 0,
+  "errors": 0,
+  "source_inputs": {
+    "docs/development/tools/manage_roadmap.py": "08ee6be97005d382c8650581f9b981ce45deafc949d5e5d4aced6905ac642e5f",
+    "docs/development/tools/test_manage_roadmap.py": "f86cdf73293c441f6cb929df57fd1b1908f525de3121259cc627858566ad1946"
+  },
+  "provenance": "tool-tests-green.txt; data fixture then differed only in S01-06/11 prerequisite labels, current ledger checked separately. Original RED retained.",
+  "business_tests_executed": false,
+  "interpreter": "C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe"
+}

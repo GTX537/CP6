@@ -1,0 +1,319 @@
+{
+  "at": "2026-10-12T02:53:49.796976+00:00",
+  "baseline_sha": "2df45097c8ba18728d30bc85f12cc874921c25e4",
+  "result": "PASS",
+  "scope": "Task inventory/cards, unchanged target/case/source state, selected original/derived SHA checks, changed Markdown links and diff whitespace. Does not execute business or database tests.",
+  "task_count": 13,
+  "selected_composed_sources": 27,
+  "physical_hash_checks": [
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\BODIES\\multi_mixed_complete_public_q14.json",
+      "sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28\\multi_mixed_complete_public_q14.json",
+      "sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\BODIES\\wn11_c06_exact_saved_200.json",
+      "sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91\\wn11_c06_exact_saved_200.json",
+      "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\BODIES\\wn11_complete_current_q14.json",
+      "sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7\\wn11_complete_current_q14.json",
+      "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\BODIES\\wn11_existing_target_c06_saved_200.json",
+      "sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731\\wn11_existing_target_c06_saved_200.json",
+      "sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\BODIES\\multi_public_native_lookup_binding.json",
+      "sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2\\multi_public_native_lookup_binding.json",
+      "sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\CURRENT\\02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b\\02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\CURRENT\\04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87\\04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\CURRENT\\05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4\\05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\CURRENT\\12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c\\12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\credit-stage100\\members\\candidate\\CURRENT\\13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5\\13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\c5\\c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc\\c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\31\\319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97\\9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2\\319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\53\\533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228\\a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d\\533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-WIRE.types.cs",
+      "sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f\\117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75\\PLAN-ATP-WIRE.types.cs",
+      "sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-POSTGRESQL-DDL.sql",
+      "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f\\29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0\\PLAN-ATP-POSTGRESQL-DDL.sql",
+      "sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\9f\\9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352\\9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\10\\103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941\\103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\4b\\4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2\\4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\commercial-cache\\lead\\CONTRACTS\\CrmLeadCp20Contracts.cs",
+      "sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59\\CrmLeadCp20Contracts.cs",
+      "sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\85\\859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a\\859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\85\\8538042210844249__crm-inq.openapi.json",
+      "sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a\\8538042210844249__crm-inq.openapi.json",
+      "sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\ef\\ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329\\ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\25\\253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72\\253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\22\\229813cf102aad92__ui-positive-cases.json",
+      "sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23\\229813cf102aad92__ui-positive-cases.json",
+      "sha256": "b5cd3840d288f191ed213e348ae2fed4d01f26c2c28812ab92d3e4ed323b989b",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-WIRE.schema.json",
+      "sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd\\PLAN-ATP-WIRE.schema.json",
+      "sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-WIRE.types.ts",
+      "sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7\\PLAN-ATP-WIRE.types.ts",
+      "sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\89\\8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+      "result": "PASS"
+    },
+    {
+      "path": "D:\\CP6-archives\\design-revision-20261011-checks\\derived\\8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e\\8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "sha256": "4087f29215dd4de47dedc4b2e7d9e34eb0dcd63a645bae8f032364b2cc8a3ac8",
+      "result": "PASS"
+    }
+  ],
+  "selected_runtime_case_ids": 19,
+  "local_asset_pins": [
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+      "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+      "sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+      "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+      "sha256": "44e4ceb8b1f0d4b673f4745c2508e1b55fb37cad58b84a9ef160ff9424ec93b2"
+    }
+  ],
+  "local_markdown_links": 62,
+  "checked_docs": [
+    "AGENTS.md",
+    "docs/development/01-work-packages.md",
+    "docs/development/03-progress.md",
+    "docs/development/05-implementation-assessment.md",
+    "docs/development/06-first-slices.md",
+    "docs/development/07-detailed-tasks.md",
+    "docs/development/08-postgresql-baseline.md",
+    "docs/development/README.md",
+    "docs/development/evidence/s01-planning/README.md",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "docs/project-memory/CHANGELOG-AI.md",
+    "docs/project-memory/PROJECT_STATE.md",
+    "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md"
+  ],
+  "reused_inventory_evidence": "docs/development/assessments/20261011/evidence/inventory-validation.json; source catalogs and all existing target/case definitions unchanged, no repeat of full historical audit.",
+  "business_tests_executed": false,
+  "errors": []
+}

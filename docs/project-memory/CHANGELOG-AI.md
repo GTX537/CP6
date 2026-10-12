@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-10-11：CP6-S01-TASK-BREAKDOWN/R1
+
+**范围：** S01细拆12项，另列S02-00 PostgreSQL多租户设计前置；分别绑定Main/CRM/Platform源码、原合同/修订向量、文件、依赖、正反验收和完成证据。增加任务状态、依赖与证据检查及07生成视图，全部PLANNED；目标/业务用例状态不变。
+
+**用户决定：** 后续唯一数据库PostgreSQL，优先评估schema多租户。规则写入AGENTS并同步当前计划；schema不能替代权限，既有TenantId、合同合法输入和历史双库证据保留。未执行业务代码、数据库迁移或租户布局切换。
+
+**验证范围：** 本地台账工具定向回归、生成视图、链接、输入pin与完整diff；历史和本次失败均保留，证据见[本轮检查](../development/evidence/s01-planning/README.md)。未启动/取消Actions，未改触发/保护或部署。
+
 ## 2026-10-11：CP6-WP01-IMPLEMENTATION-ASSESSMENT/R1
 
 **范围：** 125目标固定源码差异，105改造、20新增核心用例；Main/CRM/Platform真实main与PLM候选分开。登记13,404条目标—来源验收关联，其中原始AC/TC 8,456条、必需补充校验/连续场景 4,948条。共享条目挂到每个负责目标，不能把这个合计当成全域唯一业务测试数。全部NOT_RUN；247条修订运行场景也保持NOT_RUN，41条历史静态检查仍仅REFERENCE_ONLY。

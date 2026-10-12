@@ -2,11 +2,11 @@
 
 本台账按用户确认的顺序管理开发：全量评估、拆分大任务、安排批次、临近实施再细拆。范围对应已有125个设计目标；这是开发规划和证据登记，不改变业务合同或历史接受记录。
 
-日常先看[开发进度](03-progress.md)，再看[实现评估结论](05-implementation-assessment.md)、[首批实施切片](06-first-slices.md)、[14个大任务](01-work-packages.md)、[125目标归属](02-target-coverage.md)和[依赖与开发批次](04-batches.md)。
+日常先看[开发进度](03-progress.md)，再看[细分任务进度](07-detailed-tasks.md)、[PostgreSQL基线](08-postgresql-baseline.md)、[实现评估结论](05-implementation-assessment.md)、[首批实施切片](06-first-slices.md)、[14个大任务](01-work-packages.md)、[125目标归属](02-target-coverage.md)和[依赖与开发批次](04-batches.md)。
 
 ## 唯一登记入口与更新方式
 
-[roadmap.json](roadmap.json)是本轮开发范围、状态和验收映射的唯一登记入口。三个编号视图由它生成，禁止分别维护相互矛盾的进度数字。项目状态页只记录阶段结论和入口；活动BUG仍以[GitHub Issues规则](../quality/BUG-MANAGEMENT.md)为准，这里仅链接Issue，不复制BUG状态队列。
+[roadmap.json](roadmap.json)是本轮开发范围、状态和验收映射的唯一登记入口。01/02/03/07四个编号视图由它生成，禁止分别维护相互矛盾的进度数字。项目状态页只记录阶段结论和入口；活动BUG仍以[GitHub Issues规则](../quality/BUG-MANAGEMENT.md)为准，这里仅链接Issue，不复制BUG状态队列。
 
 “持续追踪”指在实际任务开工、阻塞变化、验收和交付时同步记录；没有启动后台定时扫描、自动更改验收状态或远程Actions。每次汇报读取最新台账，注明记录日期和证据适用的源码。
 
@@ -26,6 +26,8 @@ python -m unittest discover -s docs/development/tools -p "test_*.py"
 ```
 
 前两个命令只核对登记和生成视图；不会执行验收目录里的业务场景。不得把工具输出的`PASS`填入业务场景。
+
+细分任务记录在 `implementation_tasks`：准确任务ID、仓库、依赖、关联目标、计划路径、状态及验证/交付证据。检查器拒绝无效依赖、循环、前置未交付就开工，以及缺验证/远端回执的DONE；它不认证证据真实性或外部Git包含性，这些仍由任务级审查核对。设计任务可用文档验证完成，CODE任务必须有实际相关验证；所有任务的完成都不会自动改变目标或业务场景。
 
 ## 如何理解进度
 

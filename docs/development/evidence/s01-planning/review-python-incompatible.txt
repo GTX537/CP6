@@ -1,0 +1,21 @@
+Review environment compatibility observation; not introduced by this task.
+Workspace: D:\CP6-worktrees\s01-task-breakdown-1011
+Command: python docs/development/tools/manage_roadmap.py
+Resolved interpreter: C:\Program Files\python\python.exe
+The development README requires Python 3.10 or newer. This shell's bare python does not provide pathlib.Path.is_relative_to.
+Original error:
+Traceback (most recent call last):
+  File "docs/development/tools/manage_roadmap.py", line 271, in <module>
+    raise SystemExit(main())
+  File "docs/development/tools/manage_roadmap.py", line 254, in main
+    errors = validate(data, root)
+  File "docs/development/tools/manage_roadmap.py", line 130, in validate
+    if t["assessment"] != "PENDING" and not evidence_ok(t["assessment_evidence"], root):
+  File "docs/development/tools/manage_roadmap.py", line 35, in evidence_ok
+    if not path.resolve().is_relative_to(root.resolve()) or not path.is_file():
+AttributeError: 'WindowsPath' object has no attribute 'is_relative_to'
+
+The same read-only ledger check subsequently passed using:
+& 'C:\Users\tt\AppData\Roaming\uv\python\cpython-3.13-windows-x86_64-none\python.exe' docs/development/tools/manage_roadmap.py
+Result: PASS; 125 targets, delivered 0; 247 revision runtime cases all NOT_RUN. No business tests executed.
+The 26-unit-test run was not repeated. Existing PASS evidence was reused after both tested source-file SHA-256 values were confirmed unchanged.
