@@ -1,0 +1,3 @@
+# Package JSON carries cross-file byte pins; keep checkout bytes stable.
+*.json text eol=lf
+*.md text eol=lf

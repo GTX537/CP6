@@ -1,0 +1,67 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T06:15:19.404314+00:00",
+  "scope": "Git checkout filtering of staged package and tool blobs under core.autocrlf=true/false; no consumer runtime",
+  "checks": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "core.autocrlf": "true",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "lf_only": true
+    },
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "core.autocrlf": "false",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "lf_only": true
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "core.autocrlf": "true",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "lf_only": true
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "core.autocrlf": "false",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "lf_only": true
+    },
+    {
+      "path": "docs/development/evidence/S01-01/verify-package.py",
+      "core.autocrlf": "true",
+      "sha256": "43ebd478da697d3f56676f6036c8a071c10c70c99dce0544c94b4605e52d2b36",
+      "lf_only": true
+    },
+    {
+      "path": "docs/development/evidence/S01-01/verify-package.py",
+      "core.autocrlf": "false",
+      "sha256": "43ebd478da697d3f56676f6036c8a071c10c70c99dce0544c94b4605e52d2b36",
+      "lf_only": true
+    },
+    {
+      "path": "docs/development/evidence/S01-01/build-profile-inputs.py",
+      "core.autocrlf": "true",
+      "sha256": "4ee3113ec3acbafc8220529e89781706e7355b9b63150accbe64449ffed4b3d9",
+      "lf_only": true
+    },
+    {
+      "path": "docs/development/evidence/S01-01/build-profile-inputs.py",
+      "core.autocrlf": "false",
+      "sha256": "4ee3113ec3acbafc8220529e89781706e7355b9b63150accbe64449ffed4b3d9",
+      "lf_only": true
+    },
+    {
+      "path": "docs/development/evidence/S01-01/build-vectors.py",
+      "core.autocrlf": "true",
+      "sha256": "34a4d260f06623ca9500e7b805c2da335feaa64ce042d8c88aff3460d947d83a",
+      "lf_only": true
+    },
+    {
+      "path": "docs/development/evidence/S01-01/build-vectors.py",
+      "core.autocrlf": "false",
+      "sha256": "34a4d260f06623ca9500e7b805c2da335feaa64ce042d8c88aff3460d947d83a",
+      "lf_only": true
+    }
+  ]
+}

@@ -1,0 +1,2528 @@
+{
+  "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "role": "PINNED_ADOPTION_INPUTS_NOT_BUSINESS_EXECUTION",
+  "design_revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "database_target": "PostgreSQL",
+  "source_index": {
+    "path": "docs/development/s01-input-index.json",
+    "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+    "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+    "hash_basis": "git_blob_bytes"
+  },
+  "local_asset_pins": [
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+      "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+      "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+      "sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+      "git_blob": "f58e20dff9b268af67cd1af229fc8ce6750c2fb9",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+      "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+      "git_blob": "9725563155f695d923532ee7c136f88e15942469",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+      "sha256": "44e4ceb8b1f0d4b673f4745c2508e1b55fb37cad58b84a9ef160ff9424ec93b2",
+      "git_blob": "5e55897d4ecea3042dd521fa9cf6226f2b2879f5",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/01-version-and-authority.md",
+      "sha256": "495c8a2b821d3c5aed2b7d40e743351db6b3b8e4615f8d8f9bc25cd998fd1a7e",
+      "git_blob": "01628e6afd1118e84652ddb17854b74657b86230",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
+      "sha256": "8dabf960916e6881f6d73c4dbee17b8cbea4b3d2d2a3a664650eee03ec1192d9",
+      "git_blob": "ccf3d9fbabdcc474698245ac7ed1dda98a326e0b",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+      "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+      "git_blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+      "sha256": "05d84c3fbdae39584c6dab0f42b77c74373edfe81110a211c55f17f7f0585d4f",
+      "git_blob": "07f05990d042b5871ec9463a6cae0473ae1ff2d1",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+      "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+      "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+      "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+      "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+      "sha256": "0576480ba7a59bc6c7406dce6f99630a153e8b660ee47655b846d1206d7845e5",
+      "git_blob": "b73373c7a7ad949e2aadc4e290081c32154803c4",
+      "hash_basis": "git_blob_bytes"
+    }
+  ],
+  "sources": [
+    {
+      "id": "composed-00",
+      "filename": "multi_mixed_complete_public_q14.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/0"
+      },
+      "original_sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+      "composed_sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "composed_bytes": 21356,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 9
+    },
+    {
+      "id": "composed-01",
+      "filename": "wn11_c06_exact_saved_200.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/1"
+      },
+      "original_sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+      "composed_sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "composed_bytes": 7350,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 3
+    },
+    {
+      "id": "composed-02",
+      "filename": "wn11_complete_current_q14.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/2"
+      },
+      "original_sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+      "composed_sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "composed_bytes": 9046,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 3
+    },
+    {
+      "id": "composed-03",
+      "filename": "wn11_existing_target_c06_saved_200.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/3"
+      },
+      "original_sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+      "composed_sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "composed_bytes": 9249,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 3
+    },
+    {
+      "id": "composed-04",
+      "filename": "multi_public_native_lookup_binding.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/4"
+      },
+      "original_sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+      "composed_sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "composed_bytes": 3304,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 1
+    },
+    {
+      "id": "composed-05",
+      "filename": "02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/5"
+      },
+      "original_sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+      "composed_sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "composed_bytes": 615672,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 56
+    },
+    {
+      "id": "composed-06",
+      "filename": "04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/6"
+      },
+      "original_sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+      "composed_sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "composed_bytes": 82325,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 9
+    },
+    {
+      "id": "composed-07",
+      "filename": "05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/7"
+      },
+      "original_sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+      "composed_sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "composed_bytes": 32065,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 4
+    },
+    {
+      "id": "composed-08",
+      "filename": "12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/8"
+      },
+      "original_sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+      "composed_sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "composed_bytes": 1505761,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 648
+    },
+    {
+      "id": "composed-09",
+      "filename": "13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/9"
+      },
+      "original_sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+      "composed_sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "composed_bytes": 36549,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 2
+    },
+    {
+      "id": "composed-10",
+      "filename": "c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/10"
+      },
+      "original_sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "composed_sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "composed_bytes": 92180,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING"
+      ],
+      "patch_operation_count": 5
+    },
+    {
+      "id": "composed-11",
+      "filename": "319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/11"
+      },
+      "original_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "composed_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "composed_bytes": 53881,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "patch_operation_count": 7
+    },
+    {
+      "id": "composed-12",
+      "filename": "533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/12"
+      },
+      "original_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "composed_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "composed_bytes": 46854,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "patch_operation_count": 9
+    },
+    {
+      "id": "composed-13",
+      "filename": "PLAN-ATP-WIRE.types.cs",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/13"
+      },
+      "original_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "composed_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "composed_bytes": 40240,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "patch_operation_count": 2
+    },
+    {
+      "id": "composed-14",
+      "filename": "PLAN-ATP-POSTGRESQL-DDL.sql",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/14"
+      },
+      "original_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "composed_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "composed_bytes": 184364,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        },
+        {
+          "path": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+          "sha256": "0576480ba7a59bc6c7406dce6f99630a153e8b660ee47655b846d1206d7845e5",
+          "git_blob": "b73373c7a7ad949e2aadc4e290081c32154803c4",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004",
+        "PLAN-IF-005"
+      ],
+      "patch_operation_count": 9
+    },
+    {
+      "id": "composed-15",
+      "filename": "9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/15"
+      },
+      "original_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "composed_sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "composed_bytes": 624800,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "patch_operation_count": 2
+    },
+    {
+      "id": "composed-16",
+      "filename": "103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/16"
+      },
+      "original_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "composed_sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "composed_bytes": 362972,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "patch_operation_count": 3
+    },
+    {
+      "id": "composed-17",
+      "filename": "4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/17"
+      },
+      "original_sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "composed_sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "composed_bytes": 2420366,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "patch_operation_count": 5
+    },
+    {
+      "id": "composed-18",
+      "filename": "CrmLeadCp20Contracts.cs",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/18"
+      },
+      "original_sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+      "composed_sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7",
+      "composed_bytes": 66793,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-LEAD-GENERATED-CS-NULLABLE"
+      ],
+      "patch_operation_count": 1
+    },
+    {
+      "id": "composed-19",
+      "filename": "859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/19"
+      },
+      "original_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "composed_sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "composed_bytes": 62015,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "OPS-IF-015"
+      ],
+      "patch_operation_count": 2
+    },
+    {
+      "id": "composed-20",
+      "filename": "8538042210844249__crm-inq.openapi.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/20"
+      },
+      "original_sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a",
+      "composed_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+      "composed_bytes": 239051,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "patch_operation_count": 1
+    },
+    {
+      "id": "composed-21",
+      "filename": "ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/21"
+      },
+      "original_sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+      "composed_sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b",
+      "composed_bytes": 82951,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "patch_operation_count": 3
+    },
+    {
+      "id": "composed-22",
+      "filename": "253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/22"
+      },
+      "original_sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+      "composed_sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850",
+      "composed_bytes": 137175,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "patch_operation_count": 3
+    },
+    {
+      "id": "composed-23",
+      "filename": "229813cf102aad92__ui-positive-cases.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/23"
+      },
+      "original_sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23",
+      "composed_sha256": "b5cd3840d288f191ed213e348ae2fed4d01f26c2c28812ab92d3e4ed323b989b",
+      "composed_bytes": 50018,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "patch_operation_count": 1
+    },
+    {
+      "id": "composed-24",
+      "filename": "PLAN-ATP-WIRE.schema.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/24"
+      },
+      "original_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "composed_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "composed_bytes": 88613,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "patch_operation_count": 2
+    },
+    {
+      "id": "composed-25",
+      "filename": "PLAN-ATP-WIRE.types.ts",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/25"
+      },
+      "original_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "composed_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "composed_bytes": 25802,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "patch_operation_count": 1
+    },
+    {
+      "id": "composed-26",
+      "filename": "8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/26"
+      },
+      "original_sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e",
+      "composed_sha256": "4087f29215dd4de47dedc4b2e7d9e34eb0dcd63a645bae8f032364b2cc8a3ac8",
+      "composed_bytes": 11046967,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/fixtures/bounded-patches.json",
+          "sha256": "d9aa79c4efad0ba5ef58da632d65f1f598da3b03f6919eeb1a67617aa1284d94",
+          "git_blob": "0f8916e374f7f2e0e9dad302cadbce0bbb39f7b6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "patch_operation_count": 16
+    },
+    {
+      "id": "numeric-0",
+      "filename": "f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+      "selector": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/source_integrity/0"
+      },
+      "original_sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "composed_sha256": null,
+      "patch_bundles": [],
+      "source_finding_ids": [
+        "OPS-IF-002"
+      ],
+      "note": "Unmodified native schema/data dictionary; the R1 storage decision is a separate local asset."
+    },
+    {
+      "id": "numeric-1",
+      "filename": "3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "selector": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/source_integrity/1"
+      },
+      "original_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "composed_sha256": null,
+      "patch_bundles": [],
+      "source_finding_ids": [
+        "OPS-IF-030"
+      ],
+      "note": "Unmodified native schema/data dictionary; the R1 storage decision is a separate local asset."
+    },
+    {
+      "id": "numeric-2",
+      "filename": "8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+      "selector": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/source_integrity/2"
+      },
+      "original_sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "composed_sha256": null,
+      "patch_bundles": [],
+      "source_finding_ids": [
+        "OPS-IF-030"
+      ],
+      "note": "Unmodified native schema/data dictionary; the R1 storage decision is a separate local asset."
+    },
+    {
+      "id": "erp-registry-current",
+      "filename": "c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "selector": {
+        "path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+        "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+        "git_blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/33"
+      },
+      "original_sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+      "composed_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "composed_bytes": 542116,
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/fixtures/bounded-patches.json",
+          "sha256": "d9aa79c4efad0ba5ef58da632d65f1f598da3b03f6919eeb1a67617aa1284d94",
+          "git_blob": "0f8916e374f7f2e0e9dad302cadbce0bbb39f7b6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-PROBLEM-CODE-ALIASES"
+      ],
+      "patch_operation_count": 18
+    },
+    {
+      "id": "erp-registry-frozen",
+      "filename": "62effa1e0542784a__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "selector": {
+        "path": "docs/design-handbook/indexes/all-files.json",
+        "sha256": "8d0573cd16677ae5e462d7f758f7a1f5e9514be08822eb47f04437066aae16f0",
+        "git_blob": "8e1c2958e633c65096df381e4089073037af1c2b",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/files/6155"
+      },
+      "original_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "composed_sha256": null,
+      "patch_bundles": [],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ]
+    },
+    {
+      "id": "lead-query-schema",
+      "filename": "2428190864cfd501__CP20-qualification-h02.schema.json",
+      "selector": {
+        "path": "docs/design-handbook/remediation/00-disposition-register.json",
+        "sha256": "328eba952efffba44ad0ae2e3361f97a0bf10237902750887e1d4307ee47886b",
+        "git_blob": "0d86156b857796ff9b40a3459c014d7d2bbb6d04",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/issues/25/evidence/1"
+      },
+      "original_sha256": "2428190864cfd501096d4816a4fa6dfdb4473cdea9ebb8dc2e8b27691df291e8",
+      "composed_sha256": null,
+      "patch_bundles": [],
+      "source_finding_ids": [
+        "COM-LEAD-GENERATED-CS-NULLABLE"
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "id": "fin-credit-signed",
+      "owner": {
+        "target_id": "FIN-CREDIT-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-03",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-0",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "numeric-0",
+        "variant": "original",
+        "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+        "json_pointer": "/$defs/signedDecimal",
+        "definition": {
+          "type": "string",
+          "pattern": "^(?:0|(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9])|-(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9]))$"
+        }
+      },
+      "scope": "38 total digits / up to 8 fractional digits, native sign profile per exact field. R1 unscaled integer plus scale; no decimal/double intermediary.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/28"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/12"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/244",
+          "case_id": "DR-OPS-IF-002::OPS-IF-002-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/245",
+          "case_id": "DR-OPS-IF-002::OPS-IF-002-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/28"
+      },
+      "native_field_bindings": [
+        "/$defs/absorptionLink/properties/signedPolicyAmount",
+        "/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "/$defs/moneySigned/properties/amount"
+      ],
+      "storage_decision_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/credit"
+      }
+    },
+    {
+      "id": "fin-credit-nonnegative",
+      "owner": {
+        "target_id": "FIN-CREDIT-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-03",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-0",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "numeric-0",
+        "variant": "original",
+        "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+        "json_pointer": "/$defs/nonNegativeDecimal",
+        "definition": {
+          "type": "string",
+          "pattern": "^(?:0|(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9]))$"
+        }
+      },
+      "scope": "38 total digits / up to 8 fractional digits, native sign profile per exact field. R1 unscaled integer plus scale; no decimal/double intermediary.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/28"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/12"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/244",
+          "case_id": "DR-OPS-IF-002::OPS-IF-002-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/245",
+          "case_id": "DR-OPS-IF-002::OPS-IF-002-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/28"
+      },
+      "native_field_bindings": [
+        "/$defs/moneyNonNegative/properties/amount",
+        "/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "/$defs/arCut/properties/arBookedExposure",
+        "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "/$defs/reservationSet/properties/activeReservedDelta",
+        "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "/$defs/creditExposureSnapshot/properties/totalExposure",
+        "/$defs/subject/properties/currentCommittedPolicyAmount",
+        "/$defs/subject/properties/targetCommittedPolicyAmount",
+        "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "/$defs/postedOpenContribution/properties/policyAmount",
+        "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "/$defs/effectiveCreditContribution/properties/policyAmount",
+        "/$defs/appliedReceiptContribution/properties/policyAmount",
+        "/$defs/unbilledOrderContribution/properties/policyAmount",
+        "/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "storage_decision_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/credit"
+      }
+    },
+    {
+      "id": "fin-credit-positive",
+      "owner": {
+        "target_id": "FIN-CREDIT-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-03",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-0",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "numeric-0",
+        "variant": "original",
+        "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+        "json_pointer": "/$defs/positiveDecimal",
+        "definition": {
+          "type": "string",
+          "pattern": "^(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9])$"
+        }
+      },
+      "scope": "38 total digits / up to 8 fractional digits, native sign profile per exact field. R1 unscaled integer plus scale; no decimal/double intermediary.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/28"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/12"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/244",
+          "case_id": "DR-OPS-IF-002::OPS-IF-002-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/245",
+          "case_id": "DR-OPS-IF-002::OPS-IF-002-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/28"
+      },
+      "native_field_bindings": [
+        "/$defs/moneyPositive/properties/amount",
+        "/$defs/fxEvidence/properties/rate",
+        "/$defs/planAtpObservationInput/properties/requestedQuantity",
+        "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+        "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+      ],
+      "storage_decision_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/credit"
+      }
+    },
+    {
+      "id": "fin-inv-decimal18",
+      "owner": {
+        "target_id": "FIN-INV-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-04",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-1",
+          "variant": "original"
+        },
+        {
+          "source_id": "numeric-2",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "numeric-1",
+        "variant": "original",
+        "schema_id": "urn:cp6:fin-inv:r10:wire",
+        "json_pointer": "/$defs/Decimal18",
+        "definition": {
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      },
+      "scope": "Unbounded integer digits; native 18/12 fractional boundary. Arithmetic normalization never rewrites original wire, negative zero or digest/replay bytes.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/70"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/21"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/246",
+          "case_id": "DR-OPS-IF-030::OPS-IF-030-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/247",
+          "case_id": "DR-OPS-IF-030::OPS-IF-030-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/70"
+      },
+      "native_field_bindings": [
+        "/$defs/Money/properties/amount",
+        "/$defs/ValueLayer/properties/unroundedOriginalValue",
+        "/$defs/LayerConsumption/properties/rawAmount",
+        "/$defs/MovingAveragePoolRevision/properties/beforeUnroundedValue",
+        "/$defs/MovingAveragePoolRevision/properties/deltaUnroundedValue",
+        "/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue",
+        "/$defs/MovingAveragePoolRevision/properties/displayAverage18/anyOf/0",
+        "/$defs/RoundingTrace/properties/rawTotal",
+        "/$defs/RoundingTrace/properties/targetTotal",
+        "/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+        "/$defs/RoundingTrace/properties/residue",
+        "/$defs/RoundingTrace/properties/assignments/items/properties/amount",
+        "/$defs/RoundingTrace/properties/finalTotal",
+        "/$defs/ValueEffectResult/properties/lines/items/properties/rawAmount",
+        "/$defs/OutMoney/properties/value"
+      ],
+      "storage_decision_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/inventory_mappings"
+      }
+    },
+    {
+      "id": "fin-inv-qty12",
+      "owner": {
+        "target_id": "FIN-INV-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-04",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-1",
+          "variant": "original"
+        },
+        {
+          "source_id": "numeric-2",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "numeric-1",
+        "variant": "original",
+        "schema_id": "urn:cp6:fin-inv:r10:wire",
+        "json_pointer": "/$defs/Qty12",
+        "definition": {
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,12})?$"
+        }
+      },
+      "scope": "Unbounded integer digits; native 18/12 fractional boundary. Arithmetic normalization never rewrites original wire, negative zero or digest/replay bytes.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/70"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/21"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/246",
+          "case_id": "DR-OPS-IF-030::OPS-IF-030-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/247",
+          "case_id": "DR-OPS-IF-030::OPS-IF-030-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/70"
+      },
+      "native_field_bindings": [
+        "/$defs/Quantity/properties/value",
+        "/$defs/MovingAveragePoolRevision/properties/beforeQty",
+        "/$defs/MovingAveragePoolRevision/properties/deltaQty",
+        "/$defs/MovingAveragePoolRevision/properties/afterQty",
+        "/$defs/OutQuantity/properties/value"
+      ],
+      "storage_decision_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "git_blob": "22587c346aa3199dc89c3c1c0c8736446275e938",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/inventory_mappings"
+      }
+    },
+    {
+      "id": "atp-stableid-r1",
+      "owner": {
+        "target_id": "PLAN-ATP-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-06",
+        "Main:S01-10"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-13",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-14",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-24",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-25",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-24",
+        "variant": "composed",
+        "schema_id": "urn:cp6:plan-atp:wire:design-revision-20261011-r1",
+        "profile_version": "ATP-STABLEID-LEXICAL/20261011-R1",
+        "json_pointer": "/$defs/StableId",
+        "definition": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])"
+        }
+      },
+      "scope": "Explicit lexical successor. Five PostgreSQL UOM columns use full PLAN-IF-004 + PLAN-IF-005 composed DDL; no migration here.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/27"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/operations.json",
+          "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+          "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/1"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/248",
+          "case_id": "DR-PLAN-IF-004::PLAN-IF-004-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/249",
+          "case_id": "DR-PLAN-IF-004::PLAN-IF-004-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/27"
+      }
+    },
+    {
+      "id": "strict-json",
+      "owner": {
+        "target_id": null,
+        "repository": null,
+        "authority": "Shared contract utility; no business Owner or write authority."
+      },
+      "target_consumers": [
+        "Main:S01-02",
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [],
+      "schema_or_type_identity": {
+        "type_name": "StrictJson (S01-02 implementation pending)",
+        "support_asset": {
+          "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+          "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+          "git_blob": "9725563155f695d923532ee7c136f88e15942469",
+          "hash_basis": "git_blob_bytes"
+        }
+      },
+      "scope": "Strict duplicate-key boundary and required-null / schema equality helpers only. Semantic equality is never a signing, hashing or replay canonicalizer.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/250",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/251",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/258",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/259",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "rule_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+        "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+        "hash_basis": "git_blob_bytes"
+      }
+    },
+    {
+      "id": "null-only",
+      "owner": {
+        "target_id": null,
+        "repository": null,
+        "authority": "Shared contract utility; no business Owner or write authority."
+      },
+      "target_consumers": [
+        "Main:S01-02",
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [],
+      "schema_or_type_identity": {
+        "type_name": "Cp6.DesignRevision.NullOnly",
+        "support_asset": {
+          "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+          "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+          "git_blob": "9725563155f695d923532ee7c136f88e15942469",
+          "hash_basis": "git_blob_bytes"
+        }
+      },
+      "scope": "Strict duplicate-key boundary and required-null / schema equality helpers only. Semantic equality is never a signing, hashing or replay canonicalizer.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/250",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/251",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/258",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/259",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "rule_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+        "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+        "hash_basis": "git_blob_bytes"
+      }
+    },
+    {
+      "id": "json-semantic-equality",
+      "owner": {
+        "target_id": null,
+        "repository": null,
+        "authority": "Shared contract utility; no business Owner or write authority."
+      },
+      "target_consumers": [
+        "Main:S01-02",
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [],
+      "schema_or_type_identity": {
+        "type_name": "Cp6.DesignRevision.JsonSemanticEquality",
+        "support_asset": {
+          "path": "docs/design-handbook/remediation/assets/core-types/DesignRevisionTypes.cs",
+          "sha256": "a7ab417cabf201e8ec7b716360539b18fc0db751d180bb05b0b18f7dc3a3c3db",
+          "git_blob": "9725563155f695d923532ee7c136f88e15942469",
+          "hash_basis": "git_blob_bytes"
+        }
+      },
+      "scope": "Strict duplicate-key boundary and required-null / schema equality helpers only. Semantic equality is never a signing, hashing or replay canonicalizer.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/250",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/251",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/258",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/259",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "rule_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+        "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+        "hash_basis": "git_blob_bytes"
+      }
+    },
+    {
+      "id": "ncr-main-r6",
+      "owner": {
+        "target_id": "QA-NCR-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-15",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-17",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-15",
+        "variant": "composed",
+        "csharp_namespaces": "QaNcrMainR6Declarations"
+      },
+      "scope": "Only pinned generated attachment subset of current NCR combination. Seven required const-null properties across Main/CP4 and five exact nullable metadata corrections; Owner identity unchanged.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/49"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/operations.json",
+          "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+          "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/24"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/250",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/251",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/252",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/253",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/49"
+      },
+      "required_null_fields": [
+        {
+          "record": "Externalf70281e4_C09FailedProblem_Variant0_Payload",
+          "json_field": "originalQuery",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 1972,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "Externalf70281e4_C09FailedProblem_Variant1_Payload",
+          "json_field": "originalQuery",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 1988,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "Externalf70281e4_C09FailedProblem_Variant2_Payload",
+          "json_field": "originalQuery",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 2004,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload",
+          "json_field": "guardRef",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 4458,
+          "required": true,
+          "const": null
+        }
+      ]
+    },
+    {
+      "id": "ncr-cp4",
+      "owner": {
+        "target_id": "QA-NCR-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-16",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-16",
+        "variant": "composed",
+        "csharp_namespaces": "SourceQA; OwnerWire; Consumer; LegacyAdapter"
+      },
+      "scope": "Only pinned generated attachment subset of current NCR combination. Seven required const-null properties across Main/CP4 and five exact nullable metadata corrections; Owner identity unchanged.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/49"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/operations.json",
+          "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+          "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/24"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/250",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/251",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/252",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/253",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/49"
+      },
+      "required_null_fields": [
+        {
+          "record": "IpqcFinalGuardResult_Case2",
+          "json_field": "guardRef",
+          "source_id": "composed-16",
+          "variant": "composed",
+          "line": 200,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "ObservationInput_Case1",
+          "json_field": "code",
+          "source_id": "composed-16",
+          "variant": "composed",
+          "line": 415,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "ObservationInput_Case2",
+          "json_field": "value",
+          "source_id": "composed-16",
+          "variant": "composed",
+          "line": 423,
+          "required": true,
+          "const": null
+        }
+      ]
+    },
+    {
+      "id": "ipqc-r4",
+      "owner": {
+        "target_id": "QA-IPQC-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-19",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-19",
+        "variant": "composed",
+        "typescript_types": [
+          "QapEvidence",
+          "QapUom"
+        ],
+        "exact_fields": {
+          "QapEvidence": [
+            "owner",
+            "id",
+            "version",
+            "digest"
+          ],
+          "QapUom": [
+            "id",
+            "version"
+          ]
+        }
+      },
+      "scope": "Native QAP registrationRef and FullCount units. ExecEvidence has ref+digest and cannot be substituted by matching its name.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/48"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/operations.json",
+          "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+          "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/23"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/256",
+          "case_id": "DR-OPS-IF-015::OPS-IF-015-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/257",
+          "case_id": "DR-OPS-IF-015::OPS-IF-015-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/48"
+      }
+    },
+    {
+      "id": "crm-inq-r3-v15",
+      "owner": {
+        "target_id": "CRM-INQ-01",
+        "repository": "CRM",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-20",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-21",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-22",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-23",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-26",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-20",
+        "variant": "composed",
+        "openapi": "3.1.0",
+        "info": {
+          "title": "CRM-INQ-01 RECOVERY-R3 V15",
+          "version": "1.0-recovery-r3",
+          "description": "Design-only exact wire/transport contract; runtime adoption UNPROVEN"
+        },
+        "schema_root": "/components/schemas"
+      },
+      "scope": "Generated contract subset: references, boolean extensions, structural uniqueItems and code-point length. Full H01, permissions, download proof/session/ETag and terminal-page flows remain untested.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/0"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/0"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/258",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/259",
+          "case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/0"
+      },
+      "selected_original_subassertions": [
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/0/cases/8",
+          "case_id": "AC-INQ-009",
+          "original_source_sha256": "fa7d0f3388911b30992162f693b8f3340739171d17ae6256c4e72fc569f7890d",
+          "original_source_line": 437,
+          "scope": "Field identity across generated contracts; no business fixture execution",
+          "whole_case_state": "NOT_RUN"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/0/cases/47",
+          "case_id": "AC-INQ-048",
+          "original_source_sha256": "fa7d0f3388911b30992162f693b8f3340739171d17ae6256c4e72fc569f7890d",
+          "original_source_line": 476,
+          "scope": "Strict schema before decode; no real permission projection",
+          "whole_case_state": "NOT_RUN"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/0/cases/52",
+          "case_id": "AC-INQ-053",
+          "original_source_sha256": "fa7d0f3388911b30992162f693b8f3340739171d17ae6256c4e72fc569f7890d",
+          "original_source_line": 481,
+          "scope": "Unicode code-point length; no full endpoint or UI validation",
+          "whole_case_state": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "id": "crm-lead-cp20",
+      "owner": {
+        "target_id": "CRM-LEAD-01",
+        "repository": "CRM",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "CRM:S01-08"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-18",
+          "variant": "composed"
+        },
+        {
+          "source_id": "lead-query-schema",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-18",
+        "variant": "composed",
+        "filename_identity": "CrmLeadCp20Contracts.cs",
+        "actual_csharp_namespace": "CP6.CRM.CP21.Contracts",
+        "field": "ownerId"
+      },
+      "scope": "Filename CP20 is a locator, actual namespace CP21; current required combination is separately pinned. OwnerId UUID/unassigned/null schema remains required; string? does not authorize arbitrary strings.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/1"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/1"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/254",
+          "case_id": "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/255",
+          "case_id": "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/1"
+      },
+      "owner_id_field_schema": {
+        "source_id": "lead-query-schema",
+        "variant": "original",
+        "schema_id": "urn:cp6:crm-lead:cp21:contracts:1",
+        "json_pointer": "/$defs/LeadQueryFilters/properties/ownerId",
+        "definition": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                {
+                  "const": "unassigned"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": true,
+        "scope": "LeadQueryFilters only; ContactCreateInput.ownerId is independently optional."
+      }
+    },
+    {
+      "id": "erp-credit-current-v1",
+      "owner": {
+        "target_id": "ERP-CREDIT-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-11",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-00",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-01",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-02",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-03",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-04",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-05",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-06",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-07",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-08",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-09",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-10",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-11",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-12",
+          "variant": "composed"
+        },
+        {
+          "source_id": "erp-registry-current",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-11",
+        "variant": "composed",
+        "csharp_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "type_registry_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "scope": "ERP native Money, independent of FIN-CREDIT decimals. Exact registry route, no latest/fallback. Frozen original commands/receipts preserve bytes; insufficient current mapping proof stays READ_ONLY_UNPROVEN/MANUAL_RECONCILIATION.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/60"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/14"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/17",
+          "case_id": "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/20",
+          "case_id": "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/23",
+          "case_id": "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/60"
+      },
+      "registry_identity_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+        "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/patches/13/operations/0"
+      }
+    },
+    {
+      "id": "erp-credit-frozen-r8",
+      "owner": {
+        "target_id": "ERP-CREDIT-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-11",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-10",
+          "variant": "original"
+        },
+        {
+          "source_id": "composed-11",
+          "variant": "original"
+        },
+        {
+          "source_id": "composed-12",
+          "variant": "original"
+        },
+        {
+          "source_id": "erp-registry-frozen",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-11",
+        "variant": "original",
+        "csharp_namespace": "Cp6.ErpCredit.Generated",
+        "type_registry_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "scope": "ERP native Money, independent of FIN-CREDIT decimals. Exact registry route, no latest/fallback. Frozen original commands/receipts preserve bytes; insufficient current mapping proof stays READ_ONLY_UNPROVEN/MANUAL_RECONCILIATION.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/60"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/14"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/17",
+          "case_id": "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/20",
+          "case_id": "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/23",
+          "case_id": "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/60"
+      },
+      "registry_identity_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+        "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/patches/13/operations/0"
+      }
+    }
+  ],
+  "runtime_acceptance": "NOT_RUN",
+  "historical_results": "REFERENCE_ONLY; never copied into this task execution results",
+  "retrieval": "Repository-relative selectors resolve archival evidence during tooling/adoption only. Repository source pins bind exact git_blob bytes (working-tree filters may change line endings); original/composed archive hashes always bind raw file bytes. No consumer runtime uses machine absolute paths. Obtain exact bytes by SHA before code generation; unavailable/mismatched evidence blocks only its dependent profile.",
+  "version_policy": "Package version identifies this manifest/vector format, not an Owner envelope field. Unknown native version/schema/registry/hash rejects; no fallback or reserialization of original commands.",
+  "limits": [
+    "Contract input freeze and expected vectors only; production consumers are not implemented.",
+    "Original required combinations and historical missing evidence retain their own identities and gaps.",
+    "Database migrations, real authorization, Owner atomicity and production deployment are outside S01-01."
+  ]
+}

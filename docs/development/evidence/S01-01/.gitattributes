@@ -1,0 +1,4 @@
+# Preserve verification input and report bytes across platforms.
+*.json -text whitespace=cr-at-eol
+*.py text eol=lf
+*.md text eol=lf
