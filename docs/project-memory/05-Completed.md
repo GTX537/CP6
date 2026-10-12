@@ -1,10 +1,10 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-12：S01-01 本地合同输入与向量产物
+## 2026-10-12：S01-01 合同输入与向量交付
 
 已形成[CP6-S01-CONTRACT-INPUTS/1.0.0](../../eng/contracts/s01/README.md)：33来源、16profile、122向量，固定各原件/组合摘要和Owner边界。原23条预期及CRM-INQ原AC定义引用保留，ERP current/frozen与FIN两种数值域分开。
 
-此处记录本地产物；任务处于VERIFYING，实际审查和远端交付见[记录](../development/evidence/S01-01/delivery.md)。消费者/业务/数据库均未验收，不关闭业务目标。
+任务经本地验证、集中审查及PR #176交付后登记DONE；已核对远端main包含性，实际证据见[记录](../development/evidence/S01-01/delivery.md)。消费者/业务/数据库均未验收，不关闭业务目标。
 
 ## 2026-10-12：开发对话直接交接约定
 
