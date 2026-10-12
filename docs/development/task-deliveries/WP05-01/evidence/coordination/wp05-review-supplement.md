@@ -533,4 +533,3 @@
 场景：原Baseline事后补关系、Freeze提交后响应丢失、旧consumer缺输出映射、Owner不可得。
 
 观察：ENG本地完整同事务后继冻结；原key查回；缺映射422 REQUIRED_OUTPUT_MAPPING、源配置漂移412、异体409、Owner503且无新Baseline；旧封闭wire只经版本化错误适配；REL实际读用证据另列。
-
