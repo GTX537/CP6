@@ -158602,6 +158602,11 @@
       "date": "2026-10-12",
       "change": "WP01-02 coordinates first-wave receipt reuse and next-wave A/B/C assignments. S01-02/05/09 READY with real isolated worktrees, worker START not received; D remains unassigned. Business results unchanged.",
       "evidence": "docs/development/dispatch/20261012-wave2/README.md"
+    },
+    {
+      "date": "2026-10-12",
+      "change": "WP01-02 dispatch design delivered through PR182 and remote-main verified; task DONE. S01-02/05/09 remain READY awaiting actual START.",
+      "evidence": "docs/development/evidence/WP01-02/remote-main.json"
     }
   ],
   "implementation_assessment": {
@@ -158674,7 +158679,7 @@
         "coordination:roadmap"
       ],
       "coverage_role": "COORDINATION",
-      "state": "VERIFYING",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP01.md",
       "card_anchor": "wp01-02",
       "entry_gate": "CONFIRMED",
@@ -158686,11 +158691,29 @@
         "claimed_at": "2026-10-12T09:00:02.772472+00:00",
         "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
-        "coordination_scope": "Current user explicitly continued next-wave coordination; sole writer of roadmap/generated views/four state files. No worker business code."
+        "coordination_scope": "Current user explicitly continued next-wave coordination; sole writer of roadmap/generated views/four state files. No worker business code.",
+        "window_closed_at": "2026-10-12T09:07:49.512059+00:00"
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP01-02/dispatch-check.json",
+          "source_sha": "08813a9eb1b4dfb299bbc556a12c904bce9dc24d",
+          "command": "Local dispatch document/link/Python-snippet/path-window check; python docs/development/tools/manage_roadmap.py --write --report docs/development/evidence/WP01-02/ledger-check.json",
+          "environment": "Windows / CPython3.13, documentation only; no application or database test",
+          "observed_at": "2026-10-12T09:02:55.455255+00:00",
+          "scope": "Dispatch inputs, links, task-state boundaries and write-window separation; exact committed content and independent review preserved. No worker START/implementation result.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "08813a9eb1b4dfb299bbc556a12c904bce9dc24d",
+        "remote_main_sha": "7431bff113fbe461e61ce80727ea9c23edbb58ac",
+        "pr_url": "https://github.com/GTX537/CP6/pull/182",
+        "observed_at": "2026-10-12T09:07:49.512059+00:00",
+        "scope": "Reviewed dispatch source is ancestor of remote main and entire merged tree equals validated candidate. Reuse document checks only; no worker implementation or runtime test.",
+        "path": "docs/development/evidence/WP01-02/remote-main.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
