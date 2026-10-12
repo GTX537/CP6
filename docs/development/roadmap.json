@@ -158792,11 +158792,30 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "VERIFYING",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave2-integration-20261012/S01-02/original-validation.json",
+          "repository": "GTX537/CP6",
+          "source_sha": "2c0ef2129012a8117b0b5b058ac3c470e12d73fd",
+          "command": "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~StrictJsonTests",
+          "environment": "Windows / .NET SDK10.0.302 / target net8.0 / actual runtime .NET8.0.29",
+          "observed_at": "2026-10-12T10:57:51.720209+00:00",
+          "scope": "Reuse original 77 passed / zero skipped local contract tests, including 21 frozen vectors. Source/input/config/artifact evidence independently checked and unchanged through merge. Original execution time/working-tree source binding retained; no new business, database, package-publication or production acceptance.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+        "remote_main_sha": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+        "pr_url": "https://github.com/GTX537/CP6/pull/184",
+        "observed_at": "2026-10-12T13:45:22.652158+00:00",
+        "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-02/remote-main.json"
+      },
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
       "entry_gate": "CONFIRMED",
@@ -158808,7 +158827,7 @@
         "claimed_at": "2026-10-12T09:00:02.772472+00:00",
         "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
-        "dispatch_scope": "Actual worker START and candidate DELIVERY read by COORD at coordinator_received_at; independent review and serial integration pending. worker_ack_at is the worker-reported START time, not a backdated COORD ACK.",
+        "dispatch_scope": "Worker START and DELIVERY received at coordinator_received_at; independent review and protected merge completed. DONE applies only to this bounded contract task. Shared coordination receipt closes the window.",
         "worker_ack_at": "2026-10-12T10:47:01Z",
         "allowed_write_paths": [
           "CP6.Entity/Contracts/Wire/",
@@ -158819,7 +158838,8 @@
         "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
         "execution_baseline_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
-        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json"
+        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json",
+        "window_closed_at": "2026-10-12T13:49:17.024910+00:00"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -158900,11 +158920,30 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "VERIFYING",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave2-integration-20261012/S01-05/original-validation.json",
+          "repository": "GTX537/CP6",
+          "source_sha": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+          "command": "npm --prefix cp6.web test -- src/contracts/exact/profiles.test.ts; npm --prefix cp6.web run type-check",
+          "environment": "Windows / Node20.19.0 / npm10.8.2 / Vitest4.1.11",
+          "observed_at": "2026-10-12T10:55:04.033491+00:00",
+          "scope": "Reuse original 202 passed / zero skipped local contract tests, including 34 frozen vectors; S01-05 also frontend type-check. Source/input/config/artifact evidence independently checked and unchanged through merge. Original execution time/working-tree source binding retained; no new business, database, package-publication or production acceptance.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+        "remote_main_sha": "8b55fb3b6dd4f99909897926ecc83d5c0d1efcd2",
+        "pr_url": "https://github.com/GTX537/CP6/pull/185",
+        "observed_at": "2026-10-12T13:46:42.477768+00:00",
+        "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-05/remote-main.json"
+      },
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
       "entry_gate": "CONFIRMED",
@@ -158916,7 +158955,7 @@
         "claimed_at": "2026-10-12T09:00:02.772472+00:00",
         "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
-        "dispatch_scope": "Actual worker START and candidate DELIVERY read by COORD at coordinator_received_at; independent review and serial integration pending. worker_ack_at is the worker-reported START time, not a backdated COORD ACK.",
+        "dispatch_scope": "Worker START and DELIVERY received at coordinator_received_at; independent review and protected merge completed. DONE applies only to this bounded contract task. Shared coordination receipt closes the window.",
         "worker_ack_at": "2026-10-12T10:48:46Z",
         "allowed_write_paths": [
           "cp6.web/src/contracts/exact/",
@@ -158926,7 +158965,8 @@
         "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
         "execution_baseline_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
-        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json"
+        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json",
+        "window_closed_at": "2026-10-12T13:49:17.024910+00:00"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -159038,11 +159078,30 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "VERIFYING",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave2-integration-20261012/S01-09/original-validation.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "708253360269396a43c2b25cce1c87cd9f59f9d2",
+          "command": "dotnet test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj --no-restore --filter \"FullyQualifiedName~CloudEventContractTests|FullyQualifiedName~NativeProfileContractTests|FullyQualifiedName~MessagingTelemetryTests|FullyQualifiedName~DaprKafkaContractTests|FullyQualifiedName~TraceContextContractTests\" --logger \"trx;LogFileName=task-pass.trx\" --results-directory docs/development/evidence/S01-09/test-results",
+          "environment": "Windows / .NET SDK8.0.424 / target net8.0",
+          "observed_at": "2026-10-12T11:06:20.802346+00:00",
+          "scope": "Reuse original 110 passed / zero skipped local contract tests, including 35 frozen vectors. Source/input/config/artifact evidence independently checked and unchanged through merge. Original execution time/working-tree source binding retained; no new business, database, package-publication or production acceptance.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+        "remote_main_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/58",
+        "observed_at": "2026-10-12T13:49:03.966283+00:00",
+        "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json"
+      },
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
       "entry_gate": "CONFIRMED",
@@ -159054,7 +159113,7 @@
         "claimed_at": "2026-10-12T09:00:02.772472+00:00",
         "baseline_sha": "30bd23af6808d217a23878bd9437513043c52834",
         "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
-        "dispatch_scope": "Actual worker START and candidate DELIVERY read by COORD at coordinator_received_at; independent review and serial integration pending. worker_ack_at is the worker-reported START time, not a backdated COORD ACK.",
+        "dispatch_scope": "Worker START and DELIVERY received at coordinator_received_at; independent review and protected merge completed. DONE applies only to this bounded contract task. Shared coordination receipt closes the window.",
         "worker_ack_at": "2026-10-12T10:50:10.4320379Z",
         "allowed_write_paths": [
           "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
@@ -159070,7 +159129,8 @@
         "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
         "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
         "execution_baseline_sha": "30bd23af6808d217a23878bd9437513043c52834",
-        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json"
+        "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json",
+        "window_closed_at": "2026-10-12T13:49:17.024910+00:00"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",

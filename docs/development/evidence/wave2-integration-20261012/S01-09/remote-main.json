@@ -1,0 +1,207 @@
+{
+  "task": "S01-09",
+  "repository": "GTX537/CP6.Platform",
+  "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+  "remote_main_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+  "pr_url": "https://github.com/GTX537/CP6.Platform/pull/58",
+  "pr": {
+    "baseRefOid": "30bd23af6808d217a23878bd9437513043c52834",
+    "headRefOid": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+    "mergeCommit": {
+      "oid": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351"
+    },
+    "mergedAt": "2026-10-12T13:49:09Z",
+    "number": 58,
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6.Platform/pull/58"
+  },
+  "observed_at": "2026-10-12T13:49:03.966283+00:00",
+  "result": "PASS",
+  "candidate_ancestor": true,
+  "merged_file_checks": [
+    {
+      "path": "docs/development/evidence/S01-09/.gitattributes",
+      "blob": "b461ba79d15fbba06967e95b8c50ba4d11715d5c",
+      "remote_main_blob": "b461ba79d15fbba06967e95b8c50ba4d11715d5c"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/PLAN.md",
+      "blob": "3fe46884ce66a59992ae3d6251b8d456954f3f0b",
+      "remote_main_blob": "3fe46884ce66a59992ae3d6251b8d456954f3f0b"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/README.md",
+      "blob": "05dff70323d99312e6515976dd2af689d1cf6738",
+      "remote_main_blob": "05dff70323d99312e6515976dd2af689d1cf6738"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/consumer-regression-output.txt",
+      "blob": "2b8665ecf9b65187bec23175c922f143d0268592",
+      "remote_main_blob": "2b8665ecf9b65187bec23175c922f143d0268592"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/contracts-pass-output.txt",
+      "blob": "1fa76d849614229dded211bb0a4f257deddb3bec",
+      "remote_main_blob": "1fa76d849614229dded211bb0a4f257deddb3bec"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/green-initial-output.txt",
+      "blob": "e8cb9e4abddde52c1e04a6433bbb67bcffb611af",
+      "remote_main_blob": "e8cb9e4abddde52c1e04a6433bbb67bcffb611af"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/import-inputs.py",
+      "blob": "82c1dd83b772cdfeb11aba98d2f9393591aa2b1c",
+      "remote_main_blob": "82c1dd83b772cdfeb11aba98d2f9393591aa2b1c"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/input-provenance.json",
+      "blob": "ac21bbc067bca052c7e101d646d9b177e902de76",
+      "remote_main_blob": "ac21bbc067bca052c7e101d646d9b177e902de76"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/red-bundle-output.txt",
+      "blob": "4ce33865cd6e7453ea0255c3d5d42902dd20f6e7",
+      "remote_main_blob": "4ce33865cd6e7453ea0255c3d5d42902dd20f6e7"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/red-output.txt",
+      "blob": "883730164d888304171fa42e6c054c72619e8a84",
+      "remote_main_blob": "883730164d888304171fa42e6c054c72619e8a84"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/red-utf8-output.txt",
+      "blob": "75fdf7c766253a915b99597c3739be277532052c",
+      "remote_main_blob": "75fdf7c766253a915b99597c3739be277532052c"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/review.md",
+      "blob": "1972d5067b4e3affad5e9f290cae95644014b80e",
+      "remote_main_blob": "1972d5067b4e3affad5e9f290cae95644014b80e"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/task-pass-output.txt",
+      "blob": "c049686196e98c8dce1a24b077a8537f7c4b47a0",
+      "remote_main_blob": "c049686196e98c8dce1a24b077a8537f7c4b47a0"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/consumer-regression.trx",
+      "blob": "f137dd24bc596c78b634486906c7ad66f8784b50",
+      "remote_main_blob": "f137dd24bc596c78b634486906c7ad66f8784b50"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/contracts-pass.trx",
+      "blob": "98b7117c796f0563a80cdd3bb6ff9e0d1eac76a0",
+      "remote_main_blob": "98b7117c796f0563a80cdd3bb6ff9e0d1eac76a0"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/green-initial.trx",
+      "blob": "7e7828c37f79984ff7fb8549b51d04c574191637",
+      "remote_main_blob": "7e7828c37f79984ff7fb8549b51d04c574191637"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/red-bundle.trx",
+      "blob": "9c4b00650c316111ca9f498f55b3e1ef064e6f48",
+      "remote_main_blob": "9c4b00650c316111ca9f498f55b3e1ef064e6f48"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/red-utf8.trx",
+      "blob": "ca7b995c995b0091221f2eaca49103b24163a6f3",
+      "remote_main_blob": "ca7b995c995b0091221f2eaca49103b24163a6f3"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/red.trx",
+      "blob": "5801f9f337e082adc5757042134a28766f673090",
+      "remote_main_blob": "5801f9f337e082adc5757042134a28766f673090"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/task-pass.trx",
+      "blob": "0896180481c3ec3ee9cbb955ac39915283287032",
+      "remote_main_blob": "0896180481c3ec3ee9cbb955ac39915283287032"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/validation.json",
+      "blob": "7cd24cbea6d32009ecc6304b09d9840a95c9a597",
+      "remote_main_blob": "7cd24cbea6d32009ecc6304b09d9840a95c9a597"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/verify-delivery.py",
+      "blob": "a660e8e4de101966ff78551a7520b87ba64613cd",
+      "remote_main_blob": "a660e8e4de101966ff78551a7520b87ba64613cd"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+      "blob": "dabd5a07740227d94f2c9f3541e1a0326b851ccc",
+      "remote_main_blob": "dabd5a07740227d94f2c9f3541e1a0326b851ccc"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+      "blob": "e40fa37cc7081102e453644c7e40df53bb6853db",
+      "remote_main_blob": "e40fa37cc7081102e453644c7e40df53bb6853db"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+      "blob": "0436729bb3f3dd8131dd35fab38d0005f7d8f968",
+      "remote_main_blob": "0436729bb3f3dd8131dd35fab38d0005f7d8f968"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeJson.cs",
+      "blob": "54517ba4810e61c99a80563abc1fa273d20f513f",
+      "remote_main_blob": "54517ba4810e61c99a80563abc1fa273d20f513f"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+      "blob": "b52fcc9fd98294896a09c2c70763d95c19e7fabb",
+      "remote_main_blob": "b52fcc9fd98294896a09c2c70763d95c19e7fabb"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+      "blob": "951337940fa5a3d4a3be6709fb0041758b69ec76",
+      "remote_main_blob": "951337940fa5a3d4a3be6709fb0041758b69ec76"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/CloudEventContractTests.cs",
+      "blob": "5b7fa0a55063046c10545422f3dd57a74f9a9138",
+      "remote_main_blob": "5b7fa0a55063046c10545422f3dd57a74f9a9138"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/NativeProfileContractTests.cs",
+      "blob": "3304505376a1569d7f0f30b0fcfe4e6448eb0e44",
+      "remote_main_blob": "3304505376a1569d7f0f30b0fcfe4e6448eb0e44"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/.gitattributes",
+      "blob": "2d9a2df200785205b7cd7f3fbff6586a54454cde",
+      "remote_main_blob": "2d9a2df200785205b7cd7f3fbff6586a54454cde"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/crm-inq.openapi.json",
+      "blob": "f6a9cc972609c60c8cc098ec230ad6401a266549",
+      "remote_main_blob": "f6a9cc972609c60c8cc098ec230ad6401a266549"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/erp-current.registry.json",
+      "blob": "94d2dd2ab20cfd19c4b3d5d80c7b8795aae48a26",
+      "remote_main_blob": "94d2dd2ab20cfd19c4b3d5d80c7b8795aae48a26"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/erp-frozen.registry.json",
+      "blob": "b49913873d47520f7eb22fa45232b0f1e38fc8c9",
+      "remote_main_blob": "b49913873d47520f7eb22fa45232b0f1e38fc8c9"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/profile-inputs.json",
+      "blob": "40ccbc25727e0815dcb139f8ed01cb419d194920",
+      "remote_main_blob": "40ccbc25727e0815dcb139f8ed01cb419d194920"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/vectors.json",
+      "blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2",
+      "remote_main_blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2"
+    }
+  ],
+  "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+  "actions_triggered": 0,
+  "actions_cancelled": 0,
+  "business_acceptance": "NOT_RUN"
+}

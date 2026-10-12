@@ -1,0 +1,87 @@
+{
+  "task": "S01-05",
+  "repository": "GTX537/CP6",
+  "source_sha": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+  "remote_main_sha": "8b55fb3b6dd4f99909897926ecc83d5c0d1efcd2",
+  "pr_url": "https://github.com/GTX537/CP6/pull/185",
+  "pr": {
+    "baseRefOid": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+    "headRefOid": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+    "mergeCommit": {
+      "oid": "8b55fb3b6dd4f99909897926ecc83d5c0d1efcd2"
+    },
+    "mergedAt": "2026-10-12T13:46:50Z",
+    "number": 185,
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/185"
+  },
+  "observed_at": "2026-10-12T13:46:42.477768+00:00",
+  "result": "PASS",
+  "candidate_ancestor": true,
+  "merged_file_checks": [
+    {
+      "path": "cp6.web/src/contracts/exact/README.md",
+      "blob": "c880e6c4eae803b00413a0d65cefa4286667a391",
+      "remote_main_blob": "c880e6c4eae803b00413a0d65cefa4286667a391"
+    },
+    {
+      "path": "cp6.web/src/contracts/exact/creditAmount.ts",
+      "blob": "e53490c8a7d91b07c1957581df1ce5f7f6dbf3a6",
+      "remote_main_blob": "e53490c8a7d91b07c1957581df1ce5f7f6dbf3a6"
+    },
+    {
+      "path": "cp6.web/src/contracts/exact/exactDecimal.ts",
+      "blob": "46b9341ca75d821d1430b0ba1b5c66eac31c77c3",
+      "remote_main_blob": "46b9341ca75d821d1430b0ba1b5c66eac31c77c3"
+    },
+    {
+      "path": "cp6.web/src/contracts/exact/inventoryDecimal.ts",
+      "blob": "c696c503637d6edac4f97f2df42494a641f9bcad",
+      "remote_main_blob": "c696c503637d6edac4f97f2df42494a641f9bcad"
+    },
+    {
+      "path": "cp6.web/src/contracts/exact/profiles.test.ts",
+      "blob": "01f47816b41f2a708ec9bba3d18a8ce4666a7aaf",
+      "remote_main_blob": "01f47816b41f2a708ec9bba3d18a8ce4666a7aaf"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/DELIVERY.md",
+      "blob": "52d94f69128e0231f32a0e3dc9cf34fea0970652",
+      "remote_main_blob": "52d94f69128e0231f32a0e3dc9cf34fea0970652"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/REVIEW.md",
+      "blob": "d9bf7f0d942477e16705d4ff3e22fab1df6f48d7",
+      "remote_main_blob": "d9bf7f0d942477e16705d4ff3e22fab1df6f48d7"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/collection-failure.log",
+      "blob": "ab251977d9849fa7348d317e12412d9109f8d511",
+      "remote_main_blob": "ab251977d9849fa7348d317e12412d9109f8d511"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/green.log",
+      "blob": "5867ec547b4ab3cf5ac4a74f8164cf5774771535",
+      "remote_main_blob": "5867ec547b4ab3cf5ac4a74f8164cf5774771535"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/red.log",
+      "blob": "27b71d4e6202117716d0c520d52ef8c6f941bc5c",
+      "remote_main_blob": "27b71d4e6202117716d0c520d52ef8c6f941bc5c"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/type-check.log",
+      "blob": "908099fa9f439d0b95c5f081798ed23891d318cc",
+      "remote_main_blob": "908099fa9f439d0b95c5f081798ed23891d318cc"
+    },
+    {
+      "path": "docs/development/evidence/S01-05/verification.json",
+      "blob": "0e32bfaaf145b0ffcf6e7b4c79ee0bdb31a24b5c",
+      "remote_main_blob": "0e32bfaaf145b0ffcf6e7b4c79ee0bdb31a24b5c"
+    }
+  ],
+  "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+  "actions_triggered": 0,
+  "actions_cancelled": 0,
+  "business_acceptance": "NOT_RUN"
+}

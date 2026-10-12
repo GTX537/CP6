@@ -1,0 +1,72 @@
+{
+  "observed_at": "2026-10-12T13:49:17.024910+00:00",
+  "result": "PASS",
+  "checks": [
+    {
+      "task": "S01-02",
+      "repository": "GTX537/CP6",
+      "candidate": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+      "tested_source_commit": "2c0ef2129012a8117b0b5b058ac3c470e12d73fd",
+      "verified_remote_main": "8b55fb3b6dd4f99909897926ecc83d5c0d1efcd2",
+      "guard_paths": [
+        "CP6.Entity",
+        "eng/contracts/exact-values-tests",
+        "eng/contracts/s01",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        "NuGet.Config"
+      ],
+      "changed_validation_inputs": [],
+      "original_validation_sha256": "278f84fe197ff4566df0ec7a88da3a934ec8e839b44f6afd3f99a048c732b319",
+      "passed": 77,
+      "fixed_vectors": 21,
+      "skipped": 0,
+      "scope": "Reused original local tests after independent source/evidence review; this step checks merge identity, not a new runtime execution."
+    },
+    {
+      "task": "S01-05",
+      "repository": "GTX537/CP6",
+      "candidate": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+      "tested_source_commit": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+      "verified_remote_main": "8b55fb3b6dd4f99909897926ecc83d5c0d1efcd2",
+      "guard_paths": [
+        "cp6.web",
+        "eng/contracts/s01",
+        "docs/design-handbook/remediation/assets/core-types/numeric-validation.json"
+      ],
+      "changed_validation_inputs": [],
+      "original_validation_sha256": "4fd685d8b5f45948a8ee96a8150fdd733052fb4dec25445abbb6a3106dda240a",
+      "passed": 202,
+      "fixed_vectors": 34,
+      "skipped": 0,
+      "scope": "Reused original local tests after independent source/evidence review; this step checks merge identity, not a new runtime execution."
+    },
+    {
+      "task": "S01-09",
+      "repository": "GTX537/CP6.Platform",
+      "candidate": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+      "tested_source_commit": "708253360269396a43c2b25cce1c87cd9f59f9d2",
+      "verified_remote_main": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "guard_paths": [
+        "src",
+        "tests",
+        "contracts",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        "NuGet.Config"
+      ],
+      "changed_validation_inputs": [],
+      "original_validation_sha256": "5e9679136c5477481286a13221809e4c9712f09109da721bd420b64d3dee6754",
+      "passed": 110,
+      "fixed_vectors": 35,
+      "skipped": 0,
+      "scope": "Reused original local tests after independent source/evidence review; this step checks merge identity, not a new runtime execution."
+    }
+  ],
+  "business_tests_executed": false,
+  "actions_triggered": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0
+}

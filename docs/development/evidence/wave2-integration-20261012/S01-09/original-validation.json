@@ -1,0 +1,742 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T11:06:20.802346+00:00",
+  "source_commit": "708253360269396a43c2b25cce1c87cd9f59f9d2",
+  "execution_head": "30bd23af6808d217a23878bd9437513043c52834",
+  "source_binding": "task-pass executed working-tree source subsequently committed unchanged as source_commit; Git-filtered source identity and raw imported bytes checked. This script is evidence verification, not a new test execution.",
+  "environment": "Windows / .NET SDK 8.0.424 / net8.0 / local tests only",
+  "executed_command": "dotnet test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj --no-restore --filter \"FullyQualifiedName~CloudEventContractTests|FullyQualifiedName~NativeProfileContractTests|FullyQualifiedName~MessagingTelemetryTests|FullyQualifiedName~DaprKafkaContractTests|FullyQualifiedName~TraceContextContractTests\" --logger \"trx;LogFileName=task-pass.trx\" --results-directory docs/development/evidence/S01-09/test-results",
+  "input_package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "input_files": [
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "committed_bytes_match": true
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "committed_bytes_match": true
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/crm-inq.openapi.json",
+      "sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+      "committed_bytes_match": true
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/erp-current.registry.json",
+      "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "committed_bytes_match": true
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/TestData/S01/erp-frozen.registry.json",
+      "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "committed_bytes_match": true
+    }
+  ],
+  "test_counters": {
+    "total": "110",
+    "executed": "110",
+    "passed": "110",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "test_runs": [
+    {
+      "path": "docs/development/evidence/S01-09/test-results/consumer-regression.trx",
+      "sha256": "3f3142b45440582021914d100ae344630124e6b22f19c4a2415b4ccfe12d4667",
+      "counters": {
+        "total": "36",
+        "executed": "36",
+        "passed": "35",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-12T06:59:08.7129406-04:00",
+        "queuing": "2026-10-12T06:59:08.7129409-04:00",
+        "start": "2026-10-12T06:59:07.8776449-04:00",
+        "finish": "2026-10-12T06:59:09.3265499-04:00"
+      }
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/contracts-pass.trx",
+      "sha256": "df4bc197b8f9f6f5f23d42974ebf64a1421bc288ed37533b7252b89e3d8d8a9f",
+      "counters": {
+        "total": "72",
+        "executed": "72",
+        "passed": "72",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-12T06:58:32.2421974-04:00",
+        "queuing": "2026-10-12T06:58:32.2421978-04:00",
+        "start": "2026-10-12T06:58:31.3621333-04:00",
+        "finish": "2026-10-12T06:58:33.2617722-04:00"
+      }
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/green-initial.trx",
+      "sha256": "22ce0ae11ec8b317bac53b5a6f75fe7e426a78715887c4c59255ecb6091a65e4",
+      "counters": {
+        "total": "67",
+        "executed": "67",
+        "passed": "64",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-12T06:57:37.3085874-04:00",
+        "queuing": "2026-10-12T06:57:37.3085878-04:00",
+        "start": "2026-10-12T06:57:36.4137908-04:00",
+        "finish": "2026-10-12T06:57:38.3255909-04:00"
+      }
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/red-bundle.trx",
+      "sha256": "63984cf99dae7fe423810e9be9a7deee151cd8ff7eda562513b7fd770ddb77f9",
+      "counters": {
+        "total": "5",
+        "executed": "5",
+        "passed": "2",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-12T06:55:40.3395146-04:00",
+        "queuing": "2026-10-12T06:55:40.3395151-04:00",
+        "start": "2026-10-12T06:55:38.6971612-04:00",
+        "finish": "2026-10-12T06:55:40.3455297-04:00"
+      }
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/red-utf8.trx",
+      "sha256": "17d085ed067a8c4c92da272e6ba6f738e57bec54b661575906514da59421bfcc",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "0",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-12T06:58:14.3241187-04:00",
+        "queuing": "2026-10-12T06:58:14.3241190-04:00",
+        "start": "2026-10-12T06:58:13.2815474-04:00",
+        "finish": "2026-10-12T06:58:14.3278031-04:00"
+      }
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/red.trx",
+      "sha256": "05c4920dd722b10dc952d7460843b4e762c55209dd64743b393b408980cd72b9",
+      "counters": {
+        "total": "62",
+        "executed": "62",
+        "passed": "13",
+        "failed": "49",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-12T06:54:35.7534024-04:00",
+        "queuing": "2026-10-12T06:54:35.7534027-04:00",
+        "start": "2026-10-12T06:54:32.7799148-04:00",
+        "finish": "2026-10-12T06:54:36.3689862-04:00"
+      }
+    },
+    {
+      "path": "docs/development/evidence/S01-09/test-results/task-pass.trx",
+      "sha256": "ca0f47ac800a12c65202d28a4cc41ffb76c1aa28a8568aafaa46c7bc52991290",
+      "counters": {
+        "total": "110",
+        "executed": "110",
+        "passed": "110",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-12T07:00:46.4963181-04:00",
+        "queuing": "2026-10-12T07:00:46.4963185-04:00",
+        "start": "2026-10-12T07:00:45.2634897-04:00",
+        "finish": "2026-10-12T07:00:48.0769886-04:00"
+      }
+    }
+  ],
+  "build_artifacts": [
+    {
+      "path": "src/CP6.Platform.Messaging/bin/Debug/net8.0/CP6.Platform.Messaging.dll",
+      "sha256": "33f16c8939371bfdfb96cf9e13826a005f0540ee61fa2873651b8c2e19e24b42"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.UnitTests.dll",
+      "sha256": "f374665ecce657139fd292fa8a954eaf1fb6d93d14a2c0a75f6842473a437fc4"
+    }
+  ],
+  "vector_results": [
+    {
+      "id": "JSON-001",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "JSON-002",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "JSON-003",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "JSON-004",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "JSON-005",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "JSON-006",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "JSON-007",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "NULL-001",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "NULL-002",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "NULL-003",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "NULL-004",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "NULL-005",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "NULL-006",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "NULL-007",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "INQ-VERSION-001",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "INQ-VERSION-002",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "INQ-VERSION-003",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "INQ-VERSION-004",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "EQUAL-001",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "EQUAL-002",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "EQUAL-003",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "EQUAL-004",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "EQUAL-005",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "EQUAL-006",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "EQUAL-007",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "verification_level": "CONTRACT_UNIT",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-001",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-002",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-003",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-004",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-005",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-006",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-007",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "VERSION-008",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "BYTES-001",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "original_utf8_retention",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    },
+    {
+      "id": "BYTES-002",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "original_utf8_retention",
+      "verification_level": "CONTRACT_ROUTING",
+      "result": "PASS",
+      "scope": "Local contract subassertion only"
+    }
+  ],
+  "workflow_refs": {
+    "HEAD": "708253360269396a43c2b25cce1c87cd9f59f9d2",
+    "origin/main": "30bd23af6808d217a23878bd9437513043c52834"
+  },
+  "workflow_checks": [
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-formal-packages-recovery.yml",
+      "sha256": "a2fec881215515679cdeed382dc62c8c505b5fa65d27812a2cf0d1e6c65c61c2",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      publication_run_id:\n        description: Failed formal publication run whose Windows publication job succeeded\n        required: true\n        type: string\n      publication_run_attempt:\n        description: Exact attempt of the failed formal publication run\n        required: true\n        type: string\n      publication_commit:\n        description: Exact package source commit used by the formal publication run\n        required: true\n        type: string\n      version:\n        description: Immutable published formal package version; must be exactly 0.10.0\n        required: true\n        type: string\n      windows_artifact_id:\n        description: Exact immutable Windows read-back artifact ID from the publication run\n        required: true\n        type: string\n      windows_artifact_digest:\n        description: Exact sha256 digest reported by GitHub for the Windows read-back artifact\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for formal package publication\n        required: true\n        type: string\n      version:\n        description: Immutable formal patch version; must be exactly 0.10.2\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-formal-signer-revalidation.yml",
+      "sha256": "baa7c7b624e69a79949845cfc4507caf30e62ae1bdceadb2043ad29f63ada747",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit whose protected signer identity must be revalidated\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1",
+      "events": [
+        "workflow_dispatch",
+        "pull_request"
+      ],
+      "on_block": "  workflow_dispatch:\n  pull_request:\n    paths:\n      - \".github/workflows/p10-rfc3161-preflight.yml\"\n      - \"tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs\"\n"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/p10-test-candidate.yml",
+      "sha256": "dbb726eebac234fc841f82ebed32f98cff4fd070abcb6a298594077186976975",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for the P10 test candidate\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/platform-validation.yml",
+      "sha256": "80f167eca33181d5ed08ffd6824c3772bb1b49d1e8ada0160001a5cd1ac6ff10",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/publish-alpha.yml",
+      "sha256": "1e42cbbbd929bb1ec6a257bd50b1b244c1da029035eb27a2f4ff15ecbfc86f13",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable publication\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "HEAD",
+      "path": ".github/workflows/publish-p09.yml",
+      "sha256": "a3856f69bb6443f2a630c7da60724bb8159b515cef780a225219add55d6d28a9",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable P09 publication\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-formal-packages-recovery.yml",
+      "sha256": "a2fec881215515679cdeed382dc62c8c505b5fa65d27812a2cf0d1e6c65c61c2",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      publication_run_id:\n        description: Failed formal publication run whose Windows publication job succeeded\n        required: true\n        type: string\n      publication_run_attempt:\n        description: Exact attempt of the failed formal publication run\n        required: true\n        type: string\n      publication_commit:\n        description: Exact package source commit used by the formal publication run\n        required: true\n        type: string\n      version:\n        description: Immutable published formal package version; must be exactly 0.10.0\n        required: true\n        type: string\n      windows_artifact_id:\n        description: Exact immutable Windows read-back artifact ID from the publication run\n        required: true\n        type: string\n      windows_artifact_digest:\n        description: Exact sha256 digest reported by GitHub for the Windows read-back artifact\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for formal package publication\n        required: true\n        type: string\n      version:\n        description: Immutable formal patch version; must be exactly 0.10.2\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-formal-signer-revalidation.yml",
+      "sha256": "baa7c7b624e69a79949845cfc4507caf30e62ae1bdceadb2043ad29f63ada747",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit whose protected signer identity must be revalidated\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1",
+      "events": [
+        "workflow_dispatch",
+        "pull_request"
+      ],
+      "on_block": "  workflow_dispatch:\n  pull_request:\n    paths:\n      - \".github/workflows/p10-rfc3161-preflight.yml\"\n      - \"tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs\"\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/p10-test-candidate.yml",
+      "sha256": "dbb726eebac234fc841f82ebed32f98cff4fd070abcb6a298594077186976975",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for the P10 test candidate\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/platform-validation.yml",
+      "sha256": "80f167eca33181d5ed08ffd6824c3772bb1b49d1e8ada0160001a5cd1ac6ff10",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/publish-alpha.yml",
+      "sha256": "1e42cbbbd929bb1ec6a257bd50b1b244c1da029035eb27a2f4ff15ecbfc86f13",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable publication\n        required: true\n        type: string\n"
+    },
+    {
+      "ref": "origin/main",
+      "path": ".github/workflows/publish-p09.yml",
+      "sha256": "a3856f69bb6443f2a630c7da60724bb8159b515cef780a225219add55d6d28a9",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable P09 publication\n        required: true\n        type: string\n"
+    }
+  ],
+  "publication_paths": [
+    "docs/development/evidence/S01-09/.gitattributes",
+    "docs/development/evidence/S01-09/PLAN.md",
+    "docs/development/evidence/S01-09/README.md",
+    "docs/development/evidence/S01-09/consumer-regression-output.txt",
+    "docs/development/evidence/S01-09/contracts-pass-output.txt",
+    "docs/development/evidence/S01-09/green-initial-output.txt",
+    "docs/development/evidence/S01-09/import-inputs.py",
+    "docs/development/evidence/S01-09/input-provenance.json",
+    "docs/development/evidence/S01-09/red-bundle-output.txt",
+    "docs/development/evidence/S01-09/red-output.txt",
+    "docs/development/evidence/S01-09/red-utf8-output.txt",
+    "docs/development/evidence/S01-09/review.md",
+    "docs/development/evidence/S01-09/task-pass-output.txt",
+    "docs/development/evidence/S01-09/test-results/consumer-regression.trx",
+    "docs/development/evidence/S01-09/test-results/contracts-pass.trx",
+    "docs/development/evidence/S01-09/test-results/green-initial.trx",
+    "docs/development/evidence/S01-09/test-results/red-bundle.trx",
+    "docs/development/evidence/S01-09/test-results/red-utf8.trx",
+    "docs/development/evidence/S01-09/test-results/red.trx",
+    "docs/development/evidence/S01-09/test-results/task-pass.trx",
+    "docs/development/evidence/S01-09/validation.json",
+    "docs/development/evidence/S01-09/verify-delivery.py",
+    "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+    "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+    "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+    "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeJson.cs",
+    "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+    "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+    "tests/CP6.Platform.UnitTests/CloudEventContractTests.cs",
+    "tests/CP6.Platform.UnitTests/NativeProfileContractTests.cs",
+    "tests/CP6.Platform.UnitTests/TestData/S01/.gitattributes",
+    "tests/CP6.Platform.UnitTests/TestData/S01/crm-inq.openapi.json",
+    "tests/CP6.Platform.UnitTests/TestData/S01/erp-current.registry.json",
+    "tests/CP6.Platform.UnitTests/TestData/S01/erp-frozen.registry.json",
+    "tests/CP6.Platform.UnitTests/TestData/S01/profile-inputs.json",
+    "tests/CP6.Platform.UnitTests/TestData/S01/vectors.json"
+  ],
+  "actions_triggered": 0,
+  "actions_cancelled": 0,
+  "workflow_changes": 0,
+  "business_acceptance": "NOT_RUN",
+  "package_publication": "NOT_RUN",
+  "database": "NOT_RUN",
+  "deployment": "NOT_RUN"
+}
