@@ -2,6 +2,8 @@
 
 本任务实现Main的`CP6.Entity.Contracts.Wire`边界工具，消费已交付`CP6-S01-CONTRACT-INPUTS/1.0.0`中的3个profile/21条向量。共用输入保持原版本、摘要和NOT_RUN字段；真实局部运行证据单独保存于本目录。协调分配、精确来源和步骤见[准入检查](entry-check.json)及[实施计划](PLAN.md)。
 
+[交付报告](delivery.md)固定实现提交及责任窗口；[运行结果](validation.json)、[源码提交字节核对](source-receipt.json)和[独立审查](review.md)分别记录实际适用范围，远端main交付由COORD确认。
+
 ## 提供的能力
 
 - `StrictJson.Parse(ReadOnlySpan<byte>)`先复制原字节，校验UTF-8及JSON语法，再按解码后的属性名逐对象拒绝重复键。比较区分大小写，不做Unicode正规化；任何嵌套层及转义等价键均适用。

@@ -1,0 +1,48 @@
+{
+  "task": "S01-02",
+  "result": "PASS",
+  "observed_at": "2026-10-12T11:00:15.869147+00:00",
+  "source_sha": "2c0ef2129012a8117b0b5b058ac3c470e12d73fd",
+  "execution_base_head": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+  "scope": "Five tested source/project file hashes match committed Git blobs; reuse green execution, not a new test run",
+  "tested_sources": [
+    {
+      "path": "CP6.Entity/Contracts/Wire/NullOnly.cs",
+      "sha256": "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "sha256": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs",
+      "sha256": "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StrictJsonTests.cs",
+      "sha256": "d3aadd552e7937b6def544971386c5b4330dc2007aa1a97fd1d340e04975fc94"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "sha256": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.dll",
+      "sha256": "eb9c495390a219e05dfe37b49b33e01c40c3bd238872d2c3f82fb6e79cf23fb7"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.Entity.dll",
+      "sha256": "c6d8fb17a1d8eba4b8e6ecf4a6a21882294752cfe6d5c0b78a5b382695141eeb"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.runtimeconfig.json",
+      "sha256": "b9f6ae58ba9393a4833a54c1088ceeb2b6328e311b1be47945c55cfc4de3bc89"
+    }
+  ],
+  "validation_path": "docs/development/evidence/S01-02/validation.json",
+  "runtime_evidence": "docs/development/evidence/S01-02/implementation/green.trx",
+  "remote_main_delivery": "NOT_YET_VERIFIED",
+  "shared_state_and_merge": "COORD owns serial delivery window"
+}
