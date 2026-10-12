@@ -1,0 +1,29 @@
+{
+  "task_id": "S02-00",
+  "observed_at": "2026-10-12T07:26:45.185944+00:00",
+  "result": "PREPARATION_RECEIVED_FOR_COORDINATED_REVIEW",
+  "preparation_source_sha": "e8303d3dd75e9607f4705a1cbcd6e181d63d0388",
+  "main_at_intake": "8570384f1e28065afee4ce416c9f492dde734131",
+  "coordination_branch": "codex/integrate-s02-00-20261012",
+  "handoff_messages": [
+    {
+      "task": "s02-00",
+      "ref": "origin/codex/dev-handoff-s02-00",
+      "sha": "797883d75e0bf2981ca3451b9c452fbeb39c50c0",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S02-00/messages/20261012T060204Z-b-start/MESSAGE.md"
+    },
+    {
+      "task": "s02-00",
+      "ref": "origin/codex/dev-handoff-s02-00",
+      "sha": "797883d75e0bf2981ca3451b9c452fbeb39c50c0",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S02-00/messages/20261012T060501Z-b-delivery/MESSAGE.md"
+    }
+  ],
+  "entry_gate": "CONFIRMED",
+  "scope": "Private preparation received; present-time coordinator registration, no retroactive implementation authorization. Only this task review/integration window. No downstream implementation, database or deployment.",
+  "shared_state_writer": "COORD in this integration branch only",
+  "exclusive_resources": [
+    "Main:s02-00"
+  ],
+  "business_tests": "NOT_RUN"
+}

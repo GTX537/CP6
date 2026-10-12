@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-12：S02-00 设计准备接收与集中审查
+
+本节记录已形成并收到的设计准备成果；任务当前VERIFYING，未宣称远端交付或业务验收完成。共享 schema + 租户业务 schema、专用角色/连接池与事务恢复设计；27个运行场景保持NOT_RUN。协调审查补齐UPDATE旧行USING及PGT-008反例。 [接收依据](../development/evidence/S02-00/coordination/intake.json)。本轮不改变125目标交付状态、原清单缺口或247运行场景；无Actions、数据库迁移或部署。
+
 ## 2026-10-12：S01-01 合同输入与向量交付
 
 已形成[CP6-S01-CONTRACT-INPUTS/1.0.0](../../eng/contracts/s01/README.md)：33来源、16profile、122向量，固定各原件/组合摘要和Owner边界。原23条预期及CRM-INQ原AC定义引用保留，ERP current/frozen与FIN两种数值域分开。
