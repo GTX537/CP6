@@ -19,3 +19,11 @@
 S01-02、S01-05、S01-09 可在本任务远端交付核实后重新核对准入并领取；本任务没有自动启动它们。S01-03/04/06/07/08/10/11 继续遵守各自依赖与 Owner/数据库门。
 
 GitHub 普通工作流手动触发；R2 candidate 只响应受保护版本 Tag。每次 push/PR/merge 前重新核对候选和远端主线，禁止启动远程编译测试。无取消项、触发变更、保护变更、数据库或部署。
+
+## 固定源码与主线整合
+
+实现提交 `4258f7b66490f0b49601e5e5033d8508fc5eadbd` 的包及核验器Git字节与 `package-check.json` 三份输入SHA逐项一致；报告保留执行时工作树HEAD193bb05c，未伪称当时已提交。后续只复用这份相同输入的静态结果。
+
+主线 `92fb94db40c54be90f2fbb18b0922d264c060796` 通过正常merge整合；四份状态页的S01记录和上游Handoff记录都保留，其他上游规则没有回退。[字节稳定检查](byte-portability.json) 对5份包/工具文件分别使用 `core.autocrlf=true/false` 的Git checkout过滤，全部摘要一致且为LF。
+
+Handoff启动/资源窗口补报已在固定提交 `4309b75b4d2fa6ddc3efa3e31290c7664db97cae` 发布并远端逐字节回读：`handoffs/CP6-DEV-20261012/tasks/S01-01/messages/20261012T060915Z-start/MESSAGE.md`；协调入口已读 `e476bc58b05349c34c9361b4af2f0cde1ce92aea`，当时没有新回复。运输回执不代业务交付。

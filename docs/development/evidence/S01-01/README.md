@@ -10,6 +10,8 @@
 
 生成工具只读取归档数据及仓库资产，不执行原包程序。`build-profile-inputs.py` 重建来源清单；`build-vectors.py --write` 重建向量，`--check` 只比较已有产物。重新生成前先审查原规则及来源身份，不能以动态生成的新预期掩盖实现不符。预期不是被测 C#/TS 的输出。
 
+任务级[审查及修正记录](review.md)、[字节稳定检查](byte-portability.json)、[合并前台账检查](ledger-before-merge.json)与[实际交付记录](delivery.md)分别保留适用范围。新增的 `build-vectors.py --check --verify-native-fields` 读取准确归档数据，核对3份Schema的67个字段指针；消费者运行不需要归档路径。
+
 校验中 LEAD `LeadQueryFilters.ownerId` 的 required/UUID/unassigned/null 已核原 Schema；`ContactCreateInput.ownerId` 的独立可选性保持。ERP current/frozen 注册表实际字节单独重算，不仅引用 codec 注释中的 hash。ATP 组合 DDL 的长度与锁序修订一起保留。当前来源齐备性限于这个合同子集；原完整组合的历史缺件仍按原目录记录。
 
 没有业务编译、真实 Owner、数据库、迁移、Actions 或部署；未取消任何运行，未改触发器/分支保护。核验初次准备、后续包检查和交付状态分别留存，历史记录不改称本次业务 PASS。
