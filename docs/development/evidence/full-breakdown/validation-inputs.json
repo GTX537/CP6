@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-12T04:19:32.358371+00:00",
+  "interpreter": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+  "planning_base": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
+  "inputs": [
+    {
+      "path": "docs/development/roadmap.json",
+      "sha256": "6fc783374ae3631d7c80b00fe696a89dd5e132ae0e18544f873d5106f6d95138"
+    },
+    {
+      "path": "docs/development/task-definitions.json",
+      "sha256": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693"
+    },
+    {
+      "path": "docs/development/tools/manage_roadmap.py",
+      "sha256": "992e88abcaefd904ac9c0b555405df443f0e521170998237e3ca2f81c917545b"
+    },
+    {
+      "path": "docs/development/tools/test_manage_roadmap.py",
+      "sha256": "047354df0dca17afa25b2472580c57f58ddd3b4b0f394ee0534fde4ab9871a6c"
+    }
+  ],
+  "scope": "Exact input files for final local tool verification; no business tests."
+}

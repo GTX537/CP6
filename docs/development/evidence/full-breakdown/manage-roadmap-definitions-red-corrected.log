@@ -1,0 +1,334 @@
+COMMAND: python -B -m unittest test_manage_roadmap.TaskDefinitionTests -v
+EXIT: 1
+test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) ... 
+  test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) (mode='TASK_DELIVERY') ... FAIL
+  test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) (mode='CONDITIONAL_CONSUMER') ... FAIL
+  test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) (mode='EXTERNAL_EVIDENCE') ... FAIL
+test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) ... 
+  test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='title') ... FAIL
+  test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='repository') ... FAIL
+  test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='dependencies') ... FAIL
+  test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='exclusive_resources') ... FAIL
+test_binding_requires_supported_mode_and_condition (test_manage_roadmap.TaskDefinitionTests.test_binding_requires_supported_mode_and_condition) ... FAIL
+test_card_content_changes_when_definition_changes (test_manage_roadmap.TaskDefinitionTests.test_card_content_changes_when_definition_changes) ... FAIL
+test_conditional_consumer_does_not_create_unconditional_dependency (test_manage_roadmap.TaskDefinitionTests.test_conditional_consumer_does_not_create_unconditional_dependency) ... ok
+test_definition_matches_metadata_and_external_evidence_need_not_be_a_task (test_manage_roadmap.TaskDefinitionTests.test_definition_matches_metadata_and_external_evidence_need_not_be_a_task) ... ok
+test_definitions_must_cover_exactly_the_new_wp_tasks (test_manage_roadmap.TaskDefinitionTests.test_definitions_must_cover_exactly_the_new_wp_tasks) ... FAIL
+test_duplicate_definition_ids_are_rejected (test_manage_roadmap.TaskDefinitionTests.test_duplicate_definition_ids_are_rejected) ... FAIL
+test_existing_s01_task_must_not_be_redefined (test_manage_roadmap.TaskDefinitionTests.test_existing_s01_task_must_not_be_redefined) ... FAIL
+test_generated_card_can_be_bootstrapped_without_an_existing_file (test_manage_roadmap.TaskDefinitionTests.test_generated_card_can_be_bootstrapped_without_an_existing_file) ... FAIL
+test_invalid_definition_schema_is_rejected (test_manage_roadmap.TaskDefinitionTests.test_invalid_definition_schema_is_rejected) ... FAIL
+test_legacy_policy_without_definition_path_keeps_pure_validation (test_manage_roadmap.TaskDefinitionTests.test_legacy_policy_without_definition_path_keeps_pure_validation) ... ok
+test_malformed_definition_file_reports_validation_error (test_manage_roadmap.TaskDefinitionTests.test_malformed_definition_file_reports_validation_error) ... FAIL
+test_render_all_package_cards_without_repeating_ledger_state (test_manage_roadmap.TaskDefinitionTests.test_render_all_package_cards_without_repeating_ledger_state) ... FAIL
+test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) ... 
+  test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='scope') ... FAIL
+  test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='outputs') ... FAIL
+  test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='acceptance_positive') ... FAIL
+  test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='acceptance_negative') ... FAIL
+test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) ... 
+  test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) (path='docs/missing.md') ... FAIL
+  test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) (path='../outside.md') ... FAIL
+  test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) (path='CP6.Core/Outside.cs') ... FAIL
+test_task_anchor_and_plan_must_match_the_generated_card (test_manage_roadmap.TaskDefinitionTests.test_task_anchor_and_plan_must_match_the_generated_card) ... FAIL
+test_task_delivery_binding_must_be_a_direct_dependency (test_manage_roadmap.TaskDefinitionTests.test_task_delivery_binding_must_be_a_direct_dependency) ... FAIL
+
+======================================================================
+FAIL: test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) (mode='TASK_DELIVERY')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 369, in test_all_binding_modes_reject_unknown_task_references
+    self.reject("invalid prerequisite task reference")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) (mode='CONDITIONAL_CONSUMER')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 369, in test_all_binding_modes_reject_unknown_task_references
+    self.reject("invalid prerequisite task reference")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_all_binding_modes_reject_unknown_task_references (test_manage_roadmap.TaskDefinitionTests.test_all_binding_modes_reject_unknown_task_references) (mode='EXTERNAL_EVIDENCE')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 369, in test_all_binding_modes_reject_unknown_task_references
+    self.reject("invalid prerequisite task reference")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='title')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 343, in test_all_shared_metadata_must_match
+    self.reject("definition metadata differs: " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='repository')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 343, in test_all_shared_metadata_must_match
+    self.reject("definition metadata differs: " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='dependencies')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 343, in test_all_shared_metadata_must_match
+    self.reject("definition metadata differs: " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_all_shared_metadata_must_match (test_manage_roadmap.TaskDefinitionTests.test_all_shared_metadata_must_match) (field='exclusive_resources')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 343, in test_all_shared_metadata_must_match
+    self.reject("definition metadata differs: " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_binding_requires_supported_mode_and_condition (test_manage_roadmap.TaskDefinitionTests.test_binding_requires_supported_mode_and_condition)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 380, in test_binding_requires_supported_mode_and_condition
+    self.reject("invalid prerequisite binding")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_card_content_changes_when_definition_changes (test_manage_roadmap.TaskDefinitionTests.test_card_content_changes_when_definition_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 431, in test_card_content_changes_when_definition_changes
+    self.assertTrue(callable(getattr(roadmap, "render_cards", None)), "render_cards is required")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : render_cards is required
+
+======================================================================
+FAIL: test_definitions_must_cover_exactly_the_new_wp_tasks (test_manage_roadmap.TaskDefinitionTests.test_definitions_must_cover_exactly_the_new_wp_tasks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 331, in test_definitions_must_cover_exactly_the_new_wp_tasks
+    self.reject("definition task IDs differ")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_duplicate_definition_ids_are_rejected (test_manage_roadmap.TaskDefinitionTests.test_duplicate_definition_ids_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 403, in test_duplicate_definition_ids_are_rejected
+    self.reject("duplicate definition ID")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_existing_s01_task_must_not_be_redefined (test_manage_roadmap.TaskDefinitionTests.test_existing_s01_task_must_not_be_redefined)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 335, in test_existing_s01_task_must_not_be_redefined
+    self.reject("definition task IDs differ")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_generated_card_can_be_bootstrapped_without_an_existing_file (test_manage_roadmap.TaskDefinitionTests.test_generated_card_can_be_bootstrapped_without_an_existing_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 407, in test_generated_card_can_be_bootstrapped_without_an_existing_file
+    self.assertEqual(self.errors(), [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['WP02-01: task plan missing or outside repository'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'WP02-01: task plan missing or outside repository'
+
+- ['WP02-01: task plan missing or outside repository']
++ []
+
+======================================================================
+FAIL: test_invalid_definition_schema_is_rejected (test_manage_roadmap.TaskDefinitionTests.test_invalid_definition_schema_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 399, in test_invalid_definition_schema_is_rejected
+    self.reject("unsupported task definition schema")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_malformed_definition_file_reports_validation_error (test_manage_roadmap.TaskDefinitionTests.test_malformed_definition_file_reports_validation_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 395, in test_malformed_definition_file_reports_validation_error
+    self.assertTrue(any("cannot read task definitions" in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_render_all_package_cards_without_repeating_ledger_state (test_manage_roadmap.TaskDefinitionTests.test_render_all_package_cards_without_repeating_ledger_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 415, in test_render_all_package_cards_without_repeating_ledger_state
+    self.assertTrue(callable(getattr(roadmap, "render_cards", None)), "render_cards is required")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : render_cards is required
+
+======================================================================
+FAIL: test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='scope')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 351, in test_scope_outputs_and_both_acceptance_sides_cannot_be_empty
+    self.reject("definition requires nonempty " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='outputs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 351, in test_scope_outputs_and_both_acceptance_sides_cannot_be_empty
+    self.reject("definition requires nonempty " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='acceptance_positive')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 351, in test_scope_outputs_and_both_acceptance_sides_cannot_be_empty
+    self.reject("definition requires nonempty " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_scope_outputs_and_both_acceptance_sides_cannot_be_empty (test_manage_roadmap.TaskDefinitionTests.test_scope_outputs_and_both_acceptance_sides_cannot_be_empty) (field='acceptance_negative')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 351, in test_scope_outputs_and_both_acceptance_sides_cannot_be_empty
+    self.reject("definition requires nonempty " + field)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) (path='docs/missing.md')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 358, in test_source_references_must_be_existing_repository_docs
+    self.reject("invalid definition source reference")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) (path='../outside.md')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 358, in test_source_references_must_be_existing_repository_docs
+    self.reject("invalid definition source reference")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_source_references_must_be_existing_repository_docs (test_manage_roadmap.TaskDefinitionTests.test_source_references_must_be_existing_repository_docs) (path='CP6.Core/Outside.cs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 358, in test_source_references_must_be_existing_repository_docs
+    self.reject("invalid definition source reference")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_task_anchor_and_plan_must_match_the_generated_card (test_manage_roadmap.TaskDefinitionTests.test_task_anchor_and_plan_must_match_the_generated_card)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 387, in test_task_anchor_and_plan_must_match_the_generated_card
+    self.reject("definition card locator differs")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_task_delivery_binding_must_be_a_direct_dependency (test_manage_roadmap.TaskDefinitionTests.test_task_delivery_binding_must_be_a_direct_dependency)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 363, in test_task_delivery_binding_must_be_a_direct_dependency
+    self.reject("TASK_DELIVERY binding missing dependency")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\full-task-breakdown-1011\docs\development\tools\test_manage_roadmap.py", line 324, in reject
+    self.assertTrue(any(phrase in error for error in errors), errors)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : []
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.165s
+
+FAILED (failures=25)

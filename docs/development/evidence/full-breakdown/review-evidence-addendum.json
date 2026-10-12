@@ -1,0 +1,81 @@
+{
+  "result": "PASS",
+  "scope": "Evidence archival addendum only; no tools or business tests rerun.",
+  "raw_outputs_count": 14,
+  "source_mappings_count": 4,
+  "raw_outputs": [
+    {
+      "path": "docs/development/evidence/full-breakdown/dispatch-tests-initial-green.txt",
+      "bytes": 141,
+      "sha256": "a2e93781ef6b2a76db4feee231ec3c942d772c0c6aee8a96ad867faca891f0db"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/dispatch-tests-red.txt",
+      "bytes": 11387,
+      "sha256": "6100b2c0db36c53dc9f471dded9f60ae7081dc8ad848cb710b6fda07199ca5fb"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/manage-roadmap-all-green.log",
+      "bytes": 9050,
+      "sha256": "20345dcb810eac6ec8c1ed15f37f6fce0c6f9136c7b4699f712d761c684149ff"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/manage-roadmap-definitions-red-corrected.log",
+      "bytes": 28178,
+      "sha256": "106e88def9a3d2d6adf957abf5dfff10150fac3c7479f74bc981cd7af1c443b6"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/manage-roadmap-definitions-red.log",
+      "bytes": 29361,
+      "sha256": "927aee6f76afb8e815f296f6017296db3ccc2ca7736c84a4ebb895b1ee23eea0"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/manage-roadmap-definitions-state-red.log",
+      "bytes": 9033,
+      "sha256": "617a76827dcf0121f88063a141d3e86724ff6a59a98465bf3face2ee1ab05d87"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/manage-roadmap-summary-red.log",
+      "bytes": 4437,
+      "sha256": "44beb8c8ba6e94033950dee0b84273e9bc6600ab337ea40cb5a85d27d4fd7d30"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/normalized-source-red.txt",
+      "bytes": 1070,
+      "sha256": "5e58c44bb011544b048214720236784cfa007646e5531ac916b2069e503ce2c2"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/policy-guard-green.txt",
+      "bytes": 103,
+      "sha256": "b98328c8d52b37671d383074ff70cb3222e35c68aaf6ece51665d9fdaa695471"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/policy-guard-red.txt",
+      "bytes": 1068,
+      "sha256": "e4f706ac001a20e24284fa61d119b1975cba98169798036f7820c53e42408ec2"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/review-fixes-green.txt",
+      "bytes": 106,
+      "sha256": "caa7c4ec30f526b2b2cba7e4d62ab9263d1fce419ea700baa4cdb37a4d541f25"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/tools-final.txt",
+      "bytes": 167,
+      "sha256": "6a7ecf8f58a27e10a584588ed8fc3925c0ded5950b147c3712c268cbe6ef000a"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/tools-full-draft.txt",
+      "bytes": 166,
+      "sha256": "434edc1dbc7beedd5dbcc838be352185450fd9a92323e9037871831797b0d741"
+    },
+    {
+      "path": "docs/development/evidence/full-breakdown/worktree-alias-red.txt",
+      "bytes": 901,
+      "sha256": "be025a981886161e4d1360a2d72423c9533c654f88d391c4e908108855817560"
+    }
+  ],
+  "source_mapping_checks": "Actual raw SHA256, staged SHA256, staged Git blob and CRLF-to-LF-only bytes verified for all four files.",
+  "attributes": "Only two new nonrecursive directory-specific .log/.txt rules; neighboring files, nested directory and source attribute probes unaffected.",
+  "cached_diff_check": "PASS"
+}

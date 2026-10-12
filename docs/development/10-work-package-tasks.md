@@ -1,0 +1,154 @@
+# 工作包任务与125目标主体责任
+
+由roadmap.json生成。原14个工作包和125目标未增减；任务清单是本轮范围拆分，执行对话仍需按最新源码细化步骤。
+
+| 工作包 | 任务数 | 主体目标数 | 任务卡 |
+|---|---:|---:|---|
+| WP01 现有实现与设计对照 | 2 | 0 | [查看卡片](../../docs/development/task-plans/WP01.md) |
+| WP02 公共平台与系统基础 | 42 | 20 | [查看卡片](../../docs/development/task-plans/WP02.md) |
+| WP03 CRM客户经营 | 27 | 7 | [查看卡片](../../docs/development/task-plans/WP03.md) |
+| WP04 商业交易与订单 | 37 | 8 | [查看卡片](../../docs/development/task-plans/WP04.md) |
+| WP05 工程与产品生命周期 | 44 | 14 | [查看卡片](../../docs/development/task-plans/WP05.md) |
+| WP06 计划计算与决策 | 13 | 7 | [查看卡片](../../docs/development/task-plans/WP06.md) |
+| WP07 采购执行 | 15 | 7 | [查看卡片](../../docs/development/task-plans/WP07.md) |
+| WP08 制造执行 | 18 | 7 | [查看卡片](../../docs/development/task-plans/WP08.md) |
+| WP09 质量管理 | 12 | 4 | [查看卡片](../../docs/development/task-plans/WP09.md) |
+| WP10 仓储与物流 | 52 | 25 | [查看卡片](../../docs/development/task-plans/WP10.md) |
+| WP11 财务核算与结算 | 66 | 13 | [查看卡片](../../docs/development/task-plans/WP11.md) |
+| WP12 流程与审批 | 20 | 5 | [查看卡片](../../docs/development/task-plans/WP12.md) |
+| WP13 空间设计与运营 | 17 | 8 | [查看卡片](../../docs/development/task-plans/WP13.md) |
+| WP14 全链集成与交付验证 | 10 | 0 | [查看卡片](../../docs/development/task-plans/WP14.md) |
+
+## 目标关闭门
+
+下表列出每目标所属工作包的全部主体实现任务。公共基础、其他仓消费者和跨域验证另见卡片与修订场景；仅把目标挂在设计/基础任务下不算主体实现覆盖。全部主体任务DONE仍需原模块完整验收、必需修订场景、真实执行及远端交付证据，才能关闭目标。
+
+| 目标 | 主体实现任务 |
+|---|---|
+| CRM-INQ-01 | WP03-01, WP03-02, WP03-03, WP03-04 |
+| CRM-LEAD-01 | WP03-12, WP03-13, WP03-14, WP03-15, WP03-16 |
+| CRM-ACT-01 | WP03-17, WP03-18, WP03-19, WP03-20 |
+| CRM-ACC-01 | WP03-05, WP03-06, WP03-07 |
+| CRM-CON-01 | WP03-08, WP03-09, WP03-10, WP03-11 |
+| CRM-OPP-01 | WP03-21, WP03-22, WP03-23, WP03-24 |
+| CRM-HO-01 | WP03-23, WP03-25, WP03-26, WP03-27 |
+| ERP-BP-01 | WP04-01, WP04-02, WP04-03 |
+| ERP-EST-01 | WP04-07, WP04-08, WP04-09, WP04-33 |
+| ERP-QTN-01 | WP04-10, WP04-11, WP04-12 |
+| INT-COM-01 | WP02-22 |
+| ENG-PROD-01 | WP05-02, WP05-10 |
+| ENG-REV-01 | WP05-03, WP05-11, WP05-12 |
+| ENG-BOM-01 | WP05-09, WP05-10 |
+| ENG-ROU-01 | WP05-08, WP05-10 |
+| PLM-REQ-01 | WP05-13, WP05-14, WP05-15, WP05-60, WP05-61 |
+| PLM-ITER-01 | WP05-18, WP05-19, WP05-20, WP05-21, WP05-61 |
+| PLM-DOC-01 | WP05-16, WP05-17 |
+| PLM-VER-01 | WP05-22, WP05-23, WP05-24 |
+| PLM-CHG-01 | WP05-25, WP05-26, WP05-27, WP05-28 |
+| PLM-DEV-01 | WP05-29, WP05-30, WP05-31 |
+| PLM-REL-01 | WP05-32, WP05-33, WP05-34, WP05-35, WP05-36, WP05-42, WP05-61 |
+| PLM-FBK-01 | WP05-37, WP05-38 |
+| PLM-LIFE-01 | WP05-39, WP05-40, WP05-41 |
+| ERP-ORD-01 | WP04-13, WP04-14, WP04-15, WP04-16, WP04-17, WP04-18, WP04-20, WP04-32, WP04-33, WP04-34, WP04-37 |
+| ERP-FUL-01 | WP04-21, WP04-22, WP04-23 |
+| PLAN-DEM-01 | WP06-02, WP06-03, WP06-13 |
+| PLAN-ATP-01 | WP06-06 |
+| FIN-CREDIT-01 | WP11-05, WP11-06, WP11-07, WP11-65 |
+| PLAN-POL-01 | WP06-01 |
+| PLAN-SUP-01 | WP06-04, WP06-05 |
+| PLAN-MRP-01 | WP06-07, WP06-08, WP06-09 |
+| PLAN-PO-01 | WP06-10, WP06-11 |
+| PLAN-EXC-01 | WP06-12 |
+| PUR-PR-01 | WP07-01, WP07-02 |
+| PUR-RFQ-01 | WP07-03 |
+| PUR-PO-01 | WP07-04, WP07-05 |
+| PUR-GR-01 | WP07-06, WP07-07 |
+| PUR-MATCH-01 | WP07-08, WP07-09, WP07-14 |
+| PUR-RETURN-01 | WP07-10, WP07-11 |
+| MES-RES-01 | WP08-01, WP08-02, WP08-16 |
+| MES-WO-01 | WP08-03, WP08-04, WP08-15, WP08-17, WP08-18 |
+| MES-MAT-01 | WP08-05, WP08-06, WP08-13 |
+| MES-EXEC-01 | WP08-07, WP08-14, WP08-18 |
+| MES-OUTPUT-01 | WP08-08, WP08-09 |
+| FIN-COST-01 | WP11-39, WP11-40, WP11-41, WP11-42 |
+| QA-POL-01 | WP09-01, WP09-02, WP09-11 |
+| QA-IQC-01 | WP09-03, WP09-04 |
+| QA-IPQC-01 | WP09-05, WP09-06 |
+| QA-NCR-01 | WP09-07, WP09-08, WP09-09, WP09-10, WP09-12 |
+| WMS-MASTER-01 | WP10-01, WP10-06, WP10-47, WP10-49, WP10-50, WP10-51 |
+| WMS-STOCK-01 | WP10-02, WP10-03, WP10-04, WP10-05, WP10-46, WP10-47 |
+| WMS-TRANSFER-01 | WP10-10, WP10-11 |
+| WMS-RSV-01 | WP10-07, WP10-08 |
+| WMS-IN-01 | WP10-13, WP10-14, WP10-15 |
+| WMS-COUNT-01 | WP10-16 |
+| WMS-TRACE-01 | WP10-17, WP10-18 |
+| WMS-DISP-01 | WP10-24 |
+| WMS-MOBILE-01 | WP10-09, WP10-12 |
+| WMS-CTRL-01 | WP10-25 |
+| ERP-CREDIT-01 | WP04-27, WP04-28, WP04-29, WP04-30, WP04-31, WP04-34, WP04-36 |
+| WMS-OUT-01 | WP10-19, WP10-20 |
+| WMS-DEL-01 | WP10-21, WP10-52 |
+| WMS-RMA-01 | WP10-22, WP10-23 |
+| FIN-MASTER-01 | WP11-01, WP11-02, WP11-03, WP11-04, WP11-65 |
+| FIN-GL-01 | WP11-14, WP11-15, WP11-16, WP11-17 |
+| FIN-CLOSE-01 | WP11-08, WP11-56, WP11-57, WP11-58 |
+| FIN-REPORT-01 | WP11-59, WP11-60, WP11-61 |
+| FIN-AP-01 | WP11-18, WP11-19, WP11-20, WP11-21, WP11-22, WP11-23, WP11-24, WP11-25, WP11-64, WP11-66 |
+| FIN-AR-01 | WP11-26, WP11-27, WP11-28, WP11-29, WP11-30, WP11-31, WP11-32, WP11-33, WP11-34, WP11-62, WP11-64 |
+| FIN-INV-01 | WP11-35, WP11-36, WP11-37, WP11-38, WP11-43, WP11-44, WP11-45, WP11-63 |
+| FIN-FX-01 | WP11-09, WP11-10, WP11-46, WP11-47, WP11-64 |
+| OA-DEF-01 | WP12-01, WP12-02 |
+| OA-FORM-01 | WP12-03, WP12-04, WP12-05 |
+| OA-TASK-01 | WP12-08, WP12-09, WP12-10, WP12-11, WP12-20 |
+| OA-APP-01 | WP12-06, WP12-07, WP12-12, WP12-19 |
+| SYS-WORKSPACE-01 | WP02-18 |
+| SYS-LANG-01 | WP02-17 |
+| SYS-AUD-01 | WP02-13 |
+| SYS-PRIV-01 | WP02-15 |
+| SYS-FILE-01 | WP02-14 |
+| SYS-NUM-01 | WP02-16 |
+| SYS-CLIENT-01 | WP02-19, WP02-20 |
+| SYS-JOB-01 | WP02-21 |
+| SYS-TENANT-01 | WP02-02, WP02-04 |
+| SYS-IAM-01 | WP02-03, WP02-06, WP02-10 |
+| INT-ID-01 | WP02-05, WP02-06 |
+| INT-OPS-01 | WP02-23, WP02-24 |
+| PLT-CTX-01 | WP02-01, WP02-02 |
+| PLT-HTTP-01 | WP02-11, WP02-29 |
+| PLT-MSG-01 | WP02-12, WP02-29 |
+| PLT-DEL-01 | WP02-07, WP02-08, WP02-09, WP02-10 |
+| PLT-OBS-01 | WP02-25, WP02-26, WP02-28, WP02-29 |
+| PLT-RELEASE-01 | WP02-27, WP02-28, WP02-29 |
+| PLT-TEST-01 | WP02-26 |
+| ENG-TOOL-01 | WP05-04, WP05-05, WP05-06, WP05-07 |
+| ERP-FSC-01 | WP04-25, WP04-26 |
+| ERP-PRICE-01 | WP04-04, WP04-05, WP04-06 |
+| PUR-SUB-01 | WP07-12, WP07-13, WP07-15 |
+| MES-SCHED-01 | WP08-10, WP08-11 |
+| MES-PERF-01 | WP08-12 |
+| WMS-KIT-01 | WP10-26, WP10-27 |
+| WMS-SLOT-01 | WP10-28, WP10-29 |
+| WMS-REP-01 | WP10-30, WP10-31 |
+| WMS-XDOCK-01 | WP10-32 |
+| WMS-ROLL-01 | WP10-33, WP10-34 |
+| WMS-REM-01 | WP10-35 |
+| WMS-TOOL-01 | WP10-36, WP10-48 |
+| WMS-INK-01 | WP10-37, WP10-38 |
+| WMS-VMI-01 | WP10-39, WP10-40 |
+| WMS-SAMPLE-01 | WP10-41 |
+| WMS-AUTO-01 | WP10-42, WP10-43 |
+| WMS-ANALYTICS-01 | WP10-44, WP10-45 |
+| FIN-BUD-01 | WP11-12, WP11-13, WP11-48 |
+| FIN-BANK-01 | WP11-11, WP11-49, WP11-50, WP11-51, WP11-64 |
+| FIN-ASSET-01 | WP11-52, WP11-53, WP11-54, WP11-55 |
+| OA-CONN-01 | WP12-13, WP12-14, WP12-15, WP12-16, WP12-17, WP12-18 |
+| SPACE-MASTER-01 | WP13-01, WP13-03 |
+| SPACE-DES-01 | WP13-02, WP13-10, WP13-12 |
+| SPACE-IMPORT-01 | WP13-06, WP13-07 |
+| SPACE-PUB-01 | WP13-08, WP13-09, WP13-10, WP13-11 |
+| SPACE-PLAN-01 | WP13-13 |
+| SPACE-OPS-01 | WP13-14, WP13-15 |
+| SPACE-EXT-01 | WP13-04, WP13-05 |
+| SPACE-AI-01 | WP13-16, WP13-17 |
+
+原验收目录、具体case定义、任务状态和证据在JSON中保留准确引用。共享case不能重复计数，原件不可恢复不等于免验收。

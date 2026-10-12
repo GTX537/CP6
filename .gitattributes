@@ -128,3 +128,7 @@ docs/audits/2026-10-03-bug-163-wms-local-transactions/native/** -text whitespace
 docs/design-handbook/remediation/** -text whitespace=cr-at-eol
 docs/design-handbook/tools/build_operations_fixture_patches.py -text whitespace=cr-at-eol
 tools/build_planning_fixture_patches.py -text whitespace=cr-at-eol
+
+# Preserve raw task-planning unittest output, including unittest's trailing spaces.
+docs/development/evidence/full-breakdown/*.log -text whitespace=cr-at-eol,-blank-at-eol
+docs/development/evidence/full-breakdown/*.txt -text whitespace=cr-at-eol,-blank-at-eol
