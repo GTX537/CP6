@@ -1,0 +1,9 @@
+{
+  "task_id": "WP01-02",
+  "result": "PASS",
+  "source_sha": "08813a9eb1b4dfb299bbc556a12c904bce9dc24d",
+  "remote_main_sha": "7431bff113fbe461e61ce80727ea9c23edbb58ac",
+  "pr_url": "https://github.com/GTX537/CP6/pull/182",
+  "observed_at": "2026-10-12T09:07:49.512059+00:00",
+  "scope": "Reviewed dispatch source is ancestor of remote main and entire merged tree equals validated candidate. Reuse document checks only; no worker implementation or runtime test."
+}
