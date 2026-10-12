@@ -27,3 +27,9 @@ GitHub 普通工作流手动触发；R2 candidate 只响应受保护版本 Tag�
 主线 `92fb94db40c54be90f2fbb18b0922d264c060796` 通过正常merge整合；四份状态页的S01记录和上游Handoff记录都保留，其他上游规则没有回退。[字节稳定检查](byte-portability.json) 对5份包/工具文件分别使用 `core.autocrlf=true/false` 的Git checkout过滤，全部摘要一致且为LF。
 
 Handoff启动/资源窗口补报已在固定提交 `4309b75b4d2fa6ddc3efa3e31290c7664db97cae` 发布并远端逐字节回读：`handoffs/CP6-DEV-20261012/tasks/S01-01/messages/20261012T060915Z-start/MESSAGE.md`；协调入口已读 `e476bc58b05349c34c9361b4af2f0cde1ce92aea`，当时没有新回复。运输回执不代业务交付。
+
+## 远端交付与状态闭环
+
+[PR #176](https://github.com/GTX537/CP6/pull/176) 于2026-10-12T06:19:55Z按正常保护规则合并；远端main `d589af006447132a93ade96f10de07f3c280cb8e` 包含实现 `4258f7b66490f0b49601e5e5033d8508fc5eadbd`。合并后[回执](remote-main-check.json)核对祖先关系和三份已验证输入/工具的Git字节，结果一致；复用相同包输入的本地静态证据，没有重跑或扩大声称业务验证。
+
+据此将S01-01登记DONE，同步生成页及四份项目状态；本次回执提交只记录已经发生的交付。S01-02/05/09仍未领取，需各自重新核对前置、源码和资源。完整125业务目标、247运行场景和其他任务均保持原状态。任务分支Actions运行列表为空；没有取消项、触发修改、保护绕过、迁移或部署。

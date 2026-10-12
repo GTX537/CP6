@@ -2,6 +2,8 @@
 
 ## 2026-10-12：用户确认后的任务交付窗口
 
+交付已通过 [PR #176](https://github.com/GTX537/CP6/pull/176) 合入；远端main `d589af006447132a93ade96f10de07f3c280cb8e` 包含实现，准确检查字节未变，见[远端回执](remote-main-check.json)。唯一台账据此登记S01-01 DONE；以下保留准备和核验时点，业务状态不随之推进。
+
 用户已确认本对话兼任 S01-01 协调，领取、状态同步和本任务合并统一在本分支完成。领取时已重新 fetch 核对 main/origin/main 为 `df5553fd04ec4fc516602a4e2843650c38ae5006`；无其他已登记活动任务。准入登记检查见 [entry-check.json](entry-check.json)。没有领取或编辑其他任务。
 
 现已形成 [profile/source/vector 包](../../../../eng/contracts/s01/README.md)：`CP6-S01-CONTRACT-INPUTS/1.0.0`，33 份来源、16 个 profile、122 条共用向量。范围包括原 23 条数值/单位输入及预期、精确 Schema/类型/注册表身份、原始字节保持、严格 JSON/required null、原生字段投影与版本路由。完整合同采用和业务验收不属于此次交付。

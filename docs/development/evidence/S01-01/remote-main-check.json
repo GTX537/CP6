@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-12T06:20:14.015527+00:00",
+  "remote_main_sha": "d589af006447132a93ade96f10de07f3c280cb8e",
+  "source_sha": "4258f7b66490f0b49601e5e5033d8508fc5eadbd",
+  "pr_url": "https://github.com/GTX537/CP6/pull/176",
+  "scope": "Remote-main ancestry and unchanged tested package/verifier Git bytes; local static checks reused, no consumer/business execution",
+  "reused_evidence": "docs/development/evidence/S01-01/package-check.json",
+  "input_files_sha256": {
+    "eng/contracts/s01/profile-inputs.json": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+    "eng/contracts/s01/vectors.json": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+    "docs/development/evidence/S01-01/verify-package.py": "43ebd478da697d3f56676f6036c8a071c10c70c99dce0544c94b4605e52d2b36"
+  }
+}

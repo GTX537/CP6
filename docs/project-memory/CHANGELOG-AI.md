@@ -4,7 +4,7 @@
 
 - 用户确认本对话兼任S01-01协调；仅领取本任务，串行同步台账/生成页/四份项目状态。
 - 新增版本化profile-inputs、vectors及读取说明：33准确来源、16profile、122向量，保留原23条预期与原AC身份，明确子断言/类型接线/构造字节的限制。
-- 61次原/派生SHA及22本地pin核验通过；业务目标、247运行场景及41历史静态状态不变，任务VERIFYING。审查和远端交付见[交付记录](../development/evidence/S01-01/delivery.md)。
+- 61次原/派生SHA及22本地pin核验通过；业务目标、247运行场景及41历史静态状态不变，任务经PR #176与远端main包含性/字节核对后DONE。审查和远端交付见[交付记录](../development/evidence/S01-01/delivery.md)。
 - 无业务编译、数据库、Actions、触发/保护修改或部署。
 
 ## 2026-10-12：CP6-DEVELOPMENT-HANDOFF-CHANNEL
