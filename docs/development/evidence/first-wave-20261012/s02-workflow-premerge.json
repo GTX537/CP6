@@ -1,0 +1,248 @@
+{
+  "at": "2026-10-12T07:30:20.462637+00:00",
+  "head": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+  "protected_main": "8570384f1e28065afee4ce416c9f492dde734131",
+  "workflows": [
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/client-contract.yml",
+      "blob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "blob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "blob": "7826de728d692846184dc7113848109a6a56a92e",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "blob": "be9a37138cb903c45c4638c65929610d24362730",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "blob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "blob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "blob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "blob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/r2-candidate.yml",
+      "blob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "events": [
+        "push"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/r2-deploy.yml",
+      "blob": "d259013345adf115865007cc5f05c70939a902bf",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/r2-freeze.yml",
+      "blob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "blob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "8570384f1e28065afee4ce416c9f492dde734131",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "blob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/client-contract.yml",
+      "blob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "blob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "blob": "7826de728d692846184dc7113848109a6a56a92e",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "blob": "be9a37138cb903c45c4638c65929610d24362730",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "blob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "blob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "blob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "blob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/r2-candidate.yml",
+      "blob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "events": [
+        "push"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/r2-deploy.yml",
+      "blob": "d259013345adf115865007cc5f05c70939a902bf",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/r2-freeze.yml",
+      "blob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "blob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    },
+    {
+      "ref": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "blob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "safe_for_branch_push_pr_and_main_merge": true
+    }
+  ],
+  "workflow_and_dependency_changes": [],
+  "queued_or_running": [],
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "result": "SAFE_FOR_THIS_BRANCH_PUSH_PR_AND_MAIN_MERGE",
+  "scope": "Both exact heads have dispatch-only workflows except protected-version-tag release. This action pushes a branch/merges main, never a tag; no workflow/dependency input changes."
+}

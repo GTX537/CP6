@@ -158592,6 +158592,11 @@
       "date": "2026-10-12",
       "change": "WP05-01 preparation received and registered for coordinator review/integration now; no retroactive claim, no business PASS.",
       "evidence": "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json"
+    },
+    {
+      "date": "2026-10-12",
+      "change": "First-wave coordinator closeout: S02-00, WP05-01 and WP14-01 DONE only after reviewed remote-main inclusion; S01-01 DONE unchanged. No target/runtime/adoption promotion.",
+      "evidence": "docs/development/evidence/first-wave-20261012/README.md"
     }
   ],
   "implementation_assessment": {
@@ -159095,11 +159100,28 @@
       ],
       "relative_size": "M",
       "kind": "DESIGN",
-      "state": "VERIFYING",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/S02-00/coordination/validation.json",
+          "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+          "command": "python docs/development/evidence/S02-00/verify.py --crm-root D:\\CP6.CRM --platform-root D:\\CP6\\CP6.Platform --archive-root D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs --out docs/development/evidence/S02-00/coordination/validation.json",
+          "environment": "Local Windows / CPython 3.13; documentation or checker-only verification; no business, database, migration, deployment or Actions execution",
+          "observed_at": "2026-10-12T07:28:07.813111+00:00",
+          "scope": "126 document checks on revised design/27 NOT_RUN scenarios. Report source_sha is the pinned design input baseline, not executed HEAD; authored-file UTF8/LF hashes now matched to this delivered source and current main. Targeted review closes UPDATE USING design omission; no runtime result.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+        "remote_main_sha": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
+        "pr_url": "https://github.com/GTX537/CP6/pull/178",
+        "observed_at": "2026-10-12T07:31:41.369832+00:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/evidence/S02-00/coordination/remote-main.json"
+      },
       "package_id": "WP02",
       "coverage_role": "DESIGN",
       "entry_gate": "CONFIRMED",
@@ -159112,7 +159134,9 @@
         "baseline_sha": "8570384f1e28065afee4ce416c9f492dde734131",
         "entry_evidence": "docs/development/evidence/S02-00/coordination/intake.json",
         "coordination_branch": "codex/integrate-s02-00-20261012",
-        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation."
+        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation.",
+        "window_closed_at": "2026-10-12T08:05:32.886744+00:00",
+        "window_close_reason": "Reviewed design/preparation delivered to remote main; task resources released. No successor task claimed."
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -162563,7 +162587,7 @@
         "Main:engineering-acceptance-basis"
       ],
       "coverage_role": "DESIGN",
-      "state": "VERIFYING",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP05.md",
       "card_anchor": "wp05-01",
       "entry_gate": "CONFIRMED",
@@ -162576,11 +162600,30 @@
         "baseline_sha": "2a8dd0eeae27b885f136991b2b215ee7539677d6",
         "entry_evidence": "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json",
         "coordination_branch": "codex/integrate-wp05-01-20261012",
-        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation."
+        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation.",
+        "window_closed_at": "2026-10-12T08:05:32.886744+00:00",
+        "window_close_reason": "Reviewed design/preparation delivered to remote main; task resources released. No successor task claimed."
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json",
+          "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+          "command": "python docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py --root . --archive-root D:/CP6 --supplement docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json --out docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json",
+          "environment": "Local Windows / CPython 3.13; documentation or checker-only verification; no business, database, migration, deployment or Actions execution",
+          "observed_at": "2026-10-12T07:52:01.151991+00:00",
+          "scope": "581 supplement identity/locator/boundary checks, 49 source references. Independent initial and targeted reviews close known semantic gaps. Original six assets, 221/295 checks and unchanged checker24 tests reused at their recorded hashes; revised input bytes match delivered commit. PROPOSED/NOT_RUN, legacy30/48 retained, completion gate not changed.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+        "remote_main_sha": "38a476dd2e78262060ebbc9123a74b3437ec3867",
+        "pr_url": "https://github.com/GTX537/CP6/pull/180",
+        "observed_at": "2026-10-12T07:56:07.675663+00:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -173215,7 +173258,7 @@
         "coordination:acceptance-map"
       ],
       "coverage_role": "COORDINATION",
-      "state": "VERIFYING",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP14.md",
       "card_anchor": "wp14-01",
       "entry_gate": "CONFIRMED",
@@ -173228,11 +173271,30 @@
         "baseline_sha": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
         "entry_evidence": "docs/development/deliveries/WP14-01/evidence/coordination/intake.json",
         "coordination_branch": "codex/integrate-wp14-01-20261012",
-        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation."
+        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation.",
+        "window_closed_at": "2026-10-12T08:05:32.886744+00:00",
+        "window_close_reason": "Reviewed design/preparation delivered to remote main; task resources released. No successor task claimed."
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/deliveries/WP14-01/evidence/validation.json",
+          "source_sha": "bd8b7528580567f4b66cbbf065fcebfc472c3a14",
+          "command": "python docs/development/deliveries/WP14-01/prepare.py; python docs/development/deliveries/WP14-01/evidence/verify-docs.py",
+          "environment": "Local Windows / CPython 3.13; documentation or checker-only verification; no business, database, migration, deployment or Actions execution",
+          "observed_at": "2026-10-12T05:58:29.339415+00:00",
+          "scope": "Reuse original preparation mapping/document checks at fixed df5553fd input baseline. Current roadmap bytes differ; consumed subsets and fixed source compatibility are separately verified in coordination/current-inputs.json and closeout input identity. No business execution or cross-repository runtime adoption.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "8d40ccdb9bec774f3ed5c0869756c056858fba61",
+        "remote_main_sha": "2a8dd0eeae27b885f136991b2b215ee7539677d6",
+        "pr_url": "https://github.com/GTX537/CP6/pull/179",
+        "observed_at": "2026-10-12T07:43:07.323460+00:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/deliveries/WP14-01/evidence/coordination/remote-main.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
