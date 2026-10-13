@@ -1,0 +1,5 @@
+# Preserve actual test/source/hash receipts as captured on this Windows host.
+implementation/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+*-check.json text eol=lf
+entry-check.json text eol=lf
+handoff-start.json text eol=lf

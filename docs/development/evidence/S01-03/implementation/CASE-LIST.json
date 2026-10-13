@@ -1,0 +1,1070 @@
+{
+  "task": "S01-03",
+  "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "selection": "Frozen IDs in CreditAmountTests; not Inputs/dispatch.json. All names copied from actual GREEN TRX.",
+  "green_trx_sha256_file_bytes": "5ee0f06b3530d43eeb3cd61816a01f14980cdc485acdf0b823ea650ad6064d4f",
+  "vectors_sha256_file_bytes": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+  "case_counts": {
+    "fixed": 25,
+    "accepted_fixed": 13,
+    "rejected_fixed": 12,
+    "additional": 180,
+    "total": 205
+  },
+  "trx_counters": {
+    "total": 205,
+    "executed": 205,
+    "passed": 205,
+    "failed": 0,
+    "error": 0,
+    "timeout": 0,
+    "aborted": 0,
+    "inconclusive": 0,
+    "passedButRunAborted": 0,
+    "notRunnable": 0,
+    "notExecuted": 0,
+    "disconnected": 0,
+    "warning": 0,
+    "completed": 0,
+    "inProgress": 0,
+    "pending": 0
+  },
+  "fixed_cases": [
+    {
+      "id": "NUM-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "99999999999999999999999999999999999999",
+        "scale": 0
+      }
+    },
+    {
+      "id": "NUM-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "-99999999999999999999999999999999999999",
+        "scale": 0
+      }
+    },
+    {
+      "id": "NUM-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "99999999999999999999999999999912345678",
+        "scale": 8
+      }
+    },
+    {
+      "id": "NUM-004",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "NUM-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "1",
+        "scale": 8
+      }
+    },
+    {
+      "id": "NUM-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "0",
+        "scale": 0
+      }
+    },
+    {
+      "id": "NUM-007",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "NUM-008",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "NUM-009",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "NUM-010",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "NUM-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "CREDIT-001",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "0",
+        "scale": 0
+      }
+    },
+    {
+      "id": "CREDIT-002",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "1",
+        "scale": 0
+      }
+    },
+    {
+      "id": "CREDIT-003",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "1",
+        "scale": 8
+      }
+    },
+    {
+      "id": "CREDIT-004",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "CREDIT-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "CREDIT-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "CREDIT-007",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "99999999999999999999999999999999999999",
+        "scale": 0
+      }
+    },
+    {
+      "id": "CREDIT-008",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "99999999999999999999999999999912345678",
+        "scale": 8
+      }
+    },
+    {
+      "id": "CREDIT-009",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "CREDIT-010",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "CREDIT-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "expected_pair": null
+    },
+    {
+      "id": "CREDIT-JS-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "9007199254740991",
+        "scale": 0
+      }
+    },
+    {
+      "id": "CREDIT-JS-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "9007199254740992",
+        "scale": 0
+      }
+    },
+    {
+      "id": "CREDIT-JS-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "expected_pair": {
+        "unscaledValue": "9007199254740993",
+        "scale": 0
+      }
+    }
+  ],
+  "executed_cases": [
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Accumulation_streams_many_terms_and_unbounded_coefficients",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Addition_aligns_scales_and_normalizes_carry_and_cancellation(left: \"-0.00000001\", right: \"0.00000001\", result: \"0\", coefficient: \"0\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Addition_aligns_scales_and_normalizes_carry_and_cancellation(left: \"-1.25\", right: \"0.2\", result: \"-1.05\", coefficient: \"-105\", scale: 2)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Addition_aligns_scales_and_normalizes_carry_and_cancellation(left: \"0\", right: \"0.00000001\", result: \"0.00000001\", coefficient: \"1\", scale: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Addition_aligns_scales_and_normalizes_carry_and_cancellation(left: \"0.9\", right: \"0.1\", result: \"1\", coefficient: \"1\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Addition_aligns_scales_and_normalizes_carry_and_cancellation(left: \"1.25\", right: \"-0.25\", result: \"1\", coefficient: \"1\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Addition_aligns_scales_and_normalizes_carry_and_cancellation(left: \"1.99999999\", right: \"0.00000001\", result: \"2\", coefficient: \"2\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"-0.00000001\", right: \"0\", expectedSign: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"-1\", right: \"1\", expectedSign: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"-1.00000001\", right: \"-1\", expectedSign: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"-1.2\", right: \"-1.19\", expectedSign: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"-99999999999999999999999999999999999999\", right: \"-99999999999999999999999999999999999998\", expectedSign: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"0.00000001\", right: \"0\", expectedSign: 1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"1\", right: \"1.00000001\", expectedSign: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"1.2\", right: \"1.19\", expectedSign: 1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"1.2\", right: \"1.2\", expectedSign: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"9007199254740992\", right: \"9007199254740993\", expectedSign: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Comparison_is_exact_for_adjacent_values_and_different_scales(left: \"99999999999999999999999999999999999999\", right: \"99999999999999999999999999999999999998\", expectedSign: 1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Converter_write_revalidates_intermediates_for_its_target_profile",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Culture_does_not_change_wire_grammar_or_emission",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Escaped_amount_tokens_preserve_raw_bytes_independently_of_decoded_value",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Field_presence_and_nullability_belong_to_the_enclosing_contract",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-001\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-001\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-002\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-002\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-003\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-003\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-004\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-004\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-005\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-005\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-006\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-006\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-007\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-007\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-008\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-008\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-009\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-009\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-010\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-010\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-011\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-011\\\",\\n      \\\"profile_\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-JS-001\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-JS-001\\\",\\n      \\\"profi\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-JS-002\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-JS-002\\\",\\n      \\\"profi\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"CREDIT-JS-003\", rawVector: \"{\\n      \\\"id\\\": \\\"CREDIT-JS-003\\\",\\n      \\\"profi\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-001\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-001\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-002\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-002\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-003\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-003\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-004\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-004\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-005\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-005\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-006\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-006\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-007\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-007\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-008\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-008\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-009\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-009\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-010\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-010\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fixed_package_vector(id: \"NUM-011\", rawVector: \"{\\n      \\\"id\\\": \\\"NUM-011\\\",\\n      \\\"profile_id\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Fractional_carry_and_cancellation_validate_normalized_final_precision",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Intermediate_factory_is_explicit_unbounded_and_never_rounds_scale",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Intermediate_overflow_can_cancel_before_final_field_validation",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Mixed_carrier_profiles_are_attached_to_exact_fields",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Narrower_profile_rejects_signed_values_on_both_boundaries(text: \"-0.00000001\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Narrower_profile_rejects_signed_values_on_both_boundaries(text: \"-0.00000001\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Narrower_profile_rejects_signed_values_on_both_boundaries(text: \"-1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Narrower_profile_rejects_signed_values_on_both_boundaries(text: \"-1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Narrower_profile_rejects_signed_values_on_both_boundaries(text: \"-99999999999999999999999999999999999999\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Narrower_profile_rejects_signed_values_on_both_boundaries(text: \"-99999999999999999999999999999999999999\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Narrower_profile_rejects_signed_values_on_both_boundaries(text: \"0\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"-0.00000001\", profile: Signed, coefficient: \"-1\", scale: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"-1\", profile: Signed, coefficient: \"-1\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"-999999999999999999999999999999.12345678\", profile: Signed, coefficient: \"-99999999999999999999999999999912345678\", scale: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"-99999999999999999999999999999999999999\", profile: Signed, coefficient: \"-99999999999999999999999999999999999999\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"0\", profile: NonNegative, coefficient: \"0\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"0\", profile: Signed, coefficient: \"0\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"0.00000001\", profile: Positive, coefficient: \"1\", scale: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"1\", profile: Positive, coefficient: \"1\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"1.00000001\", profile: NonNegative, coefficient: \"100000001\", scale: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Native_sign_and_precision_boundaries_are_exact(text: \"99999999999999999999999999999999999999\", profile: Positive, coefficient: \"99999999999999999999999999999999999999\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Negative_intermediate_is_legal_before_a_positive_final_field",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \" 1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \" 1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \" 1\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"+0\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"+0\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"+0\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"+1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"+1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"+1\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-.1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-.1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-.1\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0.0\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0.0\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0.0\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0.123456789\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0.123456789\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-0.123456789\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-01\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-01\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"-01\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \".1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \".1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \".1\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.0\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.0\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.0\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.00000000\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.00000000\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.00000000\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.000000010\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.000000010\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.000000010\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.123456789\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.123456789\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"0.123456789\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"00\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"00\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"00\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"01\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"01\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"01\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1 \", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1 \", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1 \", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1,2\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1,2\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1,2\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1..1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1..1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1..1\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.0\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.0\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.0\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.000000001\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.000000001\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.000000001\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.10\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.10\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1.10\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1E-3\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1E-3\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1E-3\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\0\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\0\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\0\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\n\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\n\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\n\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\r\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\r\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1\\r\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1e3\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1e3\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"1e3\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"9999999999999999999999999999999.12345678\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"9999999999999999999999999999999.12345678\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"9999999999999999999999999999999.12345678\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"999999999999999999999999999999999999999\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"999999999999999999999999999999999999999\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"999999999999999999999999999999999999999\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"Infinity\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"Infinity\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"Infinity\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"NaN\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"NaN\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"NaN\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"\\t1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"\\t1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"\\t1\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"١\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"١\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"١\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"−1\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"−1\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"−1\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"１２\", profile: NonNegative)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"１２\", profile: Positive)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Noncanonical_input_is_never_normalized_into_acceptance(text: \"１２\", profile: Signed)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Null_text_is_not_a_required_amount",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Representation_is_immutable_canonical_and_equal_by_value",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"1\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"1.0\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"[]\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"false\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"null\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"true\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"{\\\"value\\\":\\\"1\\\"}\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Required_scalar_converter_rejects_every_non_string_token(json: \"{}\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Serialization_without_an_explicit_profile_fails_closed",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Strict_carrier_boundary_rejects_duplicates_before_amount_conversion(json: \"{\\\"amount\\\":\\\"1\\\",\\\"\\\\u0061mount\\\":\\\"2\\\"}\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Strict_carrier_boundary_rejects_duplicates_before_amount_conversion(json: \"{\\\"amount\\\":\\\"1\\\",\\\"amount\\\":\\\"2\\\"}\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Strict_carrier_boundary_rejects_duplicates_before_amount_conversion(json: \"{\\\"amount\\\":\\\"1\\\",\\\"ignored\\\":[{\\\"a\\\":1,\\\"\\\\u0061\\\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Strict_carrier_boundary_rejects_duplicates_before_amount_conversion(json: \"{\\\"amount\\\":null,\\\"ignored\\\":{\\\"x\\\":1,\\\"x\\\":2}}\")",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Subtraction_preserves_borrow_and_sign(left: \"-0.1\", right: \"-0.1\", result: \"0\", coefficient: \"0\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Subtraction_preserves_borrow_and_sign(left: \"-1\", right: \"0.01\", result: \"-1.01\", coefficient: \"-101\", scale: 2)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Subtraction_preserves_borrow_and_sign(left: \"0.00000001\", right: \"1\", result: \"-0.99999999\", coefficient: \"-99999999\", scale: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Subtraction_preserves_borrow_and_sign(left: \"0.01\", right: \"0.009\", result: \"0.001\", coefficient: \"1\", scale: 3)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Subtraction_preserves_borrow_and_sign(left: \"1\", right: \"0.00000001\", result: \"0.99999999\", coefficient: \"99999999\", scale: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Tests_execute_on_actual_net8_runtime",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Unknown_profile_fails_before_text_or_json_token_inspection(unknown: -1)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Unknown_profile_fails_before_text_or_json_token_inspection(unknown: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Unknown_profile_fails_before_text_or_json_token_inspection(unknown: 2147483647)",
+      "outcome": "Passed"
+    },
+    {
+      "test_name": "CP6.ExactValues.Tests.CreditAmountTests.Unknown_profile_fails_before_text_or_json_token_inspection(unknown: 4)",
+      "outcome": "Passed"
+    }
+  ]
+}

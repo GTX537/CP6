@@ -1,0 +1,216 @@
+{
+  "task": "S01-03",
+  "checked_at_utc": "2026-10-13T00:23:58.427423+00:00",
+  "head": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+  "branch": "codex/s01-03-credit-amount-20261012",
+  "main_and_origin_main": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+  "coordination_sha": "ad1260fd0de832817d52522c6111df6bacd788b3",
+  "created_baseline": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+  "only_coordination_documents_changed_since_creation": [
+    "docs/development/07-detailed-tasks.md",
+    "docs/development/dispatch/20261012-wave3/README.md",
+    "docs/development/dispatch/20261012-wave3/S01-03.md",
+    "docs/development/dispatch/20261012-wave3/S01-04.md",
+    "docs/development/dispatch/20261012-wave3/S01-06.md",
+    "docs/development/dispatch/20261012-wave3/S01-08.md",
+    "docs/development/dispatch/20261012-wave3/dispatch.json",
+    "docs/development/evidence/wave3-dispatch-20261012/README.md",
+    "docs/development/evidence/wave3-dispatch-20261012/admission.json",
+    "docs/development/evidence/wave3-dispatch-20261012/crm-admission.md",
+    "docs/development/evidence/wave3-dispatch-20261012/crm-ci-prerequisite.json",
+    "docs/development/evidence/wave3-dispatch-20261012/crm-policy-review.md",
+    "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-before-merge.json",
+    "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-before-pr.json",
+    "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-before-push.json",
+    "docs/development/evidence/wave3-dispatch-20261012/crm-publication/crm-final-manual-entry.json",
+    "docs/development/evidence/wave3-dispatch-20261012/dispatch-check.json",
+    "docs/development/evidence/wave3-dispatch-20261012/ledger-check.json",
+    "docs/development/evidence/wave3-dispatch-20261012/main-dispatch-review.md",
+    "docs/development/evidence/wave3-dispatch-20261012/numeric-admission.md",
+    "docs/development/evidence/wave3-dispatch-20261012/reviewed-inputs.json",
+    "docs/development/roadmap.json",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "docs/project-memory/CHANGELOG-AI.md",
+    "docs/project-memory/PROJECT_STATE.md",
+    "docs/superpowers/plans/2026-10-12-wave3-dispatch.md"
+  ],
+  "entry_gate": "CONFIRMED",
+  "predecessor_state": "DONE",
+  "write_paths": [
+    "CP6.Entity/Contracts/FinCredit/",
+    "eng/contracts/exact-values-tests/CreditAmountTests.cs",
+    "docs/development/evidence/S01-03/"
+  ],
+  "input_package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "input_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "actual_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "worktree_bytes_match": true
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "actual_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "worktree_bytes_match": true
+    },
+    {
+      "path": "eng/contracts/s01/README.md",
+      "sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "representation": "GIT_BLOB_BYTES",
+      "commit": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+      "actual_sha256": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "worktree_bytes_match": true
+    }
+  ],
+  "native_source": {
+    "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+    "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463"
+  },
+  "profiles": [
+    {
+      "id": "fin-credit-signed",
+      "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+      "definition_pointer": "/$defs/signedDecimal",
+      "field_bindings": [
+        "/$defs/absorptionLink/properties/signedPolicyAmount",
+        "/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "/$defs/moneySigned/properties/amount"
+      ],
+      "fixed_case_ids": [
+        "NUM-001",
+        "NUM-002",
+        "NUM-003",
+        "NUM-004",
+        "NUM-005",
+        "NUM-006",
+        "NUM-007",
+        "NUM-008",
+        "NUM-010",
+        "CREDIT-005",
+        "CREDIT-006",
+        "CREDIT-JS-001",
+        "CREDIT-JS-002",
+        "CREDIT-JS-003"
+      ]
+    },
+    {
+      "id": "fin-credit-nonnegative",
+      "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+      "definition_pointer": "/$defs/nonNegativeDecimal",
+      "field_bindings": [
+        "/$defs/moneyNonNegative/properties/amount",
+        "/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "/$defs/arCut/properties/arBookedExposure",
+        "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "/$defs/reservationSet/properties/activeReservedDelta",
+        "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "/$defs/creditExposureSnapshot/properties/totalExposure",
+        "/$defs/subject/properties/currentCommittedPolicyAmount",
+        "/$defs/subject/properties/targetCommittedPolicyAmount",
+        "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "/$defs/postedOpenContribution/properties/policyAmount",
+        "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "/$defs/effectiveCreditContribution/properties/policyAmount",
+        "/$defs/appliedReceiptContribution/properties/policyAmount",
+        "/$defs/unbilledOrderContribution/properties/policyAmount",
+        "/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "fixed_case_ids": [
+        "NUM-011",
+        "CREDIT-001",
+        "CREDIT-002",
+        "CREDIT-007",
+        "CREDIT-009",
+        "CREDIT-011"
+      ]
+    },
+    {
+      "id": "fin-credit-positive",
+      "schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+      "definition_pointer": "/$defs/positiveDecimal",
+      "field_bindings": [
+        "/$defs/moneyPositive/properties/amount",
+        "/$defs/fxEvidence/properties/rate",
+        "/$defs/planAtpObservationInput/properties/requestedQuantity",
+        "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+        "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+      ],
+      "fixed_case_ids": [
+        "NUM-009",
+        "CREDIT-003",
+        "CREDIT-004",
+        "CREDIT-008",
+        "CREDIT-010"
+      ]
+    }
+  ],
+  "shared_read_only_pins": [
+    {
+      "path": "CP6.Entity/CP6.Entity.csproj",
+      "sha256_git_blob": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d"
+    },
+    {
+      "path": "CP6.Entity/packages.lock.json",
+      "sha256_git_blob": "ff90d3bb5b2ea55f88c84d3fb0a4a33afd5eae54fb2e19b4898c358b290560f3"
+    },
+    {
+      "path": "Directory.Build.props",
+      "sha256_git_blob": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "sha256_git_blob": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StrictJsonTests.cs",
+      "sha256_git_blob": "d3aadd552e7937b6def544971386c5b4330dc2007aa1a97fd1d340e04975fc94"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "sha256_git_blob": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/NullOnly.cs",
+      "sha256_git_blob": "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs",
+      "sha256_git_blob": "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee"
+    },
+    {
+      "path": "CP6.Core/Services/Fin/CreditControlService.cs",
+      "sha256_git_blob": "a3354f05d9234a4ebbcc6405f41d0f8ea8e70cb6a05aae43cf557d303bb4d779"
+    },
+    {
+      "path": "CP6.Core/Services/Fin/ICreditControlService.cs",
+      "sha256_git_blob": "cbdd0b5eb2dd8ac21e1a44a615f6587558bcdfa1934036784bef336c5b9f730a"
+    }
+  ],
+  "result": "PASS",
+  "limits": "Read-only source/assignment admission, no business test, DB, Actions or deployment."
+}

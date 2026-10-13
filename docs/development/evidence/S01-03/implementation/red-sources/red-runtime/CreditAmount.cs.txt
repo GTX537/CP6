@@ -1,0 +1,21 @@
+using System.Numerics;
+using System.Text.Json.Serialization;
+
+namespace CP6.Entity.Contracts.FinCredit;
+
+[JsonConverter(typeof(CreditAmountJsonConverter))]
+public readonly struct CreditAmount : IComparable<CreditAmount>, IEquatable<CreditAmount>
+{
+    public BigInteger Coefficient => throw new NotImplementedException();
+    public int Scale => throw new NotImplementedException();
+    public static CreditAmount Parse(string text, CreditAmountProfile profile) => throw new NotImplementedException();
+    public static CreditAmount FromIntermediate(BigInteger coefficient, int scale) => throw new NotImplementedException();
+    public CreditAmount Add(CreditAmount other) => throw new NotImplementedException();
+    public CreditAmount Subtract(CreditAmount other) => throw new NotImplementedException();
+    public static CreditAmount Sum(IEnumerable<CreditAmount> terms) => throw new NotImplementedException();
+    public string ToFieldString(CreditAmountProfile profile) => throw new NotImplementedException();
+    public int CompareTo(CreditAmount other) => throw new NotImplementedException();
+    public bool Equals(CreditAmount other) => throw new NotImplementedException();
+    public override bool Equals(object? obj) => throw new NotImplementedException();
+    public override int GetHashCode() => throw new NotImplementedException();
+}
