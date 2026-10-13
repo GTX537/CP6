@@ -1,0 +1,2 @@
+# Preserve exact evidence bytes; CRLF is a line ending, not trailing content.
+* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

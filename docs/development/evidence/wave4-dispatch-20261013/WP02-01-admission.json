@@ -1,0 +1,188 @@
+{
+  "task_id": "WP02-01",
+  "date": "2026-10-13",
+  "kind": "READ_ONLY_ADMISSION_RECOMMENDATION",
+  "recommendation": "ADMISSIBLE_AFTER_COORD_CLAIM_AND_PUBLIC_INTERFACE_WINDOW",
+  "main_pin": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "platform_pin": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+  "worktree": "D:/CP6.Platform-worktrees/wp02-01-20261012",
+  "branch": "codex/wp02-01-trusted-context-20261012",
+  "ledger_at_main_pin": {
+    "state": "PLANNED",
+    "entry_gate": "NOT_CHECKED",
+    "assignment": null
+  },
+  "prerequisites": {
+    "S01-02": "DONE at pinned roadmap; source 3890b4fdbda47c3762b9f51ea75b8c156540c69f, remote main fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+    "S02-00": "DONE design at pinned roadmap; source 9e2f1d4f1ed7048c125d350e31a4067745ae3233, remote main b584563e5ebf323c840866e9c242a710f8c8d6ec"
+  },
+  "external_prerequisite_blockers": [],
+  "pending_coordination": [
+    "COORD unique assignment and Platform:request-context window",
+    "Versioned public extension signatures and namespace frozen in private PLAN before public contract edits"
+  ],
+  "allowed_write_paths": [
+    "src/CP6.Platform.AspNetCore/RequestContextAccessor.cs",
+    "src/CP6.Platform.AspNetCore/RequestContextExtensions.cs",
+    "src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs",
+    "src/CP6.Platform.Contracts/Context/",
+    "src/CP6.Platform.Abstractions/Context/",
+    "src/CP6.Platform.AspNetCore/Context/",
+    "src/CP6.Platform.Messaging/Context/",
+    "tests/CP6.Platform.AspNetCoreTests/RequestContextMiddlewareTests.cs",
+    "tests/CP6.Platform.UnitTests/RequestContextTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/Context/",
+    "tests/CP6.Platform.UnitTests/Context/",
+    "docs/WP02-01-TRUSTED-CONTEXT.md",
+    "docs/P02-REQUEST-CONTEXT.md",
+    "docs/development/evidence/WP02-01/"
+  ],
+  "readonly_boundaries": [
+    "RequestContextSnapshot and exact seven-property IRequestContext",
+    "IRequestContextResolver legacy signature; AddCp6RequestContext/UseCp6RequestContext compatibility",
+    "JWT/profile/cache code; CloudEvent seven required attributes and original wire bytes",
+    "EntityFramework models/migrations/transactions",
+    "All project/dependency/version files and workflows",
+    "Main/CRM files and Main shared state files"
+  ],
+  "existing_capabilities": [
+    "Immutable seven-field snapshot; no default tenant; nullable UserId/TokenId preserved",
+    "Scoped accessor and HTTP finally cleanup; null/invalid snapshot is 403; no downstream invocation",
+    "Existing context tests cover success/cleanup, missing context, empty tenant, forged X-Tenant",
+    "Existing JWT validation covers issuer/audience/RS256/at+jwt/kid/required claims and lifetime; reuse",
+    "Existing CloudEvent/bundle/topic/partition validation; not identity authorization",
+    "No AsyncLocal found in fixed Platform src; do not invent an existing AsyncLocal leak"
+  ],
+  "required_delta": [
+    "Explicit per-operation scopes for message/worker with cleanup and A/B concurrency/cancellation coverage",
+    "Independent versioned trusted-source binding evidence; tenant/issuer/actor/effectiveActor ownership must be explicit",
+    "Current service identity differs from originalRequester audit reference; minimal scopes do not arise from null UserId or IsPublic",
+    "Host adoption matrix separates package/reference/registration/enabled/runtime/business acceptance"
+  ],
+  "compatibility": [
+    "Do not add mandatory issuer/region/epoch/actor to old Snapshot or frozen event",
+    "Use separately versioned ContextResolutionEvidenceV1/ctx-binding-v1 candidate, signatures coordinated; effectiveActor exact type not yet frozen",
+    "Keep legacy middleware 403 and JWT 401; authority-unavailable 503 only through explicit new host adapter",
+    "Core scope in Abstractions can preserve current dependency graph; Messaging must not acquire AspNetCore dependency without coordinated window"
+  ],
+  "original_acceptance": {
+    "catalog_path": "docs/development/assessments/20261011/catalogs/foundation.json",
+    "json_pointer": "/targets/13",
+    "case_count": 28,
+    "case_ids": [
+      "CTX01-A1",
+      "CTX01-A2",
+      "CTX01-A3",
+      "CTX01-A4",
+      "CTX01-A5",
+      "CTX01-A6",
+      "CTX01-A7",
+      "CTX02-A1",
+      "CTX02-A2",
+      "CTX02-A3",
+      "CTX02-A4",
+      "CTX02-A5",
+      "CTX02-A6",
+      "CTX02-A7",
+      "CTX03-A1",
+      "CTX03-A2",
+      "CTX03-A3",
+      "CTX03-A4",
+      "CTX03-A5",
+      "CTX03-A6",
+      "CTX03-A7",
+      "CTX04-A1",
+      "CTX04-A2",
+      "CTX04-A3",
+      "CTX04-A4",
+      "CTX04-A5",
+      "CTX04-A6",
+      "CTX04-A7"
+    ],
+    "status": "NOT_RUN",
+    "original_body_path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/265aecc406e50ca8__PLT-CTX-01_完整静态设计_v0.1.md",
+    "original_body_sha256": "265aecc406e50ca8117d1823d09fac61fa5694894baecdaff31df87013f8eb6f",
+    "source_lines": {
+      "CTX01": 56,
+      "CTX02": 76,
+      "CTX03": 96,
+      "CTX04": 114
+    },
+    "original_location_note": "Local archive bytes matched fixed catalog SHA-256; original is not tracked at Main pin",
+    "ownership_note": "Library subscenarios only. CTX02 routing/final fence, CTX03 current registration/revocation, CTX04 real host/Owner adoption require separate host evidence; none may be marked globally PASS by Platform tests."
+  },
+  "pg_case": {
+    "id": "PGT-004",
+    "path": "docs/development/acceptance/postgresql-tenancy.json",
+    "source_scope": [
+      "CTX01-A2",
+      "CTX01-A4",
+      "CTX01-A6",
+      "CTX02-A2"
+    ],
+    "status": "NOT_RUN",
+    "expected": "Missing/empty tenant, unknown issuer/region and forged schema/other tenant rejected before business connection; tenantless health uses no business DB; safe error"
+  },
+  "acceptance_focus": [
+    "A/B/A serial scopes and parallel A/B retain exact tenant and actor; each disposal clears Current",
+    "Resolver/handler exception and cancellation leave no context for next operation",
+    "Missing tenant, forged issuer/actor/effectiveActor and unregistered mapping fail without default fallback",
+    "Current service registration governs worker/message; historical requester cannot impersonate effectiveActor",
+    "Frozen seven-property interface/constructor/null values and old responses remain compatible"
+  ],
+  "validation_commands": [
+    "dotnet test tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj --configuration Release",
+    "dotnet test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj --configuration Release"
+  ],
+  "validation_working_directory": "D:/CP6.Platform-worktrees/wp02-01-20261012",
+  "validation_status": "NOT_RUN",
+  "host_boundary": "At fixed Main pin CP6.Core/WebApi search finds no Add/UseCp6RequestContext. CrmIdentity/ErpIntegration conditionally register JWT; existing TenantMiddleware keeps default context when claim invalid/missing. Platform task cannot claim this Main fallback removed. Main storage/final gates remain WP02-02/03 and CRM adoption follow-on tasks. CRM latest source was not re-audited.",
+  "pg_boundary": "Consume cp6-pg-tenancy-v1 only; shared control/message schemas plus tenant business schemas, TenantId retained. Scope does not prove authorization/RLS/pool isolation/Owner transaction; no schema or migration writes.",
+  "workflow_preflight": "Fixed main only: p10-rfc3161-preflight has pull_request limited to its own workflow and P10Rfc3161PreflightWorkflowContractTests.cs; whitelist excludes both. Other observed workflows workflow_dispatch. Recheck candidate and protected base before push/PR/merge. No modifications, trigger, run query or cancellation.",
+  "source_pins": [
+    {
+      "repository": "Main",
+      "source_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "sha256": "6af601f92d8a3f3b347358313bd6d3c199581a0fd93650b3c6c7090249329417",
+      "hash_basis": "exact_git_blob_bytes"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "path": "docs/design-handbook/modules/PLT-CTX-01.md",
+      "sha256": "b7587dd2f62a2810212b8fdc7558cbac65262bd7e8a96418f6e5c0885cda97d4",
+      "hash_basis": "exact_git_blob_bytes"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
+      "sha256": "dfcaea44365d92f7457db783908dd8eb6f1eaa7651c67016bdff68281a0148c3",
+      "hash_basis": "exact_git_blob_bytes"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "path": "docs/development/acceptance/postgresql-tenancy.json",
+      "sha256": "b56363bd547034d45e5556bf112b41f71cbb4d7b9dc565de25876d297deefbd5",
+      "hash_basis": "exact_git_blob_bytes"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "path": "src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs",
+      "sha256": "0a586bbf0fe0b983514b4e45e8124729f38aa065ebee3b92a8c446e2dc95e211",
+      "hash_basis": "exact_git_blob_bytes"
+    }
+  ],
+  "not_run": [
+    "build/test",
+    "actual host acceptance",
+    "database/broker/PG isolation",
+    "migration/deployment",
+    "package publication/consumer adoption",
+    "GitHub Actions"
+  ],
+  "audit_writes": "Only this .md and .json; no repository/Git/network message mutation"
+}

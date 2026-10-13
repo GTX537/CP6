@@ -1,0 +1,62 @@
+{
+  "observed_at": "2026-10-13T04:00:04.285414+00:00",
+  "main_baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "platform_baseline": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+  "tasks": [
+    {
+      "lane": "A",
+      "id": "S01-11",
+      "previous_task": "S01-03",
+      "repository": "Main",
+      "repo": "GTX537/CP6",
+      "branch": "codex/s01-11-erp-credit-20261012",
+      "worktree": "D:/CP6-worktrees/s01-11-20261012",
+      "baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "head": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "handoff_branch": "codex/dev-handoff-s01-11",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-11/messages/"
+    },
+    {
+      "lane": "B",
+      "id": "S01-10",
+      "previous_task": "S01-04",
+      "repository": "Main",
+      "repo": "GTX537/CP6",
+      "branch": "codex/s01-10-postgresql-exact-20261012",
+      "worktree": "D:/CP6-worktrees/s01-10-20261012",
+      "baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "head": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "handoff_branch": "codex/dev-handoff-s01-10",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-10/messages/"
+    },
+    {
+      "lane": "C",
+      "id": "WP02-01",
+      "previous_task": "S01-06",
+      "repository": "Platform",
+      "repo": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-01-trusted-context-20261012",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-01-20261012",
+      "baseline": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "head": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "handoff_branch": "codex/dev-handoff-wp02-01",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-01/messages/"
+    },
+    {
+      "lane": "D",
+      "id": "S01-07",
+      "previous_task": "S01-08",
+      "repository": "Main",
+      "repo": "GTX537/CP6",
+      "branch": "codex/s01-07-quality-contracts-20261012",
+      "worktree": "D:/CP6-worktrees/s01-07-20261012",
+      "baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "head": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "handoff_branch": "codex/dev-handoff-s01-07",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-07/messages/"
+    }
+  ],
+  "actions_queued_or_running": [],
+  "previous_handoff_head": "fde58047703aa2ef18bb7bcf44dbc7fa1da93fbd",
+  "scope": "Fresh task worktrees only; no business builds, source edits or database operations."
+}

@@ -1,0 +1,131 @@
+{
+  "result": "PASS",
+  "scope": "Dependency/source/write-window/worktree admission only; no future implementation or database test executed",
+  "observed_at": "2026-10-13T04:29:31.680556+00:00",
+  "clock_basis": "coordinator host UTC",
+  "main": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "platform": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+  "tasks": [
+    {
+      "id": "S01-11",
+      "dependencies": [
+        "S01-02"
+      ],
+      "baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "branch": "codex/s01-11-erp-credit-20261012",
+      "worktree": "D:/CP6-worktrees/s01-11-20261012",
+      "clean_worktree": true,
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "source_admission": [
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/S01-11-admission.md",
+          "sha256": "5c6a4e9e734e5e246b8113cd2743518886060135fcd4f0f23466445f9666f3ab",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/S01-11-admission.json",
+          "sha256": "b083ee431efceb60d9bc22f232901dbb4d6191996370472b74467afb0d1e713e",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "local_resource": null,
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "id": "S01-10",
+      "dependencies": [
+        "S01-03",
+        "S01-04",
+        "S01-06"
+      ],
+      "baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "branch": "codex/s01-10-postgresql-exact-20261012",
+      "worktree": "D:/CP6-worktrees/s01-10-20261012",
+      "clean_worktree": true,
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "source_admission": [
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/S01-10-admission.md",
+          "sha256": "96f0b39c364c0acdf1ce9e653c731ff791060fe3ec448e66fa52af2fe380a589",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/S01-10-admission.json",
+          "sha256": "decef6e383f94c957e344d2df0fcd4a7570dac461a0bb378a2e6d238ae93db1a",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "local_resource": {
+        "host": "127.0.0.1",
+        "port": 55410,
+        "owned_root": "D:/CP6-local-test/S01-10/",
+        "provisioned": false,
+        "runtime_result": "NOT_RUN",
+        "existing_service_excluded": "postgresql-x64-18 on 5432",
+        "scope": "Only new task-owned disposable cluster/database; verify ownership, absolute path, marker/OID/role and occupancy before create/cleanup"
+      },
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "id": "WP02-01",
+      "dependencies": [
+        "S01-02"
+      ],
+      "baseline": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "branch": "codex/wp02-01-trusted-context-20261012",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-01-20261012",
+      "clean_worktree": true,
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "source_admission": [
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/WP02-01-admission.md",
+          "sha256": "dcae64d48bb43ab92bb2be81d37a33f38ee37edbc7ae293b298c08e5d78721ba",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/WP02-01-admission.json",
+          "sha256": "e9c80a5c5585152d8851c40948311614578439c32dc6b284fa933e7081bf490c",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "local_resource": null,
+      "runtime_result": "NOT_RUN"
+    },
+    {
+      "id": "S01-07",
+      "dependencies": [
+        "S01-02"
+      ],
+      "baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+      "branch": "codex/s01-07-quality-contracts-20261012",
+      "worktree": "D:/CP6-worktrees/s01-07-20261012",
+      "clean_worktree": true,
+      "entry_result": "CONFIRMED",
+      "worker_start_received": false,
+      "source_admission": [
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/S01-07-admission.md",
+          "sha256": "2c654a7cd34cf5e2282bc0a0be0810aabd81d8f1e074c9724aa3200cdfb77e7b",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave4-dispatch-20261013/S01-07-admission.json",
+          "sha256": "6f593c4aa5f4604e91d299c375be8c968c2f0f275f6c86de11062bbb0c9061ea",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "local_resource": null,
+      "runtime_result": "NOT_RUN"
+    }
+  ],
+  "write_windows_pairwise_disjoint": true,
+  "done_tasks_before": 12,
+  "done_tasks_after": 12,
+  "business_targets_completed": 0,
+  "business_target_count": 125,
+  "runtime_revision_scenarios": "247 NOT_RUN",
+  "reference_only_historical_scenarios": 41
+}

@@ -1,0 +1,279 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-13T04:39:08.628435+00:00",
+  "scope": "Added Markdown relative file links in staged diff; historical unchanged lines and web availability not checked",
+  "checked": 54,
+  "errors": [],
+  "links": [
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-01",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "S01-11.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "S01-10.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "WP02-01.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "S01-07.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "../../evidence/wave4-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-07-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-07-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-10-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-10-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-11-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-11-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../task-plans/WP02.md#wp02-01",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../evidence/wave4-dispatch-20261013/WP02-01-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../evidence/wave4-dispatch-20261013/WP02-01-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "setup.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "../../dispatch/20261013-wave4/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-11-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-11-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-10-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-10-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "WP02-01-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "WP02-01-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-07-admission.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-07-admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "../wave3-integration-20261012/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "dispatch-check.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "ledger-check.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "added-links.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "check-history.json",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/dispatch/20261013-wave4/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/evidence/wave4-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/dispatch/20261013-wave4/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/evidence/wave4-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/dispatch/20261013-wave4/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/evidence/wave4-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/dispatch/20261013-wave4/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/evidence/wave4-dispatch-20261013/README.md",
+      "exists": true
+    }
+  ]
+}

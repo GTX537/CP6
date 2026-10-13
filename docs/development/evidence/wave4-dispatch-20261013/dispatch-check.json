@@ -1,0 +1,574 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-13T04:30:46.276778+00:00",
+  "clock_basis": "coordinator host UTC",
+  "scope": "Static dispatch/ledger/fixed input availability/link checks only; no future consumer or PostgreSQL implementation run",
+  "tasks": 4,
+  "assigned_case_associations": 92,
+  "unique_assigned_cases": 92,
+  "source_reads": [
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-00",
+      "variant": "composed",
+      "sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-01",
+      "variant": "composed",
+      "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-02",
+      "variant": "composed",
+      "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-03",
+      "variant": "composed",
+      "sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-04",
+      "variant": "composed",
+      "sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-05",
+      "variant": "composed",
+      "sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-06",
+      "variant": "composed",
+      "sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-07",
+      "variant": "composed",
+      "sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-08",
+      "variant": "composed",
+      "sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-09",
+      "variant": "composed",
+      "sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-10",
+      "variant": "composed",
+      "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-11",
+      "variant": "composed",
+      "sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "composed-12",
+      "variant": "composed",
+      "sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-current-v1",
+      "source": "erp-registry-current",
+      "variant": "composed",
+      "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-frozen-r8",
+      "source": "composed-10",
+      "variant": "original",
+      "sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-frozen-r8",
+      "source": "composed-11",
+      "variant": "original",
+      "sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-frozen-r8",
+      "source": "composed-12",
+      "variant": "original",
+      "sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-11",
+      "profile": "erp-credit-frozen-r8",
+      "source": "erp-registry-frozen",
+      "variant": "original",
+      "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "fin-credit-signed",
+      "source": "numeric-0",
+      "variant": "original",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "fin-credit-nonnegative",
+      "source": "numeric-0",
+      "variant": "original",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "fin-credit-positive",
+      "source": "numeric-0",
+      "variant": "original",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "fin-inv-decimal18",
+      "source": "numeric-1",
+      "variant": "original",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "fin-inv-decimal18",
+      "source": "numeric-2",
+      "variant": "original",
+      "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "fin-inv-qty12",
+      "source": "numeric-1",
+      "variant": "original",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "fin-inv-qty12",
+      "source": "numeric-2",
+      "variant": "original",
+      "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "atp-stableid-r1",
+      "source": "composed-13",
+      "variant": "composed",
+      "sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "atp-stableid-r1",
+      "source": "composed-14",
+      "variant": "composed",
+      "sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "atp-stableid-r1",
+      "source": "composed-24",
+      "variant": "composed",
+      "sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-10",
+      "profile": "atp-stableid-r1",
+      "source": "composed-25",
+      "variant": "composed",
+      "sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-07",
+      "profile": "ncr-main-r6",
+      "source": "composed-15",
+      "variant": "composed",
+      "sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-07",
+      "profile": "ncr-main-r6",
+      "source": "composed-17",
+      "variant": "composed",
+      "sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-07",
+      "profile": "ncr-cp4",
+      "source": "composed-16",
+      "variant": "composed",
+      "sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "actual_file_hash_matches": true
+    },
+    {
+      "task": "S01-07",
+      "profile": "ipqc-r4",
+      "source": "composed-19",
+      "variant": "composed",
+      "sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "actual_file_hash_matches": true
+    }
+  ],
+  "additional_native_source_reads": [
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11b9077c2ccacb39__NCR-R6-WIRE.json",
+      "sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3e5c08a426bef34__CONSUMER-WIRE.json",
+      "sha256": "a3e5c08a426bef34ed18118c2f9ee9d9285dfa70ec369bcc1b16587349b42dc7",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/93d5eabb725f756a__SOURCE-QA-SCHEMAS.json",
+      "sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45604318db366d61__NCR-R6-MES-DISPATCH-SHAPE.json",
+      "sha256": "45604318db366d61face166e65e5672339abf06d47887a86ce8edc8e6fe5e524",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/39/392443aa5b52e47d__CONTRACT-SCHEMAS.json",
+      "sha256": "392443aa5b52e47dd4947ee25aca57b61b7e454e5bd785e53ae0c630f714e356",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/172f4d0f08b5bd4f__NCR-R6-FENCED-OWNER-SHAPES.json",
+      "sha256": "172f4d0f08b5bd4f79a067d4bac5da9f3d4ed1b69518fd99ed60da8c7fe625c4",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f0519fea751041c__SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45d7e3551df0940f__NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+      "sha256": "45d7e3551df0940f9875c3bc02e0e7b2ba0ccce581fc0145187c111a1ab8a160",
+      "matches": true
+    },
+    {
+      "task": "S01-07",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+      "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+      "matches": true
+    },
+    {
+      "task": "S01-11",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b324a9b62d888f26__ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+      "matches": true
+    },
+    {
+      "task": "S01-11",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8a/8a7864b91e2bd19f__ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f/117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75/PLAN-ATP-WIRE.types.cs",
+      "sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f/29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+      "sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd/PLAN-ATP-WIRE.schema.json",
+      "sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+      "sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7/PLAN-ATP-WIRE.types.ts",
+      "sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+      "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "matches": true
+    },
+    {
+      "task": "S01-10",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+      "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "matches": true
+    }
+  ],
+  "pin_count": 15,
+  "link_checks": [
+    {
+      "source": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "S01-11.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "S01-10.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "WP02-01.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "S01-07.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/README.md",
+      "link": "../../evidence/wave4-dispatch-20261013/README.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-07-admission.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-07.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-07-admission.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-10-admission.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-10.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-10-admission.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../../superpowers/plans/2026-10-11-s01-task-breakdown.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-11-admission.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/S01-11.md",
+      "link": "../../evidence/wave4-dispatch-20261013/S01-11-admission.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../task-plans/WP02.md#wp02-01"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../08-postgresql-baseline.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "dispatch.json"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../evidence/wave4-dispatch-20261013/WP02-01-admission.md"
+    },
+    {
+      "source": "docs/development/dispatch/20261013-wave4/WP02-01.md",
+      "link": "../../evidence/wave4-dispatch-20261013/WP02-01-admission.json"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "admission.json"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "setup.json"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "../../dispatch/20261013-wave4/README.md"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-11-admission.md"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-11-admission.json"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-10-admission.md"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-10-admission.json"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "WP02-01-admission.md"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "WP02-01-admission.json"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-07-admission.md"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "S01-07-admission.json"
+    },
+    {
+      "source": "docs/development/evidence/wave4-dispatch-20261013/README.md",
+      "link": "../wave3-integration-20261012/README.md"
+    }
+  ],
+  "unchanged_business_ledger": true,
+  "unchanged_other_implementation_tasks": true,
+  "write_windows_disjoint": true,
+  "business_result": "NOT_RUN"
+}

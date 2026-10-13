@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-10-12",
+  "as_of": "2026-10-13",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -158612,6 +158612,11 @@
       "date": "2026-10-12",
       "change": "Wave3: S01-03/04/06/08 READY with CONFIRMED entry and independent write windows; 8/375 DONE unchanged; no START received; runtime/business unchanged.",
       "evidence": "docs/development/dispatch/20261012-wave3/README.md"
+    },
+    {
+      "date": "2026-10-13",
+      "change": "Wave4: S01-11/10/07 and WP02-01 READY/CONFIRMED; independent write windows and S01-10 owned local PostgreSQL resource reservation. No START received, 12/375 DONE unchanged; business/runtime unchanged.",
+      "evidence": "docs/development/dispatch/20261013-wave4/README.md"
     }
   ],
   "implementation_assessment": {
@@ -159151,15 +159156,34 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "D / S01-07（沿用原S01-08对话）",
+        "repository": "Main",
+        "branch": "codex/s01-07-quality-contracts-20261012",
+        "worktree": "D:/CP6-worktrees/s01-07-20261012",
+        "claimed_at": "2026-10-13T04:29:31.680556+00:00",
+        "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+        "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "CP6.Entity/Contracts/Quality/",
+          "cp6.web/src/contracts/quality/",
+          "eng/contracts/exact-values-tests/QualityContractTests.cs",
+          "eng/contracts/s01-07/",
+          "docs/development/evidence/S01-07/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-07",
+        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -159353,15 +159377,42 @@
       ],
       "relative_size": "L",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "B / S01-10（沿用原S01-04对话）",
+        "repository": "Main",
+        "branch": "codex/s01-10-postgresql-exact-20261012",
+        "worktree": "D:/CP6-worktrees/s01-10-20261012",
+        "claimed_at": "2026-10-13T04:29:31.680556+00:00",
+        "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+        "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "CP6.Persistence.PostgreSql/",
+          "eng/contracts/s01/postgresql-mappings.json",
+          "eng/contracts/postgresql-tests/",
+          "docs/development/evidence/S01-10/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-10",
+        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+        "reserved_local_resource": {
+          "host": "127.0.0.1",
+          "port": 55410,
+          "owned_root": "D:/CP6-local-test/S01-10/",
+          "provisioned": false,
+          "runtime_result": "NOT_RUN",
+          "existing_service_excluded": "postgresql-x64-18 on 5432",
+          "scope": "Only new task-owned disposable cluster/database; verify ownership, absolute path, marker/OID/role and occupancy before create/cleanup"
+        }
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -159382,15 +159433,34 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "A / S01-11（沿用原S01-03对话）",
+        "repository": "Main",
+        "branch": "codex/s01-11-erp-credit-20261012",
+        "worktree": "D:/CP6-worktrees/s01-11-20261012",
+        "claimed_at": "2026-10-13T04:29:31.680556+00:00",
+        "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+        "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "CP6.Entity/Contracts/ErpCredit/",
+          "cp6.web/src/contracts/erp-credit/",
+          "eng/contracts/exact-values-tests/ErpCreditCodecTests.cs",
+          "eng/contracts/s01-11/",
+          "docs/development/evidence/S01-11/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-11",
+        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -159521,11 +159591,39 @@
         "Platform:request-context"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-01",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / WP02-01（沿用原S01-06对话）",
+        "repository": "Platform",
+        "branch": "codex/wp02-01-trusted-context-20261012",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-01-20261012",
+        "claimed_at": "2026-10-13T04:29:31.680556+00:00",
+        "baseline_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+        "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.AspNetCore/RequestContextAccessor.cs",
+          "src/CP6.Platform.AspNetCore/RequestContextExtensions.cs",
+          "src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs",
+          "src/CP6.Platform.Contracts/Context/",
+          "src/CP6.Platform.Abstractions/Context/",
+          "src/CP6.Platform.AspNetCore/Context/",
+          "src/CP6.Platform.Messaging/Context/",
+          "tests/CP6.Platform.AspNetCoreTests/RequestContextMiddlewareTests.cs",
+          "tests/CP6.Platform.UnitTests/RequestContextTests.cs",
+          "tests/CP6.Platform.AspNetCoreTests/Context/",
+          "tests/CP6.Platform.UnitTests/Context/",
+          "docs/WP02-01-TRUSTED-CONTEXT.md",
+          "docs/P02-REQUEST-CONTEXT.md",
+          "docs/development/evidence/WP02-01/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-01",
+        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
