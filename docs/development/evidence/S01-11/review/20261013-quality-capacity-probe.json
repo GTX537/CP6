@@ -1,0 +1,49 @@
+{
+  "task": "S01-11",
+  "phase": "QUALITY",
+  "observed_at": "2026-10-13T06:25:31.963Z",
+  "probe": "Small valid disjoint native interval capacity probe; no functional gate rerun",
+  "runtime": "v20.19.0",
+  "source_path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+  "source_sha256": "13d65b491d18e1fea1486f7a662cbc8dc409df8776be2f4ddd395e6079b2b6b2",
+  "source_modified": false,
+  "code_execution": "Current task production TypeScript transpiled in memory using installed locked TypeScript; no archive execution",
+  "maximum_schema_intervals": 200000,
+  "maximum_pairwise_comparisons": 19999900000,
+  "samples": [
+    {
+      "intervals": 10,
+      "allocations": 1,
+      "raw_bytes": 2165,
+      "accepted": true,
+      "elapsed_ms": 7.437,
+      "pairwise_comparisons": 45
+    },
+    {
+      "intervals": 1000,
+      "allocations": 10,
+      "raw_bytes": 32806,
+      "accepted": true,
+      "elapsed_ms": 76.203,
+      "pairwise_comparisons": 499500
+    },
+    {
+      "intervals": 2000,
+      "allocations": 20,
+      "raw_bytes": 66446,
+      "accepted": true,
+      "elapsed_ms": 178.076,
+      "pairwise_comparisons": 1999000
+    },
+    {
+      "intervals": 4000,
+      "allocations": 40,
+      "raw_bytes": 133726,
+      "accepted": true,
+      "elapsed_ms": 579.049,
+      "pairwise_comparisons": 7998000
+    }
+  ],
+  "full_maximum_executed": false,
+  "business_Owner_Store_acceptance": "NOT_RUN"
+}

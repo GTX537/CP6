@@ -1,0 +1,5 @@
+using CP6.Entity.Contracts.ErpCredit;
+namespace Cp6.ErpCredit.CurrentV1.Generated;
+public sealed class CurrentCreditCodec(IReadOnlyDictionary<string,ReadOnlyMemory<byte>> files):CreditCodecSet(true,files) {
+ public static AdaptationAssessment AssessAdaptation(NativeCreditDocument original)=>new("READ_ONLY_UNPROVEN","MANUAL_RECONCILIATION","UNKNOWN",false,false,false,original);
+}

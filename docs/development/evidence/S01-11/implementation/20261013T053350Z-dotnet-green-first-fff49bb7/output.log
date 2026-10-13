@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  CP6.Entity -> D:\CP6-worktrees\s01-11-20261012\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+D:\CP6-worktrees\s01-11-20261012\eng\contracts\exact-values-tests\ErpCreditCodecTests.cs(33,45): warning xUnit1026: Theory method 'Full_native_contract' on test class 'ErpCreditCodecTests' does not use parameter 'id'. Use the parameter, or remove the parameter and associated data. (https://xunit.net/xunit.analyzers/rules/xUnit1026) [D:\CP6-worktrees\s01-11-20261012\eng\contracts\exact-values-tests\CP6.ExactValues.Tests.csproj]
+  CP6.ExactValues.Tests -> D:\CP6-worktrees\s01-11-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll
+Test run for D:\CP6-worktrees\s01-11-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6-worktrees\s01-11-20261012\docs\development\evidence\S01-11\implementation\20261013T053350Z-dotnet-green-first-fff49bb7\results.trx
+
+Passed!  - Failed:     0, Passed:   208, Skipped:     0, Total:   208, Duration: 2 s - CP6.ExactValues.Tests.dll (net8.0)

@@ -1,0 +1,663 @@
+{
+  "origin": "CONSTRUCTED_CONTRACT_UNIT_INPUT",
+  "objects": {
+    "CreditOwnerRequest": {
+      "requestKey": "00000000-0000-4000-8000-000000000001",
+      "scopeRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "ownerContractRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "rmaRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "returnClaimRefs": [
+        {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "originalFulfilmentRefs": [
+        {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "invoiceLineRefs": [
+        {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "eligibleRanges": [
+        {
+          "from": "0",
+          "to": "1"
+        }
+      ],
+      "eligibleQuantity": {
+        "value": "1",
+        "uom": {
+          "code": "fixture",
+          "version": "fixture"
+        }
+      },
+      "reasonCode": "00000000-0000-4000-8000-000000000001",
+      "requestedComponents": [
+        "CREDIT"
+      ],
+      "occurredAt": "2026-10-13T00:00:00.000Z",
+      "sourceVersionRefs": [
+        {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "expectedOwnerHeadRef": null
+    },
+    "CreditOwnerQueryRequest": {
+      "queryIdentity": {
+        "owner": "00000000-0000-4000-8000-000000000001",
+        "contractRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "scopeRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "businessTargetRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "sourceVersionRefs": [],
+        "queryKey": "00000000-0000-4000-8000-000000000001",
+        "expectedHeadRef": null,
+        "expectedResultDigest": null
+      }
+    },
+    "CreditOwnerQueryResult": {
+      "status": "FOUND",
+      "queryIdentity": {
+        "owner": "00000000-0000-4000-8000-000000000001",
+        "contractRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "scopeRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "businessTargetRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "sourceVersionRefs": [],
+        "queryKey": "00000000-0000-4000-8000-000000000001",
+        "expectedHeadRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "expectedResultDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "result": {
+        "owner": "ERP-CREDIT-01",
+        "requestRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcomeRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "resultVersion": "00000000-0000-4000-8000-000000000001",
+        "resultDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "rmaId": "00000000-0000-4000-8000-000000000001",
+        "components": [
+          {
+            "kind": "CREDIT",
+            "componentRef": {
+              "owner": "fixture",
+              "id": "fixture",
+              "version": "fixture",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "invoiceAllocations": [
+              {
+                "allocationId": "00000000-0000-4000-8000-000000000001",
+                "invoiceLineRef": {
+                  "owner": "fixture",
+                  "id": "fixture",
+                  "version": "fixture",
+                  "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                },
+                "coveredClaimRefs": [
+                  {
+                    "owner": "fixture",
+                    "id": "fixture",
+                    "version": "fixture",
+                    "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                ],
+                "coveredRanges": [
+                  {
+                    "from": "0",
+                    "to": "1"
+                  }
+                ],
+                "quantity": {
+                  "value": "1",
+                  "uom": {
+                    "code": "fixture",
+                    "version": "fixture"
+                  }
+                },
+                "net": {
+                  "value": "1.0",
+                  "currency": "USD"
+                },
+                "tax": {
+                  "value": "-0",
+                  "currency": "USD"
+                },
+                "gross": {
+                  "value": "1.0",
+                  "currency": "USD"
+                }
+              }
+            ],
+            "approvedQuantity": {
+              "value": "1",
+              "uom": {
+                "code": "fixture",
+                "version": "fixture"
+              }
+            },
+            "approvalRef": {
+              "owner": "fixture",
+              "id": "fixture",
+              "version": "fixture",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "stableEffectKey": "00000000-0000-4000-8000-000000000001"
+          }
+        ],
+        "approvalRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "currentHeadProof": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "previousOutcomeRef": null,
+        "recordedAt": "2026-10-13T00:00:00.000Z",
+        "terminalAt": "2026-10-13T00:00:00.000Z"
+      },
+      "observedAt": "2026-10-13T00:00:00.000Z"
+    },
+    "CommercialOutcomeRef": {
+      "owner": "ERP-CREDIT-01",
+      "requestRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "outcomeRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "resultVersion": "00000000-0000-4000-8000-000000000001",
+      "resultDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rmaId": "00000000-0000-4000-8000-000000000001",
+      "components": [
+        {
+          "kind": "CREDIT",
+          "componentRef": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "invoiceAllocations": [
+            {
+              "allocationId": "00000000-0000-4000-8000-000000000001",
+              "invoiceLineRef": {
+                "owner": "fixture",
+                "id": "fixture",
+                "version": "fixture",
+                "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "coveredClaimRefs": [
+                {
+                  "owner": "fixture",
+                  "id": "fixture",
+                  "version": "fixture",
+                  "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              ],
+              "coveredRanges": [
+                {
+                  "from": "0",
+                  "to": "1"
+                }
+              ],
+              "quantity": {
+                "value": "1",
+                "uom": {
+                  "code": "fixture",
+                  "version": "fixture"
+                }
+              },
+              "net": {
+                "value": "1.0",
+                "currency": "USD"
+              },
+              "tax": {
+                "value": "-0",
+                "currency": "USD"
+              },
+              "gross": {
+                "value": "1.0",
+                "currency": "USD"
+              }
+            }
+          ],
+          "approvedQuantity": {
+            "value": "1",
+            "uom": {
+              "code": "fixture",
+              "version": "fixture"
+            }
+          },
+          "approvalRef": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "stableEffectKey": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "approvalRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "currentHeadProof": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "previousOutcomeRef": null,
+      "recordedAt": "2026-10-13T00:00:00.000Z",
+      "terminalAt": "2026-10-13T00:00:00.000Z"
+    },
+    "CreditAuthorityReadRequest": {
+      "kind": "CREDIT_AUTHORITY",
+      "readKey": "00000000-0000-4000-8000-000000000001",
+      "scope": {
+        "environmentId": "fixture",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "legalEntityKey": "fixture",
+        "ledgerKey": "fixture",
+        "mode": "DEMO"
+      },
+      "invoiceLineRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "purpose": "fixture"
+      },
+      "orderLineRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "purpose": "fixture"
+      },
+      "reasonKind": "RETURN",
+      "slice": {
+        "sliceId": "fixture",
+        "sourceLineId": "fixture",
+        "from": "0",
+        "toExclusive": "1",
+        "uom": "fixture"
+      },
+      "businessDate": "2026-10-13"
+    },
+    "CreditAuthorityReadResult": {
+      "kind": "FOUND",
+      "readKey": "00000000-0000-4000-8000-000000000001",
+      "reference": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "purpose": "fixture"
+      },
+      "value": {
+        "kind": "CREDIT_AUTHORITY",
+        "body": {
+          "scope": {
+            "environmentId": "fixture",
+            "tenantId": "00000000-0000-4000-8000-000000000001",
+            "legalEntityKey": "fixture",
+            "ledgerKey": "fixture",
+            "mode": "DEMO"
+          },
+          "authorityRef": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "purpose": "fixture"
+          },
+          "invoiceLineRef": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "purpose": "fixture"
+          },
+          "orderLineRef": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "purpose": "fixture"
+          },
+          "customerRef": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "purpose": "fixture"
+          },
+          "currency": "USD",
+          "reasonKind": "RETURN",
+          "slice": {
+            "sliceId": "fixture",
+            "sourceLineId": "fixture",
+            "from": "0",
+            "toExclusive": "1",
+            "uom": "fixture"
+          },
+          "maxQty": "1",
+          "maxNet": "1.0",
+          "maxTax": "0",
+          "maxGross": "1.0",
+          "usedRefs": [],
+          "pendingRefs": [],
+          "coverage": "COMPLETE",
+          "authorizationRef": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "purpose": "fixture"
+          },
+          "correctionOf": {
+            "owner": "fixture",
+            "id": "fixture",
+            "version": "fixture",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "purpose": "fixture"
+          },
+          "validUntil": "2026-10-13T00:00:00.000Z",
+          "state": "ACTIVE",
+          "controlRevision": "1"
+        }
+      },
+      "controlRevision": "1",
+      "frontier": "1",
+      "coverage": "COMPLETE",
+      "observedAt": "2026-10-13T00:00:00.000Z",
+      "isExecutionPermit": false
+    },
+    "CreditSelectionsQuery": {
+      "invoiceId": "00000000-0000-4000-8000-000000000001",
+      "invoiceLineId": "00000000-0000-4000-8000-000000000001",
+      "reasonKind": "RETURN",
+      "effectiveDate": "2026-10-13",
+      "cursor": "fixture",
+      "limit": 1
+    },
+    "CreditSelectionPage": {
+      "items": [],
+      "snapshotId": "00000000-0000-4000-8000-000000000001",
+      "nextCursor": "fixture",
+      "asOf": "2026-10-13T00:00:00.000Z"
+    },
+    "CreditPrepare": {
+      "commandId": "00000000-0000-4000-8000-000000000001",
+      "contextToken": "00000000-0000-4000-8000-000000000001",
+      "reason": "fixture",
+      "reasonKind": "RETURN",
+      "effectiveDate": "2026-10-13",
+      "lines": [
+        {
+          "lineId": "00000000-0000-4000-8000-000000000001",
+          "invoiceId": "00000000-0000-4000-8000-000000000001",
+          "invoiceLineId": "00000000-0000-4000-8000-000000000001",
+          "invoiceRowVersion": "AQ==",
+          "authoritySelectionId": "00000000-0000-4000-8000-000000000001",
+          "returnSelectionId": "00000000-0000-4000-8000-000000000001",
+          "dispositionSelectionId": "00000000-0000-4000-8000-000000000001",
+          "valuationSelectionId": "00000000-0000-4000-8000-000000000001",
+          "quantity": "1.0",
+          "requestedNet": "1.0",
+          "requestedTax": "1.0"
+        }
+      ],
+      "memo": "fixture"
+    },
+    "PostInput": {
+      "commandId": "00000000-0000-4000-8000-000000000001",
+      "expectedRowVersion": "AQ==",
+      "reason": "fixture",
+      "planRevision": "1"
+    },
+    "SafeOperationDetail": {
+      "operationId": "00000000-0000-4000-8000-000000000001",
+      "object": {
+        "kind": "INVOICE",
+        "id": "00000000-0000-4000-8000-000000000001"
+      },
+      "rowVersion": "AQ==",
+      "kind": "fixture",
+      "state": "DRAFT",
+      "planRevision": "1",
+      "planReadiness": "ABSENT",
+      "expectedMemberCount": 0,
+      "members": [],
+      "membershipCoverage": "COMPLETE_AUTHORIZED_VIEW",
+      "approval": {
+        "submissionLocator": "00000000-0000-4000-8000-000000000001",
+        "state": "NOT_SUBMITTED",
+        "application": "NOT_STARTED"
+      },
+      "actions": [],
+      "asOf": "2026-10-13T00:00:00.000Z",
+      "nextCursor": "fixture"
+    },
+    "CommandResult": {
+      "kind": "COMPLETED",
+      "commandId": "00000000-0000-4000-8000-000000000001",
+      "operationId": "00000000-0000-4000-8000-000000000001",
+      "outcome": "APPLIED",
+      "resultRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "purpose": "fixture"
+      },
+      "error": null,
+      "queryRef": "fixture"
+    },
+    "TerminalCommandReceipt": {
+      "terminalReceiptId": "00000000-0000-4000-8000-000000000001",
+      "commandSlotDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "requestBodyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "outcome": "COMMITTED",
+      "resultRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "problemDigest": null,
+      "localNoEffectEvidenceId": null,
+      "ownerCommandResultDigest": null,
+      "completedAt": "2026-10-13T00:00:00.000Z"
+    },
+    "FinArObservation": {
+      "state": "FOUND",
+      "queryIdentityDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "exactCommandResult": {
+        "kind": "COMPLETED",
+        "commandId": "00000000-0000-4000-8000-000000000001",
+        "operationId": "00000000-0000-4000-8000-000000000001",
+        "outcome": "APPLIED",
+        "resultRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "purpose": "fixture"
+        },
+        "error": null,
+        "queryRef": "fixture"
+      },
+      "ownerResultRef": {
+        "owner": "fixture",
+        "id": "fixture",
+        "version": "fixture",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "purpose": "fixture"
+      },
+      "observedAt": "2026-10-13T00:00:00.000Z"
+    },
+    "EC_C01_COMMITTED_CommercialDraftView": {
+      "resultKind": "COMMITTED",
+      "effectKnowledge": "COMMITTED",
+      "data": {
+        "draftId": "00000000-0000-4000-8000-000000000001",
+        "draftVersion": "fixture",
+        "workId": "00000000-0000-4000-8000-000000000001",
+        "state": "DRAFT",
+        "expectedWorkHeadRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "componentSelections": [
+          {
+            "selectionId": "fixture",
+            "kind": "CREDIT",
+            "basisKind": "RETURN",
+            "ranges": [
+              {
+                "from": "0",
+                "to": "1"
+              }
+            ],
+            "quantity": {
+              "value": "1",
+              "uom": {
+                "code": "fixture",
+                "version": "fixture"
+              }
+            }
+          }
+        ],
+        "rowVersion": "AQ=="
+      }
+    },
+    "EC_C02_COMMITTED_CommercialDraftView": {
+      "resultKind": "COMMITTED",
+      "effectKnowledge": "COMMITTED",
+      "data": {
+        "draftId": "00000000-0000-4000-8000-000000000001",
+        "draftVersion": "fixture",
+        "workId": "00000000-0000-4000-8000-000000000001",
+        "state": "DRAFT",
+        "expectedWorkHeadRef": {
+          "owner": "fixture",
+          "id": "fixture",
+          "version": "fixture",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "componentSelections": [
+          {
+            "selectionId": "fixture",
+            "kind": "CREDIT",
+            "basisKind": "RETURN",
+            "ranges": [
+              {
+                "from": "0",
+                "to": "1"
+              }
+            ],
+            "quantity": {
+              "value": "1",
+              "uom": {
+                "code": "fixture",
+                "version": "fixture"
+              }
+            }
+          }
+        ],
+        "rowVersion": "AQ=="
+      }
+    }
+  }
+}

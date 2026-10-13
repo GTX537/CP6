@@ -1,0 +1,348 @@
+{
+  "origin": "BOUNDED_MANUAL_FACADE_DERIVATION",
+  "source_ranges": [
+    {
+      "source_id": "composed-11",
+      "variant": "original",
+      "source_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "first_line": 65,
+      "last_line": 131,
+      "purpose": "strict parser, schema verifier and semantic rules",
+      "selected_range_sha256": "dfcaf8beb9fe6351a0f58b5d5ac3f013f2f1f8c6f300ee3340cc9072a3c297e5"
+    },
+    {
+      "source_id": "composed-11",
+      "variant": "original",
+      "source_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "first_line": 132,
+      "last_line": 183,
+      "purpose": "native CLR value/record surface",
+      "selected_range_sha256": "b1d41449dd2b61b1418df81841300374ca60892d3c5903b4a943e355ea0a61dd"
+    },
+    {
+      "source_id": "composed-11",
+      "variant": "original",
+      "source_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "first_line": 207,
+      "last_line": 228,
+      "purpose": "local receipt/observation records and published factories",
+      "selected_range_sha256": "f43bad08907862e0290696fcac83b8c809f4879a26235cb3460a968efb40f21b"
+    },
+    {
+      "source_id": "composed-11",
+      "variant": "composed",
+      "source_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "first_line": 65,
+      "last_line": 131,
+      "purpose": "strict parser, schema verifier and semantic rules",
+      "selected_range_sha256": "94e1c4e323cc3f2d4cfdb42f17e4eb4c747abfeaf13fad2eb0e0f3fd2958c072"
+    },
+    {
+      "source_id": "composed-11",
+      "variant": "composed",
+      "source_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "first_line": 132,
+      "last_line": 183,
+      "purpose": "native CLR value/record surface",
+      "selected_range_sha256": "b1d41449dd2b61b1418df81841300374ca60892d3c5903b4a943e355ea0a61dd"
+    },
+    {
+      "source_id": "composed-11",
+      "variant": "composed",
+      "source_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "first_line": 207,
+      "last_line": 228,
+      "purpose": "local receipt/observation records and published factories",
+      "selected_range_sha256": "f43bad08907862e0290696fcac83b8c809f4879a26235cb3460a968efb40f21b"
+    },
+    {
+      "source_id": "composed-12",
+      "variant": "original",
+      "source_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "first_line": 1,
+      "last_line": 83,
+      "purpose": "native TypeScript value surface",
+      "selected_range_sha256": "ee993838e9775b628fd032d8417dde5d8b4cd211194273bad114491a16138f7c"
+    },
+    {
+      "source_id": "composed-12",
+      "variant": "original",
+      "source_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "first_line": 88,
+      "last_line": 206,
+      "purpose": "strict parser, schema verifier, semantics and published factories",
+      "selected_range_sha256": "2025e8297c9eabcbf5de8fafb55ae313d067b47a0286a9797ff1eb94cadbf432"
+    },
+    {
+      "source_id": "composed-12",
+      "variant": "composed",
+      "source_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "first_line": 1,
+      "last_line": 83,
+      "purpose": "native TypeScript value surface",
+      "selected_range_sha256": "72510743af7d2718dc1ebad0cf3df4b52ed3d6e6a6117b3ef52cb7311d454e1b"
+    },
+    {
+      "source_id": "composed-12",
+      "variant": "composed",
+      "source_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "first_line": 88,
+      "last_line": 206,
+      "purpose": "strict parser, schema verifier, semantics and published factories",
+      "selected_range_sha256": "564b8a605631250fb192f225c35f7dfd677d708526ef39b55393fc2ca34baac9"
+    }
+  ],
+  "published_factories": [
+    {
+      "schema_file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "root": "CreditOwnerRequest"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "root": "CreditOwnerQueryRequest"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "root": "CreditOwnerQueryResult"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "root": "CommercialOutcomeRef"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "CreditAuthorityReadRequest"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "CreditAuthorityReadResult"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "CreditSelectionsQuery"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "CreditSelectionPage"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "CreditPrepare"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "PostInput"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "SafeOperationDetail"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "root": "CommandResult"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "root": "TerminalCommandReceipt"
+    },
+    {
+      "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "root": "FinArObservation"
+    }
+  ],
+  "scalar_helpers": [
+    "Money",
+    "D8"
+  ],
+  "replay_roots": [
+    "EC_C01_COMMITTED_CommercialDraftView",
+    "EC_C02_COMMITTED_CommercialDraftView"
+  ],
+  "api_mapping": "Generated typed records map to complete NativeCreditDocument JSON plus exact schema/profile/root and immutable original UTF8. No DTO numeric conversion, discriminator order restriction, serializer replay, SQL binding or Owner dispatch.",
+  "runtime_corrections": [
+    "Shared net8 StrictJson and JsonSemanticEquality replace archived scanner/DeepEquals",
+    "Conditional minItems/maxItems apply without explicit type; refs retain sibling constraints",
+    "All native nested semantic rules execute after reference validation",
+    "TypeScript null-prototype objects, own-property lookup, exact number tokens and immutable snapshots",
+    "Version-specific NO_CHANGE and FinArObservation rules remain separate; FOUND/no-effect proof remains fenced"
+  ],
+  "omitted": "Historical SQL Server ports, procedure arguments and business dispatch/orchestration. No F09-dependent C06 generic root exposure.",
+  "closed_schema_dependencies": {
+    "current": {
+      "referenced_definitions": [
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Action",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Axis",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/AxisStatus",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Cell",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CommandResult",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityBody",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityOwnerBody",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityReadRequest",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityReadResult",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditCandidateBundle",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditLineInput",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditPrepare",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditSelectionPage",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditSelectionsQuery",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Currency",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/D8",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/DateOnly",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Error",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/ErrorCode",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/ErrorIssue",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Hash",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Id",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Key",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/NonNegativeD8",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/PostInput",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/RV",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Ref",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/SafeOperationDetail",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/SafeOperationMember",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Scope",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Seq",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Slice",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Utc",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommercialDraftView",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/DecisionComponentInput",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Digest",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C01_COMMITTED_CommercialDraftView",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C02_COMMITTED_CommercialDraftView",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/FinArObservation",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/TerminalCommandReceipt",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Utc",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CommercialOutcomeComponent",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CommercialOutcomeRef",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerQueryRequest",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerQueryResult",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerRequest",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Currency",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/DecimalQty",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Digest",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Guid",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Id",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Instant",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/InvoiceAllocation",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Money",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/OwnerQueryIdentity",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Qty",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Range",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Ref",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/SignedDecimal",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Uom"
+      ],
+      "integer_domains": [
+        {
+          "file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+          "pointer": "/$defs/CreditOwnerQueryResult/oneOf/3/properties/retryAfterSeconds/oneOf/0",
+          "minimum": 1,
+          "maximum": 86400
+        },
+        {
+          "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+          "pointer": "/$defs/CreditSelectionsQuery/properties/limit",
+          "minimum": 1,
+          "maximum": 200
+        },
+        {
+          "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+          "pointer": "/$defs/SafeOperationDetail/properties/expectedMemberCount",
+          "minimum": 0,
+          "maximum": 256
+        }
+      ],
+      "additional_schema_files": []
+    },
+    "frozen": {
+      "referenced_definitions": [
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Action",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Axis",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/AxisStatus",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Cell",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CommandResult",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityBody",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityOwnerBody",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityReadRequest",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityReadResult",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditCandidateBundle",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditLineInput",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditPrepare",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditSelectionPage",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditSelectionsQuery",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Currency",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/D8",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/DateOnly",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Error",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/ErrorCode",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/ErrorIssue",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Hash",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Id",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Key",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/NonNegativeD8",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/PostInput",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/RV",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Ref",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/SafeOperationDetail",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/SafeOperationMember",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Scope",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Seq",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Slice",
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/Utc",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommercialDraftView",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/DecisionComponentInput",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Digest",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C01_COMMITTED_CommercialDraftView",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C02_COMMITTED_CommercialDraftView",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/FinArObservation",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/TerminalCommandReceipt",
+        "ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Utc",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CommercialOutcomeComponent",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CommercialOutcomeRef",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerQueryRequest",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerQueryResult",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerRequest",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Currency",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/DecimalQty",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Digest",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Guid",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Id",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Instant",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/InvoiceAllocation",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Money",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/OwnerQueryIdentity",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Qty",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Range",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Ref",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/SignedDecimal",
+        "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/Uom"
+      ],
+      "integer_domains": [
+        {
+          "file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+          "pointer": "/$defs/CreditOwnerQueryResult/oneOf/3/properties/retryAfterSeconds/oneOf/0",
+          "minimum": 1,
+          "maximum": 86400
+        },
+        {
+          "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+          "pointer": "/$defs/CreditSelectionsQuery/properties/limit",
+          "minimum": 1,
+          "maximum": 200
+        },
+        {
+          "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+          "pointer": "/$defs/SafeOperationDetail/properties/expectedMemberCount",
+          "minimum": 0,
+          "maximum": 256
+        }
+      ],
+      "additional_schema_files": []
+    }
+  }
+}

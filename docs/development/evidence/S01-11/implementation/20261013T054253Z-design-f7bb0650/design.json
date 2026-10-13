@@ -1,0 +1,13 @@
+{
+  "verification_level": "SELECTED_DESIGN_FIXTURE_SUBASSERTIONS",
+  "tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "projected_records": 343,
+  "tamper_rejections": 60,
+  "native_money_locations": 18,
+  "runtime_Owner_Store_acceptance": "NOT_RUN",
+  "actual_adoption": "UNPROVEN_FENCED",
+  "whole_C06_decode": "NOT_EXPOSED"
+}

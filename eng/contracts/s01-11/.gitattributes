@@ -1,0 +1,4 @@
+* text eol=lf
+assets/** -text
+fixtures/** -text
+provenance.json -text whitespace=cr-at-eol

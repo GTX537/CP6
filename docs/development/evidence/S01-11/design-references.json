@@ -1,0 +1,48 @@
+{
+  "task": "S01-11",
+  "baseline": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "observed_at": "2026-10-13T05:20:49.886516+00:00",
+  "references": [
+    {
+      "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+      "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+      "sha256_git_blob": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048"
+    },
+    {
+      "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+      "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+      "sha256_git_blob": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3"
+    },
+    {
+      "path": "docs/design-handbook/indexes/required-inputs.json",
+      "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+      "sha256_git_blob": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/commercial-fixtures/derivation-manifest.json",
+      "git_blob": "1392dff5a4ff0822d1ea1bd7a975a9bbb86497ee",
+      "sha256_git_blob": "7c0c97bce1498895fccdb11830f3d896f037dc49234419f856ca3be6385bfd75"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/commercial-fixtures/current-v1-adoption.md",
+      "git_blob": "00529c91071e8ee52882326fb380014386c2f211",
+      "sha256_git_blob": "f2d7741601ea6f8d04520d1063a16da732e322f6a08120d1e47b6ab4aa12a138"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+      "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+      "sha256_git_blob": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/fixtures/bounded-patches.json",
+      "git_blob": "0f8916e374f7f2e0e9dad302cadbce0bbb39f7b6",
+      "sha256_git_blob": "d9aa79c4efad0ba5ef58da632d65f1f598da3b03f6919eeb1a67617aa1284d94"
+    },
+    {
+      "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+      "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+      "sha256_git_blob": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f"
+    }
+  ],
+  "acceptance_scope": "S01-11 bounded contract subassertions only; whole ERP-CREDIT/Owner/Store/business target NOT_RUN"
+}

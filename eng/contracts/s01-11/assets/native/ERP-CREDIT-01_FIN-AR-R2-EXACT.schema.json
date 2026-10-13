@@ -1,0 +1,1437 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.cp6.local/erp-credit-01/r2/ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+  "title": "Exact closed FIN-AR R2 credit branch projection",
+  "x-cp6-source-commit": "44fcce0b2291f96d0099bebcce3563ba6fdeb8ea",
+  "x-cp6-source-file-sha256": "3ada4bf654528c62bf160075ff83f090ea0914d0d7b15401422604691edb87f5",
+  "x-cp6-source-lines": [
+    "§2 scalar rules",
+    "§11.1 public DTO",
+    "§21.2 A34 SafeOperationDetail",
+    "§24 Owner read union",
+    "§30.1 Credit selection"
+  ],
+  "$defs": {
+    "Id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "minLength": 36,
+      "maxLength": 36
+    },
+    "Key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$",
+      "x-cp6-normalization": "NFC; no trim"
+    },
+    "Seq": {
+      "type": "string",
+      "pattern": "^(?:[1-9][0-9]{0,17}|[1-8][0-9]{18}|9[01][0-9]{17}|92[01][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[01][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-7])$"
+    },
+    "RV": {
+      "type": "string",
+      "minLength": 4,
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "contentEncoding": "base64",
+      "x-cp6-semantics": "opaque CAS; never numeric"
+    },
+    "Hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "D8": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]{0,19})(\\.[0-9]{1,8})?$"
+    },
+    "NonNegativeD8": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,19})(\\.[0-9]{1,8})?$"
+    },
+    "R12": {
+      "type": "string",
+      "pattern": "^(?:0\\.(?=[0-9]{1,12}$)(?=[0-9]*[1-9])[0-9]{1,12}|[1-9][0-9]{0,15}(?:\\.[0-9]{1,12})?)$"
+    },
+    "DateOnly": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "Utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+      "minLength": 24,
+      "maxLength": 24
+    },
+    "Currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "minLength": 3,
+      "maxLength": 3
+    },
+    "ErrorCode": {
+      "type": "string",
+      "enum": [
+        "MALFORMED_JSON",
+        "AUTHENTICATION_REQUIRED",
+        "ACTION_DENIED",
+        "FIELD_DENIED",
+        "SOD_VIOLATION",
+        "NOT_FOUND_OR_NOT_VISIBLE",
+        "INVALID_INPUT",
+        "METHOD_UNSUPPORTED",
+        "FUNDS_NOT_CLEARED",
+        "COMPENSATION_REQUIRED",
+        "ALREADY_APPLIED",
+        "COVERAGE_UNPROVEN",
+        "HEAD_CHANGED",
+        "EXPECTED_HEAD_REQUIRED",
+        "COMMAND_PAYLOAD_CONFLICT",
+        "SOURCE_CONTENT_CONFLICT",
+        "SOURCE_CHANGED",
+        "SOURCE_GAP",
+        "SOURCE_PROTECTION_UNPROVEN",
+        "WRITER_FENCE_CONFLICT",
+        "GROUPING_CONFLICT",
+        "MISSING_PRICE",
+        "MISSING_POD",
+        "MISSING_COST",
+        "MISSING_RATE",
+        "POLICY_UNPROVEN",
+        "OWNER_PARTICIPANT_UNPROVEN",
+        "FUNDS_OWNER_UNPROVEN",
+        "FUNDS_REVOKED",
+        "DUPLICATE_TRANSACTION",
+        "DUPLICATE_ALLOCATION",
+        "INSUFFICIENT_BALANCE",
+        "CUSTOMER_MISMATCH",
+        "CROSS_CURRENCY_UNSUPPORTED",
+        "PLAN_NOT_READY",
+        "APPROVAL_REQUIRED",
+        "PERIOD_CLOSED",
+        "DEPENDENCY_LIMIT",
+        "REPORT_LIMIT",
+        "CURSOR_EXPIRED",
+        "REVERSED_RESULT",
+        "ALREADY_REVERSED",
+        "INVARIANT_BROKEN",
+        "UNAPPLY_REQUIRED",
+        "PARTIAL_UNAPPLY_UNSUPPORTED",
+        "UNSUPPORTED_SCHEMA",
+        "TECHNICAL_RETRY",
+        "AUTHORITY_UNAVAILABLE",
+        "OUTCOME_UNKNOWN"
+      ]
+    },
+    "Scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environmentId",
+        "tenantId",
+        "legalEntityKey",
+        "ledgerKey",
+        "mode"
+      ],
+      "properties": {
+        "environmentId": {
+          "$ref": "#/$defs/Key"
+        },
+        "tenantId": {
+          "$ref": "#/$defs/Id"
+        },
+        "legalEntityKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "ledgerKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "mode": {
+          "enum": [
+            "DEMO",
+            "REAL"
+          ]
+        }
+      }
+    },
+    "Ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "id",
+        "version",
+        "digest",
+        "purpose"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/Key"
+        },
+        "id": {
+          "$ref": "#/$defs/Key"
+        },
+        "version": {
+          "$ref": "#/$defs/Key"
+        },
+        "digest": {
+          "$ref": "#/$defs/Hash"
+        },
+        "purpose": {
+          "$ref": "#/$defs/Key"
+        }
+      }
+    },
+    "Slice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sliceId",
+        "sourceLineId",
+        "from",
+        "toExclusive",
+        "uom"
+      ],
+      "properties": {
+        "sliceId": {
+          "$ref": "#/$defs/Key"
+        },
+        "sourceLineId": {
+          "$ref": "#/$defs/Key"
+        },
+        "from": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "toExclusive": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "uom": {
+          "$ref": "#/$defs/Key"
+        }
+      },
+      "x-cp6-invariant": "decimal(from)<decimal(toExclusive)"
+    },
+    "Cell": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value"
+          ],
+          "properties": {
+            "state": {
+              "const": "VALUE"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "const": "EMPTY"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "const": "REDACTED"
+            }
+          }
+        }
+      ],
+      "x-cp6-discriminator": "state"
+    },
+    "CreditAuthorityReadRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "readKey",
+        "scope",
+        "invoiceLineRef",
+        "orderLineRef",
+        "reasonKind",
+        "slice",
+        "businessDate"
+      ],
+      "properties": {
+        "kind": {
+          "const": "CREDIT_AUTHORITY"
+        },
+        "readKey": {
+          "$ref": "#/$defs/Id"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "invoiceLineRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "orderLineRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "reasonKind": {
+          "enum": [
+            "RETURN",
+            "PRICE_ALLOWANCE"
+          ]
+        },
+        "slice": {
+          "$ref": "#/$defs/Slice"
+        },
+        "businessDate": {
+          "$ref": "#/$defs/DateOnly"
+        }
+      }
+    },
+    "CreditAuthorityBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "authorityRef",
+        "invoiceLineRef",
+        "orderLineRef",
+        "customerRef",
+        "currency",
+        "reasonKind",
+        "slice",
+        "maxQty",
+        "maxNet",
+        "maxTax",
+        "maxGross",
+        "usedRefs",
+        "pendingRefs",
+        "coverage",
+        "authorizationRef",
+        "correctionOf",
+        "validUntil",
+        "state",
+        "controlRevision"
+      ],
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "authorityRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "invoiceLineRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "orderLineRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "customerRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "reasonKind": {
+          "enum": [
+            "RETURN",
+            "PRICE_ALLOWANCE"
+          ]
+        },
+        "slice": {
+          "$ref": "#/$defs/Slice"
+        },
+        "maxQty": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "maxNet": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "maxTax": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "maxGross": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "usedRefs": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/Ref"
+          }
+        },
+        "pendingRefs": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/Ref"
+          }
+        },
+        "coverage": {
+          "enum": [
+            "COMPLETE",
+            "UNPROVEN"
+          ]
+        },
+        "authorizationRef": {
+          "$ref": "#/$defs/Ref"
+        },
+        "correctionOf": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "validUntil": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Utc"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "ACTIVE",
+            "FENCED",
+            "CLOSED"
+          ]
+        },
+        "controlRevision": {
+          "$ref": "#/$defs/Seq"
+        }
+      },
+      "x-cp6-invariants": [
+        "maxNet+maxTax=maxGross",
+        "FOUND is observation, never execution permit"
+      ]
+    },
+    "CreditAuthorityOwnerBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "body"
+      ],
+      "properties": {
+        "kind": {
+          "const": "CREDIT_AUTHORITY"
+        },
+        "body": {
+          "$ref": "#/$defs/CreditAuthorityBody"
+        }
+      }
+    },
+    "CreditAuthorityReadResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "readKey",
+            "reference",
+            "value",
+            "controlRevision",
+            "frontier",
+            "coverage",
+            "observedAt",
+            "isExecutionPermit"
+          ],
+          "properties": {
+            "kind": {
+              "const": "FOUND"
+            },
+            "readKey": {
+              "$ref": "#/$defs/Id"
+            },
+            "reference": {
+              "$ref": "#/$defs/Ref"
+            },
+            "value": {
+              "$ref": "#/$defs/CreditAuthorityOwnerBody"
+            },
+            "controlRevision": {
+              "$ref": "#/$defs/Seq"
+            },
+            "frontier": {
+              "$ref": "#/$defs/Seq"
+            },
+            "coverage": {
+              "enum": [
+                "COMPLETE",
+                "UNPROVEN"
+              ]
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Utc"
+            },
+            "isExecutionPermit": {
+              "const": false
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "readKey",
+            "requestedKind",
+            "observedAt",
+            "provesPermanentNoEffect"
+          ],
+          "properties": {
+            "kind": {
+              "const": "NOT_OBSERVED"
+            },
+            "readKey": {
+              "$ref": "#/$defs/Id"
+            },
+            "requestedKind": {
+              "const": "CREDIT_AUTHORITY"
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Utc"
+            },
+            "provesPermanentNoEffect": {
+              "const": false
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "readKey",
+            "requestedKind",
+            "reason",
+            "queryRef",
+            "observedAt"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "DENIED",
+                "UNPROVEN",
+                "UNKNOWN"
+              ]
+            },
+            "readKey": {
+              "$ref": "#/$defs/Id"
+            },
+            "requestedKind": {
+              "const": "CREDIT_AUTHORITY"
+            },
+            "reason": {
+              "$ref": "#/$defs/ErrorCode"
+            },
+            "queryRef": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Utc"
+            }
+          }
+        }
+      ],
+      "x-cp6-discriminator": "kind"
+    },
+    "CreditSelectionsQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "invoiceId",
+        "invoiceLineId",
+        "reasonKind",
+        "effectiveDate",
+        "cursor",
+        "limit"
+      ],
+      "properties": {
+        "invoiceId": {
+          "$ref": "#/$defs/Id"
+        },
+        "invoiceLineId": {
+          "$ref": "#/$defs/Id"
+        },
+        "reasonKind": {
+          "enum": [
+            "RETURN",
+            "PRICE_ALLOWANCE"
+          ]
+        },
+        "effectiveDate": {
+          "$ref": "#/$defs/DateOnly"
+        },
+        "cursor": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      }
+    },
+    "CreditCandidateBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bundleSelectionId",
+        "invoiceId",
+        "invoiceLineId",
+        "invoiceRowVersion",
+        "label",
+        "currency",
+        "authoritySelectionId",
+        "returnSelectionId",
+        "dispositionSelectionId",
+        "valuationSelectionId",
+        "maximumQuantity",
+        "maximumNet",
+        "maximumTax",
+        "availability",
+        "reasonCodes",
+        "expiresAt",
+        "isExecutionPermit"
+      ],
+      "properties": {
+        "bundleSelectionId": {
+          "$ref": "#/$defs/Id"
+        },
+        "invoiceId": {
+          "$ref": "#/$defs/Id"
+        },
+        "invoiceLineId": {
+          "$ref": "#/$defs/Id"
+        },
+        "invoiceRowVersion": {
+          "$ref": "#/$defs/RV"
+        },
+        "label": {
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "authoritySelectionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "returnSelectionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dispositionSelectionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valuationSelectionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maximumQuantity": {
+          "$ref": "#/$defs/Cell"
+        },
+        "maximumNet": {
+          "$ref": "#/$defs/Cell"
+        },
+        "maximumTax": {
+          "$ref": "#/$defs/Cell"
+        },
+        "availability": {
+          "enum": [
+            "SELECTABLE",
+            "DISABLED",
+            "UNPROVEN"
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/ErrorCode"
+          }
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/Utc"
+        },
+        "isExecutionPermit": {
+          "const": false
+        }
+      }
+    },
+    "CreditSelectionPage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "snapshotId",
+        "nextCursor",
+        "asOf"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/CreditCandidateBundle"
+          }
+        },
+        "snapshotId": {
+          "$ref": "#/$defs/Id"
+        },
+        "nextCursor": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "asOf": {
+          "$ref": "#/$defs/Utc"
+        }
+      }
+    },
+    "CreditLineInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lineId",
+        "invoiceId",
+        "invoiceLineId",
+        "invoiceRowVersion",
+        "authoritySelectionId",
+        "returnSelectionId",
+        "dispositionSelectionId",
+        "valuationSelectionId",
+        "quantity",
+        "requestedNet",
+        "requestedTax"
+      ],
+      "properties": {
+        "lineId": {
+          "$ref": "#/$defs/Id"
+        },
+        "invoiceId": {
+          "$ref": "#/$defs/Id"
+        },
+        "invoiceLineId": {
+          "$ref": "#/$defs/Id"
+        },
+        "invoiceRowVersion": {
+          "$ref": "#/$defs/RV"
+        },
+        "authoritySelectionId": {
+          "$ref": "#/$defs/Id"
+        },
+        "returnSelectionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dispositionSelectionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valuationSelectionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quantity": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "requestedNet": {
+          "$ref": "#/$defs/NonNegativeD8"
+        },
+        "requestedTax": {
+          "$ref": "#/$defs/NonNegativeD8"
+        }
+      }
+    },
+    "CreditPrepare": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commandId",
+        "contextToken",
+        "reason",
+        "reasonKind",
+        "effectiveDate",
+        "lines",
+        "memo"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "#/$defs/Id"
+        },
+        "contextToken": {
+          "$ref": "#/$defs/Id"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "reasonKind": {
+          "enum": [
+            "RETURN",
+            "PRICE_ALLOWANCE"
+          ]
+        },
+        "effectiveDate": {
+          "$ref": "#/$defs/DateOnly"
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/CreditLineInput"
+          }
+        },
+        "memo": {
+          "type": "string"
+        }
+      }
+    },
+    "PostInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commandId",
+        "expectedRowVersion",
+        "reason",
+        "planRevision"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "#/$defs/Id"
+        },
+        "expectedRowVersion": {
+          "$ref": "#/$defs/RV"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "planRevision": {
+          "$ref": "#/$defs/Seq"
+        }
+      }
+    },
+    "ErrorIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "code"
+      ],
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "messageKey",
+        "correlationId",
+        "retryAdvice",
+        "issues",
+        "queryRef",
+        "currentRowVersion"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "messageKey": {
+          "type": "string"
+        },
+        "correlationId": {
+          "$ref": "#/$defs/Id"
+        },
+        "retryAdvice": {
+          "enum": [
+            "NONE",
+            "FIX_INPUT",
+            "QUERY_ORIGINAL",
+            "SAME_KEY_SAME_BODY",
+            "REFRESH_CONTEXT",
+            "ASK_OWNER"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/ErrorIssue"
+          }
+        },
+        "queryRef": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currentRowVersion": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/RV"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "CommandResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "commandId",
+            "operationId",
+            "outcome",
+            "resultRef",
+            "error",
+            "queryRef"
+          ],
+          "properties": {
+            "kind": {
+              "const": "COMPLETED"
+            },
+            "commandId": {
+              "$ref": "#/$defs/Id"
+            },
+            "operationId": {
+              "$ref": "#/$defs/Id"
+            },
+            "outcome": {
+              "enum": [
+                "APPLIED",
+                "NO_CHANGE",
+                "REJECTED"
+              ]
+            },
+            "resultRef": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Ref"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "error": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Error"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "queryRef": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "commandId",
+            "operationId",
+            "queryRef"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "PENDING",
+                "OUTCOME_UNKNOWN"
+              ]
+            },
+            "commandId": {
+              "$ref": "#/$defs/Id"
+            },
+            "operationId": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "queryRef": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "commandId",
+            "observedAt",
+            "provesPermanentNoEffect"
+          ],
+          "properties": {
+            "kind": {
+              "const": "NOT_OBSERVED"
+            },
+            "commandId": {
+              "$ref": "#/$defs/Id"
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Utc"
+            },
+            "provesPermanentNoEffect": {
+              "const": false
+            }
+          }
+        }
+      ],
+      "x-cp6-discriminator": "kind"
+    },
+    "Action": {
+      "type": "string",
+      "enum": [
+        "EVALUATE",
+        "DRAFT",
+        "REVISE",
+        "PREPARE",
+        "POST",
+        "RECOVER",
+        "CLOSE",
+        "REGISTER_RECEIPT",
+        "CONFIRM_RECEIPT",
+        "RESERVE_ALLOCATION",
+        "APPLY_ALLOCATION",
+        "UNAPPLY",
+        "REQUEST_REVERSAL",
+        "POST_REVERSAL",
+        "CREATE_REPORT",
+        "RECONCILE",
+        "EXPORT",
+        "PREPARE_CREDIT",
+        "POST_CREDIT",
+        "SUBMIT_APPROVAL",
+        "WITHDRAW_APPROVAL",
+        "COMPENSATE_UNAPPLIED_OPERATION"
+      ]
+    },
+    "Axis": {
+      "type": "string",
+      "enum": [
+        "INVOICE",
+        "REVENUE",
+        "COGS",
+        "FUNDS",
+        "ALLOCATION",
+        "CREDIT"
+      ]
+    },
+    "AxisStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_STARTED",
+        "UNRESOLVED",
+        "READY",
+        "PENDING",
+        "PARTIAL",
+        "APPLIED",
+        "NOT_APPLICABLE",
+        "BLOCKED",
+        "OUTCOME_UNKNOWN",
+        "REVERSE_PENDING",
+        "REVERSED"
+      ]
+    },
+    "SafeOperationMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memberKey",
+        "axis",
+        "ownerLabel",
+        "eventLocator",
+        "eventDisplay",
+        "legKeys",
+        "dispatch",
+        "accounting",
+        "arApplication",
+        "resultLocators",
+        "errorCodes",
+        "queryRef"
+      ],
+      "properties": {
+        "memberKey": {
+          "$ref": "#/$defs/Key"
+        },
+        "axis": {
+          "$ref": "#/$defs/Axis"
+        },
+        "ownerLabel": {
+          "type": "string"
+        },
+        "eventLocator": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "eventDisplay": {
+          "$ref": "#/$defs/Cell"
+        },
+        "legKeys": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/Key"
+          }
+        },
+        "dispatch": {
+          "enum": [
+            "NOT_STARTED",
+            "MAY_HAVE_BEEN_SENT",
+            "RESULT_KNOWN"
+          ]
+        },
+        "accounting": {
+          "enum": [
+            "NOT_STARTED",
+            "PENDING",
+            "PARTIAL",
+            "POSTED",
+            "NO_EFFECT",
+            "REVERSED",
+            "UNKNOWN"
+          ]
+        },
+        "arApplication": {
+          "enum": [
+            "NOT_APPLIED",
+            "APPLIED",
+            "COMPENSATED"
+          ]
+        },
+        "resultLocators": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/Id"
+          }
+        },
+        "errorCodes": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/ErrorCode"
+          }
+        },
+        "queryRef": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "SafeOperationDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationId",
+        "object",
+        "rowVersion",
+        "kind",
+        "state",
+        "planRevision",
+        "planReadiness",
+        "expectedMemberCount",
+        "members",
+        "membershipCoverage",
+        "approval",
+        "actions",
+        "asOf",
+        "nextCursor"
+      ],
+      "properties": {
+        "operationId": {
+          "$ref": "#/$defs/Id"
+        },
+        "object": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "id"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "INVOICE",
+                    "RECEIPT",
+                    "ALLOCATION",
+                    "CREDIT",
+                    "COMPENSATION",
+                    "REPORT"
+                  ]
+                },
+                "id": {
+                  "$ref": "#/$defs/Id"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rowVersion": {
+          "$ref": "#/$defs/RV"
+        },
+        "kind": {
+          "$ref": "#/$defs/Key"
+        },
+        "state": {
+          "enum": [
+            "DRAFT",
+            "READY",
+            "PENDING",
+            "BLOCKED_AFTER_GL",
+            "APPLIED",
+            "COMPENSATING",
+            "COMPENSATED",
+            "REVERSED"
+          ]
+        },
+        "planRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Seq"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planReadiness": {
+          "enum": [
+            "ABSENT",
+            "UNRESOLVED",
+            "READY"
+          ]
+        },
+        "expectedMemberCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 256
+        },
+        "members": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/SafeOperationMember"
+          }
+        },
+        "membershipCoverage": {
+          "enum": [
+            "COMPLETE_AUTHORIZED_VIEW",
+            "PARTIAL_REDACTED",
+            "UNPROVEN"
+          ]
+        },
+        "approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "submissionLocator",
+            "state",
+            "application"
+          ],
+          "properties": {
+            "submissionLocator": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "state": {
+              "enum": [
+                "NOT_SUBMITTED",
+                "DISPATCH_PENDING",
+                "RUNNING",
+                "APPROVED",
+                "REJECTED",
+                "WITHDRAWN",
+                "UNKNOWN"
+              ]
+            },
+            "application": {
+              "$ref": "#/$defs/AxisStatus"
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/Action"
+          }
+        },
+        "asOf": {
+          "$ref": "#/$defs/Utc"
+        },
+        "nextCursor": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-cp6-source": "FIN-AR-01_ACCEPTED_R2_MAIN.md §21.2 A34; complete authorized member page only"
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/CreditAuthorityReadRequest"
+    },
+    {
+      "$ref": "#/$defs/CreditAuthorityReadResult"
+    },
+    {
+      "$ref": "#/$defs/CreditSelectionsQuery"
+    },
+    {
+      "$ref": "#/$defs/CreditSelectionPage"
+    },
+    {
+      "$ref": "#/$defs/CreditPrepare"
+    },
+    {
+      "$ref": "#/$defs/PostInput"
+    },
+    {
+      "$ref": "#/$defs/CommandResult"
+    },
+    {
+      "$ref": "#/$defs/SafeOperationDetail"
+    }
+  ],
+  "x-cp6-local-projection-revision": "R2"
+}

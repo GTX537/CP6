@@ -1,0 +1,27 @@
+// RED scaffold: deliberately permissive; preserved in the execution evidence.
+export const WMS_SCHEMA = 'ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json'
+export const FIN_AR_SCHEMA = 'ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json'
+export const REGISTRY_FILE = 'ERP-CREDIT-01_TYPE-REGISTRY.json'
+export type CreditWireIdentity = { profileId: string, codecNamespace: string, schemaFile: string, schemaSha256: string, registrySha256: string, root: string }
+export const sha256 = async (raw: Uint8Array) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', raw.slice()))].map(v => v.toString(16).padStart(2, '0')).join('')
+export const acceptsRegistry = (_profile: string, _ns: string, _file: string, _hash: string) => true
+export type NativeCreditDocument = { identity: CreditWireIdentity, sha256: string, value: unknown, originalUtf8(): Uint8Array }
+export class CreditCodecSet {
+  readonly codecNamespace: string
+  constructor(current: boolean) { this.codecNamespace = current ? 'Cp6.ErpCredit.CurrentV1.Generated' : 'Cp6.ErpCredit.Generated' }
+  identityFor(root: string): CreditWireIdentity { return { profileId: 'stub', codecNamespace: this.codecNamespace, schemaFile: REGISTRY_FILE, schemaSha256: 'stub', registrySha256: 'stub', root } }
+  async decode(identity: CreditWireIdentity, raw: Uint8Array): Promise<NativeCreditDocument> { const bytes = raw.slice(); return { identity, sha256: await sha256(bytes), value: JSON.parse(new TextDecoder().decode(bytes)), originalUtf8: () => bytes.slice() } }
+  get finArPostInput() { return { parse: (raw: Uint8Array) => this.decode(this.identityFor('PostInput'), raw) } }
+  get publishedCodecs() { return Object.fromEntries(Array.from({ length: 14 }, (_, i) => [String(i), this.finArPostInput])) }
+}
+export class FrozenR8CreditCodec extends CreditCodecSet {
+  constructor() { super(false) }
+  async captureReplay(_operation: string, _key: string, _request: Uint8Array, _requestHash: string, _status: number, body: Uint8Array, _bodyHash: string) {
+    const raw = body.slice()
+    return { replay: async (_key: string, _request: Uint8Array) => ({ statusCode: 200, value: JSON.parse(new TextDecoder().decode(raw)), bodyUtf8: () => raw.slice() }) }
+  }
+}
+export const createCurrentCreditCodec = async (_files: Readonly<Record<string, Uint8Array>>) => new CreditCodecSet(true)
+export const createFrozenR8CreditCodec = async (_files: Readonly<Record<string, Uint8Array>>) => new FrozenR8CreditCodec()
+export const captureOriginalBytes = async (_identity: CreditWireIdentity, raw: Uint8Array, _expected: string) => { const bytes = raw.slice(); return { sha256: await sha256(bytes), nativeSchemaValidated: false, originalUtf8: () => bytes.slice() } }
+export const assessAdaptation = (original: NativeCreditDocument) => ({ status: 'READ_ONLY_UNPROVEN', nextAction: 'MANUAL_RECONCILIATION', effectKnowledge: 'UNKNOWN', canRelease: false, canDispatch: false, establishesFound: false, original })

@@ -1,0 +1,15 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/erp-credit/creditCodec.test.ts --reporter=default --reporter=json --outputFile=D:\CP6-worktrees\s01-11-20261012\docs\development\evidence\S01-11\implementation\20261013T053709Z-ts-green-first-74bffa13\vitest.json
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-11-20261012/cp6.web
+
+ ✓ src/contracts/erp-credit/creditCodec.test.ts (208 tests) 2687ms
+
+ Test Files  1 passed (1)
+      Tests  208 passed (208)
+   Start at  01:37:12
+   Duration  4.35s (transform 64ms, setup 0ms, import 113ms, tests 2.69s, environment 1.34s)
+
+JSON report written to D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T053709Z-ts-green-first-74bffa13/vitest.json

@@ -1,0 +1,54 @@
+// RED scaffold: deliberately permissive; execution evidence retains this source hash.
+using System.Text.Json;
+using System.Security.Cryptography;
+namespace CP6.Entity.Contracts.ErpCredit;
+public sealed record CreditWireIdentity(string ProfileId,string CodecNamespace,string SchemaFile,string SchemaSha256,string RegistrySha256,string Root);
+public static class CreditIdentity {
+ public const string WmsSchema="ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json", FinArSchema="ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json", RegistryFile="ERP-CREDIT-01_TYPE-REGISTRY.json";
+ public const string CurrentNamespace="Cp6.ErpCredit.CurrentV1.Generated",FrozenNamespace="Cp6.ErpCredit.Generated";
+ public static string Sha256(ReadOnlySpan<byte> raw)=>Convert.ToHexString(SHA256.HashData(raw)).ToLowerInvariant();
+ public static bool AcceptsRegistry(string profile,string ns,string file,string hash)=>true;
+}
+public sealed class NativeCreditDocument {
+ readonly byte[] raw; public JsonElement Value {get;} public CreditWireIdentity Identity {get;} public string Sha256=>CreditIdentity.Sha256(raw);
+ internal NativeCreditDocument(CreditWireIdentity identity,ReadOnlySpan<byte> bytes){raw=bytes.ToArray();Identity=identity;using var d=JsonDocument.Parse(raw);Value=d.RootElement.Clone();}
+ public byte[] GetOriginalUtf8()=>raw.ToArray();
+}
+public sealed class NativeCreditCodec(CreditCodecSet set,string root){public NativeCreditDocument Parse(ReadOnlySpan<byte> raw)=>set.Decode(set.IdentityFor(root),raw);}
+public class CreditCodecSet {
+ public string CodecNamespace {get;}
+ protected CreditCodecSet(bool current,IReadOnlyDictionary<string,ReadOnlyMemory<byte>> files){CodecNamespace=current?CreditIdentity.CurrentNamespace:CreditIdentity.FrozenNamespace;}
+ public CreditWireIdentity IdentityFor(string root)=>new("stub",CodecNamespace,CreditIdentity.RegistryFile,"stub","stub",root);
+ public NativeCreditDocument Decode(CreditWireIdentity identity,ReadOnlySpan<byte> raw)=>new(identity,raw);
+ public NativeCreditCodec WmsCreditOwnerRequest=>new(this,"CreditOwnerRequest");
+ public NativeCreditCodec WmsCreditOwnerQueryRequest=>new(this,"CreditOwnerQueryRequest");
+ public NativeCreditCodec WmsCreditOwnerQueryResult=>new(this,"CreditOwnerQueryResult");
+ public NativeCreditCodec WmsCommercialOutcomeRef=>new(this,"CommercialOutcomeRef");
+ public NativeCreditCodec FinArCreditAuthorityReadRequest=>new(this,"CreditAuthorityReadRequest");
+ public NativeCreditCodec FinArCreditAuthorityReadResult=>new(this,"CreditAuthorityReadResult");
+ public NativeCreditCodec FinArCreditSelectionsQuery=>new(this,"CreditSelectionsQuery");
+ public NativeCreditCodec FinArCreditSelectionPage=>new(this,"CreditSelectionPage");
+ public NativeCreditCodec FinArCreditPrepare=>new(this,"CreditPrepare");
+ public NativeCreditCodec FinArPostInput=>new(this,"PostInput");
+ public NativeCreditCodec FinArSafeOperationDetail=>new(this,"SafeOperationDetail");
+ public NativeCreditCodec FinArCommandResult=>new(this,"CommandResult");
+ public NativeCreditCodec TerminalCommandReceipt=>new(this,"TerminalCommandReceipt");
+ public NativeCreditCodec FinArObservation=>new(this,"FinArObservation");
+ public IReadOnlyList<NativeCreditCodec> PublishedCodecs=>[WmsCreditOwnerRequest,WmsCreditOwnerQueryRequest,WmsCreditOwnerQueryResult,WmsCommercialOutcomeRef,FinArCreditAuthorityReadRequest,FinArCreditAuthorityReadResult,FinArCreditSelectionsQuery,FinArCreditSelectionPage,FinArCreditPrepare,FinArPostInput,FinArSafeOperationDetail,FinArCommandResult,TerminalCommandReceipt,FinArObservation];
+}
+public sealed class FrozenOriginalBytes {
+ readonly byte[] raw;public string Sha256=>CreditIdentity.Sha256(raw);public bool NativeSchemaValidated=>false;
+ private FrozenOriginalBytes(byte[] raw){this.raw=raw;}
+ public static FrozenOriginalBytes Capture(CreditWireIdentity identity,ReadOnlySpan<byte> raw,string expected)=>new(raw.ToArray());
+ public byte[] GetOriginalUtf8()=>raw.ToArray();
+}
+public sealed record AdaptationAssessment(string Status,string NextAction,string EffectKnowledge,bool CanRelease,bool CanDispatch,bool EstablishesFound,NativeCreditDocument Original);
+public sealed class FrozenHttpReplay {
+ readonly byte[] raw;public CreditWireIdentity ResponseIdentity{get;}
+ internal FrozenHttpReplay(CreditWireIdentity identity,byte[] bytes){ResponseIdentity=identity;raw=bytes;}
+ public FrozenReplayResponse Replay(string commandKey,ReadOnlySpan<byte> request)=>new(raw);
+}
+public sealed class FrozenReplayResponse {
+ readonly byte[] raw; public int StatusCode=>200;public JsonElement Value=>JsonDocument.Parse(raw).RootElement.Clone();
+ internal FrozenReplayResponse(byte[] bytes){raw=bytes.ToArray();}public byte[] GetBodyUtf8()=>raw.ToArray();
+}

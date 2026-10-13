@@ -1,0 +1,7 @@
+
+> cp6.web@0.0.0 type-check
+> vue-tsc --build
+
+src/contracts/erp-credit/creditCodec.ts(295,109): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json": string; "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json": string; "ERP-CREDIT-01_TYPE-REGISTRY.json": string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json": string; "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json": string; "ERP-CREDIT-01_TYPE-REGISTRY.json": string; }'.
+src/contracts/erp-credit/creditCodec.ts(296,3): error TS2739: Type 'Readonly<CreditCodecSet>' is missing the following properties from type 'CreditCodecSet': #current, #validator, decodeCore, codec

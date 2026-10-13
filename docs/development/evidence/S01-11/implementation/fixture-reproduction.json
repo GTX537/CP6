@@ -1,0 +1,22 @@
+{
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-X",
+    "utf8",
+    "eng/contracts/s01-11/build_fixtures.py"
+  ],
+  "time_utc": "2026-10-13T06:07:51.482018+00:00",
+  "exit_code": 0,
+  "before": {
+    "eng/contracts/s01-11/fixtures/cases.json": "225dd505a68be4b9bdfda6b6bcac524e47e398f8e0fec37f55c631336c850d74",
+    "eng/contracts/s01-11/fixtures/native-objects.json": "ec5f660824a9bd718459ba4658240e77d22301f4a482cb3c5c4d5e67b9762643"
+  },
+  "after": {
+    "eng/contracts/s01-11/fixtures/cases.json": "225dd505a68be4b9bdfda6b6bcac524e47e398f8e0fec37f55c631336c850d74",
+    "eng/contracts/s01-11/fixtures/native-objects.json": "ec5f660824a9bd718459ba4658240e77d22301f4a482cb3c5c4d5e67b9762643"
+  },
+  "byte_identical": true,
+  "stdout": "Constructed 400 codec cases; 16 complete objects.\r\n",
+  "stderr": "",
+  "level": "LOCAL_REPRODUCIBLE_UNIT_FIXTURES_NO_OWNER_PROOF"
+}

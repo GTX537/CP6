@@ -1,0 +1,422 @@
+{
+  "task": "S01-11",
+  "phase": "SPEC",
+  "observed_at": "2026-10-13T06:15:47.749557+00:00",
+  "result": "PASS",
+  "scope": "Read-only source/data/evidence verification; no repeated functional gate or archived code execution",
+  "baseline": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "input_baseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "source_checks": [
+    {
+      "source_id": "composed-00",
+      "variant": "composed",
+      "sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "matches": true
+    },
+    {
+      "source_id": "composed-01",
+      "variant": "composed",
+      "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "matches": true
+    },
+    {
+      "source_id": "composed-02",
+      "variant": "composed",
+      "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "matches": true
+    },
+    {
+      "source_id": "composed-03",
+      "variant": "composed",
+      "sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "matches": true
+    },
+    {
+      "source_id": "composed-04",
+      "variant": "composed",
+      "sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "matches": true
+    },
+    {
+      "source_id": "composed-05",
+      "variant": "composed",
+      "sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "matches": true
+    },
+    {
+      "source_id": "composed-06",
+      "variant": "composed",
+      "sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "matches": true
+    },
+    {
+      "source_id": "composed-07",
+      "variant": "composed",
+      "sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "matches": true
+    },
+    {
+      "source_id": "composed-08",
+      "variant": "composed",
+      "sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "matches": true
+    },
+    {
+      "source_id": "composed-09",
+      "variant": "composed",
+      "sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "matches": true
+    },
+    {
+      "source_id": "composed-10",
+      "variant": "composed",
+      "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "matches": true
+    },
+    {
+      "source_id": "composed-10",
+      "variant": "original",
+      "sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "matches": true
+    },
+    {
+      "source_id": "composed-11",
+      "variant": "composed",
+      "sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "matches": true
+    },
+    {
+      "source_id": "composed-11",
+      "variant": "original",
+      "sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "matches": true
+    },
+    {
+      "source_id": "composed-12",
+      "variant": "composed",
+      "sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "matches": true
+    },
+    {
+      "source_id": "composed-12",
+      "variant": "original",
+      "sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "matches": true
+    },
+    {
+      "source_id": "erp-registry-current",
+      "variant": "composed",
+      "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "matches": true
+    },
+    {
+      "source_id": "erp-registry-frozen",
+      "variant": "original",
+      "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "matches": true
+    },
+    {
+      "source_id": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "variant": "native",
+      "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+      "matches": true
+    },
+    {
+      "source_id": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "variant": "native",
+      "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+      "matches": true
+    }
+  ],
+  "source_range_hash_checks": 10,
+  "assets": [
+    {
+      "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+      "bytes": 24947
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+      "bytes": 32481
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "bytes": 542116
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/frozen/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "bytes": 232887
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_OPENAPI.json",
+      "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "bytes": 92180
+    }
+  ],
+  "schema_closures": {
+    "current": {
+      "definitions": 63,
+      "keywords": {
+        "$ref": 286,
+        "additionalProperties": 61,
+        "allOf": 7,
+        "const": 52,
+        "contains": 4,
+        "contentEncoding": 2,
+        "enum": 32,
+        "format": 4,
+        "if": 3,
+        "items": 36,
+        "maxItems": 38,
+        "maxLength": 15,
+        "maximum": 3,
+        "minItems": 25,
+        "minLength": 16,
+        "minimum": 3,
+        "oneOf": 40,
+        "pattern": 18,
+        "properties": 77,
+        "required": 71,
+        "then": 3,
+        "type": 204,
+        "uniqueItems": 1,
+        "x-cp6-combination-rules": 1,
+        "x-cp6-current-effect-knowledge-rule": 1,
+        "x-cp6-discriminator": 8,
+        "x-cp6-invariant": 2,
+        "x-cp6-invariants": 3,
+        "x-cp6-normalization": 1,
+        "x-cp6-rule": 3,
+        "x-cp6-runtime-invariants": 1,
+        "x-cp6-semantics": 1,
+        "x-cp6-source": 1,
+        "x-cp6-source-qualified-rule": 1,
+        "x-cp6-user-input-only": 1
+      },
+      "inventory_matches": true,
+      "external_schema_files": []
+    },
+    "frozen": {
+      "definitions": 63,
+      "keywords": {
+        "$ref": 285,
+        "additionalProperties": 61,
+        "allOf": 6,
+        "const": 52,
+        "contains": 4,
+        "contentEncoding": 2,
+        "enum": 30,
+        "format": 4,
+        "if": 3,
+        "items": 36,
+        "maxItems": 38,
+        "maxLength": 15,
+        "maximum": 3,
+        "minItems": 25,
+        "minLength": 16,
+        "minimum": 3,
+        "oneOf": 40,
+        "pattern": 18,
+        "properties": 76,
+        "required": 70,
+        "then": 3,
+        "type": 203,
+        "uniqueItems": 1,
+        "x-cp6-combination-rules": 1,
+        "x-cp6-discriminator": 8,
+        "x-cp6-invariant": 2,
+        "x-cp6-invariants": 3,
+        "x-cp6-normalization": 1,
+        "x-cp6-rule": 3,
+        "x-cp6-runtime-invariants": 1,
+        "x-cp6-semantics": 1,
+        "x-cp6-source": 1,
+        "x-cp6-user-input-only": 1
+      },
+      "inventory_matches": true,
+      "external_schema_files": []
+    }
+  },
+  "selected_body_bytes_verified": 5,
+  "exact_dependency_projections_verified": 343,
+  "source_counts": {
+    "composed-04": 1,
+    "composed-05": 10,
+    "composed-06": 5,
+    "composed-07": 2,
+    "composed-08": 324,
+    "composed-09": 1
+  },
+  "private_cases": 400,
+  "private_case_origins": {
+    "CONSTRUCTED_CONTRACT_UNIT_INPUT": 362,
+    "SELECTED_CURRENT_DESIGN_PROJECTION": 38
+  },
+  "fixed_ids_each_language": [
+    "VERSION-001",
+    "VERSION-002",
+    "VERSION-003",
+    "VERSION-004",
+    "VERSION-005",
+    "VERSION-006",
+    "VERSION-007",
+    "VERSION-008",
+    "BYTES-001",
+    "BYTES-002"
+  ],
+  "csharp_embedded_fixture_objects_equal_repository_fixtures": true,
+  "runs": {
+    "csharp": {
+      "directory": "20261013T060354Z-dotnet-final-407086e6",
+      "exit_code": 0,
+      "counts": {
+        "total": "417",
+        "executed": "417",
+        "passed": "417",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "metadata_sha256": "7845ca34d26932f4b159871c5c024512230ae23fd3a59e77510effaa69df9e1e",
+      "evidence_hashes_verified": {
+        "output.log": "aaaed14af0009b802d5e05801ea318343bbe4cab01fd770b2993cfaa94b2b5b6",
+        "results.trx": "9663e805935ce90e12e09206e0c8d4c43d64062ae09128b1fb7d0dd292c07922"
+      },
+      "input_changes_during_run": [],
+      "nonbehavior_metadata_drift_since_run": [
+        "eng/contracts/s01-11/.gitattributes"
+      ]
+    },
+    "typescript": {
+      "directory": "20261013T060526Z-ts-final-5254b7ee",
+      "exit_code": 0,
+      "counts": {
+        "numTotalTests": 416,
+        "numPassedTests": 416,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "metadata_sha256": "e9cb9f1aeba90f1a7ed440b6522d3c9f0dd1390a487c78b43de9f52ada1915c6",
+      "evidence_hashes_verified": {
+        "output.log": "3aad1cd597122308335dd706c56a3b8b08658338c9f11af2f32cbce60f4bbc16",
+        "vitest.json": "bc9cee23176f8975404a52d0802582dd54a756d1dc245a4fd099c9759e884f78"
+      },
+      "input_changes_during_run": [],
+      "nonbehavior_metadata_drift_since_run": [
+        "eng/contracts/s01-11/.gitattributes"
+      ]
+    },
+    "typecheck": {
+      "directory": "20261013T060619Z-typecheck-83ec4cb2",
+      "exit_code": 0,
+      "counts": null,
+      "metadata_sha256": "23d0570ce241ba78a52c4704f699e96b2e2e96d600d3d46c11a97196f828cd0a",
+      "evidence_hashes_verified": {
+        "output.log": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+      },
+      "input_changes_during_run": [],
+      "nonbehavior_metadata_drift_since_run": [
+        "eng/contracts/s01-11/.gitattributes"
+      ]
+    },
+    "design": {
+      "directory": "20261013T060706Z-design-f299e68e",
+      "exit_code": 0,
+      "counts": {
+        "verification_level": "SELECTED_DESIGN_FIXTURE_SUBASSERTIONS",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "projected_records": 343,
+        "tamper_rejections": 60,
+        "native_money_locations": 18,
+        "runtime_Owner_Store_acceptance": "NOT_RUN",
+        "actual_adoption": "UNPROVEN_FENCED",
+        "whole_C06_decode": "NOT_EXPOSED"
+      },
+      "metadata_sha256": "d240f8f267f39bfb222bc76d5c87d867e5e5f990fdfaac43ce499726004a2e6b",
+      "evidence_hashes_verified": {
+        "design.json": "7b0be6431e95fcf514a8948dc66408de102ab8b1337e7d3ed3d9bcafd35e40c5",
+        "output.log": "778c08876be2cf867a58891c455eee26fcaac96eda025d378482d9098b6a0cac"
+      },
+      "input_changes_during_run": [],
+      "nonbehavior_metadata_drift_since_run": [
+        "eng/contracts/s01-11/.gitattributes"
+      ]
+    }
+  },
+  "runtime_observed": "Environment.Version=8.0.29; .NET 8.0.29",
+  "production_source_hashes": {
+    "CP6.Entity/Contracts/ErpCredit/CreditCodecSet.cs": "8273d66e1ebb8a8e1f24aaa5cb94090a68f6c51e04e8c069434ec2af37ecb849",
+    "CP6.Entity/Contracts/ErpCredit/CurrentCreditCodec.cs": "e9b09dbb0002c97ee82290ccd40049d9921fe41875150b82fb780a97928534fe",
+    "CP6.Entity/Contracts/ErpCredit/FrozenR8CreditCodec.cs": "fa0342cb09c8f0a47af0354470b2ac6f77e95aa98dda7d82890eb0c5d759053c",
+    "CP6.Entity/Contracts/ErpCredit/NativeCreditSemantics.cs": "f548619e2a3b0e17915eff3fa4ab7a83e673c28c7c0729c1ca5bef613dca1c71",
+    "CP6.Entity/Contracts/ErpCredit/NativeSchemaValidator.cs": "b30f357af494b6c3b5a034772074054f20a119097361a5b8264f4755aeb5bb49",
+    "cp6.web/src/contracts/erp-credit/creditCodec.test.ts": "093a360a0f266ee22c1ab63d38407fb87175c6bce9e642b16816d9883a581b43",
+    "cp6.web/src/contracts/erp-credit/creditCodec.ts": "13d65b491d18e1fea1486f7a662cbc8dc409df8776be2f4ddd395e6079b2b6b2"
+  },
+  "untracked_task_paths_checked": 37,
+  "tracked_change_paths": [
+    "CP6.Entity/Contracts/ErpCredit/.gitattributes",
+    "CP6.Entity/Contracts/ErpCredit/CreditCodecSet.cs",
+    "CP6.Entity/Contracts/ErpCredit/CurrentCreditCodec.cs",
+    "CP6.Entity/Contracts/ErpCredit/FrozenR8CreditCodec.cs",
+    "CP6.Entity/Contracts/ErpCredit/NativeCreditSemantics.cs",
+    "CP6.Entity/Contracts/ErpCredit/NativeSchemaValidator.cs",
+    "CP6.Entity/Contracts/ErpCredit/README.md",
+    "cp6.web/src/contracts/erp-credit/.gitattributes",
+    "cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+    "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+    "eng/contracts/exact-values-tests/ErpCreditCodecTests.cs",
+    "eng/contracts/s01-11/.gitattributes",
+    "eng/contracts/s01-11/README.md",
+    "eng/contracts/s01-11/adopt_design_fixtures.py",
+    "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_OPENAPI.json",
+    "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_TYPE-REGISTRY.json",
+    "eng/contracts/s01-11/assets/frozen/ERP-CREDIT-01_TYPE-REGISTRY.json",
+    "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+    "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+    "eng/contracts/s01-11/build_fixtures.py",
+    "eng/contracts/s01-11/fixtures/cases.json",
+    "eng/contracts/s01-11/fixtures/current-bodies/multi_mixed_complete_public_q14.json",
+    "eng/contracts/s01-11/fixtures/current-bodies/multi_public_native_lookup_binding.json",
+    "eng/contracts/s01-11/fixtures/current-bodies/wn11_c06_exact_saved_200.json",
+    "eng/contracts/s01-11/fixtures/current-bodies/wn11_complete_current_q14.json",
+    "eng/contracts/s01-11/fixtures/current-bodies/wn11_existing_target_c06_saved_200.json",
+    "eng/contracts/s01-11/fixtures/current-chain.json",
+    "eng/contracts/s01-11/fixtures/native-objects.json",
+    "eng/contracts/s01-11/provenance.json",
+    "eng/contracts/s01-11/run_evidence.py",
+    "eng/contracts/s01-11/surface.json",
+    "eng/contracts/s01-11/verify_design.py"
+  ],
+  "out_of_scope_changes": [],
+  "review_probe_history": [
+    {
+      "attempt": 1,
+      "result": "AUDIT_PARSER_ASSERTION_FAILED",
+      "reason": "Exact id-argument display matcher did not account for xUnit truncation/escaping; no product test executed or failed."
+    },
+    {
+      "attempt": 2,
+      "result": "PASS",
+      "reason": "Parsed complete embedded item JSON from original TRX; all 400 private and 10 fixed objects match inputs exactly."
+    }
+  ],
+  "new_tests_executed": false,
+  "business_Owner_Store_database_HTTP_acceptance": "NOT_RUN"
+}
