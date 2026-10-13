@@ -1,0 +1,46 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  CP6.Entity -> D:\CP6-worktrees\s01-07-20261012\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.ExactValues.Tests -> D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll
+Test run for D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)
+[xUnit.net 00:00:00.09]   Discovering: CP6.ExactValues.Tests
+[xUnit.net 00:00:00.35]   Discovered:  CP6.ExactValues.Tests
+[xUnit.net 00:00:00.36]   Starting:    CP6.ExactValues.Tests
+[xUnit.net 00:00:00.42]     CP6.ExactValues.Tests.QualityContractTests.In_memory_unpaired_surrogates_are_rejected_without_replacement [FAIL]
+[xUnit.net 00:00:00.42]       Assert.ThrowsAny() Failure: No exception was thrown
+[xUnit.net 00:00:00.42]       Expected: typeof(System.Text.Json.JsonException)
+[xUnit.net 00:00:00.42]       Stack Trace:
+[xUnit.net 00:00:00.42]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(238,0): at CP6.ExactValues.Tests.QualityContractTests.In_memory_unpaired_surrogates_are_rejected_without_replacement()
+[xUnit.net 00:00:00.42]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.44]     CP6.ExactValues.Tests.QualityContractTests.A_typed_union_branch_cannot_serialize_as_a_different_valid_branch [FAIL]
+[xUnit.net 00:00:00.44]       Assert.ThrowsAny() Failure: No exception was thrown
+[xUnit.net 00:00:00.44]       Expected: typeof(System.Text.Json.JsonException)
+[xUnit.net 00:00:00.44]       Stack Trace:
+[xUnit.net 00:00:00.44]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(231,0): at CP6.ExactValues.Tests.QualityContractTests.A_typed_union_branch_cannot_serialize_as_a_different_valid_branch()
+[xUnit.net 00:00:00.44]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.45]   Finished:    CP6.ExactValues.Tests
+  Failed CP6.ExactValues.Tests.QualityContractTests.In_memory_unpaired_surrogates_are_rejected_without_replacement [19 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Text.Json.JsonException)
+  Stack Trace:
+     at CP6.ExactValues.Tests.QualityContractTests.In_memory_unpaired_surrogates_are_rejected_without_replacement() in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 238
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed CP6.ExactValues.Tests.QualityContractTests.A_typed_union_branch_cannot_serialize_as_a_different_valid_branch [29 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Text.Json.JsonException)
+  Stack Trace:
+     at CP6.ExactValues.Tests.QualityContractTests.A_typed_union_branch_cannot_serialize_as_a_different_valid_branch() in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 231
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Total tests: 2
+Test Run Failed.
+     Failed: 2
+ Total time: 1.2979 Seconds

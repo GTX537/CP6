@@ -1,0 +1,42 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  CP6.Entity -> D:\CP6-worktrees\s01-07-20261012\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.ExactValues.Tests -> D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll
+Test run for D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)
+[xUnit.net 00:00:00.17]   Discovering: CP6.ExactValues.Tests
+[xUnit.net 00:00:00.50]   Discovered:  CP6.ExactValues.Tests
+[xUnit.net 00:00:00.53]   Starting:    CP6.ExactValues.Tests
+[xUnit.net 00:00:00.61]       Assert.ThrowsAny() Failure: No exception was thrown
+[xUnit.net 00:00:00.61]       Expected: typeof(System.Text.Json.JsonException)
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(terminator: "\n") [FAIL]
+[xUnit.net 00:00:00.61]       Stack Trace:
+[xUnit.net 00:00:00.61]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(280,0): at CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(String terminator)
+[xUnit.net 00:00:00.61]            at InvokeStub_QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(Object, Span`1)
+[xUnit.net 00:00:00.61]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.61]       Output:
+[xUnit.net 00:00:00.61]         Runtime .NET 8.0.29; raw .NET ECMAScript $ match: True; native JS without m rejects this input.
+[xUnit.net 00:00:00.62]   Finished:    CP6.ExactValues.Tests
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(terminator: " ") [38 ms]
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(terminator: "\r\n") [< 1 ms]
+  Failed CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(terminator: "\n") [2 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Text.Json.JsonException)
+  Stack Trace:
+     at CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(String terminator) in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 280
+   at InvokeStub_QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ Runtime .NET 8.0.29; raw .NET ECMAScript $ match: True; native JS without m rejects this input.
+
+
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(terminator: " ") [< 1 ms]
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_ECMAScript_patterns_reject_trailing_line_terminators(terminator: "\r") [< 1 ms]
+
+Total tests: 5
+Test Run Failed.
+     Passed: 4
+     Failed: 1
+ Total time: 1.5458 Seconds

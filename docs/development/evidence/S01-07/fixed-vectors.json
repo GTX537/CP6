@@ -1,0 +1,406 @@
+{
+  "package": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "source_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+  "frozen_expected_unchanged": true,
+  "scope": "Original FIELD_SUBASSERTION_ONLY and TYPE_BINDING_ONLY assertions inside complete native fixtures; not whole business acceptance",
+  "cases": [
+    {
+      "id": "NCR-NULL-001",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-001\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-001\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-002",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-002\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-002\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-003",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-003\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-003\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-004",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-004\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-004\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-005",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-005\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-005\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-006",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-006\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-006\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-007",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-007\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-007\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-008",
+      "profile": "ncr-main-r6",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-008\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-008\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-009",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-009\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-009\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-010",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-010\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-010\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-011",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-011\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-011\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-012",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-012\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-012\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-013",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-013\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-013\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-014",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-014\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-014\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-015",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-015\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-015\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-016",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-016\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-016\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-017",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-017\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-017\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-018",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-018\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-018\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-019",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-019\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-019\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "NCR-NULL-020",
+      "profile": "ncr-cp4",
+      "original_operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "CP6.ExactValues.Tests.QualityContractTests.Fixed_NCR_NULL_vector_is_executed_on_each_original_native_field(id: \"NCR-NULL-020\", rawVector: \"{\\n      \\\"id\\\": \\\"NCR-NULL-020\\\",\\n      \\\"profil\"···)",
+      "evidence": "csharp/quality-contracts-format-final.trx"
+    },
+    {
+      "id": "IPQC-TYPE-001",
+      "profile": "ipqc-r4",
+      "original_operation": "native_type_binding",
+      "applicable_fields": [
+        "R4FrozenPayload.registrationRef"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-001 0ms",
+      "evidence": "ts/08-date-regression-1.log"
+    },
+    {
+      "id": "IPQC-TYPE-002",
+      "profile": "ipqc-r4",
+      "original_operation": "native_type_binding",
+      "applicable_fields": [
+        "R4FrozenPayload.registrationRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-002 0ms",
+      "evidence": "ts/08-date-regression-1.log"
+    },
+    {
+      "id": "IPQC-TYPE-003",
+      "profile": "ipqc-r4",
+      "original_operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].measurementUnitRef"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-003 0ms",
+      "evidence": "ts/08-date-regression-1.log"
+    },
+    {
+      "id": "IPQC-TYPE-004",
+      "profile": "ipqc-r4",
+      "original_operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].measurementUnitRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-004 0ms",
+      "evidence": "ts/08-date-regression-1.log"
+    },
+    {
+      "id": "IPQC-TYPE-005",
+      "profile": "ipqc-r4",
+      "original_operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].rule.unitRef"
+      ],
+      "original_expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-005 0ms",
+      "evidence": "ts/08-date-regression-1.log"
+    },
+    {
+      "id": "IPQC-TYPE-006",
+      "profile": "ipqc-r4",
+      "original_operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].rule.unitRef"
+      ],
+      "original_expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      },
+      "outcome": "PASS",
+      "actual_result": "✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-006 0ms",
+      "evidence": "ts/08-date-regression-1.log"
+    }
+  ]
+}

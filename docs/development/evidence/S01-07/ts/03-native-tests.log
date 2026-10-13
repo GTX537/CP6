@@ -1,0 +1,13 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/quality/ipqc.test.ts
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-07-20261012/cp6.web
+
+
+ Test Files  1 passed (1)
+      Tests  122 passed (122)
+   Start at  01:35:46
+   Duration  1.43s (transform 81ms, setup 0ms, import 183ms, tests 56ms, environment 1.01s)
+

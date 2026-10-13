@@ -1,0 +1,26 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/quality/ipqc.test.ts
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-07-20261012/cp6.web
+
+ ❯ src/contracts/quality/ipqc.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/contracts/quality/ipqc.test.ts [ src/contracts/quality/ipqc.test.ts ]
+Error: Denied ID D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/import_sources.py?url
+  File: D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/import_sources.py?url
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/node.js:20068:31
+ ❯ doTransform node_modules/vite/dist/node/chunks/node.js:20045:17
+ ❯ fetchModule node_modules/vite/dist/node/chunks/node.js:33584:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  01:35:30
+   Duration  1.55s (transform 53ms, setup 0ms, import 0ms, tests 0ms, environment 1.17s)
+

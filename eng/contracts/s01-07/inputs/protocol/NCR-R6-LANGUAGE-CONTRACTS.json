@@ -1,0 +1,630 @@
+{
+  "schema": "QA-NCR-R6-LANGUAGE-CONTRACTS-1",
+  "status": "DECLARATION_ONLY_NOT_IMPLEMENTATION",
+  "mainDefinitions": 224,
+  "referenceClosureNamedNodes": 337,
+  "tsAliases": 337,
+  "csharpObjectAndUnionRecords": 1046,
+  "csharpUnionMap": [
+    {
+      "type": "External22294a65_ReferenceIdentity",
+      "variants": [
+        "External22294a65_ReferenceIdentity_Variant0",
+        "External22294a65_ReferenceIdentity_Variant1",
+        "External22294a65_ReferenceIdentity_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_UnitIdentity",
+      "variants": [
+        "Main_UnitIdentity_Variant0",
+        "Main_UnitIdentity_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_BaselineSelection",
+      "variants": [
+        "Main_BaselineSelection_Variant0",
+        "Main_BaselineSelection_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_ApprovalActionBody",
+      "variants": [
+        "Main_ApprovalActionBody_Variant0",
+        "Main_ApprovalActionBody_Variant1",
+        "Main_ApprovalActionBody_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_TargetSelector",
+      "variants": [
+        "Main_TargetSelector_Variant0",
+        "Main_TargetSelector_Variant1",
+        "Main_TargetSelector_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_QualityUseApprovalBody",
+      "variants": [
+        "Main_QualityUseApprovalBody_Variant0",
+        "Main_QualityUseApprovalBody_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_PreviewRequest",
+      "variants": [
+        "Main_PreviewRequest_Variant0",
+        "Main_PreviewRequest_Variant1",
+        "Main_PreviewRequest_Variant2",
+        "Main_PreviewRequest_Variant3",
+        "Main_PreviewRequest_Variant4",
+        "Main_PreviewRequest_Variant5",
+        "Main_PreviewRequest_Variant6",
+        "Main_PreviewRequest_Variant7",
+        "Main_PreviewRequest_Variant8",
+        "Main_PreviewRequest_Variant9",
+        "Main_PreviewRequest_Variant10",
+        "Main_PreviewRequest_Variant11",
+        "Main_PreviewRequest_Variant12",
+        "Main_PreviewRequest_Variant13"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_ScrapPhysicalContext",
+      "variants": [
+        "Main_ScrapPhysicalContext_Variant0",
+        "Main_ScrapPhysicalContext_Variant1",
+        "Main_ScrapPhysicalContext_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_ResolvedUseTarget",
+      "variants": [
+        "Main_ResolvedUseTarget_Variant0",
+        "Main_ResolvedUseTarget_Variant1",
+        "Main_ResolvedUseTarget_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_Applicability",
+      "variants": [
+        "Main_Applicability_Variant0",
+        "Main_Applicability_Variant1",
+        "Main_Applicability_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_ClosureEvaluation",
+      "variants": [
+        "Main_ClosureEvaluation_Variant0",
+        "Main_ClosureEvaluation_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_OwnerFence",
+      "variants": [
+        "Main_OwnerFence_Variant0",
+        "Main_OwnerFence_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_CoordinationRequired",
+      "variants": [
+        "Main_CoordinationRequired_Variant0",
+        "Main_CoordinationRequired_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_ClosePhysicalProof",
+      "variants": [
+        "Main_ClosePhysicalProof_Variant0",
+        "Main_ClosePhysicalProof_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalf70281e4_CommonCommandReceipt",
+      "variants": [
+        "Externalf70281e4_CommonCommandReceipt_Variant0",
+        "Externalf70281e4_CommonCommandReceipt_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalf70281e4_C09FailedProblem",
+      "variants": [
+        "Externalf70281e4_C09FailedProblem_Variant0",
+        "Externalf70281e4_C09FailedProblem_Variant1",
+        "Externalf70281e4_C09FailedProblem_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalf70281e4_C09QueryUnavailableProblem",
+      "variants": [
+        "Externalf70281e4_C09QueryUnavailableProblem_Variant0"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalf70281e4_C09Result",
+      "variants": [
+        "Externalf70281e4_C09Result_Variant0",
+        "Externalf70281e4_C09Result_Variant1",
+        "Externalf70281e4_C09Result_Variant2",
+        "Externalf70281e4_C09Result_Variant3",
+        "Externalf70281e4_C09Result_Variant4"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_CloseFinanceProof",
+      "variants": [
+        "Main_CloseFinanceProof_Variant0",
+        "Main_CloseFinanceProof_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainCloseSubject",
+      "variants": [
+        "Main_MainCloseSubject_Variant0",
+        "Main_MainCloseSubject_Variant1",
+        "Main_MainCloseSubject_Variant2",
+        "Main_MainCloseSubject_Variant3",
+        "Main_MainCloseSubject_Variant4",
+        "Main_MainCloseSubject_Variant5",
+        "Main_MainCloseSubject_Variant6",
+        "Main_MainCloseSubject_Variant7",
+        "Main_MainCloseSubject_Variant8",
+        "Main_MainCloseSubject_Variant9",
+        "Main_MainCloseSubject_Variant10",
+        "Main_MainCloseSubject_Variant11",
+        "Main_MainCloseSubject_Variant12",
+        "Main_MainCloseSubject_Variant13",
+        "Main_MainCloseSubject_Variant14"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainCloseMember",
+      "variants": [
+        "Main_MainCloseMember_Variant0",
+        "Main_MainCloseMember_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainCloseCurrentVector",
+      "variants": [
+        "Main_MainCloseCurrentVector_Variant0",
+        "Main_MainCloseCurrentVector_Variant1",
+        "Main_MainCloseCurrentVector_Variant2",
+        "Main_MainCloseCurrentVector_Variant3",
+        "Main_MainCloseCurrentVector_Variant4",
+        "Main_MainCloseCurrentVector_Variant5",
+        "Main_MainCloseCurrentVector_Variant6",
+        "Main_MainCloseCurrentVector_Variant7"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30ExternalFactBinding",
+      "variants": [
+        "Main_H30ExternalFactBinding_Variant0",
+        "Main_H30ExternalFactBinding_Variant1",
+        "Main_H30ExternalFactBinding_Variant2",
+        "Main_H30ExternalFactBinding_Variant3"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_InitialSourceRootIdentity",
+      "variants": [
+        "Main_InitialSourceRootIdentity_Variant0",
+        "Main_InitialSourceRootIdentity_Variant1",
+        "Main_InitialSourceRootIdentity_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "External6d9d3eee__types_Decision_completePartition_Item",
+      "variants": [
+        "External6d9d3eee__types_Decision_completePartition_Item_Variant0",
+        "External6d9d3eee__types_Decision_completePartition_Item_Variant1",
+        "External6d9d3eee__types_Decision_completePartition_Item_Variant2",
+        "External6d9d3eee__types_Decision_completePartition_Item_Variant3"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_IpqcOriginalSourceApiRead",
+      "variants": [
+        "Main_IpqcOriginalSourceApiRead_Variant0",
+        "Main_IpqcOriginalSourceApiRead_Variant1",
+        "Main_IpqcOriginalSourceApiRead_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_IpqcStandaloneSourceOriginal",
+      "variants": [
+        "Main_IpqcStandaloneSourceOriginal_Variant0",
+        "Main_IpqcStandaloneSourceOriginal_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalcb0c1c28_SourceBundleProjection_technical",
+      "variants": [
+        "Externalcb0c1c28_SourceBundleProjection_technical_Variant0",
+        "Externalcb0c1c28_SourceBundleProjection_technical_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_InitialSourceRead",
+      "variants": [
+        "Main_InitialSourceRead_Variant0",
+        "Main_InitialSourceRead_Variant1",
+        "Main_InitialSourceRead_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "External6d9d3eee__types_IpqcFinalGuardResult",
+      "variants": [
+        "External6d9d3eee__types_IpqcFinalGuardResult_Variant0",
+        "External6d9d3eee__types_IpqcFinalGuardResult_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_InitialSourceFinalGuard",
+      "variants": [
+        "Main_InitialSourceFinalGuard_Variant0",
+        "Main_InitialSourceFinalGuard_Variant1",
+        "Main_InitialSourceFinalGuard_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_DetailResponse",
+      "variants": [
+        "Main_DetailResponse_Variant0",
+        "Main_DetailResponse_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainApplied",
+      "variants": [
+        "Main_MainApplied_Variant0",
+        "Main_MainApplied_Variant1",
+        "Main_MainApplied_Variant2",
+        "Main_MainApplied_Variant3",
+        "Main_MainApplied_Variant4",
+        "Main_MainApplied_Variant5",
+        "Main_MainApplied_Variant6",
+        "Main_MainApplied_Variant7",
+        "Main_MainApplied_Variant8",
+        "Main_MainApplied_Variant9",
+        "Main_MainApplied_Variant10",
+        "Main_MainApplied_Variant11",
+        "Main_MainApplied_Variant12",
+        "Main_MainApplied_Variant13",
+        "Main_MainApplied_Variant14",
+        "Main_MainApplied_Variant15"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainReplay",
+      "variants": [
+        "Main_MainReplay_Variant0",
+        "Main_MainReplay_Variant1",
+        "Main_MainReplay_Variant2",
+        "Main_MainReplay_Variant3",
+        "Main_MainReplay_Variant4",
+        "Main_MainReplay_Variant5",
+        "Main_MainReplay_Variant6",
+        "Main_MainReplay_Variant7",
+        "Main_MainReplay_Variant8",
+        "Main_MainReplay_Variant9",
+        "Main_MainReplay_Variant10",
+        "Main_MainReplay_Variant11",
+        "Main_MainReplay_Variant12",
+        "Main_MainReplay_Variant13",
+        "Main_MainReplay_Variant14",
+        "Main_MainReplay_Variant15"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainMutationResponse",
+      "variants": [
+        "Main_MainMutationResponse_Variant0",
+        "Main_MainMutationResponse_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_RecoveryResponse",
+      "variants": [
+        "Main_RecoveryResponse_Variant0",
+        "Main_RecoveryResponse_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_Problem",
+      "variants": [
+        "Main_Problem_Variant0",
+        "Main_Problem_Variant1",
+        "Main_Problem_Variant2",
+        "Main_Problem_Variant3",
+        "Main_Problem_Variant4",
+        "Main_Problem_Variant5",
+        "Main_Problem_Variant6",
+        "Main_Problem_Variant7",
+        "Main_Problem_Variant8",
+        "Main_Problem_Variant9",
+        "Main_Problem_Variant10",
+        "Main_Problem_Variant11",
+        "Main_Problem_Variant12",
+        "Main_Problem_Variant13",
+        "Main_Problem_Variant14",
+        "Main_Problem_Variant15",
+        "Main_Problem_Variant16",
+        "Main_Problem_Variant17",
+        "Main_Problem_Variant18",
+        "Main_Problem_Variant19",
+        "Main_Problem_Variant20",
+        "Main_Problem_Variant21",
+        "Main_Problem_Variant22",
+        "Main_Problem_Variant23",
+        "Main_Problem_Variant24",
+        "Main_Problem_Variant25",
+        "Main_Problem_Variant26",
+        "Main_Problem_Variant27",
+        "Main_Problem_Variant28",
+        "Main_Problem_Variant29",
+        "Main_Problem_Variant30",
+        "Main_Problem_Variant31",
+        "Main_Problem_Variant32",
+        "Main_Problem_Variant33",
+        "Main_Problem_Variant34",
+        "Main_Problem_Variant35",
+        "Main_Problem_Variant36",
+        "Main_Problem_Variant37",
+        "Main_Problem_Variant38"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainResult",
+      "variants": [
+        "Main_MainResult_Variant0",
+        "Main_MainResult_Variant1",
+        "Main_MainResult_Variant2",
+        "Main_MainResult_Variant3",
+        "Main_MainResult_Variant4",
+        "Main_MainResult_Variant5",
+        "Main_MainResult_Variant6",
+        "Main_MainResult_Variant7",
+        "Main_MainResult_Variant8",
+        "Main_MainResult_Variant9",
+        "Main_MainResult_Variant10",
+        "Main_MainResult_Variant11",
+        "Main_MainResult_Variant12",
+        "Main_MainResult_Variant13",
+        "Main_MainResult_Variant14",
+        "Main_MainResult_Variant15"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_FactHistoryItem",
+      "variants": [
+        "Main_FactHistoryItem_Variant0",
+        "Main_FactHistoryItem_Variant1",
+        "Main_FactHistoryItem_Variant2",
+        "Main_FactHistoryItem_Variant3",
+        "Main_FactHistoryItem_Variant4",
+        "Main_FactHistoryItem_Variant5",
+        "Main_FactHistoryItem_Variant6",
+        "Main_FactHistoryItem_Variant7",
+        "Main_FactHistoryItem_Variant8",
+        "Main_FactHistoryItem_Variant9",
+        "Main_FactHistoryItem_Variant10",
+        "Main_FactHistoryItem_Variant11",
+        "Main_FactHistoryItem_Variant12",
+        "Main_FactHistoryItem_Variant13",
+        "Main_FactHistoryItem_Variant14",
+        "Main_FactHistoryItem_Variant15",
+        "Main_FactHistoryItem_Variant16",
+        "Main_FactHistoryItem_Variant17",
+        "Main_FactHistoryItem_Variant18",
+        "Main_FactHistoryItem_Variant19",
+        "Main_FactHistoryItem_Variant20",
+        "Main_FactHistoryItem_Variant21",
+        "Main_FactHistoryItem_Variant22",
+        "Main_FactHistoryItem_Variant23",
+        "Main_FactHistoryItem_Variant24",
+        "Main_FactHistoryItem_Variant25",
+        "Main_FactHistoryItem_Variant26",
+        "Main_FactHistoryItem_Variant27",
+        "Main_FactHistoryItem_Variant28",
+        "Main_FactHistoryItem_Variant29",
+        "Main_FactHistoryItem_Variant30",
+        "Main_FactHistoryItem_Variant31",
+        "Main_FactHistoryItem_Variant32",
+        "Main_FactHistoryItem_Variant33",
+        "Main_FactHistoryItem_Variant34",
+        "Main_FactHistoryItem_Variant35",
+        "Main_FactHistoryItem_Variant36",
+        "Main_FactHistoryItem_Variant37",
+        "Main_FactHistoryItem_Variant38"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalf70281e4_QaOwnerQueryResult",
+      "variants": [
+        "Externalf70281e4_QaOwnerQueryResult_Variant0",
+        "Externalf70281e4_QaOwnerQueryResult_Variant1",
+        "Externalf70281e4_QaOwnerQueryResult_Variant2",
+        "Externalf70281e4_QaOwnerQueryResult_Variant3",
+        "Externalf70281e4_QaOwnerQueryResult_Variant4",
+        "Externalf70281e4_QaOwnerQueryResult_Variant5"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalf70281e4_QaRequiredResult",
+      "variants": [
+        "Externalf70281e4_QaRequiredResult_Variant0",
+        "Externalf70281e4_QaRequiredResult_Variant1",
+        "Externalf70281e4_QaRequiredResult_Variant2",
+        "Externalf70281e4_QaRequiredResult_Variant3",
+        "Externalf70281e4_QaRequiredResult_Variant4"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Externalf70281e4_QaOwnerProblem",
+      "variants": [
+        "Externalf70281e4_QaOwnerProblem_Variant0",
+        "Externalf70281e4_QaOwnerProblem_Variant1",
+        "Externalf70281e4_QaOwnerProblem_Variant2",
+        "Externalf70281e4_QaOwnerProblem_Variant3",
+        "Externalf70281e4_QaOwnerProblem_Variant4"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30FinalReadResult",
+      "variants": [
+        "Main_H30FinalReadResult_Variant0",
+        "Main_H30FinalReadResult_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainCloseGuardOutcome",
+      "variants": [
+        "Main_MainCloseGuardOutcome_Variant0",
+        "Main_MainCloseGuardOutcome_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_MainCloseMutationResponse",
+      "variants": [
+        "Main_MainCloseMutationResponse_Variant0",
+        "Main_MainCloseMutationResponse_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_InitialSourceReadOutcome",
+      "variants": [
+        "Main_InitialSourceReadOutcome_Variant0",
+        "Main_InitialSourceReadOutcome_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_InitialSourceFinalOutcome",
+      "variants": [
+        "Main_InitialSourceFinalOutcome_Variant0",
+        "Main_InitialSourceFinalOutcome_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_NonStockDispositionReadCandidate",
+      "variants": [
+        "Main_NonStockDispositionReadCandidate_Variant0",
+        "Main_NonStockDispositionReadCandidate_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30PreparationRequest",
+      "variants": [
+        "Main_H30PreparationRequest_Variant0",
+        "Main_H30PreparationRequest_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30PreparationResponse",
+      "variants": [
+        "Main_H30PreparationResponse_Variant0",
+        "Main_H30PreparationResponse_Variant1",
+        "Main_H30PreparationResponse_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30InputLookupRequest",
+      "variants": [
+        "Main_H30InputLookupRequest_Variant0",
+        "Main_H30InputLookupRequest_Variant1",
+        "Main_H30InputLookupRequest_Variant2"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30InputLookupResponse",
+      "variants": [
+        "Main_H30InputLookupResponse_Variant0",
+        "Main_H30InputLookupResponse_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30PortionSelectorReadResult",
+      "variants": [
+        "Main_H30PortionSelectorReadResult_Variant0",
+        "Main_H30PortionSelectorReadResult_Variant1"
+      ],
+      "oneOfExact": true
+    },
+    {
+      "type": "Main_H30PortionContinuationReadResult",
+      "variants": [
+        "Main_H30PortionContinuationReadResult_Variant0",
+        "Main_H30PortionContinuationReadResult_Variant1"
+      ],
+      "oneOfExact": true
+    }
+  ],
+  "normative": "closed exact JSON schemas plus cross-field semantic rules",
+  "compiler": "NOT_RUN",
+  "runtimeSerializer": "NOT_IMPLEMENTED_OR_RUN",
+  "scalarConstraints": "all schema patterns/formats/size/decimal/int64/const enforced by future strict adapter; C# declarations alone do not prove them",
+  "unionRules": "nullable is explicit value/null; nonnullable exact oneOf is explicit named variants, not object/JsonElement or property-presence guessing",
+  "r11SourceRelationConstraints": {
+    "normativeMap": "NCR-R11-SOURCE-GRAPH-RELATION-MAP.json",
+    "core": "C17",
+    "existingShapesAndColumnsUnchanged": true,
+    "exactRelations": "native ProofRead SHA(body), actual PlanInstance complete refs and same registered family original refs/body/cut; complete original anchors/typed child/FK/current/final/history/cold",
+    "compilerOrSqlOrRuntime": "NOT_RUN"
+  }
+}

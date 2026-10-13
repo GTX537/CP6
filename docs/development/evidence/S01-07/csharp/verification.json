@@ -1,0 +1,247 @@
+{
+  "schema": "S01-07-CSHARP-VERIFICATION-1",
+  "scope": "Compiled native NCR contract codec only; no Owner, storage, event publication or production acceptance.",
+  "sourceHead": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "sourceState": "Task source changes uncommitted at execution; exact tested code/dependency file hashes follow. Parent coordinates review/commit/merge.",
+  "sourceInputBaseline": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "command": "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~QualityContractTests --logger \"trx;LogFileName=quality-contracts-format-final.trx\" --results-directory docs/development/evidence/S01-07/csharp --logger \"console;verbosity=minimal\"",
+  "times": {
+    "creation": "2026-10-13T01:45:57.8006475-04:00",
+    "queuing": "2026-10-13T01:45:57.8006477-04:00",
+    "start": "2026-10-13T01:45:56.6414640-04:00",
+    "finish": "2026-10-13T01:45:58.5370509-04:00"
+  },
+  "counters": {
+    "total": "657",
+    "executed": "657",
+    "passed": "657",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "runtime": ".NET 8.0.29",
+  "targetFramework": "net8.0",
+  "sdk": "10.0.302",
+  "os": "Windows 10.0.26200 win-x64",
+  "fixedVectorResults": [
+    {
+      "id": "NCR-NULL-001",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-002",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-003",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-004",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-005",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-006",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-007",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-008",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-009",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-010",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-011",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-012",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-013",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-014",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-015",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-016",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-017",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-018",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-019",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    },
+    {
+      "id": "NCR-NULL-020",
+      "outcome": "Passed",
+      "scope": "Frozen field assertion executed over each applicable complete native fixture"
+    }
+  ],
+  "fullObjectFixtures": {
+    "total": 594,
+    "positive": 102,
+    "negative": 492,
+    "fileSha256": "190fcbfceb38ae42320332120f9771f6bffbb2103ec12564a204308ed55c4a8b",
+    "provenance": "Constructed from pinned schemas; not actual Owner data or business acceptance"
+  },
+  "nativeClosure": {
+    "explicitRoots": 24,
+    "compiledDeclarations": 92,
+    "schemaNodes": 102,
+    "sourceManifest": "eng/contracts/s01-07/csharp/generation-manifest.json",
+    "fieldInventory": "eng/contracts/s01-07/csharp/native-field-inventory.json"
+  },
+  "codeHashes": {
+    "CP6.Entity/Contracts/Quality/Consumer.g.cs": "bf3375df99acf0ae453bf1b8aa326ea6eea1631932a33de3e4c0e41fffbf0258",
+    "CP6.Entity/Contracts/Quality/NativeContractCatalog.g.cs": "0e359e8bf3af79fc21700d487be42effd8eb94b059edffaa131e896f75581988",
+    "CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs": "48a1943837b9fe08c179efcc50a9146512b1b67a2f94edd4e02468ab2bf3f914",
+    "CP6.Entity/Contracts/Quality/NcrJson.cs": "e6c230080597002478dac16c2a13685ef6bba321c383ce5ce67568297ed5c516",
+    "CP6.Entity/Contracts/Quality/OwnerWire.g.cs": "dcce37dd788c60d66cc6da0d9296a187251185536d218cbdbbfbfbfedae389ed",
+    "CP6.Entity/Contracts/Quality/QaNcrMainR6Declarations.g.cs": "4cfc8684330a6d8d3bdc82cb0432b687f2792c16f8ebe6b58e48b14fafc9e2bf",
+    "CP6.Entity/Contracts/Quality/SourceQA.g.cs": "097081bf6cd84897cef5e9c059a9c55cec9740e6e7cccaac95406a75d55af3ec",
+    "eng/contracts/exact-values-tests/QualityContractTests.cs": "dfeeec49bc2ac9f8aea71bd2e091428f6bdc01391be72ac7ee0474a53e468941",
+    "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs": "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee",
+    "CP6.Entity/Contracts/Wire/NullOnly.cs": "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b",
+    "CP6.Entity/Contracts/Wire/StrictJson.cs": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d"
+  },
+  "dependencyHashes": {
+    "Directory.Build.props": "dd3c34588874b90b6e2d42aa2b51b4e7deedaf22ee34b6bc182160e3d148b739",
+    "CP6.Entity/CP6.Entity.csproj": "20724537f8dfa54de7b3e4998da971e3ada31dc0300caf229012a5fa851b671a",
+    "CP6.Entity/packages.lock.json": "bf6ccea1eb09e82768edb2c2c1162171e006cd25632ed91f99af498dfa94d88f",
+    "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e"
+  },
+  "generation": {
+    "command": "python eng/contracts/s01-07/csharp/generate.py --check",
+    "result": "PASS: 92 declarations, 102 schemas, 8 generated files"
+  },
+  "tdd": [
+    {
+      "log": "red-declaration-boundary.log",
+      "discovered": 2,
+      "failed": 2,
+      "passed": 0,
+      "reason": "Real default DTO boundary incorrectly accepted unknown sourceKind and foreign owner field."
+    },
+    {
+      "log": "red-full-native.log",
+      "discovered": 631,
+      "failed": 276,
+      "passed": 355,
+      "reason": "Declaration-only baseline lacked native scalar/closed object validation and complete union codecs."
+    },
+    {
+      "log": "red-writer-identity.log",
+      "discovered": 2,
+      "failed": 2,
+      "passed": 0,
+      "reason": "Writer allowed concrete branch to become a sibling tuple and replaced unpaired UTF-16."
+    },
+    {
+      "log": "red-regex-dialect.log",
+      "discovered": 5,
+      "failed": 1,
+      "passed": 4,
+      "reason": "Raw .NET ECMAScript accepted final LF unlike actual Node native regex semantics."
+    },
+    {
+      "log": "red-rfc3339-format.log",
+      "discovered": 12,
+      "failed": 6,
+      "passed": 6,
+      "reason": "DateTime year restrictions and June/December-only positions narrowed RFC3339 format input."
+    }
+  ],
+  "fixtureClarification": "Main Decimal uses canonical no-meaningless-trailing-zero syntax; preservation of 1.00000000 is tested on SourceQA ObservationInput where original Qty permits it. Frozen vector bytes/expected values unchanged.",
+  "dateTimeScope": {
+    "reference": "https://www.rfc-editor.org/rfc/rfc3339#section-5.7",
+    "verified": "Calendar including year0000, exact original fractions/offsets, possible UTC month-end second60 positions",
+    "notClaimed": "IERS announcement or actual occurrence of a synthetic leap-second date"
+  },
+  "notRun": [
+    "Whole source declaration surface outside the explicit adopted closure",
+    "QA Owner currentness/authorization/cross-object semantic checks",
+    "QualityInspectionService and DefectRecordService wiring",
+    "Database/schema migrations",
+    "Owner business acceptance and production deployment",
+    "GitHub Actions"
+  ],
+  "actions": {
+    "triggerChanges": [],
+    "cancelledRuns": [],
+    "remoteRuns": []
+  },
+  "artifacts": {
+    "environment.txt": "9e1b9d7e939832aefca23c8b7c5f63858aa708f1d149ce2cca984349c356cd31",
+    "first-codec-gate.log": "7e5c25d50d882b7e4c9e51c4a4877bbc9f24f7369551933f2d63b0d45f835e6f",
+    "native-final-gate.log": "0ddc5115da9678bbf429707c521f08b99796a0de92af7cbd4609dc0a3e02a57e",
+    "native-format-final-gate.log": "5ed0c24968a583f2aa383f414c46e2a41e332d1bb53426987b7e92d13e4d1124",
+    "native-gate.log": "e21ce9ba044c1183d4d0c8ac49cd7c968e69e6ead6e2bcde259e41dcfd9a5462",
+    "node-regex-dialect.json": "9421dbb5ec105f54832997a1b6c6ee153152cebd7f8b26fadc4b094886e6c06f",
+    "quality-contracts-final.trx": "b01c23a803240a01317ff164f08d1f90950d3b77a477ddf18cd6660018d8794a",
+    "quality-contracts-format-final.trx": "9e5a311cbedea390d086c8f3c7e8ebe25eb9a741ae4c701aa62a8e00ce0f8ff7",
+    "quality-contracts.trx": "8d27ad80063fbf6b3c538f081a3e8d982422c95243dcc8c48d3e27b5113db917",
+    "red-declaration-boundary.log": "a5f19f1af6cd5aa4bb6fb6e19b2acfdef14de1115a6505c9cd2ba8ffe9229415",
+    "red-full-native.log": "723984797ed62b93c236239712d146346fdf29ceded704b56466d646be6c3835",
+    "red-regex-dialect.log": "e96d5d9ddf1e1383a1872bc9e01eea784085296106d23e814e9ac3807092e119",
+    "red-rfc3339-format.log": "7d2dc76603f1dca4c857a00cc3ad498081b516f0077531fd69d8c27632cf75a9",
+    "red-writer-identity.log": "77c3f18914c92eb2c29478f1ff5979d600ecf55deb83fbccc954c6dbf3855f75"
+  }
+}

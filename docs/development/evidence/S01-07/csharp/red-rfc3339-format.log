@@ -1,0 +1,197 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  CP6.Entity -> D:\CP6-worktrees\s01-07-20261012\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.ExactValues.Tests -> D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll
+Test run for D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)
+[xUnit.net 00:00:00.11]   Discovering: CP6.ExactValues.Tests
+[xUnit.net 00:00:00.38]   Discovered:  CP6.ExactValues.Tests
+[xUnit.net 00:00:00.40]   Starting:    CP6.ExactValues.Tests
+[xUnit.net 00:00:00.48]       System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+[xUnit.net 00:00:00.48]     CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-03-01T00:59:60+01:00", accepted: True) [FAIL]
+[xUnit.net 00:00:00.48]       Stack Trace:
+[xUnit.net 00:00:00.48]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(185,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword)
+[xUnit.net 00:00:00.48]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(193,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing)
+[xUnit.net 00:00:00.48]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(84,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value)
+[xUnit.net 00:00:00.48]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(28,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.48]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(23,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.48]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(307,0): at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted)
+[xUnit.net 00:00:00.48]            at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.48]       Output:
+[xUnit.net 00:00:00.48]         RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+[xUnit.net 00:00:00.50]       System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+[xUnit.net 00:00:00.50]       Stack Trace:
+[xUnit.net 00:00:00.50]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(185,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword)
+[xUnit.net 00:00:00.50]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(193,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing)
+[xUnit.net 00:00:00.50]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(84,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value)
+[xUnit.net 00:00:00.50]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(28,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.50]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(23,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.50]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(307,0): at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted)
+[xUnit.net 00:00:00.50]     CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-02-29T23:59:59.123456789Z", accepted: True) [FAIL]
+[xUnit.net 00:00:00.50]            at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.50]       Output:
+[xUnit.net 00:00:00.50]         RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+[xUnit.net 00:00:00.52]     CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-01-01T00:59:60+01:00", accepted: True) [FAIL]
+[xUnit.net 00:00:00.52]       System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+[xUnit.net 00:00:00.52]       Stack Trace:
+[xUnit.net 00:00:00.52]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(185,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword)
+[xUnit.net 00:00:00.52]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(193,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing)
+[xUnit.net 00:00:00.52]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(84,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value)
+[xUnit.net 00:00:00.52]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(28,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.52]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(23,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.52]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(307,0): at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted)
+[xUnit.net 00:00:00.52]            at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+[xUnit.net 00:00:00.52]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.52]       Output:
+[xUnit.net 00:00:00.52]         RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-01-31T23:59:60+00:01", accepted: False) [25 ms]
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-02-28T23:59:60Z", accepted: False) [8 ms]
+  Failed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-03-01T00:59:60+01:00", accepted: True) [9 ms]
+  Error Message:
+   System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+  Stack Trace:
+     at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 185
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 193
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 84
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 28
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 23
+   at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted) in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 307
+   at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+
+
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-02-30T23:59:59Z", accepted: False) [8 ms]
+  Failed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-02-29T23:59:59.123456789Z", accepted: True) [8 ms]
+  Error Message:
+   System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+  Stack Trace:
+     at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 185
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 193
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 84
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 28
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 23
+   at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted) in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 307
+   at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+
+
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-01-30T23:59:60Z", accepted: False) [8 ms]
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-12-31T23:59:60-00:01", accepted: False) [8 ms]
+  Failed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-01-01T00:59:60+01:00", accepted: True) [8 ms]
+  Error Message:
+   System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+  Stack Trace:
+     at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 185
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 193
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 84
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 28
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 23
+   at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted) in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 307
+   at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+
+
+  Passed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "9999-12-31T23:00:00-01:00", accepted: True) [25 ms]
+[xUnit.net 00:00:00.57]     CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-01-31T23:59:60Z", accepted: True) [FAIL]
+[xUnit.net 00:00:00.57]       System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+[xUnit.net 00:00:00.57]       Stack Trace:
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(185,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(193,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(84,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(28,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(23,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(307,0): at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted)
+[xUnit.net 00:00:00.57]            at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+[xUnit.net 00:00:00.57]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.57]       Output:
+[xUnit.net 00:00:00.57]         RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+[xUnit.net 00:00:00.57]       System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+[xUnit.net 00:00:00.57]       Stack Trace:
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(185,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(193,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing)
+[xUnit.net 00:00:00.57]     CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-02-01T01:59:60+02:00", accepted: True) [FAIL]
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(84,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(28,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(23,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.57]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(307,0): at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted)
+[xUnit.net 00:00:00.57]            at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+[xUnit.net 00:00:00.57]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.57]       Output:
+[xUnit.net 00:00:00.57]         RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+[xUnit.net 00:00:00.58]     CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-01-01T00:00:00Z", accepted: True) [FAIL]
+[xUnit.net 00:00:00.58]       System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+[xUnit.net 00:00:00.58]       Stack Trace:
+[xUnit.net 00:00:00.58]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(185,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword)
+[xUnit.net 00:00:00.58]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(193,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing)
+[xUnit.net 00:00:00.58]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(84,0): at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value)
+[xUnit.net 00:00:00.58]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(28,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.58]         D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs(23,0): at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8)
+[xUnit.net 00:00:00.58]         D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs(307,0): at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted)
+[xUnit.net 00:00:00.58]            at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+[xUnit.net 00:00:00.58]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.58]       Output:
+[xUnit.net 00:00:00.58]         RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+[xUnit.net 00:00:00.58]   Finished:    CP6.ExactValues.Tests
+  Failed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-01-31T23:59:60Z", accepted: True) [8 ms]
+  Error Message:
+   System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+  Stack Trace:
+     at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 185
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 193
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 84
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 28
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 23
+   at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted) in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 307
+   at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+
+
+  Failed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "2000-02-01T01:59:60+02:00", accepted: True) [8 ms]
+  Error Message:
+   System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+  Stack Trace:
+     at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 185
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 193
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 84
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 28
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 23
+   at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted) in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 307
+   at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+
+
+  Failed CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(time: "0000-01-01T00:00:00Z", accepted: True) [8 ms]
+  Error Message:
+   System.Text.Json.JsonException : NATIVE_SCHEMA_ONE_OF: $
+  Stack Trace:
+     at CP6.Entity.Contracts.Quality.NativeContractRuntime.<>c__DisplayClass15_0.<Validate>g__Fail|0(String keyword) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 185
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Validate(JsonElement schema, JsonElement value, String path, Boolean throwing) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 193
+   at CP6.Entity.Contracts.Quality.NativeContractRuntime.Read(Type type, JsonElement value) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 84
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize(Type type, ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 28
+   at CP6.Entity.Contracts.Quality.NcrJson.Deserialize[T](ReadOnlySpan`1 utf8) in D:\CP6-worktrees\s01-07-20261012\CP6.Entity\Contracts\Quality\NcrJson.cs:line 23
+   at CP6.ExactValues.Tests.QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(String time, Boolean accepted) in D:\CP6-worktrees\s01-07-20261012\eng\contracts\exact-values-tests\QualityContractTests.cs:line 307
+   at InvokeStub_QualityContractTests.Native_time_format_uses_RFC3339_calendar_range_and_UTC_month_end_positions(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ RFC3339 format/calendar/offset-position example only; synthetic second-60 positions do not claim an IERS-announced leap second.
+
+
+
+Test Run Failed.
+Total tests: 12
+     Passed: 6
+     Failed: 6
+ Total time: 1.2188 Seconds

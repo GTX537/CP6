@@ -1,0 +1,141 @@
+{
+  "version": "CP6-S01-07-IPQC-GENERATION/1",
+  "command": "node eng/contracts/s01-07/ts/generate.mjs",
+  "input_manifest": "eng/contracts/s01-07/sources.json",
+  "declarations": 203,
+  "roots": [
+    {
+      "name": "EnvironmentKey",
+      "source": "native-registry",
+      "selector": "/types/EnvironmentKey"
+    },
+    {
+      "name": "QapRef",
+      "source": "native-registry",
+      "selector": "/types/QapRef"
+    },
+    {
+      "name": "QapEvidence",
+      "source": "native-registry",
+      "selector": "/types/QapEvidence"
+    },
+    {
+      "name": "QapUom",
+      "source": "native-registry",
+      "selector": "/types/QapUom"
+    },
+    {
+      "name": "QapRange",
+      "source": "native-registry",
+      "selector": "/types/QapRange"
+    },
+    {
+      "name": "ExecRef",
+      "source": "native-registry",
+      "selector": "/types/ExecRef"
+    },
+    {
+      "name": "ExecEvidence",
+      "source": "native-registry",
+      "selector": "/types/ExecEvidence"
+    },
+    {
+      "name": "ExecRange",
+      "source": "native-registry",
+      "selector": "/types/ExecRange"
+    },
+    {
+      "name": "ExecScope",
+      "source": "native-registry",
+      "selector": "/types/ExecScope"
+    },
+    {
+      "name": "ExecQuantity",
+      "source": "native-registry",
+      "selector": "/types/ExecQuantity"
+    },
+    {
+      "name": "ExecQaSource",
+      "source": "native-registry",
+      "selector": "/types/ExecQaSource"
+    },
+    {
+      "name": "OutRef",
+      "source": "native-registry",
+      "selector": "/types/OutRef"
+    },
+    {
+      "name": "OutEvidence",
+      "source": "native-registry",
+      "selector": "/types/OutEvidence"
+    },
+    {
+      "name": "OutFlatRef",
+      "source": "native-registry",
+      "selector": "/types/OutFlatRef"
+    },
+    {
+      "name": "OutRange",
+      "source": "native-registry",
+      "selector": "/types/OutRange"
+    },
+    {
+      "name": "OutQualitySource",
+      "source": "native-registry",
+      "selector": "/types/OutQualitySource"
+    },
+    {
+      "name": "OutQualityTaskResult",
+      "source": "native-registry",
+      "selector": "/types/OutQualityTaskResult"
+    },
+    {
+      "name": "OutQualityDisposition",
+      "source": "native-registry",
+      "selector": "/types/OutQualityDisposition"
+    },
+    {
+      "name": "ExecQualityTaskResult",
+      "source": "native-registry",
+      "selector": "/types/ExecQualityTaskResult"
+    },
+    {
+      "name": "ExecQualityDisposition",
+      "source": "native-registry",
+      "selector": "/types/ExecQualityDisposition"
+    },
+    {
+      "name": "RawEvidenceHandoff",
+      "source": "native-registry",
+      "selector": "/types/RawEvidenceHandoff"
+    },
+    {
+      "name": "R4FrozenPayload",
+      "source": "composed-19",
+      "selector": "typescript_declaration:R4FrozenPayload"
+    },
+    {
+      "name": "R4QapFullCountPlanContent",
+      "source": "composed-19",
+      "selector": "typescript_declaration:R4QapFullCountPlanContent"
+    }
+  ],
+  "payload_routes": {
+    "MES_OUTPUT_QUALITY_TASK_RESULT_V1": "OutQualityTaskResult",
+    "MES_OUTPUT_QUALITY_DISPOSITION_V1": "OutQualityDisposition",
+    "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1": "ExecQualityTaskResult",
+    "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1": "ExecQualityDisposition",
+    "PLM_RAW_EVIDENCE_HANDOFF_V1": "RawEvidenceHandoff"
+  },
+  "semantics": "Native registry constraints and closed members; R4 types use declared fields plus referenced native scalar/Ref predicates. No Owner/auth/currentness/DB checks.",
+  "outputs": [
+    {
+      "path": "cp6.web/src/contracts/quality/ipqc.g.ts",
+      "sha256": "0ef897abdcc7b1cc7e40340ef49c06bde319b89c91ac94ddd29a2ab1b43af096"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqcSchemas.g.ts",
+      "sha256": "4a6b7760eeb97bd0797a52204a669accde580be154917d59e199e6aeaa06dc72"
+    }
+  ]
+}

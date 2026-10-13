@@ -1,0 +1,304 @@
+{
+  "scope": "Constructed contract fixtures, not real Owner/business evidence. Field sets independently transcribed from native source and composed-19. Five full payload bodies are read unchanged from pinned original PAYLOAD_PUBLICATIONS instead.",
+  "fixtures": {
+    "EnvironmentKey": {
+      "tenantId": "11111111-2222-3333-4444-555555555555",
+      "environmentId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+      "mode": "DEMO"
+    },
+    "QapRef": {
+      "owner": "QA-POL",
+      "id": "policy-1",
+      "version": "9007199254740993"
+    },
+    "QapEvidence": {
+      "owner": "QA-POL",
+      "id": "policy-1",
+      "version": "9007199254740993",
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "QapUom": {
+      "id": "kg",
+      "version": "1"
+    },
+    "QapRange": {
+      "from": "0",
+      "to": "10.12500000"
+    },
+    "ExecRef": {
+      "owner": "MES-EXEC",
+      "id": "operation-1",
+      "version": "2"
+    },
+    "ExecEvidence": {
+      "ref": {
+        "owner": "MES-EXEC",
+        "id": "operation-1",
+        "version": "2"
+      },
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "ExecRange": {
+      "portionId": "portion-1",
+      "from": "0",
+      "to": "10.12500000"
+    },
+    "ExecScope": {
+      "scopeId": "scope-1",
+      "scopeVersion": "2",
+      "ranges": [
+        {
+          "portionId": "portion-1",
+          "from": "0",
+          "to": "10.12500000"
+        }
+      ]
+    },
+    "ExecQuantity": {
+      "value": "10.125",
+      "unitRef": {
+        "owner": "MES-EXEC",
+        "id": "operation-1",
+        "version": "2"
+      }
+    },
+    "OutRef": {
+      "owner": "MES-OUTPUT",
+      "id": "output-1",
+      "version": "3"
+    },
+    "OutEvidence": {
+      "ref": {
+        "owner": "MES-OUTPUT",
+        "id": "output-1",
+        "version": "3"
+      },
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "OutFlatRef": {
+      "owner": "MES-OUTPUT",
+      "id": "output-1",
+      "version": "3",
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "OutRange": {
+      "from": "0",
+      "to": "10.12500000"
+    },
+    "ExecQaSource": {
+      "schema": "EXEC-QA-SOURCE-1",
+      "sourceId": "source-1",
+      "revision": "2",
+      "previousRevision": null,
+      "workOrderId": "WO-1",
+      "operationId": "OP-1",
+      "actualManifestRef": {
+        "ref": {
+          "owner": "MES-EXEC",
+          "id": "operation-1",
+          "version": "2"
+        },
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "reportRefs": [],
+      "scope": {
+        "scopeId": "scope-1",
+        "scopeVersion": "2",
+        "ranges": [
+          {
+            "portionId": "portion-1",
+            "from": "0",
+            "to": "10.12500000"
+          }
+        ]
+      },
+      "inspectionPolicyRef": {
+        "owner": "MES-EXEC",
+        "id": "operation-1",
+        "version": "2"
+      },
+      "actualBaselineRef": {
+        "owner": "MES-EXEC",
+        "id": "operation-1",
+        "version": "2"
+      },
+      "quantity": {
+        "value": "10.125",
+        "unitRef": {
+          "owner": "MES-EXEC",
+          "id": "operation-1",
+          "version": "2"
+        }
+      },
+      "evidenceRefs": [
+        {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "operation-1",
+            "version": "2"
+          },
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "OutQualitySource": {
+      "schema": "OUT-QA-SOURCE-1",
+      "sourceKey": "source-1",
+      "revision": "3",
+      "previousRef": null,
+      "outputRef": {
+        "ref": {
+          "owner": "MES-OUTPUT",
+          "id": "output-1",
+          "version": "3"
+        },
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "outputRanges": [
+        {
+          "from": "0",
+          "to": "10.12500000"
+        }
+      ],
+      "outputUnitRef": {
+        "owner": "MES-OUTPUT",
+        "id": "output-1",
+        "version": "3"
+      },
+      "actualBaselineRef": {
+        "owner": "MES-OUTPUT",
+        "id": "output-1",
+        "version": "3"
+      },
+      "purposeRef": {
+        "owner": "MES-OUTPUT",
+        "id": "output-1",
+        "version": "3"
+      },
+      "policyRef": {
+        "owner": "MES-OUTPUT",
+        "id": "output-1",
+        "version": "3",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "stage": "FQC",
+      "receiptMappings": [
+        {
+          "receiptRef": {
+            "owner": "MES-OUTPUT",
+            "id": "output-1",
+            "version": "3"
+          },
+          "lineId": "line-1",
+          "receiptSubject": {
+            "receiptSource": {
+              "producer": "MES-OUTPUT",
+              "sourceKind": "OUTPUT",
+              "documentId": "document-1",
+              "lineId": "line-1",
+              "executionKey": "execution-1",
+              "sourceVersion": "3"
+            },
+            "receiptLineKey": "line-1",
+            "range": {
+              "from": "0",
+              "to": "10.12500000"
+            }
+          },
+          "outputRange": {
+            "from": "0",
+            "to": "10.12500000"
+          },
+          "rootRange": {
+            "from": "0",
+            "to": "10.12500000"
+          },
+          "conversionRef": null
+        }
+      ],
+      "sampleBatchRef": null,
+      "sourceCoverageRef": {
+        "ref": {
+          "owner": "MES-OUTPUT",
+          "id": "output-1",
+          "version": "3"
+        },
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    "R4FrozenPayload": {
+      "tenantId": "11111111-2222-3333-4444-555555555555",
+      "environmentId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+      "mode": "DEMO",
+      "payloadId": "11111111-2222-3333-4444-555555555555",
+      "payloadType": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+      "schemaType": "OutQualityTaskResult",
+      "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "registrationRef": {
+        "owner": "QA-POL",
+        "id": "policy-1",
+        "version": "9007199254740993",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "frozenAt": "2026-10-13T05:00:00.123456789Z"
+    },
+    "R4QapFullCountPlanContent": {
+      "schema": "QAP-PLAN-1",
+      "planId": "plan-1",
+      "version": "1",
+      "previousRef": null,
+      "name": "Full count plan",
+      "stage": "IPQC",
+      "technicalBindingRef": {
+        "owner": "QA-POL",
+        "id": "policy-1",
+        "version": "9007199254740993",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "characteristics": [
+        {
+          "requirementId": "requirement-1",
+          "methodRef": {
+            "owner": "QA-POL",
+            "id": "policy-1",
+            "version": "9007199254740993",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "specificationRef": {
+            "owner": "QA-POL",
+            "id": "policy-1",
+            "version": "9007199254740993",
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "measurementUnitRef": {
+            "id": "kg",
+            "version": "1"
+          },
+          "rule": {
+            "kind": "FULL_COUNT",
+            "unitRef": {
+              "id": "kg",
+              "version": "1"
+            }
+          },
+          "required": true
+        }
+      ],
+      "grouping": "ONE_PHYSICAL_DOMAIN_AND_LOT",
+      "reinspection": "EXPLICIT_TASK_OWNER_SUCCESSOR",
+      "standardApprovalRef": {
+        "owner": "QA-POL",
+        "id": "policy-1",
+        "version": "9007199254740993",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "validity": {
+        "from": "2026-10-13T05:00:00Z",
+        "to": null,
+        "noEndAuthorityRef": null
+      },
+      "reason": "S01-07 contract fixture"
+    }
+  }
+}
