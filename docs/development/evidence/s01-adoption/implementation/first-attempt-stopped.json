@@ -1,0 +1,7 @@
+{
+  "process_id": 52624,
+  "comparator_sha256": "4ab73c1dc37e4379b7a513c5e3d44496e6bdc62c5458403b0ff0269323231085",
+  "reason": "Initial reader used repeated Git subprocesses for overlapping historical source snapshots; stopped to memoize immutable reads. No product tests or database calls ran.",
+  "observed_at_utc": "2026-10-13T12:27:34.1339714Z",
+  "result": "STOPPED_PERFORMANCE"
+}

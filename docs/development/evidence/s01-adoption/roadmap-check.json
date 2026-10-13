@@ -1,0 +1,35 @@
+{
+  "task": "S01-12",
+  "recorded_at_utc": "2026-10-13T12:23:15.677186+00:00",
+  "source_main": "47c9b12c796620effe41c62d16992ccd629ee949",
+  "roadmap_sha256_git_bytes": "aa9f0cb053cd375df21cf510bf3f3dd9270515491e893ed14c7740db39a49801",
+  "command": "python -X utf8 docs/development/tools/manage_roadmap.py",
+  "exit_code": 0,
+  "mode": "read-only; no --write",
+  "stdout": {
+    "result": "PASS",
+    "scope": "ledger/source traceability, structural evidence requirements and generated view consistency only",
+    "business_tests_executed": false,
+    "metrics": {
+      "packages": 14,
+      "targets": 125,
+      "targets_assessed": 125,
+      "targets_delivered": 0,
+      "original_inventories_complete": 123,
+      "revision_runtime": 247,
+      "runtime_states": {
+        "NOT_RUN": 247
+      },
+      "historical_static": 41
+    },
+    "errors": []
+  },
+  "actions_query": {
+    "repository": "GTX537/CP6",
+    "branch": "codex/s01-12-adoption-20261013",
+    "runs": [],
+    "total_count": 0,
+    "cancelled": []
+  },
+  "limitations": "Source snapshot remains the sole ledger; S01-12 executor does not update shared status. Consumer JSON and source comparison are separate checks."
+}

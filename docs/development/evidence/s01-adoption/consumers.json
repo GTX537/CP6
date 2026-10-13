@@ -1,0 +1,2071 @@
+{
+  "schema_version": 1,
+  "task": "S01-12",
+  "scope": "Contract capability and bounded actual-consumer source inventory; no Owner rollout or business execution. Read-only source observations at fixed remote mains.",
+  "pinned_mains": {
+    "Main": "47c9b12c796620effe41c62d16992ccd629ee949",
+    "CRM": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+    "Platform": "9259a45d39bae7e98ca804a74778a588c1ad4619"
+  },
+  "source_pins": [
+    {
+      "id": "Main:CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "git_blob": "ff7d32199f4250edfc54e9b48d9761c69742d325",
+      "sha256": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d",
+      "bytes": 5821
+    },
+    {
+      "id": "Main:CP6.Entity/Contracts/FinCredit/CreditAmount.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/Contracts/FinCredit/CreditAmount.cs",
+      "git_blob": "18123a0fac33a661a8d0d6289a533542c368702c",
+      "sha256": "cce1e47c4016eaa64fd9293199d646cfc4d84399ab379927b449e8ea899c4efe",
+      "bytes": 6810
+    },
+    {
+      "id": "Main:cp6.web/src/contracts/exact/creditAmount.ts",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/contracts/exact/creditAmount.ts",
+      "git_blob": "e53490c8a7d91b07c1957581df1ce5f7f6dbf3a6",
+      "sha256": "c054094467778bc7957513d4a5e3a66eb1807b70791592283a3a6702997a1d22",
+      "bytes": 2647
+    },
+    {
+      "id": "Main:CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+      "git_blob": "ab77570cda8fafc9c01606e8e0cf3dc40d05d1a3",
+      "sha256": "2786d97ee49ce6d8be95720ba2e0b91da39858c7d1c51b5e5ec8c104921b22a3",
+      "bytes": 5836
+    },
+    {
+      "id": "Main:cp6.web/src/contracts/exact/inventoryDecimal.ts",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/contracts/exact/inventoryDecimal.ts",
+      "git_blob": "c696c503637d6edac4f97f2df42494a641f9bcad",
+      "sha256": "b9994b231d1e2c39b9511c4dad116202135593e7e98284b9b4c2d652738f0c4e",
+      "bytes": 2408
+    },
+    {
+      "id": "Main:CP6.Entity/Contracts/PlanAtp/StableId.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/Contracts/PlanAtp/StableId.cs",
+      "git_blob": "8dc72bdc756d7df0283956772ef4e1013a2ad5ff",
+      "sha256": "d3b4e286115ed90f895f478abc687cb4acf6397c80fcb1eb56d46d5aba378db6",
+      "bytes": 1911
+    },
+    {
+      "id": "Main:cp6.web/src/contracts/plan-atp/stableId.ts",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/contracts/plan-atp/stableId.ts",
+      "git_blob": "63ebd8ae312ba1888027a5403eb2a15b007916ee",
+      "sha256": "0c4a54792aa34a2c28da26ade07157c6ec450ec52cc49a5067fd1a747b1b7809",
+      "bytes": 520
+    },
+    {
+      "id": "Main:CP6.Entity/Contracts/Quality/NcrJson.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/Contracts/Quality/NcrJson.cs",
+      "git_blob": "fde1a5b3f77dfbb98a93f58771ff1d9f52e136dc",
+      "sha256": "e6c230080597002478dac16c2a13685ef6bba321c383ce5ce67568297ed5c516",
+      "bytes": 18563
+    },
+    {
+      "id": "Main:cp6.web/src/contracts/quality/ipqc.ts",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/contracts/quality/ipqc.ts",
+      "git_blob": "a4a58acef568f041d63e8097e9ac9ba9e098afa4",
+      "sha256": "589a6a98d46fe130e29d9dc6d13f18a2333c0e98187484935e62c3ce3de558a0",
+      "bytes": 1630
+    },
+    {
+      "id": "Main:docs/development/evidence/S01-07/OWNER-CONSUMERS.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/evidence/S01-07/OWNER-CONSUMERS.md",
+      "git_blob": "1324415f82e857cfe04e3e3c198bc7656f0d5f13",
+      "sha256": "e9029b4200861a23201762deccd71a7e80f26b6f7b5811c7ad28d51b9847fa38",
+      "bytes": 4004
+    },
+    {
+      "id": "Main:docs/development/evidence/S01-07/owner-consumers.json",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/evidence/S01-07/owner-consumers.json",
+      "git_blob": "1ba61e164308e232bd424f1377d1f40d7ae4b201",
+      "sha256": "7653c59a37758b1b7a04109112471caa15d49249f08944ff9eef461dfc7a2a1c",
+      "bytes": 5505
+    },
+    {
+      "id": "CRM:src/CP6.CRM.Application/Contracts/Inquiry/NativeInquirySchema.cs",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/NativeInquirySchema.cs",
+      "git_blob": "5054c907ad0fddd5432d3082d889ac4d629f3b6d",
+      "sha256": "9298e5499e49b8ba85fe4baeb0fecefed87598b2a3dc191f508c2a52665c9dce",
+      "bytes": 5484
+    },
+    {
+      "id": "CRM:src/CP6.CRM.Application/Contracts/Inquiry/InquiryContracts.g.cs",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/InquiryContracts.g.cs",
+      "git_blob": "cee230a0d6366b6f1eeab773ca6c6ba725907663",
+      "sha256": "c0aaf199095f92e295468ce00bc37d29abec49f7edea64e09ea480029833474e",
+      "bytes": 78797
+    },
+    {
+      "id": "CRM:src/CP6.CRM.Application/Contracts/Lead/LeadContractDecoder.cs",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "src/CP6.CRM.Application/Contracts/Lead/LeadContractDecoder.cs",
+      "git_blob": "2738d1b92d49cf283816b581238a875fc72295b0",
+      "sha256": "8f2a6d922373a86ed2df51ab5b05f982d1188574a5ba0670bd55f4ce70a1f437",
+      "bytes": 3881
+    },
+    {
+      "id": "CRM:apps/web/src/contracts/inquiry/index.ts",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "apps/web/src/contracts/inquiry/index.ts",
+      "git_blob": "e3976ba615efd65b9f57d96c7b93f00fee00a17b",
+      "sha256": "54e2e525121abfc61ba25bc078e0573b72092e03f4a2595b3a684c253d5c0bcc",
+      "bytes": 10271
+    },
+    {
+      "id": "CRM:apps/web/src/contracts/lead/index.ts",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "apps/web/src/contracts/lead/index.ts",
+      "git_blob": "9c299c6203ab8f23140b53e063cd320abafa1f01",
+      "sha256": "ad99d3434b7daf172afba8c233351436cc15aac4fa8a0413eab8a09962e25556",
+      "bytes": 3429
+    },
+    {
+      "id": "Platform:src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+      "git_blob": "0436729bb3f3dd8131dd35fab38d0005f7d8f968",
+      "sha256": "850a5c99bde76851353c6d2b51e58326c5894c8c36306e183c4c45cd255cf958",
+      "bytes": 3837
+    },
+    {
+      "id": "Platform:src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+      "git_blob": "b52fcc9fd98294896a09c2c70763d95c19e7fabb",
+      "sha256": "4a10ba1324500e9686a0c851a69214e2c32003ae087cc3cb61f5932c1a4dec36",
+      "bytes": 942
+    },
+    {
+      "id": "Main:eng/contracts/s01/postgresql-mappings.json",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "eng/contracts/s01/postgresql-mappings.json",
+      "git_blob": "c8aa98beced3262e461c22b4a37636bc188eac33",
+      "sha256": "96ef3c9f22919e790f750773c2a4bdc675b7df5f145f7b9bfffeda6d19c1ec16",
+      "bytes": 126908
+    },
+    {
+      "id": "Main:docs/development/evidence/S01-10/OWNER-ADOPTION.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/evidence/S01-10/OWNER-ADOPTION.md",
+      "git_blob": "ac73046f6aa4895d6c74843b78e6b85b5af92bb9",
+      "sha256": "d3820777bb81ea8e5d6ce02055f02cbabfb353ec15a6839570e949dba8bbe116",
+      "bytes": 6845
+    },
+    {
+      "id": "Main:CP6.Entity/Contracts/ErpCredit/CurrentCreditCodec.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/Contracts/ErpCredit/CurrentCreditCodec.cs",
+      "git_blob": "17b25ca706ff9e3078ea18a359594bcfe77a32d5",
+      "sha256": "e9b09dbb0002c97ee82290ccd40049d9921fe41875150b82fb780a97928534fe",
+      "bytes": 737
+    },
+    {
+      "id": "Main:CP6.Entity/Contracts/ErpCredit/FrozenR8CreditCodec.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/Contracts/ErpCredit/FrozenR8CreditCodec.cs",
+      "git_blob": "a778536f609dfca3f92b101cafd621065926655a",
+      "sha256": "fa0342cb09c8f0a47af0354470b2ac6f77e95aa98dda7d82890eb0c5d759053c",
+      "bytes": 1264
+    },
+    {
+      "id": "Main:cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "git_blob": "f545840c012e8f3a6e7e1edeafd75496ab24bca9",
+      "sha256": "f7108b4f2dd1d2e09ba8e38bda8d52dbb991b7d671ec25bccdf0aa4fa4dd36f5",
+      "bytes": 26377
+    },
+    {
+      "id": "Main:CP6.Core/Services/Fin/CreditControlService.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Fin/CreditControlService.cs",
+      "git_blob": "2be83c3a6dca2c9ad411ce3958b6e2d377e9ee81",
+      "sha256": "a3354f05d9234a4ebbcc6405f41d0f8ea8e70cb6a05aae43cf557d303bb4d779",
+      "bytes": 1732
+    },
+    {
+      "id": "Main:CP6.Core/Services/Erp/CreditNoteService.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Erp/CreditNoteService.cs",
+      "git_blob": "5d8b01a0204d15a2b4295fc8cfe1713f0121a137",
+      "sha256": "ef51c5091b88b53a803c035d41cb46c8db4a8779e0297456d564656fb54f6c17",
+      "bytes": 3609
+    },
+    {
+      "id": "Main:CP6.Entity/DomainModels/Erp/CreditNote.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Entity/DomainModels/Erp/CreditNote.cs",
+      "git_blob": "e7417ad6aca31c939588dc44d7b8a01cfa24e365",
+      "sha256": "814d04010d8ee2f038e6998b9c5d467969c426211d2bf4305b85d3e96e4bac36",
+      "bytes": 1149
+    },
+    {
+      "id": "Main:CP6.WebApi/Controllers/Erp/CreditNoteController.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.WebApi/Controllers/Erp/CreditNoteController.cs",
+      "git_blob": "441e261879eaba4f40330307f03d75b49370aaa4",
+      "sha256": "74cdfbed92a1087bec077b52b9ecaa2e4d57473e49309c7848772b0da7cf06d2",
+      "bytes": 843
+    },
+    {
+      "id": "Main:cp6.web/src/views/erp/CreditNoteListView.vue",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/views/erp/CreditNoteListView.vue",
+      "git_blob": "e69b99d2370fc0b342a55899571fecb3b34725d3",
+      "sha256": "f0bbb5ee7056d729f8bff5a11c756eddd82a32a1f546c05e4a6a79d3e44c197b",
+      "bytes": 5725
+    },
+    {
+      "id": "Main:CP6.Core/Services/Wms/ErpBridgeHook.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Wms/ErpBridgeHook.cs",
+      "git_blob": "06ca427654a922a61f666d0e6c0956df8fc9bc91",
+      "sha256": "edff8c7686317f88fc2cdd3391221dfb3b9c241768bad1259529cb116fc8de7e",
+      "bytes": 11505
+    },
+    {
+      "id": "Main:CP6.Core/Services/Fin/StockFinBridge.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Fin/StockFinBridge.cs",
+      "git_blob": "7b2cf1aa4bafa5a76b21271cd60f61877765cec4",
+      "sha256": "e152f2887f098423dadcea56d8669228f9fd8edae7628daf7efb438e57e1b5c9",
+      "bytes": 7631
+    },
+    {
+      "id": "Main:CP6.Core/Services/Integration/IStockFinBridge.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Integration/IStockFinBridge.cs",
+      "git_blob": "43df29d210ba5803459411af33e2cd45e595743e",
+      "sha256": "e87f12cfb004a5a6099092887d09ff6f8de6d590c0685c1766ff5df812a4bc42",
+      "bytes": 1377
+    },
+    {
+      "id": "Main:CP6.Core/Services/Wms/StockMovementService.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Wms/StockMovementService.cs",
+      "git_blob": "d9bdf20772bf8a3b732ada4697f6b89e0addae1c",
+      "sha256": "4e78cf08fe9f3c18f67b45733b0f9664528910bd8aa7c8a2daa8560b251fb43e",
+      "bytes": 16785
+    },
+    {
+      "id": "Main:CP6.WebApi/Program.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.WebApi/Program.cs",
+      "git_blob": "ad77acc54be6c6d18c48d38dc478381e7a0ba52e",
+      "sha256": "e8780458a545023d435abdf8f7b32b620dd7c97eb5ccba8a3b001ecc5fbfeff9",
+      "bytes": 267556
+    },
+    {
+      "id": "Main:CP6.Core/Services/Plan/ISupplyService.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Plan/ISupplyService.cs",
+      "git_blob": "b00f7bfaf31d4222e50db4dc5524fef3e4209745",
+      "sha256": "de5ce185cb033e48e8d9d6eec2e0e915a74e7c1235e298e2aa2c371f7603714d",
+      "bytes": 918
+    },
+    {
+      "id": "Main:CP6.Core/Services/Plan/SupplyService.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Plan/SupplyService.cs",
+      "git_blob": "a7121778de4ab0218e6e8a1c2dc0b564b66c2641",
+      "sha256": "1f88cdcd7a02b63de86f14e62d0246806672a9a4d3957b8c1da69fba10bd0e69",
+      "bytes": 2720
+    },
+    {
+      "id": "Main:CP6.Core/Services/Mes/QualityInspectionService.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Mes/QualityInspectionService.cs",
+      "git_blob": "a74200e72e6e2c3d616bad65a72113fd7bdc218c",
+      "sha256": "6cc2eb34faa63d55567128b9db8e65c5f9dc2cdb255aee37822a4adf79e89f15",
+      "bytes": 17584
+    },
+    {
+      "id": "Main:CP6.Core/Services/Mes/DefectRecordService.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.Core/Services/Mes/DefectRecordService.cs",
+      "git_blob": "633a70b1ea7ebb6453b8ad3f3c5d18546a568328",
+      "sha256": "5a77c6f936fd1c514c7508ec2b554bf42d58aad0c0fd99338e11dd2f7c5d1578",
+      "bytes": 9371
+    },
+    {
+      "id": "Main:CP6.WebApi/Controllers/Mes/QualityInspectionController.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.WebApi/Controllers/Mes/QualityInspectionController.cs",
+      "git_blob": "bf5ee2a723a246234404ed1d60fab7f0d000b04f",
+      "sha256": "39d1bdfcc00f05d18defd3d0ca71ff8760dec820d4de41f62a61bdf66a1b6a5b",
+      "bytes": 2878
+    },
+    {
+      "id": "Main:CP6.WebApi/Controllers/Mes/DefectRecordController.cs",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "CP6.WebApi/Controllers/Mes/DefectRecordController.cs",
+      "git_blob": "b5458fe0465f3d5ff4161fdcd2228080f04051cf",
+      "sha256": "15f6e82f00ac4e1b6f910f178eb22270c27596eef602203527f2db058d2143f1",
+      "bytes": 3009
+    },
+    {
+      "id": "Main:cp6.web/src/api/mes/mes.ts",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/api/mes/mes.ts",
+      "git_blob": "322e60e3b3a1dfa1b7ebad0d28434995921919ca",
+      "sha256": "63dcede2074f74305cf4ad9fae2792288ab7e02d1c8ca6eb1f17c0ade315ed3b",
+      "bytes": 12421
+    },
+    {
+      "id": "Main:cp6.web/src/views/mes/QualityInspectionListView.vue",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "cp6.web/src/views/mes/QualityInspectionListView.vue",
+      "git_blob": "ed20a7c988d7ee3facf0475decf2533e21444464",
+      "sha256": "423fb600e22ae671b22e7faca1f98882db1a53e36891fe91c8ade479c741d3c6",
+      "bytes": 8667
+    },
+    {
+      "id": "CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Intake.cs",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Intake.cs",
+      "git_blob": "24e73d6f6065bf61389926e9c826f0d164e058af",
+      "sha256": "b2e5b8d0590ccbe164a1b93f64ba6a991eb098919e1889999f1388f3a7da6aae",
+      "bytes": 28702
+    },
+    {
+      "id": "CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.cs",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.cs",
+      "git_blob": "62928141e8dae73d3105b8f4aa0413903414d59d",
+      "sha256": "cd39ece81060c2d5c086b5ff316229a72543ec81eb1f4e0b5f7e4b5fe762a8ce",
+      "bytes": 34585
+    },
+    {
+      "id": "CRM:apps/web/src/leads/PublicInquiry.tsx",
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "apps/web/src/leads/PublicInquiry.tsx",
+      "git_blob": "df4d3625da394622d6c33935d2b03701f536c793",
+      "sha256": "0de54ae86f4d85d1079f867853df8869cacf4bce3f77687a42b9af56fda3b529",
+      "bytes": 8017
+    },
+    {
+      "id": "Main:docs/development/task-plans/WP02.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05",
+      "bytes": 71308
+    },
+    {
+      "id": "Main:docs/development/task-plans/WP03.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/task-plans/WP03.md",
+      "git_blob": "4b8e0719ee7b718381516de8b1dbc1d9dea75bbb",
+      "sha256": "92b3ca1158487b65681308c9479286346fd3ca9a2096f30bbd799b96b23bc4d4",
+      "bytes": 119864
+    },
+    {
+      "id": "Main:docs/development/task-plans/WP04.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/task-plans/WP04.md",
+      "git_blob": "76288654b30c992fd699da66af91a695b684336d",
+      "sha256": "08a276db83342de29704cd66a09d90db8db39b97cb3b5b3e1ca07accacccb7d7",
+      "bytes": 190986
+    },
+    {
+      "id": "Main:docs/development/task-plans/WP06.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/task-plans/WP06.md",
+      "git_blob": "a62cb9895c6ed3f42c4d04c42f88e115578451a6",
+      "sha256": "11f18af5db9772bea1cc7e80c3ec638c89ca5d4573b1ab372d620dc28710876d",
+      "bytes": 65061
+    },
+    {
+      "id": "Main:docs/development/task-plans/WP09.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/task-plans/WP09.md",
+      "git_blob": "c7b8c35e66644b2a44e860b79e7353b256cd197e",
+      "sha256": "40cf472659ed45e962aeecf599b6b76fa6c8570ac2ca90c4c334fe4185633b4d",
+      "bytes": 68021
+    },
+    {
+      "id": "Main:docs/development/task-plans/WP11.md",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/task-plans/WP11.md",
+      "git_blob": "799db77974790ec8ff7ce471101f18d928f4250a",
+      "sha256": "28774d52e763fe725a9d37d07137404fe7bd925dbc0b0fe00aa6abaa28b5d5d4",
+      "bytes": 297563
+    },
+    {
+      "id": "Main:docs/development/roadmap.json",
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "98f576a62f9603d27d5ad723ea15be4890be71a8",
+      "sha256": "aa9f0cb053cd375df21cf510bf3f3dd9270515491e893ed14c7740db39a49801",
+      "bytes": 6664901
+    }
+  ],
+  "contract_capabilities": [
+    {
+      "id": "wire",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Entity/Contracts/Wire/StrictJson.cs"
+      ],
+      "available_contract_scope": "Strict UTF-8 JSON, exact number, required NullOnly and structural equality shared contract library.",
+      "adoption_boundary": "Native field/schema selection and real HTTP raw byte ingress remain caller responsibilities.",
+      "delivery_task_ids": [
+        "S01-02"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "credit",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Entity/Contracts/FinCredit/CreditAmount.cs",
+        "Main:cp6.web/src/contracts/exact/creditAmount.ts"
+      ],
+      "available_contract_scope": "FIN-CREDIT signed/nonnegative/positive coefficient+scale parsing and exact arithmetic; target field validation.",
+      "adoption_boundary": "No currency/Owner credit exposure policy, database writer or sales confirmation adoption.",
+      "delivery_task_ids": [
+        "S01-03",
+        "S01-05"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "inventory",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+        "Main:cp6.web/src/contracts/exact/inventoryDecimal.ts"
+      ],
+      "available_contract_scope": "FIN-INV arbitrary-length Decimal18/Qty12 lexical values and exact arithmetic, original wire distinct from normalized number.",
+      "adoption_boundary": "Full Rational/MAVG objects, rounding policy, valuation/cost effects and Owner storage remain unproven.",
+      "delivery_task_ids": [
+        "S01-04",
+        "S01-05"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "atp",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Entity/Contracts/PlanAtp/StableId.cs",
+        "Main:cp6.web/src/contracts/plan-atp/stableId.ts"
+      ],
+      "available_contract_scope": "ATP-STABLEID-LEXICAL/20261011-R1 exact lexical identity in C#/TS and bounded scalar schema.",
+      "adoption_boundary": "Does not implement complete ATP R11 wire, Owner, authorization, supply source ledger or conversion. PLAN-IF-004/005 remain inputs.",
+      "delivery_task_ids": [
+        "S01-06"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "qa",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Entity/Contracts/Quality/NcrJson.cs",
+        "Main:cp6.web/src/contracts/quality/ipqc.ts",
+        "Main:docs/development/evidence/S01-07/OWNER-CONSUMERS.md",
+        "Main:docs/development/evidence/S01-07/owner-consumers.json"
+      ],
+      "available_contract_scope": "C# NCR 24 native entries/92 declarations/102 schema nodes; TS IPQC 203 aliases/23 decoder roots/5 event routes.",
+      "adoption_boundary": "C# NCR20 and TS IPQC6 fixed cases are different surfaces; current Owner, RequiredFenced and PROPOSED duties persist. ORIGINAL_DLL_SHA256_MISSING.",
+      "delivery_task_ids": [
+        "S01-07"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "crm",
+      "repository": "CRM",
+      "source_refs": [
+        "CRM:src/CP6.CRM.Application/Contracts/Inquiry/NativeInquirySchema.cs",
+        "CRM:src/CP6.CRM.Application/Contracts/Inquiry/InquiryContracts.g.cs",
+        "CRM:src/CP6.CRM.Application/Contracts/Lead/LeadContractDecoder.cs",
+        "CRM:apps/web/src/contracts/inquiry/index.ts",
+        "CRM:apps/web/src/contracts/lead/index.ts"
+      ],
+      "available_contract_scope": "CRM-INQ-TERMINAL-PROJECTION/20261013-R1, root+five embedded branches and 49 original UI contract examples; LEAD owner field bindings.",
+      "adoption_boundary": "Library decoders and UI examples are not real HTTP/Owner/PG/UI adoption. Keep source ADOPTION_PENDING unchanged and use corrected adoption receipt. No new payload version or automatic latest.",
+      "delivery_task_ids": [
+        "S01-08"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "platform",
+      "repository": "Platform",
+      "source_refs": [
+        "Platform:src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+        "Platform:src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs"
+      ],
+      "available_contract_scope": "Pinned native INQ locator and current/frozen ERP registry routing; owned original JSON bytes.",
+      "adoption_boundary": "No full INQ effective revision/ERP decoder, no Owner admission or shared Inbox transaction; no S01-09 NuGet published. Existing CloudEvent triple/manifest and P08 tracing compatibility retained.",
+      "delivery_task_ids": [
+        "S01-09"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "postgresql",
+      "repository": "Main",
+      "source_refs": [
+        "Main:eng/contracts/s01/postgresql-mappings.json",
+        "Main:docs/development/evidence/S01-10/OWNER-ADOPTION.md"
+      ],
+      "available_contract_scope": "CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0 adopted mapping: 66 INV rows/13 source tables, 42 CREDIT bindings and 5 ATP columns.",
+      "adoption_boundary": "Disposable PG18.6/Npgsql8.0.8 fixture ran PROPOSED mapping; unchanged consumer semantic hash permits bounded reuse, not a fresh formal mapping run or migrated Owner tables.",
+      "delivery_task_ids": [
+        "S01-10"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    },
+    {
+      "id": "erp-credit",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Entity/Contracts/ErpCredit/CurrentCreditCodec.cs",
+        "Main:CP6.Entity/Contracts/ErpCredit/FrozenR8CreditCodec.cs",
+        "Main:cp6.web/src/contracts/erp-credit/creditCodec.ts"
+      ],
+      "available_contract_scope": "Current/frozen codecs, native Money and original bytes; in-memory C01/C02/replay guards. Final TS428 includes 12 Buffer ownership regressions.",
+      "adoption_boundary": "AssessAdaptation explicitly READ_ONLY_UNPROVEN/MANUAL_RECONCILIATION/UNKNOWN. BYTES NativeSchemaValidated=false. No F09 or general C06 roots; O(n²) overlap capacity to check before wiring.",
+      "delivery_task_ids": [
+        "S01-11"
+      ],
+      "runtime_owner_adoption": "NOT_PROVEN_BY_S01"
+    }
+  ],
+  "current_consumers": [
+    {
+      "id": "main-credit-check",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Core/Services/Fin/CreditControlService.cs"
+      ],
+      "observed_current_source": "CheckCreditAsync(customerId, decimal orderAmount) reads CreditLimit and AR decimal values, rounds (GrossAmount-SettledAmount)*FxRate to 2 places.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "FIN-CREDIT native sign/scale fields, full current exposure cut/absorption, authoritative policy/registry and atomic final reservation gates.",
+      "responsibility_task_ids": [
+        "WP11-05",
+        "WP11-06",
+        "WP11-07",
+        "WP04-16",
+        "WP04-17",
+        "WP04-37"
+      ],
+      "available_capability_ids": [
+        "credit",
+        "postgresql"
+      ]
+    },
+    {
+      "id": "main-credit-note-read-store",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Core/Services/Erp/CreditNoteService.cs",
+        "Main:CP6.Entity/DomainModels/Erp/CreditNote.cs",
+        "Main:CP6.WebApi/Controllers/Erp/CreditNoteController.cs",
+        "Main:cp6.web/src/views/erp/CreditNoteListView.vue"
+      ],
+      "observed_current_source": "CreditNoteService is a legacy query/list path. T_CreditNote Qty decimal(21,8), nullable Amount decimal(18,4); existing controller/view use this model.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Native current/frozen ingress, real prepare/post result store and issuer/current AR/GL/member/finite gates; preserve original payload bytes separately.",
+      "responsibility_task_ids": [
+        "WP04-27",
+        "WP04-28",
+        "WP04-31",
+        "WP11-32",
+        "WP11-10"
+      ],
+      "available_capability_ids": [
+        "erp-credit",
+        "postgresql"
+      ]
+    },
+    {
+      "id": "main-credit-note-writer",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Core/Services/Wms/ErpBridgeHook.cs"
+      ],
+      "observed_current_source": "OnReturnConfirmedAsync loops RmaDetails, updates ReturnedQty, creates legacy CreditNote with Qty and no Amount assignment, then SaveChangesAsync. This is an actual writer distinct from CreditNoteService query.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Reviewed Owner migration of the bridge; independent physical return, commercial credit decision and accounting effects; unknown commit/original intent recovery.",
+      "responsibility_task_ids": [
+        "WP04-28",
+        "WP04-34",
+        "WP11-32",
+        "WP09-12"
+      ],
+      "available_capability_ids": [
+        "erp-credit",
+        "inventory",
+        "postgresql"
+      ]
+    },
+    {
+      "id": "main-stock-fin-bridge",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Core/Services/Fin/StockFinBridge.cs",
+        "Main:CP6.Core/Services/Integration/IStockFinBridge.cs",
+        "Main:CP6.Core/Services/Wms/StockMovementService.cs",
+        "Main:CP6.WebApi/Program.cs"
+      ],
+      "observed_current_source": "StockFinBridge rounds abs(Qty*UnitPrice) to 2 places and sends FinBizEvent to IAutoVoucherEngine; Program registers enabled/no-op bridge and StockMovementService uses it.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Each value writer, exact source ownership and valuation policy; no lost-digit reconstruction; storage, concurrency and legacy bridge recovery proven in separate task.",
+      "responsibility_task_ids": [
+        "WP11-35",
+        "WP11-36",
+        "WP11-38",
+        "WP11-45",
+        "WP02-02",
+        "WP02-10"
+      ],
+      "available_capability_ids": [
+        "inventory",
+        "postgresql"
+      ]
+    },
+    {
+      "id": "main-supply",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Core/Services/Plan/ISupplyService.cs",
+        "Main:CP6.Core/Services/Plan/SupplyService.cs"
+      ],
+      "observed_current_source": "SupplyBreakdown has four decimal quantities and decimal Total; GetSupplyAsync returns Task<decimal>.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Exact source ledger/cut, representative dedup, full ATP wire/locks/authorization and real conversion recovery.",
+      "responsibility_task_ids": [
+        "WP06-04",
+        "WP06-05",
+        "WP06-06",
+        "WP06-10",
+        "WP06-11",
+        "WP04-15"
+      ],
+      "available_capability_ids": [
+        "atp",
+        "inventory",
+        "postgresql"
+      ]
+    },
+    {
+      "id": "main-quality",
+      "repository": "Main",
+      "source_refs": [
+        "Main:CP6.Core/Services/Mes/QualityInspectionService.cs",
+        "Main:CP6.Core/Services/Mes/DefectRecordService.cs",
+        "Main:CP6.WebApi/Controllers/Mes/QualityInspectionController.cs",
+        "Main:CP6.WebApi/Controllers/Mes/DefectRecordController.cs",
+        "Main:cp6.web/src/api/mes/mes.ts",
+        "Main:cp6.web/src/views/mes/QualityInspectionListView.vue"
+      ],
+      "observed_current_source": "Existing inspection/defect services use legacy DTO/CP6Context/sequence and existing controller permissions; web keeps old HTTP routes. S01-07 owner inventory pinned again at current Main.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Strict raw native ingress; real QA-POL/MES-EXEC/MES-OUTPUT/current heads; current authorization, independent inspector/reviewer and domain+Command+Audit writes; inventory effects separate.",
+      "responsibility_task_ids": [
+        "WP09-01",
+        "WP09-02",
+        "WP09-05",
+        "WP09-06",
+        "WP09-07",
+        "WP09-08",
+        "WP09-09",
+        "WP09-10",
+        "WP09-11",
+        "WP09-12"
+      ],
+      "available_capability_ids": [
+        "qa",
+        "wire",
+        "inventory",
+        "postgresql"
+      ]
+    },
+    {
+      "id": "crm-intake-owner",
+      "repository": "CRM",
+      "source_refs": [
+        "CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Intake.cs",
+        "CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.cs"
+      ],
+      "observed_current_source": "Current intake and retention are existing CRM owner/storage flows. Existing LeadCodec is CrmLeadStorageCodec, not S01-08 LeadContractDecoder; do not equate names.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Native raw decode, IssuedAttempt/H01 atomic graph and public five-field receipt; internal expiry history, proof/session/ETag/download and trusted same-UoW.",
+      "responsibility_task_ids": [
+        "WP02-09",
+        "WP03-01",
+        "WP03-02",
+        "WP03-03",
+        "WP03-04",
+        "WP03-12",
+        "WP03-15"
+      ],
+      "available_capability_ids": [
+        "crm",
+        "wire",
+        "platform"
+      ]
+    },
+    {
+      "id": "crm-public-page",
+      "repository": "CRM",
+      "source_refs": [
+        "CRM:apps/web/src/leads/PublicInquiry.tsx"
+      ],
+      "observed_current_source": "readPublic uses response.json() with TypeScript cast; current form submits legacy PublicFormView/PublicReceipt and redirects by receiptId.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Use exact terminal revision at real HTTP boundary and render native terminal states; contract example roundtrips do not prove real page behavior.",
+      "responsibility_task_ids": [
+        "WP03-01",
+        "WP03-02",
+        "WP03-03",
+        "WP02-29"
+      ],
+      "available_capability_ids": [
+        "crm"
+      ]
+    },
+    {
+      "id": "platform-host-adoption",
+      "repository": "Platform",
+      "source_refs": [
+        "Platform:src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+        "Platform:src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs"
+      ],
+      "observed_current_source": "Catalog resolver and original-byte holder are standalone library entry points. Fixed src query finds their declarations, no separate production caller at the pinned Platform source.",
+      "s01_adoption": "UNPROVEN_NOT_RUN",
+      "missing_adoption": "Published immutable trusted package identity and actual Main/CRM host adoption; caller-owned Inbox/Outbox/Command/Audit transaction and unknown commit recovery.",
+      "responsibility_task_ids": [
+        "WP02-07",
+        "WP02-08",
+        "WP02-09",
+        "WP02-10",
+        "WP02-11",
+        "WP02-27",
+        "WP02-28",
+        "WP02-29"
+      ],
+      "available_capability_ids": [
+        "platform",
+        "wire"
+      ]
+    }
+  ],
+  "handoffs": [
+    {
+      "slice": "S02",
+      "status": "CONTRACT_EVIDENCE_AVAILABLE_OWNER_GATES_OPEN",
+      "available": [
+        "Strict/null/equality and native routing/original byte contracts",
+        "Pinned three-repository commits; S01-09 has no published NuGet identity"
+      ],
+      "remaining_owner_gates": [
+        "Trusted tenant-to-schema mapping and pool/transaction context retain TenantId and authorization",
+        "Real CRM/Main Owner + Inbox/Outbox/Command/Audit same UoW; no independently committed Inbox",
+        "Unknown commit and original result restoration; actual host/package capabilities"
+      ],
+      "responsibility_task_ids": [
+        "WP02-02",
+        "WP02-03",
+        "WP02-07",
+        "WP02-08",
+        "WP02-09",
+        "WP02-10",
+        "WP02-11",
+        "WP02-27",
+        "WP02-28",
+        "WP02-29"
+      ],
+      "consumer_ids": [
+        "platform-host-adoption",
+        "crm-intake-owner"
+      ],
+      "acceptance_rule": "Each task requires its own COORD admission, current source/package pin, real Owner and PostgreSQL evidence. This handoff does not authorize implementation or mark business acceptance PASS."
+    },
+    {
+      "slice": "S03",
+      "status": "CONTRACT_EVIDENCE_AVAILABLE_OWNER_GATES_OPEN",
+      "available": [
+        "CRM-INQ-TERMINAL-PROJECTION/20261013-R1 and INQ/LEAD decoders",
+        "Root+five embedded branches and 49 original UI contract examples"
+      ],
+      "remaining_owner_gates": [
+        "HTTP raw bytes and explicit revision selection, IssuedAttempt/H01 atomic graph/public five-field receipt",
+        "Proof/current session/ETag/download and internal historical expiry",
+        "Actual terminal page and PostgreSQL persistence acceptance"
+      ],
+      "responsibility_task_ids": [
+        "WP03-01",
+        "WP03-02",
+        "WP03-03",
+        "WP03-04",
+        "WP03-12",
+        "WP03-15",
+        "WP02-09",
+        "WP02-29"
+      ],
+      "consumer_ids": [
+        "crm-intake-owner",
+        "crm-public-page"
+      ],
+      "acceptance_rule": "Each task requires its own COORD admission, current source/package pin, real Owner and PostgreSQL evidence. This handoff does not authorize implementation or mark business acceptance PASS."
+    },
+    {
+      "slice": "S05",
+      "status": "CONTRACT_EVIDENCE_AVAILABLE_OWNER_GATES_OPEN",
+      "available": [
+        "FIN-CREDIT three sign profiles",
+        "ERP current/frozen native Money, original byte preservation, in-memory C01/C02 and frozen replay; corrected TS428"
+      ],
+      "remaining_owner_gates": [
+        "Real Owner/Store/issuer and current AR/GL/member/finite proof",
+        "Actual CreditNote writer and durable original results; Draft/Confirm/SalesRelease independent gates and late release terminals",
+        "F09/general C06 completion; capacity review of overlap algorithm before live wiring"
+      ],
+      "responsibility_task_ids": [
+        "WP11-05",
+        "WP11-06",
+        "WP11-07",
+        "WP11-10",
+        "WP11-32",
+        "WP04-14",
+        "WP04-16",
+        "WP04-17",
+        "WP04-18",
+        "WP04-28",
+        "WP04-31",
+        "WP04-37"
+      ],
+      "consumer_ids": [
+        "main-credit-check",
+        "main-credit-note-read-store",
+        "main-credit-note-writer"
+      ],
+      "acceptance_rule": "Each task requires its own COORD admission, current source/package pin, real Owner and PostgreSQL evidence. This handoff does not authorize implementation or mark business acceptance PASS."
+    },
+    {
+      "slice": "S07",
+      "status": "CONTRACT_EVIDENCE_AVAILABLE_OWNER_GATES_OPEN",
+      "available": [
+        "ATP-STABLEID-LEXICAL/20261011-R1 C#/TS/scalar schema",
+        "Five PostgreSQL fixture columns; PLAN-IF-004/005 complete input retained"
+      ],
+      "remaining_owner_gates": [
+        "Full ATP wire/Owner and supply writers, trusted tenant/current authorization/replay-lock order",
+        "Exact net supply dedup, independent query vs promise",
+        "Real PR/WO conversion and recovery replacing stubs"
+      ],
+      "responsibility_task_ids": [
+        "WP06-04",
+        "WP06-05",
+        "WP06-06",
+        "WP06-07",
+        "WP06-10",
+        "WP06-11",
+        "WP04-15"
+      ],
+      "consumer_ids": [
+        "main-supply"
+      ],
+      "acceptance_rule": "Each task requires its own COORD admission, current source/package pin, real Owner and PostgreSQL evidence. This handoff does not authorize implementation or mark business acceptance PASS."
+    },
+    {
+      "slice": "S08",
+      "status": "CONTRACT_EVIDENCE_AVAILABLE_OWNER_GATES_OPEN",
+      "available": [
+        "NCR C# closure, IPQC TS roots/events with distinct Evidence/Uom",
+        "FIN-INV exact profiles"
+      ],
+      "remaining_owner_gates": [
+        "QA-POL/MES-EXEC/MES-OUTPUT/Main Quality/PLM real current heads and permission",
+        "Preserve RequiredFenced and PROPOSED status until actual adoption",
+        "Atomic QA/domain+Command+Audit; receipt/quality/inventory effects independent"
+      ],
+      "responsibility_task_ids": [
+        "WP09-01",
+        "WP09-02",
+        "WP09-05",
+        "WP09-06",
+        "WP09-07",
+        "WP09-08",
+        "WP09-09",
+        "WP09-10",
+        "WP09-11",
+        "WP09-12"
+      ],
+      "consumer_ids": [
+        "main-quality"
+      ],
+      "acceptance_rule": "Each task requires its own COORD admission, current source/package pin, real Owner and PostgreSQL evidence. This handoff does not authorize implementation or mark business acceptance PASS."
+    },
+    {
+      "slice": "S09",
+      "status": "CONTRACT_EVIDENCE_AVAILABLE_OWNER_GATES_OPEN",
+      "available": [
+        "Exact arithmetic and CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0",
+        "66 INV rows/13 source tables,42 credit field bindings,5 ATP fixture columns"
+      ],
+      "remaining_owner_gates": [
+        "Every Owner/ORM/rawSQL/bulk/import writer and reader; currency/unit/policy scale and AR/INV/GL authority",
+        "Full Rational/MAVG semantics, finance atomicity/concurrency and final writer guards",
+        "Per-tenant forward migration/restore and application rollback compatibility; quantify historical precision loss, never invent lost digits"
+      ],
+      "responsibility_task_ids": [
+        "WP02-02",
+        "WP02-10",
+        "WP11-05",
+        "WP11-06",
+        "WP11-07",
+        "WP11-26",
+        "WP11-27",
+        "WP11-32",
+        "WP11-35",
+        "WP11-36",
+        "WP11-37",
+        "WP11-38",
+        "WP11-43",
+        "WP11-44",
+        "WP11-45",
+        "WP06-06"
+      ],
+      "consumer_ids": [
+        "main-credit-check",
+        "main-stock-fin-bridge",
+        "main-credit-note-writer",
+        "main-supply"
+      ],
+      "acceptance_rule": "Each task requires its own COORD admission, current source/package pin, real Owner and PostgreSQL evidence. This handoff does not authorize implementation or mark business acceptance PASS."
+    }
+  ],
+  "roadmap_task_refs": [
+    {
+      "id": "WP02-02",
+      "title": "Main PostgreSQL租户存储布局与隔离采用",
+      "repository": "Main",
+      "state": "BLOCKED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-02",
+      "dependencies": [
+        "S02-00",
+        "WP02-01"
+      ]
+    },
+    {
+      "id": "WP02-03",
+      "title": "Main当前授权与撤权最终门",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-03",
+      "dependencies": [
+        "WP02-02"
+      ]
+    },
+    {
+      "id": "WP02-07",
+      "title": "Platform调用方同事务Inbox与原结果槽",
+      "repository": "Platform",
+      "state": "READY",
+      "entry_gate": "CONFIRMED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-07",
+      "dependencies": [
+        "S01-09",
+        "WP02-01"
+      ]
+    },
+    {
+      "id": "WP02-08",
+      "title": "Platform Outbox领取、发送与Unknown恢复",
+      "repository": "Platform",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-08",
+      "dependencies": [
+        "WP02-07"
+      ]
+    },
+    {
+      "id": "WP02-09",
+      "title": "CRM首个Owner真实共同事务与授权门",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-09",
+      "dependencies": [
+        "S01-08",
+        "WP02-06",
+        "WP02-07"
+      ]
+    },
+    {
+      "id": "WP02-10",
+      "title": "Main Owner共同事务、原结果与授权参与",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-10",
+      "dependencies": [
+        "WP02-02",
+        "WP02-03",
+        "WP02-07"
+      ]
+    },
+    {
+      "id": "WP02-11",
+      "title": "Platform HTTP错误、安全重试和截止时间",
+      "repository": "Platform",
+      "state": "READY",
+      "entry_gate": "CONFIRMED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-11",
+      "dependencies": [
+        "WP02-01"
+      ]
+    },
+    {
+      "id": "WP02-27",
+      "title": "Platform包能力矩阵与不可变信任验证",
+      "repository": "Platform",
+      "state": "READY",
+      "entry_gate": "CONFIRMED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-27",
+      "dependencies": [
+        "S01-09",
+        "WP02-01"
+      ]
+    },
+    {
+      "id": "WP02-28",
+      "title": "Main宿主实际加载身份与兼容回退验证",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-28",
+      "dependencies": [
+        "WP02-25",
+        "WP02-27"
+      ]
+    },
+    {
+      "id": "WP02-29",
+      "title": "CRM宿主平台合同与观测包采用",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-29",
+      "dependencies": [
+        "WP02-09",
+        "WP02-11",
+        "WP02-12",
+        "WP02-25",
+        "WP02-27"
+      ]
+    },
+    {
+      "id": "WP03-01",
+      "title": "公开表单Bundle与配置生效",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP03.md",
+      "card_anchor": "wp03-01",
+      "dependencies": [
+        "S01-08",
+        "S02-00",
+        "WP02-09"
+      ]
+    },
+    {
+      "id": "WP03-02",
+      "title": "浏览器绑定公开提交与H01自动受理",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP03.md",
+      "card_anchor": "wp03-02",
+      "dependencies": [
+        "WP02-09",
+        "WP02-16",
+        "WP03-01"
+      ]
+    },
+    {
+      "id": "WP03-03",
+      "title": "询盘审核队列、放行拒绝与到期",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP03.md",
+      "card_anchor": "wp03-03",
+      "dependencies": [
+        "WP02-09",
+        "WP03-02"
+      ]
+    },
+    {
+      "id": "WP03-04",
+      "title": "询盘同意、保留匿名化与隐私导出",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP03.md",
+      "card_anchor": "wp03-04",
+      "dependencies": [
+        "WP02-09",
+        "WP02-14",
+        "WP02-15",
+        "WP03-03"
+      ]
+    },
+    {
+      "id": "WP03-12",
+      "title": "线索手工进入、列表和归属协作",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP03.md",
+      "card_anchor": "wp03-12",
+      "dependencies": [
+        "S01-08",
+        "S02-00",
+        "WP02-09"
+      ]
+    },
+    {
+      "id": "WP03-15",
+      "title": "Lead到Account Contact及可选商机原子转换",
+      "repository": "CRM",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP03.md",
+      "card_anchor": "wp03-15",
+      "dependencies": [
+        "WP02-09",
+        "WP03-05",
+        "WP03-09",
+        "WP03-14",
+        "WP03-21"
+      ]
+    },
+    {
+      "id": "WP04-14",
+      "title": "销售草稿、稳定行交期与导入",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-14",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP02-14",
+        "WP04-02",
+        "WP04-32",
+        "WP04-33",
+        "WP05-11",
+        "WP11-04",
+        "WP11-10"
+      ]
+    },
+    {
+      "id": "WP04-15",
+      "title": "销售ATP读取及人工承诺采纳",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-15",
+      "dependencies": [
+        "S01-06",
+        "WP02-10",
+        "WP02-13",
+        "WP04-14",
+        "WP06-06"
+      ]
+    },
+    {
+      "id": "WP04-16",
+      "title": "销售审批与信用参与的商业确认",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-16",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-12",
+        "WP04-15",
+        "WP04-32",
+        "WP05-32",
+        "WP11-07",
+        "WP12-07",
+        "WP12-19"
+      ]
+    },
+    {
+      "id": "WP04-17",
+      "title": "Sales Release底座、初次合法用途与H10接收贯通",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-17",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-16",
+        "WP04-32",
+        "WP05-32",
+        "WP06-13"
+      ]
+    },
+    {
+      "id": "WP04-18",
+      "title": "订单变化、取消与迟到执行控制",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-18",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-17",
+        "WP06-03",
+        "WP07-05",
+        "WP08-15",
+        "WP10-20",
+        "WP12-07",
+        "WP12-19"
+      ]
+    },
+    {
+      "id": "WP04-27",
+      "title": "售后CommercialWork受理与商业决定",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-27",
+      "dependencies": [
+        "S01-11",
+        "WP02-10",
+        "WP02-13",
+        "WP04-02",
+        "WP09-12",
+        "WP10-22",
+        "WP12-07"
+      ]
+    },
+    {
+      "id": "WP04-28",
+      "title": "售后贷项准备、独立过账与原结果采用",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-28",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-27",
+        "WP11-32"
+      ]
+    },
+    {
+      "id": "WP04-31",
+      "title": "售后更正撤权与全成员恢复",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-31",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-28",
+        "WP04-29",
+        "WP04-30",
+        "WP09-12",
+        "WP10-22"
+      ]
+    },
+    {
+      "id": "WP04-34",
+      "title": "原发运商业可退资格与独立退货来源授权",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-34",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-32",
+        "WP10-19",
+        "WP12-07"
+      ]
+    },
+    {
+      "id": "WP04-37",
+      "title": "销售Release正式用途许可采用与完整需求贯通",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-37",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-17",
+        "WP05-42",
+        "WP06-02"
+      ]
+    },
+    {
+      "id": "WP06-04",
+      "title": "供给来源账、互斥代表与固定cut提供者",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP06.md",
+      "card_anchor": "wp06-04",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP06-01"
+      ]
+    },
+    {
+      "id": "WP06-05",
+      "title": "采购、制造及库存事实采用和供给回流",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP06.md",
+      "card_anchor": "wp06-05",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP06-04",
+        "WP07-04",
+        "WP07-07",
+        "WP08-08",
+        "WP09-06",
+        "WP10-05",
+        "WP10-14",
+        "WP10-15"
+      ]
+    },
+    {
+      "id": "WP06-06",
+      "title": "ATP R11真实评估、恢复与销售查询",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP06.md",
+      "card_anchor": "wp06-06",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S01-06",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP06-01",
+        "WP06-05"
+      ]
+    },
+    {
+      "id": "WP06-07",
+      "title": "MRP责任展开与NET/GROSS无损计算",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP06.md",
+      "card_anchor": "wp06-07",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP05-10",
+        "WP05-12",
+        "WP05-39",
+        "WP06-01",
+        "WP06-02",
+        "WP06-04",
+        "WP08-05"
+      ]
+    },
+    {
+      "id": "WP06-10",
+      "title": "CP22计划单来源份额、委托与转换意图",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP06.md",
+      "card_anchor": "wp06-10",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP06-09"
+      ]
+    },
+    {
+      "id": "WP06-11",
+      "title": "CP22真实PR、WO与调拨转单并替换Stub",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP06.md",
+      "card_anchor": "wp06-11",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP06-10",
+        "WP07-01",
+        "WP08-03",
+        "WP10-10"
+      ]
+    },
+    {
+      "id": "WP09-01",
+      "title": "质量Plan、Policy与豁免Ground生命周期",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-01",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S01-07",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP05-02",
+        "WP05-03",
+        "WP05-12",
+        "WP05-16",
+        "WP05-32",
+        "WP09-11"
+      ]
+    },
+    {
+      "id": "WP09-02",
+      "title": "QA任务族、源映射与同事务最终质量门",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-02",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP05-12",
+        "WP05-30",
+        "WP05-32",
+        "WP09-01"
+      ]
+    },
+    {
+      "id": "WP09-05",
+      "title": "过程与最终检验任务、测量与复核",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-05",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S01-07",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP08-07",
+        "WP08-08",
+        "WP09-02"
+      ]
+    },
+    {
+      "id": "WP09-06",
+      "title": "IPQC/FQC判定、库存质量应用与失效恢复",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-06",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP09-05",
+        "WP10-03",
+        "WP10-15"
+      ]
+    },
+    {
+      "id": "WP09-07",
+      "title": "NCR三源建单、处置分区与独立批准",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-07",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S01-07",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP05-02",
+        "WP05-12",
+        "WP09-04",
+        "WP09-06",
+        "WP10-22"
+      ]
+    },
+    {
+      "id": "WP09-08",
+      "title": "NCR返工准入、实际完成和重检闭环",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-08",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP08-14",
+        "WP09-07"
+      ]
+    },
+    {
+      "id": "WP09-09",
+      "title": "NCR处置财务采用、H30与全义务关闭",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-09",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP04-31",
+        "WP09-07",
+        "WP09-12",
+        "WP10-04",
+        "WP11-44",
+        "WP11-63"
+      ]
+    },
+    {
+      "id": "WP09-10",
+      "title": "质量工程反馈、变更影响和技术偏离双授权",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-10",
+      "dependencies": [
+        "S01-02",
+        "S01-05",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP05-25",
+        "WP05-26",
+        "WP05-29",
+        "WP05-30",
+        "WP05-33",
+        "WP05-37",
+        "WP09-07"
+      ]
+    },
+    {
+      "id": "WP09-11",
+      "title": "独立质量规格、Requirements与固定源证明",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-11",
+      "dependencies": [
+        "S01-07",
+        "S02-00",
+        "WP02-03",
+        "WP02-10",
+        "WP02-13",
+        "WP02-14",
+        "WP05-16",
+        "WP12-07"
+      ]
+    },
+    {
+      "id": "WP09-12",
+      "title": "NCR专业物理应用与当前来源结果提供者",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP09.md",
+      "card_anchor": "wp09-12",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP09-07",
+        "WP10-04"
+      ]
+    },
+    {
+      "id": "WP11-05",
+      "title": "信用政策和Credit到GL身份Registry",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-05",
+      "dependencies": [
+        "S01-03",
+        "S01-10",
+        "WP02-10",
+        "WP02-13",
+        "WP04-02"
+      ]
+    },
+    {
+      "id": "WP11-06",
+      "title": "信用完整敞口Cut和吸收守恒",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-06",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-32",
+        "WP11-05",
+        "WP11-62"
+      ]
+    },
+    {
+      "id": "WP11-07",
+      "title": "信用预留、特批与Sales AR最终参与",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-07",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP11-06"
+      ]
+    },
+    {
+      "id": "WP11-10",
+      "title": "业务汇率冻结与F09同事务用途",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-10",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP11-09"
+      ]
+    },
+    {
+      "id": "WP11-26",
+      "title": "应收计费政策、义务切片与跨版本Claim",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-26",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-02",
+        "WP04-32",
+        "WP10-19",
+        "WP10-52",
+        "WP11-04",
+        "WP11-10",
+        "WP11-62",
+        "WP12-07"
+      ]
+    },
+    {
+      "id": "WP11-27",
+      "title": "应收独立收入事件与本域过账应用",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-27",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP11-07",
+        "WP11-16",
+        "WP11-26"
+      ]
+    },
+    {
+      "id": "WP11-32",
+      "title": "应收退货贷项与库存价值独立协调",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-32",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP04-27",
+        "WP09-12",
+        "WP10-22",
+        "WP11-27",
+        "WP11-31",
+        "WP11-44"
+      ]
+    },
+    {
+      "id": "WP11-35",
+      "title": "库存价值来源、所有权与收货价值",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-35",
+      "dependencies": [
+        "S01-04",
+        "S01-10",
+        "WP02-10",
+        "WP02-13",
+        "WP07-06",
+        "WP10-03",
+        "WP10-14",
+        "WP11-04",
+        "WP11-08"
+      ]
+    },
+    {
+      "id": "WP11-36",
+      "title": "FIFO移动平均标准和个别计价",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-36",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP11-35"
+      ]
+    },
+    {
+      "id": "WP11-37",
+      "title": "库存GRNI与AP清算价值采用",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-37",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP07-14",
+        "WP11-19",
+        "WP11-36"
+      ]
+    },
+    {
+      "id": "WP11-38",
+      "title": "出库层消耗与唯一COGS来源",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-38",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP10-19",
+        "WP10-52",
+        "WP11-16",
+        "WP11-36"
+      ]
+    },
+    {
+      "id": "WP11-43",
+      "title": "成本结果到FG WIP价值准确采用",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-43",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP11-36",
+        "WP11-42"
+      ]
+    },
+    {
+      "id": "WP11-44",
+      "title": "库存价值更正、退回谱系与H30专用绑定",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-44",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP09-12",
+        "WP10-22",
+        "WP11-17",
+        "WP11-37",
+        "WP11-38",
+        "WP11-43",
+        "WP11-63"
+      ]
+    },
+    {
+      "id": "WP11-45",
+      "title": "库存价值对账、冷恢复与旧桥采用",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "plan_path": "docs/development/task-plans/WP11.md",
+      "card_anchor": "wp11-45",
+      "dependencies": [
+        "WP02-10",
+        "WP02-13",
+        "WP10-05",
+        "WP11-44"
+      ]
+    }
+  ],
+  "source_searches": [
+    {
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "arguments": [
+        "grep",
+        "-n",
+        "-E",
+        "CP6.Entity.Contracts|CreditAmount|InventoryDecimal|NcrJson|CurrentCreditCodec|FrozenR8CreditCodec",
+        "47c9b12c796620effe41c62d16992ccd629ee949",
+        "--",
+        "CP6.Core",
+        "CP6.WebApi"
+      ],
+      "exit_code": 1,
+      "matches": [],
+      "interpretation": "Static bounded symbol/import search only; absence is not proof against dynamic calls or all future writers. Platform matches are declarations within the capability itself."
+    },
+    {
+      "repository": "Main",
+      "commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "arguments": [
+        "grep",
+        "-n",
+        "-E",
+        "contracts/(exact|quality|plan-atp|erp-credit)|decodeIpqc|createCurrentCreditCodec|createFrozenR8CreditCodec",
+        "47c9b12c796620effe41c62d16992ccd629ee949",
+        "--",
+        "cp6.web/src/api",
+        "cp6.web/src/views",
+        "cp6.web/src/stores"
+      ],
+      "exit_code": 1,
+      "matches": [],
+      "interpretation": "Static bounded symbol/import search only; absence is not proof against dynamic calls or all future writers. Platform matches are declarations within the capability itself."
+    },
+    {
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "arguments": [
+        "grep",
+        "-n",
+        "-E",
+        "NativeInquiry|LeadContractDecoder|decodeInquiry|decodeLead",
+        "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+        "--",
+        "src/CP6.CRM.Infrastructure",
+        "src/CP6.CRM.Api",
+        "apps/web/src/leads"
+      ],
+      "exit_code": 1,
+      "matches": [],
+      "interpretation": "Static bounded symbol/import search only; absence is not proof against dynamic calls or all future writers. Platform matches are declarations within the capability itself."
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "arguments": [
+        "grep",
+        "-n",
+        "-E",
+        "Cp6NativeContractCatalog|Cp6OriginalJson",
+        "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "--",
+        "src"
+      ],
+      "exit_code": 0,
+      "matches": [
+        "9259a45d39bae7e98ca804a74778a588c1ad4619:src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs:14:public sealed class Cp6NativeContractCatalog",
+        "9259a45d39bae7e98ca804a74778a588c1ad4619:src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs:22:    private Cp6NativeContractCatalog(Cp6NativeOpenApiIdentity inq, Dictionary<string, Cp6NativeRegistryIdentity> registries)",
+        "9259a45d39bae7e98ca804a74778a588c1ad4619:src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs:28:    public static Cp6NativeContractCatalog LoadS01(ReadOnlyMemory<byte> manifest)",
+        "9259a45d39bae7e98ca804a74778a588c1ad4619:src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs:9:public sealed class Cp6OriginalJson",
+        "9259a45d39bae7e98ca804a74778a588c1ad4619:src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs:13:    private Cp6OriginalJson(byte[] bytes)",
+        "9259a45d39bae7e98ca804a74778a588c1ad4619:src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs:21:    public static Cp6OriginalJson Capture(ReadOnlyMemory<byte> utf8)",
+        "9259a45d39bae7e98ca804a74778a588c1ad4619:src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs:25:        return new Cp6OriginalJson(owned);"
+      ],
+      "interpretation": "Static bounded symbol/import search only; absence is not proof against dynamic calls or all future writers. Platform matches are declarations within the capability itself."
+    }
+  ],
+  "versions": {
+    "package": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+    "atp": "ATP-STABLEID-LEXICAL/20261011-R1",
+    "crm_terminal": "CRM-INQ-TERMINAL-PROJECTION/20261013-R1",
+    "crm_native_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+    "crm_overlay_sha256": "bce20c5a3bc93826993be6c2ba7c9a440fffd467f746245e5665707d8eedf549",
+    "crm_effective_sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d",
+    "pg_mapping": "CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0",
+    "pg_file_sha256": "96ef3c9f22919e790f750773c2a4bdc675b7df5f145f7b9bfffeda6d19c1ec16",
+    "pg_consumer_semantic_sha256": "7bb24e1e36610996a46d13cace0a58e8032a3eb369e4dda235af5ec3c58e8752"
+  },
+  "business_status": {
+    "accepted_targets_pass": 0,
+    "accepted_targets_total": 125,
+    "full_runtime_cases": 247,
+    "full_runtime_status": "NOT_RUN",
+    "historical_reference_only": 41,
+    "original_inventory": "123/125",
+    "missing_originals": [
+      "ITER",
+      "REL"
+    ],
+    "WP05": "PROPOSED"
+  },
+  "database_adoption": "NOT_RUN; PostgreSQL only; no tenant schema switch approved",
+  "notes": [
+    "Consumer coverage is a bounded inspected inventory, not an assertion that every repository writer was exhaustively audited. OWNER-ADOPTION.md enumerates all 13 source tables and additional writer/migration duties.",
+    "Old SQL Server/dual-provider artifacts retain history; this task does not delete or migrate them.",
+    "Task states are snapshots at pinned Main; coordination ledger remains sole task state source."
+  ]
+}

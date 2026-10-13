@@ -1,0 +1,24 @@
+{
+  "observed_at_utc": "2026-10-13T12:53:11.243690+00:00",
+  "result": "PASS",
+  "vectors_byte_identical": true,
+  "other_18_revision_cases_canonical_identical": true,
+  "manifest_scope_check": {
+    "only_added_references": [
+      "Main:eng/contracts/s01-07/csharp/native-field-inventory.json"
+    ],
+    "all_other_manifest_fields_unchanged": true
+  },
+  "hashes": {
+    "manifest.json": "96210c30090f97da137d1a57e675b8f77aae1f4efe5d8c7d1b0ae591932ba0cb",
+    "vectors.json": "ea4a8685b08e0d4bd8d48610583fd7b765f133466b4f3a6f11e05aea1002dc5f",
+    "revision-coverage.json": "8e397235add80ddee823a9107bbd941875a5a9d0095211353e81fd64763935a2"
+  },
+  "source_hashes": {
+    "eng/contracts/s01-12/verify_adoption.py": "0d53315b8f8f6e938570fa40beebc047cd4c9b01006379d74b69d9941239fede",
+    "eng/contracts/s01-12/test_verify_adoption.py": "54c904364ee4575e3b125d0515d590eee062f794ef9f418bfd4ed0cd3a95c32c"
+  },
+  "new_tests": "2 targeted comparator tests only; original30 remain historical evidence, not rerun",
+  "product_tests_executed": 0,
+  "database_operations": 0
+}
