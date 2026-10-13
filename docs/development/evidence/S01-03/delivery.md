@@ -27,7 +27,7 @@ var wire = projected.ToFieldString(CreditAmountProfile.NonNegative);
 dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~CreditAmountTests
 ```
 
-GREEN：实际 .NET 8.0.29 / net8.0、SDK 10.0.302，205 执行 / 205 通过 / 0 失败 / 0 跳过；25 个固定向量和 180 个补充用例。固定 ID、全部用例结果、源码/输入/依赖/产物 hash 见 [validation.json](validation.json)及 [green metadata](implementation/green-metadata.json)、[完整 TRX](implementation/green.trx)。源码提交绑定在准备发布时写入 `source-receipt.json`；执行时 base_head 只是基础提交，实际未提交文件由原始字节摘要标识。
+GREEN：实际 .NET 8.0.29 / net8.0、SDK 10.0.302，205 执行 / 205 通过 / 0 失败 / 0 跳过；25 个固定向量和 180 个补充用例。固定 ID、全部用例结果、源码/输入/依赖/产物 hash 见 [validation.json](validation.json)及 [green metadata](implementation/green-metadata.json)、[完整 TRX](implementation/green.trx)。[源码提交回执](source-receipt.json)已绑定代码提交 `036194e33a5c2bfce9f1960f47058e3001328338`；执行时 base_head 只是基础提交，实际未提交文件由原始字节摘要标识，后续提交核对不冒称新执行。
 
 RED：原始及修正记录器后的实际 TRX 均为 205 执行 / 204 个未实现失败 / 1 个环境检查通过 / 0 跳过。原 PowerShell 错误处理导致初次控制台日志不完整且无 metadata，详见 [真实失败说明](runner-initial-failure.json)；原件保留，未补造 metadata。[red-runtime metadata](implementation/red-runtime-metadata.json)记录修正后的完整日志、实际非零退出和未变源码；两套桩/测试快照均保留。该记录器修复不更改产品代码、工作流或测试失败含义。
 
@@ -35,7 +35,7 @@ S01-02 原 77/77 结果仅按 `docs/development/evidence/wave2-integration-20261
 
 ## 发布与范围
 
-本任务的[独立集中审查](review.md)已按规范→质量顺序通过，无实质发现和返工项。当前为任务候选，等待 COORD 审查接收、共享台账/生成页/四状态页同步和正常 PR 串行合并。准确代码提交、最终候选 SHA、PR 和固定 Handoff DELIVERY 由提交回执/交付消息定位；没有把尚未合入远端 main 的候选称为 DONE。
+本任务的[独立集中审查](review.md)已按规范→质量顺序通过，无实质发现和返工项。准确代码提交为 `036194e33a5c2bfce9f1960f47058e3001328338`；后续仅追加源码/工作流回执和交付文档。当前为任务候选，等待 COORD 审查接收、共享台账/生成页/四状态页同步和正常 PR 串行合并。最终候选 SHA、PR 和固定 Handoff DELIVERY 由交付消息定位，避免预写报告自身未来 SHA；没有把尚未合入远端 main 的候选称为 DONE。[工作流回执](workflow-check.json)记录候选与最新 protected main 的完整事件检查，最终 push/PR 前继续按真实 SHA 核对。
 
 现有 `CreditControlService.CheckCreditAsync(string, decimal)`、`ICreditControlService`、`CreditCheckResult` 及账务舍入保持原合同。真实授信/应收/订单写者、Owner、授权/租户/事务、存储及跨仓包采用仍 NOT_RUN。S01-10 只能在本 API 真实合入后采用 PostgreSQL 存储适配；本任务没有运行 DB、迁移、包发布或部署。中间系数/项数没有应用上限，实际容量受框架整数/集合类型及可用内存约束。
 
