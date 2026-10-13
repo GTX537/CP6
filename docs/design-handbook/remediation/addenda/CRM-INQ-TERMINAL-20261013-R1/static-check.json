@@ -1,0 +1,44 @@
+{
+  "result": "PASS",
+  "scope": "STATIC_OVERLAY_IDENTITY_AND_SCHEMA_INVARIANTS_ONLY",
+  "profile_id": "CRM-INQ-TERMINAL-PROJECTION/20261013-R1",
+  "base_schema_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349",
+  "patch_sha256": "bce20c5a3bc93826993be6c2ba7c9a440fffd467f746245e5665707d8eedf549",
+  "profile_manifest_sha256": "c354974c918dbc39d1ecf9352db79ab5b2b8a61e901f2db6ea328d6112993645",
+  "verifier_sha256": "48d84de422b3a46d9c596e8b7c440bef9e7f0ded8d27209fac23cf1ed36c2d12",
+  "effective_schema_sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d",
+  "effective_schema_bytes": 238954,
+  "applications": 2,
+  "definitions": 38,
+  "references": 257,
+  "resolved_references": 257,
+  "privacy_export_view_references": 7,
+  "unregistered_changes": 0,
+  "status_20_30_90_unchanged": true,
+  "authority": [
+    {
+      "path": "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
+      "sha256": "8dabf960916e6881f6d73c4dbee17b8cbea4b3d2d2a3a664650eee03ec1192d9",
+      "lines_verified": true
+    },
+    {
+      "path": "docs/design-handbook/remediation/01-version-and-authority.md",
+      "sha256": "495c8a2b821d3c5aed2b7d40e743351db6b3b8e4615f8d8f9bc25cd998fd1a7e",
+      "lines_verified": true
+    }
+  ],
+  "negative_checks": {
+    "changed_base_bytes": true,
+    "changed_patch_bytes": true,
+    "unknown_profile": true,
+    "wrong_native_identity": true,
+    "wrong_patch_hash": true,
+    "wrong_effective_hash": true,
+    "wrong_old_value": true,
+    "extra_operation": true
+  },
+  "base_source_unchanged": true,
+  "schema_written": false,
+  "consumer_adoption": "NOT_RUN",
+  "business_validation": "NOT_RUN"
+}
