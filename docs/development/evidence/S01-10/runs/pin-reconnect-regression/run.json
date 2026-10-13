@@ -1,0 +1,311 @@
+{
+  "task": "S01-10",
+  "run_id": "pin-reconnect-regression",
+  "started_utc": "2026-10-13T05:54:38.988758+00:00",
+  "finished_utc": "2026-10-13T05:55:00.957582+00:00",
+  "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+  "command": [
+    "dotnet",
+    "test",
+    "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~Fixed_vector|FullyQualifiedName~Committed_values",
+    "--logger",
+    "trx;LogFileName=s01-10-postgresql.trx",
+    "--results-directory",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\pin-reconnect-regression",
+    "--verbosity",
+    "minimal"
+  ],
+  "exit_code": 0,
+  "counters": {
+    "total": "57",
+    "executed": "57",
+    "passed": "57",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "cases": [
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Committed_values_and_original_UTF8_survive_new_physical_connections_and_repeated_persistence",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-021\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-009\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-017\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-007\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-018\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-008\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-016\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-010\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-015\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-JS-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-010\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-012\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-007\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-006\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-JS-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-009\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-010\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-JS-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-008\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-019\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-011\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-007\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-023\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-006\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-008\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-011\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-013\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-020\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-022\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-006\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-014\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-009\")",
+      "outcome": "Passed"
+    }
+  ],
+  "source_sha256": {
+    "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs": "f0514c0253a1d3a2c22d1a5e925eeb0b51b2f2faf8017f6d17dcb481eef99859",
+    "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+    "CP6.Persistence.PostgreSql/packages.lock.json": "565334cc9393b7f9796a652007cbed6887ad67ba5f7c14052e2e32e8b383b7f8",
+    "docs/development/evidence/S01-10/postgresql-mappings.proposed.json": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+    "eng/contracts/postgresql-tests/atp-recovery-subset.sql": "55afa723281bf2b65c2aa2cae9133e6313242c1b50df758d75c766b226c8d80b",
+    "eng/contracts/postgresql-tests/atp-reviewed-subset.sql": "315784b00be3416e3fe1047748978d6556906b0149e8df96d6d8bc7574de24ab",
+    "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj": "a6616864498568d9c888b1e327cc461383f91e781e5c85517840eb3dd873885a",
+    "eng/contracts/postgresql-tests/exact-guards.sql": "edf7f473ce0ae782640ecb5da4aa0540ab6a195efa1f802a216069276e341197",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Adapter.cs": "325cd53a8170dd42a9c90b2830ec1e6dfa8c81452636e0fba58cc16b0d4ad934",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs": "32a41367fbf83c424ef27891defb7c59fc216c494bc06cd778890798c1e89958",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs": "3b70a384947109b4d272da4a0a2db341dfb026042b65ffc282bad755a05af149",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.cs": "e5196860cb11734f04d9990903f7e8e64976fe76528172f24601519b43b2eb91",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs": "c4e49d8e459e2fc0fe7f5d8bc74c7208320c662279c54474a0aafaddab7d5e61",
+    "eng/contracts/postgresql-tests/FixtureSql.cs": "745cd4ef0d8c13a862c2599c8e3a7c8ca13076090989d665305a3e6110701468",
+    "eng/contracts/postgresql-tests/OwnedPostgres.cs": "6a3fd2baaf946749dd114138517982b2838ce761931df1cc587b065312c43efd",
+    "eng/contracts/postgresql-tests/packages.lock.json": "17bb2300b71126fb34c589ea27f15d30bee42a35bf883e09b31dc82efa0ae558",
+    "eng/contracts/postgresql-tests/prepare_mapping_proposal.py": "5323500f69c8ee4c80137f030e4128636f7f79233059f9f6313b26a3bb7a517a",
+    "eng/contracts/postgresql-tests/prepare_sources.py": "6562483865fbcbca0c58bc672e0c8d488fa5a14b22dcd87d56313def39f308e4",
+    "eng/contracts/postgresql-tests/run_local.py": "cdc5a11633f0a33830499cbe856f7ef2032e6db10a8766184dd7d974a7dfd913",
+    "eng/contracts/postgresql-tests/TestInputs.cs": "52fbfbe3d1583e467c221576b80377f24e18b10dfc040d9058dbd52bec9990a4",
+    "eng/contracts/s01/profile-inputs.json": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+    "eng/contracts/s01/vectors.json": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+  },
+  "source_unchanged_during_run": true,
+  "artifact_sha256": {
+    "CP6.ExactValues.PostgreSqlTests.dll": "98ac45cc5653b9642d5724df64813f9ded8e3518bea9626eb7ca92ede86e9efa",
+    "CP6.Persistence.PostgreSql.dll": "a9f4bc41c9448c2887ac89d8e06184fdbb31eb7531100b418ab5b2ebc8f57ad9",
+    "CP6.Entity.dll": "875b13343dc80edcf283e06835097cd5fcefebbbacb46fac3dc383b909d8a072",
+    "Npgsql.dll": "2083de510463c4f708fa433d68bf3da149f10e25cd99a86f4519360e3f59b70d"
+  },
+  "lifecycle": [
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/4b8c1c89bea042528e4a8e0adbbcba96.json",
+      "sha256": "5f03bdddf2aade922009983ce14b29f3da8033aa0ed81c74227fb85487463d71",
+      "status": "CLEANED"
+    }
+  ],
+  "local_gate": "PASS",
+  "scope": "Owned fixture only; draft mapping remains proposed until COORD decision; no production Owner/tenant/migration acceptance"
+}

@@ -1,0 +1,3112 @@
+{
+  "mapping_version": "CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0",
+  "adoption": "PROPOSED_PENDING_COORD",
+  "database": "PostgreSQL",
+  "source_revision": "CP6-EXACT-NUMERIC-STORAGE/1",
+  "source_sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+  "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "native_inventory_schema_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+  "credit": {
+    "field_bindings": [
+      {
+        "profile": "fin-credit-signed",
+        "count": 4,
+        "pointers": [
+          "/$defs/absorptionLink/properties/signedPolicyAmount",
+          "/$defs/representationTransfer/properties/deltaPolicyAmount",
+          "/$defs/subject/properties/exposureDeltaPolicyAmount",
+          "/$defs/moneySigned/properties/amount"
+        ]
+      },
+      {
+        "profile": "fin-credit-nonnegative",
+        "count": 33,
+        "pointers": [
+          "/$defs/moneyNonNegative/properties/amount",
+          "/$defs/arObligationAggregate/properties/openPolicyAmount",
+          "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+          "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+          "/$defs/arCut/properties/arBookedExposure",
+          "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+          "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+          "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+          "/$defs/reservationSet/properties/activeReservedDelta",
+          "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+          "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+          "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+          "/$defs/creditExposureSnapshot/properties/totalExposure",
+          "/$defs/subject/properties/currentCommittedPolicyAmount",
+          "/$defs/subject/properties/targetCommittedPolicyAmount",
+          "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+          "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+          "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+          "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+          "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+          "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+          "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+          "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+          "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+          "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+          "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+          "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+          "/$defs/postedOpenContribution/properties/policyAmount",
+          "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+          "/$defs/effectiveCreditContribution/properties/policyAmount",
+          "/$defs/appliedReceiptContribution/properties/policyAmount",
+          "/$defs/unbilledOrderContribution/properties/policyAmount",
+          "/$defs/activeReservationContribution/properties/policyAmount"
+        ]
+      },
+      {
+        "profile": "fin-credit-positive",
+        "count": 5,
+        "pointers": [
+          "/$defs/moneyPositive/properties/amount",
+          "/$defs/fxEvidence/properties/rate",
+          "/$defs/planAtpObservationInput/properties/requestedQuantity",
+          "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+          "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+        ]
+      }
+    ],
+    "representation": "numeric(38,0) coefficient + smallint scale 0..8, same row/transaction",
+    "binding": "NpgsqlDbType.Numeric with BigInteger; read GetFieldValue<BigInteger>(); do not use decimal/ExecuteScalar default numeric read",
+    "validation": "Validate exact destination profile before binding; canonical zero=(0,0); scale>0 coefficient not divisible by10; no rounding/truncation; reject NaN and invalid pair on storage boundary",
+    "scope": "Pure storage adapter, no CreditControlService Owner switch"
+  },
+  "inventory_mappings": [
+    {
+      "table": "SourcePortion",
+      "logical_column": "SourceQty",
+      "source_pointer": "/Tables/1/Columns/6",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "SourceQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "SourceQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "SourceQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionFact/properties/sourceQuantity",
+        "/$defs/Quantity/properties/value",
+        "/$defs/Qty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortion",
+      "logical_column": "BaseQty",
+      "source_pointer": "/Tables/1/Columns/8",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "BaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "BaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "BaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionFact/properties/baseQuantity",
+        "/$defs/Quantity/properties/value",
+        "/$defs/Qty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortion",
+      "logical_column": "RatioNumerator",
+      "source_pointer": "/Tables/1/Columns/10",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,0)",
+      "source_scale_range": [
+        0,
+        0
+      ],
+      "nullable": false,
+      "digits_column": "RatioNumeratorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RatioNumeratorScale",
+      "scale_type": "smallint",
+      "wire_column": "RatioNumeratorOriginalWire",
+      "wire_type": "text",
+      "profile": "PositiveInteger",
+      "numeric_rule": "Positive",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionFact/properties/conversion",
+        "/$defs/UomConversion/properties/ratio",
+        "/$defs/Rational/properties/numerator"
+      ],
+      "storage_scale_range": [
+        0,
+        0
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortion",
+      "logical_column": "RatioDenominator",
+      "source_pointer": "/Tables/1/Columns/11",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,0)",
+      "source_scale_range": [
+        0,
+        0
+      ],
+      "nullable": false,
+      "digits_column": "RatioDenominatorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RatioDenominatorScale",
+      "scale_type": "smallint",
+      "wire_column": "RatioDenominatorOriginalWire",
+      "wire_type": "text",
+      "profile": "PositiveInteger",
+      "numeric_rule": "Positive",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionFact/properties/conversion",
+        "/$defs/UomConversion/properties/ratio",
+        "/$defs/Rational/properties/denominator"
+      ],
+      "storage_scale_range": [
+        0,
+        0
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionBalance",
+      "logical_column": "OriginalBaseQty",
+      "source_pointer": "/Tables/2/Columns/2",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "OriginalBaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "OriginalBaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "OriginalBaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionBalance/properties/originalBaseQty",
+        "/$defs/NonNegativeQty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionBalance",
+      "logical_column": "ValuedBaseQty",
+      "source_pointer": "/Tables/2/Columns/3",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ValuedBaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ValuedBaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ValuedBaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionBalance/properties/valuedBaseQty",
+        "/$defs/NonNegativeQty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionBalance",
+      "logical_column": "ClearedBaseQty",
+      "source_pointer": "/Tables/2/Columns/4",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ClearedBaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ClearedBaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ClearedBaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionBalance/properties/clearedBaseQty",
+        "/$defs/NonNegativeQty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionBalance",
+      "logical_column": "OutboundBaseQty",
+      "source_pointer": "/Tables/2/Columns/5",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "OutboundBaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "OutboundBaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "OutboundBaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionBalance/properties/outboundBaseQty",
+        "/$defs/NonNegativeQty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionBalance",
+      "logical_column": "ReversedBaseQty",
+      "source_pointer": "/Tables/2/Columns/6",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ReversedBaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ReversedBaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ReversedBaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionBalance/properties/reversedBaseQty",
+        "/$defs/NonNegativeQty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionBalance",
+      "logical_column": "ReservedBaseQty",
+      "source_pointer": "/Tables/2/Columns/7",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ReservedBaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ReservedBaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ReservedBaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionBalance/properties/reservedBaseQty",
+        "/$defs/NonNegativeQty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionBalance",
+      "logical_column": "AvailableBaseQty",
+      "source_pointer": "/Tables/2/Columns/8",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "AvailableBaseQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "AvailableBaseQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "AvailableBaseQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionBalance/properties/availableBaseQty",
+        "/$defs/NonNegativeQty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValuationPoolHead",
+      "logical_column": "CurrentQty",
+      "source_pointer": "/Tables/4/Columns/2",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "CurrentQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "CurrentQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "CurrentQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_CURRENT_REVISION_PROJECTION",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/afterQty"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValuationPoolHead",
+      "logical_column": "CurrentUnroundedValue",
+      "source_pointer": "/Tables/4/Columns/3",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "CurrentUnroundedValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "CurrentUnroundedValueScale",
+      "scale_type": "smallint",
+      "wire_column": "CurrentUnroundedValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_CURRENT_REVISION_PROJECTION",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayer",
+      "logical_column": "OriginalQty",
+      "source_pointer": "/Tables/5/Columns/12",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "OriginalQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "OriginalQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "OriginalQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueLayer/properties/originalQty",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayer",
+      "logical_column": "OriginalUnroundedValue",
+      "source_pointer": "/Tables/5/Columns/13",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "OriginalUnroundedValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "OriginalUnroundedValueScale",
+      "scale_type": "smallint",
+      "wire_column": "OriginalUnroundedValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueLayer/properties/unroundedOriginalValue"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayer",
+      "logical_column": "UnitValue",
+      "source_pointer": "/Tables/5/Columns/14",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "UnitValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "UnitValueScale",
+      "scale_type": "smallint",
+      "wire_column": "UnitValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueLayer/properties/unitValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent of amount lexical scale",
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayerBalance",
+      "logical_column": "OriginalQty",
+      "source_pointer": "/Tables/6/Columns/2",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "OriginalQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "OriginalQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "OriginalQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "DERIVED_LAYER_BALANCE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueLayer/properties/originalQty",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayerBalance",
+      "logical_column": "ConsumedQty",
+      "source_pointer": "/Tables/6/Columns/3",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ConsumedQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ConsumedQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ConsumedQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "DERIVED_LAYER_BALANCE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/Qty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayerBalance",
+      "logical_column": "ReversedQty",
+      "source_pointer": "/Tables/6/Columns/4",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ReversedQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ReversedQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ReversedQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "DERIVED_LAYER_BALANCE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/Qty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayerBalance",
+      "logical_column": "ReservedQty",
+      "source_pointer": "/Tables/6/Columns/5",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ReservedQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ReservedQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ReservedQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "DERIVED_LAYER_BALANCE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/Qty12"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLayerBalance",
+      "logical_column": "AvailableQty",
+      "source_pointer": "/Tables/6/Columns/6",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "AvailableQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "AvailableQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "AvailableQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "NonNegative",
+      "binding_kind": "DERIVED_LAYER_BALANCE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueLayer/properties/availableQty",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "BeforeQty",
+      "source_pointer": "/Tables/7/Columns/3",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "BeforeQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "BeforeQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "BeforeQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/beforeQty"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "BeforeUnroundedValue",
+      "source_pointer": "/Tables/7/Columns/4",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "BeforeUnroundedValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "BeforeUnroundedValueScale",
+      "scale_type": "smallint",
+      "wire_column": "BeforeUnroundedValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/beforeUnroundedValue"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DeltaQty",
+      "source_pointer": "/Tables/7/Columns/5",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "DeltaQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "DeltaQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "DeltaQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/deltaQty"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DeltaUnroundedValue",
+      "source_pointer": "/Tables/7/Columns/6",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "DeltaUnroundedValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "DeltaUnroundedValueScale",
+      "scale_type": "smallint",
+      "wire_column": "DeltaUnroundedValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/deltaUnroundedValue"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "AfterQty",
+      "source_pointer": "/Tables/7/Columns/7",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "AfterQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "AfterQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "AfterQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/afterQty"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "AfterUnroundedValue",
+      "source_pointer": "/Tables/7/Columns/8",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "AfterUnroundedValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "AfterUnroundedValueScale",
+      "scale_type": "smallint",
+      "wire_column": "AfterUnroundedValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "ExactAverageNumerator",
+      "source_pointer": "/Tables/7/Columns/10",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(76,0)",
+      "source_scale_range": [
+        0,
+        0
+      ],
+      "nullable": true,
+      "digits_column": "ExactAverageNumeratorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ExactAverageNumeratorScale",
+      "scale_type": "smallint",
+      "wire_column": "ExactAverageNumeratorOriginalWire",
+      "wire_type": "text",
+      "profile": "MavgNumerator",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/exactAverageNumerator"
+      ],
+      "storage_scale_range": [
+        0,
+        0
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "ExactAverageDenominator",
+      "source_pointer": "/Tables/7/Columns/11",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(76,0)",
+      "source_scale_range": [
+        0,
+        0
+      ],
+      "nullable": true,
+      "digits_column": "ExactAverageDenominatorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ExactAverageDenominatorScale",
+      "scale_type": "smallint",
+      "wire_column": "ExactAverageDenominatorOriginalWire",
+      "wire_type": "text",
+      "profile": "PositiveInteger",
+      "numeric_rule": "Positive",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/exactAverageDenominator"
+      ],
+      "storage_scale_range": [
+        0,
+        0
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DisplayAverage18",
+      "source_pointer": "/Tables/7/Columns/12",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": true,
+      "digits_column": "DisplayAverage18UnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "DisplayAverage18Scale",
+      "scale_type": "smallint",
+      "wire_column": "DisplayAverage18OriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/displayAverage18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DiscardedRemainderNumerator",
+      "source_pointer": "/Tables/7/Columns/13",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(76,0)",
+      "source_scale_range": [
+        0,
+        0
+      ],
+      "nullable": true,
+      "digits_column": "DiscardedRemainderNumeratorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "DiscardedRemainderNumeratorScale",
+      "scale_type": "smallint",
+      "wire_column": "DiscardedRemainderNumeratorOriginalWire",
+      "wire_type": "text",
+      "profile": "MavgNumerator",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/discardedRemainderNumerator"
+      ],
+      "storage_scale_range": [
+        0,
+        0
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "MovingAveragePoolRevision",
+      "logical_column": "DiscardedRemainderDenominator",
+      "source_pointer": "/Tables/7/Columns/14",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(76,0)",
+      "source_scale_range": [
+        0,
+        0
+      ],
+      "nullable": true,
+      "digits_column": "DiscardedRemainderDenominatorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "DiscardedRemainderDenominatorScale",
+      "scale_type": "smallint",
+      "wire_column": "DiscardedRemainderDenominatorOriginalWire",
+      "wire_type": "text",
+      "profile": "PositiveInteger",
+      "numeric_rule": "Positive",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/MovingAveragePoolRevision/properties/discardedRemainderDenominator"
+      ],
+      "storage_scale_range": [
+        0,
+        0
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLine",
+      "logical_column": "Qty",
+      "source_pointer": "/Tables/11/Columns/7",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "QtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "QtyScale",
+      "scale_type": "smallint",
+      "wire_column": "QtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueEffectResult/properties/lines/items/properties/quantity",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLine",
+      "logical_column": "UnitValue",
+      "source_pointer": "/Tables/11/Columns/9",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "UnitValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "UnitValueScale",
+      "scale_type": "smallint",
+      "wire_column": "UnitValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueEffectResult/properties/lines/items/properties/unitValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: 0..8, independent",
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLine",
+      "logical_column": "RawAmount",
+      "source_pointer": "/Tables/11/Columns/10",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "RawAmountUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RawAmountScale",
+      "scale_type": "smallint",
+      "wire_column": "RawAmountOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ValueEffectResult/properties/lines/items/properties/rawAmount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLine",
+      "logical_column": "RoundedBeforeResidue",
+      "source_pointer": "/Tables/11/Columns/11",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "RoundedBeforeResidueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RoundedBeforeResidueScale",
+      "scale_type": "smallint",
+      "wire_column": "RoundedBeforeResidueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/roundedBeforeResidue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale / RoundingPolicy.currencyScale: 0..8, independently preserved by Owner",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLine",
+      "logical_column": "ResidueApplied",
+      "source_pointer": "/Tables/11/Columns/12",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "ResidueAppliedUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ResidueAppliedScale",
+      "scale_type": "smallint",
+      "wire_column": "ResidueAppliedOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/residueApplied",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale / RoundingPolicy.currencyScale: 0..8, independently preserved by Owner",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ValueLine",
+      "logical_column": "FinalAmount",
+      "source_pointer": "/Tables/11/Columns/13",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "FinalAmountUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "FinalAmountScale",
+      "scale_type": "smallint",
+      "wire_column": "FinalAmountOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/finalAmount",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale / RoundingPolicy.currencyScale: 0..8, independently preserved by Owner",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "LayerConsumption",
+      "logical_column": "BeforeQty",
+      "source_pointer": "/Tables/12/Columns/5",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "BeforeQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "BeforeQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "BeforeQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/beforeQty",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "LayerConsumption",
+      "logical_column": "TakeQty",
+      "source_pointer": "/Tables/12/Columns/6",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "TakeQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "TakeQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "TakeQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Positive",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/takeQty",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "LayerConsumption",
+      "logical_column": "AfterQty",
+      "source_pointer": "/Tables/12/Columns/7",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "AfterQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "AfterQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "AfterQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/afterQty",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "LayerConsumption",
+      "logical_column": "RawAmount",
+      "source_pointer": "/Tables/12/Columns/9",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "RawAmountUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RawAmountScale",
+      "scale_type": "smallint",
+      "wire_column": "RawAmountOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/rawAmount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "LayerConsumption",
+      "logical_column": "RoundedBeforeResidue",
+      "source_pointer": "/Tables/12/Columns/10",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "RoundedBeforeResidueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RoundedBeforeResidueScale",
+      "scale_type": "smallint",
+      "wire_column": "RoundedBeforeResidueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/roundedBeforeResidue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent of amount lexical scale",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "LayerConsumption",
+      "logical_column": "ResidueApplied",
+      "source_pointer": "/Tables/12/Columns/11",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "ResidueAppliedUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ResidueAppliedScale",
+      "scale_type": "smallint",
+      "wire_column": "ResidueAppliedOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/residueApplied",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent of amount lexical scale",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "LayerConsumption",
+      "logical_column": "FinalAmount",
+      "source_pointer": "/Tables/12/Columns/12",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "FinalAmountUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "FinalAmountScale",
+      "scale_type": "smallint",
+      "wire_column": "FinalAmountOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/LayerConsumption/properties/finalAmount",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent of amount lexical scale",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "RoundingTrace",
+      "logical_column": "RawTotal",
+      "source_pointer": "/Tables/13/Columns/5",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "RawTotalUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RawTotalScale",
+      "scale_type": "smallint",
+      "wire_column": "RawTotalOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/RoundingTrace/properties/rawTotal",
+        "/$defs/Decimal18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "RoundingTrace",
+      "logical_column": "TargetTotal",
+      "source_pointer": "/Tables/13/Columns/6",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "TargetTotalUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "TargetTotalScale",
+      "scale_type": "smallint",
+      "wire_column": "TargetTotalOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/RoundingTrace/properties/targetTotal",
+        "/$defs/Decimal18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "RoundingTrace",
+      "logical_column": "LineRoundedTotalBeforeResidue",
+      "source_pointer": "/Tables/13/Columns/7",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "LineRoundedTotalBeforeResidueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "LineRoundedTotalBeforeResidueScale",
+      "scale_type": "smallint",
+      "wire_column": "LineRoundedTotalBeforeResidueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+        "/$defs/Decimal18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "RoundingTrace",
+      "logical_column": "Residue",
+      "source_pointer": "/Tables/13/Columns/8",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "ResidueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ResidueScale",
+      "scale_type": "smallint",
+      "wire_column": "ResidueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/RoundingTrace/properties/residue",
+        "/$defs/Decimal18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "RoundingTrace",
+      "logical_column": "FinalTotal",
+      "source_pointer": "/Tables/13/Columns/11",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "FinalTotalUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "FinalTotalScale",
+      "scale_type": "smallint",
+      "wire_column": "FinalTotalOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/RoundingTrace/properties/finalTotal",
+        "/$defs/Decimal18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "Quantity",
+      "source_pointer": "/Tables/20/Columns/10",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": true,
+      "digits_column": "QuantityUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "QuantityScale",
+      "scale_type": "smallint",
+      "wire_column": "QuantityOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/quantity",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "InventoryValue",
+      "source_pointer": "/Tables/20/Columns/11",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "InventoryValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "InventoryValueScale",
+      "scale_type": "smallint",
+      "wire_column": "InventoryValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/inventoryValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "InTransitValue",
+      "source_pointer": "/Tables/20/Columns/12",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "InTransitValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "InTransitValueScale",
+      "scale_type": "smallint",
+      "wire_column": "InTransitValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/inTransitValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "WipValue",
+      "source_pointer": "/Tables/20/Columns/13",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "WipValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "WipValueScale",
+      "scale_type": "smallint",
+      "wire_column": "WipValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/wipValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "FgValue",
+      "source_pointer": "/Tables/20/Columns/14",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "FgValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "FgValueScale",
+      "scale_type": "smallint",
+      "wire_column": "FgValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/fgValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "GrniValue",
+      "source_pointer": "/Tables/20/Columns/15",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "GrniValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "GrniValueScale",
+      "scale_type": "smallint",
+      "wire_column": "GrniValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/grniValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "ApValue",
+      "source_pointer": "/Tables/20/Columns/16",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "ApValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ApValueScale",
+      "scale_type": "smallint",
+      "wire_column": "ApValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/apValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "CogsValue",
+      "source_pointer": "/Tables/20/Columns/17",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "CogsValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "CogsValueScale",
+      "scale_type": "smallint",
+      "wire_column": "CogsValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/cogsValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "GlValue",
+      "source_pointer": "/Tables/20/Columns/18",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "GlValueUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "GlValueScale",
+      "scale_type": "smallint",
+      "wire_column": "GlValueOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/glValue",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ReconciliationLine",
+      "logical_column": "Difference",
+      "source_pointer": "/Tables/20/Columns/19",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": true,
+      "digits_column": "DifferenceUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "DifferenceScale",
+      "scale_type": "smallint",
+      "wire_column": "DifferenceOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ReconciliationRow/properties/difference",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionRange",
+      "logical_column": "FromQty",
+      "source_pointer": "/Tables/37/Columns/2",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "FromQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "FromQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "FromQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionFact/properties/ranges",
+        "/$defs/Range/properties/from"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "SourcePortionRange",
+      "logical_column": "ToQty",
+      "source_pointer": "/Tables/37/Columns/3",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "ToQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "ToQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "ToQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "NonNegativeQty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/SourcePortionFact/properties/ranges",
+        "/$defs/Range/properties/to"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "FxRateFact",
+      "logical_column": "RateNumerator",
+      "source_pointer": "/Tables/38/Columns/6",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "RateNumeratorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RateNumeratorScale",
+      "scale_type": "smallint",
+      "wire_column": "RateNumeratorOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Positive",
+      "binding_kind": "DICTIONARY_DECIMAL18_FIELD_NO_NATIVE_FXRATE_OBJECT",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/Decimal18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "FxRateFact",
+      "logical_column": "RateDenominator",
+      "source_pointer": "/Tables/38/Columns/7",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,18)",
+      "source_scale_range": [
+        0,
+        18
+      ],
+      "nullable": false,
+      "digits_column": "RateDenominatorUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "RateDenominatorScale",
+      "scale_type": "smallint",
+      "wire_column": "RateDenominatorOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Positive",
+      "binding_kind": "DICTIONARY_DECIMAL18_FIELD_NO_NATIVE_FXRATE_OBJECT",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/Decimal18"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ProvisionalValueFact",
+      "logical_column": "MaxQty",
+      "source_pointer": "/Tables/41/Columns/4",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,12)",
+      "source_scale_range": [
+        0,
+        12
+      ],
+      "nullable": false,
+      "digits_column": "MaxQtyUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "MaxQtyScale",
+      "scale_type": "smallint",
+      "wire_column": "MaxQtyOriginalWire",
+      "wire_type": "text",
+      "profile": "Qty12",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ProvisionalEnabled/properties/maxQuantity",
+        "/$defs/Quantity/properties/value"
+      ],
+      "storage_scale_range": [
+        0,
+        12
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": null,
+      "lossless_basis": "Native lexical limit and numeric storage range agree; normalization is reversible using independently preserved originalWire",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    },
+    {
+      "table": "ProvisionalValueFact",
+      "logical_column": "MaxAmount",
+      "source_pointer": "/Tables/41/Columns/5",
+      "source_id": "numeric-2",
+      "old_storage_type": "decimal(38,8)",
+      "source_scale_range": [
+        0,
+        8
+      ],
+      "nullable": false,
+      "digits_column": "MaxAmountUnscaledDigits",
+      "digits_type": "text",
+      "scale_column": "MaxAmountScale",
+      "scale_type": "smallint",
+      "wire_column": "MaxAmountOriginalWire",
+      "wire_type": "text",
+      "profile": "Decimal18",
+      "numeric_rule": "Any",
+      "binding_kind": "NATIVE_FIELD",
+      "native_source_id": "numeric-1",
+      "native_pointers": [
+        "/$defs/ProvisionalEnabled/properties/maxAmount",
+        "/$defs/Money/properties/amount"
+      ],
+      "storage_scale_range": [
+        0,
+        18
+      ],
+      "numeric_scale": "Normalized exact coefficient scale; zero=(0,0); fractional trailing zeros removed only from value pair",
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "lossless_basis": "Decimal18 allows 18 fractional digits; old storage scale8 is not a wire restriction; no quantization",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair"
+    }
+  ],
+  "atp": {
+    "profile": "ATP-STABLEID-LEXICAL/20261011-R1",
+    "composed_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+    "required_findings": [
+      "PLAN-IF-004",
+      "PLAN-IF-005"
+    ],
+    "patch_operation_count": 9,
+    "five_columns": [
+      {
+        "table": "plan_atp.evaluation",
+        "column": "result_uom",
+        "nullable": true,
+        "line": 132,
+        "exact_definition": "result_uom varchar(128) CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.segment",
+        "column": "uom",
+        "nullable": false,
+        "line": 291,
+        "exact_definition": "uom varchar(128) NOT NULL CHECK (uom IS NULL OR uom !~ '[^A-Za-z0-9._:/-]' AND uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.basis",
+        "column": "native_uom",
+        "nullable": false,
+        "line": 325,
+        "exact_definition": "native_uom varchar(128) NOT NULL CHECK (native_uom IS NULL OR native_uom !~ '[^A-Za-z0-9._:/-]' AND native_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.basis",
+        "column": "result_uom",
+        "nullable": false,
+        "line": 327,
+        "exact_definition": "result_uom varchar(128) NOT NULL CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.reservation_ledger",
+        "column": "uom",
+        "nullable": false,
+        "line": 382,
+        "exact_definition": "uom varchar(128) NOT NULL CHECK (uom IS NULL OR uom !~ '[^A-Za-z0-9._:/-]' AND uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      }
+    ],
+    "patch_bundle_refs": [
+      "docs/design-handbook/remediation/assets/core-types/bounded-patches.json#/patches/1",
+      "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json#/patches/0..4"
+    ],
+    "scope": "Pin full composition including recovery lock-order/binding changes; run only reviewed storage fixture subset, never execute complete archived business DDL wholesale",
+    "driver_guard": "Validate StableId before binding; no explicit varchar(128) cast or truncating parameter Size; raw text guard needed before coercion if asserting direct DB-input rejection"
+  },
+  "assigned_vectors": [
+    {
+      "id": "NUM-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/0"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/1"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/2"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-004",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/3"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/4"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/5"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-007",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/6"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-008",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/7"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-009",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/8"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-010",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/9"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/10"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-012",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/11"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-013",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/12"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-014",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/13"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-015",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/14"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-016",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/15"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-017",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/16"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-018",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/17"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-019",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/18"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-020",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/19"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-021",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/20"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-022",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/21"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-023",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/22"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-001",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-002",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-003",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-004",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-007",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-008",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-009",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-010",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-JS-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-JS-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-JS-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-001",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-002",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-003",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-004",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/0"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/1"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/2"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/3"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/4"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-006",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/5"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-007",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/6"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-008",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/7"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-009",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/8"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-010",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/9"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    }
+  ],
+  "arithmetic": "Application BigInteger exact arithmetic; no numeric CAST/SUM of unbounded inventory coefficients",
+  "owner_relations": "Dictionary multi-field arithmetic, full native object validation, Owner identity, receipt bytes, tenant/authorization and migrations remain Owner adoption obligations; this fixture enforces scalar sign/null rules and explicit MAVG/ATP state relations",
+  "scale_change": {
+    "count": 20,
+    "from_max": 8,
+    "to_max": 18,
+    "approval": "PENDING",
+    "question_commit": "cc6dde813dfa841f9302c9cc5b9b9a25ded25f68"
+  }
+}

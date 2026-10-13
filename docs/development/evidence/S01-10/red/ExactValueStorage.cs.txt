@@ -1,0 +1,11 @@
+using CP6.Entity.Contracts.FinCredit;
+using Npgsql;
+
+namespace CP6.Persistence.PostgreSql.Contracts;
+
+/// <summary>Validates final field profiles before constructing exact PostgreSQL parameters.</summary>
+public static class ExactValueStorage
+{
+    public static NpgsqlParameter[] CreditParameters(CreditAmount? value, CreditAmountProfile profile, bool nullable = false)
+        => throw new NotImplementedException();
+}
