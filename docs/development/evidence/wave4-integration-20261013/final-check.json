@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-13T11:06:08.955247+00:00",
+  "scope": "Coordinator documents/ledger only; independent product reviews and old/new local validation retain distinct scope",
+  "review": "closeout-review.md",
+  "reviewed_file_count": 38,
+  "reviewed_raw_hash_aggregate": "a11a1be076398f1fabd87bf7f2d10137974a124922b14b267e394e5fb7020db8",
+  "ledger": "ledger-check.json",
+  "links": "links.json",
+  "format_check": "git diff --cached --check PASS; .gitattributes preserves original evidence CRLF and log whitespace",
+  "prior_doc_failures": "Three relocated relative links initially failed and were corrected; links-first-pass.json retained. Issue close timestamp clock origins clarified, no timestamp rewritten.",
+  "combined_tree": "combined-tree.json",
+  "changes_after_review": "Only copies of accepted review/link records, combined-tree read-only receipt and this final metadata; reviewed38 files unchanged.",
+  "business_tests_executed": false
+}

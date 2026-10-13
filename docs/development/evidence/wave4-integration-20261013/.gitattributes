@@ -1,0 +1,4 @@
+# Keep exact audit/report bytes; copied records may contain original CRLF.
+* -text whitespace=cr-at-eol
+*.md whitespace=cr-at-eol,-blank-at-eof
+WP02-01/architecture/output.log whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

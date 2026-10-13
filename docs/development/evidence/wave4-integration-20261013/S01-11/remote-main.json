@@ -1,0 +1,476 @@
+{
+  "result": "PASS",
+  "task": "S01-11",
+  "repository": "GTX537/CP6",
+  "source_sha": "6dbc1a00cec1349c2ff7fdc2fe633d64ce2cf82d",
+  "baseline": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "remote_main_sha": "b7d8da0182530aec3d33d3d5d9e4bc3a86b0f0e9",
+  "pr_url": "https://github.com/GTX537/CP6/pull/199",
+  "merged_at": "2026-10-13T10:55:07Z",
+  "candidate_files_match": [
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/.gitattributes",
+      "blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/CreditCodecSet.cs",
+      "blob": "d5ca23abd2106bb8c35d1b49b5488bd52900194d"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/CurrentCreditCodec.cs",
+      "blob": "17b25ca706ff9e3078ea18a359594bcfe77a32d5"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/FrozenR8CreditCodec.cs",
+      "blob": "a778536f609dfca3f92b101cafd621065926655a"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/NativeCreditSemantics.cs",
+      "blob": "980379c30a3387a894df4b8971b9352923eef606"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/NativeSchemaValidator.cs",
+      "blob": "b6d182e0f75af03c199f758c1236842341c73576"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/README.md",
+      "blob": "875ad15b758c4b9450c0625486787e3eecda3edd"
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/.gitattributes",
+      "blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+      "blob": "e09ec8e07db6b0a7ce0167f7c8e3f5fcdda96541"
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "blob": "f545840c012e8f3a6e7e1edeafd75496ab24bca9"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/.gitattributes",
+      "blob": "11f6e389341c3c8b9860fb8001fa998c1baa706e"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/DELIVERY.md",
+      "blob": "6b30d78ecde44d9399824b007320a88914b0a09e"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/PLAN.md",
+      "blob": "00fe2a328088177f7b3f15cbac7e34e5f4f096d1"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/README.md",
+      "blob": "4ab005954e42d19f0bed378911ddcaf526eff939"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/check-evidence.py",
+      "blob": "354486d47de8e146d54107788212d15a091b1983"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/check-publication.py",
+      "blob": "d8bb86bed19b867181809b121a670a288aaf8364"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/coord-fix-196/README.md",
+      "blob": "c6dcdf717bd809bb42f9a180026283dac1616398"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/coord-fix-196/S01-11-fix-review.json",
+      "blob": "a49ced0701898951c47d6f1aa3d502782e7cb6d3"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/coord-fix-196/S01-11-fix-review.md",
+      "blob": "26b6b154dcd551792ef415a007d4645a48e6dd32"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/coord-fix-196/S01-11-original-validation.json",
+      "blob": "1ca4e854229fbb9a7d7e1930867b0c90171a61ce"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/coord-fix-196/S01-11-probe-recheck.json",
+      "blob": "095352ac0dffc811c16c68b966e4c85e44275085"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/coord-fix-196/S01-11-review.md",
+      "blob": "ad800a32033e97c95ee831bfbdd30e7d4adb48a5"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/coord-fix-196/validation.json",
+      "blob": "02bf08278d83781d7296d002818e00f4f041cf42"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/design-references.json",
+      "blob": "aac56f8e79f630345b4cd53e7f1b0f7897b6bfc4"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/entry.json",
+      "blob": "9463c8861672f285c1856f4b9b2880ff52abe299"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/.gitattributes",
+      "blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T051443Z-restore-ts-92d7c10d/metadata.json",
+      "blob": "d0c1613cd9faee9fde1d1d16fe44ec3c750d8192"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T051443Z-restore-ts-92d7c10d/output.log",
+      "blob": "8e41ef7a2104c0cbdbadd3faf3d88c80e2df2ff4"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052402Z-dotnet-red-243e73f1/metadata.json",
+      "blob": "08c7bcb319476004e30925f6ce62360e6705f87c"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052402Z-dotnet-red-243e73f1/output.log",
+      "blob": "30e524386c388b25d643ec3f3b5865729276a91d"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052402Z-dotnet-red-243e73f1/results.trx",
+      "blob": "5008c5c09b8e4cc0a9be3e8d941d7fd7f2d5d7ed"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052518Z-ts-red-c29b488e/metadata.json",
+      "blob": "2d2abe0a08a3fa5b17ffac44bed3f96f50b623b0"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052518Z-ts-red-c29b488e/output.log",
+      "blob": "da8ef44181c45c928f6c96d9cd91d85e11b048f0"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052518Z-ts-red-c29b488e/vitest.json",
+      "blob": "d8cb0d25add8bdd6af624091b4b1067cc3cc4464"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053350Z-dotnet-green-first-fff49bb7/metadata.json",
+      "blob": "26d16de45fcbb0758833c4efe56cfbebb76fbd15"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053350Z-dotnet-green-first-fff49bb7/output.log",
+      "blob": "a61097e346452128ff3b238e8daff088d4a87c0b"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053350Z-dotnet-green-first-fff49bb7/results.trx",
+      "blob": "fa4d88fbfa842a3d26f0802b969c274d4be83a4f"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053709Z-ts-green-first-74bffa13/metadata.json",
+      "blob": "a9c69f998f937e533303dce4b3d7f329288c4230"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053709Z-ts-green-first-74bffa13/output.log",
+      "blob": "a746dd6ee07a9b7798a1820b46473831ab71fc50"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053709Z-ts-green-first-74bffa13/vitest.json",
+      "blob": "c622fe75cccda9b0ef744efa78d1fc70476bb113"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053800Z-typecheck-83b6779d/metadata.json",
+      "blob": "8f5d0009fa511f08b9f74a13ece64df8aceb7fd4"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053800Z-typecheck-83b6779d/output.log",
+      "blob": "f77d43b82e9242ae9523e79b5a4f58523b21bcb4"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054253Z-design-f7bb0650/design.json",
+      "blob": "52499503fdc44a01fb05bd389837628d0bc5c432"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054253Z-design-f7bb0650/metadata.json",
+      "blob": "811d0e7952fc8c190857d0f2926bcc82545219e8"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054253Z-design-f7bb0650/output.log",
+      "blob": "ebcc374a63d1eb8d6f8db0f56a0b3cc247281bd7"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054426Z-dotnet-expanded-1d54865d/metadata.json",
+      "blob": "dc0b76c175c5f9110c1ebddfb78db3a23958bab3"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054426Z-dotnet-expanded-1d54865d/output.log",
+      "blob": "d072137f3ccd36c8136af73f51847d93d6996b57"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054426Z-dotnet-expanded-1d54865d/results.trx",
+      "blob": "df99d75c33328ac23178b61f69555e9cc586f67d"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054532Z-ts-expanded-fe680e72/metadata.json",
+      "blob": "7d8eb3fa2147a3fc9cd9b136f455fb205abecd7b"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054532Z-ts-expanded-fe680e72/output.log",
+      "blob": "f326854b7949d96c3dad4f301e2cd5779449dee8"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054532Z-ts-expanded-fe680e72/vitest.json",
+      "blob": "d5c850825dfaa69ed31ca8e162ddafbb5cb825f7"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/metadata.json",
+      "blob": "bd42844d3986ba8a503530755c52e150306ffbd1"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/output.log",
+      "blob": "80a994b438b4e24593853e4a9605a6f6bc498749"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/results.trx",
+      "blob": "a6c48b1af5ebfb3630324aeae9541f84d4166307"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/metadata.json",
+      "blob": "bcd91acc8e4a42770499afe450aa267e5c449d60"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/output.log",
+      "blob": "33caf3f150515746359aafb36c3eb87b43277b53"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/vitest.json",
+      "blob": "4e3ffed044cbb9f918d5396504bb2f863602d72f"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060619Z-typecheck-83ec4cb2/metadata.json",
+      "blob": "0abb5a24865c6b1dfb53e9a16b22fa7dae3993a2"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060619Z-typecheck-83ec4cb2/output.log",
+      "blob": "908099fa9f439d0b95c5f081798ed23891d318cc"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/design.json",
+      "blob": "52499503fdc44a01fb05bd389837628d0bc5c432"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/metadata.json",
+      "blob": "4440a301590c9588b43ea626f2147b4fab693aba"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/output.log",
+      "blob": "8a03c38e7aa75d6a146fdbf25dd73e279e156e7a"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T073925Z-ts-bug196-red-5c44645d/metadata.json",
+      "blob": "8baf5babf3f42147bd5cff93c318436cc59bf442"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T073925Z-ts-bug196-red-5c44645d/output.log",
+      "blob": "fa2f8b4b3cb1a6705ccb66c3fd3d901778342b54"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T073925Z-ts-bug196-red-5c44645d/vitest.json",
+      "blob": "421ee7eed63b9042b8cf88176192f22dd55ea0e4"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/metadata.json",
+      "blob": "a12b2d8368b8f8d17c6c9cd6f1a231a09b68c762"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/output.log",
+      "blob": "af8b51435baee9f18366517df17cd9390d2475dc"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/vitest.json",
+      "blob": "2a026411740df45ec4a114d3eea784c481823d5c"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103806Z-ts-bug196-green-3e6985e2/metadata.json",
+      "blob": "9ff5e46f02faa883aa7a0dc790de4d081182f24b"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103806Z-ts-bug196-green-3e6985e2/output.log",
+      "blob": "1521c0da5d6a4b82aadcde0b8bd194ad431d0e14"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103806Z-ts-bug196-green-3e6985e2/vitest.json",
+      "blob": "abcab02df64c1284afed890d8d49278e126fed4c"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/metadata.json",
+      "blob": "8863fd24fc55f8720cb213f9eaec99380ca98b30"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/output.log",
+      "blob": "68c8c482413ab7c5688943e60a827c280cb1cb82"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+      "blob": "1daa789cebbebcc339f5b4212a60092a8d2bd9aa"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103957Z-typecheck-edf96295/metadata.json",
+      "blob": "e2a2209eb548301ce2a2dc0a05e1f5f32af1891a"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103957Z-typecheck-edf96295/output.log",
+      "blob": "908099fa9f439d0b95c5f081798ed23891d318cc"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/IMPLEMENTATION-REPORT.md",
+      "blob": "822f6ca1df3a15147424f91c344357f68d69698a"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/fixture-reproduction.json",
+      "blob": "d0ec2e0583d39c2cbe0676c664a14bca18cbadcb"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/CreditCodecSet.cs.txt",
+      "blob": "17c5c9094f51f7325526e3fd1b9574b09bbd5432"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/CurrentCreditCodec.cs.txt",
+      "blob": "6cde1a90c30327a714f473a327dbceb97af36280"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/FrozenR8CreditCodec.cs.txt",
+      "blob": "e4b7b6eda046969d41978ccf488476c3bfc1c503"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/creditCodec.ts.txt",
+      "blob": "2170b61200d139eb767aef0475a43d92e48d995b"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/owner-boundary.json",
+      "blob": "dfcc05d1ef390bab6794019e45b92803e4f4d380"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-capacity-probe.json",
+      "blob": "132d57cf614c2ddd98e482cfb93285f35618bfc2"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-review.json",
+      "blob": "0ec4cb3c87c3e331472aa3f3ab89485fc6f9cbc1"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-review.md",
+      "blob": "8dd48a94aad09561ca324d445fd4cabe13bc3ff8"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-spec-audit.json",
+      "blob": "fbe41e7c6ce323f626cc946a4ba7f5d8ce509ae1"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-spec-review.md",
+      "blob": "3ce91487f2577d27e1a9603803aa255c57c10562"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/source-receipt.json",
+      "blob": "995a39043b252403025ff6ecc31351e9be133bcc"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/start-local.json",
+      "blob": "0162605a0290b6c30130322abede9bdb7c8a172b"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/start-receipt.json",
+      "blob": "7c664a8a7aff01ecdda4f7da5e6ea471ca2e8ec1"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/validation.json",
+      "blob": "c82f2ec0de361794ca6ae67dab0798b7827eb67d"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/ErpCreditCodecTests.cs",
+      "blob": "3df091271d0be21cb921d5eb131bbf7b41235301"
+    },
+    {
+      "path": "eng/contracts/s01-11/.gitattributes",
+      "blob": "1a13503bebe93215a1f9e00fe80f6b34626a4b35"
+    },
+    {
+      "path": "eng/contracts/s01-11/README.md",
+      "blob": "e85913a7db2f9c412e7bbdff46384c8e83431af8"
+    },
+    {
+      "path": "eng/contracts/s01-11/adopt_design_fixtures.py",
+      "blob": "d468072d252f9eff65c4423f9c49ccbf0fd81818"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_OPENAPI.json",
+      "blob": "961618e42077635a229f84b1cbd206560a0269da"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "blob": "94d2dd2ab20cfd19c4b3d5d80c7b8795aae48a26"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/frozen/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "blob": "b49913873d47520f7eb22fa45232b0f1e38fc8c9"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "blob": "2cd224d47a71e52b74976f9d31563e156d3baf21"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "blob": "879e61f6292de40f691bd186fff5059ea2857f87"
+    },
+    {
+      "path": "eng/contracts/s01-11/build_fixtures.py",
+      "blob": "a1d6b69d28201bed2dbaa5995bd96252959aa565"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/cases.json",
+      "blob": "9f53797c01b1f0bdfed3d0fd375abaf9bf9e376c"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/multi_mixed_complete_public_q14.json",
+      "blob": "f4b1f5d78328c939f1d23d2186b1aefb10960350"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/multi_public_native_lookup_binding.json",
+      "blob": "2cd4fc2cfb4db99d789c5265dcefe5ded6c0a52f"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/wn11_c06_exact_saved_200.json",
+      "blob": "7264331585b31c0dccfeb4bbe400faac06690522"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/wn11_complete_current_q14.json",
+      "blob": "81a236de5e5a42595976ccb2c2b05381d4b7c534"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/wn11_existing_target_c06_saved_200.json",
+      "blob": "bad210d3f6e34e1cb3f00fdd8f46be2c4f9bafa1"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-chain.json",
+      "blob": "67dae24267e4719ab7fcaedebff7d3d7ef73dd90"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/native-objects.json",
+      "blob": "b1acea5695ad9376ff25ef281d26787f363f2acf"
+    },
+    {
+      "path": "eng/contracts/s01-11/provenance.json",
+      "blob": "0efba01ad1badd2e9e4ae2077b814c5d92862a21"
+    },
+    {
+      "path": "eng/contracts/s01-11/run_evidence.py",
+      "blob": "faf97594296beef0f5011491dcbb23b941043824"
+    },
+    {
+      "path": "eng/contracts/s01-11/surface.json",
+      "blob": "c0658c457dac97fb424cc23e5b97f55cf2c7b1c7"
+    },
+    {
+      "path": "eng/contracts/s01-11/verify_design.py",
+      "blob": "c9116d5d32ab9896e51619c8898c0fd8969c1db1"
+    }
+  ],
+  "observed_at": "2026-10-13T10:55:15.593155+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "original_candidate_sha": "b27fbe5422bbe487efce2aa4de1bf14713bd396a"
+}

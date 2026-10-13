@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-10-13：第四轮四项基础任务已交付
+
+S01-11 ERP授信合同、S01-10 PostgreSQL精确存储、WP02-01可信上下文、S01-07质量合同均经正常PR合并与远端main核对，登记DONE。累计16/375，S01为11/12；业务目标仍0/125。
+
+S01-11在准入审查中修复Buffer字节别名Issue196，新TS428/428、类型检查和原步骤复测通过，原C#417/设计5复用。S01-10正式采用PG映射1.0.0及20字段无损数值尺度补充，政策尺度保持；原PG210+重叠57和生命周期1准确复用。WP02原502复用、新架构98通过；S01-07原657/130与类型检查复用。未执行整个合并组合或真实Owner/宿主/PG业务验收。
+
+[完整协调证据](../development/evidence/wave4-integration-20261013/README.md)保留原候选、失败和历史PROPOSED身份；247运行NOT_RUN、ITER/REL缺口、WP05 PROPOSED不改。下一步可核S01-12及WP02后续任务准入，本次未派新任务。无Actions运行/取消/触发变更、迁库或部署。下文保留历史时点。
+
 ## 2026-10-13：第四轮四项任务已分配
 
 沿用A/B/C/D分配S01-11 ERP-CREDIT、S01-10 PostgreSQL精确存储、WP02-01可信上下文、S01-07质量合同；均READY/CONFIRMED，独立工作树和写入窗口已核，尚无实际START。12/375 DONE、S01 8/12和业务0/125不变，247运行NOT_RUN。S01-10只预约隔离本地测试资源；本次未操作数据库、触发/取消Actions或部署。[执行包](../development/dispatch/20261013-wave4/README.md)与[准入证据](../development/evidence/wave4-dispatch-20261013/README.md)。

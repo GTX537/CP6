@@ -1,0 +1,292 @@
+{
+  "result": "PASS",
+  "task": "S01-10",
+  "repository": "GTX537/CP6",
+  "source_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+  "baseline": "d9d6ced01291f9f07487e6f40d4925908926923e",
+  "remote_main_sha": "8e48ee78fd70a2b53ebb39efe7ba7deb351b6840",
+  "pr_url": "https://github.com/GTX537/CP6/pull/198",
+  "merged_at": "2026-10-13T10:47:56Z",
+  "candidate_files_match": [
+    {
+      "path": "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs",
+      "blob": "577ca148dd73b9439d80d919addb83c80b77b9c6"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/.gitattributes",
+      "blob": "15a0c5522dedd8c6dcc2974743ebf39adaf82fe6"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/.gitignore",
+      "blob": "2e6285340c7d410d868324329c88a5ca53c1e861"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/COORD-ADOPTION.md",
+      "blob": "6b0a8751b3ce36a61d16253a61f5a0d2447791c5"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/FAILURES.md",
+      "blob": "3c6b6d9230f794b295c178b7e1ed98e102e4c399"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/OWNER-ADOPTION.md",
+      "blob": "ac73046f6aa4895d6c74843b78e6b85b5af92bb9"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/PLAN.md",
+      "blob": "4c3d1cdee46d5ab265aeb52456f74d0faae3ce2c"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/README.md",
+      "blob": "773664041af3acd147ec01a8ca04c3174027846d"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/REVIEW.md",
+      "blob": "e44396dd9d68f8e951317f2857cce18b78826883"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/coord-adoption/REVIEW.md",
+      "blob": "755e11836fc973948527c26f2c06ddab08f2e53d"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/coord-adoption/S01-10-original-validation.json",
+      "blob": "6d5afd79f28a482c825a36c00d2eb1dc57e8a35a"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/coord-adoption/S01-10-review.md",
+      "blob": "1c4b0ec6bce8baa94d680da383320f2e38fe6e95"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/coord-adoption/scale-adoption-review.json",
+      "blob": "0f6ec0031e7dc9f99123c843e5b3f9ce6a59380e"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/coord-adoption/scale-adoption-review.md",
+      "blob": "7f56b019592af06642050d7291ba169e2c50d6ad"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/coord-adoption/verification.json",
+      "blob": "9bcbb1dbc471aa9561b41a9337a16b3588727a61"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/coord-adoption/verify_formal_mapping.py",
+      "blob": "61458b4fd4a5abd7b9fa4f4dda8c6fb9d488d932"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/initial-build.log",
+      "blob": "6f7733efc1babee465ead7cfcb629c0e0dc746b4"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/4b8c1c89bea042528e4a8e0adbbcba96.json",
+      "blob": "7190174ac56d6d2a4f489b42ed755a8dedc1de31"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/642b372f1b6543e7872b96957539074b.json",
+      "blob": "91dc4f579b552224837c1e1315ef12e9ec74f968"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/80717248d306470181697404561bb329-cleanup.json",
+      "blob": "98761099113311dbaba4e22964440a5a5a7ac45b"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/80717248d306470181697404561bb329.json",
+      "blob": "ca94be9fde3f2085b4a97adc5a7886f4b2219220"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/8e600f17d5ab4d4795205be033c7d2b8-cleanup.json",
+      "blob": "f832802b5d30cd7b7becad516067e12b9236bfa5"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/8e600f17d5ab4d4795205be033c7d2b8.json",
+      "blob": "7ac49de0342be04a374bb98891121ce62a6ab3b8"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/dc3791a925044c1ebe6a14206cdbf8d9.json",
+      "blob": "081bc3bf31f8245b918574c288983a40545fc510"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/postgresql-mappings.proposed.json",
+      "blob": "44437079ee57d1291f9b2f40cff1a37a5caa95d0"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/prepush-verification.json",
+      "blob": "8ba6eb54ff4fc539d8705d52525f5c177e93cd22"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/red/ExactValueStorage.cs.txt",
+      "blob": "261516b6821205031f63cd810d4abda0b45227c7"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/red/ExactValueStorageTests.Adapter.cs.txt",
+      "blob": "3b2e2552cad0f713fac5f05a53b2e8f834642ba6"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/red/adapter-red.trx",
+      "blob": "d9a9e56d3a850fa5abe0479e70daac4325f1e2a8"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/red/command.log",
+      "blob": "4ec1cf992d0cb59d5e88763a9d26fa488012f4d1"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/red/run.json",
+      "blob": "4c7664ecadb1c0f1112faf7354886ab0c9fbf5d3"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/first-pg/command.log",
+      "blob": "e4a58c21a254683dca3be4eca38dc78cb772c78d"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/first-pg/run.json",
+      "blob": "dff9a460daac1e1c01296df87d5e975af404a5e6"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/full-storage/command.log",
+      "blob": "6b8f18946cae103e9a624e5d46a9c80004ddc9d0"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/full-storage/run.json",
+      "blob": "10bac5f9dfe61fa9988842fd0778ec0f1c8383fa"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/full-storage/s01-10-postgresql.trx",
+      "blob": "7be6c66943a1317b444e8823982414b74a7b555c"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/lifecycle-regression/command.log",
+      "blob": "7df846325b442462c8766ac0545844a8fc891736"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/lifecycle-regression/run.json",
+      "blob": "a56b60bfe01a8c55cb572449c4836264be66874d"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/lifecycle-regression/s01-10-postgresql.trx",
+      "blob": "85b4871676a7a202bebcdaf258f35dcca3ed4098"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/pin-reconnect-regression/command.log",
+      "blob": "99965f1534760e2bd043390b6e5045a3c7bcb9f2"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/pin-reconnect-regression/run.json",
+      "blob": "1fb5bb66c3c8220d10b9bc696f5121621406ac1d"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/pin-reconnect-regression/s01-10-postgresql.trx",
+      "blob": "a41585b3fa67d726da5c5d688c54faaa665154c3"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/second-pg/command.log",
+      "blob": "fb4cd76ffd386621dad8a64bc911037ffa037940"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/second-pg/run.json",
+      "blob": "6266f59e07821e537343bb1f7168b46d2eb7dfb5"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/second-pg/s01-10-postgresql.trx",
+      "blob": "1f01dbbf1d029326a91101f9903481f705120c33"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/third-pg/command.log",
+      "blob": "7d40e92c46bef4de1a1f9e64bdec1e8da9075ae1"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/third-pg/run.json",
+      "blob": "27b544719783b567f1816eaf1cd23e0a3451d6a1"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/runs/third-pg/s01-10-postgresql.trx",
+      "blob": "36e8205a6128c90498fc66b122b8b78bde50b894"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/source-verification.json",
+      "blob": "3d54cac1302962bc0e3d28843358b59d263937ad"
+    },
+    {
+      "path": "docs/development/evidence/S01-10/startup-hang-identity.json",
+      "blob": "02e901ac2d2b7200eb7790af012ffbe900fd47ea"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/.gitignore",
+      "blob": "c18dd8d83ceed1806b50b0aaa46beb7e335fff13"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+      "blob": "e2b9f15d7978b5cdcb19e8326ad51719ab558984"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/ExactValueStorageTests.Adapter.cs",
+      "blob": "3b2e2552cad0f713fac5f05a53b2e8f834642ba6"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs",
+      "blob": "69710a13477c63195fb0aeae7a5cdb8d7c275cec"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs",
+      "blob": "7007a0e85fe0f11e0916028423e8ea48439e04dd"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs",
+      "blob": "ae55c4037ccf227588655eefe209f2b291b3f4a3"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/ExactValueStorageTests.cs",
+      "blob": "82192801eb093fc35465590f382f2785f3664e76"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/FixtureSql.cs",
+      "blob": "04fa9334e4c948c91045f1d823fc027043f1c0e3"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/OwnedPostgres.cs",
+      "blob": "4ae526e22d8cf55a5bf9e168a57ca6fce60d8295"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/TestInputs.cs",
+      "blob": "57c2eabf3ac0784faad7a53c9bbd9ec7bf77766c"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/atp-recovery-subset.sql",
+      "blob": "1cf81b651ba8445fa76a7942aad67504b928a5c0"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/atp-reviewed-subset.sql",
+      "blob": "bf361d2990d589e198ef2e0ea44d0bf4f5bbd3d7"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/exact-guards.sql",
+      "blob": "1a62690781c652517c2c7a165cf45cc6dffed991"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/packages.lock.json",
+      "blob": "d4cc48682e9c256e14937c14c7c661d62358387a"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/prepare_mapping_proposal.py",
+      "blob": "0f78e54dd9136a30e27366e87e2c739c28df1647"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/prepare_sources.py",
+      "blob": "8f69ab7a0d5cd9d859f5e71a986b8c164e3edd87"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/run_local.py",
+      "blob": "eaa01ef412720dde079d10f8cb530b322536bf2e"
+    },
+    {
+      "path": "eng/contracts/s01/postgresql-mappings.json",
+      "blob": "c8aa98beced3262e461c22b4a37636bc188eac33"
+    }
+  ],
+  "observed_at": "2026-10-13T10:47:56.086663+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "original_candidate_sha": "d90be911bd54dc14bf9f11cdc73bf237c778d2f9"
+}

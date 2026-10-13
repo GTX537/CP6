@@ -1,0 +1,1177 @@
+{
+  "task": "S01-10",
+  "review_kind": "READ_ONLY_COORDINATOR_ADMISSION",
+  "recorded_utc": "2026-10-13T07:38:03.687364+00:00",
+  "base_sha": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "candidate_sha": "d90be911bd54dc14bf9f11cdc73bf237c778d2f9",
+  "review_result": "ACCEPT_WITH_FORMAL_MAPPING_ADOPTION",
+  "repository": "D:\\CP6-worktrees\\s01-10-20261012",
+  "findings": [],
+  "delivery_conditions": [
+    {
+      "kind": "REQUIRED_BEFORE_DONE",
+      "path": "eng/contracts/s01/postgresql-mappings.json",
+      "message": "候选仅有PROPOSED；COORD须完成有版本正式采纳与集成。不是业务代码阻断，不能跳过后直接DONE。"
+    }
+  ],
+  "reviewed_requirements": [
+    "D:/CP6/AGENTS.md",
+    "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md:S01-10",
+    "docs/development/dispatch/20261013-wave4/S01-10.md",
+    "docs/development/evidence/wave4-dispatch-20261013/S01-10-admission.md",
+    "C:/Users/tt/.agents/skills/requesting-code-review/SKILL.md"
+  ],
+  "commands": {
+    "reviewer": [
+      "git status --short; git rev-parse HEAD (read only)",
+      "git diff --stat/--name-only BASE CANDIDATE; git show CANDIDATE:path (read only)",
+      "Get-Content / rg for candidate source, original requirements, mappings and evidence",
+      "python - : exec(compile(Path(\"C:/Users/tt/CP6-planning-reports/20261013-wave4-integration/verify_s01_10_review.py\").read_bytes(), path, \"exec\"))"
+    ],
+    "diff_checks": [
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check",
+          "e20740e37e20bc0210e0b32c5670c2bce962002a",
+          "d90be911bd54dc14bf9f11cdc73bf237c778d2f9"
+        ],
+        "exit_code": 2,
+        "trailing_whitespace_count": 18401
+      },
+      {
+        "command": [
+          "git",
+          "-c",
+          "core.whitespace=cr-at-eol",
+          "diff",
+          "--check",
+          "e20740e37e20bc0210e0b32c5670c2bce962002a",
+          "d90be911bd54dc14bf9f11cdc73bf237c778d2f9"
+        ],
+        "exit_code": 0,
+        "trailing_whitespace_count": 0
+      }
+    ],
+    "original_executions": [
+      [
+        "dotnet",
+        "test",
+        "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+        "--no-restore",
+        "--filter",
+        "FullyQualifiedName~ExactValueStorageTests",
+        "--logger",
+        "trx;LogFileName=s01-10-postgresql.trx",
+        "--results-directory",
+        "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\full-storage",
+        "--verbosity",
+        "minimal"
+      ],
+      [
+        "dotnet",
+        "test",
+        "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+        "--no-restore",
+        "--filter",
+        "FullyQualifiedName~Fixed_vector|FullyQualifiedName~Committed_values",
+        "--logger",
+        "trx;LogFileName=s01-10-postgresql.trx",
+        "--results-directory",
+        "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\pin-reconnect-regression",
+        "--verbosity",
+        "minimal"
+      ],
+      [
+        "dotnet",
+        "test",
+        "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+        "--no-restore",
+        "--filter",
+        "FullyQualifiedName~Owned_resource_rejects",
+        "--logger",
+        "trx;LogFileName=s01-10-postgresql.trx",
+        "--results-directory",
+        "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\lifecycle-regression",
+        "--verbosity",
+        "minimal"
+      ],
+      [
+        "dotnet",
+        "test",
+        "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+        "--no-restore",
+        "--filter",
+        "FullyQualifiedName~ExactValueStorageTests",
+        "--logger",
+        "trx;LogFileName=s01-10-postgresql.trx",
+        "--results-directory",
+        "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\first-pg",
+        "--verbosity",
+        "minimal"
+      ],
+      [
+        "dotnet",
+        "test",
+        "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+        "--no-restore",
+        "--filter",
+        "FullyQualifiedName~ExactValueStorageTests",
+        "--logger",
+        "trx;LogFileName=s01-10-postgresql.trx",
+        "--results-directory",
+        "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\second-pg",
+        "--verbosity",
+        "minimal"
+      ],
+      [
+        "dotnet",
+        "test",
+        "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+        "--no-restore",
+        "--filter",
+        "FullyQualifiedName~ExactValueStorageTests",
+        "--logger",
+        "trx;LogFileName=s01-10-postgresql.trx",
+        "--results-directory",
+        "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\third-pg",
+        "--verbosity",
+        "minimal"
+      ]
+    ],
+    "original_red": "dotnet test eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj --no-restore --filter FullyQualifiedName~Adapter_binds_38_digit --logger trx;LogFileName=adapter-red.trx --results-directory docs/development/evidence/S01-10/red --verbosity quiet",
+    "rerun_database_tests": false,
+    "review_tool_failures": [
+      {
+        "command": "python verify_s01_10_review.py",
+        "attempts": 2,
+        "exit_code": 1
+      },
+      {
+        "command": "python -X utf8 verify_s01_10_review.py",
+        "attempts": 1,
+        "exit_code": 1
+      }
+    ],
+    "review_tool_failure_reason": "Local Python3.8.6 file tokenizer reported UTF8 SyntaxError on a long Chinese f-string; raw bytes decode and compile correctly. Read-bytes compile executed the same read-only audit successfully; no product test was run by these attempts.",
+    "additional_read_only_checks": [
+      "Parsed all122 test-host package locks against obj/project.assets.json; all version/content hash keys matched. Compared109 common packages to Persistence lock:106 exact,3 explained host/private-build graph differences.",
+      "A probe for an exact-values-tests/packages.lock.json failed because that optional comparison file does not exist; no claim that it was checked."
+    ]
+  },
+  "counts": {
+    "candidate_changed_files": 59,
+    "original_source_hashes": {
+      "verified": 11,
+      "total": 11
+    },
+    "credit_native_bindings": {
+      "fin-credit-signed": 4,
+      "fin-credit-nonnegative": 33,
+      "fin-credit-positive": 5
+    },
+    "inventory": {
+      "fields": 66,
+      "tables": 13,
+      "required": 51,
+      "nullable": 15,
+      "scale_widened": 20,
+      "scale_unchanged": 46
+    },
+    "atp_selected_definitions": 9,
+    "atp_uom_columns": 5,
+    "atp_recovery_source_patches": 5,
+    "fixed_vectors": {
+      "credit": 25,
+      "inventory": 9,
+      "atp": 22,
+      "total": 56
+    },
+    "successful_original_runs": {
+      "full-storage": {
+        "total": 210,
+        "executed": 210,
+        "passed": 210,
+        "failed": 0,
+        "notExecuted": 0
+      },
+      "pin-reconnect-regression": {
+        "total": 57,
+        "executed": 57,
+        "passed": 57,
+        "failed": 0,
+        "notExecuted": 0
+      },
+      "lifecycle-regression": {
+        "total": 1,
+        "executed": 1,
+        "passed": 1,
+        "failed": 0,
+        "notExecuted": 0
+      }
+    },
+    "unique_cases_note": "210 unique test IDs; 57 regression cases overlap. Three long invalid-UOM display names truncate alike; IDs are distinct. Do not add counts as 267 independent cases."
+  },
+  "skips": {
+    "original_successful_runs_skipped": 0,
+    "reviewer_pg_execution": "NOT_RUN; original source-bound evidence reused",
+    "actions": "NOT_RUN_OR_QUERIED_BY_REVIEWER; no network authorization",
+    "production_owner_tables_all_writers_migrations_tenancy_authorization_full_recovery": "NOT_RUN/UNPROVEN; OWNER-ADOPTION.md required later",
+    "historical_247_runtime_scenarios_41_reference_only_ITER_REL_WP05": "UNCHANGED; no status promoted"
+  },
+  "env": {
+    "os": "Windows; task-local owned runner",
+    "postgres_server": "18.6",
+    "npgsql_assembly": "8.0.8.0",
+    "framework": "net8.0 (TRX/build/deps)",
+    "sdk": {
+      "version": "10.0.302",
+      "basis": "pre-start admission probe and delivery report; not newly executed by reviewer"
+    },
+    "resolved_packages": {
+      "Npgsql": "8.0.8",
+      "Microsoft.NET.Test.Sdk": "17.14.1",
+      "xunit": "2.9.3",
+      "xunit.runner.visualstudio": "3.1.4"
+    },
+    "endpoint": "127.0.0.1:55410",
+    "root": "D:/CP6-local-test/S01-10/<owner32>/",
+    "bootstrap": "s0110_bootstrap; setup-only",
+    "owner": "s0110_owner NOLOGIN, no elevated role attributes",
+    "writer": "s0110_writer LOGIN, no elevated privileges/DDL/owner membership; verified on each OpenWriterAsync",
+    "connection": "SCRAM; Pooling=false; Multiplexing=false; SearchPath=pg_catalog; qualified fixture objects",
+    "cleanup": "marker/path/reparse/system_identifier/OID/owner/session verified; zero other client sessions; DROP without FORCE; pg_ctl smart stop; password and lease removal",
+    "environment_patch_limit": "runtime patch version beyond net8.0 was not recorded; no claim of new runtime probe",
+    "test_host_dependency_verification": {
+      "locked_packages_matching_restored_assets_content_hashes": 122,
+      "shared_package_names_with_existing_persistence_lock": 109,
+      "shared_same_version_and_content_hash": 106,
+      "host_graph_differences": [
+        {
+          "package": "Microsoft.Bcl.AsyncInterfaces",
+          "persistence_project_graph": "6.0.0",
+          "test_host": "1.1.1",
+          "source": "Azure.Core lower bound; private EF Design graph does not flow to host"
+        },
+        {
+          "package": "System.Collections.Immutable",
+          "persistence_project_graph": "6.0.0",
+          "test_host": "8.0.0",
+          "source": "Microsoft.TestPlatform.ObjectModel -> System.Reflection.Metadata"
+        },
+        {
+          "package": "System.Reflection.Metadata",
+          "persistence_project_graph": "6.0.1",
+          "test_host": "8.0.0",
+          "source": "Microsoft.TestPlatform.ObjectModel"
+        }
+      ],
+      "scope": "Task-local test lock matches its actual restore graph. Existing shared project/locks unchanged; Npgsql8.0.8 and tested production/Entity DLL identity unchanged. This is fixture-host validation, not production runtime deployment validation."
+    }
+  },
+  "bindings": {
+    "worktree_head_matches_candidate": true,
+    "candidate_all59_files_match_worktree_modulo_eol": true,
+    "worktree_unrelated_warning": "Two pre-existing historical WP6 evidence paths appear deleted because Windows path length; excluded from candidate diff; reviewer did not repair/stage/delete them.",
+    "source_pins": [
+      {
+        "source_id": "composed-13",
+        "variant": "original",
+        "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+        "sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+        "matches": true
+      },
+      {
+        "source_id": "composed-13",
+        "variant": "composed",
+        "path": "D:/CP6-archives/design-revision-20261011-checks/derived/2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f/117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75/PLAN-ATP-WIRE.types.cs",
+        "sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+        "matches": true
+      },
+      {
+        "source_id": "composed-14",
+        "variant": "original",
+        "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+        "matches": true
+      },
+      {
+        "source_id": "composed-14",
+        "variant": "composed",
+        "path": "D:/CP6-archives/design-revision-20261011-checks/derived/cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f/29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0/PLAN-ATP-POSTGRESQL-DDL.sql",
+        "sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+        "matches": true
+      },
+      {
+        "source_id": "composed-24",
+        "variant": "original",
+        "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+        "sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+        "matches": true
+      },
+      {
+        "source_id": "composed-24",
+        "variant": "composed",
+        "path": "D:/CP6-archives/design-revision-20261011-checks/derived/5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd/PLAN-ATP-WIRE.schema.json",
+        "sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+        "matches": true
+      },
+      {
+        "source_id": "composed-25",
+        "variant": "original",
+        "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+        "sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+        "matches": true
+      },
+      {
+        "source_id": "composed-25",
+        "variant": "composed",
+        "path": "D:/CP6-archives/design-revision-20261011-checks/derived/da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7/PLAN-ATP-WIRE.types.ts",
+        "sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+        "matches": true
+      },
+      {
+        "source_id": "numeric-0",
+        "variant": "original",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+        "sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+        "matches": true
+      },
+      {
+        "source_id": "numeric-1",
+        "variant": "original",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+        "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+        "matches": true
+      },
+      {
+        "source_id": "numeric-2",
+        "variant": "original",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+        "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+        "matches": true
+      }
+    ],
+    "input_pins": [
+      {
+        "path": "eng/contracts/s01/profile-inputs.json",
+        "local_file_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "eng/contracts/s01/vectors.json",
+        "local_file_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "eng/contracts/s01/atp-stable-id.schema.json",
+        "local_file_sha256": "db14cb345c5adaf9bac3bd435f6545800c8ba26ad96c4c5202991168d4691469",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+        "local_file_sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
+        "local_file_sha256": "ad62f478e077f4b783bbaddab4e8c8c1018a314484a9d3ba2b1c0c018498dee9",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "eng/database-compatibility/OwnedTestDatabase.cs",
+        "local_file_sha256": "5da21563fd452b9dcbee4e3f52d070093cf49e552df80c841a1ca59b037d6fb6",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "scripts/database-compatibility/DatabaseCompatibilityLifecycle.psm1",
+        "local_file_sha256": "c47ebcfd9b1b3b2485f832c38272c6061bbd66d4ccc991c8c15aae2f816b168a",
+        "admission_hash_matches": true
+      }
+    ],
+    "unchanged_dependency_pins": [
+      {
+        "path": "CP6.Entity/Contracts/FinCredit/CreditAmount.cs",
+        "local_file_sha256": "cce1e47c4016eaa64fd9293199d646cfc4d84399ab379927b449e8ea899c4efe",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Entity/Contracts/FinCredit/CreditAmountProfile.cs",
+        "local_file_sha256": "780cd2f0fbf35317e67c32343a648599ba7858f2da4a3f9954433489576af0b0",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Entity/Contracts/FinCredit/CreditAmountFieldAttribute.cs",
+        "local_file_sha256": "ee296c5f4ad121849e745a2d33742ad379d90440f42896c936339c847c828a53",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Entity/Contracts/FinCredit/CreditAmountJsonConverter.cs",
+        "local_file_sha256": "46744fe3f770caa713364bb8100f613b0f0fedf7c17171455a8bb52bc592f0c8",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+        "local_file_sha256": "a5e9a8c598de70ffa9dcea75a6d9b5d4ce7ffe030dd85e2660a861906903319a",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimalJsonConverter.cs",
+        "local_file_sha256": "648830a91b64f4dcc870d104a4343dcf3db48b0fb2a2734e0c117855cd13879b",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Entity/Contracts/FinInventory/InventoryRatio.cs",
+        "local_file_sha256": "9087936d31274c72382797c172d259174040f50f54425e55f2f32f116799d5e7",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Entity/Contracts/PlanAtp/StableId.cs",
+        "local_file_sha256": "d3b4e286115ed90f895f478abc687cb4acf6397c80fcb1eb56d46d5aba378db6",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/CreditAmountTests.cs",
+        "local_file_sha256": "85993a4badbe5014176817267c89c94a485d0e81e0037399571a5a6b78e13801",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/InventoryDecimalTests.cs",
+        "local_file_sha256": "d739ae1fa49ca5c5b6ca563c16b894cb643cc47ce9ddc2dbedd3cd6a5cd665dc",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/StableIdTests.cs",
+        "local_file_sha256": "51bd4ef6f07b3a35b408f7323cec0a0ad638e5b0d2eb9a1ad8c2499310c66d1b",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+        "local_file_sha256": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+        "admission_hash_matches": true
+      },
+      {
+        "path": "CP6.Core/CP6.Core.csproj",
+        "local_file_sha256": "241aa0f2737a6aa6e2dd3b89d7af9344472c20e306ebd4897db5bcc1b830b2b8",
+        "admission_hash_matches": true
+      }
+    ],
+    "atp_definitions": [
+      {
+        "declaration": "DOMAIN plan_atp.sha256_hex",
+        "source_line": 32,
+        "source_excerpt_sha256": "453c140166063744fe7ab425018ed603b026919c429996140f62a58feb074866",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "DOMAIN plan_atp.stable_id",
+        "source_line": 34,
+        "source_excerpt_sha256": "beb36e148a34dc1b6d6a36da3cc15c8f2d5d528fdc090c4063da7ff998f159dc",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "DOMAIN plan_atp.decimal_30_8",
+        "source_line": 48,
+        "source_excerpt_sha256": "86b148d783d34535d01e455628061c6af5f9adb83bfcd34637de78a2ac682e57",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "TYPE plan_atp.evaluation_state",
+        "source_line": 50,
+        "source_excerpt_sha256": "013ec3e399ecd15e1f0826a03fb724546be3c17358c80b342825302116f98714",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "TABLE plan_atp.evaluation",
+        "source_line": 117,
+        "source_excerpt_sha256": "7eeccb6aa41869200526b7976401dd54984b732ad556c47a5051afdc36269a72",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "TABLE plan_atp.segment",
+        "source_line": 286,
+        "source_excerpt_sha256": "f55a2408e56fdb2d81e0516490e1729554b225ebfedeaaf22aae7dfe183aac78",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "TABLE plan_atp.basis",
+        "source_line": 309,
+        "source_excerpt_sha256": "1044f46e51ba22195ead59b1bfe318564827c883dc714d5b5d6f96ff7cdd6ec8",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "TABLE plan_atp.reservation_ledger",
+        "source_line": 368,
+        "source_excerpt_sha256": "84b5d911b0ae353c73647bb9ef8fe4b11cdfe23dba2039e743c83257dffca904",
+        "schema_rename_only": true
+      },
+      {
+        "declaration": "TABLE plan_atp.replay_record",
+        "source_line": 197,
+        "source_excerpt_sha256": "81392a3d167cfdd8f3ad1134eb5e272a80cb6d022e49c9ee48d6f6797f70091a",
+        "schema_rename_only": true
+      }
+    ],
+    "recovery_patches_verified": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "proposal_sha256": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+    "mapping_semantic_sha256": "7bb24e1e36610996a46d13cace0a58e8032a3eb369e4dda235af5ec3c58e8752",
+    "runs": [
+      {
+        "run_id": "full-storage",
+        "started_utc": "2026-10-13T05:48:41.565134+00:00",
+        "finished_utc": "2026-10-13T05:49:19.449503+00:00",
+        "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+        "command": [
+          "dotnet",
+          "test",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+          "--no-restore",
+          "--filter",
+          "FullyQualifiedName~ExactValueStorageTests",
+          "--logger",
+          "trx;LogFileName=s01-10-postgresql.trx",
+          "--results-directory",
+          "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\full-storage",
+          "--verbosity",
+          "minimal"
+        ],
+        "exit_code": 0,
+        "source_unchanged_during_run": true,
+        "local_gate": "PASS",
+        "report_path": "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\full-storage\\run.json",
+        "report_sha256": "cd21b6b7f8a05a51fcdcb473c57bb403a592a5bb214046bbbece1b9cb2c0f2be",
+        "command_log_sha256": "11444fbcceed0449f63c99fb1543d185e017fe5740133004483b9d663e01b371",
+        "execution_basis": "REUSED_ORIGINAL_EXECUTION_NOT_RERUN_BY_REVIEWER",
+        "source_current_differences": [
+          {
+            "path": "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs",
+            "run_sha256": "44b88d0b4602bf94f7c39ed7cd2f230fc0d01db0575fe0a4c18ae1664730e75a",
+            "candidate_workfile_sha256": "3b70a384947109b4d272da4a0a2db341dfb026042b65ffc282bad755a05af149"
+          },
+          {
+            "path": "eng/contracts/postgresql-tests/prepare_sources.py",
+            "run_sha256": "6562483865fbcbca0c58bc672e0c8d488fa5a14b22dcd87d56313def39f308e4",
+            "candidate_workfile_sha256": "eb83e07adfcbfa4d3bf0addcbe7694fd877f2f3ccee908b9bf045fa0d1d741cb"
+          },
+          {
+            "path": "eng/contracts/postgresql-tests/TestInputs.cs",
+            "run_sha256": "33a63dd8cbfbb2532aa25418a09eed6c86f85ce8db5348d20f1397168b865c7a",
+            "candidate_workfile_sha256": "52fbfbe3d1583e467c221576b80377f24e18b10dfc040d9058dbd52bec9990a4"
+          }
+        ],
+        "source_candidate_eol_only_differences": [
+          "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+          "CP6.Persistence.PostgreSql/packages.lock.json",
+          "eng/contracts/postgresql-tests/atp-reviewed-subset.sql",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs",
+          "eng/contracts/postgresql-tests/packages.lock.json"
+        ],
+        "source_sha256": {
+          "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs": "f0514c0253a1d3a2c22d1a5e925eeb0b51b2f2faf8017f6d17dcb481eef99859",
+          "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+          "CP6.Persistence.PostgreSql/packages.lock.json": "565334cc9393b7f9796a652007cbed6887ad67ba5f7c14052e2e32e8b383b7f8",
+          "docs/development/evidence/S01-10/postgresql-mappings.proposed.json": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+          "eng/contracts/postgresql-tests/atp-recovery-subset.sql": "55afa723281bf2b65c2aa2cae9133e6313242c1b50df758d75c766b226c8d80b",
+          "eng/contracts/postgresql-tests/atp-reviewed-subset.sql": "315784b00be3416e3fe1047748978d6556906b0149e8df96d6d8bc7574de24ab",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj": "a6616864498568d9c888b1e327cc461383f91e781e5c85517840eb3dd873885a",
+          "eng/contracts/postgresql-tests/exact-guards.sql": "edf7f473ce0ae782640ecb5da4aa0540ab6a195efa1f802a216069276e341197",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Adapter.cs": "325cd53a8170dd42a9c90b2830ec1e6dfa8c81452636e0fba58cc16b0d4ad934",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs": "32a41367fbf83c424ef27891defb7c59fc216c494bc06cd778890798c1e89958",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs": "44b88d0b4602bf94f7c39ed7cd2f230fc0d01db0575fe0a4c18ae1664730e75a",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.cs": "e5196860cb11734f04d9990903f7e8e64976fe76528172f24601519b43b2eb91",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs": "c4e49d8e459e2fc0fe7f5d8bc74c7208320c662279c54474a0aafaddab7d5e61",
+          "eng/contracts/postgresql-tests/FixtureSql.cs": "745cd4ef0d8c13a862c2599c8e3a7c8ca13076090989d665305a3e6110701468",
+          "eng/contracts/postgresql-tests/OwnedPostgres.cs": "6a3fd2baaf946749dd114138517982b2838ce761931df1cc587b065312c43efd",
+          "eng/contracts/postgresql-tests/packages.lock.json": "17bb2300b71126fb34c589ea27f15d30bee42a35bf883e09b31dc82efa0ae558",
+          "eng/contracts/postgresql-tests/prepare_mapping_proposal.py": "5323500f69c8ee4c80137f030e4128636f7f79233059f9f6313b26a3bb7a517a",
+          "eng/contracts/postgresql-tests/prepare_sources.py": "6562483865fbcbca0c58bc672e0c8d488fa5a14b22dcd87d56313def39f308e4",
+          "eng/contracts/postgresql-tests/run_local.py": "cdc5a11633f0a33830499cbe856f7ef2032e6db10a8766184dd7d974a7dfd913",
+          "eng/contracts/postgresql-tests/TestInputs.cs": "33a63dd8cbfbb2532aa25418a09eed6c86f85ce8db5348d20f1397168b865c7a",
+          "eng/contracts/s01/profile-inputs.json": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+          "eng/contracts/s01/vectors.json": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+        },
+        "artifacts": [
+          {
+            "file": "CP6.ExactValues.PostgreSqlTests.dll",
+            "run_sha256": "ec7556234d0fc0d05c2c2053e376eb1cef815c0cb4db67098d3e9b2497ffe869",
+            "current_sha256": "98ac45cc5653b9642d5724df64813f9ded8e3518bea9626eb7ca92ede86e9efa",
+            "current_matches": false
+          },
+          {
+            "file": "CP6.Persistence.PostgreSql.dll",
+            "run_sha256": "a9f4bc41c9448c2887ac89d8e06184fdbb31eb7531100b418ab5b2ebc8f57ad9",
+            "current_sha256": "a9f4bc41c9448c2887ac89d8e06184fdbb31eb7531100b418ab5b2ebc8f57ad9",
+            "current_matches": true
+          },
+          {
+            "file": "CP6.Entity.dll",
+            "run_sha256": "875b13343dc80edcf283e06835097cd5fcefebbbacb46fac3dc383b909d8a072",
+            "current_sha256": "875b13343dc80edcf283e06835097cd5fcefebbbacb46fac3dc383b909d8a072",
+            "current_matches": true
+          },
+          {
+            "file": "Npgsql.dll",
+            "run_sha256": "2083de510463c4f708fa433d68bf3da149f10e25cd99a86f4519360e3f59b70d",
+            "current_sha256": "2083de510463c4f708fa433d68bf3da149f10e25cd99a86f4519360e3f59b70d",
+            "current_matches": true
+          }
+        ],
+        "lifecycle": [
+          {
+            "path": "docs/development/evidence/S01-10/lifecycle/642b372f1b6543e7872b96957539074b.json",
+            "sha256": "b174e8d18616508dfb9471e20f904af8eeb95fd48424845852b3eada088fa4bd",
+            "receipt": {
+              "task": "S01-10",
+              "owner": "642b372f1b6543e7872b96957539074b",
+              "marker": "CP6-S01-10:642b372f1b6543e7872b96957539074b",
+              "database": "cp6_s0110_20261013_642b372f_exact",
+              "endpoint": "127.0.0.1:55410",
+              "run_root": "D:\\CP6-local-test\\S01-10\\642b372f1b6543e7872b96957539074b",
+              "owner_role": "s0110_owner",
+              "writer_role": "s0110_writer",
+              "npgsql_version": "8.0.8.0",
+              "status": "CLEANED",
+              "private_acl_current_user_only": true,
+              "system_identifier": "7696025310276345184",
+              "server_version": "18.6",
+              "data_directory": "D:/CP6-local-test/S01-10/642b372f1b6543e7872b96957539074b/data",
+              "database_oid": 16386,
+              "mapping_path": "docs/development/evidence/S01-10/postgresql-mappings.proposed.json",
+              "mapping_adoption": "PROPOSED_PENDING_COORD",
+              "mapping_sha256": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+              "fixture_sql_sha256": "67f1abc34ad46c8eb6d5799c9c7ed94b897cc44162ec3c560f82071c064c31d1",
+              "password_file_removed": true,
+              "retained_resource": "Stopped owned cluster and local logs; no recursive deletion; no business data"
+            },
+            "event_statuses": [
+              "PLANNED",
+              "OWNED_BEFORE_DDL",
+              "READY",
+              "DATABASE_DROPPED",
+              "CLEANED"
+            ]
+          }
+        ],
+        "counts": {
+          "total": 210,
+          "executed": 210,
+          "passed": 210,
+          "failed": 0,
+          "notExecuted": 0
+        },
+        "trx_sha256": "a37fe9c5d2495463444e247d95eac5580d8cc25be2fea11785a77cc53f1190c2",
+        "unique_test_ids": 210,
+        "method_counts": {
+          "Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling": 66,
+          "Fixed_vector_matches_pinned_expectation_and_real_storage": 56,
+          "Credit_all_42_native_fields_use_their_exact_destination_profile": 42,
+          "Inventory_rejects_noncanonical_or_mismatched_stored_pairs": 9,
+          "Atp_all_five_columns_reject_raw_invalid_text_before_narrowing": 13,
+          "Inventory_original_lexeme_is_independent_from_normalized_storage": 3,
+          "Wrong_JSON_tokens_fail_native_contracts_before_storage_binding": 5,
+          "Atp_all_five_columns_preserve_full_accepted_lengths": 4,
+          "Committed_values_and_original_UTF8_survive_new_physical_connections_and_repeated_persistence": 1,
+          "Atp_recovery_locks_replay_in_C_order_before_evaluation_and_requires_binding": 1,
+          "Inventory_coefficient_beyond_PostgreSQL_numeric_capacity_remains_text": 1,
+          "Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip": 1,
+          "Owned_resource_rejects_collisions_identity_drift_sessions_and_writer_DDL": 1,
+          "Mavg_preserves_unreduced_numerators_denominators_and_remainder_raw_strings": 1,
+          "Mavg_active_empty_state_constraints_and_positive_denominators_are_enforced": 1,
+          "Atp_composed_relationship_and_terminal_state_checks_remain_in_force": 1,
+          "Atp_database_column_checks_nullability_and_typmod_limit_are_distinguished_from_raw_guard": 1,
+          "Atp_replay_binding_checks_organization_actor_delegation_request_and_both_digests": 1,
+          "Constraint_failure_aborts_and_rolls_back_all_writes_on_the_same_transaction": 1,
+          "Credit_rejects_invalid_pairs_and_guards_raw_integer_input_before_numeric_rounding": 1
+        },
+        "case_manifest_matches_trx": true
+      },
+      {
+        "run_id": "pin-reconnect-regression",
+        "started_utc": "2026-10-13T05:54:38.988758+00:00",
+        "finished_utc": "2026-10-13T05:55:00.957582+00:00",
+        "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+        "command": [
+          "dotnet",
+          "test",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+          "--no-restore",
+          "--filter",
+          "FullyQualifiedName~Fixed_vector|FullyQualifiedName~Committed_values",
+          "--logger",
+          "trx;LogFileName=s01-10-postgresql.trx",
+          "--results-directory",
+          "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\pin-reconnect-regression",
+          "--verbosity",
+          "minimal"
+        ],
+        "exit_code": 0,
+        "source_unchanged_during_run": true,
+        "local_gate": "PASS",
+        "report_path": "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\pin-reconnect-regression\\run.json",
+        "report_sha256": "bb45f97c64e8c41613523b64eed8879f205fb7ee4d735f33cd366d524e729ecc",
+        "command_log_sha256": "2caa4597b451dfbb2f876eda25253ae946df5eb4dab3fffaa55a7582a73dbf32",
+        "execution_basis": "REUSED_ORIGINAL_EXECUTION_NOT_RERUN_BY_REVIEWER",
+        "source_current_differences": [
+          {
+            "path": "eng/contracts/postgresql-tests/prepare_sources.py",
+            "run_sha256": "6562483865fbcbca0c58bc672e0c8d488fa5a14b22dcd87d56313def39f308e4",
+            "candidate_workfile_sha256": "eb83e07adfcbfa4d3bf0addcbe7694fd877f2f3ccee908b9bf045fa0d1d741cb"
+          }
+        ],
+        "source_candidate_eol_only_differences": [
+          "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+          "CP6.Persistence.PostgreSql/packages.lock.json",
+          "eng/contracts/postgresql-tests/atp-reviewed-subset.sql",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs",
+          "eng/contracts/postgresql-tests/packages.lock.json"
+        ],
+        "source_sha256": {
+          "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs": "f0514c0253a1d3a2c22d1a5e925eeb0b51b2f2faf8017f6d17dcb481eef99859",
+          "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+          "CP6.Persistence.PostgreSql/packages.lock.json": "565334cc9393b7f9796a652007cbed6887ad67ba5f7c14052e2e32e8b383b7f8",
+          "docs/development/evidence/S01-10/postgresql-mappings.proposed.json": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+          "eng/contracts/postgresql-tests/atp-recovery-subset.sql": "55afa723281bf2b65c2aa2cae9133e6313242c1b50df758d75c766b226c8d80b",
+          "eng/contracts/postgresql-tests/atp-reviewed-subset.sql": "315784b00be3416e3fe1047748978d6556906b0149e8df96d6d8bc7574de24ab",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj": "a6616864498568d9c888b1e327cc461383f91e781e5c85517840eb3dd873885a",
+          "eng/contracts/postgresql-tests/exact-guards.sql": "edf7f473ce0ae782640ecb5da4aa0540ab6a195efa1f802a216069276e341197",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Adapter.cs": "325cd53a8170dd42a9c90b2830ec1e6dfa8c81452636e0fba58cc16b0d4ad934",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs": "32a41367fbf83c424ef27891defb7c59fc216c494bc06cd778890798c1e89958",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs": "3b70a384947109b4d272da4a0a2db341dfb026042b65ffc282bad755a05af149",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.cs": "e5196860cb11734f04d9990903f7e8e64976fe76528172f24601519b43b2eb91",
+          "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs": "c4e49d8e459e2fc0fe7f5d8bc74c7208320c662279c54474a0aafaddab7d5e61",
+          "eng/contracts/postgresql-tests/FixtureSql.cs": "745cd4ef0d8c13a862c2599c8e3a7c8ca13076090989d665305a3e6110701468",
+          "eng/contracts/postgresql-tests/OwnedPostgres.cs": "6a3fd2baaf946749dd114138517982b2838ce761931df1cc587b065312c43efd",
+          "eng/contracts/postgresql-tests/packages.lock.json": "17bb2300b71126fb34c589ea27f15d30bee42a35bf883e09b31dc82efa0ae558",
+          "eng/contracts/postgresql-tests/prepare_mapping_proposal.py": "5323500f69c8ee4c80137f030e4128636f7f79233059f9f6313b26a3bb7a517a",
+          "eng/contracts/postgresql-tests/prepare_sources.py": "6562483865fbcbca0c58bc672e0c8d488fa5a14b22dcd87d56313def39f308e4",
+          "eng/contracts/postgresql-tests/run_local.py": "cdc5a11633f0a33830499cbe856f7ef2032e6db10a8766184dd7d974a7dfd913",
+          "eng/contracts/postgresql-tests/TestInputs.cs": "52fbfbe3d1583e467c221576b80377f24e18b10dfc040d9058dbd52bec9990a4",
+          "eng/contracts/s01/profile-inputs.json": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+          "eng/contracts/s01/vectors.json": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+        },
+        "artifacts": [
+          {
+            "file": "CP6.ExactValues.PostgreSqlTests.dll",
+            "run_sha256": "98ac45cc5653b9642d5724df64813f9ded8e3518bea9626eb7ca92ede86e9efa",
+            "current_sha256": "98ac45cc5653b9642d5724df64813f9ded8e3518bea9626eb7ca92ede86e9efa",
+            "current_matches": true
+          },
+          {
+            "file": "CP6.Persistence.PostgreSql.dll",
+            "run_sha256": "a9f4bc41c9448c2887ac89d8e06184fdbb31eb7531100b418ab5b2ebc8f57ad9",
+            "current_sha256": "a9f4bc41c9448c2887ac89d8e06184fdbb31eb7531100b418ab5b2ebc8f57ad9",
+            "current_matches": true
+          },
+          {
+            "file": "CP6.Entity.dll",
+            "run_sha256": "875b13343dc80edcf283e06835097cd5fcefebbbacb46fac3dc383b909d8a072",
+            "current_sha256": "875b13343dc80edcf283e06835097cd5fcefebbbacb46fac3dc383b909d8a072",
+            "current_matches": true
+          },
+          {
+            "file": "Npgsql.dll",
+            "run_sha256": "2083de510463c4f708fa433d68bf3da149f10e25cd99a86f4519360e3f59b70d",
+            "current_sha256": "2083de510463c4f708fa433d68bf3da149f10e25cd99a86f4519360e3f59b70d",
+            "current_matches": true
+          }
+        ],
+        "lifecycle": [
+          {
+            "path": "docs/development/evidence/S01-10/lifecycle/4b8c1c89bea042528e4a8e0adbbcba96.json",
+            "sha256": "5f03bdddf2aade922009983ce14b29f3da8033aa0ed81c74227fb85487463d71",
+            "receipt": {
+              "task": "S01-10",
+              "owner": "4b8c1c89bea042528e4a8e0adbbcba96",
+              "marker": "CP6-S01-10:4b8c1c89bea042528e4a8e0adbbcba96",
+              "database": "cp6_s0110_20261013_4b8c1c89_exact",
+              "endpoint": "127.0.0.1:55410",
+              "run_root": "D:\\CP6-local-test\\S01-10\\4b8c1c89bea042528e4a8e0adbbcba96",
+              "owner_role": "s0110_owner",
+              "writer_role": "s0110_writer",
+              "npgsql_version": "8.0.8.0",
+              "status": "CLEANED",
+              "private_acl_current_user_only": true,
+              "system_identifier": "7696026848283770236",
+              "server_version": "18.6",
+              "data_directory": "D:/CP6-local-test/S01-10/4b8c1c89bea042528e4a8e0adbbcba96/data",
+              "database_oid": 16386,
+              "mapping_path": "docs/development/evidence/S01-10/postgresql-mappings.proposed.json",
+              "mapping_adoption": "PROPOSED_PENDING_COORD",
+              "mapping_sha256": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+              "fixture_sql_sha256": "67f1abc34ad46c8eb6d5799c9c7ed94b897cc44162ec3c560f82071c064c31d1",
+              "password_file_removed": true,
+              "retained_resource": "Stopped owned cluster and local logs; no recursive deletion; no business data"
+            },
+            "event_statuses": [
+              "PLANNED",
+              "OWNED_BEFORE_DDL",
+              "READY",
+              "DATABASE_DROPPED",
+              "CLEANED"
+            ]
+          }
+        ],
+        "counts": {
+          "total": 57,
+          "executed": 57,
+          "passed": 57,
+          "failed": 0,
+          "notExecuted": 0
+        },
+        "trx_sha256": "994f2eb7f8003b4a787da8029700c1999115c026e961148dcac89ebe44327b82",
+        "unique_test_ids": 57,
+        "method_counts": {
+          "Committed_values_and_original_UTF8_survive_new_physical_connections_and_repeated_persistence": 1,
+          "Fixed_vector_matches_pinned_expectation_and_real_storage": 56
+        },
+        "case_manifest_matches_trx": true
+      },
+      {
+        "run_id": "lifecycle-regression",
+        "started_utc": "2026-10-13T05:47:46.730579+00:00",
+        "finished_utc": "2026-10-13T05:48:00.892020+00:00",
+        "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+        "command": [
+          "dotnet",
+          "test",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+          "--no-restore",
+          "--filter",
+          "FullyQualifiedName~Owned_resource_rejects",
+          "--logger",
+          "trx;LogFileName=s01-10-postgresql.trx",
+          "--results-directory",
+          "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\lifecycle-regression",
+          "--verbosity",
+          "minimal"
+        ],
+        "exit_code": 0,
+        "source_unchanged_during_run": true,
+        "local_gate": "PASS",
+        "report_path": "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\lifecycle-regression\\run.json",
+        "report_sha256": "640bc3ea1f5fd0a029365f00a55a8d258b52010f163e442c38b4c59feedeff0a",
+        "command_log_sha256": "cf8c4f721d8f451d6b7eeea428840c4172f77806d9a98262eb810071d91ea08f",
+        "execution_basis": "REUSED_ORIGINAL_EXECUTION_NOT_RERUN_BY_REVIEWER",
+        "lifecycle": [
+          {
+            "path": "docs/development/evidence/S01-10/lifecycle/dc3791a925044c1ebe6a14206cdbf8d9.json",
+            "sha256": "ac32a7dbd4b6482a904be746eaa965648223f8fdcabc0be3d7b2aa8524604800",
+            "receipt": {
+              "task": "S01-10",
+              "owner": "dc3791a925044c1ebe6a14206cdbf8d9",
+              "marker": "CP6-S01-10:dc3791a925044c1ebe6a14206cdbf8d9",
+              "database": "cp6_s0110_20261013_dc3791a9_exact",
+              "endpoint": "127.0.0.1:55410",
+              "run_root": "D:\\CP6-local-test\\S01-10\\dc3791a925044c1ebe6a14206cdbf8d9",
+              "owner_role": "s0110_owner",
+              "writer_role": "s0110_writer",
+              "npgsql_version": "8.0.8.0",
+              "status": "CLEANED",
+              "private_acl_current_user_only": true,
+              "system_identifier": "7696025076809147480",
+              "server_version": "18.6",
+              "data_directory": "D:/CP6-local-test/S01-10/dc3791a925044c1ebe6a14206cdbf8d9/data",
+              "database_oid": 16386,
+              "mapping_path": "docs/development/evidence/S01-10/postgresql-mappings.proposed.json",
+              "mapping_adoption": "PROPOSED_PENDING_COORD",
+              "mapping_sha256": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+              "fixture_sql_sha256": "67f1abc34ad46c8eb6d5799c9c7ed94b897cc44162ec3c560f82071c064c31d1",
+              "password_file_removed": true,
+              "retained_resource": "Stopped owned cluster and local logs; no recursive deletion; no business data"
+            },
+            "event_statuses": [
+              "PLANNED",
+              "OWNED_BEFORE_DDL",
+              "READY",
+              "DATABASE_DROPPED",
+              "CLEANED"
+            ]
+          }
+        ],
+        "counts": {
+          "total": 1,
+          "executed": 1,
+          "passed": 1,
+          "failed": 0,
+          "notExecuted": 0
+        },
+        "trx_sha256": "656c6c24abd0cd71f63f8aa6cd386625a52664741d45f4842394215c65086d94",
+        "unique_test_ids": 1,
+        "method_counts": {
+          "Owned_resource_rejects_collisions_identity_drift_sessions_and_writer_DDL": 1
+        },
+        "case_manifest_matches_trx": true
+      },
+      {
+        "run_id": "first-pg",
+        "started_utc": "2026-10-13T05:40:09.473871+00:00",
+        "finished_utc": "2026-10-13T05:40:14.095335+00:00",
+        "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+        "command": [
+          "dotnet",
+          "test",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+          "--no-restore",
+          "--filter",
+          "FullyQualifiedName~ExactValueStorageTests",
+          "--logger",
+          "trx;LogFileName=s01-10-postgresql.trx",
+          "--results-directory",
+          "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\first-pg",
+          "--verbosity",
+          "minimal"
+        ],
+        "exit_code": 1,
+        "source_unchanged_during_run": true,
+        "local_gate": "FAIL_OR_BLOCKED",
+        "report_path": "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\first-pg\\run.json",
+        "report_sha256": "303d1def4222e6399fe45020c2849ce4f59682a5104f249b5a738efeb724c951",
+        "command_log_sha256": "88d6387afcd3c5fd68d5a56803ae69221ed84a38e5d3aedc093cc679d2de7486",
+        "execution_basis": "REUSED_ORIGINAL_EXECUTION_NOT_RERUN_BY_REVIEWER",
+        "lifecycle": [],
+        "counts": {
+          "total": 0,
+          "executed": 0,
+          "passed": 0,
+          "failed": null,
+          "notExecuted": null
+        },
+        "failure_phase": "COMPILATION_BEFORE_DATABASE_SETUP"
+      },
+      {
+        "run_id": "second-pg",
+        "started_utc": "2026-10-13T05:40:50.133371+00:00",
+        "finished_utc": "2026-10-13T05:40:54.974968+00:00",
+        "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+        "command": [
+          "dotnet",
+          "test",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+          "--no-restore",
+          "--filter",
+          "FullyQualifiedName~ExactValueStorageTests",
+          "--logger",
+          "trx;LogFileName=s01-10-postgresql.trx",
+          "--results-directory",
+          "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\second-pg",
+          "--verbosity",
+          "minimal"
+        ],
+        "exit_code": 1,
+        "source_unchanged_during_run": true,
+        "local_gate": "FAIL_OR_BLOCKED",
+        "report_path": "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\second-pg\\run.json",
+        "report_sha256": "4ffe24ab7bee305c4e31b5c0bafe8a3cbd84eb8cefc4926758b8baf3286c6410",
+        "command_log_sha256": "42f81c2f3b2db27ab3297a4e7c20ad1e303bc3f89c9eb483758026bc8dfc6705",
+        "execution_basis": "REUSED_ORIGINAL_EXECUTION_NOT_RERUN_BY_REVIEWER",
+        "lifecycle": [
+          {
+            "path": "docs/development/evidence/S01-10/lifecycle/80717248d306470181697404561bb329.json",
+            "sha256": "f37d2fe96cc5c238c9089b717c863357fe1d688251b8cafc3b1df83a10301289",
+            "receipt": {
+              "setup_failure": "UnauthorizedAccessException",
+              "status": "BLOCKED"
+            },
+            "event_statuses": [
+              "BLOCKED"
+            ]
+          }
+        ],
+        "counts": {
+          "total": 210,
+          "executed": 210,
+          "passed": 0,
+          "failed": 210,
+          "notExecuted": 0
+        },
+        "trx_sha256": "f288bc9c8776293280dab251cf4fa2cfff0b1444901ac7ac1a40ff6c957fe43e",
+        "unique_test_ids": 210,
+        "case_manifest_matches_trx": true
+      },
+      {
+        "run_id": "third-pg",
+        "started_utc": "2026-10-13T05:43:03.631503+00:00",
+        "finished_utc": "2026-10-13T05:46:43.039002+00:00",
+        "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+        "command": [
+          "dotnet",
+          "test",
+          "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+          "--no-restore",
+          "--filter",
+          "FullyQualifiedName~ExactValueStorageTests",
+          "--logger",
+          "trx;LogFileName=s01-10-postgresql.trx",
+          "--results-directory",
+          "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\third-pg",
+          "--verbosity",
+          "minimal"
+        ],
+        "exit_code": 1,
+        "source_unchanged_during_run": true,
+        "local_gate": "FAIL_OR_BLOCKED",
+        "report_path": "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\third-pg\\run.json",
+        "report_sha256": "926199065d678de2c9e816e602b4f9883cc7801c8d81405a912a905bdad20585",
+        "command_log_sha256": "c465d218eaaa563816c72c4c45afb5e4dc7a62fd4d20a7d56c43d91497af7768",
+        "execution_basis": "REUSED_ORIGINAL_EXECUTION_NOT_RERUN_BY_REVIEWER",
+        "lifecycle": [
+          {
+            "path": "docs/development/evidence/S01-10/lifecycle/8e600f17d5ab4d4795205be033c7d2b8.json",
+            "sha256": "9ba23e10c0047bab5052b1f9aa6b15d13c9c22beac0cecac690dba462d239209",
+            "receipt": {
+              "task": "S01-10",
+              "owner": "8e600f17d5ab4d4795205be033c7d2b8",
+              "marker": "CP6-S01-10:8e600f17d5ab4d4795205be033c7d2b8",
+              "database": "cp6_s0110_20261013_8e600f17_exact",
+              "endpoint": "127.0.0.1:55410",
+              "run_root": "D:\\CP6-local-test\\S01-10\\8e600f17d5ab4d4795205be033c7d2b8",
+              "owner_role": "s0110_owner",
+              "writer_role": "s0110_writer",
+              "npgsql_version": "8.0.8.0",
+              "status": "BLOCKED",
+              "private_acl_current_user_only": true,
+              "setup_failure": "NpgsqlException"
+            },
+            "event_statuses": [
+              "PLANNED",
+              "BLOCKED"
+            ]
+          }
+        ],
+        "counts": {
+          "total": 210,
+          "executed": 210,
+          "passed": 0,
+          "failed": 210,
+          "notExecuted": 0
+        },
+        "trx_sha256": "bb9ebeb5e80aa3dd38a5ff08ec77a06b0a01de22d2c1ae6fd49e2f96946400ee",
+        "unique_test_ids": 210,
+        "case_manifest_matches_trx": true
+      }
+    ],
+    "red": {
+      "failed": 1,
+      "passed": 0,
+      "skipped": 0,
+      "expected_failure": "NotImplementedException",
+      "source_snapshots_verified": true
+    },
+    "reuse_basis": [
+      "Production adapter, all SQL, FixtureSql and owned runner unchanged since full-storage.",
+      "Full-storage Boundaries raw hash exactly recovered by removing only the three added ATP reconnect lines; 57-case regression executes the final method.",
+      "Final TestInputs hash matches pin-reconnect-regression; all56 fixed vectors rerun there with added hash/profile guards.",
+      "Only prepare_sources.py differs from final regression; exact b622 source hash matches earlier run and d90 diff adds read-only42-field CREDIT verification, no runtime code.",
+      "Final four DLL hashes match regression; production/Entity/Npgsql DLLs also match full-storage. The older full-storage test DLL is recorded, not falsely claimed still current.",
+      "Tracked source blob/workfile differences are CRLF/LF only; evidence .gitattributes intentionally preserves raw bytes.",
+      "First compile failure, 210 setup failures in second/third runs, original RED and separate identity/cleanup receipts remain failures."
+    ]
+  },
+  "evidence_paths": [
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\README.md",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\OWNER-ADOPTION.md",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\FAILURES.md",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\source-verification.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\postgresql-mappings.proposed.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\startup-hang-identity.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\prepush-verification.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\full-storage\\run.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\pin-reconnect-regression\\run.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\lifecycle-regression\\run.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\first-pg\\run.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\second-pg\\run.json",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\third-pg\\run.json"
+  ],
+  "changedfiles": [
+    "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs",
+    "docs/development/evidence/S01-10/.gitattributes",
+    "docs/development/evidence/S01-10/.gitignore",
+    "docs/development/evidence/S01-10/FAILURES.md",
+    "docs/development/evidence/S01-10/OWNER-ADOPTION.md",
+    "docs/development/evidence/S01-10/PLAN.md",
+    "docs/development/evidence/S01-10/README.md",
+    "docs/development/evidence/S01-10/REVIEW.md",
+    "docs/development/evidence/S01-10/initial-build.log",
+    "docs/development/evidence/S01-10/lifecycle/4b8c1c89bea042528e4a8e0adbbcba96.json",
+    "docs/development/evidence/S01-10/lifecycle/642b372f1b6543e7872b96957539074b.json",
+    "docs/development/evidence/S01-10/lifecycle/80717248d306470181697404561bb329-cleanup.json",
+    "docs/development/evidence/S01-10/lifecycle/80717248d306470181697404561bb329.json",
+    "docs/development/evidence/S01-10/lifecycle/8e600f17d5ab4d4795205be033c7d2b8-cleanup.json",
+    "docs/development/evidence/S01-10/lifecycle/8e600f17d5ab4d4795205be033c7d2b8.json",
+    "docs/development/evidence/S01-10/lifecycle/dc3791a925044c1ebe6a14206cdbf8d9.json",
+    "docs/development/evidence/S01-10/postgresql-mappings.proposed.json",
+    "docs/development/evidence/S01-10/prepush-verification.json",
+    "docs/development/evidence/S01-10/red/ExactValueStorage.cs.txt",
+    "docs/development/evidence/S01-10/red/ExactValueStorageTests.Adapter.cs.txt",
+    "docs/development/evidence/S01-10/red/adapter-red.trx",
+    "docs/development/evidence/S01-10/red/command.log",
+    "docs/development/evidence/S01-10/red/run.json",
+    "docs/development/evidence/S01-10/runs/first-pg/command.log",
+    "docs/development/evidence/S01-10/runs/first-pg/run.json",
+    "docs/development/evidence/S01-10/runs/full-storage/command.log",
+    "docs/development/evidence/S01-10/runs/full-storage/run.json",
+    "docs/development/evidence/S01-10/runs/full-storage/s01-10-postgresql.trx",
+    "docs/development/evidence/S01-10/runs/lifecycle-regression/command.log",
+    "docs/development/evidence/S01-10/runs/lifecycle-regression/run.json",
+    "docs/development/evidence/S01-10/runs/lifecycle-regression/s01-10-postgresql.trx",
+    "docs/development/evidence/S01-10/runs/pin-reconnect-regression/command.log",
+    "docs/development/evidence/S01-10/runs/pin-reconnect-regression/run.json",
+    "docs/development/evidence/S01-10/runs/pin-reconnect-regression/s01-10-postgresql.trx",
+    "docs/development/evidence/S01-10/runs/second-pg/command.log",
+    "docs/development/evidence/S01-10/runs/second-pg/run.json",
+    "docs/development/evidence/S01-10/runs/second-pg/s01-10-postgresql.trx",
+    "docs/development/evidence/S01-10/runs/third-pg/command.log",
+    "docs/development/evidence/S01-10/runs/third-pg/run.json",
+    "docs/development/evidence/S01-10/runs/third-pg/s01-10-postgresql.trx",
+    "docs/development/evidence/S01-10/source-verification.json",
+    "docs/development/evidence/S01-10/startup-hang-identity.json",
+    "eng/contracts/postgresql-tests/.gitignore",
+    "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Adapter.cs",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.cs",
+    "eng/contracts/postgresql-tests/FixtureSql.cs",
+    "eng/contracts/postgresql-tests/OwnedPostgres.cs",
+    "eng/contracts/postgresql-tests/TestInputs.cs",
+    "eng/contracts/postgresql-tests/atp-recovery-subset.sql",
+    "eng/contracts/postgresql-tests/atp-reviewed-subset.sql",
+    "eng/contracts/postgresql-tests/exact-guards.sql",
+    "eng/contracts/postgresql-tests/packages.lock.json",
+    "eng/contracts/postgresql-tests/prepare_mapping_proposal.py",
+    "eng/contracts/postgresql-tests/prepare_sources.py",
+    "eng/contracts/postgresql-tests/run_local.py"
+  ],
+  "reviewer_repo_changes": [],
+  "scratch_files": [
+    "C:\\Users\\tt\\CP6-planning-reports\\20261013-wave4-integration\\S01-10-review.md",
+    "C:\\Users\\tt\\CP6-planning-reports\\20261013-wave4-integration\\S01-10-original-validation.json",
+    "C:\\Users\\tt\\CP6-planning-reports\\20261013-wave4-integration\\scale-adoption-review.md",
+    "C:\\Users\\tt\\CP6-planning-reports\\20261013-wave4-integration\\scale-adoption-review.json"
+  ],
+  "formal_adoption_steps": [
+    "COORD 在本任务公共合同窗口新增 eng/contracts/s01/postgresql-mappings.json；初次正式版本沿用 CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0，记录采纳决定、候选 SHA、提案 SHA256、原件/旧存储版本和这20项有界覆盖。原固定输入和提案保留不变。",
+    "正式文件保留本提案所有66行、credit/atp/assigned_vectors及语义字段；只修改 adoption、scale_change.approval 并增加决定/证据元数据。按本报告 semantic_keys 比较 semantic_sha256，应与已测试提案相同。不是把 Money.scale 改18，也不是扩大原 wire 词法。",
+    "TestInputs.MappingPath 已优先选择正式文件；COORD 静态核对正式路径、mapping_version 与 ExactValueStorage.MappingVersion 相同且采用状态已确认，生成 fixture 所消费字段与提案相同。保持历史运行 mapping_adoption=PROPOSED，不回写为正式运行。",
+    "仅移动相同语义并补决定元数据，可复用现有210+57结果，注明原工作文件hash与CRLF/LF差异；任何profile/null/sign/scale/SQL/参数/runner语义变化才扩大到受影响回归。",
+    "同步本任务交付文档和协调状态，正常集成并核远端main包含后才能DONE；Owner真实表、全写者切换、迁移、租户/权限/池、完整对象与业务算法继续各自UNPROVEN/NOT_RUN。"
+  ]
+}

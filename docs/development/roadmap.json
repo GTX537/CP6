@@ -158617,6 +158617,11 @@
       "date": "2026-10-13",
       "change": "Wave4: S01-11/10/07 and WP02-01 READY/CONFIRMED; independent write windows and S01-10 owned local PostgreSQL resource reservation. No START received, 12/375 DONE unchanged; business/runtime unchanged.",
       "evidence": "docs/development/dispatch/20261013-wave4/README.md"
+    },
+    {
+      "date": "2026-10-13",
+      "change": "Wave4 S01-11/10/07 and WP02-01 normally merged and remote verified;16/375 tasks DONE,S01 11/12. Issue196 corrected; formal PG mapping adopted with20 lossless scale capacities. Business0/125,247 NOT_RUN and historical gaps unchanged. No next-wave assignment.",
+      "evidence": "docs/development/evidence/wave4-integration-20261013/README.md"
     }
   ],
   "implementation_assessment": {
@@ -159156,11 +159161,30 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave4-integration-20261013/S01-07/original-validation.json",
+          "repository": "GTX537/CP6",
+          "source_sha": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+          "command": "Original dotnet test --filter FullyQualifiedName~QualityContractTests; original npm target TS test and type-check; exact input/TRX/log review",
+          "environment": "Windows; .NET runtime8.0.29/SDK10.0.302; Node22.22/npm10.9.4",
+          "observed_at": "2026-10-13T10:56:40.886367+00:00",
+          "scope": "COORD evidence observation at this timestamp; original actual test times preserved in linked evidence. Original C#657/657,TS130/130 and typecheck reused.32 source assets,64 input files,15 consumer hashes and complete110-file admission reviewed. Original execution did not bind DLL hashes; no invented new test run. Owner/DB/HTTP NOT_RUN.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+        "remote_main_sha": "d9d6ced01291f9f07487e6f40d4925908926923e",
+        "pr_url": "https://github.com/GTX537/CP6/pull/197",
+        "observed_at": "2026-10-13T10:36:15.037951+00:00",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-07/remote-main.json",
+        "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+      },
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
       "entry_gate": "CONFIRMED",
@@ -159172,8 +159196,8 @@
         "claimed_at": "2026-10-13T04:29:31.680556+00:00",
         "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
         "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual START and DELIVERY received, reviewed, normally merged and remote inclusion verified. No backdated COORD ACK. This bounded window is closed; future tasks require separate dispatch.",
+        "worker_ack_at": "2026-10-13T05:15:38.653338+00:00",
         "allowed_write_paths": [
           "CP6.Entity/Contracts/Quality/",
           "cp6.web/src/contracts/quality/",
@@ -159182,7 +159206,11 @@
           "docs/development/evidence/S01-07/"
         ],
         "handoff_branch": "codex/dev-handoff-s01-07",
-        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+        "coordinator_received_at": "2026-10-13T07:18:10.535882+00:00",
+        "handoff_receipt": "docs/development/evidence/wave4-integration-20261013/intake.json",
+        "execution_baseline_sha": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "window_closed_at": "2026-10-13T10:56:40.886367+00:00"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -159377,11 +159405,30 @@
       ],
       "relative_size": "L",
       "kind": "CODE",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave4-integration-20261013/S01-10/original-validation.json",
+          "repository": "GTX537/CP6",
+          "source_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+          "command": "Original run_local.py full-storage and pin-reconnect-regression; local verify_formal_mapping.py; exact input/TRX/artifact reuse",
+          "environment": "Windows; original PostgreSQL18.6/Npgsql8.0.8; .NET8 runtime/SDK10.0.302",
+          "observed_at": "2026-10-13T10:56:40.886367+00:00",
+          "scope": "COORD evidence observation at this timestamp; original actual test times preserved in linked evidence. Original PG210/210 plus overlapping57/57 and lifecycle1/1 reused. All tested mapping semantics identical; only formal adoption metadata updated. Historical runs remain PROPOSED; formal version1.0.0 and20 scale8-to18 capacities accepted, no new DB execution.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+        "remote_main_sha": "8e48ee78fd70a2b53ebb39efe7ba7deb351b6840",
+        "pr_url": "https://github.com/GTX537/CP6/pull/198",
+        "observed_at": "2026-10-13T10:47:56.086663+00:00",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-10/remote-main.json",
+        "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+      },
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
       "entry_gate": "CONFIRMED",
@@ -159393,8 +159440,8 @@
         "claimed_at": "2026-10-13T04:29:31.680556+00:00",
         "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
         "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual START and DELIVERY received, reviewed, normally merged and remote inclusion verified. No backdated COORD ACK. This bounded window is closed; future tasks require separate dispatch.",
+        "worker_ack_at": "2026-10-13T05:04:59Z",
         "allowed_write_paths": [
           "CP6.Persistence.PostgreSql/",
           "eng/contracts/s01/postgresql-mappings.json",
@@ -159411,6 +159458,17 @@
           "runtime_result": "NOT_RUN",
           "existing_service_excluded": "postgresql-x64-18 on 5432",
           "scope": "Only new task-owned disposable cluster/database; verify ownership, absolute path, marker/OID/role and occupancy before create/cleanup"
+        },
+        "coordinator_received_at": "2026-10-13T07:18:10.535882+00:00",
+        "handoff_receipt": "docs/development/evidence/wave4-integration-20261013/intake.json",
+        "execution_baseline_sha": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "window_closed_at": "2026-10-13T10:56:40.886367+00:00",
+        "coordinator_completion": {
+          "branch": "codex/s01-10-coord-adoption-20261013",
+          "worktree": "D:\\CP6-worktrees\\s01-10-20261012",
+          "original_candidate_sha": "d90be911bd54dc14bf9f11cdc73bf237c778d2f9",
+          "source_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+          "scope": "Dedicated completion branch created from current main; original candidate branch preserved. Formal mapping adoption in assigned COORD shared-contract window; proposal unchanged."
         }
       },
       "entry_conditions": [
@@ -159433,11 +159491,30 @@
       ],
       "relative_size": "M",
       "kind": "CODE",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave4-integration-20261013/S01-11/fix-validation.json",
+          "repository": "GTX537/CP6",
+          "source_sha": "6dbc1a00cec1349c2ff7fdc2fe633d64ce2cf82d",
+          "command": "npm --prefix cp6.web test -- src/contracts/erp-credit/creditCodec.test.ts; npm --prefix cp6.web run type-check; original C# and design audit exact-input reuse",
+          "environment": "Windows; Node20.19.0; TypeScript6.0.2; original C# runtime8.0.29",
+          "observed_at": "2026-10-13T10:56:40.886367+00:00",
+          "scope": "COORD evidence observation at this timestamp; original actual test times preserved in linked evidence. Final local TS428/428 and typecheck,12 new Buffer regressions RED then GREEN; original C#417/design5 reused. Original observation steps rechecked and Issue196 fixed. Actual execution used recorded uncommitted bytes with b27fbe54 HEAD; source_sha is subsequent final binding, not an execution at that SHA.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "6dbc1a00cec1349c2ff7fdc2fe633d64ce2cf82d",
+        "remote_main_sha": "b7d8da0182530aec3d33d3d5d9e4bc3a86b0f0e9",
+        "pr_url": "https://github.com/GTX537/CP6/pull/199",
+        "observed_at": "2026-10-13T10:55:15.593155+00:00",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-11/remote-main.json",
+        "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+      },
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
       "entry_gate": "CONFIRMED",
@@ -159449,8 +159526,8 @@
         "claimed_at": "2026-10-13T04:29:31.680556+00:00",
         "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
         "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual START and DELIVERY received, reviewed, normally merged and remote inclusion verified. No backdated COORD ACK. This bounded window is closed; future tasks require separate dispatch.",
+        "worker_ack_at": "2026-10-13T05:08:04.533726+00:00",
         "allowed_write_paths": [
           "CP6.Entity/Contracts/ErpCredit/",
           "cp6.web/src/contracts/erp-credit/",
@@ -159459,7 +159536,18 @@
           "docs/development/evidence/S01-11/"
         ],
         "handoff_branch": "codex/dev-handoff-s01-11",
-        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+        "coordinator_received_at": "2026-10-13T07:18:10.535882+00:00",
+        "handoff_receipt": "docs/development/evidence/wave4-integration-20261013/intake.json",
+        "execution_baseline_sha": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+        "window_closed_at": "2026-10-13T10:56:40.886367+00:00",
+        "coordinator_completion": {
+          "branch": "codex/bug-196-credit-byte-ownership",
+          "worktree": "D:\\CP6-worktrees\\s01-11-20261012",
+          "original_candidate_sha": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+          "source_sha": "6dbc1a00cec1349c2ff7fdc2fe633d64ce2cf82d",
+          "scope": "Dedicated completion branch created from current main; original candidate branch preserved. Issue196 byte ownership fix and regression."
+        }
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -159591,7 +159679,7 @@
         "Platform:request-context"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-01",
       "entry_gate": "CONFIRMED",
@@ -159603,8 +159691,8 @@
         "claimed_at": "2026-10-13T04:29:31.680556+00:00",
         "baseline_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
         "entry_evidence": "docs/development/evidence/wave4-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigned under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual START and DELIVERY received, reviewed, normally merged and remote inclusion verified. No backdated COORD ACK. This bounded window is closed; future tasks require separate dispatch.",
+        "worker_ack_at": "2026-10-13T05:19:03Z",
         "allowed_write_paths": [
           "src/CP6.Platform.AspNetCore/RequestContextAccessor.cs",
           "src/CP6.Platform.AspNetCore/RequestContextExtensions.cs",
@@ -159622,11 +159710,34 @@
           "docs/development/evidence/WP02-01/"
         ],
         "handoff_branch": "codex/dev-handoff-wp02-01",
-        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+        "coordination_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+        "coordinator_received_at": "2026-10-13T07:18:10.535882+00:00",
+        "handoff_receipt": "docs/development/evidence/wave4-integration-20261013/intake.json",
+        "execution_baseline_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+        "window_closed_at": "2026-10-13T10:56:40.886367+00:00"
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/original-validation.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+          "command": "Original dotnet test AspNetCoreTests and UnitTests -c Release; new dotnet test ArchitectureTests -c Release",
+          "environment": "Windows; .NET SDK8.0.424/runtime8.0.30",
+          "observed_at": "2026-10-13T10:56:40.886367+00:00",
+          "scope": "COORD evidence observation at this timestamp; original actual test times preserved in linked evidence. Original HTTP243+Unit259=502 library tests reused with197 raw/Git source,8 dependency and32 artifact hashes. New98/98 architecture tests retained separately. Real authority/host/tenant routing/Owner NOT_RUN.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+        "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+        "observed_at": "2026-10-13T07:39:05.879535+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+        "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"

@@ -1,0 +1,32 @@
+{
+  "result": "PASS",
+  "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+  "command": "C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj -c Release --logger trx;LogFileName=architecture.trx",
+  "environment": "Windows; .NET SDK8.0.424/runtime8.0.30; local architecture-only test project",
+  "counts": {
+    "total": "98",
+    "executed": "98",
+    "passed": "98",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "times": {
+    "creation": "2026-10-13T03:33:14.5676256-04:00",
+    "queuing": "2026-10-13T03:33:14.5676260-04:00",
+    "start": "2026-10-13T03:33:12.2541053-04:00",
+    "finish": "2026-10-13T03:33:14.8322629-04:00"
+  },
+  "trx_sha256": "87eea661362b555738b4807a820c1925e3cb6cfd505660d8abdd6569c2400547",
+  "scope": "New coordinator local architecture gate. Original502 tests separately reused; no production acceptance."
+}

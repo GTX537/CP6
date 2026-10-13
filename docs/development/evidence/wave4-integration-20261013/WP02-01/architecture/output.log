@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  Restored D:\CP6.Platform-worktrees\wp02-01-20261012\tests\CP6.Platform.ArchitectureTests\CP6.Platform.ArchitectureTests.csproj (in 5.2 sec).
+  CP6.Platform.ArchitectureTests -> D:\CP6.Platform-worktrees\wp02-01-20261012\tests\CP6.Platform.ArchitectureTests\bin\Release\net8.0\CP6.Platform.ArchitectureTests.dll
+Test run for D:\CP6.Platform-worktrees\wp02-01-20261012\tests\CP6.Platform.ArchitectureTests\bin\Release\net8.0\CP6.Platform.ArchitectureTests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.11.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+Results File: C:\Users\tt\CP6-planning-reports\20261013-wave4-integration\platform-architecture\architecture.trx
+
+Passed!  - Failed:     0, Passed:    98, Skipped:     0, Total:    98, Duration: 374 ms - CP6.Platform.ArchitectureTests.dll (net8.0)

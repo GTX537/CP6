@@ -1,0 +1,227 @@
+{
+  "result": "PASS",
+  "task": "WP02-01",
+  "repository": "GTX537/CP6.Platform",
+  "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+  "baseline": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+  "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+  "merged_at": "2026-10-13T07:38:51Z",
+  "candidate_files_match": [
+    {
+      "path": "docs/P02-REQUEST-CONTEXT.md",
+      "blob": "80f08fe4724cfc85e32b6f3c7541e0336518b15a"
+    },
+    {
+      "path": "docs/WP02-01-TRUSTED-CONTEXT.md",
+      "blob": "7a7c5f50092349e10f6f7683def23a3695037fa5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/ACCEPTANCE.md",
+      "blob": "69dbb5a171598b52f62003961bf49ae524a90522"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/DELIVERY.md",
+      "blob": "b1857792b0745868cfe516eabad624f9d629c8df"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/PLAN.md",
+      "blob": "9e3d9278c16786f85bd211fcd9e886da21cecd1c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/PROVENANCE.json",
+      "blob": "1a49c11f241de0a0f3e235fdf810743f02001a25"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/PUSH-CHECK.json",
+      "blob": "68864d84649875ea3ca924aa87bb83db156dee8b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/REVIEW.md",
+      "blob": "2857abc983539b316473c704caaf204622841fd8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/VALIDATION.md",
+      "blob": "17a8132f7b407ffd6357634550ee012b5e644d91"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/acceptance-map.json",
+      "blob": "db1a722ba2da7d179d26cb8761c789c23bf03fff"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/boundary-check.log",
+      "blob": "20c87535b26658beebd14552cf955fa94db395b8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/capture_inputs.py",
+      "blob": "230c016380473d5e2b0b3c29b7be86a42afe9d89"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/full-http.log",
+      "blob": "5032423a202f44b6521b6c207aa3636a82fe392e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/full-test-inputs.json",
+      "blob": "0ecc4ee04e25944488ca1d1d7be8d38c7bae3378"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/full-unit.log",
+      "blob": "6ee8282d9d3a9bf290bc85a2b6fe9e0ff2100e05"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/green-core.log",
+      "blob": "4e6fb1657b04f2045035231e29f0d5ce15c7a33a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/green-http.log",
+      "blob": "cfd0a8ea294475b97cc22d8cd7bf3eafcc5b9fde"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/red-bindings.log",
+      "blob": "34f4df9b0d68a04157336be87bc7931054d2f2dc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/red-http.log",
+      "blob": "19ccf301aa27689ac8d03e2a35e956998bf9d0e1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/red-legacy.log",
+      "blob": "2b825291db974b1232e05d893e9b05057d6425dd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/red-scope.log",
+      "blob": "751b8e30b5be341f1b029df8d79a1ad08a82cff2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/red-source.json",
+      "blob": "83e4a5e089083e0403cce749622e73e4902df85c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/static-checks.json",
+      "blob": "a59c1508266c689eceb1bba8b17302999300b3b5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/boundary-check.trx",
+      "blob": "dce6d4843b3c5b87f18be85dd9a908d42a6c5b63"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/full-http.trx",
+      "blob": "e22080f8c3bb4c1f3526be5511a14bed46db0eae"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/full-unit.trx",
+      "blob": "8a1c033127bc135714aa6a90c7e09fac429bd84f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/green-core.trx",
+      "blob": "0b32fc98f529d07b82d86cf6209d023477586ef9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/green-http.trx",
+      "blob": "c14259218c3fd267f021f05020c00b48a464c36a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/red-bindings.trx",
+      "blob": "6f9ac8bbc06be8e4442d145bf22d7e1250aca811"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/red-http.trx",
+      "blob": "7d8c5829841b92fa4597a0c9702ed4c0ee9e18f3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/red-legacy.trx",
+      "blob": "71ce58ec4d14e4f230bda23be6638893a6537d12"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-results/red-scope.trx",
+      "blob": "10747856956318e534416ee1cd2ca715b914e65a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/test-summary.json",
+      "blob": "3c8513f864077d0305f785e25aacc0b0b4f6bebb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-01/tested-git-blobs.json",
+      "blob": "48e850ca4f19fc99cd6cc1766452814e5cddc8de"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/BackgroundContextExecutorV1.cs",
+      "blob": "00b2d113c47f243549ad345df1464255a0fa931b"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/ContextBindingValidatorV1.cs",
+      "blob": "20d0d50bfafabdb2c5288cb4e0b09717b7d95e5f"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/ContextBoundariesV1.cs",
+      "blob": "6170302e84e5dcf43ea67dbb96f46b45a115fb4d"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/ContextScopeAccessorV1.cs",
+      "blob": "534ffeb5705a4d3cdadc6e7021f4796e17315fbe"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/TrustedContextExecutorV1.cs",
+      "blob": "94840cf64832d30af6455e833625a74d000deda8"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+      "blob": "aafabad8ae1c1c9ca7a4a193dd2807f975bbd100"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextMiddlewareV1.cs",
+      "blob": "88f27f9dd56aaca8ff42225986b179fae0bf6222"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/RequestContextAccessor.cs",
+      "blob": "7af3466100101f218ce0fb888be62f27008c8e23"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/RequestContextExtensions.cs",
+      "blob": "de71430519928fb305826223ec5a46ad63f51bbb"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs",
+      "blob": "efcf240e6ead009566b647b5c69b82d2b2e578f0"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/Context/ContextContractsV1.cs",
+      "blob": "b0d306b08c10780b1928a5273af902c96d41a09c"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Context/MessageContextExecutorV1.cs",
+      "blob": "0e14ef0cd8145ac2d98684fa45979bb85a8c6fae"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/Context/TrustedContextMiddlewareTests.cs",
+      "blob": "72d75ef656e9972a0b60da9931439d4dd9aef7c1"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/RequestContextMiddlewareTests.cs",
+      "blob": "4d931acffc16df80a4047d7ca93d299d4b3da75b"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/Context/ContextEntryTests.cs",
+      "blob": "ed22c284857749d8d727bbf6ecac3d6df9e3185a"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/Context/ContextFixture.cs",
+      "blob": "f0d8a9f23a44fe6aaf4d3fcae1ff07e78a2cbe06"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/Context/ContextScopeTests.cs",
+      "blob": "5026ccecbb6f1c2b2a19fa722e545b08d3a2202e"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/Context/TrustedContextTests.cs",
+      "blob": "d72566889214e303b6f4ab731f6db3087ada0061"
+    }
+  ],
+  "observed_at": "2026-10-13T07:39:05.879535+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

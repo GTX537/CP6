@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "combined_main": "b7d8da0182530aec3d33d3d5d9e4bc3a86b0f0e9",
+  "tasks": [
+    {
+      "task": "S01-07",
+      "source_sha": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "matched_candidate_paths": 110
+    },
+    {
+      "task": "S01-10",
+      "source_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+      "matched_candidate_paths": 68
+    },
+    {
+      "task": "S01-11",
+      "source_sha": "6dbc1a00cec1349c2ff7fdc2fe633d64ce2cf82d",
+      "matched_candidate_paths": 114
+    }
+  ],
+  "observed_at": "2026-10-13T11:03:33.457658+00:00",
+  "scope": "Git ancestry and exact complete candidate-file blob matching in shared Main tree. No new combined build/runtime test claimed; tests retain original execution provenance."
+}

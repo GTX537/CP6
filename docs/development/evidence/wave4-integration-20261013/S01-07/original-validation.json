@@ -1,0 +1,1150 @@
+{
+  "schema": "CP6-WAVE4-S01-07-COORDINATOR-REVIEW/1",
+  "task": "S01-07",
+  "reviewer": "/root/wave4_review_quality",
+  "observed_at": "2026-10-13T07:37:10.582278+00:00",
+  "candidate_sha": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+  "review_base_sha": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "input_baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "worktree": "D:/CP6-worktrees/s01-07-20261012",
+  "review_result": "ACCEPT",
+  "findings": [],
+  "requirements_reviewed": [
+    "D:/CP6/AGENTS.md",
+    "C:/Users/tt/.agents/skills/requesting-code-review/SKILL.md",
+    "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md#S01-07",
+    "docs/development/dispatch/20261013-wave4/S01-07.md",
+    "docs/development/evidence/wave4-dispatch-20261013/S01-07-admission.md",
+    "Pinned original language protocols, composed-15/16/17/19, native Schema closure and IPQC canonical/publications"
+  ],
+  "review_scope": "Full 110-path candidate diff; authored product/runtime, tests and tooling; adopted declarations and complete semantic Schema predicate closure; original execution and source provenance. Immutable source outside adopted closure is hash-verified, not newly accepted as business behavior.",
+  "contract_checks": {
+    "required_null_only": {
+      "total": 7,
+      "main": 4,
+      "cp4": 3,
+      "observation_fields_in_cp4": 2,
+      "behavior": "Explicit null accepted/preserved; missing, zero, object and string null rejected. Other legal nullable values remain allowed."
+    },
+    "field_metadata": {
+      "total": 5,
+      "required": true,
+      "editable": false,
+      "nullable_false": [
+        "MainResult/oneOf/14/priorHeadRef"
+      ],
+      "nullable_true": [
+        "InitialSourceOptionQuery/sourceKind",
+        "InitialSourceOptionQuery/keyword",
+        "InitialSourceOptionQuery/cursor",
+        "InitialSourceOptionPage/nextCursor"
+      ]
+    },
+    "csharp": {
+      "roots": 24,
+      "declarations": 92,
+      "schema_nodes": 102,
+      "union_types": 8,
+      "wrappers": 12,
+      "all_semantic_predicates_compared_to_native_source": true,
+      "only_annotations_omitted": true
+    },
+    "typescript": {
+      "source_aliases": 203,
+      "runtime_roots": 23,
+      "native_registry_roots_exact": 21,
+      "composed_r4_roots": 2,
+      "canonical_routes": {
+        "MES_OUTPUT_QUALITY_TASK_RESULT_V1": "OutQualityTaskResult",
+        "MES_OUTPUT_QUALITY_DISPOSITION_V1": "OutQualityDisposition",
+        "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1": "ExecQualityTaskResult",
+        "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1": "ExecQualityDisposition",
+        "PLM_RAW_EVIDENCE_HANDOFF_V1": "RawEvidenceHandoff"
+      }
+    },
+    "native_identities": "QAP flat owner/id/version/digest Evidence and id/version Uom; Exec/Out ref/digest Evidence; Exec scope portionId preserved. OwnerWire/MES/Finance/WMS original Ref/Scope fields, limits and version lexemes remain distinct.",
+    "json_boundary": "Duplicate decoded names, escaped-equivalent and nested keys, malformed JSON, closed-object extras, absent required members and wrong union/event identities rejected. C# concrete branch writers and TS encode also validate."
+  },
+  "counts": {
+    "csharp": {
+      "discovered": 657,
+      "executed": 657,
+      "passed": 657,
+      "failed": 0,
+      "skipped": 0,
+      "unique_test_ids": 657,
+      "declared_methods": 19,
+      "executed_methods": 19,
+      "undiscovered_methods": [],
+      "full_object_fixtures": 594,
+      "positive_fixtures": 102,
+      "negative_fixtures": 492,
+      "fixture_ids_exact_match_trx_stdout": true,
+      "frozen_ncr_ids": 20,
+      "frozen_field_assertions": 28
+    },
+    "typescript": {
+      "discovered": 130,
+      "executed": 130,
+      "passed": 130,
+      "failed": 0,
+      "skipped": 0,
+      "individual_pass_rows": 130,
+      "runtime_roots": 23,
+      "full_root_tests": 69,
+      "payload_route_tests": 26,
+      "frozen_ipqc_ids": 6,
+      "original_publications": 5,
+      "manual_full_fixtures": 18
+    },
+    "web_typecheck": {
+      "exit_code": 0,
+      "test_count": "not a test runner"
+    }
+  },
+  "skips": {
+    "csharp": 0,
+    "typescript": 0,
+    "skip_attributes_or_only_filters_found": false,
+    "business_NOT_RUN_is_not_test_skip": true
+  },
+  "env": {
+    "original_csharp": {
+      "sdk": "10.0.302",
+      "runtime": ".NET 8.0.29",
+      "target": "net8.0",
+      "os": "Windows 10.0.26200 win-x64",
+      "evidence": "environment.txt and original TRX runtime assertion/stdout"
+    },
+    "original_typescript": {
+      "node": "v22.22.0",
+      "npm": "10.9.4",
+      "evidence": "08-date-regression-validation.json"
+    },
+    "review_python": "3.8.6, used only read-only audits/checks and scratch report output; not an assertion about the original worker Python runtime"
+  },
+  "commands": {
+    "reused_original": [
+      {
+        "command": "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~QualityContractTests --logger \"trx;LogFileName=quality-contracts-format-final.trx\" --results-directory docs/development/evidence/S01-07/csharp --logger \"console;verbosity=minimal\"",
+        "times": {
+          "creation": "2026-10-13T01:45:57.8006475-04:00",
+          "queuing": "2026-10-13T01:45:57.8006477-04:00",
+          "start": "2026-10-13T01:45:56.6414640-04:00",
+          "finish": "2026-10-13T01:45:58.5370509-04:00"
+        },
+        "result": "657/657 PASS; 0 skipped",
+        "rerun_by_reviewer": false
+      },
+      {
+        "command": [
+          "node",
+          "eng/contracts/s01-07/ts/generate.mjs",
+          "--check"
+        ],
+        "observed_at": "2026-10-13T05:46:03.565175+00:00",
+        "exit_code": 0,
+        "log": "docs/development/evidence/S01-07/ts/08-date-regression-0.log",
+        "log_sha256": "72ce0a51a4717a9040b18a6f9c85fb1b6ae2a3dc70d367c15534bd03669b8afa",
+        "rerun_by_reviewer": false
+      },
+      {
+        "command": [
+          "npm.cmd",
+          "--prefix",
+          "cp6.web",
+          "test",
+          "--",
+          "src/contracts/quality/ipqc.test.ts",
+          "--reporter=verbose"
+        ],
+        "observed_at": "2026-10-13T05:46:03.979708+00:00",
+        "exit_code": 0,
+        "log": "docs/development/evidence/S01-07/ts/08-date-regression-1.log",
+        "log_sha256": "aab752a0f3e44650660371303ccd0fc7f3d571a6796132035ab7923c1de3a715",
+        "rerun_by_reviewer": false
+      },
+      {
+        "command": [
+          "npm.cmd",
+          "--prefix",
+          "cp6.web",
+          "run",
+          "type-check"
+        ],
+        "observed_at": "2026-10-13T05:46:06.912072+00:00",
+        "exit_code": 0,
+        "log": "docs/development/evidence/S01-07/ts/08-date-regression-2.log",
+        "log_sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8",
+        "rerun_by_reviewer": false
+      }
+    ],
+    "review_executed": [
+      {
+        "command": "python -B eng/contracts/s01-07/import_sources.py --check",
+        "exit_code": 0,
+        "result": "32 pinned inputs"
+      },
+      {
+        "command": "python -B eng/contracts/s01-07/csharp/generate.py --check",
+        "exit_code": 0,
+        "result": "92 declarations, 102 schemas, 8 files"
+      },
+      {
+        "command": "node eng/contracts/s01-07/ts/generate.mjs --check",
+        "exit_code": 0,
+        "result": "23 roots, 5 routes, 203 aliases"
+      },
+      {
+        "command": "git -c core.longpaths=true status --short",
+        "exit_code": 0,
+        "result": "clean"
+      },
+      {
+        "command": "git diff --check e20740e37e20bc0210e0b32c5670c2bce962002a d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+        "exit_code": 0,
+        "result": "clean"
+      },
+      {
+        "command": "Read-only Python/XML/JSON audits via stdin and git show/rev-parse",
+        "exit_code": 0,
+        "result": "Source pins, composition replay, native schema predicate comparison, method/fixture discovery and hash binding match"
+      }
+    ],
+    "review_harness_corrections": [
+      "GBK printing of a test-log checkmark was corrected with UTF-8 stdout.",
+      "xUnit display names truncate long fixture IDs; exact IDs were verified from TRX StdOut instead.",
+      "Scratch report output initially used pathlib.write_text(newline=), unsupported by reviewer Python 3.8.6; changed to write_bytes. No product or test execution failed."
+    ],
+    "not_executed": [
+      "Full test rerun",
+      "Build/restore",
+      "Business database",
+      "Git writes/network publication",
+      "GitHub Actions query/trigger/rerun/cancellation"
+    ]
+  },
+  "binding": {
+    "execution_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+    "execution_state": "Task files uncommitted at original execution. Candidate preserves tested bytes; a new SHA is not a new execution.",
+    "candidate_blob_working_byte_comparisons": 110,
+    "candidate_mismatches": [],
+    "csharp_code_dependency_hash_checks": 15,
+    "csharp_recorded_artifact_hash_checks": 14,
+    "typescript_recorded_input_hash_checks": 49,
+    "typescript_log_hash_checks": 3,
+    "source_assets": 32,
+    "upstream_git_pin_byte_and_blob_checks": 8,
+    "container_member_path_ordinal_hash_checks": 16,
+    "reapplied_compositions": [
+      "composed-15",
+      "composed-16",
+      "composed-17",
+      "composed-19"
+    ],
+    "composition_index_hash_checks": 4,
+    "csharp_generated_files": 8,
+    "typescript_generated_outputs_checked": true,
+    "read_only_consumer_hash_checks": 15,
+    "source_manifest_sha256": "bbd32a7c63ce81af6967f5e9d47bc04dbd5779e3b6012e3c7fbe8aaca397b9e4",
+    "fixed_vectors_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+    "distinct_recorded_test_input_hashes": 64,
+    "all_match": true,
+    "artifact_scope": "Source/dependency/generated-output and raw execution-log/TRX hashes verified. Worker evidence does not pin executed DLL hash; no independent binary-identity reproduction claimed. Original logs record net8 compilation and test assembly execution."
+  },
+  "not_run": [
+    "Whole original type surface beyond adopted codec roots",
+    "Actual QA Owner adoption/currentness/authorization and tenant isolation",
+    "QualityInspectionService/DefectRecordService, HTTP/frontend consumer wiring",
+    "Cross-object business semantics and atomic domain/Command/Audit writes",
+    "Database storage/migrations/PostgreSQL integration/production promotion",
+    "All 50 original IPQC business AC and 247 overall runtime scenarios are not promoted by contract tests"
+  ],
+  "scope_limits": [
+    "26 frozen vectors retain FIELD_SUBASSERTION_ONLY/TYPE_BINDING_ONLY. Full decoder evidence is separate complete-object coverage.",
+    "C# MainResult adoption only includes full oneOf/14.",
+    "TS 203 aliases do not imply runtime decoding of all types: 23 roots only; two R4 types are not fabricated registry entries.",
+    "PLM RequiredFenced, MES proposed protocols, 41 REFERENCE_ONLY, missing ITER/REL originals and WP05 PROPOSED unchanged.",
+    "Documented TS/C# lone-surrogate profile difference retained; no general string interchangeability claimed.",
+    "C# pin verification is the separately executed import_sources.py --check, not an embedded generate.py preflight."
+  ],
+  "actions": {
+    "trigger_changes": [],
+    "cancelled_runs": [],
+    "remote_runs": [],
+    "scope": "Reviewer performed none; worker records none. Live remote state was not queried; final push guard belongs to coordinator."
+  },
+  "evidence_paths": [
+    {
+      "path": "docs/development/evidence/S01-07/DELIVERY.md",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/DELIVERY.md",
+      "sha256": "20521eaa467ba779a1ebd48292aca61c97f1bb8ed949d1faf5a1ee6d3ee14603"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/REVIEW.md",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/REVIEW.md",
+      "sha256": "64439c42e2ff6b099104fcd5ac2a5cde6958e9713de3a2bbc2bdb9140238dca6"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/verification.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/csharp/verification.json",
+      "sha256": "3e9981f726e4e1bb78b6e194a0755893a4f6659fc6f08d145d98d2ff1a2e5daf"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+      "sha256": "9e5a311cbedea390d086c8f3c7e8ebe25eb9a741ae4c701aa62a8e00ce0f8ff7"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/native-format-final-gate.log",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/csharp/native-format-final-gate.log",
+      "sha256": "5ed0c24968a583f2aa383f414c46e2a41e332d1bb53426987b7e92d13e4d1124"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/environment.txt",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/csharp/environment.txt",
+      "sha256": "9e1b9d7e939832aefca23c8b7c5f63858aa708f1d149ce2cca984349c356cd31"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-validation.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/ts/08-date-regression-validation.json",
+      "sha256": "d7cce89c62fdd472811a549e97b258728fb0c2ab1a81e1cf7568dd618ef672b9"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-1.log",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/ts/08-date-regression-1.log",
+      "sha256": "aab752a0f3e44650660371303ccd0fc7f3d571a6796132035ab7923c1de3a715"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-2.log",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/ts/08-date-regression-2.log",
+      "sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/fixed-vectors.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/fixed-vectors.json",
+      "sha256": "1a3cc7085f16df870376661be5ec1190665a1470cc651570878dbc42f3a32b4c"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/owner-consumers.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/owner-consumers.json",
+      "sha256": "7653c59a37758b1b7a04109112471caa15d49249f08944ff9eef461dfc7a2a1c"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/final-integrity.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/docs/development/evidence/S01-07/final-integrity.json",
+      "sha256": "a7711e66892f01ce11b2eb1bdec810212f72a0f2dfb78c5ad5388660bf3b2008"
+    },
+    {
+      "path": "eng/contracts/s01-07/sources.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/sources.json",
+      "sha256": "bbd32a7c63ce81af6967f5e9d47bc04dbd5779e3b6012e3c7fbe8aaca397b9e4"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/generation-manifest.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/csharp/generation-manifest.json",
+      "sha256": "40b00fc9387127a0ba21be95297019ca9c4b224fe383ab305d5408db3a41ebda"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/native-field-inventory.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/csharp/native-field-inventory.json",
+      "sha256": "cbde1363c08b97551e5a4cc285028aeb88e327793ffa6327c93e84c9ef4b483f"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/full-object-fixtures.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/csharp/full-object-fixtures.json",
+      "sha256": "190fcbfceb38ae42320332120f9771f6bffbb2103ec12564a204308ed55c4a8b"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/generation.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/ts/generation.json",
+      "sha256": "02ee87856d4832ca96cad4a4acde6911df3b596afbc8acff78970aa644017892"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/manual-fixtures.json",
+      "absolute_path": "D:/CP6-worktrees/s01-07-20261012/eng/contracts/s01-07/ts/manual-fixtures.json",
+      "sha256": "4b650c23ae818aecac78f6543de8402979e54fcbc47a961c2ed446952570b585"
+    }
+  ],
+  "changed_path_groups": {
+    "C# contract boundary": 9,
+    "TypeScript contract boundary": 7,
+    "Task delivery and original evidence": 46,
+    "C# contract tests": 1,
+    "Import/generator/fixture/evidence tooling": 15,
+    "Immutable source/protocol/Git pin": 32
+  },
+  "changed_paths": [
+    {
+      "path": "CP6.Entity/Contracts/Quality/.gitattributes",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 14,
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/Consumer.g.cs",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 1360,
+      "sha256": "bf3375df99acf0ae453bf1b8aa326ea6eea1631932a33de3e4c0e41fffbf0258"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/NativeContractCatalog.g.cs",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 73808,
+      "sha256": "0e359e8bf3af79fc21700d487be42effd8eb94b059edffaa131e896f75581988"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 832,
+      "sha256": "48a1943837b9fe08c179efcc50a9146512b1b67a2f94edd4e02468ab2bf3f914"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/NcrJson.cs",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 18563,
+      "sha256": "e6c230080597002478dac16c2a13685ef6bba321c383ce5ce67568297ed5c516"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/OwnerWire.g.cs",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 2567,
+      "sha256": "dcce37dd788c60d66cc6da0d9296a187251185536d218cbdbbfbfbfedae389ed"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/QaNcrMainR6Declarations.g.cs",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 25980,
+      "sha256": "4cfc8684330a6d8d3bdc82cb0432b687f2792c16f8ebe6b58e48b14fafc9e2bf"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/README.md",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 7126,
+      "sha256": "1a6f66dc9dc9d7ca8a852d05c7fd705a21ea2ba9d36db4f9bec9fd057985db00"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/SourceQA.g.cs",
+      "change": "A",
+      "summary": "C# contract boundary",
+      "bytes": 10903,
+      "sha256": "097081bf6cd84897cef5e9c059a9c55cec9740e6e7cccaac95406a75d55af3ec"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/.gitattributes",
+      "change": "A",
+      "summary": "TypeScript contract boundary",
+      "bytes": 14,
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqc.g.ts",
+      "change": "A",
+      "summary": "TypeScript contract boundary",
+      "bytes": 62128,
+      "sha256": "0ef897abdcc7b1cc7e40340ef49c06bde319b89c91ac94ddd29a2ab1b43af096"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqc.test.ts",
+      "change": "A",
+      "summary": "TypeScript contract boundary",
+      "bytes": 10986,
+      "sha256": "24034a561074d1e14e7beeb88d3cc0bfa426c11f1d4f6da5bfca93ebdf797c89"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqc.ts",
+      "change": "A",
+      "summary": "TypeScript contract boundary",
+      "bytes": 1630,
+      "sha256": "589a6a98d46fe130e29d9dc6d13f18a2333c0e98187484935e62c3ce3de558a0"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqcSchemas.g.ts",
+      "change": "A",
+      "summary": "TypeScript contract boundary",
+      "bytes": 97653,
+      "sha256": "4a6b7760eeb97bd0797a52204a669accde580be154917d59e199e6aeaa06dc72"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/schema.ts",
+      "change": "A",
+      "summary": "TypeScript contract boundary",
+      "bytes": 5656,
+      "sha256": "0713ecf08658e76b7fe9eb106d29c874aeb12f632dcc6fa07729a650d5b14b14"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/strictJson.ts",
+      "change": "A",
+      "summary": "TypeScript contract boundary",
+      "bytes": 1246,
+      "sha256": "63d7d72dd62940a880b6c736d153a1817fd8c17e1c83fcdad7940851b5a6f97b"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/.gitattributes",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 58,
+      "sha256": "892b322f34495eadde2749dc74745da1bf4db92f91e9cff623be6fd6a1d8b253"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/DELIVERY.md",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 7973,
+      "sha256": "20521eaa467ba779a1ebd48292aca61c97f1bb8ed949d1faf5a1ee6d3ee14603"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/OWNER-CONSUMERS.md",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 4004,
+      "sha256": "e9029b4200861a23201762deccd71a7e80f26b6f7b5811c7ad28d51b9847fa38"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/PLAN.md",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 1627,
+      "sha256": "7a0f2b92e9231e4aff52c2630ff1014b0542fd8bd9f4179fb02d6ab4016416f1"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/REVIEW.md",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 2433,
+      "sha256": "64439c42e2ff6b099104fcd5ac2a5cde6958e9713de3a2bbc2bdb9140238dca6"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/README.md",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 5006,
+      "sha256": "682c57c3a67bd2b36c36d755391b1e47bb303f1293c8b005cd4f3cdcfe7c8468"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/environment.txt",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 2922,
+      "sha256": "9e1b9d7e939832aefca23c8b7c5f63858aa708f1d149ce2cca984349c356cd31"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/first-codec-gate.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 646,
+      "sha256": "7e5c25d50d882b7e4c9e51c4a4877bbc9f24f7369551933f2d63b0d45f835e6f"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/native-final-gate.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 762,
+      "sha256": "0ddc5115da9678bbf429707c521f08b99796a0de92af7cbd4609dc0a3e02a57e"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/native-format-final-gate.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 769,
+      "sha256": "5ed0c24968a583f2aa383f414c46e2a41e332d1bb53426987b7e92d13e4d1124"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/native-gate.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 756,
+      "sha256": "e21ce9ba044c1183d4d0c8ac49cd7c968e69e6ead6e2bcde259e41dcfd9a5462"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/node-regex-dialect.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 608,
+      "sha256": "9421dbb5ec105f54832997a1b6c6ee153152cebd7f8b26fadc4b094886e6c06f"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/quality-contracts-final.trx",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 1255276,
+      "sha256": "b01c23a803240a01317ff164f08d1f90950d3b77a477ddf18cd6660018d8794a"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 1276822,
+      "sha256": "9e5a311cbedea390d086c8f3c7e8ebe25eb9a741ae4c701aa62a8e00ce0f8ff7"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/quality-contracts.trx",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 1247014,
+      "sha256": "8d27ad80063fbf6b3c538f081a3e8d982422c95243dcc8c48d3e27b5113db917"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-declaration-boundary.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 4146,
+      "sha256": "a5f19f1af6cd5aa4bb6fb6e19b2acfdef14de1115a6505c9cd2ba8ffe9229415"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-full-native.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 665645,
+      "sha256": "723984797ed62b93c236239712d146346fdf29ceded704b56466d646be6c3835"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-regex-dialect.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 3547,
+      "sha256": "e96d5d9ddf1e1383a1872bc9e01eea784085296106d23e814e9ac3807092e119"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-rfc3339-format.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 26981,
+      "sha256": "7d2dc76603f1dca4c857a00cc3ad498081b516f0077531fd69d8c27632cf75a9"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-writer-identity.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 4084,
+      "sha256": "77c3f18914c92eb2c29478f1ff5979d600ecf55deb83fbccc954c6dbf3855f75"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/verification.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 10799,
+      "sha256": "3e9981f726e4e1bb78b6e194a0755893a4f6659fc6f08d145d98d2ff1a2e5daf"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/final-integrity.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 9559,
+      "sha256": "a7711e66892f01ce11b2eb1bdec810212f72a0f2dfb78c5ad5388660bf3b2008"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/fixed-vectors.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 18223,
+      "sha256": "1a3cc7085f16df870376661be5ec1190665a1470cc651570878dbc42f3a32b4c"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/owner-consumers.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 5505,
+      "sha256": "7653c59a37758b1b7a04109112471caa15d49249f08944ff9eef461dfc7a2a1c"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/scope-review.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 22040,
+      "sha256": "a86580eb3e414be48deed571158eb3117c0022341bd51a6e9f973051b5593a7b"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/00-npm-ci.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 307,
+      "sha256": "0a0d150b5dd3b92268b967806920437a6f432838052d072ba83438ddc6552255"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/01-red.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 2496,
+      "sha256": "3b88194658bbab669fc2aa8ebfdc54b5be8f331297a71f8f3743195a1ab12112"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/02-native-tests.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 976,
+      "sha256": "8d64b3ca91f4d2a9b6a21c997b6c68d6b87a4ca3f129da6a47e4a3dd8eab6559"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/03-native-tests.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 313,
+      "sha256": "469499b09ec6d8ee807df86040f36906da306edbed6c42cd6d1a2751ba8597e0"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/04-type-check.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 51,
+      "sha256": "f39358c5d264df40c833ad6cf8f6286b9652d06fe1275645745b8a8de5be4a22"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/05-final-0.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 66,
+      "sha256": "72ce0a51a4717a9040b18a6f9c85fb1b6ae2a3dc70d367c15534bd03669b8afa"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/05-final-1.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 16013,
+      "sha256": "ec0ecf817992ce37464c1c3dd097016e5405a437e6b26499cbaa6f8ae850ad63"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/05-harness-failure.md",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 1591,
+      "sha256": "f4872aa7775860793b52bf8aba5469719705e42308deae632676e7ad891fcf2a"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-0.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 66,
+      "sha256": "72ce0a51a4717a9040b18a6f9c85fb1b6ae2a3dc70d367c15534bd03669b8afa"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-1.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 18240,
+      "sha256": "7b01cf69da511bf50bd572b102fe05b96032ce21ea375803c5fb61d13b2bd362"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-2.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 47,
+      "sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-validation.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 8098,
+      "sha256": "d31dd3d7be6d6fe98b2b2b973c324d12e1ba628deb1232c794068c7f323d9f6b"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-0.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 66,
+      "sha256": "72ce0a51a4717a9040b18a6f9c85fb1b6ae2a3dc70d367c15534bd03669b8afa"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-1.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 16549,
+      "sha256": "f7845dd8870dcaabe80fbf1c68a9eba006580f51aca2f471fcea717f278deacd"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-2.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 47,
+      "sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-validation.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 8098,
+      "sha256": "d54ac83adfd8b67480d4bfcd5079c2f1225f6d8640b0500171061048e73e3c14"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-0.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 66,
+      "sha256": "72ce0a51a4717a9040b18a6f9c85fb1b6ae2a3dc70d367c15534bd03669b8afa"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-1.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 17086,
+      "sha256": "aab752a0f3e44650660371303ccd0fc7f3d571a6796132035ab7923c1de3a715"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-2.log",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 47,
+      "sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-validation.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 8128,
+      "sha256": "d7cce89c62fdd472811a549e97b258728fb0c2ab1a81e1cf7568dd618ef672b9"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/workflows.json",
+      "change": "A",
+      "summary": "Task delivery and original evidence",
+      "bytes": 26394,
+      "sha256": "ea3a71fcc4bb6c1df127355d226efc48694f5848fee9a77bc114035a6f1c2dc4"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/QualityContractTests.cs",
+      "change": "A",
+      "summary": "C# contract tests",
+      "bytes": 17732,
+      "sha256": "dfeeec49bc2ac9f8aea71bd2e091428f6bdc01391be72ac7ee0474a53e468941"
+    },
+    {
+      "path": "eng/contracts/s01-07/.gitattributes",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 80,
+      "sha256": "f4079faec048950527546f69c7f6f94efc1e076cdba6a1c6c1af7737ac70836b"
+    },
+    {
+      "path": "eng/contracts/s01-07/README.md",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 3605,
+      "sha256": "a2c4d30b1511078efffacce0124640225a080728aa6c43cd70f96cc5df2240e0"
+    },
+    {
+      "path": "eng/contracts/s01-07/check_workflows.mjs",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 2842,
+      "sha256": "cab1dcfb333ec61a8a9dc563ebf4a0b70820d214cd5498630d5c235b3e025ee8"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/capture_evidence.py",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 5953,
+      "sha256": "16496d75da94cb491f3df74239a5834b59ab6e81b5abfef1704e0a50c3759c2e"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/full-object-fixtures.json",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 456014,
+      "sha256": "190fcbfceb38ae42320332120f9771f6bffbb2103ec12564a204308ed55c4a8b"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/generate.py",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 17138,
+      "sha256": "70bd5974faa847ed512ecdd035a169b0c15d51e229960f8aa4760e0e00cca4ac"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/generation-manifest.json",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 40020,
+      "sha256": "40b00fc9387127a0ba21be95297019ca9c4b224fe383ab305d5408db3a41ebda"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/make_fixtures.py",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 6132,
+      "sha256": "52f501e0ce1ffbf6b31c199522a4ea1e48b77f8e65fd8f55095a6ddb044e702a"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/native-field-inventory.json",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 343269,
+      "sha256": "cbde1363c08b97551e5a4cc285028aeb88e327793ffa6327c93e84c9ef4b483f"
+    },
+    {
+      "path": "eng/contracts/s01-07/import_sources.py",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 5148,
+      "sha256": "abf4d844ab90f4cb9752c9de472a7f7b9c4a82f33fcbd5dd369991dfb42ba6c8"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-15.cs.txt",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 624800,
+      "sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-16.cs.txt",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 362972,
+      "sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-17.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 2420366,
+      "sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-19.ts.txt",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 62015,
+      "sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-FENCED-OWNER-SHAPES.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 26866,
+      "sha256": "172f4d0f08b5bd4f79a067d4bac5da9f3d4ed1b69518fd99ed60da8c7fe625c4"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-MES-DISPATCH-SHAPE.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 5576,
+      "sha256": "45604318db366d61face166e65e5672339abf06d47887a86ce8edc8e6fe5e524"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 586084,
+      "sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 17856,
+      "sha256": "45d7e3551df0940f9875c3bc02e0e7b2ba0ccce581fc0145187c111a1ab8a160"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/CONSUMER-WIRE.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 122131,
+      "sha256": "a3e5c08a426bef34ed18118c2f9ee9d9285dfa70ec369bcc1b16587349b42dc7"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 144755,
+      "sha256": "392443aa5b52e47dd4947ee25aca57b61b7e454e5bd785e53ae0c630f714e356"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 240184,
+      "sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 487645,
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 1766984,
+      "sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 299269,
+      "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-15.cs.txt",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 624708,
+      "sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-16.cs.txt",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 362855,
+      "sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-17.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 2420369,
+      "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-19.ts.txt",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 62006,
+      "sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/2026-10-11-s01-task-breakdown.md",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 24101,
+      "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/bounded-patches.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 14120,
+      "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/composed-derivatives.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 53328,
+      "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/container-members.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 21781437,
+      "sha256": "730fd2a826e61b9cbad74e4e66e68fe478c0ce7135bd3469a9db4b8af22778a1"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/profile-inputs.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 113230,
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/required-inputs.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 3332403,
+      "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/s01-input-index.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 23332,
+      "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/vectors.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 132820,
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/ACCEPTANCE.md",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 2612,
+      "sha256": "7faae8212b09d21e656e386023e7380ce9c9eefff35c37c6a4832616f567ff18"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 1803613,
+      "sha256": "ec15532bb8820016f44af4dcf91823b2ec2af7684ec767cc1f25a4bbe61ec74b"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/LANGUAGE-CONTRACTS.md",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 7651,
+      "sha256": "23c597a0e6230a922823f6805c91a3c9b2d641fafbddff313ec2bd86a1cb98d9"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/NCR-R6-LANGUAGE-CONTRACTS.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 19421,
+      "sha256": "9e9ee118ded0250fa98ba6530d5c86f281a95ac0364ae15f1ee9e8481df08690"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 138327,
+      "sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/QA-IPQC-01-SPEC.md",
+      "change": "A",
+      "summary": "Immutable source/protocol/Git pin",
+      "bytes": 37378,
+      "sha256": "c82ef3d5833b823cc562606af1a8bd8a68653416790bfc09c895df3a9a8c511b"
+    },
+    {
+      "path": "eng/contracts/s01-07/sources.json",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 13955,
+      "sha256": "bbd32a7c63ce81af6967f5e9d47bc04dbd5779e3b6012e3c7fbe8aaca397b9e4"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/generate.mjs",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 7090,
+      "sha256": "548f45529610da63f801aec0297c3447f67d5828df6c792f10bf2be219fc8875"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/generation.json",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 3858,
+      "sha256": "02ee87856d4832ca96cad4a4acde6911df3b596afbc8acff78970aa644017892"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/manual-fixtures.json",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 8375,
+      "sha256": "4b650c23ae818aecac78f6543de8402979e54fcbc47a961c2ed446952570b585"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/validate.py",
+      "change": "A",
+      "summary": "Import/generator/fixture/evidence tooling",
+      "bytes": 3378,
+      "sha256": "2faea94b40e84bb56d517e18dcd7e777374fd73e8b4b8d421c95f68184602892"
+    }
+  ],
+  "coordinator_next": "Shared ledger/four state files, latest-main integration, final workflow guard, protected merge and remote main containment remain coordinator responsibilities."
+}

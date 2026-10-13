@@ -1,8 +1,8 @@
 # 细分任务进度
 
-台账日期：2026-10-13。由 roadmap.json 生成；S01 已交付：8/12。S02-00 多租户设计前置保留。
+台账日期：2026-10-13。由 roadmap.json 生成；S01 已交付：11/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 12 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 16 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -23,14 +23,14 @@
 | [S01-04 FIN-INV 数量、金额与分数](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-02 | CODE / M | B / S01-04（沿用原S01-05对话） |
 | [S01-05 Main TypeScript 精确值](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-01 | CODE / M | B / S01-05（沿用原S02-00对话） |
 | [S01-06 ATP StableId](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-02 | CODE / M | C / S01-06（沿用原S01-09对话） |
-| [S01-07 原生 Ref/Scope 与 NCR/IPQC 类型](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 可开工 | S01-02 | CODE / M | D / S01-07（沿用原S01-08对话） |
+| [S01-07 原生 Ref/Scope 与 NCR/IPQC 类型](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-02 | CODE / M | D / S01-07（沿用原S01-08对话） |
 | [S01-08 CRM INQ/LEAD 合同采用](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | CRM | 已交付 | S01-02 | CODE / L | D / S01-08（沿用原WP14-01对话） |
 | [S01-09 Platform 准确合同路由与原字节](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Platform | 已交付 | S01-01 | CODE / M | C / S01-09（沿用原WP05-01对话） |
-| [S01-10 PostgreSQL 精确存储适配](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 可开工 | S01-03, S01-04, S01-06 | CODE / L | B / S01-10（沿用原S01-04对话） |
-| [S01-11 ERP-CREDIT 原生金额与冻结重放](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 可开工 | S01-02 | CODE / M | A / S01-11（沿用原S01-03对话） |
+| [S01-10 PostgreSQL 精确存储适配](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-03, S01-04, S01-06 | CODE / L | B / S01-10（沿用原S01-04对话） |
+| [S01-11 ERP-CREDIT 原生金额与冻结重放](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-02 | CODE / M | A / S01-11（沿用原S01-03对话） |
 | [S01-12 采用证据与消费者交接](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07, S01-08, S01-09, S01-10, S01-11 | DESIGN / M | 未领取 |
 | [S02-00 PostgreSQL 多租户存储与事务布局设计](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | B / S02-00 |
-| [WP02-01 Platform可信请求、消息与后台租户上下文](../../docs/development/task-plans/WP02.md#wp02-01) | Platform | 可开工 | S01-02 | CODE / M | C / WP02-01（沿用原S01-06对话） |
+| [WP02-01 Platform可信请求、消息与后台租户上下文](../../docs/development/task-plans/WP02.md#wp02-01) | Platform | 已交付 | S01-02 | CODE / M | C / WP02-01（沿用原S01-06对话） |
 | [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 待安排 | S02-00, WP02-01 | CODE / M | 未领取 |
 | [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | 未领取 |
 | [WP02-04 租户创建、暂停恢复与管理审计](../../docs/development/task-plans/WP02.md#wp02-04) | Main | 待安排 | WP02-03 | CODE / M | 未领取 |
