@@ -1,0 +1,8 @@
+namespace CP6.Entity.Contracts.FinCredit;
+
+public enum CreditAmountProfile
+{
+    Signed = 1,
+    NonNegative = 2,
+    Positive = 3
+}

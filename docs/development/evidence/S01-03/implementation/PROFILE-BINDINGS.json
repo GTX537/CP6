@@ -1,0 +1,218 @@
+{
+  "task": "S01-03",
+  "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "profile_inputs_path": "eng/contracts/s01/profile-inputs.json",
+  "profile_inputs_sha256_file_bytes": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+  "native_source_id": "numeric-0",
+  "native_source_sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+  "native_schema_id": "https://cp6.example/design/fin-credit-wire-r4.schema.json",
+  "authority": "Original native FIN-CREDIT-01 Owner; this evidence and API do not transfer business ownership.",
+  "runtime_dependency": "No archive or source path dependency. Runtime tests use existing copied Inputs/vectors.json only.",
+  "profiles": [
+    {
+      "id": "fin-credit-signed",
+      "api_profile": "Signed",
+      "definition_pointer": "/$defs/signedDecimal",
+      "native_definition": {
+        "type": "string",
+        "pattern": "^(?:0|(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9])|-(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9]))$"
+      },
+      "native_field_bindings": [
+        {
+          "pointer": "/$defs/absorptionLink/properties/signedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/representationTransfer/properties/deltaPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/subject/properties/exposureDeltaPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/moneySigned/properties/amount",
+          "verified_form": "inline_definition"
+        }
+      ],
+      "verified_binding_count": 4
+    },
+    {
+      "id": "fin-credit-nonnegative",
+      "api_profile": "NonNegative",
+      "definition_pointer": "/$defs/nonNegativeDecimal",
+      "native_definition": {
+        "type": "string",
+        "pattern": "^(?:0|(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9]))$"
+      },
+      "native_field_bindings": [
+        {
+          "pointer": "/$defs/moneyNonNegative/properties/amount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/arObligationAggregate/properties/openPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/arCut/properties/arBookedExposure",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/reservationSet/properties/activeReservedDelta",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditExposureSnapshot/properties/totalExposure",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/subject/properties/currentCommittedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/subject/properties/targetCommittedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/postedOpenContribution/properties/policyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/effectiveCreditContribution/properties/policyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/appliedReceiptContribution/properties/policyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/unbilledOrderContribution/properties/policyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/activeReservationContribution/properties/policyAmount",
+          "verified_form": "inline_definition"
+        }
+      ],
+      "verified_binding_count": 33
+    },
+    {
+      "id": "fin-credit-positive",
+      "api_profile": "Positive",
+      "definition_pointer": "/$defs/positiveDecimal",
+      "native_definition": {
+        "type": "string",
+        "pattern": "^(?:[1-9][0-9]{0,37}|(?:0|[1-9][0-9]{0,36})\\.[1-9]|(?:0|[1-9][0-9]{0,35})\\.[0-9]{1}[1-9]|(?:0|[1-9][0-9]{0,34})\\.[0-9]{2}[1-9]|(?:0|[1-9][0-9]{0,33})\\.[0-9]{3}[1-9]|(?:0|[1-9][0-9]{0,32})\\.[0-9]{4}[1-9]|(?:0|[1-9][0-9]{0,31})\\.[0-9]{5}[1-9]|(?:0|[1-9][0-9]{0,30})\\.[0-9]{6}[1-9]|(?:0|[1-9][0-9]{0,29})\\.[0-9]{7}[1-9])$"
+      },
+      "native_field_bindings": [
+        {
+          "pointer": "/$defs/moneyPositive/properties/amount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/fxEvidence/properties/rate",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/planAtpObservationInput/properties/requestedQuantity",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+          "verified_form": "inline_definition"
+        },
+        {
+          "pointer": "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount",
+          "verified_form": "inline_definition"
+        }
+      ],
+      "verified_binding_count": 5
+    }
+  ],
+  "verification_result": "PASS"
+}

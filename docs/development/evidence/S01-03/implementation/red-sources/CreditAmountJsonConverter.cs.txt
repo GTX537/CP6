@@ -1,0 +1,13 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace CP6.Entity.Contracts.FinCredit;
+
+public sealed class CreditAmountJsonConverter : JsonConverter<CreditAmount>
+{
+    public CreditAmountJsonConverter() => throw new NotImplementedException();
+    public CreditAmountJsonConverter(CreditAmountProfile profile) => throw new NotImplementedException();
+    public override bool HandleNull => true;
+    public override CreditAmount Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotImplementedException();
+    public override void Write(Utf8JsonWriter writer, CreditAmount value, JsonSerializerOptions options) => throw new NotImplementedException();
+}

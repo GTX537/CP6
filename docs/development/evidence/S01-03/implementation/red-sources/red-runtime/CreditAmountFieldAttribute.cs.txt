@@ -1,0 +1,10 @@
+using System.Text.Json.Serialization;
+
+namespace CP6.Entity.Contracts.FinCredit;
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public sealed class CreditAmountFieldAttribute : JsonConverterAttribute
+{
+    public CreditAmountFieldAttribute(CreditAmountProfile profile) => throw new NotImplementedException();
+    public override JsonConverter CreateConverter(Type typeToConvert) => throw new NotImplementedException();
+}

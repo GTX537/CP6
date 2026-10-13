@@ -1,0 +1,63 @@
+{
+  "stage": "red",
+  "classification": "Compiled runtime RED completed; PowerShell evidence wrapper aborted on native stderr before recording its metadata.",
+  "wrapper_exit_code": 1,
+  "dotnet_exit_code_recorded": false,
+  "error": "Windows PowerShell NativeCommandError in run-tests.ps1 native dotnet/Tee pipeline while ErrorActionPreference=Stop.",
+  "observed_trx_counters": {
+    "total": 205,
+    "executed": 205,
+    "passed": 1,
+    "failed": 204,
+    "error": 0,
+    "timeout": 0,
+    "aborted": 0,
+    "inconclusive": 0,
+    "passedButRunAborted": 0,
+    "notRunnable": 0,
+    "notExecuted": 0,
+    "disconnected": 0,
+    "warning": 0,
+    "completed": 0,
+    "inProgress": 0,
+    "pending": 0
+  },
+  "full_trx_preserved": true,
+  "console_log_complete": false,
+  "metadata_not_reconstructed": true,
+  "superseding_complete_red_stage": "red-runtime",
+  "evidence_files": [
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red-environment.log",
+      "sha256_file_bytes": "47143645a4041f4e004ea2f3735d613fcae0605384e8c1ebb54912b5f5bc5122"
+    },
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red.log",
+      "sha256_file_bytes": "131c58540dc349806cdf662b3c04c428eb394c9d67e65b07527783a1230bb8db"
+    },
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red.trx",
+      "sha256_file_bytes": "eeb2783acd71f132b594f3a14c32cae02ff8738d14e9352c9c50227aaedb8525"
+    },
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red-sources/CreditAmount.cs.txt",
+      "sha256_file_bytes": "1287fd8b93b3d694e2c799cd49523422247eb67f5e0767bf006de2b47ff42b34"
+    },
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red-sources/CreditAmountFieldAttribute.cs.txt",
+      "sha256_file_bytes": "1a9531e64ea6baf7844354ea432b97ee380abe57b42f702921acdc272e84aa89"
+    },
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red-sources/CreditAmountJsonConverter.cs.txt",
+      "sha256_file_bytes": "a0f0ae8514428bab2fa479a1a120ea189044f953351a98c2efcc929e9e18bfb4"
+    },
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red-sources/CreditAmountProfile.cs.txt",
+      "sha256_file_bytes": "bc9329835d39d2d70547a42a492dbcead89c561353af08fdd3119458031046f9"
+    },
+    {
+      "path": "docs/development/evidence/S01-03/implementation/red-sources/CreditAmountTests.cs.txt",
+      "sha256_file_bytes": "f24ceca79a352983d3e9de01056ada434af12e39be185c90948531fdaee84b04"
+    }
+  ]
+}

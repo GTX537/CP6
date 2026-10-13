@@ -1,0 +1,15 @@
+{
+  "task": "S01-03",
+  "stage": "red",
+  "classification": "Runtime tests completed; Windows PowerShell log pipeline aborted before metadata capture.",
+  "cause": "xUnit emitted FAIL lines to native stderr. ErrorActionPreference Stop converted them into a terminating NativeCommandError at the dotnet/Tee pipeline.",
+  "test_trx": "implementation/red.trx",
+  "console_log": "implementation/red.log",
+  "console_log_complete": false,
+  "environment_log": "implementation/red-environment.log",
+  "metadata": "NOT_CAPTURED; not reconstructed or attributed a later source hash.",
+  "counters_from_actual_trx": {"total": 205, "executed": 205, "passed": 1, "failed": 204, "notExecuted": 0},
+  "response": "Preserve initial files and source snapshots. Limit Continue to native pipeline, restore Stop, capture actual exit code and metadata, execute a unique red-runtime stage before implementation.",
+  "product_logic_implemented_before_initial_red": false,
+  "actions_or_database_used": false
+}

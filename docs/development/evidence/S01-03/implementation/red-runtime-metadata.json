@@ -1,0 +1,96 @@
+﻿{
+    "stage":  "red-runtime",
+    "started_utc":  "2026-10-13T00:34:01.5078857Z",
+    "finished_utc":  "2026-10-13T00:34:06.5726480Z",
+    "powershell_version":  "5.1.26100.9444",
+    "base_head":  "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+    "source_state":  "Working files identified by raw file SHA-256; base_head alone is not the tested source.",
+    "command":  "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~CreditAmountTests",
+    "logging_arguments":  "--logger console;verbosity=normal --logger trx;LogFileName=red-runtime.trx --results-directory docs/development/evidence/S01-03/implementation",
+    "exit_code":  1,
+    "sources_unchanged_during_run":  true,
+    "sources":  [
+                    {
+                        "path":  "CP6.Entity/Contracts/FinCredit/CreditAmount.cs",
+                        "sha256_file_bytes":  "1287fd8b93b3d694e2c799cd49523422247eb67f5e0767bf006de2b47ff42b34"
+                    },
+                    {
+                        "path":  "CP6.Entity/Contracts/FinCredit/CreditAmountFieldAttribute.cs",
+                        "sha256_file_bytes":  "1a9531e64ea6baf7844354ea432b97ee380abe57b42f702921acdc272e84aa89"
+                    },
+                    {
+                        "path":  "CP6.Entity/Contracts/FinCredit/CreditAmountJsonConverter.cs",
+                        "sha256_file_bytes":  "a0f0ae8514428bab2fa479a1a120ea189044f953351a98c2efcc929e9e18bfb4"
+                    },
+                    {
+                        "path":  "CP6.Entity/Contracts/FinCredit/CreditAmountProfile.cs",
+                        "sha256_file_bytes":  "bc9329835d39d2d70547a42a492dbcead89c561353af08fdd3119458031046f9"
+                    },
+                    {
+                        "path":  "eng/contracts/exact-values-tests/CreditAmountTests.cs",
+                        "sha256_file_bytes":  "85993a4badbe5014176817267c89c94a485d0e81e0037399571a5a6b78e13801"
+                    },
+                    {
+                        "path":  "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+                        "sha256_file_bytes":  "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e"
+                    },
+                    {
+                        "path":  "CP6.Entity/CP6.Entity.csproj",
+                        "sha256_file_bytes":  "20724537f8dfa54de7b3e4998da971e3ada31dc0300caf229012a5fa851b671a"
+                    },
+                    {
+                        "path":  "CP6.Entity/packages.lock.json",
+                        "sha256_file_bytes":  "bf6ccea1eb09e82768edb2c2c1162171e006cd25632ed91f99af498dfa94d88f"
+                    },
+                    {
+                        "path":  "Directory.Build.props",
+                        "sha256_file_bytes":  "dd3c34588874b90b6e2d42aa2b51b4e7deedaf22ee34b6bc182160e3d148b739"
+                    },
+                    {
+                        "path":  "CP6.Entity/Contracts/Wire/StrictJson.cs",
+                        "sha256_file_bytes":  "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d"
+                    },
+                    {
+                        "path":  "CP6.Entity/Contracts/Wire/NullOnly.cs",
+                        "sha256_file_bytes":  "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b"
+                    },
+                    {
+                        "path":  "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs",
+                        "sha256_file_bytes":  "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee"
+                    },
+                    {
+                        "path":  "eng/contracts/s01/profile-inputs.json",
+                        "sha256_file_bytes":  "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e"
+                    },
+                    {
+                        "path":  "eng/contracts/s01/vectors.json",
+                        "sha256_file_bytes":  "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+                    },
+                    {
+                        "path":  "docs/development/dispatch/20261012-wave3/dispatch.json",
+                        "sha256_file_bytes":  "b3eef8a4dce7c802e6ebe213de8542529123c6d26563b9acee5540e0a5320b2b"
+                    }
+                ],
+    "artifacts":  [
+                      {
+                          "path":  "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.dll",
+                          "sha256_file_bytes":  "3ba29ddf171b67e34c40ff41a152f47b10bfc4396e3e7a0f0519b6b1da699cdb"
+                      },
+                      {
+                          "path":  "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.Entity.dll",
+                          "sha256_file_bytes":  "6931e435a86656969b5f25935b3d40d2fe34f8314f299d358a441ba520dab339"
+                      },
+                      {
+                          "path":  "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.runtimeconfig.json",
+                          "sha256_file_bytes":  "b9f6ae58ba9393a4833a54c1088ceeb2b6328e311b1be47945c55cfc4de3bc89"
+                      },
+                      {
+                          "path":  "eng/contracts/exact-values-tests/obj/project.assets.json",
+                          "sha256_file_bytes":  "5c32cb0d78c07e486c6d2ff0b869f2db2af1ffb2a21c7b9632cb3512336a226a"
+                      },
+                      {
+                          "path":  "CP6.Entity/obj/project.assets.json",
+                          "sha256_file_bytes":  "4f399d7709052373a4397776a2e9a274ad1c875dfa0c05aa742adbd11c195f77"
+                      }
+                  ]
+}

@@ -1,0 +1,16 @@
+{
+  "task": "S01-03",
+  "repository": "GTX537/CP6.AI-Handoff",
+  "branch": "codex/dev-handoff-s01-03",
+  "coordination_read_sha": "ad1260fd0de832817d52522c6111df6bacd788b3",
+  "message_sha": "d097d1690ce14625df22e855a43fbcc5ddaed5b2",
+  "path": "handoffs/CP6-DEV-20261012/tasks/S01-03/messages/20261013T002413Z-start/MESSAGE.md",
+  "remote_branch_head_verified": true,
+  "fixed_commit_content_matches_local_bytes": true,
+  "private_repository_verified": true,
+  "actions_enabled": false,
+  "candidate_and_refreshed_default_workflow_files": [],
+  "transport_result": "PUBLISHED_AND_READ_BACK",
+  "coordinator_ack": "NOT_YET_OBSERVED",
+  "entry_authority": "Existing roadmap READY/CONFIRMED and assigned-wave3; transport does not grant admission or DONE."
+}
