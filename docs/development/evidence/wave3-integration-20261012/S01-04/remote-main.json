@@ -1,0 +1,70 @@
+{
+  "result": "PASS",
+  "task": "S01-04",
+  "repository": "GTX537/CP6",
+  "source_sha": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+  "baseline": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+  "remote_main_sha": "688383439311a3babf00bae98ee426122ce60cd1",
+  "pr_url": "https://github.com/GTX537/CP6/pull/190",
+  "merged_at": "2026-10-13T03:07:19Z",
+  "candidate_files_match": [
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+      "blob": "ab77570cda8fafc9c01606e8e0cf3dc40d05d1a3"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimalJsonConverter.cs",
+      "blob": "7011c257bc9ce56a30a4a7fe4544f95be148f380"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryRatio.cs",
+      "blob": "6996b49fc173ef378e324ab483949bf53b97d793"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/README.md",
+      "blob": "c43aba7463af65096c016cac52863353f66f0b22"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/DELIVERY.md",
+      "blob": "e032247f340e10a0c00428192ff5a4893faef034"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/REVIEW.md",
+      "blob": "bdd239091e25ed02a58900ac0602492bd5fd0eef"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/green.log",
+      "blob": "fbca3503ffa480438ddc0b9d911172d5bc788098"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/green/inventory-green.trx",
+      "blob": "b35b4c6adc3cbe38d5e8115b05f1075d02bcd1ee"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/red.log",
+      "blob": "546ca6e37609bff5d88ee8e7c28acab24c667255"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/red/inventory-red.trx",
+      "blob": "fa35f68ab775b20d55650ecd22a7e7e852abc6cb"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/verification.json",
+      "blob": "f5e2535fd2d39e20352c045f135c39f7dd36a850"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/InventoryDecimalTests.cs",
+      "blob": "95c49065142f8ff33d337fe71343e9d5f2366020"
+    }
+  ],
+  "observed_at": "2026-10-13T03:07:10.474156+00:00",
+  "validation": "Reused original exact-source local results; coordinated source/evidence/read-only review",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "verification_observed_at": "2026-10-13T03:40:43.897257+00:00",
+  "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+  "verification_scope": "Fresh read-only PR state/head, latest remote main ancestry and all originally recorded candidate blobs checked after review.",
+  "clock_basis": "Original observed_at was captured from coordinator host AFTER the recorded Git/API checks; GitHub merged_at is a separate server clock. Host/server skew may make original observed_at earlier than merged_at; it is not an operation start time. Both raw values are preserved. verification_observed_at is the new actual host reading after this fresh verification."
+}

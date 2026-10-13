@@ -1,0 +1,2387 @@
+{
+  "captured_at_utc": "2026-10-13T03:21:40.949057+00:00",
+  "executed_head": "2ff7f1e4b3df8a4d492d971ffd8f19ff1ea77243",
+  "identity_basis": "Exact local working bytes and artifacts after the recorded commands, not a claim that HEAD includes uncommitted fixes.",
+  "environment": {
+    "node": "v22.22.0",
+    "npm": "10.9.4",
+    "dotnet_sdk": "10.0.302",
+    "python": "3.14.4 (main, Apr 14 2026, 14:30:57) [MSC v.1944 64 bit (AMD64)]",
+    "node_executable": "C:\\Users\\tt\\AppData\\Local\\nvm\\v22.22.0\\node.exe",
+    "path_scope": "Node directory prepended per process only; no nvm use or global switch",
+    "database": "NOT_RUN"
+  },
+  "inputs": [
+    {
+      "path": "apps/web/next-env.d.ts",
+      "length": 288,
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+    },
+    {
+      "path": "apps/web/package.json",
+      "length": 944,
+      "sha256": "08322c9105c8fc61c878e1199014426e607c0757339cb233bc257aa48afc05cb"
+    },
+    {
+      "path": "apps/web/src/app-shell/CrmAppShell.tsx",
+      "length": 3426,
+      "sha256": "9dde6afe1bd25bb248369e224e8597d926e6d376645b1d6bb64c5b02b5a1cdfc"
+    },
+    {
+      "path": "apps/web/src/app-shell/index.ts",
+      "length": 56,
+      "sha256": "60635d8417e39891f340be915ec58a10847d150b5817d2730bf19617c5970df5"
+    },
+    {
+      "path": "apps/web/src/app-shell/model.ts",
+      "length": 10144,
+      "sha256": "65a0a81ea0cb6f6b8f855c67a66f548b728bfb9971c9c7cf910389600c9869af"
+    },
+    {
+      "path": "apps/web/src/authorization/index.ts",
+      "length": 51,
+      "sha256": "d96dbc5a4827e676735688f54cf9e0402932076c939c0b2570b14abc6b8f4bac"
+    },
+    {
+      "path": "apps/web/src/authorization/local-fixture.ts",
+      "length": 1139,
+      "sha256": "97dd4686326ad9e97b80bae9a1d1bd4394e37129b29e1f7a6531da2773f266a7"
+    },
+    {
+      "path": "apps/web/src/authorization/policy.ts",
+      "length": 8190,
+      "sha256": "5900e10b9cc2f1c801d79374412b4d387b30c5f1a91bb613b52dc5a93fc5cc14"
+    },
+    {
+      "path": "apps/web/src/authorization/types.ts",
+      "length": 2154,
+      "sha256": "e017b8829867715c8358b456215c220a649a888d259aa224684e16afdee4903a"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/contracts.g.ts",
+      "length": 25003,
+      "sha256": "60c019092083aea238105fe3e84a280a2a9b34568e1ee70c6cc8e5ddefb93353"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/index.ts",
+      "length": 10271,
+      "sha256": "54e2e525121abfc61ba25bc078e0573b72092e03f4a2595b3a684c253d5c0bcc"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/revision-schema.g.ts",
+      "length": 239418,
+      "sha256": "752aed8790a292d74e650ec16c35b09b23f1216e7b87cb5405161d0722213236"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/schema.g.ts",
+      "length": 239392,
+      "sha256": "dd359ebe778f96c13cbc14517ea66655d95e1b95d49cfa26133fa6d3f6a0f634"
+    },
+    {
+      "path": "apps/web/src/contracts/lead/contracts.g.ts",
+      "length": 43682,
+      "sha256": "b448f9c9d56e93e4f8e45db5111269b39de47aee9df4b729b1aa3241cff22074"
+    },
+    {
+      "path": "apps/web/src/contracts/lead/index.ts",
+      "length": 3429,
+      "sha256": "ad99d3434b7daf172afba8c233351436cc15aac4fa8a0413eab8a09962e25556"
+    },
+    {
+      "path": "apps/web/src/contracts/lead/schema.g.ts",
+      "length": 156115,
+      "sha256": "669d4917b826a460dbd40063a88579d9e18520c3a5320933a8f1b0c839670773"
+    },
+    {
+      "path": "apps/web/src/contracts/wire/index.ts",
+      "length": 57,
+      "sha256": "db1efaa4e52b3751da9661d1ab88c240adf7aa1d40449ea4eba9fee7e1d109fa"
+    },
+    {
+      "path": "apps/web/src/contracts/wire/schema.ts",
+      "length": 19145,
+      "sha256": "9b21bc4518707e3eed962393b39ac8308b471682143b6b97a61ad1fc95c44e42"
+    },
+    {
+      "path": "apps/web/src/contracts/wire/strict-json.ts",
+      "length": 10843,
+      "sha256": "b933d2cc9d8f8509ab2847727ec4bdd57c91646925224652aedd2bf8ee28cd51"
+    },
+    {
+      "path": "apps/web/src/generated/crm-api.ts",
+      "length": 14877,
+      "sha256": "a8724ea22e3f24c2bd60a7f65cb4cfd78eb72d0dc850506b48d531484c009c2e"
+    },
+    {
+      "path": "apps/web/src/leads/api.ts",
+      "length": 7881,
+      "sha256": "5256d0b68f1b91474f9d497eccafea69bf8200fdbb04c6d943a8a8bf0565c720"
+    },
+    {
+      "path": "apps/web/src/leads/calendar.ts",
+      "length": 1494,
+      "sha256": "a059c6d1af2baeaa13122244baee556947f9c6eb86c46f29042c62a43eb21106"
+    },
+    {
+      "path": "apps/web/src/leads/Configuration.tsx",
+      "length": 13809,
+      "sha256": "4ca4d4989b59a06508303629de9b7e43c62e28925d58dfbb33c7be77dd47b850"
+    },
+    {
+      "path": "apps/web/src/leads/IntakeReview.tsx",
+      "length": 11411,
+      "sha256": "55ce457781ba951acdb53e7e2ab1c66efba526fb798b4906c8fc41c51eb40492"
+    },
+    {
+      "path": "apps/web/src/leads/LeadPages.tsx",
+      "length": 598,
+      "sha256": "038822d350e801cb01e631b9b43f3ce98c691d327edfddee6b47aae61d44383d"
+    },
+    {
+      "path": "apps/web/src/leads/LeadRecordDetails.tsx",
+      "length": 14933,
+      "sha256": "575ee6240c87943a929625d94d7ccc667d72533e0e26cd5ba925f223b2622a1d"
+    },
+    {
+      "path": "apps/web/src/leads/LeadWorkbench.tsx",
+      "length": 27024,
+      "sha256": "e4104eef1a07f22460ce0d08b32b1ab7a9f2bab20427d7f8e33857be1da91e22"
+    },
+    {
+      "path": "apps/web/src/leads/ManualLeadForm.tsx",
+      "length": 4340,
+      "sha256": "98f0a2dbf7bb3d946e3b0f4d7fafabd9b2e528b84eaa3401dbadfd9a0dfb5fec"
+    },
+    {
+      "path": "apps/web/src/leads/model.ts",
+      "length": 3636,
+      "sha256": "99dc158609cdf133210227245f0448e5015df3bb9af2d8e4b89f9387a68699e0"
+    },
+    {
+      "path": "apps/web/src/leads/PublicInquiry.tsx",
+      "length": 8017,
+      "sha256": "0de54ae86f4d85d1079f867853df8869cacf4bce3f77687a42b9af56fda3b529"
+    },
+    {
+      "path": "apps/web/src/leads/types.ts",
+      "length": 1612,
+      "sha256": "8183130b96e1ce0e9ebd0a2aed7f044076903e0b23cfd7ae70386a6ec48605b3"
+    },
+    {
+      "path": "apps/web/src/leads/Workspace.tsx",
+      "length": 4583,
+      "sha256": "7784f81dc5dc81e0c3dddd38b0a54d68976a36224fcec9ae431a712cd5bc5365"
+    },
+    {
+      "path": "apps/web/src/page-functions/app-router-validation.ts",
+      "length": 7258,
+      "sha256": "3367200d996c63a236bfa680de2bed2a245e3108018cd562386c5c6bc2665075"
+    },
+    {
+      "path": "apps/web/src/page-functions/catalog.ts",
+      "length": 23494,
+      "sha256": "6e2cce7a2c0f591f530f663b33162ace2e3e5a1c954059e19c335d7f03beb543"
+    },
+    {
+      "path": "apps/web/src/page-functions/registry.ts",
+      "length": 13982,
+      "sha256": "a5861d32ec59ac7502efeb9d26a7d770135911187a48d3d85c8a5b77df8f67a9"
+    },
+    {
+      "path": "apps/web/src/page-functions/types.ts",
+      "length": 5373,
+      "sha256": "9c07b0580d898dfed39c7fd2f989fd297c7c88eb26f907715a05f98cbeb3a65f"
+    },
+    {
+      "path": "apps/web/src/server/crm-proxy.ts",
+      "length": 6685,
+      "sha256": "349c87a8a4af603247c742553e1bb89b5c5803a78f9dc7fe6f391958d49fa0ef"
+    },
+    {
+      "path": "apps/web/src/states/CrmPageState.tsx",
+      "length": 3189,
+      "sha256": "d057c3abc0720e9ac14ea93c20210db610a86fb89418a07e1ee372bc43a0693b"
+    },
+    {
+      "path": "apps/web/src/states/index.ts",
+      "length": 57,
+      "sha256": "011d8b6cb33ccd3a130a6397b49f705081cbbe2e141dd32cb67f65f9cf46cfbc"
+    },
+    {
+      "path": "apps/web/src/states/model.ts",
+      "length": 3670,
+      "sha256": "44db2436b4439fee66eb3f72589f62099e5645ca5e5c0594eac3876a04d98902"
+    },
+    {
+      "path": "apps/web/tests/app-shell.test.tsx",
+      "length": 6786,
+      "sha256": "ac209118186e6bb79b1df7d8e2784f8c130081e13d6ab66e7290edac56edde14"
+    },
+    {
+      "path": "apps/web/tests/calendar.test.ts",
+      "length": 748,
+      "sha256": "5821194a0c6de76faee2256951e37e17ae562f2fce56129c396127cd6ef842ed"
+    },
+    {
+      "path": "apps/web/tests/contracts-exact.test.ts",
+      "length": 32953,
+      "sha256": "96aff37a2e8a18267e19ee147b2a624f765fd82c8cbca7e0030f244d70664e47"
+    },
+    {
+      "path": "apps/web/tests/crm-proxy.test.ts",
+      "length": 7282,
+      "sha256": "981d75a4ffbcfb6e9cc9462346a18192b3ed3e660a4cf1745fe1210bb80fd579"
+    },
+    {
+      "path": "apps/web/tests/function-authorization.test.ts",
+      "length": 9934,
+      "sha256": "9196fe4da8cd275fd6ce279caf768789804a1c1d645d79b5bdaa403b24474792"
+    },
+    {
+      "path": "apps/web/tests/leads.test.ts",
+      "length": 6568,
+      "sha256": "dc9c790c2fd6a6a0aa88799f09688551425b03b0b47346f31ed2b7b1cb25b491"
+    },
+    {
+      "path": "apps/web/tests/page-function-app-router.test.ts",
+      "length": 5701,
+      "sha256": "fa2375e06c21c468154a9c38af0142bbc7e4486aafeeb93cdf9566ac2342cc37"
+    },
+    {
+      "path": "apps/web/tests/page-function-registry.test.ts",
+      "length": 9353,
+      "sha256": "1f33cfe4a3033360579982bbbb5bc62fc7fb0544cb0243ec32612ce795d795a0"
+    },
+    {
+      "path": "apps/web/tests/page-states.test.tsx",
+      "length": 7104,
+      "sha256": "ca443174378ef1626a5fbcaa7cd78fa8b90ffdfb647569a1a083a28c582145d5"
+    },
+    {
+      "path": "apps/web/tests/s01/native-types.ts",
+      "length": 2320,
+      "sha256": "55c875d050cab5e0eee050919bc48f8a3dde41cbeef9c3f938b5fdc829b986ec"
+    },
+    {
+      "path": "apps/web/tests/s01/vectors.ts",
+      "length": 926,
+      "sha256": "e5b369bacd59937c1326bd9597a1f91431eac96a1f4631e4e3d53bd0eb45771f"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "length": 640,
+      "sha256": "a69bfff975c13bf6aeeeb6e901fe7b54a75a4c7cd2cc9145bb12e96049fb4db6"
+    },
+    {
+      "path": "apps/web/tsconfig.test.json",
+      "length": 576,
+      "sha256": "50dd63fc34596211e6ed470f830e7a315051da2aba1dc44341fe309572156bc0"
+    },
+    {
+      "path": "contracts/s01/.gitattributes",
+      "length": 130,
+      "sha256": "c7e56b032b68aef746c2fba4eb88cd8f22d6efda3c5e627e7cab97d881f1d70f"
+    },
+    {
+      "path": "contracts/s01/fixtures/contract-assertions.json",
+      "length": 25913,
+      "sha256": "2309afc28dd3820ef812163c98cb860fe6ffbe540e8e17e5d3d78d45a1d616d5"
+    },
+    {
+      "path": "contracts/s01/generation/StrictContractDecoder.cs.txt",
+      "length": 2661,
+      "sha256": "057627ced271a6a7809d75ddee989b0a95688d3d1a5e85c8db923b0ebe8546db"
+    },
+    {
+      "path": "contracts/s01/generation/StrictSchema.cs.txt",
+      "length": 1783,
+      "sha256": "0c07c9c6f60d6b8d64adafae47da2ff1a392c10723ffe64e4af56c2d7a641a28"
+    },
+    {
+      "path": "contracts/s01/generation-manifest.json",
+      "length": 16552,
+      "sha256": "985db6e3f405106099c27f047cfb85d8d3e39d324d2d39bce76edd3c36c18827"
+    },
+    {
+      "path": "contracts/s01/profile-inputs.json",
+      "length": 113230,
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e"
+    },
+    {
+      "path": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/crm-inq.terminal.openapi.json",
+      "length": 238954,
+      "sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d"
+    },
+    {
+      "path": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/overlay.json",
+      "length": 4068,
+      "sha256": "bce20c5a3bc93826993be6c2ba7c9a440fffd467f746245e5665707d8eedf549"
+    },
+    {
+      "path": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+      "length": 2070,
+      "sha256": "c354974c918dbc39d1ecf9352db79ab5b2b8a61e901f2db6ea328d6112993645"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/229813cf102aad92__ui-positive-cases.json",
+      "length": 50018,
+      "sha256": "b5cd3840d288f191ed213e348ae2fed4d01f26c2c28812ab92d3e4ed323b989b"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/2428190864cfd501__CP20-qualification-h02.schema.json",
+      "length": 155758,
+      "sha256": "2428190864cfd501096d4816a4fa6dfdb4473cdea9ebb8dc2e8b27691df291e8"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "length": 137175,
+      "sha256": "59c94a5a99eb2383a5e0e0bfaa957ee6ad9dfaeff5d2ff0bb449e0e07a22d850"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/8538042210844249__crm-inq.openapi.json",
+      "length": 239051,
+      "sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "length": 11046967,
+      "sha256": "4087f29215dd4de47dedc4b2e7d9e34eb0dcd63a645bae8f032364b2cc8a3ac8"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/CrmLeadCp20Contracts.cs",
+      "length": 66793,
+      "sha256": "45ad1fa71237bbadf5e4ced495ea3a35ff625ee385270b6566057f9782e1eab7"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "length": 82951,
+      "sha256": "acd6c5a6a2f6660b52ca978077e130e86f2d920f0d6bbf9d7937d081e48b953b"
+    },
+    {
+      "path": "contracts/s01/upstream/core-types-bounded-patches.json",
+      "length": 14120,
+      "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3"
+    },
+    {
+      "path": "contracts/s01/upstream/fixtures-bounded-patches.json",
+      "length": 67525,
+      "sha256": "d9aa79c4efad0ba5ef58da632d65f1f598da3b03f6919eeb1a67617aa1284d94"
+    },
+    {
+      "path": "contracts/s01/upstream/JsonSemanticEquality.cs",
+      "length": 4547,
+      "sha256": "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee"
+    },
+    {
+      "path": "contracts/s01/upstream/NullOnly.cs",
+      "length": 803,
+      "sha256": "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b"
+    },
+    {
+      "path": "contracts/s01/upstream/original/229813cf102aad92__ui-positive-cases.json",
+      "length": 50036,
+      "sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23"
+    },
+    {
+      "path": "contracts/s01/upstream/original/2428190864cfd501__CP20-qualification-h02.schema.json",
+      "length": 155758,
+      "sha256": "2428190864cfd501096d4816a4fa6dfdb4473cdea9ebb8dc2e8b27691df291e8"
+    },
+    {
+      "path": "contracts/s01/upstream/original/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "length": 137027,
+      "sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72"
+    },
+    {
+      "path": "contracts/s01/upstream/original/8538042210844249__crm-inq.openapi.json",
+      "length": 238336,
+      "sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a"
+    },
+    {
+      "path": "contracts/s01/upstream/original/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "length": 11046655,
+      "sha256": "8907803dd2e284d08b71011df6b373d1a0fe910d95c546463a4fef4c981a410e"
+    },
+    {
+      "path": "contracts/s01/upstream/original/CrmLeadCp20Contracts.cs",
+      "length": 66794,
+      "sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59"
+    },
+    {
+      "path": "contracts/s01/upstream/original/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "length": 82892,
+      "sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329"
+    },
+    {
+      "path": "contracts/s01/upstream/s01-input-index.json",
+      "length": 23332,
+      "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95"
+    },
+    {
+      "path": "contracts/s01/upstream/StrictJson.cs",
+      "length": 5821,
+      "sha256": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d"
+    },
+    {
+      "path": "contracts/s01/vectors.json",
+      "length": 132820,
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+    },
+    {
+      "path": "Directory.Build.props",
+      "length": 408,
+      "sha256": "b16171f79d8ff5e5a3d114486bddd4d3a64e43a524a1049231f16d421b716af3"
+    },
+    {
+      "path": "global.json",
+      "length": 108,
+      "sha256": "546b7a626451526a3d390b862254cb0d15f62042ad1b4e40eccbb44168ba8f7c"
+    },
+    {
+      "path": "package-lock.json",
+      "length": 260643,
+      "sha256": "20d8b1f04fc8ec6c9460e591072a5ac69b68be57ef618cc96d365710fff7d48c"
+    },
+    {
+      "path": "package.json",
+      "length": 700,
+      "sha256": "f08edbff328ea0f5c28690b9bde80a61fccd051b6e6765343ae68b0094b56153"
+    },
+    {
+      "path": "scripts/import-s01-contracts.py",
+      "length": 30743,
+      "sha256": "43c0435576a6296506140bb8e17207243c44566a7d4ec178a03d8d2f50a7e79a"
+    },
+    {
+      "path": "src/CP6.CRM.Api/appsettings.json",
+      "length": 160,
+      "sha256": "54c79fa2267ff0adb1669b7e0b11ddd2170bdd376b13a80ed55a67e51f52b9e5"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmAuthContracts.cs",
+      "length": 3295,
+      "sha256": "69e9d3fb0e29ebf5df0cc80d4b712ed174f05f0a8de20859fe3e64d47d210458"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmAuthenticationProblems.cs",
+      "length": 798,
+      "sha256": "c3b98b783dd3d3a2a8f5612be48e8d7823feebb84f6c19cedef1d3e3849fc929"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmAuthenticationService.cs",
+      "length": 10863,
+      "sha256": "9a43344cf0b615e58c4855a36a7cf1819e75ced75c625df9b18386dc41a1c1ca"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmAuthOptions.cs",
+      "length": 2183,
+      "sha256": "e72ab48becbbe13901d634f1c077cf5b1bd80a6c0500c5f5b6fbe88022941fce"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmErpExtensions.cs",
+      "length": 1643,
+      "sha256": "bfeca5ac1284a8d740a05c40e98e11d440f780c6de515a8606ffae875192db55"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmIdentityProjectionExtensions.cs",
+      "length": 5180,
+      "sha256": "df38093c34f5922f04c54ab90d91e6dfcb64145441d0960eeb5271367634ea10"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmOidcClient.cs",
+      "length": 24264,
+      "sha256": "3ddba6e0618fbc2c5a7d230593875bdb528def0336cfdc7b2b1a4e45fedef621"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmPlatformAuthenticationExtensions.cs",
+      "length": 1919,
+      "sha256": "103289bce9388c0ff3b4e1196f96b83fc2926f62d9f0c7aebb2c356c16077e39"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmPublicBrowser.cs",
+      "length": 6171,
+      "sha256": "1606e78eaf37899a4ece0672b9441da9acbacae5d877c47bf85b71190d31897d"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/CrmTransportSecurity.cs",
+      "length": 3085,
+      "sha256": "b568decdbfcf32919180770fd7c2f6569b6076e7af96eacb6ea90da22e4449f2"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Authentication/SqlCrmAuthStore.cs",
+      "length": 17521,
+      "sha256": "29978b9959659f5a42672ad8df1bcf6f9e3612b7a06b2b95ad55e657140e045e"
+    },
+    {
+      "path": "src/CP6.CRM.Api/CP6.CRM.Api.csproj",
+      "length": 361,
+      "sha256": "8f2c3314a099e4e710769e1eca17dca98ab346ba8a9fcef883e208478cce8c7d"
+    },
+    {
+      "path": "src/CP6.CRM.Api/CrmContractInputFilter.cs",
+      "length": 1459,
+      "sha256": "a68937742d89d08c6e1561c3dc6736e083c5e067586a259e589c24cd9a73fe4d"
+    },
+    {
+      "path": "src/CP6.CRM.Api/CrmEndpoints.cs",
+      "length": 16659,
+      "sha256": "ed41f3a1130398869d0e9a709269f99adab3d98d9543b9098205bf499752274e"
+    },
+    {
+      "path": "src/CP6.CRM.Api/CrmRetentionWorker.cs",
+      "length": 785,
+      "sha256": "984584280d842fd3b5c34ad3b9bfb115ca312a0beabdf11968bfbc15a56a934f"
+    },
+    {
+      "path": "src/CP6.CRM.Api/Program.cs",
+      "length": 10427,
+      "sha256": "04c93be407689707c95e3eaf21efcc0858bd15d4decc21800e914fb98be26382"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/CrmApi.g.cs",
+      "length": 24770,
+      "sha256": "0041cafaa483b216c57c545e37afedf4fb8961873ea939ffcb7608f415ac7628"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/InquiryContracts.g.cs",
+      "length": 78797,
+      "sha256": "c0aaf199095f92e295468ce00bc37d29abec49f7edea64e09ea480029833474e"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/InquiryRevisionSchemaSource.g.cs",
+      "length": 319137,
+      "sha256": "551b3378a5f2ee538777d6eba6cec3c7584545da87d57508ff704a03fc8478a2"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/InquirySchemaSource.g.cs",
+      "length": 319068,
+      "sha256": "0cbccbe2cda495979bfa0ef2841575d8d9385a695d80f7524dbaf2afeab76d79"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/NativeInquiryDefinitions.g.cs",
+      "length": 2768,
+      "sha256": "973b38ec5f7f63ffee53fc48729d2dae0e17f9e1cfe800c980fc5e55cdb169e4"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/NativeInquirySchema.cs",
+      "length": 5484,
+      "sha256": "9298e5499e49b8ba85fe4baeb0fecefed87598b2a3dc191f508c2a52665c9dce"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Lead/LeadContractDecoder.cs",
+      "length": 3881,
+      "sha256": "8f2a6d922373a86ed2df51ab5b05f982d1188574a5ba0670bd55f4ce70a1f437"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Lead/LeadContracts.g.cs",
+      "length": 71425,
+      "sha256": "88a4ca3c97d6f2cc2be3b3df7015956263aaa39aacd054b8f6518ab791778026"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Lead/LeadSchemaSource.g.cs",
+      "length": 207993,
+      "sha256": "3ea9ee067b6721f7bee2c0348cc2e2d23446844db6e584e1be57ea123cb55c96"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/ExactJsonNumber.cs",
+      "length": 4519,
+      "sha256": "31e2dc8dbc2711809675b10f0bf7978e8d83075d4b61c416b097d25fe2f08b13"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/ExactJsonTemporal.cs",
+      "length": 2075,
+      "sha256": "9ad4dd0c7cbe9e7da2254aca993aee83da31232cd147e1fc799605023eae130c"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/JsonSemanticEquality.cs",
+      "length": 4556,
+      "sha256": "394060d62d44eef4c19eadd529428ce295c9633f63499a73d437237eeeb82d71"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/NullOnly.cs",
+      "length": 812,
+      "sha256": "9f026fccf5df4e4dcc9b70911bbb7549a83524ca583ce73d2a0d91c5350e8e21"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/StrictJson.cs",
+      "length": 5830,
+      "sha256": "500cd7b07d4720e67d8ef7ce8f70054723904c270325903bc1ca4a92a97f6371"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/WireJsonConverters.cs",
+      "length": 1269,
+      "sha256": "e48c019490e4f3f50300e3e9b937a0656a6e1ce270fe691a01829b92800d93d9"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/WireSchemaValidator.cs",
+      "length": 11753,
+      "sha256": "3ec4a4574bdcdd241c17db4d1bcaadf88edd64bef3ced3614cf4736edbadbddd"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/WireTemporal.cs",
+      "length": 4147,
+      "sha256": "2165a5ddd45b1535a0b15ea14a9410eb8d586f08e1769b7c430eb223cda92891"
+    },
+    {
+      "path": "src/CP6.CRM.Application/CP6.CRM.Application.csproj",
+      "length": 258,
+      "sha256": "bc76bb1fc31de2220eb4de2557bafa07b6526546d9bd797cf583d5eb4907c9eb"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/DataRegion.cs",
+      "length": 111,
+      "sha256": "4311b429e77026f81358965e117e1dbdd3c4146eeca8c68826d087154c5207d5"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/IOrganizationDatabaseCatalog.cs",
+      "length": 243,
+      "sha256": "80748e821d8b5c7652633e9c81c961e9580f8169a72f36c699af37af356c2762"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/IOrganizationDatabaseRouter.cs",
+      "length": 245,
+      "sha256": "809e01bb13c015db862f20ae2f172c0e8f090c9946953fd0eebfb332bfa63f31"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/OrganizationContext.cs",
+      "length": 868,
+      "sha256": "c90bd653d1ff9325958da4fad4557110278fb4cae71a50a5bd4a1f9c3961da53"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/OrganizationContextTrust.cs",
+      "length": 134,
+      "sha256": "ebfcd429022202176144d3b03d42d0c4e14e6c5b2c3e4dd3d933668103a1d7b0"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/OrganizationDatabaseRegistration.cs",
+      "length": 1436,
+      "sha256": "de9b0664c21467e20c19ff8f100f222b697bb3b1dc6583575038f6d49930b17f"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/OrganizationDatabaseRoute.cs",
+      "length": 166,
+      "sha256": "69b89ac26e7c7ab1e5e8ec8faafd1a9bc46c0f163b1a6dc0b4162b723e882a4c"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/OrganizationDatabaseRoutingException.cs",
+      "length": 1004,
+      "sha256": "0a96ff1a21932827cdee6688489c1e70bc397d7bf1f9107f707ff30be43dab9f"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/OrganizationDatabaseRoutingFailure.cs",
+      "length": 209,
+      "sha256": "c9e212cc8c66c578069bf515bdbbe5893613a2bad9a35e8ee657b21a5c0c08a1"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/OrganizationDatabaseStatus.cs",
+      "length": 125,
+      "sha256": "2d77cbb0ea35d6503771322b452e694a49cac14c7be0d6a827a1f6bf8f406cb2"
+    },
+    {
+      "path": "src/CP6.CRM.Application/DatabaseRouting/PlatformOrganizationContextAdapter.cs",
+      "length": 601,
+      "sha256": "34edb378806e9cd5314722840deaacb8181e202c28831dee1c52d626a632cdc7"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Erp/IErpReadClient.cs",
+      "length": 1383,
+      "sha256": "1d5f2e0acc84a965e21df5b6f09889f839a180b2986aaf2c5b1f1ef7f14c87fe"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Identity/IdentityAuthorization.cs",
+      "length": 669,
+      "sha256": "5c9947c4d7b21046314f761ef47442a211a02b1053b718ba6e5ff8ad5d6d9909"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Leads/CrmAccessPolicy.cs",
+      "length": 1438,
+      "sha256": "45c1e7289ff87eda282417699ebb0590a212a19992ed487523889beb27743d68"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Leads/CrmActorContext.cs",
+      "length": 1094,
+      "sha256": "fd38c072e47f924dda6ddae9fad2b3e771f41ef8bc763b77aa05adc9383c57e7"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Leads/CrmPublicRequestProof.cs",
+      "length": 357,
+      "sha256": "13296c11b6ea9cd42b0571d23561926fd4c8ddd32fbc6f6e7e1414ef54ea74f6"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/CP6.CRM.Domain.csproj",
+      "length": 36,
+      "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/DomainAssemblyReference.cs",
+      "length": 182,
+      "sha256": "1b3f136c57a768f72ec122103d8eff330229fda403b508abddb5a4cd504fd1e4"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/BusinessCalendar.cs",
+      "length": 5489,
+      "sha256": "f5dcf476fe15b188004b08c2109a7693896d29653580bec428836012e3a7d21f"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/Lead.cs",
+      "length": 15834,
+      "sha256": "e038fac12fadc00d1e48a3724fac39b39628926af5c4475c3d88ca0da777a535"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/LeadActivity.cs",
+      "length": 4821,
+      "sha256": "233ef09368ebf2789449b916bb5c5532e4d8ac1d3f9788e76670b3be79d83af1"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/LeadContact.cs",
+      "length": 1648,
+      "sha256": "4ffb806332dfcccc65dcde10c54d7cfbf4f17141bf5067659e8d6097032d76f4"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/LeadDomainException.cs",
+      "length": 167,
+      "sha256": "82721be44e08f967e26fbb61b8f819e8ee49d80bc8480e59e79d08712a6c25da"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/LeadRetention.cs",
+      "length": 3318,
+      "sha256": "30d45339269269ba0a4d7bd378cef69e5d629431f33abcafc026a7ed5da08cb1"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/LeadSnapshot.cs",
+      "length": 1735,
+      "sha256": "84f7886a9cc570c50f64f80bf77a127bbe6d391078dd8d522b0717086c02c9b3"
+    },
+    {
+      "path": "src/CP6.CRM.Domain/Leads/PublicSubmission.cs",
+      "length": 12455,
+      "sha256": "d8c53371db3ae4b9f8cd79bd2691ab77d495d84c87e87830a386e94c2c1ad56b"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
+      "length": 2827,
+      "sha256": "1411f641dbedcd450a315d80efa7f25aa1e65818fca4c06d35f4c9cf34300704"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/DatabaseRouting/InMemoryOrganizationDatabaseCatalog.cs",
+      "length": 900,
+      "sha256": "7e60ed730aa2f24e80a772ce688677bfd38e6a1b4085903f9847eb37eff6bfec"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/DatabaseRouting/OrganizationDatabaseRouter.cs",
+      "length": 1770,
+      "sha256": "95f189ec836f8d580ebb1754d61498c5fa3ccc5e1ccefe06f13889f06cf98f68"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Erp/Contracts/ErpEventContracts.cs",
+      "length": 3770,
+      "sha256": "ecbc074814e1ea1892448d212719f97e34527e01f40b854b170e772dcd2bde50"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Erp/Contracts/ErpEventValidator.cs",
+      "length": 6210,
+      "sha256": "681419ffd6adea6c4e0b273d345fe481eda4a349b7137652ba704685caa52ec4"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Erp/ErpReadClient.cs",
+      "length": 12653,
+      "sha256": "2951e1ce059b2c168d1ff758c1804c52d727162966bb6a49293844c298d9d010"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Erp/ErpReadOptions.cs",
+      "length": 1707,
+      "sha256": "b71aab1447ea07930d5d6be8c8f39e17d42f1f833ed819be3eef6bd59acd759d"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Contracts/IdentityEventContracts.cs",
+      "length": 3721,
+      "sha256": "7b1190d4a40f94e238594b2f2e0abdbad9b81e555448f09c79eb5931f9e9210a"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Contracts/IdentityEventValidator.cs",
+      "length": 8040,
+      "sha256": "c14a5cc3a5890fecfa0537e0b24cb14c2617ae1bf1f6271a842d67b47fc1cfe5"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityAuthorizationPolicy.cs",
+      "length": 7596,
+      "sha256": "4c005ae07c22612f40be493abfcab9c4e2aa3854d958f0abe70f233f8cc617ff"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityAuthorizationReader.cs",
+      "length": 4399,
+      "sha256": "978243515f621039cfc04503bedeed203a8f436fe78cd140afe0d56fb697092f"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityEventConsumer.cs",
+      "length": 6279,
+      "sha256": "2595bddb439e183506fc681477a1fb2d066c8e44b8feb908dfacd77f8b3270fa"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityProjectionContext.cs",
+      "length": 5368,
+      "sha256": "fd2e60189ec4b0f6b4ac0e6d51883c3530db624d846e51be822d0b6713c15801"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityProjectionOptions.cs",
+      "length": 1713,
+      "sha256": "d88b054c0edd0ed1d57d615488ecb9638838cc64046602637f55a3559716f5ab"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityProjectionStore.cs",
+      "length": 8987,
+      "sha256": "1cafe56eaa36ca0cf0297853eb7f96d694d52fa8df41f6f93410b022dbf05e95"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityPublishedCompiler.cs",
+      "length": 7331,
+      "sha256": "2c3b18bebcb5f1f4f2bd6eeb4e185ec08bf080c3e3bfcc407c6cf3ba1f478f3f"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityPublishedModel.cs",
+      "length": 6477,
+      "sha256": "006d6f45e505badc3a69b97b3a0aaf76974c5bf9f015a17819c8894b25728a90"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityPublishedModels.cs",
+      "length": 4321,
+      "sha256": "642f3f6b956d55f7cf9f3a7a69bd5da7bd7585936ca6e4af7c9599035a7bda58"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityPublishedPublisher.cs",
+      "length": 7263,
+      "sha256": "e5765b381fad5ce235fd14509405f9738b187699f43f6247d909f8c672b59bcc"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityPublishedReader.cs",
+      "length": 4825,
+      "sha256": "ad35930cff4f49675279a755a44cf8a6cd050030ece145a96bb06a1b9143e394"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityReconciliationClient.cs",
+      "length": 7294,
+      "sha256": "f8902ab12c881e9b905f01beb62a596c0ec77cfa41aaf0c37a42491f5dbc0665"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityReconciliationWorker.cs",
+      "length": 12228,
+      "sha256": "154fc31d657931c5049cacb14670a99b7845b33a7288778f55157cee4d0456f3"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityRevocationOrigin.cs",
+      "length": 4758,
+      "sha256": "cb214ac7916fb31d7532a1a38194d245b6d968048590190711ce1f261c41c3fb"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/IdentityRevocationOriginReader.cs",
+      "length": 2500,
+      "sha256": "8a65517161143c84fbbeeba152c255a1b8ddb8dd2cc3088c35bb42b40d655b58"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Migrations/20260910060401_IdentityProjectionInitial.cs",
+      "length": 15349,
+      "sha256": "053f1f3a2902d441694009e18d7a069285e189809850dbfed11249fe6a0773e4"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Migrations/20260910060401_IdentityProjectionInitial.Designer.cs",
+      "length": 17782,
+      "sha256": "bd35ea64418676ba1116edebd9d654b012bfff99493ee09bb092db3c41aaa39f"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Migrations/20260914095428_PublishedIdentity.cs",
+      "length": 15757,
+      "sha256": "7257093ef9369c9d62959750c7bebe49cb7c6c254fdfe72668c9b8ef02e5d8f3"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Migrations/20260914095428_PublishedIdentity.Designer.cs",
+      "length": 35755,
+      "sha256": "ae3e34a93d22d20d131233c644fe6ec21e44c7abe4749e6a358109d9a63e4c46"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Migrations/20260914102138_IdentityRevocationOrigin.cs",
+      "length": 1373,
+      "sha256": "2fb7e4b7cd71c678c5ef69ffcd57974e8c014ef922ec584dd84ccbbd6f642df4"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Migrations/20260914102138_IdentityRevocationOrigin.Designer.cs",
+      "length": 36280,
+      "sha256": "4ab2719d2fa4e7e47d5945119d6e5b77e1e789b6682a8c08d799360b4a1233a6"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Identity/Migrations/IdentityProjectionContextModelSnapshot.cs",
+      "length": 36170,
+      "sha256": "c1d3d93705a35201a9c6255ffe220e073a37c5a84b02924efa969224ca1837e5"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Configuration.cs",
+      "length": 9724,
+      "sha256": "026e8b514d98dc13c686fea8d6d76c6bed7ba0ec5b1f5fec4510514eb6957b91"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.cs",
+      "length": 34585,
+      "sha256": "cd39ece81060c2d5c086b5ff316229a72543ec81eb1f4e0b5f7e4b5fe762a8ce"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Intake.cs",
+      "length": 28702,
+      "sha256": "b2e5b8d0590ccbe164a1b93f64ba6a991eb098919e1889999f1388f3a7da6aae"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Retention.cs",
+      "length": 10224,
+      "sha256": "710914859718cd238ecd559711c946b567052a1b8800f861db803a7ee02fbe78"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.RetentionEvidence.cs",
+      "length": 8474,
+      "sha256": "e5ec42a7cdb8df9c0b344d0b1d5f091f5b59adc9d7d8a3e4d706c507b9035b9d"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Views.cs",
+      "length": 8123,
+      "sha256": "db13fb63b92929cd2a9a7e471b185b5d19602e0e7dbac6a5d004a298b1ba7d85"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmCommandMetadata.cs",
+      "length": 144,
+      "sha256": "1ea880836616473303c2ea556455df858fd7f1a169c517509e877798f32c3185"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessEventContracts.cs",
+      "length": 3505,
+      "sha256": "77d43337c2023506f877af7ba458a69e837cc802316c5a9055de011c8ec36450"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessEventValidator.cs",
+      "length": 4676,
+      "sha256": "13eb029228ef4c620b1538869d6386cb4f839e0160c255b06c407cceef3fa01c"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessMessageDispatcher.cs",
+      "length": 2459,
+      "sha256": "ef45bc5de2ffc1f5cd9515249d7b326fe26ed4f67ccd656f94fe7267ef33eb34"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessMessagingModel.cs",
+      "length": 1176,
+      "sha256": "36b82ac4609f39184071f4e1595bd39156ff5950387e70fa5aec4b2d31b32f40"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessMessagingSchema.cs",
+      "length": 2811,
+      "sha256": "59538934c1bc24ac66ec4576b05a7fa075b6fec7497f7f9306a370f6238a5ffb"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessMessagingSchema.sql",
+      "length": 4492,
+      "sha256": "72d88a71099b6e3d54b5d6a2a4dc4d6e3f088265821112332edfd344bd191f1b"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmBusinessOutbox.cs",
+      "length": 2769,
+      "sha256": "64c055d5818cb18a96e5fc17d4da1143c1346c3e79123001707d00a223d8d36e"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmDaprDeliveryValidationResult.cs",
+      "length": 1230,
+      "sha256": "6cbe993b66f4c5ebfee18302bd706ecf7adc82ae088ad97d9ef36bd4394d7c2b"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmEventContractValidationResult.cs",
+      "length": 1248,
+      "sha256": "dc1f78af65bfd8c670b9ff95ae9a1fc357785f92ab255fb9a3b954c47948da48"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmPlatformDaprDeliveryGate.cs",
+      "length": 1991,
+      "sha256": "69ff531529053388cb5a699d7dc339e0b1b5db0f693379e60ac57912119bc73c"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmPlatformEventContractGate.cs",
+      "length": 3183,
+      "sha256": "7175bc36362cb353329e59a01fe9e9d9e6121ae2320ca034883e5e9266fe019c"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Messaging/CrmPlatformTransactionalMessageValidator.cs",
+      "length": 3270,
+      "sha256": "b067d60ea248e1ba01fb3da3fef44203a3f9394d2a4ae7c9c149bbf1964958d6"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Migrations/BusinessInitial.cs",
+      "length": 6465,
+      "sha256": "0120aade828316dda89dd4149ccb43f249656beaae914f05610651fc415caeb2"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Migrations/NormalizedRuntime.cs",
+      "length": 1103,
+      "sha256": "db9dcc66ea71a3e30e3219c7d1d084de7bd9fd98a6a9749b554c4daf0adeebbe"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmAuxiliaryStorageCodecs.cs",
+      "length": 23795,
+      "sha256": "a72011b049f7fd32e143d84280818f5ef6a9a72100b6d7546fe22bbde9d39ee3"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmAuxiliaryStorageCodecs.Updates.cs",
+      "length": 12996,
+      "sha256": "c93822e988b0d2d5ff36bc172c6d7234c188daadc5a43c788edb41909d843499"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmAuxiliaryStorageGraph.cs",
+      "length": 619,
+      "sha256": "1540cb18cbb8e5f141be71c1bd7ce7c56dba7462fef77a289f34ae9378385c25"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCalendarStorageCodec.cs",
+      "length": 9196,
+      "sha256": "ed341f2848a4549c70aefec278efc987a1b09e8dfa01abb9e6c7fcff88b25e89"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCalendarStorageCodec.Publication.cs",
+      "length": 4468,
+      "sha256": "2d79ba1cf97cef4413103cdf7cc9b4835751fb5d6d6962e1d2279786faa0ec46"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateAdoptionCoordinator.Catalog.cs",
+      "length": 13972,
+      "sha256": "cb6a56936f21daa53b025bde6585269945815d97ad7464d7518185df654025a2"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateAdoptionCoordinator.cs",
+      "length": 23321,
+      "sha256": "de44e4a6383f245d5839ad942ead4846be4cb227de2f22f31a72c3f0be799cb6"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateAdoptionCoordinator.Schema.cs",
+      "length": 2313,
+      "sha256": "e6d595a777a9def359a3e404aa1c392a9230e2ed5d1105cbbe0e8d2d728b67de"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateCatalogBinding.cs",
+      "length": 2723,
+      "sha256": "001209d624b7bf78648dc00770402e0d3bda34ee1024f79d88e65e42fdf39988"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateCatalogBinding.Reader.cs",
+      "length": 4790,
+      "sha256": "c89431a8469ff375a06508e11d424a80972b55d0d59e13f32355aa01f0888d05"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateGraphCompiler.cs",
+      "length": 6688,
+      "sha256": "1de6a7c9585ce290bcd25adfea131ccb23275a9775c21d2788afe827654049c8"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateGraphWriter.cs",
+      "length": 6635,
+      "sha256": "c19563aaf99f2f0717d4e28e95288343a36894d78bbe893eb9aa628b6b7cf9b8"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateOrganizationAdoption.cs",
+      "length": 12564,
+      "sha256": "e8ad7fc2d5e6ea3a538464dc81887f8b85f158eb3814e1a749d1e2d8da9d0159"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateOrganizationAdoption.Storage.cs",
+      "length": 3357,
+      "sha256": "8a5170cc7b062d078ea5a7752e1bf48eaf25871e2f91a496d9c276ebb5eca65c"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidatePlan.cs",
+      "length": 6841,
+      "sha256": "2640faaeb5aaafa4e94b49f4768340c5f65e05129836b6671793e5ba35621761"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidatePlan.Validation.cs",
+      "length": 7192,
+      "sha256": "745e111978cf09e8c0c7d8282a00ecb819f98968420391d75be4492004cdf296"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidatePlanStore.cs",
+      "length": 10468,
+      "sha256": "cbe11d43cba1444dc318fefc82c04a931938f8612d4d1a9f5410271d034540a9"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateRetentionPolicy.cs",
+      "length": 13051,
+      "sha256": "0901adf1d312176281b52a9bc34fedee7654fd1bdfdeb2c6e01859c6938878ff"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateSourceDigest.cs",
+      "length": 4411,
+      "sha256": "df4a65c0348fbb29c11d27368fb4ef92f9e499415415e64459a2d18a4b5dd802"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateSourceIdentity.cs",
+      "length": 2372,
+      "sha256": "4c17415dd15bc813a91001511cd3f0e9d6a83b22845378aa126b2425482e2725"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateSourceIdentityReader.cs",
+      "length": 17813,
+      "sha256": "692ea3692177e37e68e3688bcc0852ee5aef2bcf4009d9ea4158bf983985abe7"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateSourceReader.cs",
+      "length": 4437,
+      "sha256": "338b65691ab96142fc3b075d87ef9b28e9e5e9bb8447aabc8df84eb6a61388d2"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateSourceTypes.cs",
+      "length": 3850,
+      "sha256": "11a8b51bc6dd76998558f33051a4fb4ec4be5c7c57e6a7f4a52d7ffee8e6adf8"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateSourceValidator.Commands.cs",
+      "length": 14472,
+      "sha256": "6358c88ef3bf0d6b5753227af1554b9d5c18c07bc0e329ccab0ae3c22f0588a4"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateSourceValidator.cs",
+      "length": 18119,
+      "sha256": "b5131fe9428f2af1488b606e8a84244eba19fcbc27f25cd29a02a1d19428d9c3"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateTargetDigest.cs",
+      "length": 7561,
+      "sha256": "66136d51663104910b04439e1b65d85c4967b489bbb9604176a7cde177fe1380"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateTargetIdentityReader.cs",
+      "length": 12068,
+      "sha256": "5ecdbb9c2f807f3129917deaeb2aecbd353af137fd1a9920e7cb694b432c74c4"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateTargetIdentityReader.Metadata.cs",
+      "length": 12715,
+      "sha256": "2033a0563b536be761abc0fd70311dd402959dfaa77e3c2d3aa26924c805a006"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmCandidateTargetSchemaApproval.cs",
+      "length": 318,
+      "sha256": "163a60bd3e0e1942c72f08254ccc519890a41cbf81c932df4f412b858a03aab6"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmDatabaseFactory.cs",
+      "length": 7885,
+      "sha256": "f61f8aa22dab8e72cab6b75445259104478de124f841d5380c7891c3bb32960a"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmDataProtector.CandidatePlans.cs",
+      "length": 740,
+      "sha256": "9eb6de7631a99f24f1fee769cb85d85285fe80fc508234b4975aa553f7108cec"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmDataProtector.Columns.cs",
+      "length": 6197,
+      "sha256": "2c1016a07349fafe78399e9f03765984be347522cb37a88498b7a43cfb17a7c7"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmDataProtector.cs",
+      "length": 2501,
+      "sha256": "a7e806d259992a960a213b9a269eae267472bebe04c12cbd563ecfb7ae8a5f1b"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmDataProtector.RuntimeColumns.cs",
+      "length": 6923,
+      "sha256": "d9225845ebf41ecbe10e5d1528fc005a3c441af5edfee0798784fd657c539790"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmDbContext.cs",
+      "length": 8612,
+      "sha256": "1d88f30d091cce3d037e779060b9a7d21915e48fdfe50e454b26d74ae9a81d6f"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmLeadStorageCodec.cs",
+      "length": 44494,
+      "sha256": "df253512b556e95e5e862e99456459b3a1ebe6605be5b49e7cdbcdd378c999a2"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmLeadStorageCodec.Retention.cs",
+      "length": 3875,
+      "sha256": "632c4ac3d1d13ad7b426f4a88ad32017da81acf48da96773ddacd22ed424e072"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmLeadStorageGraph.cs",
+      "length": 1445,
+      "sha256": "62f8ef469bb0c9c160fa2e3c1fa18e76c65401a173bdbe21957c65ce50eb986c"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmNativeAudit.cs",
+      "length": 5939,
+      "sha256": "0885276c6e04e4933970b6ae520d6d7b15d42ece6ac7b1fed3b815938458d67c"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmPublicAttemptStorageCodec.cs",
+      "length": 7800,
+      "sha256": "98e02d0ec0f412a2001663d54f4aabe89cc08839ba6f90b0f49182898ff3ef2d"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmPublishedSourceFreezeVerifier.cs",
+      "length": 13592,
+      "sha256": "d81ca1044d2994e7e9e23bccfc4dd3e5c202617726566d53d16ef04d3161cd9b"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRetainedAuditSchema.cs",
+      "length": 1650,
+      "sha256": "9bf185125d73069d591b799f8e0e521448e175a8a2484cd967ee66366128a29e"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRetainedContract.cs",
+      "length": 1662,
+      "sha256": "d58c7547ddcd3102d4ebcb7edf1a53263ac7c7d252aa975a8c2f472a386974c9"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRetainedMessagingAdapter.cs",
+      "length": 8646,
+      "sha256": "f8015b3f630e0ee5d5c62139be6d4e275d314e3d1f97022257e1e85b800abbe5"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRetainedMessagingReader.cs",
+      "length": 3306,
+      "sha256": "8189c50fdac985a62ccce95e1163ebde05d3ca64e8b7d0385058ad55f11be730"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeAdoption.cs",
+      "length": 1773,
+      "sha256": "854aa8994a3dd11ff12b5d9cbf6820bdcd7d3c2ada1a0320e29c59c00c4744cd"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeCatalogContext.cs",
+      "length": 1716,
+      "sha256": "fe6d9f8e1c858c3f03c2bb51d90f7a46eabcefd2f0c5683de3dfd3fcbd0d8838"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeDbContext.cs",
+      "length": 9016,
+      "sha256": "5836cec814b4f585ad04e7a0254d852bd0d8bd0ed2a0cc38b08449389c0db94e"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeGraphStore.cs",
+      "length": 5328,
+      "sha256": "71286337f82c94c8e6e2d388e6ca0ec2400291b5ce426e9ad37dd495357e95c6"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeGraphStore.Updates.cs",
+      "length": 8499,
+      "sha256": "450cb16a9c5213fdb59f36a36add40d88471bb82373f01d0675f3f684c7a6fda"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeProvisioner.cs",
+      "length": 14702,
+      "sha256": "7248d79963ac0f62366d818a1b4a8bcc01dec5db84002ae79c6b8ad26fa003e2"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeReadiness.cs",
+      "length": 8178,
+      "sha256": "7a9985dd7e64ded4114e674d2f28b6ea1610d9572a8ba8e686d4fdc776f2d7c5"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeRetiredSourceFence.cs",
+      "length": 9173,
+      "sha256": "9a595cfa030d61ef15a3d96725c666e00c28e027485f2fd936dbc94e5e19f77a"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmRuntimeSchema.cs",
+      "length": 2221,
+      "sha256": "a46bdfa88e92e864b86c656da9042a317106b90a79ffed2439f4483e438bca61"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmStorageOptions.cs",
+      "length": 668,
+      "sha256": "d338747552cd745f21e3f050cfeaf0f18f518805035b6fbc3694e1bdddecd9a2"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmTargetWriteGate.Activation.cs",
+      "length": 8437,
+      "sha256": "cf6667149b341d0b14c106a67f70305742feb843796de089634496266064f625"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmTargetWriteGate.cs",
+      "length": 24077,
+      "sha256": "6fa429f9479bb3219afe00511ff2ece0d5a1faa473a6754cccac7103c3208bbc"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmTargetWriteGate.Rollback.cs",
+      "length": 4752,
+      "sha256": "f5344be7fc0bc16cc4ef25c239ca58567ae0c7e1d335020b02623636f5d5fe27"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmTargetWriteGate.Sql.cs",
+      "length": 3744,
+      "sha256": "6be25ebc0ba2017c826a9eb117b8f2b5ebe5359d8ad3da934ef8d67d54b633a9"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/CrmWindowsLocalDrainGuard.cs",
+      "length": 19917,
+      "sha256": "5dfaa64ec1fb6f22c04706bfd34b613a7d43def59a184acc823669a64d8689cc"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRetainedContractDigest.g.cs",
+      "length": 275,
+      "sha256": "0bffd546eb75396b99c268ac4fcf53e59f85b3bf19f606b37d3b68e4b89308e0"
+    },
+    {
+      "path": "src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRuntimeRows.g.cs",
+      "length": 164013,
+      "sha256": "25253c41ea7f516a7304cd0fd9d83b416fbd17c2082b0e53598c83871417b729"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/appsettings.json",
+      "length": 371,
+      "sha256": "3be72b715dff7f454e6b77bb35b89ad80878fa4f1ae12930fe4b55b2b3d179f1"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/CP6.CRM.Worker.csproj",
+      "length": 247,
+      "sha256": "4fc977da40c52945659b68f2527fd87688216a581d1c572a670d801ba96d2e62"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/CrmOutboxWorker.cs",
+      "length": 3303,
+      "sha256": "94e7e907bf65cf7ff44073b1b557e6d740e24a785c3b529ebffb9ee421686d2d"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/CrmWorkerDispatch.cs",
+      "length": 2284,
+      "sha256": "8d5647561fcff03af9651ef9559ac115c77cb7c3e4acf032b17928585a050ae0"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/CrmWorkerOptions.cs",
+      "length": 4111,
+      "sha256": "a63abde0f5953e00fe1787b182d439f9c9b55b36e42283e69aec664a850723c3"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/CrmWorkerState.cs",
+      "length": 2486,
+      "sha256": "758a28938237e0210f8371066df2aa16783ade4933a6c325f621d6746d4c30f8"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/CrmWorkerTransport.cs",
+      "length": 1181,
+      "sha256": "8fb478bbe290f96d7b5faab86baa39d2e01659a5ad44e4804f7766fc0b2a0da7"
+    },
+    {
+      "path": "src/CP6.CRM.Worker/Program.cs",
+      "length": 4180,
+      "sha256": "3feb9f827ca95dbf92f3f6bf8c3758666da181925aaab8d2a0d8a90342ada3f1"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/ApiSmokeTests.cs",
+      "length": 1982,
+      "sha256": "f8fe7df5697936e9a331a038e6ca4927940c1f1a8ac6643b0d0ece52782cd8f0"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/CrmAuthenticationServiceTests.cs",
+      "length": 9859,
+      "sha256": "c38a47dd1705b6534ee7ee8c143f3091f99382f21d0e6e55096110e7f1b93ef4"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/CrmBrowserSecurityTests.cs",
+      "length": 1611,
+      "sha256": "8fe3ec91bea80cd95c75d0c881660598c998281856a6486dbf2ed151f3a65698"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/CrmGeneratedClientTests.cs",
+      "length": 1965,
+      "sha256": "fd233befed811efe7c2c3851979c7515ee67068f53b5f8e431465b67933af274"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/CrmOidcClientTests.cs",
+      "length": 44905,
+      "sha256": "49dd3f67647f864391e5b3bb3e575f09467b490086405244bd04d49a274c9fe1"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/CrmPublicBrowserTests.cs",
+      "length": 11995,
+      "sha256": "96bc45a952175c4dfc026d77c98827c16a59b8e8d7bfe0658e72b7bf15fc6496"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/CrmPublicEndpointTests.cs",
+      "length": 9554,
+      "sha256": "66c12f6fe1f3e0d5a7a2a0615d31d0a3af2fc00ae00f1b64fde22c0e4a8ad7b7"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/CrmTransportSecurityTests.cs",
+      "length": 5750,
+      "sha256": "edcab24de6aa7f09b87f9ff5606f4ba7c9e1e5b077a0762623327cd048b9fe16"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/PlatformAuthenticationContractTests.cs",
+      "length": 4625,
+      "sha256": "c83174ebd18371607dcfabfa083de2346891e1826ee95da5f6536f3a5c32066f"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Api/PlatformGatewayConsumerTests.cs",
+      "length": 9972,
+      "sha256": "303dd3897a3b562a4004e77f43f4487b9858f7f0fc5618d2597eeb22e9226d08"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Application/CrmAccessPolicyTests.cs",
+      "length": 4595,
+      "sha256": "d811f608d49e934a3c635df277e5e402e4abdc973d48649d698a73667ae57e4d"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/BusinessEventContractTests.cs",
+      "length": 3122,
+      "sha256": "cb0f69790e13fa81aa4206f051edbd1e6534c73540520a1ead6511c282e04f77"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/BusinessWorkerTests.cs",
+      "length": 10287,
+      "sha256": "b37655f41a68b2ac751aacec87a2bd687079dac1e789982cf1be14947acc4d62"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/BusinessWorkerTransportTests.cs",
+      "length": 4400,
+      "sha256": "743abd417c20492b3f5810e890a9a31233f5639dd67ea478111759166ab1eb86"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/InquiryContractAdoptionTests.cs",
+      "length": 29981,
+      "sha256": "2b31b1d3fe53484fb67d5c63602fbdb9112dd86edb5b70c8cc0593d9e6360ef2"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/InquiryTerminalProjectionTests.cs",
+      "length": 4191,
+      "sha256": "5cb10276f347333bccadeb24fadddc1cc3d63a89205f1fa6568e003c3926a0e9"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/S01/ImportContractTests.py",
+      "length": 5118,
+      "sha256": "852009ad14d9bb88548932224a066d753fd086c255bdda79026ebbd3f59551f9"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/S01/LeadUnionCases.cs",
+      "length": 3345,
+      "sha256": "b7ed6325d844edf2a8ed818a9ce841b2f5d77902084a4d852223f60faa82cf5b"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj",
+      "length": 1909,
+      "sha256": "416e942d2c70a7039c74310fa52853a3ced6fb7c673a1862ee962485ba2e648e"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/DatabaseRouting/OrganizationDatabaseRouterTests.cs",
+      "length": 4677,
+      "sha256": "81927e05b4b363ee738dc078b269327eb98626bd74fb943f259d895b338f3edb"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/DatabaseRouting/PlatformOrganizationContextAdapterTests.cs",
+      "length": 1708,
+      "sha256": "d3f58ee29e93beab189c62397f3004c1d13f4cf486d90c209c5e20d01ca32004"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/ErpEventContractTests.cs",
+      "length": 12836,
+      "sha256": "6aff5b10beaa507f07c5ea8368fcca0d3ce7a1151a1a7be863d082903cf3e64c"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/ErpReadBoundaryTests.cs",
+      "length": 7960,
+      "sha256": "dee8579386e65080451a633465109490a9500536ba15bc140eced4face63ad2a"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/ErpReadClientTests.cs",
+      "length": 9762,
+      "sha256": "99983add6c2507bf5ee2a1ae047c09da76c8e9aa83380d6e951699319a42fa16"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/ErpRegistrationTests.cs",
+      "length": 4040,
+      "sha256": "03b2652c62365c73d9b1d3a5868a10276b8efbd62fe22091054b63479f9431e8"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/IdentityProjectionTests.cs",
+      "length": 11516,
+      "sha256": "a7afd90857847e032d02fbc84ee1aa6869f2537517138b652e852d78a5607600"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/IdentityPublishedCompilerTests.cs",
+      "length": 8416,
+      "sha256": "69e7098a1f5c3d8b077ced83db64ccb4c0ff7025e3fe26edf9ac8fa9b466ed1c"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/IdentityPublishedModelTests.cs",
+      "length": 8759,
+      "sha256": "e75d5fe07538e383ac64b76b8370eaf9f8d176f4192c5e3715b8eb086ec4e5bd"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/IdentityReconciliationClientTests.cs",
+      "length": 4471,
+      "sha256": "ca15641af37a22baa3908a764fb3d065e93f4d32fe89e13372416a691777fed1"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/IdentityRevocationOriginTests.cs",
+      "length": 6501,
+      "sha256": "fb8b1ec374575b62b56cda6c159a1f2eea1b3ff0c5566b28e8960232de401d06"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Leads/BusinessCalendarTests.cs",
+      "length": 4911,
+      "sha256": "f27d2c34f2d1a5113e096bccd6447b5c15eacd9df31acad2e18cd747f6da24dd"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Leads/CrmBusinessRuntimeBindingTests.cs",
+      "length": 8072,
+      "sha256": "c149d1411e728775964c0069aa96ae0e18093683121f4cab9ec6592af32a49cc"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Leads/LeadTests.cs",
+      "length": 15339,
+      "sha256": "a181374ceb6fdac2889242c30a60b765c3ace4eb44c6d6808cd424a364d72525"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Leads/PublicSubmissionRetentionTests.cs",
+      "length": 4697,
+      "sha256": "93bba515b26844ab066c8dc3180216cd9dc5851ad18c3d7ba0c3f1a5c5f5088f"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Leads/PublicSubmissionTests.cs",
+      "length": 8456,
+      "sha256": "9df104c803883d3b3901fc1c62d8d67beb0b32a9db1613f09a3e7c67492fd84b"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Messaging/PlatformDaprKafkaConsumerTests.cs",
+      "length": 3620,
+      "sha256": "1db31c4e12f6e073c170aabda3e1e3a5ce573298449d6a05b67083ec76d54147"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Messaging/PlatformEventContractConsumerTests.cs",
+      "length": 4549,
+      "sha256": "1d3a1dfa49274350cc892e1dca095793948ae3c0d8817aecf228ea7f1f9a0921"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmAuxiliaryLinkedRetentionTests.cs",
+      "length": 6154,
+      "sha256": "4a9ba6d32f59404af9824705a1bfa89d9ca76eaaf642c55f75820200d7417c1a"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmAuxiliaryStorageTests.cs",
+      "length": 17081,
+      "sha256": "a8750076cc15b7c51da3eb496eb5786bc571baa142a2f3bf6484d99b63683add"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmAuxiliaryStorageUpdateTests.cs",
+      "length": 10615,
+      "sha256": "76a1a95baecddbaec0ab891cefd34268944a7f0b62b1f6a9c361870d183c55f6"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCalendarPublicationTests.cs",
+      "length": 4457,
+      "sha256": "45790042a66120b6894063dbf39b9723336c1294add47b774a8735324c01c5c8"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCalendarStorageTests.cs",
+      "length": 10737,
+      "sha256": "1306f07c3fcd453fb062e6e17ec53440955b762c04d191677270b5b82020e002"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidateCatalogBindingTests.cs",
+      "length": 5701,
+      "sha256": "2450e15374eae3f1ae26ac4935ba84b1656b81fe14d5e8c78afcee18ea0ad95f"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidateGraphCompilerTests.cs",
+      "length": 5394,
+      "sha256": "e94bc859e05a98cbbcd1b88a3aa0f12e82b91ef53ea2b1748df012cddca850f7"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidatePlanStoreTests.cs",
+      "length": 11898,
+      "sha256": "a244637aa3208715a1b20314cc2eda93cddcaa5cbc7b9cbc668a1748885620ff"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidatePlanTests.cs",
+      "length": 4982,
+      "sha256": "1a54e9f9cf5989796a43271b7a8392a4dbd45ed87af554997347904dd624b009"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidateRetentionPolicyTests.cs",
+      "length": 14754,
+      "sha256": "4d063f8b2e2ff05ac76caaa360ddb862054ad282664aa6c1d115ac76703d19f8"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidateSourceBoundaryTests.cs",
+      "length": 15128,
+      "sha256": "58a251751171f488fbe757ce34becfd599942a4f297398912855b1935f84b31e"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidateSourceDigestTests.cs",
+      "length": 3024,
+      "sha256": "8df66d1f2a9430f4cbfb911bde190aabec9c865277e1c15a8e1db6ff2a1ca2ff"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidateSourceReplayConsistencyTests.cs",
+      "length": 1375,
+      "sha256": "bae9796de5907bebdb9b25ec60c6a4c9f07aa69c1f410834b02594334d77914d"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmCandidateSourceTests.cs",
+      "length": 18705,
+      "sha256": "3d007870205a18006c4a4774028b300bca3e2cdf6ca0b6d4f8c5b87de5c89b50"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmColumnProtectionTests.cs",
+      "length": 8356,
+      "sha256": "0e1f56e68f22bc76f53b23188d383b4c75ee2efdca185c5382b2d2027c67b32a"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmLeadRetentionTests.cs",
+      "length": 16061,
+      "sha256": "13afcd8720bdcd057bb9f9184c4206f93344dd047afab7a8d05cc6c1444b39d7"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmLeadStorageTests.cs",
+      "length": 37063,
+      "sha256": "4e55401264d1169b81c79d262e044c2e69072c37fe769787ae09bd9360186d59"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmNativeAuditTests.cs",
+      "length": 3881,
+      "sha256": "f1967235facb1029e61536889a8529cd95c353731417d6ef2f07e23bf10379d7"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmPublicAttemptStorageTests.cs",
+      "length": 15456,
+      "sha256": "c831c26910380821bf049b8cac3837ec361baa9117ceb196870cc792eb06abce"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmRetainedMessagingAdapterTests.cs",
+      "length": 8028,
+      "sha256": "ad05cfdc2a3a5007c350a09d26d51ce5a10782d45b6122a679c21068a8b350e8"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmRetentionEvidenceTests.cs",
+      "length": 5725,
+      "sha256": "42c3b2c4ab2ec69f1c11a3eceb70bf963d203ee315fa0c111bcfe284879f55fa"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmRuntimeColumnTests.cs",
+      "length": 6135,
+      "sha256": "e6e24f01e74d0fae5a771eadb41fe9934567a37dd097baa02dc88284acc3d9c2"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Persistence/CrmRuntimeModelTests.cs",
+      "length": 5357,
+      "sha256": "d6a22f7db154a78d8edfc4fd3be7123df2c801f117062e0d81a72cf19f34cca7"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Platform/P08/ConsumerActivityRecorder.cs",
+      "length": 4638,
+      "sha256": "7751bae11ff1dfb387d09f8af5744d6ffac1d13f0fb0d3e57012efdebc6c4810"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Platform/P08/ConsumerHttpTestDoubles.cs",
+      "length": 2182,
+      "sha256": "81c98533ae4dba099af3eceaa67b098f5e9b0ed5aaec4f380c01f1053cab7a8c"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Platform/P08/PlatformHttpResilienceConsumerTests.cs",
+      "length": 11757,
+      "sha256": "0e77078021d054bbd68c211195dbe6d0b7a68a93b75018cff2f420d08575d304"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Platform/P08/PlatformObservabilityConsumerTests.cs",
+      "length": 5904,
+      "sha256": "04c656d87eca2c065df1f3b678817a8849f97da899c5feb5a487ab3864b7fb07"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Platform/P08/PlatformOperationalEndpointConsumerTests.cs",
+      "length": 10928,
+      "sha256": "0f2371d7bd1e1c76c073d484351d01dcf416f328d6a2723b6c69dfe8d2234ec9"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Platform/P08/TwoServiceConsumerFixture.cs",
+      "length": 11813,
+      "sha256": "6bbbb236e9887d1d76973179cf115d5fe8153dd7b9741d8205eb823feceabd8b"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Platform/P09/PlatformDeploymentPackageConsumerTests.cs",
+      "length": 10180,
+      "sha256": "cfbb219748cbbaef2dabba7eba6ff3970870bff92b9367113056a0368f91ae01"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "tests/CP6.CRM.UnitTests/bin/Debug/net8.0/CP6.CRM.UnitTests.dll",
+      "length": 830464,
+      "sha256": "963b1a5271d76d8bd8554d78dc2b365bc07f505084c237074cf49f407d3115f8"
+    },
+    {
+      "path": "src/CP6.CRM.Application/bin/Debug/net8.0/CP6.CRM.Application.dll",
+      "length": 4093440,
+      "sha256": "1e5a5ee70c81277f5c3cd9bcc217002c35b1b0e2fd4d5d1b68c0a481f2064bd2"
+    },
+    {
+      "path": "apps/web/.test-dist/src/app-shell/CrmAppShell.js",
+      "length": 3163,
+      "sha256": "2cff5abfc6a12e20ad35e8db9cfdf4fa1b3db1be1b030c2487402e45b1965698"
+    },
+    {
+      "path": "apps/web/.test-dist/src/app-shell/index.js",
+      "length": 849,
+      "sha256": "a44b7a2389bc92879b7fdb2ebfbc743ba3587b04fde40fe853276a1e7d00cd66"
+    },
+    {
+      "path": "apps/web/.test-dist/src/app-shell/model.js",
+      "length": 8365,
+      "sha256": "5b8aca271206b0cab4a96b41ee48b0b382ff120802dfb6fb9ca45d706ac07bd6"
+    },
+    {
+      "path": "apps/web/.test-dist/src/authorization/index.js",
+      "length": 844,
+      "sha256": "99de42cc14ce3ce3142bea182e2bfed702a60c5f6103d99300f8d083bf400221"
+    },
+    {
+      "path": "apps/web/.test-dist/src/authorization/local-fixture.js",
+      "length": 969,
+      "sha256": "fb3da3282c3404414dd4ed4ae367942c5256cb1b5ca08a04cdefe956bf382448"
+    },
+    {
+      "path": "apps/web/.test-dist/src/authorization/policy.js",
+      "length": 7248,
+      "sha256": "6759e8bd24bb74280c24b3f23290d5d6a2cd1a107c21aee089dfb9f7445d9302"
+    },
+    {
+      "path": "apps/web/.test-dist/src/authorization/types.js",
+      "length": 477,
+      "sha256": "8824829bd4f4886d1754ef779cb6d91d86c0de9630b88647cac4892f16161905"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/inquiry/contracts.g.js",
+      "length": 1069,
+      "sha256": "5a17955a2dd241338363d3c0eb211113e978e03455243f4147f71eb6afcbce7e"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/inquiry/index.js",
+      "length": 10249,
+      "sha256": "1d8a35ab16c390c9e7a03fe85bc11d2d4ffa64f78cfa879e3f56617915d7b5c9"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/inquiry/revision-schema.g.js",
+      "length": 348711,
+      "sha256": "56b17567004b67c15c2118a97c97a95a34286983339c6efed0f3843b3ccdeb87"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/inquiry/schema.g.js",
+      "length": 348710,
+      "sha256": "fe22eddc4e3aac2e7262a72b4963ae0e4c8baf1781829a6a34a8e37c58427980"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/lead/contracts.g.js",
+      "length": 2892,
+      "sha256": "cba87813b994918b1d2d61fba7247e4f8682b9e8801599b0dbe9f9cd596cdb83"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/lead/index.js",
+      "length": 4090,
+      "sha256": "826b19c2e52f3e78a087993e23b711d719feaf9b483c84bed87f5ab655fda2c5"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/lead/schema.g.js",
+      "length": 212875,
+      "sha256": "e0b671b83ce3ab1f818878a71cb26522f5f2e95b701a00abd563669ef65526c1"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/wire/schema.js",
+      "length": 19951,
+      "sha256": "0dad8eb8030474505bfee1f0f0ef869d2cea49a15d2a36e41afe3d0c62193cd5"
+    },
+    {
+      "path": "apps/web/.test-dist/src/contracts/wire/strict-json.js",
+      "length": 12268,
+      "sha256": "9f24bff7625ace0ae746cc27e1a557cd5047b4d8d73599ba419cc2820389ca2a"
+    },
+    {
+      "path": "apps/web/.test-dist/src/generated/crm-api.js",
+      "length": 5639,
+      "sha256": "d1e9c297b2a7f6ffea7b9463715842e6a502bc77dc17e9b0d33c68eb566a94ea"
+    },
+    {
+      "path": "apps/web/.test-dist/src/leads/api.js",
+      "length": 6468,
+      "sha256": "f8489d21db1bfe149268ed01ef60c4005d6e0d28e76c43d45cfafd9edc6f89cd"
+    },
+    {
+      "path": "apps/web/.test-dist/src/leads/calendar.js",
+      "length": 1623,
+      "sha256": "5c618bc59de9ebe5dbc8767d5b7a6ca1a03f2336fd43d10e7adffc9ef7c1d2bd"
+    },
+    {
+      "path": "apps/web/.test-dist/src/leads/model.js",
+      "length": 3575,
+      "sha256": "c77f06d702e3d1bff5e759894a2bc6980ac9318bde2fb95223b57817b3022771"
+    },
+    {
+      "path": "apps/web/.test-dist/src/leads/types.js",
+      "length": 77,
+      "sha256": "d43aa81f5bc89faa359e0f97c814ba25155591ff078fbb9bfd40f8c7c9683230"
+    },
+    {
+      "path": "apps/web/.test-dist/src/page-functions/app-router-validation.js",
+      "length": 6892,
+      "sha256": "49cd4a3a56bb0c52ca2f11c1c805173dbd4b6e85a8db0f39c6205e74320e93f5"
+    },
+    {
+      "path": "apps/web/.test-dist/src/page-functions/catalog.js",
+      "length": 25914,
+      "sha256": "59285632a25ab5eb08bea7e271d408f4e61cec907cabe502bd2983652a83dc2f"
+    },
+    {
+      "path": "apps/web/.test-dist/src/page-functions/registry.js",
+      "length": 15398,
+      "sha256": "f590cbbad320e76dae91e9a88ea99d6a0905d6738d9a23026856ef1bbb2799c7"
+    },
+    {
+      "path": "apps/web/.test-dist/src/page-functions/types.js",
+      "length": 2972,
+      "sha256": "8c259f0114fccb54c3c20a21dfa0854445860330cc4ff3f3973f82e08600d816"
+    },
+    {
+      "path": "apps/web/.test-dist/src/server/crm-proxy.js",
+      "length": 7166,
+      "sha256": "2150e325a57f9cc803ee1ca3c6aff0c7d7adba884c417cba181feff78bf9ad02"
+    },
+    {
+      "path": "apps/web/.test-dist/src/states/CrmPageState.js",
+      "length": 2212,
+      "sha256": "58f25e7addfa1b9f390f2318a01b425a4fb28380c836cbc5516d995fffe9f21a"
+    },
+    {
+      "path": "apps/web/.test-dist/src/states/index.js",
+      "length": 850,
+      "sha256": "e8b1b4ffd7b8f5c222a6b0f93f4b342f455eedb2be0d61be3db8ca6e7e6d8966"
+    },
+    {
+      "path": "apps/web/.test-dist/src/states/model.js",
+      "length": 3222,
+      "sha256": "aec47d4092d4cc450756b8d45990f61675031604eacfa1e3039288d5319d7678"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/app-shell.test.js",
+      "length": 7645,
+      "sha256": "322ce555b83fc9628c20ed14641fa2d224d26727afe66b90a4f16237377c092d"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/calendar.test.js",
+      "length": 1092,
+      "sha256": "7384687bc30b71043ea3ffe81d3455deb76b96c9a8cd24b591630c0dd308662a"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/contracts-exact.test.js",
+      "length": 38569,
+      "sha256": "19b5fd28158113ba33e43f338973bf17ab5f0e098b1ebc4d354ef8583def7f3d"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/crm-proxy.test.js",
+      "length": 8231,
+      "sha256": "f9a42ea50fd31026583037caa06891281be84816c8d9b83917bce57cb5778a7a"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/function-authorization.test.js",
+      "length": 10291,
+      "sha256": "76a1704739b7989f55d91f50c24618d94473f161b67fa7260f9a30a6cca26115"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/leads.test.js",
+      "length": 7690,
+      "sha256": "36d9db878b590c791f56bb50b2db760010f320ee861a4135a8261d7a5668aae9"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/page-function-app-router.test.js",
+      "length": 6692,
+      "sha256": "513465c94ce50383e676b4a099a1e410d27d2896bdc0a426d5498696a6eefc1e"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/page-function-registry.test.js",
+      "length": 10400,
+      "sha256": "a463c584da783a04fa41ac474977ac75d4241eae3954ad9ffcd4bf1e4c0a8c0f"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/page-states.test.js",
+      "length": 8819,
+      "sha256": "420a224d195670cbdbcc2ec18e555336f5c180e015fa80afe8f0e3e50841fe1a"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/s01/native-types.js",
+      "length": 77,
+      "sha256": "d43aa81f5bc89faa359e0f97c814ba25155591ff078fbb9bfd40f8c7c9683230"
+    },
+    {
+      "path": "apps/web/.test-dist/tests/s01/vectors.js",
+      "length": 830,
+      "sha256": "f0e9022403efa22f00dabd09292fd049bed6de65ac9bb1d650260a7a22be2a23"
+    },
+    {
+      "path": "apps/web/.next/types/cache-life.d.ts",
+      "length": 5905,
+      "sha256": "4f984436b10cfb43ccf7fc3114dcb851cbefa4d58b7d8ae741aaae0f6e330129"
+    },
+    {
+      "path": "apps/web/.next/types/root-params.d.ts",
+      "length": 101,
+      "sha256": "f3387dd7800eec3c34273f7a8efad13e864598c7e8f788d321e407390989bb59"
+    },
+    {
+      "path": "apps/web/.next/types/routes.d.ts",
+      "length": 3056,
+      "sha256": "f26f3d99efe658ddbaaae7c9414d8a6d58529dccc12d4a37af8c649f5acd617c"
+    },
+    {
+      "path": "apps/web/.next/types/validator.ts",
+      "length": 9516,
+      "sha256": "86a82524e1b1e5db55ca61cf32e4752b851414526e383ed1e1d4b32b62a904c4"
+    },
+    {
+      "path": "apps/web/tsconfig.tsbuildinfo",
+      "length": 128748,
+      "sha256": "c69252535ea779aa05ea42edf46797b5d6b12089e70d74e5a40cbca510ee3a93"
+    }
+  ],
+  "results": {
+    "csharp": {
+      "executed": 186,
+      "passed": 186,
+      "failed": 0,
+      "skipped": 0
+    },
+    "web": {
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "task_contracts": 82,
+      "existing_web": 60
+    },
+    "typecheck_exit": 0,
+    "importer_integrity": {
+      "executed": 6,
+      "passed": 6,
+      "skipped": 0
+    }
+  },
+  "exit_observation": "Exit statuses were observed in local command tool results; the capture script parses tests but does not infer typecheck exit from sparse logs.",
+  "fixed_vector_results": [
+    {
+      "id": "JSON-001",
+      "expected": {
+        "accepted": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "JSON-002",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "JSON-003",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "JSON-004",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "JSON-005",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "JSON-006",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "JSON-007",
+      "expected": {
+        "accepted": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "NULL-001",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "NULL-002",
+      "expected": {
+        "accepted": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "NULL-003",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "NULL-004",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "NULL-005",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "NULL-006",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "NULL-007",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "LEAD-OWNER-001",
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "LEAD-OWNER-002",
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "LEAD-OWNER-003",
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "LEAD-OWNER-004",
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "LEAD-OWNER-005",
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "INQ-VERSION-001",
+      "expected": {
+        "accepted": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "NATIVE_SOURCE_LOCATOR_SUBASSERTION_WITHIN_EXPLICIT_REVISION_LOAD"
+    },
+    {
+      "id": "INQ-VERSION-002",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "NATIVE_SOURCE_LOCATOR_SUBASSERTION_WITHIN_EXPLICIT_REVISION_LOAD"
+    },
+    {
+      "id": "INQ-VERSION-003",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "NATIVE_SOURCE_LOCATOR_SUBASSERTION_WITHIN_EXPLICIT_REVISION_LOAD"
+    },
+    {
+      "id": "INQ-VERSION-004",
+      "expected": {
+        "accepted": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "NATIVE_SOURCE_LOCATOR_SUBASSERTION_WITHIN_EXPLICIT_REVISION_LOAD"
+    },
+    {
+      "id": "EQUAL-001",
+      "expected": {
+        "equal": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "EQUAL-002",
+      "expected": {
+        "equal": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "EQUAL-003",
+      "expected": {
+        "equal": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "EQUAL-004",
+      "expected": {
+        "equal": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "EQUAL-005",
+      "expected": {
+        "equal": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "EQUAL-006",
+      "expected": {
+        "equal": true
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    },
+    {
+      "id": "EQUAL-007",
+      "expected": {
+        "equal": false
+      },
+      "csharp": "Passed",
+      "typescript": "Passed",
+      "scope": "ORIGINAL_CONTRACT_SUBASSERTION"
+    }
+  ],
+  "source_delivery": {
+    "recorded_at_utc": "2026-10-13T03:18:42.107898+00:00",
+    "issue": "https://github.com/GTX537/CP6/issues/189",
+    "source_commit": "ce38171868312588ce8f4b9e843ed6c39f4d0b0f",
+    "source_pr": "https://github.com/GTX537/CP6/pull/192",
+    "coordinator_reported_remote_main": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+    "remote_observation": "Coordinator supplied merged PR and remote containment; this worker only read local fixed Git blobs, no network.",
+    "files": [
+      {
+        "source_path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+        "source_sha256": "c354974c918dbc39d1ecf9352db79ab5b2b8a61e901f2db6ea328d6112993645",
+        "bytes": 2070,
+        "local_copy": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+        "local_copy_exact": true
+      },
+      {
+        "source_path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/overlay.json",
+        "source_sha256": "bce20c5a3bc93826993be6c2ba7c9a440fffd467f746245e5665707d8eedf549",
+        "bytes": 4068,
+        "local_copy": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/overlay.json",
+        "local_copy_exact": true
+      },
+      {
+        "source_path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/verify_overlay.py",
+        "source_sha256": "48d84de422b3a46d9c596e8b7c440bef9e7f0ded8d27209fac23cf1ed36c2d12",
+        "bytes": 10100,
+        "local_copy": null,
+        "local_copy_exact": "not copied; local importer independently composes same operations"
+      }
+    ],
+    "effective_schema_sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d"
+  },
+  "outputs": [
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-final.txt",
+      "length": 1190,
+      "sha256": "9d05c044f7df5a202273f9460c9dfe9899da9a57bffd6957a687761b56cbec98"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-green.txt",
+      "length": 3414,
+      "sha256": "9cbec8dd2c6adb5319f04275f5b2c1ca9be9c0c43384ddee5e3e7bfed7ae29a5"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-red.txt",
+      "length": 34051,
+      "sha256": "a4c02299996378ad2ff291cbfabe13898805b8dc0bff945787365345b53bf835"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/dotnet-restore.txt",
+      "length": 719,
+      "sha256": "b98ea3ec82ee4e714b3054c9286d6cb361ed320d6ad6fe1b6154f66859d5610d"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-check.txt",
+      "length": 94,
+      "sha256": "cade88d2a4514fc89f1593f07047f6a633fd739c72094eb2cb5da9c0364b2d58"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-final-check.txt",
+      "length": 94,
+      "sha256": "cade88d2a4514fc89f1593f07047f6a633fd739c72094eb2cb5da9c0364b2d58"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-final-generation.txt",
+      "length": 97,
+      "sha256": "e13b300ae9ab4fff4ef9ec2bdc6ffb7a882483ac750aff5ce45c085fb538c66b"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-final-integrity.txt",
+      "length": 1011,
+      "sha256": "b631ae3814bb2b299464e3ddc963df1b30a49d3152e218627559cd7d1f5c3c60"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-generation.txt",
+      "length": 97,
+      "sha256": "e13b300ae9ab4fff4ef9ec2bdc6ffb7a882483ac750aff5ce45c085fb538c66b"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-integrity.txt",
+      "length": 1012,
+      "sha256": "50c6cd66544a5f7347d50aa1599e47071e95930fb34fee089e0e69a5c4ff3343"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/npm-ci.txt",
+      "length": 316,
+      "sha256": "3cc817cb3ba8618b68df26f9fe1a9564e4779dc23c32967e31c851feee4abb48"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/revision-metadata-red.txt",
+      "length": 1071,
+      "sha256": "9ac97507420b678c0d638a5cd8c2b0fce75b6f94ddc99d0795a2c5866d2a7186"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/ts-behavior-red.txt",
+      "length": 19390,
+      "sha256": "71134623d5fc2987897a68fe6b04e31b8230701c05c349ddb5cb47f56a301556"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/ts-red.txt",
+      "length": 1576,
+      "sha256": "aa212ffa3068f8ae218408a6f769f3f089b94b95c4dfd0a6d95796d7465c677e"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+      "length": 29501,
+      "sha256": "ee948b24c8f2c1800cddb00a2c53a8d6658b26ee659580805e49e9fd52f64f04"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-final-typecheck.txt",
+      "length": 129,
+      "sha256": "48377bcab8ff42f75a4d7499205ba5fc6a57cbbaf1c05b06946e45500c4ca692"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-final.txt",
+      "length": 29289,
+      "sha256": "144574090d76ab058e68077ade9c5b423cf83311e65f22771aa0c2fc75a1e282"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-green.txt",
+      "length": 36125,
+      "sha256": "6ba5be9aad2f1dfd9481872c9509395d350f1db5e526dfe89f6430b1fa35453c"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-typecheck.txt",
+      "length": 129,
+      "sha256": "48377bcab8ff42f75a4d7499205ba5fc6a57cbbaf1c05b06946e45500c4ca692"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-final.trx",
+      "length": 323402,
+      "sha256": "4bc4c30aef71b802982e9c9be5f353c89e743b80e0ad42e4374ebf7fad62f2dd"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-green.trx",
+      "length": 328062,
+      "sha256": "298349e6d0aff2a410194b1699b9da16fbc175be925a47e8f3108839316caef6"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/terminal-red.trx",
+      "length": 96132,
+      "sha256": "8b9e9345676414e62123410db8d9c46eaf54b52ad647622f306b3d1f88b3db9a"
+    }
+  ]
+}

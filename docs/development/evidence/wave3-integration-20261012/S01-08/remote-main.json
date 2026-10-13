@@ -1,0 +1,643 @@
+{
+  "result": "PASS",
+  "task": "S01-08",
+  "repository": "GTX537/CP6.CRM",
+  "source_sha": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+  "original_candidate_sha": "2ff7f1e4b3df8a4d492d971ffd8f19ff1ea77243",
+  "remote_main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+  "baseline": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+  "pr_url": "https://github.com/GTX537/CP6.CRM/pull/90",
+  "merged_at": "2026-10-13T03:34:57Z",
+  "observed_at": "2026-10-13T03:35:07.964360+00:00",
+  "candidate_files_match": [
+    {
+      "path": "CHANGELOG-AI.md",
+      "blob": "d99dfbbeab5a863ac20592015b94a87e071bcd5d"
+    },
+    {
+      "path": "apps/web/package.json",
+      "blob": "720f8ef7d140d7e3ab76d4cb8f0e1daee3736338"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/contracts.g.ts",
+      "blob": "8b055f1a60c2c9a13496fe51e0148ff141549b1d"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/index.ts",
+      "blob": "e3976ba615efd65b9f57d96c7b93f00fee00a17b"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/revision-schema.g.ts",
+      "blob": "ea7aa326a28f1f5b9b1c223e9b8730fc4a7197e5"
+    },
+    {
+      "path": "apps/web/src/contracts/inquiry/schema.g.ts",
+      "blob": "30f344a244717d22b2cbe4826a35e41888a4e435"
+    },
+    {
+      "path": "apps/web/src/contracts/lead/contracts.g.ts",
+      "blob": "57d02b04cd9ab8dc74af01d10a369a1eb5a6830f"
+    },
+    {
+      "path": "apps/web/src/contracts/lead/index.ts",
+      "blob": "9c299c6203ab8f23140b53e063cd320abafa1f01"
+    },
+    {
+      "path": "apps/web/src/contracts/lead/schema.g.ts",
+      "blob": "9fe4f2c4d343ab45076500b022e2198065957ede"
+    },
+    {
+      "path": "apps/web/src/contracts/wire/index.ts",
+      "blob": "626fd3071b77420dfa9d55dc303d6086b9c903ca"
+    },
+    {
+      "path": "apps/web/src/contracts/wire/schema.ts",
+      "blob": "bb50811e844d1dc12ff2cedcb8c440058160cacd"
+    },
+    {
+      "path": "apps/web/src/contracts/wire/strict-json.ts",
+      "blob": "a9a74d42e79ae7c824c83196a6baee2a6383ffe4"
+    },
+    {
+      "path": "apps/web/tests/contracts-exact.test.ts",
+      "blob": "b225c61824c0d8b7feb67b3b9e482cb15f07768b"
+    },
+    {
+      "path": "apps/web/tests/s01/native-types.ts",
+      "blob": "a842bd21b49d8128b459a559c62bf6abfbb6690f"
+    },
+    {
+      "path": "apps/web/tests/s01/vectors.ts",
+      "blob": "8e820f8d8b87584ffbbc187c7fbb499f46ff7583"
+    },
+    {
+      "path": "contracts/s01/.gitattributes",
+      "blob": "9b34056418b826876f8b4a28ca58c25a2a2e6381"
+    },
+    {
+      "path": "contracts/s01/README.md",
+      "blob": "728e3adaa6ab603a891657584eb916c6bed84ccd"
+    },
+    {
+      "path": "contracts/s01/fixtures/contract-assertions.json",
+      "blob": "88b4cfe521e79db96ce880cfbe3098c8b66d5418"
+    },
+    {
+      "path": "contracts/s01/generation-manifest.json",
+      "blob": "dc62c3aff60c265aed15cd0c2e4c80ecaa4cda0c"
+    },
+    {
+      "path": "contracts/s01/generation/StrictContractDecoder.cs.txt",
+      "blob": "acf2e04ec01bd96720d50b1c9c087dd72026fd23"
+    },
+    {
+      "path": "contracts/s01/generation/StrictSchema.cs.txt",
+      "blob": "7f38d00f34ffa3487c4f617189e2e624fc8548fe"
+    },
+    {
+      "path": "contracts/s01/profile-inputs.json",
+      "blob": "40ccbc25727e0815dcb139f8ed01cb419d194920"
+    },
+    {
+      "path": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/crm-inq.terminal.openapi.json",
+      "blob": "6e9c7a6c71c80611da41c68bc5271c8d6692df8e"
+    },
+    {
+      "path": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/overlay.json",
+      "blob": "bb49655c3439d17aea865932cc7fe8f44c2a7931"
+    },
+    {
+      "path": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+      "blob": "06a8c1b339e35b8664aceb192dd7a663791e9f2c"
+    },
+    {
+      "path": "contracts/s01/upstream/JsonSemanticEquality.cs",
+      "blob": "b31ed4d5155ecfed8fbe062f8e9186919af72619"
+    },
+    {
+      "path": "contracts/s01/upstream/NullOnly.cs",
+      "blob": "ae8d2442efa64c3de6dc309ee572639a63ddcc0b"
+    },
+    {
+      "path": "contracts/s01/upstream/StrictJson.cs",
+      "blob": "ff7d32199f4250edfc54e9b48d9761c69742d325"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/229813cf102aad92__ui-positive-cases.json",
+      "blob": "59fea6d3a04ee64a72137b2b498c21b987a8caf8"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/2428190864cfd501__CP20-qualification-h02.schema.json",
+      "blob": "f135a4c96af1f4dfb44774d43f9a27b01abbd803"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "blob": "545b1353cb22cb208aaa5833eafc4468c981f9de"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/8538042210844249__crm-inq.openapi.json",
+      "blob": "f6a9cc972609c60c8cc098ec230ad6401a266549"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "blob": "62657849e80b8d1a398fa1d387a32a13228b155c"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/CrmLeadCp20Contracts.cs",
+      "blob": "a9d57286b5593368e7d3b624596850f57e76738e"
+    },
+    {
+      "path": "contracts/s01/upstream/composed/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "blob": "6af76a27e8ba4cb3e61b8a31cad1c47c849d4898"
+    },
+    {
+      "path": "contracts/s01/upstream/core-types-bounded-patches.json",
+      "blob": "72b12a06f9a172bf981000eaf976edabe2a28570"
+    },
+    {
+      "path": "contracts/s01/upstream/fixtures-bounded-patches.json",
+      "blob": "0f8916e374f7f2e0e9dad302cadbce0bbb39f7b6"
+    },
+    {
+      "path": "contracts/s01/upstream/original/229813cf102aad92__ui-positive-cases.json",
+      "blob": "56e1f99fb419bcceb7ddfd3287aa28801a937fea"
+    },
+    {
+      "path": "contracts/s01/upstream/original/2428190864cfd501__CP20-qualification-h02.schema.json",
+      "blob": "f135a4c96af1f4dfb44774d43f9a27b01abbd803"
+    },
+    {
+      "path": "contracts/s01/upstream/original/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "blob": "0318753b61426348c042dedefeb3d533d7c1f8a1"
+    },
+    {
+      "path": "contracts/s01/upstream/original/8538042210844249__crm-inq.openapi.json",
+      "blob": "78976a91b2fc0dc80d185c055b8ff7395af0a17a"
+    },
+    {
+      "path": "contracts/s01/upstream/original/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+      "blob": "35565da3ba311279ae2d41037eeba38bd14c9033"
+    },
+    {
+      "path": "contracts/s01/upstream/original/CrmLeadCp20Contracts.cs",
+      "blob": "b98e26f3cd50b5a0aff42b3cd22bd7dd707a7ed1"
+    },
+    {
+      "path": "contracts/s01/upstream/original/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "blob": "61a6b2790c2e4eaf136d998f33effbdf19a81486"
+    },
+    {
+      "path": "contracts/s01/upstream/s01-input-index.json",
+      "blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f"
+    },
+    {
+      "path": "contracts/s01/vectors.json",
+      "blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2"
+    },
+    {
+      "path": "docs/delivery/S01-08.md",
+      "blob": "41522503ce3b6bae32a489f9089038b034ce823c"
+    },
+    {
+      "path": "docs/evidence/s01-08/.gitattributes",
+      "blob": "054deec2d22e5d1fe685b49238c8e5cbf4604810"
+    },
+    {
+      "path": "docs/evidence/s01-08/README.md",
+      "blob": "402933f7a7c9792d182ec272ff173ba4188d6043"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-boundary-red.txt",
+      "blob": "b59dcc47db032341b464d7e8153f8cdfee24b48f"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-case-results.json",
+      "blob": "17e0a7bf018b6f45bb2f667110a0973d3e9c891a"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-events-red.txt",
+      "blob": "43f8bc555354c9a177d9e427277e5ad7290f567c"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-executed-source.json",
+      "blob": "1a73ca0503da1a10bfa7a16c92807dcf16757ea8"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-expanded-green.txt",
+      "blob": "130434f6ad8b1d96d0335e8953adde75df2cf096"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-expanded.txt",
+      "blob": "c598b5d65e24d7e92838e9b6b73aca1062b63b84"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-expiry-red.txt",
+      "blob": "1fe1a59578598751d7520ee1c09d6b29146cb561"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-final.trx",
+      "blob": "6e77e06489c1214366f42469ddbe3218f30f7d7a"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-final.txt",
+      "blob": "c167cf5c4631590a9882b3f084021904088bd168"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-first-compile-failure.txt",
+      "blob": "9860babd4cbd5965e2ece5115ef1cb4c42e9eee6"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-number-green.txt",
+      "blob": "900331003006a50697e88dfe8d2cf5a38a59e04b"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-pattern-compile-failure.txt",
+      "blob": "808692fbb917e40cb69333e84f8af4932d469fe4"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-pattern-red-source.json",
+      "blob": "50fa09a12df49b7e3253856ecc5400fa088655a2"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-pattern-red.txt",
+      "blob": "fa5d1313f0312064e991d9836851bc3ccd0e4552"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-red-source.json",
+      "blob": "4965d901f2ffd364cc6779ba710c638eb37a709a"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-red.txt",
+      "blob": "824a757b48b00efba94cc4bcc442a428358235ba"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-spec-green-source.json",
+      "blob": "c4a9d63fc3b60dc9a028ace9047b4dd700a62f78"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-spec-green.trx",
+      "blob": "34b1f20b9586a4834eb460f9f8d40a8a0a4cbe52"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-spec-green.txt",
+      "blob": "e5cc612bb5e5432130f010d21844732022b4c0d5"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-temporal-green.txt",
+      "blob": "ddb1a62a05bbe0f6867fc0af4faf02cba29788b5"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-temporal-red-source.json",
+      "blob": "0c75bd73b9e989d753a7bd271f43788cef393937"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-temporal-red.txt",
+      "blob": "7267e1e11aefd10130932f622b8acc976c3350cb"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-unions-red-source.json",
+      "blob": "ad07a8ef510179176a0b56d5e8997bc53ac187b0"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-unions-red.trx",
+      "blob": "2435adc18e3a5a32f62caa574e20451f24f6be52"
+    },
+    {
+      "path": "docs/evidence/s01-08/csharp-unions-red.txt",
+      "blob": "5b8b99cb76c8428161c2c383f9221b6a2adbc78f"
+    },
+    {
+      "path": "docs/evidence/s01-08/first-slice-generation.txt",
+      "blob": "c3cbfdc522e890360796faafa6ebb009093fe5da"
+    },
+    {
+      "path": "docs/evidence/s01-08/first-slice-implementation.txt",
+      "blob": "bbf4e7714187efa8b8617af46946b7dbf4db1561"
+    },
+    {
+      "path": "docs/evidence/s01-08/implementation-plan.md",
+      "blob": "3549519d292fa133a0ebd460365880011617ba70"
+    },
+    {
+      "path": "docs/evidence/s01-08/importer-check.txt",
+      "blob": "ec1e17013b774489d643517718745199c5ee0979"
+    },
+    {
+      "path": "docs/evidence/s01-08/importer-executed-source.json",
+      "blob": "8fa733a1ebbb1ada654bd60e1a177b8a3cd6b568"
+    },
+    {
+      "path": "docs/evidence/s01-08/importer-generation.txt",
+      "blob": "869cc7287f03ae32a67331334f74321df3a43e1e"
+    },
+    {
+      "path": "docs/evidence/s01-08/importer-integrity.txt",
+      "blob": "d33a941dc2cc6a1574a97a5becfb418613b5c15e"
+    },
+    {
+      "path": "docs/evidence/s01-08/npm-restore.txt",
+      "blob": "56fd48de16328fe1113cade6b776594e5d107c34"
+    },
+    {
+      "path": "docs/evidence/s01-08/preflight-review.json",
+      "blob": "eac6d27af0b1aaca9a70300da2063968d6d20b23"
+    },
+    {
+      "path": "docs/evidence/s01-08/review.md",
+      "blob": "263cc1735da8c5e36d426e5786c382f781035ca8"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/README.md",
+      "blob": "da4344abbfc96a091541446d8a3233836b5216b7"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/capture-execution.py",
+      "blob": "d9abca68cec1c0455ebb68f0480d1666339f847f"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/coordinator-final-check.json",
+      "blob": "2fe2efc8e978d16a08cbfbbab9aa367ee8474e4a"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/coordinator-links.json",
+      "blob": "e8d362efed39ed50cfd0b0514811b0772b708f6a"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/coordinator-product-freeze.txt",
+      "blob": "bd65d60eb38bbfc057ce14adcc6ed876a8b2a5f5"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/coordinator-review.md",
+      "blob": "9a52ac138dfd26b4d41c55300fd24dfdd27aecc6"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-final.trx",
+      "blob": "bff98da5018f6dc26dde84483249721b10c21c84"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-final.txt",
+      "blob": "cdf4d146b03decc2270bc0422ceb65d1604f6a23"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-first-attempt-source.json",
+      "blob": "286d0f9856bc68cd6b0aa0a29b8e982adf1c0400"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-green.trx",
+      "blob": "5f99408515f1f51bb98ed185253c36978abfb83a"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-green.txt",
+      "blob": "2710c6af17a37f494c613d83bd2178ec3d4ea1d8"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/csharp-red.txt",
+      "blob": "50e815dd81cd1d61f8b737bc6292faafbd900fb4"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/dotnet-restore.txt",
+      "blob": "725ec667bdaef8992241c99e90036838999315c0"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/executed-source.json",
+      "blob": "0acd04c60f8aabb4838af00302c018acbe6a9ca1"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-check.txt",
+      "blob": "a82f45213553ddcb1eb61d536b9792abe931c6e5"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-final-check.txt",
+      "blob": "a82f45213553ddcb1eb61d536b9792abe931c6e5"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-final-generation.txt",
+      "blob": "d2d02908f356b29daa6b773658db238d01658d8b"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-final-integrity.txt",
+      "blob": "32f4099bb1fe213e8fc6aae7bea69d62a0350a4f"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-generation.txt",
+      "blob": "d2d02908f356b29daa6b773658db238d01658d8b"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/importer-integrity.txt",
+      "blob": "efa699ec46894d256f649971b9c031b749999ac7"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/npm-ci.txt",
+      "blob": "a0e5f57f4ce8d68ebbf9a7feec5cffd4ad1a70ad"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/red-source.json",
+      "blob": "00b9940ae6fbc576eac6857169522f06dfd2ce19"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/revision-metadata-red.txt",
+      "blob": "42c561e098d5a71e70f678aad6628c23e96d87fd"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/self-check.json",
+      "blob": "03ee20fd24b9915fbf637d7772f4d4af68db0eff"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/source-delivery.json",
+      "blob": "44d088c8492e2de6cb6a3807dd49f094fb74983f"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/terminal-red.trx",
+      "blob": "b6ffa836fd2fc4e08980812c6fee7a04419d53fd"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/ts-behavior-red.txt",
+      "blob": "a02f4340bf0a13b0cab96ef3d918e6a7514d5394"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/ts-red.txt",
+      "blob": "a0101c12792dc5b73ddadf792c211b1bb173d894"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+      "blob": "72c2976809955485a10c0496933596085e3ec7e4"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-final-typecheck.txt",
+      "blob": "7838c037e339c4d6f3d77950606e4b429a8a0ab9"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-final.txt",
+      "blob": "a8330f19a695386b1df8ac36b59090cc1f6b4b3e"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-first-attempt-source.json",
+      "blob": "bbf6c7142ebf0c89080ae03e6157da1c3f15b2df"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-green.txt",
+      "blob": "165e699d9f8198ac2c89ba8f57ca884be71f5691"
+    },
+    {
+      "path": "docs/evidence/s01-08/terminal-r1/web-typecheck.txt",
+      "blob": "7838c037e339c4d6f3d77950606e4b429a8a0ab9"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-buffer-red.txt",
+      "blob": "5a177669cc2657f870b76da9316360caddbe9efa"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-directed-green.txt",
+      "blob": "b049f16b92733e275582403210143a63096da915"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-formats-red.txt",
+      "blob": "1efceafc0fbd5858923997f7f5114549155a1ce3"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-generator-recipe.txt",
+      "blob": "ff9bf764f778e3a624840fa59192e9cd6a546f39"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-green.txt",
+      "blob": "31cb9fb4ed952dd9dfded0748f03fdb214a3afa0"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-red.txt",
+      "blob": "c998c8acc2451254113b6817436ee8787734fc70"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-report.md",
+      "blob": "71e4e4e660acccf7d44858d09e07e67214f64764"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-schema-red.txt",
+      "blob": "8fe0fd09e77354bdfa1ad3cd0acdd94467676ab2"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-source-expiry-red.txt",
+      "blob": "a77a0773103891d258e3cbbbb02b53c9e44de6a6"
+    },
+    {
+      "path": "docs/evidence/s01-08/ts-verification.json",
+      "blob": "986e9bdd66e04409e8abfc0831cfcb32a18290c2"
+    },
+    {
+      "path": "docs/evidence/s01-08/web-executed-artifacts.json",
+      "blob": "f849d6fdc1ba06b0b3f06ebdd36566e05103c1c1"
+    },
+    {
+      "path": "docs/evidence/s01-08/web-typecheck.txt",
+      "blob": "7838c037e339c4d6f3d77950606e4b429a8a0ab9"
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "blob": "84647971c667181051434898fea3adc60619d51d"
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "blob": "be84f12252d8cf43cc28979d479e7521b57b5c14"
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "blob": "c35132f97d6cd1d93d89902da23614ca5b628691"
+    },
+    {
+      "path": "scripts/import-s01-contracts.py",
+      "blob": "0f84a73d7e0c3529702d555a2f8a47a82a81253f"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/InquiryContracts.g.cs",
+      "blob": "cee230a0d6366b6f1eeab773ca6c6ba725907663"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/InquiryRevisionSchemaSource.g.cs",
+      "blob": "1d63e5c763cb44b1b71b407dba8902a54de51351"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/InquirySchemaSource.g.cs",
+      "blob": "377667dbd0c7dbce6c5de5f29b9e76e7496783f9"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/NativeInquiryDefinitions.g.cs",
+      "blob": "da5589a2c624ca241311293df373b7bcc42b3e38"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/NativeInquirySchema.cs",
+      "blob": "5054c907ad0fddd5432d3082d889ac4d629f3b6d"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Lead/LeadContractDecoder.cs",
+      "blob": "2738d1b92d49cf283816b581238a875fc72295b0"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Lead/LeadContracts.g.cs",
+      "blob": "f557d4e08df0d0f9b042a3c0d82f6822f0a97768"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Lead/LeadSchemaSource.g.cs",
+      "blob": "85b1a0d7c8a88df86725c08db8a6d9f98877ca14"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/ExactJsonNumber.cs",
+      "blob": "81fab8b8ce2d72a418c0fca688607f1be0b0ef4d"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/ExactJsonTemporal.cs",
+      "blob": "25b252f613ec75591bebf56d8ac5f8d8a3e329c1"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/JsonSemanticEquality.cs",
+      "blob": "5fb15dc88bb8154b8a497bb438deaa349bd40436"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/NullOnly.cs",
+      "blob": "1785ca11ab620e0f3bff82ab4da98d4bdc6308c8"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/StrictJson.cs",
+      "blob": "7eda9f10aa6a08ee985a64f9c85362234260c1b6"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/WireJsonConverters.cs",
+      "blob": "5c74cda0a07851e874c92dcffff5f3d337113546"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/WireSchemaValidator.cs",
+      "blob": "046c541aca25f6c08f37b45560a0101371853399"
+    },
+    {
+      "path": "src/CP6.CRM.Application/Contracts/Wire/WireTemporal.cs",
+      "blob": "cb05e2187c0d5d354a48e33856134824aa3217d0"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj",
+      "blob": "3e57046234858562f17fcc6e3b3ab7a808fc8c2b"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/InquiryContractAdoptionTests.cs",
+      "blob": "235303cb03f1429efc1b8f29042ab8d1830e6917"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/InquiryTerminalProjectionTests.cs",
+      "blob": "e706fa896cf50c0f1e66b58ada86dd3f760ce79b"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/S01/ImportContractTests.py",
+      "blob": "98fb8ccb356aef30108a9cc52f938aafe0936686"
+    },
+    {
+      "path": "tests/CP6.CRM.UnitTests/Contracts/S01/LeadUnionCases.cs",
+      "blob": "c524dd13ab801c836a63028eb8fd4fe5a8a02971"
+    }
+  ],
+  "validation": "Original candidate review retained; terminal projection/source identity fix reviewed and regressions run in supported local environment. No full business acceptance.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "verification_observed_at": "2026-10-13T03:40:55.373292+00:00",
+  "verification_remote_main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+  "verification_scope": "Fresh read-only PR state/head, latest remote main ancestry and all originally recorded candidate blobs checked after review.",
+  "clock_basis": "Original observed_at was captured from coordinator host AFTER the recorded Git/API checks; GitHub merged_at is a separate server clock. Host/server skew may make original observed_at earlier than merged_at; it is not an operation start time. Both raw values are preserved. verification_observed_at is the new actual host reading after this fresh verification."
+}

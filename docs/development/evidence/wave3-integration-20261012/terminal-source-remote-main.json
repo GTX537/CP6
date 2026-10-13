@@ -1,0 +1,67 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6",
+  "source_sha": "ce38171868312588ce8f4b9e843ed6c39f4d0b0f",
+  "remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+  "pr_url": "https://github.com/GTX537/CP6/pull/192",
+  "merged_at": "2026-10-13T03:11:56Z",
+  "files_match": [
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/.gitattributes",
+      "blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/README.md",
+      "blob": "dc0774737468c3b84185efd35a556aec1a3f444d"
+    },
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/overlay.json",
+      "blob": "bb49655c3439d17aea865932cc7fe8f44c2a7931"
+    },
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+      "blob": "06a8c1b339e35b8664aceb192dd7a663791e9f2c"
+    },
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/source-review.md",
+      "blob": "41b5c3e16956c265d5ea76e4c636c411773ed8ef"
+    },
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/static-check-history.json",
+      "blob": "5c210ccbe0832fd3686b5435628d53c8b0c76f59"
+    },
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/static-check.json",
+      "blob": "c80a7aa49ba57e0cbad46404cb9cc8beed502d2e"
+    },
+    {
+      "path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/verify_overlay.py",
+      "blob": "83bf45baf07ece5616268b7f5f4ea53d4902eda8"
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "blob": "4cc033e832135c9917eb4d40f171f7d4f5b55409"
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "blob": "9578fb9005e6006c38476c1356bf15448e0dffd5"
+    },
+    {
+      "path": "docs/project-memory/CHANGELOG-AI.md",
+      "blob": "ec744b737f852af96563d60b2acd750adc5eaaae"
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "blob": "d97607ba0a2e3e78a748bb94d5c9f11d92c7d798"
+    }
+  ],
+  "observed_at": "2026-10-13T03:11:48.681852+00:00",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "verification_observed_at": "2026-10-13T03:40:56.119612+00:00",
+  "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+  "verification_scope": "Fresh read-only PR state/head, latest remote main ancestry and all originally recorded candidate blobs checked after review.",
+  "clock_basis": "Original observed_at was captured from coordinator host AFTER the recorded Git/API checks; GitHub merged_at is a separate server clock. Host/server skew may make original observed_at earlier than merged_at; it is not an operation start time. Both raw values are preserved. verification_observed_at is the new actual host reading after this fresh verification."
+}

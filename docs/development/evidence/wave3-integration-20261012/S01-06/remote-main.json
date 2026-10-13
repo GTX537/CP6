@@ -1,0 +1,150 @@
+{
+  "result": "PASS",
+  "task": "S01-06",
+  "repository": "GTX537/CP6",
+  "source_sha": "f406e4e515a7ce82d77db5307e467e7bcdbc25e4",
+  "baseline": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+  "remote_main_sha": "bd25558ea4c0981b0cff1e4fa77ab8f61277211c",
+  "pr_url": "https://github.com/GTX537/CP6/pull/191",
+  "merged_at": "2026-10-13T03:09:32Z",
+  "candidate_files_match": [
+    {
+      "path": "CP6.Entity/Contracts/PlanAtp/.gitattributes",
+      "blob": "d59777b4550f8567d98727a0c388eccb95b51f6d"
+    },
+    {
+      "path": "CP6.Entity/Contracts/PlanAtp/StableId.cs",
+      "blob": "8dc72bdc756d7df0283956772ef4e1013a2ad5ff"
+    },
+    {
+      "path": "cp6.web/src/contracts/plan-atp/.gitattributes",
+      "blob": "1ed01fc9d44a651a4c0ddb4a71ee539a9b5d22e4"
+    },
+    {
+      "path": "cp6.web/src/contracts/plan-atp/stableId.test.ts",
+      "blob": "47a3e21f341a77761fc2b8bde9d3b6d1af4f84fc"
+    },
+    {
+      "path": "cp6.web/src/contracts/plan-atp/stableId.ts",
+      "blob": "63ebd8ae312ba1888027a5403eb2a15b007916ee"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/.gitattributes",
+      "blob": "1db0f7d8b8282f35c3db0d1e31ff611723ef7dfb"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/DELIVERY.md",
+      "blob": "c710bc4f5c05d8a6902bf79b2c8d6a3343d672b2"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/IMPLEMENTATION.md",
+      "blob": "f9545c55e5ad8c216ddf323d39f5a2b9218ce9ad"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/PLAN.md",
+      "blob": "2fa5160614ff4eee8ec4189925843c89ea802c19"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/REVIEW.md",
+      "blob": "8782e23a14b229c991a3d6bb1b0ca627c1ad50bb"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/capture-state.py",
+      "blob": "6fb6228505e58e1f64e305601d773e62265b9cf0"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/case-matrix.json",
+      "blob": "c6a87a737c8598cec52999589483ae724646dfdc"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/green-csharp.log",
+      "blob": "b834e5d2db9d4fb452e4ead69a51ff483a386b67"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/green-csharp.trx",
+      "blob": "0877a5d6f8613b5f5439db47dbf665fa2b9ad076"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/green-state.json",
+      "blob": "060239ea8b25f7592e000dc4820c58c4928bfbcc"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/green-ts.json",
+      "blob": "ef5a54b5784b4cc85187a5aa02f1780173fc0e1d"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/green-ts.log",
+      "blob": "5f77d37be6e1793e2e0a86e41823575e71d5e5fd"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/green-type-check.log",
+      "blob": "905c99dc702c215d0802d6faef3a4bf4290ca39e"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/prepare-inputs.py",
+      "blob": "601474806c1b322d3699af7de976caba9e9ad52d"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/publication-precheck.json",
+      "blob": "3618f53311494faec3e6aae01d6ae43b1a014154"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-csharp.log",
+      "blob": "c08c2ed1959fa9dd332b312f64da045fcb9f546f"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-csharp.trx",
+      "blob": "d67a8957173ffddb2057600e584d3834b5ea49bc"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-state.json",
+      "blob": "d798351d60677f0088c6e4ac486e2305d2483060"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-ts.json",
+      "blob": "f205fbd8ce79e7e68d8b1099276b7f835b5ace07"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-ts.log",
+      "blob": "5e663371c3c2875351968bb998d50a7fb6c20242"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/restore-dotnet.log",
+      "blob": "e44a161cae879392d49d9fdcc69715e604b5515b"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/source-provenance.json",
+      "blob": "843e70fff886976b2c7f01c3b8562d7b8ab2098e"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/start-transport-verification.json",
+      "blob": "04fad24c1ebc98081380527b3534241f981484eb"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/summarize-validation.py",
+      "blob": "3c0716ddf154f2f9ddb6d8c24b2d149d8c43b0a1"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/validation-summary.json",
+      "blob": "f9734ebd13145a41c7495c80ab4f268d3bf523d5"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StableIdTests.cs",
+      "blob": "45fa7b7e8b24ded1aee467a2f6343997fb08fd4d"
+    },
+    {
+      "path": "eng/contracts/s01/atp-stable-id.schema.json",
+      "blob": "bc636b223a53a2635c7f6483adea08580e5ad460"
+    }
+  ],
+  "observed_at": "2026-10-13T03:09:25.841315+00:00",
+  "validation": "Reused original exact-source local results; coordinated source/evidence/read-only review",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "verification_observed_at": "2026-10-13T03:40:45.917413+00:00",
+  "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+  "verification_scope": "Fresh read-only PR state/head, latest remote main ancestry and all originally recorded candidate blobs checked after review.",
+  "clock_basis": "Original observed_at was captured from coordinator host AFTER the recorded Git/API checks; GitHub merged_at is a separate server clock. Host/server skew may make original observed_at earlier than merged_at; it is not an operation start time. Both raw values are preserved. verification_observed_at is the new actual host reading after this fresh verification."
+}
