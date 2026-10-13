@@ -1,0 +1,106 @@
+{
+  "task": "S01-12",
+  "recorded_at_utc": "2026-10-13T12:44:22.885969+00:00",
+  "result": "PASS_LOCAL_EVIDENCE_RECONCILIATION",
+  "source_main": "47c9b12c796620effe41c62d16992ccd629ee949",
+  "executed_from": "uncommitted task-owned files; exact source hashes below, no implied committed-source execution",
+  "comparator_source_sha256": {
+    "test_verify_adoption.py": "5c41fb0324d5bc2f56774fc119890fad1d11c7993c232746d5900259cfeed197",
+    "verify_adoption.py": "ddd4c399b0657f26f26a1b0355e4629a0f45c0c233c78b21f6b875d9618a98d4"
+  },
+  "outputs_sha256": {
+    "manifest.json": "a4158ce46a24d0a2c4a75628e919e0fe0f1b30e901d8a337e3e533734edd496c",
+    "vectors.json": "ea4a8685b08e0d4bd8d48610583fd7b765f133466b4f3a6f11e05aea1002dc5f",
+    "revision-coverage.json": "5008c4eaa94925ecdd211d44b335b1ccecde33b080d01b07a207c5af9d838aca"
+  },
+  "consumers_sha256": "6450d6f9e2851af0cdc3f764dc5c30a3491f99f5fcf08ef80039f7808ffdf96d",
+  "references": {
+    "implementation/final-verification.json": {
+      "path": "implementation/final-verification.json",
+      "sha256": "55cfc1a847d06ae8457e27da65a1b32dd1e8abc7595ab067161ac097b23bc339"
+    },
+    "implementation/comparator-tests.json": {
+      "path": "implementation/comparator-tests.json",
+      "sha256": "9a738da6c3cdb264ec790876045e9b75d33d4d7ebb0fad9754c4ecaf1d9b0dad"
+    },
+    "implementation/first-attempt-stopped.json": {
+      "path": "implementation/first-attempt-stopped.json",
+      "sha256": "b30e0a340e3d87dcdb3ccb3f4b936ffb901b23e640e6dcc88d11c0dc2fd89c63"
+    },
+    "implementation/IMPLEMENTATION.md": {
+      "path": "implementation/IMPLEMENTATION.md",
+      "sha256": "c2fef3b5843963966080d9c6871c92cdfedd5abd94d604b1f5aa5f360b7ca92b"
+    },
+    "roadmap-check.json": {
+      "path": "roadmap-check.json",
+      "sha256": "9ac994b54d42cca1b96dc393dae1db2f66b812971f7ba204c24ed2e91b3b1c2d"
+    }
+  },
+  "new_checks": {
+    "evidence_comparison": {
+      "result": "PASS",
+      "exit_code": 0,
+      "report": "implementation/final-verification.json",
+      "referenced_files": 827,
+      "vectors": 122,
+      "profiles": 16,
+      "three_surface_lexical": 56,
+      "historical_applicable_assertions": 352,
+      "not_applicable_cells": 502,
+      "revision_cases": 19,
+      "consumer_source_pins": 51,
+      "responsibility_task_snapshots": 56,
+      "handoff_slices": 6
+    },
+    "comparator_tests": {
+      "result": "PASS",
+      "exit_code": 0,
+      "report": "implementation/comparator-tests.json",
+      "counts": {
+        "discovered": 30,
+        "executed": 30,
+        "passed": 30,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "roadmap": {
+      "result": "PASS",
+      "exit_code": 0,
+      "report": "roadmap-check.json",
+      "read_only": true
+    },
+    "parent_identity_check": {
+      "result": "PASS",
+      "scope": "Recomputed final comparison/test-driver source hashes and three generated files plus consumers; compared to actual run records. Consumer task titles/plan headings/ID uniqueness and six slices independently checked."
+    }
+  },
+  "commands": "Exact tool paths and arguments in implementation/IMPLEMENTATION.md; roadmap command in roadmap-check.json",
+  "old_test_reuse": "All product results retain original execution identity. S10 fixed vectors use final57; full210 overlaps and is not added. S11 TS428 replaces416, C#417/design5 reused. No new combined current-main product run.",
+  "preserved_attempts": [
+    "implementation/first-attempt-stopped.json",
+    "implementation/second-attempt.json",
+    "implementation/third-attempt.json",
+    "implementation/fourth-attempt.json"
+  ],
+  "new_product_tests": 0,
+  "database_operations": 0,
+  "actions_started": 0,
+  "actions_cancelled": [],
+  "workflow_trigger_changes": [],
+  "not_run": [
+    "All 247 full runtime business cases",
+    "Real Owner/HTTP/page/writer/storage/tenant adoption",
+    "Combined current Main product execution",
+    "NuGet publication, migration and production deployment"
+  ],
+  "known_gaps": [
+    "S01-07 ORIGINAL_DLL_SHA256_MISSING",
+    "S01-05 individual reporter output missing; suite/source/ID-summary bounded proof only",
+    "No captured actual scalar values in original assertion reporters",
+    "Unpublished Platform S01-09 package identity; no effective INQ decoder adoption there"
+  ],
+  "review": "See review.md; task-level review is separate from these actual local checks.",
+  "completion_gate": "COORD status sync, protected merge and fresh remote-main containment required; this local result does not mark DONE."
+}

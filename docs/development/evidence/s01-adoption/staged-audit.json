@@ -1,0 +1,131 @@
+{
+  "task": "S01-12",
+  "source_main": "47c9b12c796620effe41c62d16992ccd629ee949",
+  "result": "PASS",
+  "scope": "24 pre-review task files only; exact staged/work bytes, allowed task paths and narrow credential-pattern scan. Does not certify absence of every possible secret.",
+  "files": [
+    {
+      "path": "docs/development/evidence/s01-adoption/.gitattributes",
+      "sha256_staged_and_working_bytes": "4ae8735fcd43790a18674cb62d91eed7c2c4a86d85e0f69953291c2fe92b911b",
+      "bytes": 96
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/DELIVERY.md",
+      "sha256_staged_and_working_bytes": "4361dfe083fb28bc66bac00b625bc5edfaa68ae0d750e38337845606f891525e",
+      "bytes": 4492
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/PLAN.md",
+      "sha256_staged_and_working_bytes": "de7fb22b9fee2b77d8dfb5335669439e3d4d79dd7bd7df2402e45a5409526191",
+      "bytes": 2320
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/README.md",
+      "sha256_staged_and_working_bytes": "a95709482ff9984a1cf7a0b2703aec22d20594e5832bfcf598c676dc7a1d06b5",
+      "bytes": 12035
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/check-publication.py",
+      "sha256_staged_and_working_bytes": "6c551c279dd8e3e50f50390b77130c0e67c08097fb74232255b75cf99cd3ca58",
+      "bytes": 3601
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/consumers.json",
+      "sha256_staged_and_working_bytes": "6450d6f9e2851af0cdc3f764dc5c30a3491f99f5fcf08ef80039f7808ffdf96d",
+      "bytes": 71478
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/entry.json",
+      "sha256_staged_and_working_bytes": "b150497fa89edc25dc010f774f164d18f413c6545d0f99611eb17568f8966a73",
+      "bytes": 21070
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/IMPLEMENTATION.md",
+      "sha256_staged_and_working_bytes": "c2fef3b5843963966080d9c6871c92cdfedd5abd94d604b1f5aa5f360b7ca92b",
+      "bytes": 4518
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/comparator-tests.json",
+      "sha256_staged_and_working_bytes": "9a738da6c3cdb264ec790876045e9b75d33d4d7ebb0fad9754c4ecaf1d9b0dad",
+      "bytes": 1153
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/final-verification.json",
+      "sha256_staged_and_working_bytes": "55cfc1a847d06ae8457e27da65a1b32dd1e8abc7595ab067161ac097b23bc339",
+      "bytes": 2432
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/first-attempt-stopped.json",
+      "sha256_staged_and_working_bytes": "b30e0a340e3d87dcdb3ccb3f4b936ffb901b23e640e6dcc88d11c0dc2fd89c63",
+      "bytes": 394
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/fourth-attempt.json",
+      "sha256_staged_and_working_bytes": "a3ab121f2bc7e7de6e7071acabdf55edd7ea44eeb8d0faa1bff718a1ddb824d5",
+      "bytes": 2432
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/second-attempt.json",
+      "sha256_staged_and_working_bytes": "071c86ffa24510a43e6cf00f313dde943f1d25b339719460580754e73433dfeb",
+      "bytes": 2323
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/third-attempt.json",
+      "sha256_staged_and_working_bytes": "901233458756ec864d08e05d82ab1a4494f9b3fd57f159c2869015681533caec",
+      "bytes": 2432
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/manifest.json",
+      "sha256_staged_and_working_bytes": "a4158ce46a24d0a2c4a75628e919e0fe0f1b30e901d8a337e3e533734edd496c",
+      "bytes": 1471911
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/revision-coverage.json",
+      "sha256_staged_and_working_bytes": "5008c4eaa94925ecdd211d44b335b1ccecde33b080d01b07a207c5af9d838aca",
+      "bytes": 57960
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/roadmap-check.json",
+      "sha256_staged_and_working_bytes": "9ac994b54d42cca1b96dc393dae1db2f66b812971f7ba204c24ed2e91b3b1c2d",
+      "bytes": 1194
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/start-receipt.json",
+      "sha256_staged_and_working_bytes": "72e99d5812ed9bdfaeb9999d73114f618bc884565ba3aeb2480c31e4b8ed2a0c",
+      "bytes": 926
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/validation.json",
+      "sha256_staged_and_working_bytes": "2e2682d90ce19fede2deea41ec7faf0da02680f4e03c6a46de7f92652b228363",
+      "bytes": 4560
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/vectors.json",
+      "sha256_staged_and_working_bytes": "ea4a8685b08e0d4bd8d48610583fd7b765f133466b4f3a6f11e05aea1002dc5f",
+      "bytes": 617368
+    },
+    {
+      "path": "eng/contracts/s01-12/.gitattributes",
+      "sha256_staged_and_working_bytes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+      "bytes": 14
+    },
+    {
+      "path": "eng/contracts/s01-12/.gitignore",
+      "sha256_staged_and_working_bytes": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+      "bytes": 13
+    },
+    {
+      "path": "eng/contracts/s01-12/test_verify_adoption.py",
+      "sha256_staged_and_working_bytes": "5c41fb0324d5bc2f56774fc119890fad1d11c7993c232746d5900259cfeed197",
+      "bytes": 9905
+    },
+    {
+      "path": "eng/contracts/s01-12/verify_adoption.py",
+      "sha256_staged_and_working_bytes": "ddd4c399b0657f26f26a1b0355e4629a0f45c0c233c78b21f6b875d9618a98d4",
+      "bytes": 66453
+    }
+  ],
+  "credential_pattern_matches": [],
+  "diff_check_exit_code": 0,
+  "limitations": "Review and publication evidence added after this snapshot are separately inspected; this is not a product test."
+}

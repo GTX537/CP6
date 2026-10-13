@@ -1,0 +1,181 @@
+{
+  "task": "S01-12",
+  "observed_at_utc": "2026-10-13T13:06:17.075746+00:00",
+  "base": "47c9b12c796620effe41c62d16992ccd629ee949",
+  "result": "PASS",
+  "files": [
+    {
+      "path": "docs/development/evidence/s01-adoption/.gitattributes",
+      "sha256_staged_and_working_bytes": "4ae8735fcd43790a18674cb62d91eed7c2c4a86d85e0f69953291c2fe92b911b",
+      "bytes": 96
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/DELIVERY.md",
+      "sha256_staged_and_working_bytes": "4361dfe083fb28bc66bac00b625bc5edfaa68ae0d750e38337845606f891525e",
+      "bytes": 4492
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/PLAN.md",
+      "sha256_staged_and_working_bytes": "de7fb22b9fee2b77d8dfb5335669439e3d4d79dd7bd7df2402e45a5409526191",
+      "bytes": 2320
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/README.md",
+      "sha256_staged_and_working_bytes": "d49b09f76af8f18a69ce70a2c0b603648073de6c6504fb9d2fe6203408456c5e",
+      "bytes": 12443
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/check-publication.py",
+      "sha256_staged_and_working_bytes": "6c551c279dd8e3e50f50390b77130c0e67c08097fb74232255b75cf99cd3ca58",
+      "bytes": 3601
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/consumers.json",
+      "sha256_staged_and_working_bytes": "6450d6f9e2851af0cdc3f764dc5c30a3491f99f5fcf08ef80039f7808ffdf96d",
+      "bytes": 71478
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/entry.json",
+      "sha256_staged_and_working_bytes": "b150497fa89edc25dc010f774f164d18f413c6545d0f99611eb17568f8966a73",
+      "bytes": 21070
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/IMPLEMENTATION.md",
+      "sha256_staged_and_working_bytes": "c2fef3b5843963966080d9c6871c92cdfedd5abd94d604b1f5aa5f360b7ca92b",
+      "bytes": 4518
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/SPEC-FIELD-FIX.md",
+      "sha256_staged_and_working_bytes": "4cc48a50678963fff0403ef4229ed57376adbb8d0c4841a8ebcbd60469e54389",
+      "bytes": 2954
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/comparator-tests.json",
+      "sha256_staged_and_working_bytes": "9a738da6c3cdb264ec790876045e9b75d33d4d7ebb0fad9754c4ecaf1d9b0dad",
+      "bytes": 1153
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/final-verification.json",
+      "sha256_staged_and_working_bytes": "55cfc1a847d06ae8457e27da65a1b32dd1e8abc7595ab067161ac097b23bc339",
+      "bytes": 2432
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/first-attempt-stopped.json",
+      "sha256_staged_and_working_bytes": "b30e0a340e3d87dcdb3ccb3f4b936ffb901b23e640e6dcc88d11c0dc2fd89c63",
+      "bytes": 394
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/fourth-attempt.json",
+      "sha256_staged_and_working_bytes": "a3ab121f2bc7e7de6e7071acabdf55edd7ea44eeb8d0faa1bff718a1ddb824d5",
+      "bytes": 2432
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/second-attempt.json",
+      "sha256_staged_and_working_bytes": "071c86ffa24510a43e6cf00f313dde943f1d25b339719460580754e73433dfeb",
+      "bytes": 2323
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-diff-check.json",
+      "sha256_staged_and_working_bytes": "d060abf4865c9777cb5ed56d27398a6603fb9fea5a57479535129fa6d4e7b4ab",
+      "bytes": 1070
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-green.json",
+      "sha256_staged_and_working_bytes": "915d7be334bc0537f4de60fbcb68f6fa3fd01074857e2666c78ba280780b8a15",
+      "bytes": 1233
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-pre-fix.json",
+      "sha256_staged_and_working_bytes": "612a8c3a1700dd8353258128c4fa6382209db24167c8f7b34c5f7dee39a2f8c6",
+      "bytes": 1987
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-red.json",
+      "sha256_staged_and_working_bytes": "767af28219e0c8f42dee5de80a1321764a085a24a286639246a1f7be83d49217",
+      "bytes": 2182
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-targeted-tests.json",
+      "sha256_staged_and_working_bytes": "7cae5de763c49d8d1c8e59b2c97838f7448b89f6f4852f05c4c15df9cca4f0cb",
+      "bytes": 1298
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-verification.json",
+      "sha256_staged_and_working_bytes": "66dfef0810184c59468c3fecc84a0d5eabc4156b170693b2586f82bc88346602",
+      "bytes": 2432
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/third-attempt.json",
+      "sha256_staged_and_working_bytes": "901233458756ec864d08e05d82ab1a4494f9b3fd57f159c2869015681533caec",
+      "bytes": 2432
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/manifest.json",
+      "sha256_staged_and_working_bytes": "96210c30090f97da137d1a57e675b8f77aae1f4efe5d8c7d1b0ae591932ba0cb",
+      "bytes": 1472270
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/review.md",
+      "sha256_staged_and_working_bytes": "1d1b62b4d7e5efc9a4f80d6c99e8c4760491a0fe94c409bb073dcc17e5ac0252",
+      "bytes": 4089
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/revision-coverage.json",
+      "sha256_staged_and_working_bytes": "8e397235add80ddee823a9107bbd941875a5a9d0095211353e81fd64763935a2",
+      "bytes": 77386
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/roadmap-check.json",
+      "sha256_staged_and_working_bytes": "9ac994b54d42cca1b96dc393dae1db2f66b812971f7ba204c24ed2e91b3b1c2d",
+      "bytes": 1194
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/staged-audit.json",
+      "sha256_staged_and_working_bytes": "632694822b4b783ef3c10b2cda097614af532af51a46842183615a3b12e8246a",
+      "bytes": 5696
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/start-receipt.json",
+      "sha256_staged_and_working_bytes": "72e99d5812ed9bdfaeb9999d73114f618bc884565ba3aeb2480c31e4b8ed2a0c",
+      "bytes": 926
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/validation-pre-spec-fix.json",
+      "sha256_staged_and_working_bytes": "2e2682d90ce19fede2deea41ec7faf0da02680f4e03c6a46de7f92652b228363",
+      "bytes": 4560
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/validation.json",
+      "sha256_staged_and_working_bytes": "07b0ef4e8c0103128cb139361d5a277f84be7122197dfb36b5f8138cffdf6673",
+      "bytes": 6755
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/vectors.json",
+      "sha256_staged_and_working_bytes": "ea4a8685b08e0d4bd8d48610583fd7b765f133466b4f3a6f11e05aea1002dc5f",
+      "bytes": 617368
+    },
+    {
+      "path": "eng/contracts/s01-12/.gitattributes",
+      "sha256_staged_and_working_bytes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+      "bytes": 14
+    },
+    {
+      "path": "eng/contracts/s01-12/.gitignore",
+      "sha256_staged_and_working_bytes": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+      "bytes": 13
+    },
+    {
+      "path": "eng/contracts/s01-12/test_verify_adoption.py",
+      "sha256_staged_and_working_bytes": "54c904364ee4575e3b125d0515d590eee062f794ef9f418bfd4ed0cd3a95c32c",
+      "bytes": 12465
+    },
+    {
+      "path": "eng/contracts/s01-12/verify_adoption.py",
+      "sha256_staged_and_working_bytes": "0d53315b8f8f6e938570fa40beebc047cd4c9b01006379d74b69d9941239fede",
+      "bytes": 71098
+    }
+  ],
+  "scope": "Final task diff before this receipt; exact staged/work bytes, allowlist, whitespace and narrow credential patterns. Does not certify absence of every possible secret. No product test.",
+  "review": "SPEC PASS / QUALITY PASS",
+  "publication_records": "Exact candidate pre-push and pre-PR records will be attached to fixed Handoff DELIVERY; this local receipt is not publication approval or remote containment."
+}

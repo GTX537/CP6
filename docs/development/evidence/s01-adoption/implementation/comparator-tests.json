@@ -1,0 +1,32 @@
+{
+  "schema": "CP6-S01-12-COMPARATOR-TESTS/1",
+  "result": "PASS",
+  "observed_at_utc": "2026-10-13T12:40:11.565478+00:00",
+  "counts": {
+    "discovered": 30,
+    "executed": 30,
+    "passed": 30,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "failures": [],
+  "environment": {
+    "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "source_sha256": {
+    "test_verify_adoption.py": "5c41fb0324d5bc2f56774fc119890fad1d11c7993c232746d5900259cfeed197",
+    "verify_adoption.py": "ddd4c399b0657f26f26a1b0355e4629a0f45c0c233c78b21f6b875d9618a98d4"
+  },
+  "repository_pins": {
+    "Main": "47c9b12c796620effe41c62d16992ccd629ee949",
+    "CRM": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+    "Platform": "9259a45d39bae7e98ca804a74778a588c1ad4619"
+  },
+  "input_package_sha256": {
+    "profiles": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+    "vectors": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+  },
+  "scope": "Comparator adversarial checks only; no new product tests, database, HTTP, Owner or build executions"
+}

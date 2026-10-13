@@ -1,0 +1,1741 @@
+{
+  "schema": "CP6-S01-REVISION-COVERAGE/1",
+  "coverage_semantics": "FULL applies only to explicitly bounded contract subassertion; never promotes REQUIRED_RUNTIME to PASS.",
+  "full_runtime_catalog": {
+    "cases": 247,
+    "result": "NOT_RUN"
+  },
+  "cases": [
+    {
+      "revision_case_id": "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+      "original_ac_id": "AC-W5-COM-07-R",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/20"
+      },
+      "original_expected": "amount别名、额外Money字段、任一旧digest/byteLength/handle/receipt摘要组合均不可进入current夹具；缺真实issuer/Store收据仍fenced。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "erp-credit-current-v1",
+        "erp-credit-frozen-r8"
+      ],
+      "fixed_vector_ids": [
+        "VERSION-001",
+        "VERSION-002",
+        "VERSION-003",
+        "VERSION-004",
+        "VERSION-005",
+        "VERSION-006",
+        "VERSION-007",
+        "VERSION-008",
+        "BYTES-001",
+        "BYTES-002"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Money amount alias and extra Money members rejected",
+          "coverage": "FULL",
+          "reason": "Explicit original current/frozen Money negative tests are located separately from routing vectors."
+        },
+        {
+          "assertion": "Old digest/length/handle/receipt combinations rejected in selected design chain",
+          "coverage": "PARTIAL",
+          "reason": "Original design5 audit has343 projections/60 tamper rejections; this is selected fixture evidence, not all native C06 roots or runtime Store proof."
+        },
+        {
+          "assertion": "Real issuer/Store receipts required before business effects",
+          "coverage": "NOT_COVERED",
+          "reason": "No real issuer/Store is wired; UNPROVEN_FENCED remains the adoption state."
+        },
+        {
+          "assertion": "Exactly the typed contract write set; negative/replay cases create no unauthorized or duplicate business effect. See issue outputs for concrete records.",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": [
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs current-money-alias",
+            "full_name_sha256": "77771049bf0495f0fe6c7f874033b779079c7bc14cee2f3850fe75f3ac280d8c",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/118"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs frozen-money-alias",
+            "full_name_sha256": "b4df177b0957c7d4d5da949c5a15695064f9bacaf475d9591f37a0c5a93b75db",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/119"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs current-money-extra",
+            "full_name_sha256": "89e6cd841626a3609058c238a7fa6d815ca58e04a83c53b7764e837dd32be75b",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/120"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs frozen-money-extra",
+            "full_name_sha256": "bcd6dcce222f5f0d328469ea318f082b59eb134e4ce9f240e1020736db25d148",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/121"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "revision_case_id": "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+      "original_ac_id": "AC-W5-COM-06-R",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/17"
+      },
+      "original_expected": "错TYPE或native schema pin拒加载；APPLIED无Ref/REJECTED带Ref拒wire；NO_CHANGE或COMPLETED传输成功不能单独建立FOUND或释放占用。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "erp-credit-current-v1",
+        "erp-credit-frozen-r8"
+      ],
+      "fixed_vector_ids": [
+        "VERSION-001",
+        "VERSION-002",
+        "VERSION-003",
+        "VERSION-004",
+        "VERSION-005",
+        "VERSION-006",
+        "VERSION-007",
+        "VERSION-008",
+        "BYTES-001",
+        "BYTES-002"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Wrong registry/schema identity and APPLIED-without-ref/REJECTED-with-ref rejected",
+          "coverage": "FULL",
+          "reason": "Native routing vectors plus explicit current/frozen outcome tests cover these codec assertions."
+        },
+        {
+          "assertion": "NO_CHANGE/COMPLETED transport alone never createsFOUND or releases occupancy",
+          "coverage": "PARTIAL",
+          "reason": "Unproven contract projections remain fenced; actual Owner/Store effects and recovery were not executed."
+        },
+        {
+          "assertion": "Exactly the typed contract write set; negative/replay cases create no unauthorized or duplicate business effect. See issue outputs for concrete records.",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": [
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs current-outcome-APPLIED-False",
+            "full_name_sha256": "dd6e88590eaf6c66b00fc38e4ac1a7721e2aaaeb4fa6befb40fcabbbac1fb52e",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/142"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs frozen-outcome-APPLIED-False",
+            "full_name_sha256": "343bef1fead48834897e3db23764f31d9c9ec51979815972795ef6f6390aa5b2",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/143"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs current-outcome-REJECTED-True",
+            "full_name_sha256": "cd3ef2fb35af3bdafc7e675c1181cdd9df341b58baca2c46499e4fd495e05222",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/144"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs frozen-outcome-REJECTED-True",
+            "full_name_sha256": "de565b2b9564fbc2e6a40a60208fea90f0338d13f9ae6d3ef8d2dce1fe8065b1",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/145"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs current-unproven-completed",
+            "full_name_sha256": "1703b506b8de47fdc8e1ff48b23f6404bbbcde66357769ba09b8d607024d690e",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/152"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs frozen-unproven-completed",
+            "full_name_sha256": "dd898a2df84fc675963b6e585d650cdf0f6ed421975dd4e455ef08913c2e76bb",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/153"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs current exact routes, schema pins, immutable snapshots",
+            "full_name_sha256": "72fc1d780364d996abb7bfb355cdcddb6600f5f41963052f47ca84086a8be771",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/422"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs frozen exact routes, schema pins, immutable snapshots",
+            "full_name_sha256": "c10fdd5fd70427519750e5c07a3a0a227c16a0c10a1535c31a6411338cd00371",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/423"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "revision_case_id": "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R",
+      "original_ac_id": "AC-W5-COM-08-R",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/23"
+      },
+      "original_expected": "重复扩展键、多根载体不可用于生成；重放重命名COMMITTED_REPLAY、重新脱敏/重建body或再次业务写均拒绝。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "erp-credit-current-v1",
+        "erp-credit-frozen-r8"
+      ],
+      "fixed_vector_ids": [
+        "VERSION-001",
+        "VERSION-002",
+        "VERSION-003",
+        "VERSION-004",
+        "VERSION-005",
+        "VERSION-006",
+        "VERSION-007",
+        "VERSION-008",
+        "BYTES-001",
+        "BYTES-002"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Duplicate keys rejected and C01/C02 replay retains exact original body bytes",
+          "coverage": "PARTIAL",
+          "reason": "Byte retention and replay tests exist; BYTES vectors have invalid native RV and NativeSchemaValidated=false."
+        },
+        {
+          "assertion": "Every multi-root generator input and repeat business write rejected",
+          "coverage": "NOT_COVERED",
+          "reason": "Full generator/Owner write sequence is outside the bounded codec; no native fullC06 decode or repeat-write acceptance."
+        },
+        {
+          "assertion": "Exactly the typed contract write set; negative/replay cases create no unauthorized or duplicate business effect. See issue outputs for concrete records.",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": [
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs C01 replays the complete original HTTP201 COMMITTED body as HTTP200",
+            "full_name_sha256": "102d1d58af0036bbe56b7719162f78264771b869439bb617d08d9d338b421322",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/424"
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S11-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "ERP-CREDIT native codecs C02 replays the complete original HTTP201 COMMITTED body as HTTP200",
+            "full_name_sha256": "2c7788103c6f8f514e36f654e3c8f4d7de4e21e9c15676ef108eedb03e81b03f",
+            "outcome": "passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+              "json_pointer": "/testResults/0/assertionResults/425"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "revision_case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+      "original_ac_id": "COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/259"
+      },
+      "original_expected": "boolean扩展字段仍由decoder检查，重复JSON键拒绝；旧过期proof或错误ETag不能下载/写入",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "strict-json",
+        "null-only",
+        "json-semantic-equality",
+        "crm-inq-r3-v15"
+      ],
+      "fixed_vector_ids": [
+        "JSON-002",
+        "JSON-003",
+        "JSON-004",
+        "JSON-005",
+        "JSON-006",
+        "NULL-001",
+        "NULL-003",
+        "NULL-004",
+        "NULL-005",
+        "NULL-006",
+        "NULL-007",
+        "INQ-VERSION-002",
+        "INQ-VERSION-003",
+        "INQ-VERSION-004",
+        "EQUAL-002",
+        "EQUAL-003",
+        "EQUAL-007"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Duplicate JSON keys rejected and local decoder validates selected closed members",
+          "coverage": "PARTIAL",
+          "reason": "Frozen strict JSON vectors and corrected decoder tests execute; fixed vectors do not enumerate every extension-field rule."
+        },
+        {
+          "assertion": "Expired proof/wrongETag cannot download or write through real HTTP/Owner",
+          "coverage": "NOT_COVERED",
+          "reason": "Local codec and download-state tests do not establish authorization, persistence, or real HTTP negative paths."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+      "original_ac_id": "COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/258"
+      },
+      "original_expected": "55引用可解析；不同对象键序算同值；终态公开字段null；合法幂等键下201/4001字符长度负例422",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "strict-json",
+        "null-only",
+        "json-semantic-equality",
+        "crm-inq-r3-v15"
+      ],
+      "fixed_vector_ids": [
+        "JSON-001",
+        "JSON-007",
+        "NULL-002",
+        "INQ-VERSION-001",
+        "EQUAL-001",
+        "EQUAL-004",
+        "EQUAL-005",
+        "EQUAL-006"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Exact source selection and semantic object-key equality",
+          "coverage": "PARTIAL",
+          "reason": "Four fixed INQ cases identify the native locator; effective terminal profile is separately pinned, and EQUAL vectors cover JSON semantics."
+        },
+        {
+          "assertion": "Status90/99 required-null public fields and status99/status30 clock rules",
+          "coverage": "FULL",
+          "reason": "Corrected terminal-R1 run covers local C# decoder and TS view-state behavior; no HTTP delivery acceptance is inferred."
+        },
+        {
+          "assertion": "All55 reference closure and HTTP201/422 at201/4001 character boundaries",
+          "coverage": "NOT_COVERED",
+          "reason": "Fixed native locator/equality evidence is insufficient for this complete HTTP scenario; no new HTTP execution occurred."
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": [
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "INQ privacy revision clears public terminal expiry and keeps state 30 ordering",
+            "full_name_sha256": "7f6fab7c498023806ffe1b1f83584ce0fcbec2f7625cc70973e4fcf2794958fd",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 71
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "all 49 pinned UI samples decode and preserve bytes under explicit terminal revision",
+            "full_name_sha256": "05d9e2f456680aebf2158925fa10399d526a9dc290cc8cbcab8edf55d875b60b",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 73
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision root: 90/99 public nulls and original bytes",
+            "full_name_sha256": "d0ef31e6c3eb7b947a3a4951df340bad1fef78431ea11edb9f58d713be98a088",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 79
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision root: 99 order excludes public expiry and 30 retains clocks",
+            "full_name_sha256": "e8308e619877b1f7d63686525f6dd2ad77f6a440a8b4e7faaa9c7197053eb9b5",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 80
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision ready: 90/99 public nulls and original bytes",
+            "full_name_sha256": "24183a7e8e26c6c6d46311908c88b11fbef9f2d8a9a4c5f40a76e81033e35aa7",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 81
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision ready: 99 order excludes public expiry and 30 retains clocks",
+            "full_name_sha256": "09879c22672a92c45d5358dc86bfaee9752cbc7211a7ad10012fd729decaf650",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 82
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision requesting: 90/99 public nulls and original bytes",
+            "full_name_sha256": "f85812ee4ae63c2c738586ae8600a83f4c66589536c9d40b40593b8396b51497",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 83
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision requesting: 99 order excludes public expiry and 30 retains clocks",
+            "full_name_sha256": "b835d58dad825fc38aa63367f9493a4cf9c7156cafa34dae8628280fb90a9736",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 84
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision completed: 90/99 public nulls and original bytes",
+            "full_name_sha256": "16d97e1ce90bd724b071022f545ac25d97356a5f611a775f7b315b95f40f9297",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 85
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision completed: 99 order excludes public expiry and 30 retains clocks",
+            "full_name_sha256": "ad02ab1bcc8f40eb87ea893b28c971756582610cf9935924764b4b4a3013b0d1",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 86
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision rejected: 90/99 public nulls and original bytes",
+            "full_name_sha256": "4a6ef60ec68f1dc59aa6440ed1ff8b071c12a24f55157920e7ea9aa39b48675a",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 87
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision rejected: 99 order excludes public expiry and 30 retains clocks",
+            "full_name_sha256": "14f18970ef84c74b45cfbe5d5885172c35880ce0b054bd0701802e54c08af507",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 88
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision expired: 90/99 public nulls and original bytes",
+            "full_name_sha256": "f6d8dfc8f886684d319993413a3f275bde5255af7b5d3b04d27e3d4a91380b41",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 89
+            }
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S08-TS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "SELECTED_CONTRACT_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "terminal revision expired: 99 order excludes public expiry and 30 retains clocks",
+            "full_name_sha256": "fe98209f3050dd35ce485f1f6361f3549bed8cbcbad6f159e26f14807956b82a",
+            "outcome": "passed",
+            "locator": {
+              "ref": "CRM:docs/evidence/s01-08/terminal-r1/web-final-142.txt",
+              "tap_number": 90
+            }
+          }
+        }
+      ]
+    },
+    {
+      "revision_case_id": "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-NEG",
+      "original_ac_id": "COM-LEAD-GENERATED-CS-NULLABLE-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/255"
+      },
+      "original_expected": "任意非法string仍由严格Schema拒绝",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "crm-lead-cp20"
+      ],
+      "fixed_vector_ids": [
+        "LEAD-OWNER-004",
+        "LEAD-OWNER-005"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Invalid owner string and missing required ownerId rejected",
+          "coverage": "FULL",
+          "reason": "Five original field projections are present in corrected CRM C# and Web runs; backend lead service integration is separate."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-POS",
+      "original_ac_id": "COM-LEAD-GENERATED-CS-NULLABLE-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/254"
+      },
+      "original_expected": "三种原允许形式不丢",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "crm-lead-cp20"
+      ],
+      "fixed_vector_ids": [
+        "LEAD-OWNER-001",
+        "LEAD-OWNER-002",
+        "LEAD-OWNER-003"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "ownerId null, unassigned and native UUID forms retained",
+          "coverage": "FULL",
+          "reason": "Five original field projections are present in corrected CRM C# and Web runs; backend lead service integration is separate."
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+      "original_ac_id": "NCR-FIELD-01-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/253"
+      },
+      "original_expected": "字段元数据不授予写权限或改变Source范围",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "NOT_COVERED",
+      "applicable_profiles": [
+        "ncr-main-r6",
+        "ncr-cp4"
+      ],
+      "fixed_vector_ids": [],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Field metadata grants no write permission and preserves business Source scope",
+          "coverage": "NOT_COVERED",
+          "reason": "A declaration/field codec cannot prove runtime authorization or Source qualification; future QA Owner integration is required."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+      "original_ac_id": "NCR-FIELD-01-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/252"
+      },
+      "original_expected": "准确可空值/必需非空按shape表现",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "ncr-main-r6"
+      ],
+      "fixed_vector_ids": [],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "field": "priorHeadRef",
+          "assertion": "Original required/nullable/editable metadata for priorHeadRef",
+          "coverage": "PARTIAL",
+          "original_schema": {
+            "ref": "Main:eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+            "json_pointer": "/$defs/MainResult/oneOf/14/properties/priorHeadRef"
+          },
+          "original_shape": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "original_field_inventory": {
+            "ref": "Main:eng/contracts/s01-07/csharp/native-field-inventory.json",
+            "json_pointer": "/declarations/60/fields/9"
+          },
+          "metadata_assertion": {
+            "coverage": "FULL",
+            "expected_flags": {
+              "required": true,
+              "nullable": false,
+              "editable": false
+            },
+            "metadata_source": {
+              "ref": "Main:CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs"
+            },
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Five_field_metadata_rows_retain_exact_required_nullable_and_editable_flags",
+                "full_name_sha256": "fab67513bfc4609c45446605606ae7f361616b4e39f599a82fa74f7215ee198f",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "9769af35-af53-08f7-9c17-c76f48c68c70",
+                  "result_index": 274
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 147,
+                "line_end": 156
+              }
+            },
+            "scope": "Exact five-row metadata flags only; Editable=false does not establish runtime write authorization."
+          },
+          "dynamic_shape": {
+            "coverage": "NOT_COVERED",
+            "reason": "The selected five-field test checks metadata only; neither selected result exercises this field's dynamic shape, non-null value domain or missing/null rejection."
+          }
+        },
+        {
+          "field": "sourceKind",
+          "assertion": "Original required/nullable/editable metadata for sourceKind",
+          "coverage": "PARTIAL",
+          "original_schema": {
+            "ref": "Main:eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+            "json_pointer": "/$defs/InitialSourceOptionQuery/properties/sourceKind"
+          },
+          "original_shape": {
+            "oneOf": [
+              {
+                "enum": [
+                  "QA_IPQC",
+                  "QA_IQC",
+                  "WMS_RMA"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "original_field_inventory": {
+            "ref": "Main:eng/contracts/s01-07/csharp/native-field-inventory.json",
+            "json_pointer": "/declarations/58/fields/0"
+          },
+          "metadata_assertion": {
+            "coverage": "FULL",
+            "expected_flags": {
+              "required": true,
+              "nullable": true,
+              "editable": false
+            },
+            "metadata_source": {
+              "ref": "Main:CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs"
+            },
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Five_field_metadata_rows_retain_exact_required_nullable_and_editable_flags",
+                "full_name_sha256": "fab67513bfc4609c45446605606ae7f361616b4e39f599a82fa74f7215ee198f",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "9769af35-af53-08f7-9c17-c76f48c68c70",
+                  "result_index": 274
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 147,
+                "line_end": 156
+              }
+            },
+            "scope": "Exact five-row metadata flags only; Editable=false does not establish runtime write authorization."
+          },
+          "dynamic_shape": {
+            "coverage": "PARTIAL",
+            "assertion": "Explicit null decodes and remains present when caller requests WhenWritingNull omission",
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Required_nullable_values_are_not_omitted_by_relaxed_caller_options",
+                "full_name_sha256": "5e019da53627faa024983407844e3fd1d5a927ae99eaf43a41695c75f52a49ef",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "04dbbf18-9182-683a-8813-d9a7c858892a",
+                  "result_index": 458
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 204,
+                "line_end": 212
+              }
+            },
+            "remaining": "This exact test does not enumerate all legal non-null values, missing-member rejection or all runtime shape transitions."
+          }
+        },
+        {
+          "field": "keyword",
+          "assertion": "Original required/nullable/editable metadata for keyword",
+          "coverage": "PARTIAL",
+          "original_schema": {
+            "ref": "Main:eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+            "json_pointer": "/$defs/InitialSourceOptionQuery/properties/keyword"
+          },
+          "original_shape": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "original_field_inventory": {
+            "ref": "Main:eng/contracts/s01-07/csharp/native-field-inventory.json",
+            "json_pointer": "/declarations/58/fields/1"
+          },
+          "metadata_assertion": {
+            "coverage": "FULL",
+            "expected_flags": {
+              "required": true,
+              "nullable": true,
+              "editable": false
+            },
+            "metadata_source": {
+              "ref": "Main:CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs"
+            },
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Five_field_metadata_rows_retain_exact_required_nullable_and_editable_flags",
+                "full_name_sha256": "fab67513bfc4609c45446605606ae7f361616b4e39f599a82fa74f7215ee198f",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "9769af35-af53-08f7-9c17-c76f48c68c70",
+                  "result_index": 274
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 147,
+                "line_end": 156
+              }
+            },
+            "scope": "Exact five-row metadata flags only; Editable=false does not establish runtime write authorization."
+          },
+          "dynamic_shape": {
+            "coverage": "PARTIAL",
+            "assertion": "Explicit null decodes and remains present when caller requests WhenWritingNull omission",
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Required_nullable_values_are_not_omitted_by_relaxed_caller_options",
+                "full_name_sha256": "5e019da53627faa024983407844e3fd1d5a927ae99eaf43a41695c75f52a49ef",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "04dbbf18-9182-683a-8813-d9a7c858892a",
+                  "result_index": 458
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 204,
+                "line_end": 212
+              }
+            },
+            "remaining": "This exact test does not enumerate all legal non-null values, missing-member rejection or all runtime shape transitions."
+          }
+        },
+        {
+          "field": "cursor",
+          "assertion": "Original required/nullable/editable metadata for cursor",
+          "coverage": "PARTIAL",
+          "original_schema": {
+            "ref": "Main:eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+            "json_pointer": "/$defs/InitialSourceOptionQuery/properties/cursor"
+          },
+          "original_shape": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 16384
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "original_field_inventory": {
+            "ref": "Main:eng/contracts/s01-07/csharp/native-field-inventory.json",
+            "json_pointer": "/declarations/58/fields/3"
+          },
+          "metadata_assertion": {
+            "coverage": "FULL",
+            "expected_flags": {
+              "required": true,
+              "nullable": true,
+              "editable": false
+            },
+            "metadata_source": {
+              "ref": "Main:CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs"
+            },
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Five_field_metadata_rows_retain_exact_required_nullable_and_editable_flags",
+                "full_name_sha256": "fab67513bfc4609c45446605606ae7f361616b4e39f599a82fa74f7215ee198f",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "9769af35-af53-08f7-9c17-c76f48c68c70",
+                  "result_index": 274
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 147,
+                "line_end": 156
+              }
+            },
+            "scope": "Exact five-row metadata flags only; Editable=false does not establish runtime write authorization."
+          },
+          "dynamic_shape": {
+            "coverage": "PARTIAL",
+            "assertion": "Explicit null decodes and remains present when caller requests WhenWritingNull omission",
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Required_nullable_values_are_not_omitted_by_relaxed_caller_options",
+                "full_name_sha256": "5e019da53627faa024983407844e3fd1d5a927ae99eaf43a41695c75f52a49ef",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "04dbbf18-9182-683a-8813-d9a7c858892a",
+                  "result_index": 458
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 204,
+                "line_end": 212
+              }
+            },
+            "remaining": "This exact test does not enumerate all legal non-null values, missing-member rejection or all runtime shape transitions."
+          }
+        },
+        {
+          "field": "nextCursor",
+          "assertion": "Original required/nullable/editable metadata for nextCursor",
+          "coverage": "PARTIAL",
+          "original_schema": {
+            "ref": "Main:eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+            "json_pointer": "/$defs/InitialSourceOptionPage/properties/nextCursor"
+          },
+          "original_shape": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 16384
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "original_field_inventory": {
+            "ref": "Main:eng/contracts/s01-07/csharp/native-field-inventory.json",
+            "json_pointer": "/declarations/57/fields/7"
+          },
+          "metadata_assertion": {
+            "coverage": "FULL",
+            "expected_flags": {
+              "required": true,
+              "nullable": true,
+              "editable": false
+            },
+            "metadata_source": {
+              "ref": "Main:CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs"
+            },
+            "evidence": {
+              "status": "PASS_REUSED",
+              "run": "S07-CS",
+              "observation_kind": "RECORDED_TEST_ASSERTION",
+              "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+              "actual_scalar": null,
+              "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+              "actual_test": {
+                "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Five_field_metadata_rows_retain_exact_required_nullable_and_editable_flags",
+                "full_name_sha256": "fab67513bfc4609c45446605606ae7f361616b4e39f599a82fa74f7215ee198f",
+                "outcome": "Passed",
+                "locator": {
+                  "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+                  "test_id": "9769af35-af53-08f7-9c17-c76f48c68c70",
+                  "result_index": 274
+                }
+              },
+              "test_source": {
+                "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+                "line_start": 147,
+                "line_end": 156
+              }
+            },
+            "scope": "Exact five-row metadata flags only; Editable=false does not establish runtime write authorization."
+          },
+          "dynamic_shape": {
+            "coverage": "NOT_COVERED",
+            "reason": "The selected five-field test checks metadata only; neither selected result exercises this field's dynamic shape, non-null value domain or missing/null rejection."
+          }
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": [
+        {
+          "status": "PASS_REUSED",
+          "run": "S07-CS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Five_field_metadata_rows_retain_exact_required_nullable_and_editable_flags",
+            "full_name_sha256": "fab67513bfc4609c45446605606ae7f361616b4e39f599a82fa74f7215ee198f",
+            "outcome": "Passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+              "test_id": "9769af35-af53-08f7-9c17-c76f48c68c70",
+              "result_index": 274
+            }
+          },
+          "test_source": {
+            "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+            "line_start": 147,
+            "line_end": 156
+          }
+        },
+        {
+          "status": "PASS_REUSED",
+          "run": "S07-CS",
+          "observation_kind": "RECORDED_TEST_ASSERTION",
+          "scope": "EXACT_NCR_FIELD_SUBASSERTION",
+          "actual_scalar": null,
+          "actual_scalar_reason": "Original result records assertion outcome, not a captured scalar; expected is not observed output.",
+          "actual_test": {
+            "name_prefix": "CP6.ExactValues.Tests.QualityContractTests.Required_nullable_values_are_not_omitted_by_relaxed_caller_options",
+            "full_name_sha256": "5e019da53627faa024983407844e3fd1d5a927ae99eaf43a41695c75f52a49ef",
+            "outcome": "Passed",
+            "locator": {
+              "ref": "Main:docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+              "test_id": "04dbbf18-9182-683a-8813-d9a7c858892a",
+              "result_index": 458
+            }
+          },
+          "test_source": {
+            "ref": "Main:eng/contracts/exact-values-tests/QualityContractTests.cs",
+            "line_start": 204,
+            "line_end": 212
+          }
+        }
+      ]
+    },
+    {
+      "revision_case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+      "original_ac_id": "NCR-TYPE-01-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/251"
+      },
+      "original_expected": "0/数字/对象/字符串null/缺字段均拒绝",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "strict-json",
+        "null-only",
+        "json-semantic-equality",
+        "ncr-main-r6",
+        "ncr-cp4"
+      ],
+      "fixed_vector_ids": [
+        "NULL-001",
+        "NULL-003",
+        "NULL-004",
+        "NULL-005",
+        "NULL-006",
+        "NULL-007",
+        "NCR-NULL-002",
+        "NCR-NULL-003",
+        "NCR-NULL-004",
+        "NCR-NULL-006",
+        "NCR-NULL-007",
+        "NCR-NULL-008",
+        "NCR-NULL-010",
+        "NCR-NULL-011",
+        "NCR-NULL-012",
+        "NCR-NULL-014",
+        "NCR-NULL-015",
+        "NCR-NULL-016",
+        "NCR-NULL-018",
+        "NCR-NULL-019",
+        "NCR-NULL-020"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Null-only fields reject missing, number, object and string-null inputs",
+          "coverage": "FULL",
+          "reason": "Generic null-only vectors and native NCR field subassertions have separate recorded C# results; no universal language equivalence."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+      "original_ac_id": "NCR-TYPE-01-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/250"
+      },
+      "original_expected": "必需成员显式null反序列化并原样输出",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "strict-json",
+        "null-only",
+        "json-semantic-equality",
+        "ncr-main-r6",
+        "ncr-cp4"
+      ],
+      "fixed_vector_ids": [
+        "NULL-002",
+        "NCR-NULL-001",
+        "NCR-NULL-005",
+        "NCR-NULL-009",
+        "NCR-NULL-013",
+        "NCR-NULL-017"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Required null-only fields accept explicit null and retain it",
+          "coverage": "FULL",
+          "reason": "Generic null-only vectors and native NCR field subassertions have separate recorded C# results; no universal language equivalence."
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-OPS-IF-002::OPS-IF-002-NEG",
+      "original_ac_id": "OPS-IF-002-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/245"
+      },
+      "original_expected": "39位输出/指数/负零按原Schema拒绝；禁止先走decimal(38,8)",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "fin-credit-signed",
+        "fin-credit-nonnegative",
+        "fin-credit-positive"
+      ],
+      "fixed_vector_ids": [
+        "NUM-004",
+        "NUM-007",
+        "NUM-008",
+        "NUM-009",
+        "NUM-010",
+        "NUM-011",
+        "CREDIT-004",
+        "CREDIT-005",
+        "CREDIT-006",
+        "CREDIT-009",
+        "CREDIT-010",
+        "CREDIT-011"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "39 digit, exponent and negative zero rejection without decimal(38,8) intermediary",
+          "coverage": "FULL",
+          "reason": "Selected immutable lexical inputs have C#/TS/PG passing assertions; scalar values were not separately captured."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-OPS-IF-002::OPS-IF-002-POS",
+      "original_ac_id": "OPS-IF-002-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/244"
+      },
+      "original_expected": "38个9及30整数+8小数精确往返",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "fin-credit-signed",
+        "fin-credit-nonnegative",
+        "fin-credit-positive"
+      ],
+      "fixed_vector_ids": [
+        "NUM-001",
+        "NUM-002",
+        "NUM-003",
+        "NUM-005",
+        "NUM-006",
+        "CREDIT-001",
+        "CREDIT-002",
+        "CREDIT-003",
+        "CREDIT-007",
+        "CREDIT-008",
+        "CREDIT-JS-001",
+        "CREDIT-JS-002",
+        "CREDIT-JS-003"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "38 digit / 30 integer + 8 fraction exact wire and coefficient-scale roundtrip",
+          "coverage": "FULL",
+          "reason": "Selected immutable lexical inputs have C#/TS/PG passing assertions; scalar values were not separately captured."
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-OPS-IF-015::OPS-IF-015-NEG",
+      "original_ac_id": "OPS-IF-015-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/257"
+      },
+      "original_expected": "不把任意同名Ref强转为原QAP Evidence",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "ipqc-r4"
+      ],
+      "fixed_vector_ids": [
+        "IPQC-TYPE-002",
+        "IPQC-TYPE-004",
+        "IPQC-TYPE-006"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "ExecEvidence/Uom same-name substitutions rejected",
+          "coverage": "FULL",
+          "reason": "Six original TYPE_BINDING_ONLY assertions execute in TypeScript; no C#/PG applicability is fabricated."
+        },
+        {
+          "assertion": "Complete original evidence object and Owner qualification",
+          "coverage": "PARTIAL",
+          "reason": "Selected complete native fixtures and typecheck exist, while the full business object sequence remains unexecuted."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-OPS-IF-015::OPS-IF-015-POS",
+      "original_ac_id": "OPS-IF-015-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/256"
+      },
+      "original_expected": "准确原证据/单位成员可编译并过原Schema",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "ipqc-r4"
+      ],
+      "fixed_vector_ids": [
+        "IPQC-TYPE-001",
+        "IPQC-TYPE-003",
+        "IPQC-TYPE-005"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "QapEvidence/QapUom original member type bindings",
+          "coverage": "FULL",
+          "reason": "Six original TYPE_BINDING_ONLY assertions execute in TypeScript; no C#/PG applicability is fabricated."
+        },
+        {
+          "assertion": "Complete original evidence object and Owner qualification",
+          "coverage": "PARTIAL",
+          "reason": "Selected complete native fixtures and typecheck exist, while the full business object sequence remains unexecuted."
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-OPS-IF-030::OPS-IF-030-NEG",
+      "original_ac_id": "OPS-IF-030-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/247"
+      },
+      "original_expected": "不得有限CAST/SUM、分母0、超小数位或静默舍入",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "fin-inv-decimal18",
+        "fin-inv-qty12"
+      ],
+      "fixed_vector_ids": [
+        "NUM-015",
+        "NUM-016",
+        "INV-001"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Fractional overflow rejected without silent rounding",
+          "coverage": "FULL",
+          "reason": "Covered by the selected original inventory vector assertions."
+        },
+        {
+          "assertion": "Every production CAST/SUM path and zero-denominator business input",
+          "coverage": "NOT_COVERED",
+          "reason": "This join establishes lexical/isolated exact-storage vectors, not all financial writers or aggregations."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-OPS-IF-030::OPS-IF-030-POS",
+      "original_ac_id": "OPS-IF-030-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/246"
+      },
+      "original_expected": "90整数位+18/12小数及原合法-0.000保持精确值和原文",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "fin-inv-decimal18",
+        "fin-inv-qty12"
+      ],
+      "fixed_vector_ids": [
+        "NUM-012",
+        "NUM-013",
+        "NUM-014",
+        "INV-002",
+        "INV-003",
+        "INV-004"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "90 integer digits, 18/12 fractional places and original -0.000 preservation",
+          "coverage": "FULL",
+          "reason": "Covered by the selected original inventory vector assertions."
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-PLAN-IF-004::PLAN-IF-004-NEG",
+      "original_ac_id": "PLAN-IF-004-NEG",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/249"
+      },
+      "original_expected": "空/空白/中文/129字符及短或128字符后附LF/CRLF拒绝，原历史profile不重写",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "atp-stableid-r1"
+      ],
+      "fixed_vector_ids": [
+        "NUM-020",
+        "NUM-021",
+        "NUM-022",
+        "NUM-023",
+        "ATP-R1-003",
+        "ATP-R1-004",
+        "ATP-R1-005",
+        "ATP-R1-006",
+        "ATP-R1-007",
+        "ATP-R1-008",
+        "ATP-R1-009",
+        "ATP-LEADING-001",
+        "ATP-LEADING-002",
+        "ATP-LEADING-003",
+        "ATP-LEADING-004",
+        "ATP-LEADING-005"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "Empty/whitespace/Chinese/129 characters and LF/CRLF suffix rejected",
+          "coverage": "FULL",
+          "reason": "Original 22-case C#/TS, bounded scalar-schema assertions and isolated PG storage checks are joined; no full ATP engine claim."
+        },
+        {
+          "assertion": "Historical profiles remain unchanged in existing business records",
+          "coverage": "NOT_COVERED",
+          "reason": "No production migration or historical-record recovery was executed."
+        },
+        {
+          "assertion": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    },
+    {
+      "revision_case_id": "DR-PLAN-IF-004::PLAN-IF-004-POS",
+      "original_ac_id": "PLAN-IF-004-POS",
+      "original_ac": {
+        "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "json_pointer": "/cases/248"
+      },
+      "original_expected": "17/128合法单位不截断，三语言完整末尾规则一致",
+      "verification_level": "REQUIRED_RUNTIME",
+      "whole_case_result": "NOT_RUN",
+      "coverage": "PARTIAL",
+      "applicable_profiles": [
+        "atp-stableid-r1"
+      ],
+      "fixed_vector_ids": [
+        "NUM-017",
+        "NUM-018",
+        "NUM-019",
+        "ATP-R1-001",
+        "ATP-R1-002",
+        "ATP-R1-010"
+      ],
+      "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+      "subassertions": [
+        {
+          "assertion": "17/128 character inputs retained; full end-of-string lexical rules",
+          "coverage": "FULL",
+          "reason": "Original 22-case C#/TS, bounded scalar-schema assertions and isolated PG storage checks are joined; no full ATP engine claim."
+        },
+        {
+          "assertion": "Historical profiles remain unchanged in existing business records",
+          "coverage": "NOT_COVERED",
+          "reason": "No production migration or historical-record recovery was executed."
+        },
+        {
+          "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+          "coverage": "NOT_COVERED",
+          "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+        }
+      ],
+      "supplementary_evidence": []
+    }
+  ],
+  "counts": {
+    "PARTIAL": 18,
+    "NOT_COVERED": 1
+  }
+}

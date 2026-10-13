@@ -1,0 +1,24 @@
+{
+  "task": "S01-12",
+  "observed_at_utc": "2026-10-13T12:13:33.925244+00:00",
+  "commit": "335ccdcf8838ef3d336f67d3d1b4c534b99054c3",
+  "branch": "codex/dev-handoff-s01-12",
+  "private": true,
+  "actions_enabled": false,
+  "default_sha": "c5af26da818151eb362455b8709c53b43fe004c2",
+  "workflows": [],
+  "files": [
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-12/messages/20261013T121148Z-start/.gitattributes",
+      "sha256": "730a35ae3d558080083c3103d9ac8100c3f6561678092abe341701dfa331eb1d",
+      "git_blob": "4f7fc3ef1406bfab189a4a14744c344f36d77d9a"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-12/messages/20261013T121148Z-start/MESSAGE.md",
+      "sha256": "eeaf410eafa298d686637a95972de78a3f47afcd765923c58990ba16b3736d5e",
+      "git_blob": "9bd280a14f1685525aac78ae805631797f44ecc1"
+    }
+  ],
+  "result": "PUBLISHED_REMOTE_BYTES_VERIFIED",
+  "coordinator_ack": "NOT_YET_OBSERVED"
+}

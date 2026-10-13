@@ -1,0 +1,46 @@
+{
+  "reason": "SPEC found FIELD revision incorrectly connected to NCR const-null vectors; pre-fix baseline only",
+  "old_hashes": {
+    "manifest.json": "a4158ce46a24d0a2c4a75628e919e0fe0f1b30e901d8a337e3e533734edd496c",
+    "vectors.json": "ea4a8685b08e0d4bd8d48610583fd7b765f133466b4f3a6f11e05aea1002dc5f",
+    "revision-coverage.json": "5008c4eaa94925ecdd211d44b335b1ccecde33b080d01b07a207c5af9d838aca"
+  },
+  "other_18_cases_canonical_sha256": "9407187f2549bf74da6c188b2dba234ff58b7f67419eb62da2b112bf49b21b3b",
+  "original_incorrect_case": {
+    "revision_case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+    "original_ac_id": "NCR-FIELD-01-POS",
+    "original_ac": {
+      "ref": "Main:docs/design-handbook/remediation/08-acceptance-catalog.json",
+      "json_pointer": "/cases/252"
+    },
+    "original_expected": "准确可空值/必需非空按shape表现",
+    "verification_level": "REQUIRED_RUNTIME",
+    "whole_case_result": "NOT_RUN",
+    "coverage": "PARTIAL",
+    "applicable_profiles": [
+      "ncr-main-r6",
+      "ncr-cp4"
+    ],
+    "fixed_vector_ids": [
+      "NCR-NULL-001",
+      "NCR-NULL-005",
+      "NCR-NULL-009",
+      "NCR-NULL-013",
+      "NCR-NULL-017"
+    ],
+    "fixed_vector_evidence": "vectors.json/cases: each ID retains original input, expectation and per-surface result locator",
+    "subassertions": [
+      {
+        "assertion": "Selected original shapes retain required/null-only members",
+        "coverage": "PARTIAL",
+        "reason": "Twenty field subassertions and selected complete NCR fixtures cover the adopted roots, not every original declared field."
+      },
+      {
+        "assertion": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+        "coverage": "NOT_COVERED",
+        "reason": "Original business write-set acceptance has not run; library and isolated fixture PASS cannot discharge it."
+      }
+    ],
+    "supplementary_evidence": []
+  }
+}
