@@ -1,0 +1,10 @@
+{
+  "scope": "Coordinator static checker only; no future implementation test was run",
+  "initial_attempts": [
+    {"result":"FAIL","error":"AssertionError: .","cause":"Checker recognized source_path/path but the frozen ERP registry materialized index uses absolute_path"},
+    {"result":"FAIL","error":"S01-11 erp-registry-frozen materialized selector uses absolute_path","cause":"Diagnostic repeat confirmed the checker field assumption; no source input was missing"}
+  ],
+  "resolution":"Resolve the recorded absolute_path variant and verify its original fixed SHA-256; input/source/expected values unchanged",
+  "final_result_reference":"dispatch-check.json",
+  "business_result":"NOT_RUN"
+}

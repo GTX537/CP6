@@ -1,0 +1,1362 @@
+{
+  "report_version": "CP6-WAVE4-READONLY-ADMISSION/1",
+  "observed_at": "2026-10-13T04:11:18.312778+00:00",
+  "repository": "GTX537/CP6",
+  "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "baseline_local_refs": {
+    "HEAD": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+    "main": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+    "origin/main": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+  },
+  "remote_main_authority": "Confirmed by COORD in parent task; no network query in this admission.",
+  "database_target": "PostgreSQL",
+  "admission": "READY_FOR_COORDINATOR_CLAIM_WITH_SCOPED_IMPLEMENTATION",
+  "execution": "NOT_RUN",
+  "business_acceptance": "NOT_RUN",
+  "blocking_missing_inputs": [],
+  "actions": "NO_BUILD_NO_TEST_NO_DATABASE_NO_NETWORK_NO_GIT_WRITES",
+  "evidence_scope": "Read-only local source/hash/metadata and actual project CLI inspection only. Historical PASS remains historical.",
+  "input_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "git_blob": "40ccbc25727e0815dcb139f8ed01cb419d194920",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "git_blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+    },
+    {
+      "path": "docs/development/s01-input-index.json",
+      "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+      "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "a1377a945dafe9150a370c3ce21fa5dea5c57fa7ea176a02768545792c8159a7"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+      "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "f1cd48dc35ce1a2d837ce47a1ac77543a81a6a370fc90b8d7f6d123c6d2b364e"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+      "git_blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d",
+      "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27"
+    },
+    {
+      "path": "docs/design-handbook/indexes/required-inputs.json",
+      "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+      "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "c9d6715fbc0eb51797634fc29948daae97795d3e7b139f1849e67ecbc8db0e71"
+    },
+    {
+      "path": "docs/design-handbook/indexes/container-members.json",
+      "git_blob": "671e8a5f8870b29352e948f917a46d5b72e8a5fa",
+      "sha256": "730fd2a826e61b9cbad74e4e66e68fe478c0ce7135bd3469a9db4b8af22778a1",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "26d40abd31783efc537752b99a9e247d20c2cd2d376987bd5f43bcf0888dcd35"
+    }
+  ],
+  "prerequisite": {
+    "id": "S01-02",
+    "title": "严格 JSON、NullOnly 与结构相等",
+    "repository": "Main",
+    "dependencies": [
+      "S01-01"
+    ],
+    "target_ids": [
+      "QA-NCR-01",
+      "CRM-INQ-01"
+    ],
+    "relative_size": "M",
+    "kind": "CODE",
+    "state": "DONE",
+    "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+    "blockers": [],
+    "validation_evidence": [
+      {
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-02/original-validation.json",
+        "repository": "GTX537/CP6",
+        "source_sha": "2c0ef2129012a8117b0b5b058ac3c470e12d73fd",
+        "command": "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~StrictJsonTests",
+        "environment": "Windows / .NET SDK10.0.302 / target net8.0 / actual runtime .NET8.0.29",
+        "observed_at": "2026-10-12T10:57:51.720209+00:00",
+        "scope": "Reuse original 77 passed / zero skipped local contract tests, including 21 frozen vectors. Source/input/config/artifact evidence independently checked and unchanged through merge. Original execution time/working-tree source binding retained; no new business, database, package-publication or production acceptance.",
+        "result": "PASS"
+      }
+    ],
+    "delivery_evidence": {
+      "source_sha": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+      "remote_main_sha": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+      "pr_url": "https://github.com/GTX537/CP6/pull/184",
+      "observed_at": "2026-10-12T13:45:22.652158+00:00",
+      "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+      "repository": "GTX537/CP6",
+      "path": "docs/development/evidence/wave2-integration-20261012/S01-02/remote-main.json"
+    },
+    "package_id": "WP02",
+    "coverage_role": "FOUNDATION",
+    "entry_gate": "CONFIRMED",
+    "assignment": {
+      "chat_label": "A / S01-02（沿用原S01-01对话）",
+      "repository": "Main",
+      "branch": "codex/s01-02-strict-json-20261012",
+      "worktree": "D:/CP6-worktrees/s01-02-20261012",
+      "claimed_at": "2026-10-12T09:00:02.772472+00:00",
+      "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
+      "dispatch_scope": "Worker START and DELIVERY received at coordinator_received_at; independent review and protected merge completed. DONE applies only to this bounded contract task. Shared coordination receipt closes the window.",
+      "worker_ack_at": "2026-10-12T10:47:01Z",
+      "allowed_write_paths": [
+        "CP6.Entity/Contracts/Wire/",
+        "eng/contracts/exact-values-tests/",
+        "docs/development/evidence/S01-02/"
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-02",
+      "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
+      "execution_baseline_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+      "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json",
+      "window_closed_at": "2026-10-12T13:49:17.024910+00:00"
+    },
+    "entry_conditions": [
+      "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
+      "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
+    ],
+    "exclusive_resources": [
+      "Main:s01-02"
+    ]
+  },
+  "shared_read_only_paths": [
+    "CP6.Entity/CP6.Entity.csproj",
+    "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+    "CP6.Entity/Contracts/Wire/",
+    "eng/contracts/s01/",
+    "cp6.web/package.json",
+    "cp6.web/package-lock.json",
+    "cp6.web/vitest.config.ts",
+    "cp6.web/tsconfig*.json",
+    "docs/development/roadmap.json",
+    "docs/development/07-detailed-tasks.md",
+    "docs/project-memory/PROJECT_STATE.md",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "docs/project-memory/CHANGELOG-AI.md",
+    ".github/workflows/"
+  ],
+  "source_archive_policy": "Composed files read first. Native schemas with no composed variant and original frozen-profile assets read only by exact indexed hash. No archive code executed, no irrecoverable historical originals searched.",
+  "instructions": "Follow the exact S01 task card and AGENTS.md; these reports do not authorize business writes, Owner adoption, DB migration, network publication or whole-target DONE.",
+  "task_id": "S01-11",
+  "profiles": [
+    {
+      "id": "erp-credit-current-v1",
+      "owner": {
+        "target_id": "ERP-CREDIT-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-11",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-00",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-01",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-02",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-03",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-04",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-05",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-06",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-07",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-08",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-09",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-10",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-11",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-12",
+          "variant": "composed"
+        },
+        {
+          "source_id": "erp-registry-current",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-11",
+        "variant": "composed",
+        "csharp_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "type_registry_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "scope": "ERP native Money, independent of FIN-CREDIT decimals. Exact registry route, no latest/fallback. Frozen original commands/receipts preserve bytes; insufficient current mapping proof stays READ_ONLY_UNPROVEN/MANUAL_RECONCILIATION.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/60"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/14"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/17",
+          "case_id": "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/20",
+          "case_id": "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/23",
+          "case_id": "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/60"
+      },
+      "registry_identity_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+        "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/patches/13/operations/0"
+      }
+    },
+    {
+      "id": "erp-credit-frozen-r8",
+      "owner": {
+        "target_id": "ERP-CREDIT-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-11",
+        "Platform:S01-09"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-10",
+          "variant": "original"
+        },
+        {
+          "source_id": "composed-11",
+          "variant": "original"
+        },
+        {
+          "source_id": "composed-12",
+          "variant": "original"
+        },
+        {
+          "source_id": "erp-registry-frozen",
+          "variant": "original"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-11",
+        "variant": "original",
+        "csharp_namespace": "Cp6.ErpCredit.Generated",
+        "type_registry_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "scope": "ERP native Money, independent of FIN-CREDIT decimals. Exact registry route, no latest/fallback. Frozen original commands/receipts preserve bytes; insufficient current mapping proof stays READ_ONLY_UNPROVEN/MANUAL_RECONCILIATION.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/60"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+          "sha256": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3",
+          "git_blob": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/14"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/17",
+          "case_id": "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/20",
+          "case_id": "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/23",
+          "case_id": "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/60"
+      },
+      "registry_identity_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+        "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/patches/13/operations/0"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "composed-00",
+      "filename": "multi_mixed_complete_public_q14.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/0"
+      },
+      "original_sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+      "composed_sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 9,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_mixed_complete_public_q14.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28/multi_mixed_complete_public_q14.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-01",
+      "filename": "wn11_c06_exact_saved_200.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/1"
+      },
+      "original_sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+      "composed_sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 3,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_c06_exact_saved_200.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91/wn11_c06_exact_saved_200.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-02",
+      "filename": "wn11_complete_current_q14.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/2"
+      },
+      "original_sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+      "composed_sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 3,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_complete_current_q14.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7/wn11_complete_current_q14.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-03",
+      "filename": "wn11_existing_target_c06_saved_200.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/3"
+      },
+      "original_sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+      "composed_sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 3,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/wn11_existing_target_c06_saved_200.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731/wn11_existing_target_c06_saved_200.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-04",
+      "filename": "multi_public_native_lookup_binding.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/4"
+      },
+      "original_sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+      "composed_sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 1,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/BODIES/multi_public_native_lookup_binding.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2/multi_public_native_lookup_binding.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-05",
+      "filename": "02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/5"
+      },
+      "original_sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+      "composed_sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 56,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b/02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-06",
+      "filename": "04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/6"
+      },
+      "original_sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+      "composed_sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 9,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87/04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-07",
+      "filename": "05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/7"
+      },
+      "original_sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+      "composed_sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 4,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4/05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-08",
+      "filename": "12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/8"
+      },
+      "original_sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+      "composed_sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 648,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-09",
+      "filename": "13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/9"
+      },
+      "original_sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+      "composed_sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "patch_operation_count": 2,
+      "local_original_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5/13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-10",
+      "filename": "c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "selected_variants": [
+        "composed",
+        "original"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/10"
+      },
+      "original_sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "composed_sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING"
+      ],
+      "patch_operation_count": 5,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "READ_ONLY_ORIGINAL_REQUIRED_BY_FROZEN_PROFILE",
+      "composed_observed_sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "composed_hash_matches": true,
+      "original_observed_sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "original_hash_matches": true
+    },
+    {
+      "source_id": "composed-11",
+      "filename": "319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "selected_variants": [
+        "composed",
+        "original"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/11"
+      },
+      "original_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "composed_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "patch_operation_count": 7,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97/9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "READ_ONLY_ORIGINAL_REQUIRED_BY_FROZEN_PROFILE",
+      "composed_observed_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "composed_hash_matches": true,
+      "original_observed_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "original_hash_matches": true
+    },
+    {
+      "source_id": "composed-12",
+      "filename": "533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "selected_variants": [
+        "composed",
+        "original"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/12"
+      },
+      "original_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "composed_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "patch_operation_count": 9,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228/a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "READ_ONLY_ORIGINAL_REQUIRED_BY_FROZEN_PROFILE",
+      "composed_observed_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "composed_hash_matches": true,
+      "original_observed_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "original_hash_matches": true
+    },
+    {
+      "source_id": "erp-registry-current",
+      "filename": "c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+        "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+        "git_blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/33"
+      },
+      "original_sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+      "composed_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/fixtures/bounded-patches.json",
+          "sha256": "d9aa79c4efad0ba5ef58da632d65f1f598da3b03f6919eeb1a67617aa1284d94",
+          "git_blob": "0f8916e374f7f2e0e9dad302cadbce0bbb39f7b6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "COM-CREDIT-PROBLEM-CODE-ALIASES"
+      ],
+      "patch_operation_count": 18,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "erp-registry-frozen",
+      "filename": "62effa1e0542784a__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "selected_variants": [
+        "original"
+      ],
+      "git_selector": {
+        "path": "docs/design-handbook/indexes/all-files.json",
+        "sha256": "8d0573cd16677ae5e462d7f758f7a1f5e9514be08822eb47f04437066aae16f0",
+        "git_blob": "8e1c2958e633c65096df381e4089073037af1c2b",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/files/6155"
+      },
+      "original_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "composed_sha256": null,
+      "patch_bundles": [],
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "patch_operation_count": null,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/62effa1e0542784a__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "local_composed_path": null,
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "READ_ONLY_ORIGINAL_REQUIRED_BY_FROZEN_PROFILE",
+      "original_observed_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "original_hash_matches": true
+    }
+  ],
+  "vectors": [
+    {
+      "id": "VERSION-001",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "VERSION-002",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-003",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-004",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-005",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.unknown.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-006",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "VERSION-007",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-008",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "BYTES-001",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "original_utf8_retention",
+      "applicable_fields": [
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/PostInput (bytes only)"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/development/s01-input-index.json",
+        "json_pointer": "/sources/11"
+      },
+      "input": {
+        "native_schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+        "native_schema_root": "PostInput",
+        "fixture_origin": "CONSTRUCTED_CONTRACT_UNIT_INPUT",
+        "original_utf8": "{ \"commandId\": \"00000000-0000-4000-8000-000000000001\", \"expectedRowVersion\": \"1\", \"reason\": \"fixture\", \"planRevision\": \"1\" }\r\n",
+        "replay_utf8": "{ \"commandId\": \"00000000-0000-4000-8000-000000000001\", \"expectedRowVersion\": \"1\", \"reason\": \"fixture\", \"planRevision\": \"1\" }\r\n"
+      },
+      "expected": {
+        "bytes_equal": true,
+        "digest_equal": true,
+        "original_sha256": "2146a8b0fe2836a1add75c17762009b4b9831ac9cea07a5e1cd107c3e87b03cb",
+        "replay_sha256": "2146a8b0fe2836a1add75c17762009b4b9831ac9cea07a5e1cd107c3e87b03cb"
+      }
+    },
+    {
+      "id": "BYTES-002",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "original_utf8_retention",
+      "applicable_fields": [
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/PostInput (bytes only)"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/development/s01-input-index.json",
+        "json_pointer": "/sources/11"
+      },
+      "input": {
+        "native_schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+        "native_schema_root": "PostInput",
+        "fixture_origin": "CONSTRUCTED_CONTRACT_UNIT_INPUT",
+        "original_utf8": "{ \"commandId\": \"00000000-0000-4000-8000-000000000001\", \"expectedRowVersion\": \"1\", \"reason\": \"fixture\", \"planRevision\": \"1\" }\r\n",
+        "replay_utf8": "{\"planRevision\":\"1\",\"reason\":\"fixture\",\"expectedRowVersion\":\"1\",\"commandId\":\"00000000-0000-4000-8000-000000000001\"}"
+      },
+      "expected": {
+        "bytes_equal": false,
+        "digest_equal": false,
+        "original_sha256": "2146a8b0fe2836a1add75c17762009b4b9831ac9cea07a5e1cd107c3e87b03cb",
+        "replay_sha256": "48eaac86c06f5dfd4cd4f4a1ff45bc1c84a0f441871cfdd5e74914ad9ded22da"
+      }
+    }
+  ],
+  "case_ids": [
+    "VERSION-001",
+    "VERSION-002",
+    "VERSION-003",
+    "VERSION-004",
+    "VERSION-005",
+    "VERSION-006",
+    "VERSION-007",
+    "VERSION-008",
+    "BYTES-001",
+    "BYTES-002"
+  ],
+  "revision_case_ids": [
+    "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+    "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+    "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R"
+  ],
+  "revision_cases": [
+    {
+      "id": "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "错TYPE或native schema pin拒加载；APPLIED无Ref/REJECTED带Ref拒wire；NO_CHANGE或COMPLETED传输成功不能单独建立FOUND或释放占用。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "AC-W5-COM-06-R",
+      "issue_id": "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION",
+      "source_finding_ids": [
+        "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION"
+      ],
+      "consumer_targets": [
+        "ERP-CREDIT-01",
+        "FIN-AR-01"
+      ],
+      "input": "真实消费者负向契约/恢复门",
+      "expected_writes": "Exactly the typed contract write set; negative/replay cases create no unauthorized or duplicate business effect. See issue outputs for concrete records."
+    },
+    {
+      "id": "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "amount别名、额外Money字段、任一旧digest/byteLength/handle/receipt摘要组合均不可进入current夹具；缺真实issuer/Store收据仍fenced。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "AC-W5-COM-07-R",
+      "issue_id": "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD",
+      "source_finding_ids": [
+        "COM-CREDIT-CURRENT-BODY-MONEY-FIELD"
+      ],
+      "consumer_targets": [
+        "ERP-CREDIT-01",
+        "WMS-RMA-01"
+      ],
+      "input": "真实消费者负向契约/恢复门",
+      "expected_writes": "Exactly the typed contract write set; negative/replay cases create no unauthorized or duplicate business effect. See issue outputs for concrete records."
+    },
+    {
+      "id": "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R",
+      "scenario": "真实消费者负向契约/恢复门",
+      "expected": "重复扩展键、多根载体不可用于生成；重放重命名COMMITTED_REPLAY、重新脱敏/重建body或再次业务写均拒绝。",
+      "verification_level": "REQUIRED_RUNTIME_ADOPTION",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "AC-W5-COM-08-R",
+      "issue_id": "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING",
+      "source_finding_ids": [
+        "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING"
+      ],
+      "consumer_targets": [
+        "ERP-CREDIT-01"
+      ],
+      "input": "真实消费者负向契约/恢复门",
+      "expected_writes": "Exactly the typed contract write set; negative/replay cases create no unauthorized or duplicate business effect. See issue outputs for concrete records."
+    }
+  ],
+  "case_coverage": "Contract subassertions only. source_case_id=null remains null. Full original and revision business scenarios remain NOT_RUN.",
+  "native_schema_bundle": [
+    {
+      "filename": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "source_sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+      "observed_sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+      "matches": true,
+      "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b324a9b62d888f26__ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "git_selector_path": "docs/design-handbook/indexes/materialized-content-paths.json",
+      "json_pointer": "/b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a"
+    },
+    {
+      "filename": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "source_sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+      "observed_sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+      "matches": true,
+      "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8a/8a7864b91e2bd19f__ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "git_selector_path": "docs/design-handbook/indexes/materialized-content-paths.json",
+      "json_pointer": "/8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca"
+    }
+  ],
+  "native_money_rules": {
+    "wms": {
+      "Money": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "currency"
+        ],
+        "properties": {
+          "value": {
+            "$ref": "#/$defs/SignedDecimal"
+          },
+          "currency": {
+            "$ref": "#/$defs/Currency"
+          }
+        }
+      },
+      "SignedDecimal": {
+        "type": "string",
+        "pattern": "^-?(0|[1-9][0-9]{0,29})(\\.[0-9]{1,8})?$"
+      },
+      "DecimalQty": {
+        "type": "string",
+        "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+      },
+      "Currency": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    "fin_ar": {
+      "D8": {
+        "type": "string",
+        "pattern": "^-?(0|[1-9][0-9]{0,19})(\\.[0-9]{1,8})?$"
+      },
+      "NonNegativeD8": {
+        "type": "string",
+        "pattern": "^(0|[1-9][0-9]{0,19})(\\.[0-9]{1,8})?$"
+      },
+      "Currency": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}$",
+        "minLength": 3,
+        "maxLength": 3
+      }
+    },
+    "interpretation": "Preserve native original lexical domains and text. WMS SignedDecimal 1..30 integer digits and <=8 fractional digits; FIN-AR D8 1..20 integer digits and <=8 fractional digits. -0 and 1.0 are native accepted lexical forms. No FIN-CREDIT canonical/sign profile substitution."
+  },
+  "current_registry_extra_root_dependencies": [
+    {
+      "json_pointer": "/$defs/EC_C06_200_StoredTerminal/oneOf/1",
+      "ref": "./F09-LOCAL-TYPES.schema.json#/$defs/F09Committed"
+    },
+    {
+      "json_pointer": "/$defs/EC_C06_202_StoredAdmission/oneOf/1",
+      "ref": "./F09-LOCAL-TYPES.schema.json#/$defs/F09Admission"
+    },
+    {
+      "json_pointer": "/$defs/WholeC06PublicRequest/oneOf/1",
+      "ref": "./F09-LOCAL-TYPES.schema.json#/$defs/F09CorrectionRequest"
+    }
+  ],
+  "recommended_exclusive_write_paths": [
+    "CP6.Entity/Contracts/ErpCredit/",
+    "cp6.web/src/contracts/erp-credit/",
+    "eng/contracts/exact-values-tests/ErpCreditCodecTests.cs",
+    "eng/contracts/s01-11/",
+    "docs/development/evidence/S01-11/"
+  ],
+  "read_only_service_paths": [
+    "CP6.Core/Services/Erp/CreditNoteService.cs",
+    "CP6.Entity/DomainModels/Erp/CreditNote.cs",
+    "CP6.Entity/DTOs/Erp/CreditNoteDto.cs",
+    "CP6.WebApi/Controllers/Erp/CreditNoteController.cs"
+  ],
+  "commands_not_run": [
+    "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~ErpCreditCodecTests",
+    "npm --prefix cp6.web test -- src/contracts/erp-credit/creditCodec.test.ts"
+  ],
+  "required_implementation_checks": [
+    "Separate current-v1 and frozen-R8 namespace, TypeRegistry SHA and schema bundle; exact route only, no latest/fallback.",
+    "composed-00..09 contain dependent revised fixture identities: retain body digest, byteLength, handle, Store/receipt metadata chains together. No issuer or Owner proof invented.",
+    "current-v1 three-file codec bundle = exact WMS-RMA + exact FIN-AR + registry 564706ce...; frozen-R8 same two native schemas + registry 62effa1e....",
+    "Current Money strictly {value,currency}; amount alias and extra properties reject. Native decimal strings, allowed negative zero/trailing zeros and separate WMS/FIN-AR limits preserved.",
+    "Current result semantics: APPLIED requires resultRef; REJECTED forbids resultRef; NO_CHANGE may carry proven resultRef. COMPLETED/NO_CHANGE transport alone does not establish FOUND/release. Frozen-R8 retains its original validation identity.",
+    "Frozen command/receipt original bytes remain immutable. C01/C02 replay HTTP200 returns original saved COMMITTED body from HTTP201; never rename to COMMITTED_REPLAY, re-redact/rebuild or reapply writes.",
+    "Insufficient Owner/current mapping proof remains READ_ONLY_UNPROVEN/MANUAL_RECONCILIATION. BYTES vectors are explicitly constructed unit inputs, not legitimate Owner command or replay proof.",
+    "Actual target is net8.0. Pinned generated current C# calls JsonElement.DeepEquals; local net8 reference XML has no such member, while net10 does. Adopt in task-owned wrapper via CP6.Entity.Contracts.Wire.JsonSemanticEquality.AreEqual and StrictJson; no SDK/dependency upgrades or shared Wire edits. Preserve derivation map.",
+    "Current registry EC_C06_200_StoredTerminal, EC_C06_202_StoredAdmission and WholeC06PublicRequest reference F09-LOCAL-TYPES. Existing generated codec SchemaIdentity allows exactly three files and its published factories do not expose these C06 roots. Do not advertise arbitrary registry root decoding; if such root is required, stop that expansion until exact F09 closure and route are pinned by COORD.",
+    "10 frozen vectors cover registry routes/original-byte preservation only; add native Money full-object positives/negatives, exact schema pin, current/frozen semantic distinction and guarded mapping tests in task directory."
+  ],
+  "gaps": [
+    "No missing profile-selected composed/original or required two native exact schemas found. All business execution NOT_RUN.",
+    "Full TypeRegistry is larger than the generated three-file codec surface: three extra F09 references need separately pinned closure if exposed. This admission authorizes only the task card codec/adaptation surface and preserves this explicit limitation.",
+    "No native Money numerical fixtures in shared vectors.json; source-derived tests must be added without editing the shared package.",
+    "Legacy CreditNote.Amount is decimal(18,4), Qty decimal(21,8), with existing search-only API; this does not represent adoption of ERP native wire. Domain/service writes and migration remain later Owner work."
+  ],
+  "project_cli_match": {
+    "leaf_project": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+    "target_framework": "net8.0",
+    "project_reference": "../../../CP6.Entity/CP6.Entity.csproj",
+    "test_framework": "xUnit",
+    "leaf_default_compile_glob": true,
+    "frontend_script": "vitest run",
+    "frontend_test_include": "src/**/*.{test,spec}.ts",
+    "frontend_environment": "jsdom",
+    "implementation_paths_exist": false,
+    "shared_test_input_warning": "Inputs/dispatch.json is wave2, owned by existing StrictJsonTests. New tests pin their own explicit case IDs and read task-owned relative assets; do not treat wave2 dispatch as wave4 IDs.",
+    "shared_projects_unchanged_required": true
+  },
+  "exclusive_resource": "Main:s01-11",
+  "state_rule": "COORD must claim/register task and exact write paths before implementation; source availability is not an assignment or business PASS."
+}

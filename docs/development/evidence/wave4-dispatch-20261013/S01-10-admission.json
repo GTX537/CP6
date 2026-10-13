@@ -1,0 +1,2419 @@
+{
+  "task": "S01-10",
+  "report_kind": "READ_ONLY_ADMISSION",
+  "recorded_utc": "2026-10-13T04:09:43.0618063Z",
+  "recommendation": "READY_FOR_COORDINATOR_DISPATCH_WITH_RUNTIME_RESOURCE_GATE",
+  "declared_main_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "main_sha_basis": "PARENT_CONFIRMED_REMOTE_MAIN",
+  "repository": "D:/CP6",
+  "future_worktree": "D:/CP6-worktrees/s01-10-20261012",
+  "actual_ledger_state": "PLANNED",
+  "actual_entry_gate": "NOT_CHECKED",
+  "no_hard_resource_blocker_observed": true,
+  "resource_provisioned": false,
+  "postgres_runtime_status": "NOT_RUN",
+  "business_runtime_status": "NOT_RUN",
+  "external_publication": "NOT_PERFORMED",
+  "repository_mutations": "NONE",
+  "git_operations": "NONE",
+  "database_connections": "NONE",
+  "services_started_stopped": "NONE",
+  "actions": "NOT_RUN_OR_QUERIED",
+  "dependencies": [
+    {
+      "task": "S01-03",
+      "ledger_state": "DONE",
+      "source_sha": "b24f76445ffdc9b4df0de77eb394a6aa47726a0c",
+      "recorded_remote_main_sha": "08bf7c923fa0b21af39d5e1f1fd550ed635246ed",
+      "pr_url": "https://github.com/GTX537/CP6/pull/188",
+      "evidence": "docs/development/evidence/wave3-integration-20261012/S01-03/remote-main.json",
+      "basis": "EXISTING_DELIVERY_RECEIPT_NOT_NEW_REMOTE_QUERY"
+    },
+    {
+      "task": "S01-04",
+      "ledger_state": "DONE",
+      "source_sha": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+      "recorded_remote_main_sha": "688383439311a3babf00bae98ee426122ce60cd1",
+      "pr_url": "https://github.com/GTX537/CP6/pull/190",
+      "evidence": "docs/development/evidence/wave3-integration-20261012/S01-04/remote-main.json",
+      "basis": "EXISTING_DELIVERY_RECEIPT_NOT_NEW_REMOTE_QUERY"
+    },
+    {
+      "task": "S01-06",
+      "ledger_state": "DONE",
+      "source_sha": "f406e4e515a7ce82d77db5307e467e7bcdbc25e4",
+      "recorded_remote_main_sha": "bd25558ea4c0981b0cff1e4fa77ab8f61277211c",
+      "pr_url": "https://github.com/GTX537/CP6/pull/191",
+      "evidence": "docs/development/evidence/wave3-integration-20261012/S01-06/remote-main.json",
+      "basis": "EXISTING_DELIVERY_RECEIPT_NOT_NEW_REMOTE_QUERY"
+    },
+    {
+      "task": "S02-00",
+      "ledger_state": "DONE",
+      "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+      "recorded_remote_main_sha": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
+      "pr_url": "https://github.com/GTX537/CP6/pull/178",
+      "design_version": "cp6-pg-tenancy-v1",
+      "adoption": "UNPROVEN",
+      "basis": "EXISTING_DELIVERY_RECEIPT_NOT_NEW_REMOTE_QUERY"
+    }
+  ],
+  "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "exact_storage_revision": "CP6-EXACT-NUMERIC-STORAGE/1",
+  "file_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "basis": "CURRENT_LOCAL_FILE_BYTES",
+      "observed_now": true
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "basis": "CURRENT_LOCAL_FILE_BYTES",
+      "observed_now": true
+    },
+    {
+      "path": "eng/contracts/s01/atp-stable-id.schema.json",
+      "sha256": "db14cb345c5adaf9bac3bd435f6545800c8ba26ad96c4c5202991168d4691469",
+      "basis": "CURRENT_LOCAL_FILE_BYTES",
+      "observed_now": true
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+      "sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+      "basis": "CURRENT_LOCAL_FILE_BYTES",
+      "observed_now": true
+    },
+    {
+      "path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
+      "sha256": "ad62f478e077f4b783bbaddab4e8c8c1018a314484a9d3ba2b1c0c018498dee9",
+      "basis": "CURRENT_LOCAL_FILE_BYTES",
+      "observed_now": true
+    },
+    {
+      "path": "eng/database-compatibility/OwnedTestDatabase.cs",
+      "sha256": "5da21563fd452b9dcbee4e3f52d070093cf49e552df80c841a1ca59b037d6fb6",
+      "basis": "CURRENT_LOCAL_FILE_BYTES",
+      "observed_now": true
+    },
+    {
+      "path": "scripts/database-compatibility/DatabaseCompatibilityLifecycle.psm1",
+      "sha256": "c47ebcfd9b1b3b2485f832c38272c6061bbd66d4ccc991c8c15aae2f816b168a",
+      "basis": "CURRENT_LOCAL_FILE_BYTES",
+      "observed_now": true
+    }
+  ],
+  "source_pins": [
+    {
+      "source_id": "composed-13",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "expected_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "actual_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ]
+    },
+    {
+      "source_id": "composed-13",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f/117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75/PLAN-ATP-WIRE.types.cs",
+      "expected_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "actual_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ]
+    },
+    {
+      "source_id": "composed-14",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "expected_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "actual_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004",
+        "PLAN-IF-005"
+      ]
+    },
+    {
+      "source_id": "composed-14",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f/29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "expected_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "actual_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004",
+        "PLAN-IF-005"
+      ]
+    },
+    {
+      "source_id": "composed-24",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+      "expected_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "actual_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ]
+    },
+    {
+      "source_id": "composed-24",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd/PLAN-ATP-WIRE.schema.json",
+      "expected_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "actual_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ]
+    },
+    {
+      "source_id": "composed-25",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+      "expected_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "actual_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ]
+    },
+    {
+      "source_id": "composed-25",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7/PLAN-ATP-WIRE.types.ts",
+      "expected_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "actual_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ]
+    },
+    {
+      "source_id": "numeric-0",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+      "expected_sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "matches": true
+    },
+    {
+      "source_id": "numeric-1",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "expected_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "actual_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "matches": true
+    },
+    {
+      "source_id": "numeric-2",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+      "expected_sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "actual_sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "matches": true
+    }
+  ],
+  "credit": {
+    "field_bindings": [
+      {
+        "profile": "fin-credit-signed",
+        "count": 4,
+        "pointers": [
+          "/$defs/absorptionLink/properties/signedPolicyAmount",
+          "/$defs/representationTransfer/properties/deltaPolicyAmount",
+          "/$defs/subject/properties/exposureDeltaPolicyAmount",
+          "/$defs/moneySigned/properties/amount"
+        ]
+      },
+      {
+        "profile": "fin-credit-nonnegative",
+        "count": 33,
+        "pointers": [
+          "/$defs/moneyNonNegative/properties/amount",
+          "/$defs/arObligationAggregate/properties/openPolicyAmount",
+          "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+          "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+          "/$defs/arCut/properties/arBookedExposure",
+          "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+          "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+          "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+          "/$defs/reservationSet/properties/activeReservedDelta",
+          "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+          "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+          "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+          "/$defs/creditExposureSnapshot/properties/totalExposure",
+          "/$defs/subject/properties/currentCommittedPolicyAmount",
+          "/$defs/subject/properties/targetCommittedPolicyAmount",
+          "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+          "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+          "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+          "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+          "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+          "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+          "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+          "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+          "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+          "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+          "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+          "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+          "/$defs/postedOpenContribution/properties/policyAmount",
+          "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+          "/$defs/effectiveCreditContribution/properties/policyAmount",
+          "/$defs/appliedReceiptContribution/properties/policyAmount",
+          "/$defs/unbilledOrderContribution/properties/policyAmount",
+          "/$defs/activeReservationContribution/properties/policyAmount"
+        ]
+      },
+      {
+        "profile": "fin-credit-positive",
+        "count": 5,
+        "pointers": [
+          "/$defs/moneyPositive/properties/amount",
+          "/$defs/fxEvidence/properties/rate",
+          "/$defs/planAtpObservationInput/properties/requestedQuantity",
+          "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+          "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+        ]
+      }
+    ],
+    "representation": "numeric(38,0) coefficient + smallint scale 0..8, same row/transaction",
+    "binding": "NpgsqlDbType.Numeric with BigInteger; read GetFieldValue<BigInteger>(); do not use decimal/ExecuteScalar default numeric read",
+    "validation": "Validate exact destination profile before binding; canonical zero=(0,0); scale>0 coefficient not divisible by10; no rounding/truncation; reject NaN and invalid pair on storage boundary",
+    "scope": "Pure storage adapter, no CreditControlService Owner switch"
+  },
+  "inventory": {
+    "mapping_count": 66,
+    "table_count": 13,
+    "nullable_count": 15,
+    "nonnullable_count": 51,
+    "source_scale_counts": {
+      "scale8": 20,
+      "scale18": 13,
+      "scale12": 27,
+      "scale0": 6
+    },
+    "mappings": [
+      {
+        "source_pointer": "/Tables/1/Columns/6",
+        "table": "SourcePortion",
+        "logical_column": "SourceQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "SourceQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "SourceQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/1/Columns/8",
+        "table": "SourcePortion",
+        "logical_column": "BaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "BaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "BaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/1/Columns/10",
+        "table": "SourcePortion",
+        "logical_column": "RatioNumerator",
+        "old_storage_type": "decimal(38,0)",
+        "nullable": false,
+        "digits_column": "RatioNumeratorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RatioNumeratorScale",
+        "source_scale_range": [
+          0,
+          0
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/1/Columns/11",
+        "table": "SourcePortion",
+        "logical_column": "RatioDenominator",
+        "old_storage_type": "decimal(38,0)",
+        "nullable": false,
+        "digits_column": "RatioDenominatorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RatioDenominatorScale",
+        "source_scale_range": [
+          0,
+          0
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/2/Columns/2",
+        "table": "SourcePortionBalance",
+        "logical_column": "OriginalBaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "OriginalBaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "OriginalBaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/2/Columns/3",
+        "table": "SourcePortionBalance",
+        "logical_column": "ValuedBaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ValuedBaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ValuedBaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/2/Columns/4",
+        "table": "SourcePortionBalance",
+        "logical_column": "ClearedBaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ClearedBaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ClearedBaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/2/Columns/5",
+        "table": "SourcePortionBalance",
+        "logical_column": "OutboundBaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "OutboundBaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "OutboundBaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/2/Columns/6",
+        "table": "SourcePortionBalance",
+        "logical_column": "ReversedBaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ReversedBaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ReversedBaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/2/Columns/7",
+        "table": "SourcePortionBalance",
+        "logical_column": "ReservedBaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ReservedBaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ReservedBaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/2/Columns/8",
+        "table": "SourcePortionBalance",
+        "logical_column": "AvailableBaseQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "AvailableBaseQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "AvailableBaseQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/4/Columns/2",
+        "table": "ValuationPoolHead",
+        "logical_column": "CurrentQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "CurrentQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "CurrentQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/4/Columns/3",
+        "table": "ValuationPoolHead",
+        "logical_column": "CurrentUnroundedValue",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "CurrentUnroundedValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "CurrentUnroundedValueScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/5/Columns/12",
+        "table": "ValueLayer",
+        "logical_column": "OriginalQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "OriginalQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "OriginalQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/5/Columns/13",
+        "table": "ValueLayer",
+        "logical_column": "OriginalUnroundedValue",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "OriginalUnroundedValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "OriginalUnroundedValueScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/5/Columns/14",
+        "table": "ValueLayer",
+        "logical_column": "UnitValue",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "UnitValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "UnitValueScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/6/Columns/2",
+        "table": "ValueLayerBalance",
+        "logical_column": "OriginalQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "OriginalQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "OriginalQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/6/Columns/3",
+        "table": "ValueLayerBalance",
+        "logical_column": "ConsumedQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ConsumedQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ConsumedQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/6/Columns/4",
+        "table": "ValueLayerBalance",
+        "logical_column": "ReversedQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ReversedQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ReversedQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/6/Columns/5",
+        "table": "ValueLayerBalance",
+        "logical_column": "ReservedQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ReservedQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ReservedQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/6/Columns/6",
+        "table": "ValueLayerBalance",
+        "logical_column": "AvailableQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "AvailableQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "AvailableQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/3",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "BeforeQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "BeforeQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "BeforeQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/4",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "BeforeUnroundedValue",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "BeforeUnroundedValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "BeforeUnroundedValueScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/5",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "DeltaQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "DeltaQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "DeltaQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/6",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "DeltaUnroundedValue",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "DeltaUnroundedValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "DeltaUnroundedValueScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/7",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "AfterQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "AfterQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "AfterQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/8",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "AfterUnroundedValue",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "AfterUnroundedValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "AfterUnroundedValueScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/10",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "ExactAverageNumerator",
+        "old_storage_type": "decimal(76,0)",
+        "nullable": true,
+        "digits_column": "ExactAverageNumeratorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ExactAverageNumeratorScale",
+        "source_scale_range": [
+          0,
+          0
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/11",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "ExactAverageDenominator",
+        "old_storage_type": "decimal(76,0)",
+        "nullable": true,
+        "digits_column": "ExactAverageDenominatorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ExactAverageDenominatorScale",
+        "source_scale_range": [
+          0,
+          0
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/12",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "DisplayAverage18",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": true,
+        "digits_column": "DisplayAverage18UnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "DisplayAverage18Scale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/13",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "DiscardedRemainderNumerator",
+        "old_storage_type": "decimal(76,0)",
+        "nullable": true,
+        "digits_column": "DiscardedRemainderNumeratorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "DiscardedRemainderNumeratorScale",
+        "source_scale_range": [
+          0,
+          0
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/7/Columns/14",
+        "table": "MovingAveragePoolRevision",
+        "logical_column": "DiscardedRemainderDenominator",
+        "old_storage_type": "decimal(76,0)",
+        "nullable": true,
+        "digits_column": "DiscardedRemainderDenominatorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "DiscardedRemainderDenominatorScale",
+        "source_scale_range": [
+          0,
+          0
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/11/Columns/7",
+        "table": "ValueLine",
+        "logical_column": "Qty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "QtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "QtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/11/Columns/9",
+        "table": "ValueLine",
+        "logical_column": "UnitValue",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "UnitValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "UnitValueScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/11/Columns/10",
+        "table": "ValueLine",
+        "logical_column": "RawAmount",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "RawAmountUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RawAmountScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/11/Columns/11",
+        "table": "ValueLine",
+        "logical_column": "RoundedBeforeResidue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "RoundedBeforeResidueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RoundedBeforeResidueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/11/Columns/12",
+        "table": "ValueLine",
+        "logical_column": "ResidueApplied",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "ResidueAppliedUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ResidueAppliedScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/11/Columns/13",
+        "table": "ValueLine",
+        "logical_column": "FinalAmount",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "FinalAmountUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "FinalAmountScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/12/Columns/5",
+        "table": "LayerConsumption",
+        "logical_column": "BeforeQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "BeforeQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "BeforeQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/12/Columns/6",
+        "table": "LayerConsumption",
+        "logical_column": "TakeQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "TakeQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "TakeQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/12/Columns/7",
+        "table": "LayerConsumption",
+        "logical_column": "AfterQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "AfterQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "AfterQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/12/Columns/9",
+        "table": "LayerConsumption",
+        "logical_column": "RawAmount",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "RawAmountUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RawAmountScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/12/Columns/10",
+        "table": "LayerConsumption",
+        "logical_column": "RoundedBeforeResidue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "RoundedBeforeResidueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RoundedBeforeResidueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/12/Columns/11",
+        "table": "LayerConsumption",
+        "logical_column": "ResidueApplied",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "ResidueAppliedUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ResidueAppliedScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/12/Columns/12",
+        "table": "LayerConsumption",
+        "logical_column": "FinalAmount",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "FinalAmountUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "FinalAmountScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/13/Columns/5",
+        "table": "RoundingTrace",
+        "logical_column": "RawTotal",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "RawTotalUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RawTotalScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/13/Columns/6",
+        "table": "RoundingTrace",
+        "logical_column": "TargetTotal",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "TargetTotalUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "TargetTotalScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/13/Columns/7",
+        "table": "RoundingTrace",
+        "logical_column": "LineRoundedTotalBeforeResidue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "LineRoundedTotalBeforeResidueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "LineRoundedTotalBeforeResidueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/13/Columns/8",
+        "table": "RoundingTrace",
+        "logical_column": "Residue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "ResidueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ResidueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/13/Columns/11",
+        "table": "RoundingTrace",
+        "logical_column": "FinalTotal",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "FinalTotalUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "FinalTotalScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/10",
+        "table": "ReconciliationLine",
+        "logical_column": "Quantity",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": true,
+        "digits_column": "QuantityUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "QuantityScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/11",
+        "table": "ReconciliationLine",
+        "logical_column": "InventoryValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "InventoryValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "InventoryValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/12",
+        "table": "ReconciliationLine",
+        "logical_column": "InTransitValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "InTransitValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "InTransitValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/13",
+        "table": "ReconciliationLine",
+        "logical_column": "WipValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "WipValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "WipValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/14",
+        "table": "ReconciliationLine",
+        "logical_column": "FgValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "FgValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "FgValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/15",
+        "table": "ReconciliationLine",
+        "logical_column": "GrniValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "GrniValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "GrniValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/16",
+        "table": "ReconciliationLine",
+        "logical_column": "ApValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "ApValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ApValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/17",
+        "table": "ReconciliationLine",
+        "logical_column": "CogsValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "CogsValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "CogsValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/18",
+        "table": "ReconciliationLine",
+        "logical_column": "GlValue",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "GlValueUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "GlValueScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/20/Columns/19",
+        "table": "ReconciliationLine",
+        "logical_column": "Difference",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": true,
+        "digits_column": "DifferenceUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "DifferenceScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/37/Columns/2",
+        "table": "SourcePortionRange",
+        "logical_column": "FromQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "FromQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "FromQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/37/Columns/3",
+        "table": "SourcePortionRange",
+        "logical_column": "ToQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "ToQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "ToQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/38/Columns/6",
+        "table": "FxRateFact",
+        "logical_column": "RateNumerator",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "RateNumeratorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RateNumeratorScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/38/Columns/7",
+        "table": "FxRateFact",
+        "logical_column": "RateDenominator",
+        "old_storage_type": "decimal(38,18)",
+        "nullable": false,
+        "digits_column": "RateDenominatorUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "RateDenominatorScale",
+        "source_scale_range": [
+          0,
+          18
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/41/Columns/4",
+        "table": "ProvisionalValueFact",
+        "logical_column": "MaxQty",
+        "old_storage_type": "decimal(38,12)",
+        "nullable": false,
+        "digits_column": "MaxQtyUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "MaxQtyScale",
+        "source_scale_range": [
+          0,
+          12
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      },
+      {
+        "source_pointer": "/Tables/41/Columns/5",
+        "table": "ProvisionalValueFact",
+        "logical_column": "MaxAmount",
+        "old_storage_type": "decimal(38,8)",
+        "nullable": false,
+        "digits_column": "MaxAmountUnscaledDigits",
+        "postgres_type": "text",
+        "scale_column": "MaxAmountScale",
+        "source_scale_range": [
+          0,
+          8
+        ],
+        "source_dictionary_matches": true,
+        "coupling": "both null iff logical value null; otherwise both non-null; original native wire remains separately preserved",
+        "implementation_status": "NOT_IMPLEMENTED",
+        "runtime_status": "NOT_RUN"
+      }
+    ],
+    "representation": "canonical ASCII signed integer text + smallint scale; original field wire independently retained; optional exact original UTF8 document bytea for receipt/digest",
+    "arithmetic": "BigInteger only; no finite numeric CAST/SUM or finite coefficient index",
+    "mavg": "Preserve native numerator 00/-0 and all original numerator/denominator strings separately from gcd-reduced internal ratio; strictly positive denominator; ACTIVE five optional fields non-null and afterQty positive; EMPTY five fields null, afterQty zero and afterUnroundedValue zero",
+    "scale_adoption_gate": "For each of all 66 entries prove relation between native field scale and storage scale. 20 source mappings cap at8 while Money.amount and RoundingTrace amount fields reference Decimal18. Do not infer a wire limit from old decimal precision or Money.scale. If storage mapping must widen, record versioned lossless PG mapping and obtain coordinator contract window; preserve original source pins."
+  },
+  "atp": {
+    "profile": "ATP-STABLEID-LEXICAL/20261011-R1",
+    "composed_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+    "required_findings": [
+      "PLAN-IF-004",
+      "PLAN-IF-005"
+    ],
+    "patch_operation_count": 9,
+    "five_columns": [
+      {
+        "table": "plan_atp.evaluation",
+        "column": "result_uom",
+        "nullable": true,
+        "line": 132,
+        "exact_definition": "result_uom varchar(128) CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.segment",
+        "column": "uom",
+        "nullable": false,
+        "line": 291,
+        "exact_definition": "uom varchar(128) NOT NULL CHECK (uom IS NULL OR uom !~ '[^A-Za-z0-9._:/-]' AND uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.basis",
+        "column": "native_uom",
+        "nullable": false,
+        "line": 325,
+        "exact_definition": "native_uom varchar(128) NOT NULL CHECK (native_uom IS NULL OR native_uom !~ '[^A-Za-z0-9._:/-]' AND native_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.basis",
+        "column": "result_uom",
+        "nullable": false,
+        "line": 327,
+        "exact_definition": "result_uom varchar(128) NOT NULL CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      },
+      {
+        "table": "plan_atp.reservation_ledger",
+        "column": "uom",
+        "nullable": false,
+        "line": 382,
+        "exact_definition": "uom varchar(128) NOT NULL CHECK (uom IS NULL OR uom !~ '[^A-Za-z0-9._:/-]' AND uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+        "current_composed_line_matches": true
+      }
+    ],
+    "patch_bundle_refs": [
+      "docs/design-handbook/remediation/assets/core-types/bounded-patches.json#/patches/1",
+      "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json#/patches/0..4"
+    ],
+    "scope": "Pin full composition including recovery lock-order/binding changes; run only reviewed storage fixture subset, never execute complete archived business DDL wholesale",
+    "driver_guard": "Validate StableId before binding; no explicit varchar(128) cast or truncating parameter Size; raw text guard needed before coercion if asserting direct DB-input rejection"
+  },
+  "mapped_vector_count": 56,
+  "mapped_vectors": [
+    {
+      "id": "NUM-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/0"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/1"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/2"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-004",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/3"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/4"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/5"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-007",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/6"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-008",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/7"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-009",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/8"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-010",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/9"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/10"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-012",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/11"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-013",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/12"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-014",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/13"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-015",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/14"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-016",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/15"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-017",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/16"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-018",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/17"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-019",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/18"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-020",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/19"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-021",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/20"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-022",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/21"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "NUM-023",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/22"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-001",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-002",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-003",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-004",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-007",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-008",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-009",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-010",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-JS-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-JS-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "CREDIT-JS-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-001",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-002",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-003",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "INV-004",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/0"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/1"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/2"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/3"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/4"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-006",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/5"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-007",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/6"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-008",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/7"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-009",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/8"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-R1-010",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": true,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/9"
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "id": "ATP-LEADING-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "accepted": false,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "future_layer": "POSTGRESQL_FIXTURE_SUBASSERTIONS",
+      "runtime_status": "NOT_RUN"
+    }
+  ],
+  "required_postgres_checks": [
+    "All 25 CREDIT/9 INV/22 ATP shared lexical vectors mapped; accepted values write/read exact and invalid values rejected without writes",
+    "Every 66 INV mapping matched to source pointer/nullability/column names with field-scale no-loss evidence; both partial-null pairs rejected; originalWire retained",
+    "MAVG ACTIVE/EMPTY, four integer columns at scale0, positive denominators, native00/-0, gcd/divrem sign/remainder and original parts preserved",
+    "ATP five exact varchar128/CHECK columns, 16/17/128 accepted,129/empty/nonASCII/leadingpunctuation/LF/CRLF/trailing-space rejected at input boundary; evaluation nullable only",
+    "CREDIT numeric38 values beyond System.Decimal,30+8,zero and all sign profiles; malformed pair/scale/39digits/NaN rejected",
+    "Successful transaction read on fresh physical connection; failure rolls back complete write set; reopen verifies original value and wire; never replace rollback with autocommit continuation",
+    "Owner marker/database OID/data directory/endpoint/principal verified before DDL, before test and before cleanup; missing resources fail not skip; runtime credential denied management rights"
+  ],
+  "existing_validation_reuse": {
+    "credit": "S01-03:205 passed, contract-only",
+    "inventory": "S01-04:132 passed, contract-only",
+    "atp": "S01-06:60 C# +81 TS/schema and type-check, contract-only",
+    "restriction": "Reuse source-identical results with their actual original SHA/commands; no fresh execution claimed. None proves PG storage or Owner adoption."
+  },
+  "resource_probe": {
+    "postgres_bin": "C:/Program Files/PostgreSQL/18/bin",
+    "postgres_binary_version": "18.6",
+    "psql": true,
+    "initdb": true,
+    "pg_ctl": true,
+    "existing_postgres_service": "postgresql-x64-18 Running",
+    "existing_port5432": "Listening PID9000 on0.0.0.0/::; forbidden to touch",
+    "reserved_port": 55410,
+    "port55410_observation": "No listener at probe time; must recheck immediately before provisioning",
+    "docker_installed": true,
+    "docker_context": "desktop-linux current; default also listed",
+    "docker_service": "com.docker.service Stopped",
+    "docker_daemon_probed": false,
+    "dotnet_sdk": "10.0.302",
+    "npgsql8_0_8_local_cache": true,
+    "actual_driver_runtime_version": "NOT_RUN",
+    "credentials_read": false,
+    "reserved_resource_root_exists": false
+  },
+  "resource_plan": {
+    "coordinator_reserved_root": "D:/CP6-local-test/S01-10/",
+    "provisioned": false,
+    "run_directory": "D:/CP6-local-test/S01-10/<owner32>/",
+    "subdirectories": [
+      "data",
+      "private",
+      "logs",
+      "receipts"
+    ],
+    "endpoint": "127.0.0.1:55410",
+    "database_name": "cp6_s0110_<UTCyyyyMMdd>_<owner8>_exact",
+    "database_comment": "CP6-S01-10:<owner32>",
+    "bootstrap_role": "cp6_s0110_<owner8>_bootstrap: isolated cluster setup only",
+    "owner_role": "cp6_s0110_<owner8>_owner NOLOGIN",
+    "writer_role": "cp6_s0110_<owner8>_writer LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS; only required CONNECT/USAGE/DML",
+    "authentication": "New task credentials, protected private pwfile, SCRAM; never read appsettings or existing service credentials",
+    "cluster": "New initdb UTF8 under reserved path, loopback only; never register or restart existing service; no Docker dependency",
+    "owned_resource": "PG-only task-private runner preserves lifecycle principles from existing helper; no WP6 marker reuse or shared helper edits",
+    "identity": "Require new path/no collision, full owner token, endpoint, DB name/OID, server system identifier/data directory, DB owner and session_user, physical PID provenance; redact credentials",
+    "cleanup": "Only after matching receipt/marker/OID/owner/principal and zero non-runner sessions; no force terminate, no unknown targets; stop only owned pg_ctl data path; any recursive deletion requires canonical containment check and evidence retention",
+    "fail_closed": "If provisioning or identity check fails, record BLOCKED/NOT_RUN. Zero skips is mandatory for actual PG acceptance."
+  },
+  "write_window": {
+    "exclusive_paths": [
+      "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs",
+      "eng/contracts/s01/postgresql-mappings.json",
+      "eng/contracts/postgresql-tests/**",
+      "docs/development/evidence/S01-10/**"
+    ],
+    "new_project_and_lock": "Only eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj and its own packages.lock.json",
+    "implementation_assembly": "Prefer project reference to actual CP6.Persistence.PostgreSql assembly so tests exercise shipped code. Existing wildcard compile can include new Contracts source.",
+    "read_only_inputs": [
+      "CP6.Entity/Contracts/**",
+      "eng/contracts/s01/profile-inputs.json",
+      "eng/contracts/s01/vectors.json",
+      "eng/contracts/s01/atp-stable-id.schema.json",
+      "eng/contracts/exact-values-tests/**",
+      "eng/database-compatibility/**",
+      "scripts/database-compatibility/**",
+      "docs/design-handbook/**"
+    ],
+    "no_shared_writes": [
+      "CP6.Core/EFDbContext/CP6Context.cs",
+      "CP6.Persistence.PostgreSql/Migrations/**",
+      "existing csproj/packages.lock.json/solution/Directory.Build.*",
+      "existing Owner services",
+      "roadmap.json/generated progress/four state files",
+      ".github/workflows/**"
+    ],
+    "coordinator_only": "Assign resource/entry gate; add ledger and state changes in delivery window. Any required shared dependency/model/contract change must get an explicit serialized file window."
+  },
+  "commands_to_run_later": [
+    "dotnet restore eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+    "dotnet test eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj --no-restore --filter FullyQualifiedName~ExactValueStorageTests --logger \"trx;LogFileName=s01-10-postgresql.trx\" --results-directory docs/development/evidence/S01-10/postgresql",
+    "If tests link the production source instead of referencing its assembly: dotnet build CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj --no-restore",
+    "Use task-private runner after implementation to provision/verify only the reserved isolated cluster, inject process-only secret variables, run tests, record actual SELECT version/assembly version and cleanup receipt. This admission report did not run these commands."
+  ],
+  "owner_adoption_checklist": [
+    "List each actual Owner table/native field, all writers/rawSQL/bulk/import/readers, schema/model version, nullability/sign/scale/indices and original wire location",
+    "Add representation alongside old only under separately approved migration; compare exact values to recoverable original and preserve receipt bytes; never infer lost old precision",
+    "Prove new/old reader compatibility and atomic all-writer switch; same connection/transaction and tenant guards/IDs/uniqueness unchanged",
+    "S02-00 tenant binding/roles/RLS/pooling/migration/recovery adoption remains separate; fixture does not make tenant schema rollout proven",
+    "Existing CreditControlService(decimal), StockFinBridge(round2) and ISupplyService(decimal) remain legacy; no Owner acceptance claimed"
+  ],
+  "official_sources": [
+    {
+      "url": "https://www.npgsql.org/doc/types/basic.html",
+      "claim": "numeric supports BigInteger write and GetFieldValue<BigInteger> read (6.0+); default numeric read is decimal"
+    },
+    {
+      "url": "https://www.postgresql.org/docs/18/datatype-numeric.html",
+      "claim": "numeric declared scale coerces/rounds; NaN requires deliberate rejection; unbounded inventory text must not be cast to numeric"
+    },
+    {
+      "url": "https://www.postgresql.org/docs/18/datatype-character.html",
+      "claim": "varchar explicit casts and excess trailing spaces can truncate; validate original text before length coercion"
+    }
+  ],
+  "not_done": [
+    "No implementation",
+    "No build or test",
+    "No database initialization/connection/DDL/DML/cleanup",
+    "No business data migration",
+    "No service start/stop",
+    "No Actions or network publication",
+    "No new Git/remote-main verification; parent pin and existing receipts used"
+  ],
+  "current_code_pins": [
+    {
+      "path": "CP6.Entity/Contracts/FinCredit/CreditAmount.cs",
+      "sha256": "cce1e47c4016eaa64fd9293199d646cfc4d84399ab379927b449e8ea899c4efe",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinCredit/CreditAmountProfile.cs",
+      "sha256": "780cd2f0fbf35317e67c32343a648599ba7858f2da4a3f9954433489576af0b0",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinCredit/CreditAmountFieldAttribute.cs",
+      "sha256": "ee296c5f4ad121849e745a2d33742ad379d90440f42896c936339c847c828a53",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinCredit/CreditAmountJsonConverter.cs",
+      "sha256": "46744fe3f770caa713364bb8100f613b0f0fedf7c17171455a8bb52bc592f0c8",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+      "sha256": "a5e9a8c598de70ffa9dcea75a6d9b5d4ce7ffe030dd85e2660a861906903319a",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimalJsonConverter.cs",
+      "sha256": "648830a91b64f4dcc870d104a4343dcf3db48b0fb2a2734e0c117855cd13879b",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryRatio.cs",
+      "sha256": "9087936d31274c72382797c172d259174040f50f54425e55f2f32f116799d5e7",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/Contracts/PlanAtp/StableId.cs",
+      "sha256": "d3b4e286115ed90f895f478abc687cb4acf6397c80fcb1eb56d46d5aba378db6",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/CreditAmountTests.cs",
+      "sha256": "85993a4badbe5014176817267c89c94a485d0e81e0037399571a5a6b78e13801",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/InventoryDecimalTests.cs",
+      "sha256": "d739ae1fa49ca5c5b6ca563c16b894cb643cc47ce9ddc2dbedd3cd6a5cd665dc",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StableIdTests.cs",
+      "sha256": "51bd4ef6f07b3a35b408f7323cec0a0ad638e5b0d2eb9a1ad8c2499310c66d1b",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "sha256": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Core/CP6.Core.csproj",
+      "sha256": "241aa0f2737a6aa6e2dd3b89d7af9344472c20e306ebd4897db5bcc1b830b2b8",
+      "basis": "CURRENT_LOCAL_FILE_BYTES"
+    }
+  ]
+}

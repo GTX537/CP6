@@ -1,0 +1,2149 @@
+{
+  "report_version": "CP6-WAVE4-READONLY-ADMISSION/1",
+  "observed_at": "2026-10-13T04:11:18.312778+00:00",
+  "repository": "GTX537/CP6",
+  "baseline_sha": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "baseline_local_refs": {
+    "HEAD": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+    "main": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+    "origin/main": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+  },
+  "remote_main_authority": "Confirmed by COORD in parent task; no network query in this admission.",
+  "database_target": "PostgreSQL",
+  "admission": "READY_FOR_COORDINATOR_CLAIM_WITH_SCOPED_IMPLEMENTATION",
+  "execution": "NOT_RUN",
+  "business_acceptance": "NOT_RUN",
+  "blocking_missing_inputs": [],
+  "actions": "NO_BUILD_NO_TEST_NO_DATABASE_NO_NETWORK_NO_GIT_WRITES",
+  "evidence_scope": "Read-only local source/hash/metadata and actual project CLI inspection only. Historical PASS remains historical.",
+  "input_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "git_blob": "40ccbc25727e0815dcb139f8ed01cb419d194920",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "git_blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+    },
+    {
+      "path": "docs/development/s01-input-index.json",
+      "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+      "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "a1377a945dafe9150a370c3ce21fa5dea5c57fa7ea176a02768545792c8159a7"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+      "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "f1cd48dc35ce1a2d837ce47a1ac77543a81a6a370fc90b8d7f6d123c6d2b364e"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+      "git_blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d",
+      "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27"
+    },
+    {
+      "path": "docs/design-handbook/indexes/required-inputs.json",
+      "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+      "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "c9d6715fbc0eb51797634fc29948daae97795d3e7b139f1849e67ecbc8db0e71"
+    },
+    {
+      "path": "docs/design-handbook/indexes/container-members.json",
+      "git_blob": "671e8a5f8870b29352e948f917a46d5b72e8a5fa",
+      "sha256": "730fd2a826e61b9cbad74e4e66e68fe478c0ce7135bd3469a9db4b8af22778a1",
+      "hash_basis": "git_blob_bytes",
+      "working_file_sha256": "26d40abd31783efc537752b99a9e247d20c2cd2d376987bd5f43bcf0888dcd35"
+    }
+  ],
+  "prerequisite": {
+    "id": "S01-02",
+    "title": "严格 JSON、NullOnly 与结构相等",
+    "repository": "Main",
+    "dependencies": [
+      "S01-01"
+    ],
+    "target_ids": [
+      "QA-NCR-01",
+      "CRM-INQ-01"
+    ],
+    "relative_size": "M",
+    "kind": "CODE",
+    "state": "DONE",
+    "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+    "blockers": [],
+    "validation_evidence": [
+      {
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-02/original-validation.json",
+        "repository": "GTX537/CP6",
+        "source_sha": "2c0ef2129012a8117b0b5b058ac3c470e12d73fd",
+        "command": "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~StrictJsonTests",
+        "environment": "Windows / .NET SDK10.0.302 / target net8.0 / actual runtime .NET8.0.29",
+        "observed_at": "2026-10-12T10:57:51.720209+00:00",
+        "scope": "Reuse original 77 passed / zero skipped local contract tests, including 21 frozen vectors. Source/input/config/artifact evidence independently checked and unchanged through merge. Original execution time/working-tree source binding retained; no new business, database, package-publication or production acceptance.",
+        "result": "PASS"
+      }
+    ],
+    "delivery_evidence": {
+      "source_sha": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+      "remote_main_sha": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+      "pr_url": "https://github.com/GTX537/CP6/pull/184",
+      "observed_at": "2026-10-12T13:45:22.652158+00:00",
+      "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+      "repository": "GTX537/CP6",
+      "path": "docs/development/evidence/wave2-integration-20261012/S01-02/remote-main.json"
+    },
+    "package_id": "WP02",
+    "coverage_role": "FOUNDATION",
+    "entry_gate": "CONFIRMED",
+    "assignment": {
+      "chat_label": "A / S01-02（沿用原S01-01对话）",
+      "repository": "Main",
+      "branch": "codex/s01-02-strict-json-20261012",
+      "worktree": "D:/CP6-worktrees/s01-02-20261012",
+      "claimed_at": "2026-10-12T09:00:02.772472+00:00",
+      "baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "entry_evidence": "docs/development/evidence/WP01-02/admission.json",
+      "dispatch_scope": "Worker START and DELIVERY received at coordinator_received_at; independent review and protected merge completed. DONE applies only to this bounded contract task. Shared coordination receipt closes the window.",
+      "worker_ack_at": "2026-10-12T10:47:01Z",
+      "allowed_write_paths": [
+        "CP6.Entity/Contracts/Wire/",
+        "eng/contracts/exact-values-tests/",
+        "docs/development/evidence/S01-02/"
+      ],
+      "handoff_branch": "codex/dev-handoff-s01-02",
+      "coordination_baseline_sha": "dfc043b1473dcea51d34ff87a7808692349c278a",
+      "coordinator_received_at": "2026-10-12T13:36:47.756214+00:00",
+      "execution_baseline_sha": "4ab979e2f391c5a5645da0d1586781e824a9f8cd",
+      "handoff_receipt": "docs/development/evidence/wave2-integration-20261012/intake.json",
+      "window_closed_at": "2026-10-12T13:49:17.024910+00:00"
+    },
+    "entry_conditions": [
+      "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
+      "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
+    ],
+    "exclusive_resources": [
+      "Main:s01-02"
+    ]
+  },
+  "shared_read_only_paths": [
+    "CP6.Entity/CP6.Entity.csproj",
+    "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+    "CP6.Entity/Contracts/Wire/",
+    "eng/contracts/s01/",
+    "cp6.web/package.json",
+    "cp6.web/package-lock.json",
+    "cp6.web/vitest.config.ts",
+    "cp6.web/tsconfig*.json",
+    "docs/development/roadmap.json",
+    "docs/development/07-detailed-tasks.md",
+    "docs/project-memory/PROJECT_STATE.md",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "docs/project-memory/CHANGELOG-AI.md",
+    ".github/workflows/"
+  ],
+  "source_archive_policy": "Composed files read first. Native schemas with no composed variant and original frozen-profile assets read only by exact indexed hash. No archive code executed, no irrecoverable historical originals searched.",
+  "instructions": "Follow the exact S01 task card and AGENTS.md; these reports do not authorize business writes, Owner adoption, DB migration, network publication or whole-target DONE.",
+  "task_id": "S01-07",
+  "profiles": [
+    {
+      "id": "ncr-main-r6",
+      "owner": {
+        "target_id": "QA-NCR-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-15",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-17",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-15",
+        "variant": "composed",
+        "csharp_namespaces": "QaNcrMainR6Declarations"
+      },
+      "scope": "Only pinned generated attachment subset of current NCR combination. Seven required const-null properties across Main/CP4 and five exact nullable metadata corrections; Owner identity unchanged.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/49"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/operations.json",
+          "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+          "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/24"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/250",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/251",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/252",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/253",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/49"
+      },
+      "required_null_fields": [
+        {
+          "record": "Externalf70281e4_C09FailedProblem_Variant0_Payload",
+          "json_field": "originalQuery",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 1972,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "Externalf70281e4_C09FailedProblem_Variant1_Payload",
+          "json_field": "originalQuery",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 1988,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "Externalf70281e4_C09FailedProblem_Variant2_Payload",
+          "json_field": "originalQuery",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 2004,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload",
+          "json_field": "guardRef",
+          "source_id": "composed-15",
+          "variant": "composed",
+          "line": 4458,
+          "required": true,
+          "const": null
+        }
+      ]
+    },
+    {
+      "id": "ncr-cp4",
+      "owner": {
+        "target_id": "QA-NCR-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-16",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-16",
+        "variant": "composed",
+        "csharp_namespaces": "SourceQA; OwnerWire; Consumer; LegacyAdapter"
+      },
+      "scope": "Only pinned generated attachment subset of current NCR combination. Seven required const-null properties across Main/CP4 and five exact nullable metadata corrections; Owner identity unchanged.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/49"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/operations.json",
+          "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+          "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/24"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/250",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/251",
+          "case_id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/252",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/253",
+          "case_id": "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/49"
+      },
+      "required_null_fields": [
+        {
+          "record": "IpqcFinalGuardResult_Case2",
+          "json_field": "guardRef",
+          "source_id": "composed-16",
+          "variant": "composed",
+          "line": 200,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "ObservationInput_Case1",
+          "json_field": "code",
+          "source_id": "composed-16",
+          "variant": "composed",
+          "line": 415,
+          "required": true,
+          "const": null
+        },
+        {
+          "record": "ObservationInput_Case2",
+          "json_field": "value",
+          "source_id": "composed-16",
+          "variant": "composed",
+          "line": 423,
+          "required": true,
+          "const": null
+        }
+      ]
+    },
+    {
+      "id": "ipqc-r4",
+      "owner": {
+        "target_id": "QA-IPQC-01",
+        "repository": "Main",
+        "authority": "Original native business Owner; this package grants no write authority."
+      },
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-19",
+          "variant": "composed"
+        }
+      ],
+      "schema_or_type_identity": {
+        "source_id": "composed-19",
+        "variant": "composed",
+        "typescript_types": [
+          "QapEvidence",
+          "QapUom"
+        ],
+        "exact_fields": {
+          "QapEvidence": [
+            "owner",
+            "id",
+            "version",
+            "digest"
+          ],
+          "QapUom": [
+            "id",
+            "version"
+          ]
+        }
+      },
+      "scope": "Native QAP registrationRef and FullCount units. ExecEvidence has ref+digest and cannot be substituted by matching its name.",
+      "adoption_state": "NOT_RUN",
+      "original_acceptance_refs": [
+        {
+          "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+          "sha256": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048",
+          "git_blob": "a2f971d4657e41b51bef295e701d5e90089e99c8",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/48"
+        },
+        {
+          "path": "docs/development/assessments/20261011/catalogs/operations.json",
+          "sha256": "60e2ccbe509265d5db8e55154980301436a7c55038d0fda22c7b08bf583517e2",
+          "git_blob": "648f8357585c0aa9884fb01e44fa0da0492f8194",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/targets/23"
+        }
+      ],
+      "revision_acceptance_refs": [
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/256",
+          "case_id": "DR-OPS-IF-015::OPS-IF-015-POS",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        },
+        {
+          "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+          "sha256": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f",
+          "git_blob": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "hash_basis": "git_blob_bytes",
+          "json_pointer": "/cases/257",
+          "case_id": "DR-OPS-IF-015::OPS-IF-015-NEG",
+          "coverage": "CONTRACT_SUBASSERTIONS_ONLY",
+          "remaining": "Real consumers, permissions, persistence and complete business sequence require later tasks; whole case remains NOT_RUN."
+        }
+      ],
+      "required_combination_ref": {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+        "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/targets/48"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "composed-15",
+      "filename": "9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/15"
+      },
+      "original_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "composed_sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "patch_operation_count": 2,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-16",
+      "filename": "103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/16"
+      },
+      "original_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "composed_sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "patch_operation_count": 3,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-17",
+      "filename": "4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/17"
+      },
+      "original_sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "composed_sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "patch_operation_count": 5,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "composed_hash_matches": true
+    },
+    {
+      "source_id": "composed-19",
+      "filename": "859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "selected_variants": [
+        "composed"
+      ],
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/19"
+      },
+      "original_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "composed_sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ],
+      "source_finding_ids": [
+        "OPS-IF-015"
+      ],
+      "patch_operation_count": 2,
+      "local_original_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "local_composed_path": "D:/CP6-archives/design-revision-20261011-checks/derived/859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "runtime_path_policy": "Use task-owned repository-relative adopted assets; archive paths are read-only provenance, never runtime configuration.",
+      "original_rehash": "NOT_REHASHED_THIS_ADMISSION_WHEN_COMPOSED_AVAILABLE",
+      "composed_observed_sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "composed_hash_matches": true
+    }
+  ],
+  "vectors": [
+    {
+      "id": "NCR-NULL-001",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"originalQuery\": null}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-002",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-003",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"originalQuery\": 0}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-004",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"originalQuery\": {}}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-005",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": null}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-006",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-007",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": 0}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-008",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": {}}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-009",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": null}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-010",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-011",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": 0}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-012",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": {}}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-013",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"code\": null}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-014",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-015",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"code\": 0}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-016",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"code\": {}}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-017",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{\"value\": null}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-018",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-019",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{\"value\": 0}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-020",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{\"value\": {}}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-001",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4FrozenPayload.registrationRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/0"
+      },
+      "input": {
+        "supplied_type": "QapEvidence"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-002",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4FrozenPayload.registrationRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/0"
+      },
+      "input": {
+        "supplied_type": "ExecEvidence"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-003",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].measurementUnitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "QapUom"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-004",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].measurementUnitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "Uom"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-005",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].rule.unitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "QapUom"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-006",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].rule.unitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "Uom"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    }
+  ],
+  "case_ids": [
+    "NCR-NULL-001",
+    "NCR-NULL-002",
+    "NCR-NULL-003",
+    "NCR-NULL-004",
+    "NCR-NULL-005",
+    "NCR-NULL-006",
+    "NCR-NULL-007",
+    "NCR-NULL-008",
+    "NCR-NULL-009",
+    "NCR-NULL-010",
+    "NCR-NULL-011",
+    "NCR-NULL-012",
+    "NCR-NULL-013",
+    "NCR-NULL-014",
+    "NCR-NULL-015",
+    "NCR-NULL-016",
+    "NCR-NULL-017",
+    "NCR-NULL-018",
+    "NCR-NULL-019",
+    "NCR-NULL-020",
+    "IPQC-TYPE-001",
+    "IPQC-TYPE-002",
+    "IPQC-TYPE-003",
+    "IPQC-TYPE-004",
+    "IPQC-TYPE-005",
+    "IPQC-TYPE-006"
+  ],
+  "revision_case_ids": [
+    "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+    "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+    "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+    "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+    "DR-OPS-IF-015::OPS-IF-015-NEG",
+    "DR-OPS-IF-015::OPS-IF-015-POS"
+  ],
+  "revision_cases": [
+    {
+      "id": "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+      "scenario": "必需成员显式null反序列化并原样输出",
+      "expected": "必需成员显式null反序列化并原样输出",
+      "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "NCR-TYPE-01-POS",
+      "issue_id": "DR-NCR-TYPE-01",
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "consumer_targets": [
+        "QA-NCR-01"
+      ],
+      "input": "必需成员显式null反序列化并原样输出"
+    },
+    {
+      "id": "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+      "scenario": "0/数字/对象/字符串null/缺字段均拒绝",
+      "expected": "0/数字/对象/字符串null/缺字段均拒绝",
+      "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "NCR-TYPE-01-NEG",
+      "issue_id": "DR-NCR-TYPE-01",
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "consumer_targets": [
+        "QA-NCR-01"
+      ],
+      "input": "0/数字/对象/字符串null/缺字段均拒绝"
+    },
+    {
+      "id": "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+      "scenario": "准确可空值/必需非空按shape表现",
+      "expected": "准确可空值/必需非空按shape表现",
+      "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "NCR-FIELD-01-POS",
+      "issue_id": "DR-NCR-FIELD-01",
+      "source_finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "consumer_targets": [
+        "QA-NCR-01"
+      ],
+      "input": "准确可空值/必需非空按shape表现"
+    },
+    {
+      "id": "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+      "scenario": "字段元数据不授予写权限或改变Source范围",
+      "expected": "字段元数据不授予写权限或改变Source范围",
+      "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "NCR-FIELD-01-NEG",
+      "issue_id": "DR-NCR-FIELD-01",
+      "source_finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "consumer_targets": [
+        "QA-NCR-01"
+      ],
+      "input": "字段元数据不授予写权限或改变Source范围"
+    },
+    {
+      "id": "DR-OPS-IF-015::OPS-IF-015-POS",
+      "scenario": "准确原证据/单位成员可编译并过原Schema",
+      "expected": "准确原证据/单位成员可编译并过原Schema",
+      "expected_writes": "Only original contracted business write set after exact current qualification; read-only adapters produce capture/receipt only",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "OPS-IF-015-POS",
+      "issue_id": "DR-OPS-IF-015",
+      "source_finding_ids": [
+        "OPS-IF-015"
+      ],
+      "consumer_targets": [
+        "QA-IPQC-01"
+      ],
+      "input": "准确原证据/单位成员可编译并过原Schema"
+    },
+    {
+      "id": "DR-OPS-IF-015::OPS-IF-015-NEG",
+      "scenario": "不把任意同名Ref强转为原QAP Evidence",
+      "expected": "不把任意同名Ref强转为原QAP Evidence",
+      "expected_writes": "No new unauthorized or duplicate business effect; retain original facts and append only permitted audit/blocked receipt",
+      "verification_level": "REQUIRED_RUNTIME",
+      "result": "NOT_RUN",
+      "original_acceptance_id": "OPS-IF-015-NEG",
+      "issue_id": "DR-OPS-IF-015",
+      "source_finding_ids": [
+        "OPS-IF-015"
+      ],
+      "consumer_targets": [
+        "QA-IPQC-01"
+      ],
+      "input": "不把任意同名Ref强转为原QAP Evidence"
+    }
+  ],
+  "case_coverage": "Contract subassertions only. source_case_id=null remains null. Full original and revision business scenarios remain NOT_RUN.",
+  "native_schema_file_closure": {
+    "entry_member": "design/NCR-R6-WIRE.json",
+    "file_count": 10,
+    "reference_count": 6487,
+    "assets": [
+      {
+        "member": "design/NCR-R6-WIRE.json",
+        "source_sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+        "observed_sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11b9077c2ccacb39__NCR-R6-WIRE.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 40,
+        "schema_id": "urn:cp6:qa-ncr:main:6"
+      },
+      {
+        "member": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json",
+        "source_sha256": "a3e5c08a426bef34ed18118c2f9ee9d9285dfa70ec369bcc1b16587349b42dc7",
+        "observed_sha256": "a3e5c08a426bef34ed18118c2f9ee9d9285dfa70ec369bcc1b16587349b42dc7",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3e5c08a426bef34__CONSUMER-WIRE.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 148,
+        "schema_id": "QA-NCR-CONSUMER-WIRE-5"
+      },
+      {
+        "member": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json",
+        "source_sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+        "observed_sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/93d5eabb725f756a__SOURCE-QA-SCHEMAS.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 235,
+        "schema_id": "urn:cp6:owner-addenda:source-qa-schemas:cp1"
+      },
+      {
+        "member": "design/NCR-R6-MES-DISPATCH-SHAPE.json",
+        "source_sha256": "45604318db366d61face166e65e5672339abf06d47887a86ce8edc8e6fe5e524",
+        "observed_sha256": "45604318db366d61face166e65e5672339abf06d47887a86ce8edc8e6fe5e524",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45604318db366d61__NCR-R6-MES-DISPATCH-SHAPE.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 29,
+        "schema_id": "urn:cp6:qa-ncr:mes-dispatch-shape:6"
+      },
+      {
+        "member": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json",
+        "source_sha256": "392443aa5b52e47dd4947ee25aca57b61b7e454e5bd785e53ae0c630f714e356",
+        "observed_sha256": "392443aa5b52e47dd4947ee25aca57b61b7e454e5bd785e53ae0c630f714e356",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/39/392443aa5b52e47d__CONTRACT-SCHEMAS.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 219,
+        "schema_id": "urn:cp6:ncr-owner-addenda:cp2"
+      },
+      {
+        "member": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json",
+        "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+        "observed_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 240,
+        "schema_id": "urn:cp6:fin-inv:r10:wire"
+      },
+      {
+        "member": "design/NCR-R6-FENCED-OWNER-SHAPES.json",
+        "source_sha256": "172f4d0f08b5bd4f79a067d4bac5da9f3d4ed1b69518fd99ed60da8c7fe625c4",
+        "observed_sha256": "172f4d0f08b5bd4f79a067d4bac5da9f3d4ed1b69518fd99ed60da8c7fe625c4",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/172f4d0f08b5bd4f__NCR-R6-FENCED-OWNER-SHAPES.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 25,
+        "schema_id": "urn:cp6:qa-ncr:fenced-owner-proposals:6"
+      },
+      {
+        "member": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+        "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+        "observed_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f0519fea751041c__SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 256,
+        "schema_id": "QA-IPQC-01-SCHEMAS-RECOVERY-R4-SYSTEMIC-R4"
+      },
+      {
+        "member": "design/NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+        "source_sha256": "45d7e3551df0940f9875c3bc02e0e7b2ba0ccce581fc0145187c111a1ab8a160",
+        "observed_sha256": "45d7e3551df0940f9875c3bc02e0e7b2ba0ccce581fc0145187c111a1ab8a160",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45d7e3551df0940f__NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 54,
+        "schema_id": "urn:cp6:ncr-main6:iqc-source-projection-candidate"
+      },
+      {
+        "member": "design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json",
+        "source_sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+        "observed_sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+        "matches": true,
+        "local_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fb/fbac66e3f15e7da1__WMS-RMA-01_CANONICAL-CONTRACT.json",
+        "git_selector_path": "docs/design-handbook/indexes/container-members.json",
+        "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+        "container_member_ordinal": 270,
+        "schema_id": null
+      }
+    ],
+    "unresolved_references": [],
+    "closure_evidence": "All external relative $ref files and fragments traversed read-only against accepted R12 archive member map. No validators or archive programs executed."
+  },
+  "native_ref_scope_schemas": {
+    "QapRef": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/QapRef",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          }
+        },
+        "required": [
+          "owner",
+          "id",
+          "version"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:QapRef"
+      }
+    },
+    "QapEvidence": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/QapEvidence",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "owner",
+          "id",
+          "version",
+          "digest"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:QapEvidence"
+      }
+    },
+    "QapUom": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/QapUom",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:QapUom"
+      }
+    },
+    "QapRange": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/QapRange",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:QapRange"
+      }
+    },
+    "ExecRef": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/ExecRef",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          }
+        },
+        "required": [
+          "owner",
+          "id",
+          "version"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:ExecRef"
+      }
+    },
+    "ExecEvidence": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/ExecEvidence",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "owner": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "version": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)$"
+              }
+            },
+            "required": [
+              "owner",
+              "id",
+              "version"
+            ]
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "ref",
+          "digest"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:ExecEvidence"
+      }
+    },
+    "ExecRange": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/ExecRange",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "portionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "from": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+          }
+        },
+        "required": [
+          "portionId",
+          "from",
+          "to"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:ExecRange"
+      }
+    },
+    "ExecScope": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/ExecScope",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scopeId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "scopeVersion": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "ranges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "portionId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "from": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+                },
+                "to": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+                }
+              },
+              "required": [
+                "portionId",
+                "from",
+                "to"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "scopeId",
+          "scopeVersion",
+          "ranges"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:ExecScope"
+      }
+    },
+    "OutRef": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/OutRef",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          }
+        },
+        "required": [
+          "owner",
+          "id",
+          "version"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:OutRef"
+      }
+    },
+    "OutEvidence": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/OutEvidence",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "owner": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "version": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)$"
+              }
+            },
+            "required": [
+              "owner",
+              "id",
+              "version"
+            ]
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "ref",
+          "digest"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:OutEvidence"
+      }
+    },
+    "OutFlatRef": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/OutFlatRef",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "owner",
+          "id",
+          "version",
+          "digest"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:OutFlatRef"
+      }
+    },
+    "OutRange": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/OutRange",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{1,8})?$"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:OutRange"
+      }
+    },
+    "EnvironmentKey": {
+      "source_sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "json_pointer": "/types/EnvironmentKey",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "environmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "REAL",
+              "DEMO"
+            ]
+          }
+        },
+        "required": [
+          "tenantId",
+          "environmentId",
+          "mode"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:cp6:qa-ipqc:recovery-r4-systemic:EnvironmentKey"
+      }
+    }
+  },
+  "nullable_metadata_corrections": [
+    {
+      "index": 1849,
+      "field": {
+        "pointer": "#/$defs/MainResult/oneOf/14/properties/priorHeadRef",
+        "shape": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "required": true,
+        "source": "exact committed local fact set and stable intent/business digest; exact member priorHeadRef in named producer output",
+        "persistence": {
+          "table": "qa_ncr.MainResult",
+          "columnOrChild": "PriorHeadRef",
+          "domain": "exact scalar/ref identity columns or complete named typed child/profile; compare body/typed values from one strict parse"
+        },
+        "editable": false,
+        "nullable": false,
+        "sourceKind": "NAMED_FAMILY_MEMBER"
+      }
+    },
+    {
+      "index": 3338,
+      "field": {
+        "pointer": "#/$defs/InitialSourceOptionQuery/properties/sourceKind",
+        "source": "named original-source option producer exact InitialSourceOptionQuery.sourceKind",
+        "persistence": null,
+        "editable": false,
+        "nullable": true,
+        "shape": {
+          "oneOf": [
+            {
+              "enum": [
+                "QA_IPQC",
+                "QA_IQC",
+                "WMS_RMA"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": true,
+        "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+      }
+    },
+    {
+      "index": 3339,
+      "field": {
+        "pointer": "#/$defs/InitialSourceOptionQuery/properties/keyword",
+        "source": "named original-source option producer exact InitialSourceOptionQuery.keyword",
+        "persistence": null,
+        "editable": false,
+        "nullable": true,
+        "shape": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": true,
+        "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+      }
+    },
+    {
+      "index": 3341,
+      "field": {
+        "pointer": "#/$defs/InitialSourceOptionQuery/properties/cursor",
+        "source": "named original-source option producer exact InitialSourceOptionQuery.cursor",
+        "persistence": null,
+        "editable": false,
+        "nullable": true,
+        "shape": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16384
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": true,
+        "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+      }
+    },
+    {
+      "index": 3360,
+      "field": {
+        "pointer": "#/$defs/InitialSourceOptionPage/properties/nextCursor",
+        "source": "named original-source option producer exact InitialSourceOptionPage.nextCursor",
+        "persistence": null,
+        "editable": false,
+        "nullable": true,
+        "shape": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16384
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": true,
+        "sourceKind": "CLOSED_REQUEST_READ_OR_PROTOCOL_DECLARATION"
+      }
+    }
+  ],
+  "ref_storage_identity_rules": {
+    "Evidence": "ER Owner/Id/Version/Digest; E in every FK",
+    "OwnerRef": "OR Owner/Id/Version; no digest manufactured",
+    "OwnerBusinessRef": "BR Owner/StreamId/BusinessId/Revision/Digest",
+    "QapUom": "Id/Version only; no Owner borrowed from MES"
+  },
+  "required_null_fields": [
+    {
+      "record": "Externalf70281e4_C09FailedProblem_Variant0_Payload",
+      "json_field": "originalQuery",
+      "source_id": "composed-15",
+      "variant": "composed",
+      "line": 1972,
+      "required": true,
+      "const": null
+    },
+    {
+      "record": "Externalf70281e4_C09FailedProblem_Variant1_Payload",
+      "json_field": "originalQuery",
+      "source_id": "composed-15",
+      "variant": "composed",
+      "line": 1988,
+      "required": true,
+      "const": null
+    },
+    {
+      "record": "Externalf70281e4_C09FailedProblem_Variant2_Payload",
+      "json_field": "originalQuery",
+      "source_id": "composed-15",
+      "variant": "composed",
+      "line": 2004,
+      "required": true,
+      "const": null
+    },
+    {
+      "record": "External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload",
+      "json_field": "guardRef",
+      "source_id": "composed-15",
+      "variant": "composed",
+      "line": 4458,
+      "required": true,
+      "const": null
+    },
+    {
+      "record": "IpqcFinalGuardResult_Case2",
+      "json_field": "guardRef",
+      "source_id": "composed-16",
+      "variant": "composed",
+      "line": 200,
+      "required": true,
+      "const": null
+    },
+    {
+      "record": "ObservationInput_Case1",
+      "json_field": "code",
+      "source_id": "composed-16",
+      "variant": "composed",
+      "line": 415,
+      "required": true,
+      "const": null
+    },
+    {
+      "record": "ObservationInput_Case2",
+      "json_field": "value",
+      "source_id": "composed-16",
+      "variant": "composed",
+      "line": 423,
+      "required": true,
+      "const": null
+    }
+  ],
+  "recommended_exclusive_write_paths": [
+    "CP6.Entity/Contracts/Quality/",
+    "cp6.web/src/contracts/quality/",
+    "eng/contracts/exact-values-tests/QualityContractTests.cs",
+    "eng/contracts/s01-07/",
+    "docs/development/evidence/S01-07/"
+  ],
+  "read_only_service_paths": [
+    "CP6.Core/Services/Mes/QualityInspectionService.cs",
+    "CP6.Core/Services/Mes/DefectRecordService.cs"
+  ],
+  "commands_not_run": [
+    "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~QualityContractTests",
+    "npm --prefix cp6.web test -- src/contracts/quality/ipqc.test.ts"
+  ],
+  "required_implementation_checks": [
+    "Pin exact native Schema/type identities and resolve complete dependency closure of every adopted root; no universal Ref or guessed cross-domain coercion.",
+    "Seven exact required const-null fields: four in NCR Main declarations and three in CP4 (including two ObservationInput fields). Test explicit null roundtrip; reject missing, numbers, object and string null.",
+    "Five nullable metadata corrections retain required and editable=false; valid nullable values accepted, missing rejected.",
+    "QAP Evidence is flat owner/id/version/digest; ExecEvidence and OutEvidence are ref+digest. QapUom=id/version; WMS Uom=code/version; never borrow owner or collapse schemas.",
+    "R4FrozenPayload.registrationRef and FullCount units follow composed-19 precise declared types. Native registry /types covers the QAP scalars/refs; do not invent /types/R4FrozenPayload or /types/R4QapFullCountPlanContent (those TS declarations are separately pinned).",
+    "Expose only declared native payload/schema routes; reject cross-event and wrong version/unit identity using complete native fixtures. Reuse StrictJson duplicate decoded-name boundary.",
+    "26 frozen vectors are 20 field projections and 6 type bindings; add positive/negative full-root fixtures for exposed roots with independent source expectations. No QA Owner source/currentness/write acceptance."
+  ],
+  "gaps": [
+    "No missing pinned inputs or unresolved NCR schema references found. Implementation and native fixture execution NOT_RUN.",
+    "Package vectors contain no dedicated NCR-FIELD metadata vectors and no complete payload decoder fixtures; task must add source-derived coverage in its own directory.",
+    "Original QA-NCR R12 171 values/DAG and QA-IPQC original business ACs remain referenced by catalogs; this task must not claim them executed."
+  ],
+  "project_cli_match": {
+    "leaf_project": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+    "target_framework": "net8.0",
+    "project_reference": "../../../CP6.Entity/CP6.Entity.csproj",
+    "test_framework": "xUnit",
+    "leaf_default_compile_glob": true,
+    "frontend_script": "vitest run",
+    "frontend_test_include": "src/**/*.{test,spec}.ts",
+    "frontend_environment": "jsdom",
+    "implementation_paths_exist": false,
+    "shared_test_input_warning": "Inputs/dispatch.json is wave2, owned by existing StrictJsonTests. New tests pin their own explicit case IDs and read task-owned relative assets; do not treat wave2 dispatch as wave4 IDs.",
+    "shared_projects_unchanged_required": true
+  },
+  "exclusive_resource": "Main:s01-07",
+  "state_rule": "COORD must claim/register task and exact write paths before implementation; source availability is not an assignment or business PASS."
+}
