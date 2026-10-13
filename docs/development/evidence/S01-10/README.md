@@ -33,11 +33,13 @@
 | [完整真实PG运行](runs/full-storage/run.json) | **210/210 PASS；0失败/0跳过** | 固定56向量（CREDIT25/INV9/ATP22）、42原金额字段、66映射极值/null、非法pair/token、131073整数位INV、MAVG状态/原串、ATP五列与关系/锁序、回滚/重连/重复持久化、owned资源边界 |
 | [收尾定向回归](runs/pin-reconnect-regression/run.json) | **57/57 PASS；0失败/0跳过** | 增加测试运行时固定包原始字节hash/profile绑定校验，重跑全部56向量；给重连场景补齐ATP五列128字符恢复 |
 | [启动/清理定向回归](runs/lifecycle-regression/run.json) | **1/1 PASS；0失败/0跳过** | 同名库拒绝、OID/marker/角色漂移拒绝、活动会话拒绝、writer禁止DDL/SET ROLE、正常清理 |
-| [源码/原设计核对](source-verification.json) | **11/11来源hash；66/66字典；5/5恢复修订** | 固定包Git字节hash、三个native原件及ATP四组原/组合输入；9个明确选定SQL定义 |
+| [源码/原设计核对](source-verification.json) | **11/11来源hash；42/42 CREDIT绑定；66/66字典；5/5恢复修订** | 固定包Git字节hash、三个native原件及ATP四组原/组合输入；9个明确选定SQL定义 |
 
 210项与57项包含重复覆盖，**不相加为267个独立用例**。完整运行后只改变测试输入保护与ATP重连断言，生产适配器和SQL未变；未受影响结果复用完整运行，57项为实际新增执行。后续文档/审查记录不触发全仓编译。每个运行目录保存实际命令、exit code、TRX逐测试结果、工作文件与程序集SHA256、数据源身份、未变输入证明及所用proposal hash；未将未提交源码冒称某个历史SHA已包含。
 
 首次完整编译/两次启动器失败及最初 RED 均在 [FAILURES.md](FAILURES.md) 逐项说明，日志/TRX原样保留。失败没有改名PASS或跳过。早期Windows ACL和输出管道问题已按根因修复。
+
+[任务级集中审查](REVIEW.md)以 `e20740e3..b622a966` 完整差异为主体，并复核随后追加的42个原生CREDIT节点核对；未发现 Critical / Important 问题。审查独立核对映射、原始SQL、结果计数、清理回执与程序集hash，没有重跑数据库测试。结论只覆盖当前存储/fixture候选，正式映射采用仍须COORD确认。
 
 复现命令（只在本任务已分配的Windows本地资源窗口运行）：
 
@@ -56,4 +58,4 @@ dotnet test eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.cspro
 
 [逐Owner采用清单](OWNER-ADOPTION.md)覆盖13个INV表、42个CREDIT字段、ATP五列及恢复入口；真实表采用、旧writer全部切换、迁移/回退兼容、同连接事务、完整对象合同和tenant schema/连接池/权限隔离仍待各自任务。S02-00设计不因此成为运行PASS；247完整运行场景、41历史REFERENCE_ONLY、ITER/REL缺原件及WP05 PROPOSED范围均保持原状态。
 
-本任务无Actions取消项、触发变更或远程执行，没有发布包或部署。推送前还须核候选与受保护main的工作流事件；共享台账/生成页/四状态页由COORD在正式交付窗口串行同步，远端main包含性核对后才可DONE。
+本任务无Actions取消项、触发变更或远程执行，没有发布包或部署。[推送前核对](prepush-verification.json)保留候选与受保护main的26个工作流事件块：普通工作流仅手动，R2候选仅版本Tag触发，任务分支推送不触发；Azure桥保持手动，没有本任务排队/执行中的运行。共享台账/生成页/四状态页由COORD在正式交付窗口串行同步，远端main包含性核对后才可DONE。

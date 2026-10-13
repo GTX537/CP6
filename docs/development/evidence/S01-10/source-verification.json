@@ -144,6 +144,260 @@
       "local_file_sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607"
     }
   ],
+  "credit_native_field_bindings_verified": [
+    {
+      "pointer": "/$defs/absorptionLink/properties/signedPolicyAmount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/representationTransfer/properties/deltaPolicyAmount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/subject/properties/exposureDeltaPolicyAmount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/moneySigned/properties/amount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/moneyNonNegative/properties/amount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/arObligationAggregate/properties/openPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/arCut/properties/arBookedExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/reservationSet/properties/activeReservedDelta",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/totalExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/subject/properties/currentCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/subject/properties/targetCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/postedOpenContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/effectiveCreditContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/appliedReceiptContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/unbilledOrderContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/activeReservationContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/moneyPositive/properties/amount",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/fxEvidence/properties/rate",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/planAtpObservationInput/properties/requestedQuantity",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    }
+  ],
   "inventory_dictionary_bindings_verified": 66,
   "atp_selected_definitions": [
     {

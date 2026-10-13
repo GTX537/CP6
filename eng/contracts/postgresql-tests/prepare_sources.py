@@ -52,6 +52,18 @@ def main():
         assert patch["finding"] == "PLAN-IF-005"
         assert patch["after"] in ddl
     dictionary = json.loads(Path(next(p["path"] for p in sources if p["source_id"] == "numeric-2")).read_text(encoding="utf-8-sig"))
+    credit = json.loads(Path(next(p["path"] for p in sources if p["source_id"] == "numeric-0")).read_text(encoding="utf-8-sig"))
+    credit_bindings = []
+    for group in ADMISSION["credit"]["field_bindings"]:
+        definition = {"fin-credit-signed": "signedDecimal", "fin-credit-nonnegative": "nonNegativeDecimal",
+                      "fin-credit-positive": "positiveDecimal"}[group["profile"]]
+        for pointer in group["pointers"]:
+            node = credit
+            for token in pointer.strip("/").split("/"):
+                node = node[int(token)] if isinstance(node, list) else node[token]
+            assert node == credit["$defs"][definition], pointer
+            credit_bindings.append({"pointer": pointer, "native_definition": definition, "profile": group["profile"], "exact_native_schema_matches": True})
+    assert len(credit_bindings) == 42
     for mapping in ADMISSION["inventory"]["mappings"]:
         _, _, table_index, _, column_index = mapping["source_pointer"].split("/")
         table = dictionary["Tables"][int(table_index)]
@@ -60,10 +72,11 @@ def main():
             mapping["table"], mapping["logical_column"], mapping["old_storage_type"], mapping["nullable"])
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "source-verification.json").write_text(json.dumps({"task": "S01-10", "sources": sources, "package_pins": pins,
+        "credit_native_field_bindings_verified": credit_bindings,
         "inventory_dictionary_bindings_verified": 66, "atp_selected_definitions": selection,
         "atp_recovery_patch_indices_verified": list(range(5)), "atp_subset_sha256": digest(target.read_bytes()),
         "scope": "Source verification and fixture subset only; no archived business procedure executed"}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("Verified 11 source hashes, 3 Git input hashes, 66 dictionary bindings, 5 recovery patches; extracted 9 reviewed definitions.")
+    print("Verified 11 source hashes, 3 Git input hashes, 42 native CREDIT profiles, 66 dictionary bindings, 5 recovery patches; extracted 9 reviewed definitions.")
 
 
 if __name__ == "__main__":
