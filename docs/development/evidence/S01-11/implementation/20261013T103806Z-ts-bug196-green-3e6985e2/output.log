@@ -1,0 +1,1435 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/erp-credit/creditCodec.test.ts --reporter=default --reporter=json --outputFile=D:\CP6-worktrees\s01-11-20261012\docs\development\evidence\S01-11\implementation\20261013T103806Z-ts-bug196-green-3e6985e2\vitest.json
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-11-20261012/cp6.web
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts (428 tests | 149 failed) 9503ms
+     ✓ current decode isolates Buffer changes during validation and returned bytes 33ms
+     ✓ current decode isolates Buffer changes after validation and returned bytes 19ms
+     ✓ current schema pin and parsed schema use the same Buffer snapshot 23ms
+     ✓ frozen decode isolates Buffer changes during validation and returned bytes 11ms
+     ✓ frozen decode isolates Buffer changes after validation and returned bytes 9ms
+     ✓ frozen schema pin and parsed schema use the same Buffer snapshot 11ms
+     ✓ captureOriginalBytes isolates Buffer changes during validation and returned bytes 9ms
+     ✓ captureOriginalBytes isolates Buffer changes after validation and returned bytes 9ms
+     ✓ C01 isolates request and response Buffers during capture and on return 11ms
+     ✓ C01 isolates request and response Buffers after capture and on return 10ms
+     ✓ C02 isolates request and response Buffers during capture and on return 11ms
+     ✓ C02 isolates request and response Buffers after capture and on return 10ms
+     × current-full-CreditOwnerRequest 29ms
+     × frozen-full-CreditOwnerRequest 12ms
+     ✓ current-required-CreditOwnerRequest 15ms
+     ✓ frozen-required-CreditOwnerRequest 10ms
+     ✓ current-closed-CreditOwnerRequest 17ms
+     ✓ frozen-closed-CreditOwnerRequest 11ms
+     × current-full-CreditOwnerQueryRequest 18ms
+     × frozen-full-CreditOwnerQueryRequest 11ms
+     ✓ current-required-CreditOwnerQueryRequest 15ms
+     ✓ frozen-required-CreditOwnerQueryRequest 11ms
+     ✓ current-closed-CreditOwnerQueryRequest 23ms
+     ✓ frozen-closed-CreditOwnerQueryRequest 12ms
+     × current-full-CreditOwnerQueryResult 23ms
+     × frozen-full-CreditOwnerQueryResult 18ms
+     ✓ current-required-CreditOwnerQueryResult 16ms
+     ✓ frozen-required-CreditOwnerQueryResult 9ms
+     ✓ current-closed-CreditOwnerQueryResult 16ms
+     ✓ frozen-closed-CreditOwnerQueryResult 10ms
+     × current-full-CommercialOutcomeRef 20ms
+     × frozen-full-CommercialOutcomeRef 13ms
+     ✓ current-required-CommercialOutcomeRef 16ms
+     ✓ frozen-required-CommercialOutcomeRef 10ms
+     ✓ current-closed-CommercialOutcomeRef 16ms
+     ✓ frozen-closed-CommercialOutcomeRef 9ms
+     × current-full-CreditAuthorityReadRequest 17ms
+     × frozen-full-CreditAuthorityReadRequest 11ms
+     ✓ current-required-CreditAuthorityReadRequest 15ms
+     ✓ frozen-required-CreditAuthorityReadRequest 9ms
+     ✓ current-closed-CreditAuthorityReadRequest 16ms
+     ✓ frozen-closed-CreditAuthorityReadRequest 9ms
+     × current-full-CreditAuthorityReadResult 19ms
+     × frozen-full-CreditAuthorityReadResult 13ms
+     ✓ current-required-CreditAuthorityReadResult 15ms
+     ✓ frozen-required-CreditAuthorityReadResult 9ms
+     ✓ current-closed-CreditAuthorityReadResult 16ms
+     ✓ frozen-closed-CreditAuthorityReadResult 9ms
+     × current-full-CreditSelectionsQuery 15ms
+     × frozen-full-CreditSelectionsQuery 9ms
+     ✓ current-required-CreditSelectionsQuery 14ms
+     ✓ frozen-required-CreditSelectionsQuery 9ms
+     ✓ current-closed-CreditSelectionsQuery 15ms
+     ✓ frozen-closed-CreditSelectionsQuery 9ms
+     × current-full-CreditSelectionPage 19ms
+     × frozen-full-CreditSelectionPage 12ms
+     ✓ current-required-CreditSelectionPage 16ms
+     ✓ frozen-required-CreditSelectionPage 10ms
+     ✓ current-closed-CreditSelectionPage 17ms
+     ✓ frozen-closed-CreditSelectionPage 11ms
+     × current-full-CreditPrepare 25ms
+     × frozen-full-CreditPrepare 25ms
+     ✓ current-required-CreditPrepare 34ms
+     ✓ frozen-required-CreditPrepare 22ms
+     ✓ current-closed-CreditPrepare 53ms
+     ✓ frozen-closed-CreditPrepare 24ms
+     × current-full-PostInput 29ms
+     × frozen-full-PostInput 20ms
+     ✓ current-required-PostInput 32ms
+     ✓ frozen-required-PostInput 24ms
+     ✓ current-closed-PostInput 27ms
+     ✓ frozen-closed-PostInput 16ms
+     × current-full-SafeOperationDetail 40ms
+     × frozen-full-SafeOperationDetail 18ms
+     ✓ current-required-SafeOperationDetail 29ms
+     ✓ frozen-required-SafeOperationDetail 14ms
+     ✓ current-closed-SafeOperationDetail 24ms
+     ✓ frozen-closed-SafeOperationDetail 15ms
+     × current-full-CommandResult 26ms
+     × frozen-full-CommandResult 17ms
+     ✓ current-required-CommandResult 24ms
+     ✓ frozen-required-CommandResult 15ms
+     ✓ current-closed-CommandResult 26ms
+     ✓ frozen-closed-CommandResult 15ms
+     × current-full-TerminalCommandReceipt 29ms
+     × frozen-full-TerminalCommandReceipt 16ms
+     ✓ current-required-TerminalCommandReceipt 23ms
+     ✓ frozen-required-TerminalCommandReceipt 14ms
+     ✓ current-closed-TerminalCommandReceipt 25ms
+     ✓ frozen-closed-TerminalCommandReceipt 14ms
+     × current-full-FinArObservation 31ms
+     × frozen-full-FinArObservation 17ms
+     ✓ current-required-FinArObservation 23ms
+     ✓ frozen-required-FinArObservation 14ms
+     ✓ current-closed-FinArObservation 24ms
+     ✓ frozen-closed-FinArObservation 14ms
+     × current-wms--0 19ms
+     × frozen-wms--0 14ms
+     × current-wms-1.0 26ms
+     × frozen-wms-1.0 15ms
+     × current-wms--123456789012345678901234567890.12345678 28ms
+     × frozen-wms--123456789012345678901234567890.12345678 15ms
+     × current-wms-999999999999999999999999999999.99999999 28ms
+     × frozen-wms-999999999999999999999999999999.99999999 21ms
+     ✓ current-wms-invalid-'+1' 27ms
+     ✓ frozen-wms-invalid-'+1' 18ms
+     ✓ current-wms-invalid-'01' 36ms
+     ✓ frozen-wms-invalid-'01' 21ms
+     ✓ current-wms-invalid-'1e0' 24ms
+     ✓ frozen-wms-invalid-'1e0' 13ms
+     ✓ current-wms-invalid-'1.123456789' 28ms
+     ✓ frozen-wms-invalid-'1.123456789' 26ms
+     ✓ current-wms-invalid-'1000000000000000000000000000000' 35ms
+     ✓ frozen-wms-invalid-'1000000000000000000000000000000' 22ms
+     ✓ current-wms-invalid-'NaN' 39ms
+     ✓ frozen-wms-invalid-'NaN' 21ms
+     ✓ current-wms-invalid-'1\n' 41ms
+     ✓ frozen-wms-invalid-'1\n' 15ms
+     ✓ current-money-alias 29ms
+     ✓ frozen-money-alias 23ms
+     ✓ current-money-extra 34ms
+     ✓ frozen-money-extra 20ms
+     ✓ current-money-number 28ms
+     ✓ frozen-money-number 19ms
+     × current-ar--0 32ms
+     × frozen-ar--0 17ms
+     × current-ar-1.0 32ms
+     × frozen-ar-1.0 15ms
+     × current-ar--12345678901234567890.12345678 29ms
+     × frozen-ar--12345678901234567890.12345678 16ms
+     ✓ current-ar-invalid-'123456789012345678901' 26ms
+     ✓ frozen-ar-invalid-'123456789012345678901' 15ms
+     ✓ current-ar-invalid-'1.123456789' 27ms
+     ✓ frozen-ar-invalid-'1.123456789' 16ms
+     ✓ current-ar-invalid-'+1' 27ms
+     ✓ frozen-ar-invalid-'+1' 16ms
+     ✓ current-ar-invalid-'1e0' 27ms
+     ✓ frozen-ar-invalid-'1e0' 14ms
+     ✓ current-ar-invalid-'01' 25ms
+     ✓ frozen-ar-invalid-'01' 14ms
+     ✓ current-ar-invalid-'1\n' 26ms
+     ✓ frozen-ar-invalid-'1\n' 15ms
+     ✓ current-outcome-APPLIED-False 26ms
+     ✓ frozen-outcome-APPLIED-False 15ms
+     ✓ current-outcome-REJECTED-True 25ms
+     ✓ frozen-outcome-REJECTED-True 15ms
+     × current-outcome-NO_CHANGE-True 27ms
+     ✓ frozen-outcome-NO_CHANGE-True 13ms
+     × current-outcome-NO_CHANGE-False 25ms
+     × frozen-outcome-NO_CHANGE-False 15ms
+     × current-found-no-change 26ms
+     ✓ frozen-found-no-change 15ms
+     × current-unproven-completed 31ms
+     ✓ frozen-unproven-completed 14ms
+     × current-no-effect-reordered 32ms
+     × frozen-no-effect-reordered 17ms
+     ✓ current-no-effect-hash 28ms
+     ✓ frozen-no-effect-hash 34ms
+     ✓ current-no-effect-projection 24ms
+     ✓ frozen-no-effect-projection 15ms
+     ✓ current-no-effect-duplicate 24ms
+     ✓ frozen-no-effect-duplicate 18ms
+     ✓ current-found-projection 35ms
+     ✓ frozen-found-projection 21ms
+     ✓ current-unique 34ms
+     ✓ frozen-unique 21ms
+     ✓ current-range-measure 36ms
+     ✓ frozen-range-measure 23ms
+     ✓ current-money-sum 29ms
+     ✓ frozen-money-sum 22ms
+     ✓ current-money-currency 29ms
+     ✓ frozen-money-currency 16ms
+     ✓ current-range-empty 34ms
+     ✓ frozen-range-empty 15ms
+     ✓ current-range-overlap 28ms
+     ✓ frozen-range-overlap 15ms
+     ✓ current-members 25ms
+     ✓ frozen-members 15ms
+     ✓ current-ar-sum 25ms
+     ✓ frozen-ar-sum 15ms
+     ✓ current-strict-168 25ms
+     ✓ frozen-strict-169 18ms
+     ✓ current-strict-170 26ms
+     ✓ frozen-strict-171 14ms
+     ✓ current-strict-172 32ms
+     ✓ frozen-strict-173 14ms
+     ✓ current-strict-174 23ms
+     ✓ frozen-strict-175 13ms
+     ✓ current-strict-176 22ms
+     ✓ frozen-strict-177 14ms
+     ✓ current-strict-178 24ms
+     ✓ frozen-strict-179 18ms
+     ✓ current-strict-180 29ms
+     ✓ frozen-strict-181 17ms
+     × current-integer-1.0 32ms
+     × frozen-integer-1.0 17ms
+     × current-integer-1e0 27ms
+     × frozen-integer-1e0 17ms
+     ✓ current-integer-1.000000000000000000001 30ms
+     ✓ frozen-integer-1.000000000000000000001 17ms
+     ✓ current-integer-9007199254740993 28ms
+     ✓ frozen-integer-9007199254740993 17ms
+     ✓ current-integer-1e999999999999999999999 28ms
+     ✓ frozen-integer-1e999999999999999999999 15ms
+     ✓ current-receipt-null-only-problemDigest 26ms
+     ✓ frozen-receipt-null-only-problemDigest 18ms
+     ✓ current-receipt-null-required-problemDigest 30ms
+     ✓ frozen-receipt-null-required-problemDigest 17ms
+     ✓ current-receipt-null-only-localNoEffectEvidenceId 25ms
+     ✓ frozen-receipt-null-only-localNoEffectEvidenceId 14ms
+     ✓ current-receipt-null-required-localNoEffectEvidenceId 23ms
+     ✓ frozen-receipt-null-required-localNoEffectEvidenceId 24ms
+     ✓ current-receipt-null-only-ownerCommandResultDigest 30ms
+     ✓ frozen-receipt-null-only-ownerCommandResultDigest 34ms
+     ✓ current-receipt-null-required-ownerCommandResultDigest 43ms
+     ✓ frozen-receipt-null-required-ownerCommandResultDigest 25ms
+     ✓ current-native-object-money-alias 66ms
+     ✓ frozen-native-object-money-alias 40ms
+     × current-native-object-30-digits 76ms
+     × frozen-native-object-30-digits 39ms
+     ✓ current-nested-money-invariant 30ms
+     ✓ frozen-nested-money-invariant 19ms
+     ✓ current-nested-current-command-semantics 31ms
+     ✓ current-unknown-APPLIED 28ms
+     × current-unknown-NO_CHANGE 31ms
+     × current-unknown-REJECTED 31ms
+     × current-requested-native-array 38ms
+     × frozen-requested-native-array 26ms
+     × current-singleton-native 39ms
+     × frozen-singleton-native 24ms
+     ✓ current-conditional-maxItems-without-type 28ms
+     ✓ frozen-conditional-maxItems-without-type 17ms
+     × current-refund-native 36ms
+     × frozen-refund-native 26ms
+     ✓ current-refund-cap 31ms
+     ✓ frozen-refund-cap 19ms
+     ✓ current-conditional-contains-credit 27ms
+     ✓ frozen-conditional-contains-credit 27ms
+     ✓ current-refund-link 33ms
+     ✓ frozen-refund-link 17ms
+     ✓ current-ar-native-slice 27ms
+     ✓ frozen-ar-native-slice 14ms
+     ✓ current-calendar-2026-02-30 25ms
+     ✓ frozen-calendar-2026-02-30 14ms
+     ✓ current-calendar-0000-01-01 28ms
+     ✓ frozen-calendar-0000-01-01 15ms
+     × current-timestamp-2024-02-29T23:59:59.123456789Z 32ms
+     × frozen-timestamp-2024-02-29T23:59:59.123456789Z 20ms
+     ✓ current-timestamp-2026-02-30T00:00:00.000Z 27ms
+     ✓ frozen-timestamp-2026-02-30T00:00:00.000Z 16ms
+     ✓ current-timestamp-2026-10-13T24:00:00.000Z 26ms
+     ✓ frozen-timestamp-2026-10-13T24:00:00.000Z 15ms
+     ✓ current-prototype-toString 26ms
+     ✓ frozen-prototype-toString 17ms
+     ✓ current-prototype-hasOwnProperty 50ms
+     ✓ frozen-prototype-hasOwnProperty 17ms
+     ✓ current-prototype-__proto__ 27ms
+     ✓ frozen-prototype-__proto__ 17ms
+     ✓ current-base64-whitespace 40ms
+     ✓ frozen-base64-whitespace 17ms
+     × current-structural-ref-key-no-NUL-collision 46ms
+     × frozen-structural-ref-key-no-NUL-collision 34ms
+     × current-query-branch-STALE_HEAD 34ms
+     × frozen-query-branch-STALE_HEAD 27ms
+     ✓ current-query-null-STALE_HEAD 23ms
+     ✓ frozen-query-null-STALE_HEAD 15ms
+     × current-query-branch-NOT_OBSERVED 28ms
+     × frozen-query-branch-NOT_OBSERVED 19ms
+     ✓ current-query-null-NOT_OBSERVED 26ms
+     ✓ frozen-query-null-NOT_OBSERVED 14ms
+     × current-query-branch-UNKNOWN 27ms
+     × frozen-query-branch-UNKNOWN 18ms
+     ✓ current-query-null-UNKNOWN 23ms
+     ✓ frozen-query-null-UNKNOWN 15ms
+     × current-query-branch-PENDING 30ms
+     × frozen-query-branch-PENDING 19ms
+     ✓ current-query-null-PENDING 25ms
+     ✓ frozen-query-null-PENDING 15ms
+     × current-query-branch-REQUIRED_FENCED 29ms
+     × frozen-query-branch-REQUIRED_FENCED 18ms
+     ✓ current-query-null-REQUIRED_FENCED 27ms
+     ✓ frozen-query-null-REQUIRED_FENCED 15ms
+     × current-authority-branch-NOT_OBSERVED 27ms
+     × frozen-authority-branch-NOT_OBSERVED 18ms
+     ✓ current-authority-required-NOT_OBSERVED 22ms
+     ✓ frozen-authority-required-NOT_OBSERVED 14ms
+     × current-authority-branch-DENIED 40ms
+     × frozen-authority-branch-DENIED 20ms
+     ✓ current-authority-required-DENIED 26ms
+     ✓ frozen-authority-required-DENIED 17ms
+     × current-authority-branch-UNPROVEN 33ms
+     × frozen-authority-branch-UNPROVEN 18ms
+     × current-authority-branch-UNKNOWN 27ms
+     × frozen-authority-branch-UNKNOWN 16ms
+     × current-command-PENDING 29ms
+     × frozen-command-PENDING 17ms
+     ✓ current-command-required-PENDING 25ms
+     ✓ frozen-command-required-PENDING 13ms
+     × current-pending-projection 30ms
+     × frozen-pending-projection 17ms
+     ✓ current-pending-projection-mismatch 26ms
+     ✓ frozen-pending-projection-mismatch 14ms
+     × current-command-OUTCOME_UNKNOWN 35ms
+     × frozen-command-OUTCOME_UNKNOWN 20ms
+     ✓ current-command-required-OUTCOME_UNKNOWN 35ms
+     ✓ frozen-command-required-OUTCOME_UNKNOWN 28ms
+     × current-not-observed 38ms
+     × frozen-not-observed 21ms
+     ✓ current-not-observed-no-proof 32ms
+     ✓ frozen-not-observed-no-proof 16ms
+     × current-terminal-REJECTED_NO_EFFECT 34ms
+     × frozen-terminal-REJECTED_NO_EFFECT 16ms
+     ✓ current-terminal-forbidden-REJECTED_NO_EFFECT 33ms
+     ✓ frozen-terminal-forbidden-REJECTED_NO_EFFECT 23ms
+     × current-terminal-SEALED_NO_EFFECT 25ms
+     × frozen-terminal-SEALED_NO_EFFECT 10ms
+     ✓ current-terminal-forbidden-SEALED_NO_EFFECT 19ms
+     ✓ frozen-terminal-forbidden-SEALED_NO_EFFECT 15ms
+     × current-component-REPLACEMENT 33ms
+     × frozen-component-REPLACEMENT 23ms
+     ✓ current-component-quantity-REPLACEMENT 30ms
+     ✓ frozen-component-quantity-REPLACEMENT 18ms
+     × current-component-SUPPLEMENTARY_SHIPMENT 35ms
+     × frozen-component-SUPPLEMENTARY_SHIPMENT 23ms
+     ✓ current-component-quantity-SUPPLEMENTARY_SHIPMENT 30ms
+     ✓ frozen-component-quantity-SUPPLEMENTARY_SHIPMENT 16ms
+     × current-component-REJECTED 54ms
+     × frozen-component-REJECTED 20ms
+     ✓ current-component-quantity-REJECTED 31ms
+     ✓ frozen-component-quantity-REJECTED 16ms
+     × current-nonempty-native-selection-page 32ms
+     × frozen-nonempty-native-selection-page 18ms
+     ✓ current-selection-no-execution-permit 25ms
+     ✓ frozen-selection-no-execution-permit 16ms
+     × current-nonempty-native-operation 28ms
+     × frozen-nonempty-native-operation 20ms
+     ✓ current-cell-closed-union 27ms
+     ✓ frozen-cell-closed-union 15ms
+     × current-selected-Money-multi_mixed_complete_public_q14-0 27ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-0 16ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-0 26ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-0 15ms
+     × current-selected-Money-multi_mixed_complete_public_q14-1 30ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-1 17ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-1 25ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-1 14ms
+     × current-selected-Money-multi_mixed_complete_public_q14-2 29ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-2 18ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-2 27ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-2 14ms
+     × current-selected-Money-multi_mixed_complete_public_q14-3 31ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-3 22ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-3 37ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-3 18ms
+     × current-selected-Money-multi_mixed_complete_public_q14-4 39ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-4 22ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-4 37ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-4 15ms
+     × current-selected-Money-multi_mixed_complete_public_q14-5 39ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-5 19ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-5 34ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-5 16ms
+     × current-selected-Money-multi_mixed_complete_public_q14-6 25ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-6 14ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-6 23ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-6 14ms
+     × current-selected-Money-multi_mixed_complete_public_q14-7 26ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-7 15ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-7 37ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-7 15ms
+     × current-selected-Money-multi_mixed_complete_public_q14-8 27ms
+     × frozen-selected-Money-multi_mixed_complete_public_q14-8 19ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-8 26ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-8 16ms
+     × current-selected-Money-wn11_c06_exact_saved_200-0 29ms
+     × frozen-selected-Money-wn11_c06_exact_saved_200-0 16ms
+     ✓ current-selected-Money-alias-wn11_c06_exact_saved_200-0 24ms
+     ✓ frozen-selected-Money-alias-wn11_c06_exact_saved_200-0 14ms
+     × current-selected-Money-wn11_c06_exact_saved_200-1 30ms
+     × frozen-selected-Money-wn11_c06_exact_saved_200-1 21ms
+     ✓ current-selected-Money-alias-wn11_c06_exact_saved_200-1 27ms
+     ✓ frozen-selected-Money-alias-wn11_c06_exact_saved_200-1 14ms
+     × current-selected-Money-wn11_c06_exact_saved_200-2 30ms
+     × frozen-selected-Money-wn11_c06_exact_saved_200-2 17ms
+     ✓ current-selected-Money-alias-wn11_c06_exact_saved_200-2 24ms
+     ✓ frozen-selected-Money-alias-wn11_c06_exact_saved_200-2 13ms
+     × current-selected-Money-wn11_complete_current_q14-0 21ms
+     × frozen-selected-Money-wn11_complete_current_q14-0 14ms
+     ✓ current-selected-Money-alias-wn11_complete_current_q14-0 27ms
+     ✓ frozen-selected-Money-alias-wn11_complete_current_q14-0 16ms
+     × current-selected-Money-wn11_complete_current_q14-1 24ms
+     × frozen-selected-Money-wn11_complete_current_q14-1 13ms
+     ✓ current-selected-Money-alias-wn11_complete_current_q14-1 23ms
+     ✓ frozen-selected-Money-alias-wn11_complete_current_q14-1 13ms
+     × current-selected-Money-wn11_complete_current_q14-2 27ms
+     × frozen-selected-Money-wn11_complete_current_q14-2 15ms
+     ✓ current-selected-Money-alias-wn11_complete_current_q14-2 23ms
+     ✓ frozen-selected-Money-alias-wn11_complete_current_q14-2 14ms
+     × current-selected-Money-wn11_existing_target_c06_saved_200-0 22ms
+     × frozen-selected-Money-wn11_existing_target_c06_saved_200-0 16ms
+     ✓ current-selected-Money-alias-wn11_existing_target_c06_saved_200-0 23ms
+     ✓ frozen-selected-Money-alias-wn11_existing_target_c06_saved_200-0 14ms
+     × current-selected-Money-wn11_existing_target_c06_saved_200-1 25ms
+     × frozen-selected-Money-wn11_existing_target_c06_saved_200-1 14ms
+     ✓ current-selected-Money-alias-wn11_existing_target_c06_saved_200-1 34ms
+     ✓ frozen-selected-Money-alias-wn11_existing_target_c06_saved_200-1 19ms
+     × current-selected-Money-wn11_existing_target_c06_saved_200-2 32ms
+     × frozen-selected-Money-wn11_existing_target_c06_saved_200-2 18ms
+     ✓ current-selected-Money-alias-wn11_existing_target_c06_saved_200-2 31ms
+     ✓ frozen-selected-Money-alias-wn11_existing_target_c06_saved_200-2 18ms
+     × current-selected-native-outcome-projection 56ms
+     × frozen-selected-native-outcome-projection 34ms
+     ✓ VERSION-001 0ms
+     ✓ VERSION-002 0ms
+     ✓ VERSION-003 0ms
+     ✓ VERSION-004 0ms
+     ✓ VERSION-005 0ms
+     ✓ VERSION-006 0ms
+     ✓ VERSION-007 0ms
+     ✓ VERSION-008 0ms
+     ✓ BYTES-001 16ms
+     ✓ BYTES-002 19ms
+     × current exact routes, schema pins, immutable snapshots 39ms
+     × frozen exact routes, schema pins, immutable snapshots 19ms
+     × C01 replays the complete original HTTP201 COMMITTED body as HTTP200 16ms
+     × C02 replays the complete original HTTP201 COMMITTED body as HTTP200 21ms
+     ✓ CommandResult cannot authorize FOUND or release without trusted Owner integration 28ms
+     ✓ FinArObservation cannot authorize FOUND or release without trusted Owner integration 32ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 149 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditOwnerRequest
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditOwnerRequest
+AssertionError: expected Uint8Array[ 123, 34, 114, 101, …(1258) ] to deeply equal Uint8Array[ 123, 34, 114, 101, …(1258) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditOwnerQueryRequest
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditOwnerQueryRequest
+AssertionError: expected Uint8Array[ 123, 34, 113, 117, …(528) ] to deeply equal Uint8Array[ 123, 34, 113, 117, …(528) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditOwnerQueryResult
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditOwnerQueryResult
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(2751) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(2751) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CommercialOutcomeRef
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CommercialOutcomeRef
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(1855) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(1855) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditAuthorityReadRequest
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditAuthorityReadRequest
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(600) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(600) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditAuthorityReadResult
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditAuthorityReadResult
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(1768) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(1768) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditSelectionsQuery
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditSelectionsQuery
+AssertionError: expected Uint8Array[ 123, 34, 105, 110, …(70) ] to deeply equal Uint8Array[ 123, 34, 105, 110, …(70) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditSelectionPage
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditSelectionPage
+AssertionError: expected Uint8Array[ 123, 34, 105, 116, …(21) ] to deeply equal Uint8Array[ 123, 34, 105, 116, …(21) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CreditPrepare
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CreditPrepare
+AssertionError: expected Uint8Array[ 123, 34, 99, 111, …(584) ] to deeply equal Uint8Array[ 123, 34, 99, 111, …(584) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-PostInput
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-PostInput
+AssertionError: expected Uint8Array[ 123, 34, 99, 111, …(10) ] to deeply equal Uint8Array[ 123, 34, 99, 111, …(10) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-SafeOperationDetail
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-SafeOperationDetail
+AssertionError: expected Uint8Array[ 123, 34, 111, 112, …(402) ] to deeply equal Uint8Array[ 123, 34, 111, 112, …(402) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-CommandResult
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-CommandResult
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(232) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(232) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-TerminalCommandReceipt
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-TerminalCommandReceipt
+AssertionError: expected Uint8Array[ 123, 34, 116, 101, …(411) ] to deeply equal Uint8Array[ 123, 34, 116, 101, …(411) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-full-FinArObservation
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-full-FinArObservation
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(581) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(581) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-wms--0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-wms--0
+AssertionError: expected Uint8Array[ 123, 34, 118, 97, …(-76) ] to deeply equal Uint8Array[ 123, 34, 118, 97, …(-76) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-wms-1.0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-wms-1.0
+AssertionError: expected Uint8Array[ 123, 34, 118, 97, …(-75) ] to deeply equal Uint8Array[ 123, 34, 118, 97, …(-75) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-wms--123456789012345678901234567890.12345678
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-wms--123456789012345678901234567890.12345678
+AssertionError: expected Uint8Array[ 123, 34, 118, 97, …(-38) ] to deeply equal Uint8Array[ 123, 34, 118, 97, …(-38) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-wms-999999999999999999999999999999.99999999
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-wms-999999999999999999999999999999.99999999
+AssertionError: expected Uint8Array[ 123, 34, 118, 97, …(-39) ] to deeply equal Uint8Array[ 123, 34, 118, 97, …(-39) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-ar--0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-ar--0
+AssertionError: expected Uint8Array[ 34, 45, 48, 34 ] to deeply equal Uint8Array[ 34, 45, 48, 34 ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-ar-1.0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-ar-1.0
+AssertionError: expected Uint8Array[ 34, 49, 46, 48, 34 ] to deeply equal Uint8Array[ 34, 49, 46, 48, 34 ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-ar--12345678901234567890.12345678
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-ar--12345678901234567890.12345678
+AssertionError: expected Uint8Array[ 34, 45, 49, 50, 51, …(-19) ] to deeply equal Uint8Array[ 34, 45, 49, 50, 51, …(-19) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-outcome-NO_CHANGE-True
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(234) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(234) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-outcome-NO_CHANGE-False
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-outcome-NO_CHANGE-False
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(88) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(88) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-found-no-change
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(583) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(583) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-unproven-completed
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(436) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(436) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-no-effect-reordered
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-no-effect-reordered
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(734) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(734) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-integer-1.0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-integer-1.0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-integer-1e0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-integer-1e0
+AssertionError: expected Uint8Array[ 123, 34, 105, 110, …(72) ] to deeply equal Uint8Array[ 123, 34, 105, 110, …(72) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-native-object-30-digits
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-native-object-30-digits
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(1927) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(1927) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-unknown-NO_CHANGE
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(292) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(292) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-unknown-REJECTED
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(291) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(291) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-requested-native-array
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-requested-native-array
+AssertionError: expected Uint8Array[ 123, 34, 114, 101, …(1272) ] to deeply equal Uint8Array[ 123, 34, 114, 101, …(1272) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-singleton-native
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-singleton-native
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(1258) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(1258) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-refund-native
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-refund-native
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(2436) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(2436) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-timestamp-2024-02-29T23:59:59.123456789Z
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-timestamp-2024-02-29T23:59:59.123456789Z
+AssertionError: expected Uint8Array[ 123, 34, 114, 101, …(1264) ] to deeply equal Uint8Array[ 123, 34, 114, 101, …(1264) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-structural-ref-key-no-NUL-collision
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-structural-ref-key-no-NUL-collision
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(2896) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(2896) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-query-branch-STALE_HEAD
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-query-branch-STALE_HEAD
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(1155) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(1155) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-query-branch-NOT_OBSERVED
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-query-branch-NOT_OBSERVED
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(974) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(974) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-query-branch-UNKNOWN
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-query-branch-UNKNOWN
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(870) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(870) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-query-branch-PENDING
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-query-branch-PENDING
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(958) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(958) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-query-branch-REQUIRED_FENCED
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-query-branch-REQUIRED_FENCED
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(1013) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(1013) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-authority-branch-NOT_OBSERVED
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-authority-branch-NOT_OBSERVED
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(70) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(70) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-authority-branch-DENIED
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-authority-branch-DENIED
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(79) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(79) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-authority-branch-UNPROVEN
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-authority-branch-UNPROVEN
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(81) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(81) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-authority-branch-UNKNOWN
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-authority-branch-UNKNOWN
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(80) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(80) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-command-PENDING
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-command-PENDING
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(0) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(0) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-pending-projection
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-pending-projection
+AssertionError: expected Uint8Array[ 123, 34, 115, 116, …(223) ] to deeply equal Uint8Array[ 123, 34, 115, 116, …(223) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-command-OUTCOME_UNKNOWN
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-command-OUTCOME_UNKNOWN
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(8) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(8) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-not-observed
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-not-observed
+AssertionError: expected Uint8Array[ 123, 34, 107, 105, …(37) ] to deeply equal Uint8Array[ 123, 34, 107, 105, …(37) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-terminal-REJECTED_NO_EFFECT
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-terminal-REJECTED_NO_EFFECT
+AssertionError: expected Uint8Array[ 123, 34, 116, 101, …(356) ] to deeply equal Uint8Array[ 123, 34, 116, 101, …(356) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-terminal-SEALED_NO_EFFECT
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-terminal-SEALED_NO_EFFECT
+AssertionError: expected Uint8Array[ 123, 34, 116, 101, …(388) ] to deeply equal Uint8Array[ 123, 34, 116, 101, …(388) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-component-REPLACEMENT
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-component-REPLACEMENT
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(1583) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(1583) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-component-SUPPLEMENTARY_SHIPMENT
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-component-SUPPLEMENTARY_SHIPMENT
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(1594) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(1594) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-component-REJECTED
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-component-REJECTED
+AssertionError: expected Uint8Array[ 123, 34, 111, 119, …(1287) ] to deeply equal Uint8Array[ 123, 34, 111, 119, …(1287) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-nonempty-native-selection-page
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-nonempty-native-selection-page
+AssertionError: expected Uint8Array[ 123, 34, 105, 116, …(758) ] to deeply equal Uint8Array[ 123, 34, 105, 116, …(758) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-nonempty-native-operation
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-nonempty-native-operation
+AssertionError: expected Uint8Array[ 123, 34, 111, 112, …(722) ] to deeply equal Uint8Array[ 123, 34, 111, 112, …(722) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-1
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-1
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-2
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-2
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-3
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-3
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-4
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-4
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-5
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-5
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-6
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-6
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-7
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-7
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-multi_mixed_complete_public_q14-8
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-multi_mixed_complete_public_q14-8
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_c06_exact_saved_200-2
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_c06_exact_saved_200-2
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_complete_current_q14-2
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_complete_current_q14-2
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_existing_target_c06_saved_200-2
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_existing_target_c06_saved_200-2
+AssertionError: expected Uint8Array[ 123, 34, 99, 117, …(-74) ] to deeply equal Uint8Array[ 123, 34, 99, 117, …(-74) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_c06_exact_saved_200-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_c06_exact_saved_200-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_c06_exact_saved_200-1
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_c06_exact_saved_200-1
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_complete_current_q14-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_complete_current_q14-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_complete_current_q14-1
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_complete_current_q14-1
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_existing_target_c06_saved_200-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_existing_target_c06_saved_200-0
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-Money-wn11_existing_target_c06_saved_200-1
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-Money-wn11_existing_target_c06_saved_200-1
+AssertionError: expected Uint8Array[ 123, 34, 99, 117, …(-73) ] to deeply equal Uint8Array[ 123, 34, 99, 117, …(-73) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current-selected-native-outcome-projection
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen-selected-native-outcome-projection
+AssertionError: expected Uint8Array[ 123, 34, 97, 112, …(3976) ] to deeply equal Uint8Array[ 123, 34, 97, 112, …(3976) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:98:39
+     96|       else {
+     97|         const parsed = await decode()
+     98|         expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+       |                                       ^
+     99|         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
+    100|         expect(parsed.identity.root).toBe(c.root)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > current exact routes, schema pins, immutable snapshots
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > frozen exact routes, schema pins, immutable snapshots
+AssertionError: expected Uint8Array[ 123, 34, 99, 111, …(10) ] to deeply equal Uint8Array[ 123, 34, 99, 111, …(10) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:129:37
+    127|       input[0] = 0
+    128|       const parsed = await pending
+    129|       expect(parsed.originalUtf8()).toEqual(original)
+       |                                     ^
+    130|       const copy = parsed.originalUtf8(); copy[0] = 0
+    131|       expect(parsed.originalUtf8()).toEqual(original)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[59/149]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > C01 replays the complete original HTTP201 COMMITTED body as HTTP200
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > ERP-CREDIT native codecs > C02 replays the complete original HTTP201 COMMITTED body as HTTP200
+AssertionError: expected Uint8Array[ 32, 123, 34, 114, …(469) ] to deeply equal Uint8Array[ 32, 123, 34, 114, …(469) ]
+
+Compared values have no visual difference.
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:154:70
+    152|       body[0] = 0
+    153|       const saved = await pending, replay = await saved.replay('scope/…
+    154|       expect(replay.statusCode).toBe(200); expect(replay.bodyUtf8()).t…
+       |                                                                      ^
+    155|       expect((replay.value as Record<string, unknown>).resultKind).toB…
+    156|       const copy = replay.bodyUtf8(); copy[0] = 0
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[60/149]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  149 failed | 279 passed (428)
+   Start at  06:38:09
+   Duration  11.68s (transform 103ms, setup 0ms, import 190ms, tests 9.50s, environment 1.66s)
+
+JSON report written to D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103806Z-ts-bug196-green-3e6985e2/vitest.json
