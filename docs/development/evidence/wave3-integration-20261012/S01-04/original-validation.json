@@ -1,0 +1,419 @@
+{
+  "format": "CP6-ORIGINAL-VALIDATION-REUSE/1",
+  "task": "S01-04",
+  "scope": "REUSE_OF_TRUE_EXISTING_LOCAL_EXECUTION; NOT_A_NEW_EXECUTION",
+  "result": "PASS_REUSED",
+  "new_execution": false,
+  "compiled_or_tested_during_this_assessment": false,
+  "recorded_at": "2026-10-13T03:23:35.552843+00:00",
+  "source_sha": null,
+  "source_sha_reason": "The actual test source was an uncommitted working tree. Its content identity is the recorded file-hash set below; execution HEAD only identifies the baseline. Later source-binding/evidence/merge commits are not relabeled as the execution source.",
+  "execution_base_head": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+  "original_worktree": "D:/CP6-worktrees/s01-04-20261012",
+  "accepted_review": {
+    "path": "C:/Users/tt/CP6-planning-reports/20261012-wave3-integration/S01-04-review.md",
+    "sha256_file_bytes": "88462c0616e0e2032951d1da2f2ead21a1466bb06f7a458dde598c4c1d67c249",
+    "reuse": "Existing accepted task review; no full review restarted."
+  },
+  "remote_main_receipt": {
+    "path": "C:/Users/tt/CP6-planning-reports/20261012-wave3-integration/S01-04-remote-main.json",
+    "sha256_file_bytes": "0b11597ae72fee54393a55cf10b46fe61daf1ad953546ae3e0838df0aeda9a6b",
+    "candidate_sha": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+    "remote_main_sha": "688383439311a3babf00bae98ee426122ce60cd1",
+    "pr_url": "https://github.com/GTX537/CP6/pull/190",
+    "candidate_files_match_final_merged_tree": true,
+    "scope": "Reused coordinator publication/containment receipt; no new network observation by this assessment."
+  },
+  "integration_assessment": {
+    "scope": "READ_ONLY_MERGED_TREE_INSPECTION_NOT_COMPILATION_OR_TEST_EXECUTION",
+    "merged_tree_sha": "bd25558ea4c0981b0cff1e4fa77ab8f61277211c",
+    "shared_sdk_projects_include_all_three": true,
+    "compile_item_basis": "Both SDK projects retain default Compile globbing; the leaf ProjectReference still points at CP6.Entity. No Compile remove/include override or changed Directory.Build configuration.",
+    "leaf_tests_present": [
+      "CreditAmountTests.cs",
+      "InventoryDecimalTests.cs",
+      "StableIdTests.cs",
+      "StrictJsonTests.cs"
+    ],
+    "production_namespaces": [
+      "CP6.Entity.Contracts.FinCredit",
+      "CP6.Entity.Contracts.FinInventory",
+      "CP6.Entity.Contracts.PlanAtp"
+    ],
+    "unchanged_build_inputs": [
+      {
+        "path": "CP6.Entity/CP6.Entity.csproj",
+        "sha256_git_blob": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+        "unchanged_from_execution_baseline": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+        "sha256_git_blob": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e",
+        "unchanged_from_execution_baseline": true
+      },
+      {
+        "path": "Directory.Build.props",
+        "sha256_git_blob": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+        "unchanged_from_execution_baseline": true
+      },
+      {
+        "path": "cp6.web/package.json",
+        "sha256_git_blob": "01ce340ec4dcac1db3cabecf5e72a497ff544b2c731abfebb9206633877a3d6a",
+        "unchanged_from_execution_baseline": true
+      },
+      {
+        "path": "cp6.web/package-lock.json",
+        "sha256_git_blob": "f9e3dc5844c826554cf54e2b30d6b1ae2b4bfa56ea8c3f39ddafd8957d6b21bc",
+        "unchanged_from_execution_baseline": true
+      },
+      {
+        "path": "cp6.web/tsconfig.app.json",
+        "sha256_git_blob": "92496d0db20bb707be8b697a9dc316c7ded1011f8a9998a472c89f3e612822f2",
+        "unchanged_from_execution_baseline": true
+      },
+      {
+        "path": "cp6.web/vitest.config.ts",
+        "sha256_git_blob": "43c0f2ba99f80ce2e339fc5dad4df0da51ab040adeaf437df5f36e06ae98ee10",
+        "unchanged_from_execution_baseline": true
+      }
+    ],
+    "specific_interaction_risk_found": false,
+    "additional_execution_recommended": false,
+    "reason": "Disjoint new namespaces and test classes; no global using, shared signature/configuration/dependency changes or new cross-task source dependency. CREDIT/INV do not affect the ATP TypeScript project.",
+    "combined_assembly_build_executed": false,
+    "limitation": "Each original run compiled its own candidate. The complete merged combination has not been built or tested by this reuse assessment. Static absence of a specific interaction concern is not a claim of a new combined runtime PASS."
+  },
+  "command": "dotnet test eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj --filter FullyQualifiedName~InventoryDecimalTests --logger trx;LogFileName=inventory-green.trx --results-directory docs/development/evidence/S01-04/green",
+  "observed_at": "2026-10-12T20:27:36.4934107-04:00",
+  "observed_at_basis": "Original GREEN TRX finish time",
+  "original_started_at": "2026-10-12T20:27:35.1042040-04:00",
+  "original_evidence_recorded_at": "2026-10-13T00:31:22.106865+00:00",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "sdk": "10.0.302",
+    "target": "net8.0",
+    "observed_runtime": ".NET 8.0.29",
+    "packages": "Test SDK17.14.1; xunit2.9.3; runner3.1.4; Entity EFCore8.0.30; existing restore only",
+    "observation_basis": "Original manifest declaration; runtime/TFM also observed in TRX. Not remeasured."
+  },
+  "original_result": {
+    "exit_code": 0,
+    "counters": {
+      "total": 132,
+      "executed": 132,
+      "passed": 132,
+      "failed": 0,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "fixed_vector_count": 9,
+    "additional_case_count": 123
+  },
+  "fixed_vectors": {
+    "ids": [
+      "NUM-012",
+      "NUM-013",
+      "NUM-014",
+      "NUM-015",
+      "NUM-016",
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004"
+    ],
+    "endpoint": "C# FIN-INV scalar/JSON and internal ratio arithmetic",
+    "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+    "expected_input_unchanged": true
+  },
+  "post_execution_source_binding_commit": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+  "source_identity_basis": "Four GREEN source/test raw hashes plus 12 fixed input/configuration Git-blob pins; raw and committed representations are explicit. Candidate commit is subsequent binding, not the execution HEAD.",
+  "source_and_input_hashes": [
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+      "sha256_executed_file_bytes": "2786d97ee49ce6d8be95720ba2e0b91da39858c7d1c51b5e5ec8c104921b22a3",
+      "sha256_candidate_git_blob": "2786d97ee49ce6d8be95720ba2e0b91da39858c7d1c51b5e5ec8c104921b22a3",
+      "sha256_merged_git_blob": "2786d97ee49ce6d8be95720ba2e0b91da39858c7d1c51b5e5ec8c104921b22a3",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "execution_hash_basis": "Original execution raw-file SHA-256 matched; candidate and merged Git bytes matched with only the separately documented line-ending filter where present."
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimalJsonConverter.cs",
+      "sha256_executed_file_bytes": "86f7c4171137318fb8ecce359b4fbca375bdbe863824b61e53187a831032a402",
+      "sha256_candidate_git_blob": "86f7c4171137318fb8ecce359b4fbca375bdbe863824b61e53187a831032a402",
+      "sha256_merged_git_blob": "86f7c4171137318fb8ecce359b4fbca375bdbe863824b61e53187a831032a402",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "execution_hash_basis": "Original execution raw-file SHA-256 matched; candidate and merged Git bytes matched with only the separately documented line-ending filter where present."
+    },
+    {
+      "path": "CP6.Entity/Contracts/FinInventory/InventoryRatio.cs",
+      "sha256_executed_file_bytes": "37743d2c0b4c28f1f7d846076bc2de2c12ebf4552acd4d029659b03fb4d21f3b",
+      "sha256_candidate_git_blob": "37743d2c0b4c28f1f7d846076bc2de2c12ebf4552acd4d029659b03fb4d21f3b",
+      "sha256_merged_git_blob": "37743d2c0b4c28f1f7d846076bc2de2c12ebf4552acd4d029659b03fb4d21f3b",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "execution_hash_basis": "Original execution raw-file SHA-256 matched; candidate and merged Git bytes matched with only the separately documented line-ending filter where present."
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/InventoryDecimalTests.cs",
+      "sha256_executed_file_bytes": "d739ae1fa49ca5c5b6ca563c16b894cb643cc47ce9ddc2dbedd3cd6a5cd665dc",
+      "sha256_candidate_git_blob": "d739ae1fa49ca5c5b6ca563c16b894cb643cc47ce9ddc2dbedd3cd6a5cd665dc",
+      "sha256_merged_git_blob": "d739ae1fa49ca5c5b6ca563c16b894cb643cc47ce9ddc2dbedd3cd6a5cd665dc",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "execution_hash_basis": "Original execution raw-file SHA-256 matched; candidate and merged Git bytes matched with only the separately documented line-ending filter where present."
+    },
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256_candidate_git_blob": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "sha256_merged_git_blob": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "sha256_candidate_git_blob": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "sha256_merged_git_blob": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "eng/contracts/s01/README.md",
+      "sha256_candidate_git_blob": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "sha256_merged_git_blob": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "9058ef80ee531bf7503adc3854e4ae3b4b3fea61ec0eaed65323d88b601b8ff3",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "CP6.Entity/CP6.Entity.csproj",
+      "sha256_candidate_git_blob": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+      "sha256_merged_git_blob": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "CRLF_TO_LF_ONLY",
+      "sha256_current_worktree_file_bytes": "20724537f8dfa54de7b3e4998da971e3ada31dc0300caf229012a5fa851b671a",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "CP6.Entity/packages.lock.json",
+      "sha256_candidate_git_blob": "ff90d3bb5b2ea55f88c84d3fb0a4a33afd5eae54fb2e19b4898c358b290560f3",
+      "sha256_merged_git_blob": "ff90d3bb5b2ea55f88c84d3fb0a4a33afd5eae54fb2e19b4898c358b290560f3",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "CRLF_TO_LF_ONLY",
+      "sha256_current_worktree_file_bytes": "bf6ccea1eb09e82768edb2c2c1162171e006cd25632ed91f99af498dfa94d88f",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "Directory.Build.props",
+      "sha256_candidate_git_blob": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+      "sha256_merged_git_blob": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "CRLF_TO_LF_ONLY",
+      "sha256_current_worktree_file_bytes": "dd3c34588874b90b6e2d42aa2b51b4e7deedaf22ee34b6bc182160e3d148b739",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "sha256_candidate_git_blob": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e",
+      "sha256_merged_git_blob": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StrictJsonTests.cs",
+      "sha256_candidate_git_blob": "d3aadd552e7937b6def544971386c5b4330dc2007aa1a97fd1d340e04975fc94",
+      "sha256_merged_git_blob": "d3aadd552e7937b6def544971386c5b4330dc2007aa1a97fd1d340e04975fc94",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "d3aadd552e7937b6def544971386c5b4330dc2007aa1a97fd1d340e04975fc94",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "sha256_candidate_git_blob": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d",
+      "sha256_merged_git_blob": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/NullOnly.cs",
+      "sha256_candidate_git_blob": "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b",
+      "sha256_merged_git_blob": "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "3fa80c80928c4ce04b904a98b1bb668445412732c635eb77b0d01e050fcada4b",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/JsonSemanticEquality.cs",
+      "sha256_candidate_git_blob": "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee",
+      "sha256_merged_git_blob": "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "61afae5efd22fbff880d9a5c17f9c5ec465381533fd880e692f9ba648b469eee",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+      "sha256_candidate_git_blob": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+      "sha256_merged_git_blob": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+      "candidate_and_merged_bytes_equal": true,
+      "execution_to_git_representation": "EXACT",
+      "sha256_current_worktree_file_bytes": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+      "sha256_executed_file_bytes": null,
+      "execution_hash_basis": "Original verification records this shared input by Git-blob pin, not a raw working-file snapshot. Current raw bytes are identified separately; original Git content equals candidate and merged content."
+    }
+  ],
+  "original_artifact_hashes": [
+    {
+      "path": "CP6.Entity/bin/Debug/net8.0/CP6.Entity.dll",
+      "sha256": "2ec3fbed49a306fad2ed887ea272b6227a07f4855e933295b7af9413b2abca48",
+      "representation": "GREEN_BUILD_FILE_BYTES"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.dll",
+      "sha256": "f6ca8fdea07a499670f0dfd9aabaf6ba625ff465ab60d4caf2778c29eaf73612",
+      "representation": "GREEN_BUILD_FILE_BYTES"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.runtimeconfig.json",
+      "sha256": "b9f6ae58ba9393a4833a54c1088ceeb2b6328e311b1be47945c55cfc4de3bc89",
+      "representation": "GREEN_BUILD_FILE_BYTES"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.deps.json",
+      "sha256": "42d31f816489f3ffa5879e5587ea01cb8a11ee4dd409873ad081a905d51d5b7c",
+      "representation": "GREEN_BUILD_FILE_BYTES"
+    },
+    {
+      "path": "CP6.Entity/obj/project.assets.json",
+      "sha256": "e8d5b5f63b7c05e98ffb6546a7530732832c844dbb3418029f20eae4ce4f7232",
+      "representation": "GREEN_BUILD_FILE_BYTES"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/obj/project.assets.json",
+      "sha256": "3f0c1063a6124763f355ec7a0ca3f29309c5fcf5541a92a03e7f35f7e116da9c",
+      "representation": "GREEN_BUILD_FILE_BYTES"
+    }
+  ],
+  "original_log_hashes": [
+    {
+      "path": "docs/development/evidence/S01-04/green/inventory-green.trx",
+      "sha256": "e759c6804c5948dd1f7455724580280b237f9af426f0e4598407ea9387105621",
+      "representation": "EXECUTED_FILE_BYTES",
+      "stored_git_blob_sha256": "778347269d6a6da3757c232f4a136fe06acb6ecbda8680ab9ae7edcf8762caa2"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/green.log",
+      "sha256": "c5ccc5cf7bf2525e0755e1fd8d5db85aedf742048778a90f75c6826eeed59462",
+      "representation": "EXECUTED_FILE_BYTES",
+      "stored_git_blob_sha256": "6a7a3e909379d776f1eca5a2da42ce367f5fb0e0ea45b707bd2217de90f89f2f"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/red/inventory-red.trx",
+      "sha256": "045a3b24c3b6e37a2dc649ea9d1e91785a6e004ca1bd8251bb2de978f776a65b",
+      "representation": "EXECUTED_FILE_BYTES",
+      "stored_git_blob_sha256": "244cd8ba1d6bf53aadf1b7d509d0ef00a7bc36f66d5e38f64d9408d4cd9ea14f"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/red.log",
+      "sha256": "69bacbc4107eb5464a47865a0534c29cfdac3ada4de5ff464e3b61299a63e6a4",
+      "representation": "EXECUTED_FILE_BYTES",
+      "stored_git_blob_sha256": "f046874c93b04c603a707538897471c54904426e1aa4c857d067f66f855db7dc"
+    }
+  ],
+  "original_red_history": {
+    "total": 132,
+    "passed": 3,
+    "failed": 129,
+    "skipped": 0,
+    "note": "RED logs/TRX retained, but RED stub source and binary snapshots were not retained. GREEN source/artifact hashes cannot prove RED identity."
+  },
+  "limitations": [
+    "Native Rational/basisRef object adoption",
+    "MAVG string codec and ACTIVE/EMPTY object validation",
+    "Real FIN-INV Owner, valuation and posting",
+    "C#/TS/PostgreSQL joint adoption",
+    "Database persistence/migrations and old-ledger conversion",
+    "Production deployment",
+    "Only original 132-test run is reused; no combined assembly or database/business run is claimed."
+  ],
+  "original_evidence": [
+    {
+      "path": "docs/development/evidence/S01-04/REVIEW.md",
+      "sha256_original_file_bytes": "10d1f0b9949a5afcfed17b284500e1095fc2f25da251374633aefea2a9ddfe89",
+      "sha256_candidate_git_blob": "10d1f0b9949a5afcfed17b284500e1095fc2f25da251374633aefea2a9ddfe89"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/DELIVERY.md",
+      "sha256_original_file_bytes": "a28230a9a5c7930c21c2f36872ebfce03da21eb3841803fc0ad27d778b962b39",
+      "sha256_candidate_git_blob": "a28230a9a5c7930c21c2f36872ebfce03da21eb3841803fc0ad27d778b962b39"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/verification.json",
+      "sha256_original_file_bytes": "bf6647dbc9c88a21956501a33a2e17e76b18cb6f09b270f3ce66ffb22d077ffe",
+      "sha256_candidate_git_blob": "63981001ab2e88925c78c73a78cc13bb6d5606102423b42b2b7cdb06a0967a93"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/green/inventory-green.trx",
+      "sha256_original_file_bytes": "e759c6804c5948dd1f7455724580280b237f9af426f0e4598407ea9387105621",
+      "sha256_candidate_git_blob": "778347269d6a6da3757c232f4a136fe06acb6ecbda8680ab9ae7edcf8762caa2"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/green.log",
+      "sha256_original_file_bytes": "c5ccc5cf7bf2525e0755e1fd8d5db85aedf742048778a90f75c6826eeed59462",
+      "sha256_candidate_git_blob": "6a7a3e909379d776f1eca5a2da42ce367f5fb0e0ea45b707bd2217de90f89f2f"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/red/inventory-red.trx",
+      "sha256_original_file_bytes": "045a3b24c3b6e37a2dc649ea9d1e91785a6e004ca1bd8251bb2de978f776a65b",
+      "sha256_candidate_git_blob": "244cd8ba1d6bf53aadf1b7d509d0ef00a7bc36f66d5e38f64d9408d4cd9ea14f"
+    },
+    {
+      "path": "docs/development/evidence/S01-04/red.log",
+      "sha256_original_file_bytes": "69bacbc4107eb5464a47865a0534c29cfdac3ada4de5ff464e3b61299a63e6a4",
+      "sha256_candidate_git_blob": "f046874c93b04c603a707538897471c54904426e1aa4c857d067f66f855db7dc"
+    }
+  ],
+  "reuse_applicability": {
+    "accepted_review_reused": true,
+    "recorded_execution_bytes_match_candidate_after_documented_git_filters": true,
+    "candidate_and_final_merged_input_bytes_equal": true,
+    "later_commit_is_not_new_test_execution": true,
+    "build_artifacts_prove_original_candidate_only_not_combined_main": true,
+    "common_input_package_execution_state": "NOT_RUN_UNCHANGED",
+    "business_validation": "NOT_RUN",
+    "network_or_actions_performed_by_this_assessment": false
+  }
+}

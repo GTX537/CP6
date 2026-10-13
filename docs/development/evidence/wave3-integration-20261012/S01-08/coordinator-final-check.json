@@ -1,0 +1,19 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-13T03:29:47.261535+00:00",
+  "executed_worktree_base": "2ff7f1e4b3df8a4d492d971ffd8f19ff1ea77243",
+  "execution_input_checks": {
+    "inputs": 338,
+    "artifacts": 47,
+    "outputs": 22
+  },
+  "changes_since_focused_review": "Only four coordinator project-state pages, review copy, product-freeze/link evidence and this receipt; no product/test/dependency bytes changed.",
+  "product_freeze_command": "pwsh -NoProfile -File scripts/verify-product-freeze.ps1",
+  "product_freeze_exit": 0,
+  "links": "43 added local links valid; unchanged historical links excluded",
+  "review": "coordinator-review.md",
+  "business_validation": "NOT_RUN",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0
+}

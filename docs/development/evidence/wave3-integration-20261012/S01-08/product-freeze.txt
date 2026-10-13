@@ -1,0 +1,3 @@
+Product payload SHA-256: e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b
+R00 payload SHA-256: 64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03
+Product freeze verification passed.

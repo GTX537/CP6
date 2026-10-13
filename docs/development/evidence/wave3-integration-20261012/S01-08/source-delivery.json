@@ -1,0 +1,32 @@
+{
+  "recorded_at_utc": "2026-10-13T03:18:42.107898+00:00",
+  "issue": "https://github.com/GTX537/CP6/issues/189",
+  "source_commit": "ce38171868312588ce8f4b9e843ed6c39f4d0b0f",
+  "source_pr": "https://github.com/GTX537/CP6/pull/192",
+  "coordinator_reported_remote_main": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+  "remote_observation": "Coordinator supplied merged PR and remote containment; this worker only read local fixed Git blobs, no network.",
+  "files": [
+    {
+      "source_path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+      "source_sha256": "c354974c918dbc39d1ecf9352db79ab5b2b8a61e901f2db6ea328d6112993645",
+      "bytes": 2070,
+      "local_copy": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+      "local_copy_exact": true
+    },
+    {
+      "source_path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/overlay.json",
+      "source_sha256": "bce20c5a3bc93826993be6c2ba7c9a440fffd467f746245e5665707d8eedf549",
+      "bytes": 4068,
+      "local_copy": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/overlay.json",
+      "local_copy_exact": true
+    },
+    {
+      "source_path": "docs/design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/verify_overlay.py",
+      "source_sha256": "48d84de422b3a46d9c596e8b7c440bef9e7f0ded8d27209fac23cf1ed36c2d12",
+      "bytes": 10100,
+      "local_copy": null,
+      "local_copy_exact": "not copied; local importer independently composes same operations"
+    }
+  ],
+  "effective_schema_sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d"
+}

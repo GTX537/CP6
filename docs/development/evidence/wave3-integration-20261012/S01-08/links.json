@@ -1,0 +1,224 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-13T03:29:08.821007+00:00",
+  "scope": "Added Markdown relative file links in staged diff; historical unchanged lines and web availability not checked",
+  "checked": 43,
+  "errors": [],
+  "links": [
+    {
+      "file": "CHANGELOG-AI.md",
+      "link": "docs/delivery/S01-08.md",
+      "exists": true
+    },
+    {
+      "file": "contracts/s01/README.md",
+      "link": "revisions/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/importer-final-generation.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/importer-final-check.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/importer-final-integrity.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/executed-source.json",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/csharp-final.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/csharp-final.trx",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/web-final-142.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/executed-source.json",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/web-final-typecheck.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/executed-source.json",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/first-slice-generation.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/first-slice-implementation.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/executed-source.json",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/source-delivery.json",
+      "exists": true
+    },
+    {
+      "file": "docs/delivery/S01-08.md",
+      "link": "../evidence/s01-08/terminal-r1/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/README.md",
+      "link": "terminal-r1/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/review.md",
+      "link": "terminal-r1/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "source-delivery.json",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "csharp-final.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "csharp-final.trx",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "web-final-142.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "web-final-typecheck.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "importer-final-generation.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "importer-final-check.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "importer-final-integrity.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "executed-source.json",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "capture-execution.py",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "csharp-red.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "terminal-red.trx",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "red-source.json",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "ts-red.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "ts-behavior-red.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "csharp-green.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "csharp-green.trx",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "web-green.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "web-final.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/terminal-r1/README.md",
+      "link": "revision-metadata-red.txt",
+      "exists": true
+    },
+    {
+      "file": "docs/evidence/s01-08/ts-report.md",
+      "link": "terminal-r1/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../delivery/S01-08.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../delivery/S01-08.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../delivery/S01-08.md",
+      "exists": true
+    }
+  ]
+}

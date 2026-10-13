@@ -1,0 +1,87 @@
+{
+  "result": "PASS",
+  "scope": "Read-only follow-up of receipt timestamp semantics; no repeated business validation",
+  "repositories": {
+    "GTX537/CP6": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+    "GTX537/CP6.CRM": "1e4eea61c31d7547c3b3495d392eefbed99b7339"
+  },
+  "tasks": {
+    "S01-03": {
+      "observed_at": "2026-10-13T03:40:43.067932+00:00",
+      "remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+      "files_checked": 49,
+      "pr": {
+        "headRefOid": "b24f76445ffdc9b4df0de77eb394a6aa47726a0c",
+        "mergeCommit": {
+          "oid": "08bf7c923fa0b21af39d5e1f1fd550ed635246ed"
+        },
+        "mergedAt": "2026-10-13T02:57:31Z",
+        "state": "MERGED",
+        "url": "https://github.com/GTX537/CP6/pull/188"
+      }
+    },
+    "S01-04": {
+      "observed_at": "2026-10-13T03:40:43.897257+00:00",
+      "remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+      "files_checked": 12,
+      "pr": {
+        "headRefOid": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+        "mergeCommit": {
+          "oid": "688383439311a3babf00bae98ee426122ce60cd1"
+        },
+        "mergedAt": "2026-10-13T03:07:19Z",
+        "state": "MERGED",
+        "url": "https://github.com/GTX537/CP6/pull/190"
+      }
+    },
+    "S01-06": {
+      "observed_at": "2026-10-13T03:40:45.917413+00:00",
+      "remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+      "files_checked": 32,
+      "pr": {
+        "headRefOid": "f406e4e515a7ce82d77db5307e467e7bcdbc25e4",
+        "mergeCommit": {
+          "oid": "bd25558ea4c0981b0cff1e4fa77ab8f61277211c"
+        },
+        "mergedAt": "2026-10-13T03:09:32Z",
+        "state": "MERGED",
+        "url": "https://github.com/GTX537/CP6/pull/191"
+      }
+    },
+    "S01-08": {
+      "observed_at": "2026-10-13T03:40:55.373292+00:00",
+      "remote_main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "files_checked": 155,
+      "pr": {
+        "headRefOid": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+        "mergeCommit": {
+          "oid": "1e4eea61c31d7547c3b3495d392eefbed99b7339"
+        },
+        "mergedAt": "2026-10-13T03:34:57Z",
+        "state": "MERGED",
+        "url": "https://github.com/GTX537/CP6.CRM/pull/90"
+      }
+    },
+    "terminal-source": {
+      "observed_at": "2026-10-13T03:40:56.119612+00:00",
+      "remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263",
+      "files_checked": 12,
+      "pr": {
+        "headRefOid": "ce38171868312588ce8f4b9e843ed6c39f4d0b0f",
+        "mergeCommit": {
+          "oid": "dbe59942c34a62a47f5e7b11112a3062a07d1263"
+        },
+        "mergedAt": "2026-10-13T03:11:56Z",
+        "state": "MERGED",
+        "url": "https://github.com/GTX537/CP6/pull/192"
+      }
+    }
+  },
+  "issue": {
+    "closedAt": "2026-10-13T03:37:00Z",
+    "number": 189,
+    "state": "CLOSED",
+    "url": "https://github.com/GTX537/CP6/issues/189"
+  },
+  "issue_observed_at": "2026-10-13T03:40:57.429110+00:00"
+}

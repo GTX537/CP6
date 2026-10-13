@@ -1,0 +1,26 @@
+{
+  "result": "SAFE",
+  "head": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+  "protected_main": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+  "observed_at": "2026-10-13T03:34:36.854655+00:00",
+  "workflows": [
+    {
+      "ref": "4d08db119333a0586e69cb13a0824ed3f1c8e51c",
+      "path": ".github/workflows/crm-validation.yml",
+      "blob": "b1781daf55e5392253b6589d5eda2d9e6ed3b7c2",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      include_legacy_s03:\n        description: Also replay the historical S03 temporary artifact\n        required: false\n        type: boolean\n        default: false\n\n"
+    },
+    {
+      "ref": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+      "path": ".github/workflows/crm-validation.yml",
+      "blob": "b1781daf55e5392253b6589d5eda2d9e6ed3b7c2",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      include_legacy_s03:\n        description: Also replay the historical S03 temporary artifact\n        required: false\n        type: boolean\n        default: false\n\n"
+    }
+  ],
+  "workflow_state": "disabled_manually",
+  "queued_or_running": [],
+  "dependency_changes": [
+    "scripts/import-s01-contracts.py"
+  ],
+  "analysis": "Only new local contract importer changed in scripts; it is not invoked by crm-validation. Workflow, CI gate/guard scripts and producer identity checks unchanged. Existing tracked workflow is manual-only at both refs, pre-existing disabled_manually state preserved. Web package change adds local test script, does not register GitHub events. No Actions started, cancelled or settings changed."
+}

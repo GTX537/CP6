@@ -1,0 +1,8 @@
+{
+  "previous_format_check": {
+    "command": "git diff --cached --check",
+    "exit": 2,
+    "reason": "Raw CRLF evidence retained after -text was classified as trailing CR; no source or business test failure."
+  },
+  "correction": "Scoped evidence whitespace attribute recognizes cr-at-eol while retaining blank-at-eol, blank-at-eof and space-before-tab checks; raw evidence bytes unchanged."
+}
