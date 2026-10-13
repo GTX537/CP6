@@ -1,0 +1,15 @@
+{
+  "task": "S01-11",
+  "observed_at": "2026-10-13T05:08:39.995527+00:00",
+  "handoff_branch": "codex/dev-handoff-s01-11",
+  "commit": "1d88ab7f43c33ac08de8eaca353a5747698e15c5",
+  "path": "handoffs/CP6-DEV-20261012/tasks/S01-11/messages/20261013T050804Z-start/MESSAGE.md",
+  "sha256": "e80637625965bab446b6123dc2f4876634244d04f372c16d65379a0936e00c1f",
+  "private": true,
+  "actions_enabled": false,
+  "default_sha": "c5af26da818151eb362455b8709c53b43fe004c2",
+  "candidate_default_workflows": [],
+  "remote_bytes_match": true,
+  "result": "PUBLISHED_FIXED_COMMIT_VERIFIED",
+  "coordinator_ack": "NOT_YET_OBSERVED"
+}

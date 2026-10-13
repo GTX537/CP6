@@ -1,0 +1,617 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/erp-credit/creditCodec.test.ts --reporter=default --reporter=json --outputFile=D:\CP6-worktrees\s01-11-20261012\docs\development\evidence\S01-11\implementation\20261013T103604Z-ts-bug196-red-complete-f6cf63b1\vitest.json
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-11-20261012/cp6.web
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts (428 tests | 12 failed) 9223ms
+     × current decode isolates Buffer changes during validation and returned bytes 63ms
+     × current decode isolates Buffer changes after validation and returned bytes 25ms
+     × current schema pin and parsed schema use the same Buffer snapshot 27ms
+     × frozen decode isolates Buffer changes during validation and returned bytes 11ms
+     × frozen decode isolates Buffer changes after validation and returned bytes 11ms
+     × frozen schema pin and parsed schema use the same Buffer snapshot 11ms
+     × captureOriginalBytes isolates Buffer changes during validation and returned bytes 11ms
+     × captureOriginalBytes isolates Buffer changes after validation and returned bytes 11ms
+     × C01 isolates request and response Buffers during capture and on return 10ms
+     × C01 isolates request and response Buffers after capture and on return 11ms
+     × C02 isolates request and response Buffers during capture and on return 10ms
+     × C02 isolates request and response Buffers after capture and on return 11ms
+     ✓ current-full-CreditOwnerRequest 22ms
+     ✓ frozen-full-CreditOwnerRequest 14ms
+     ✓ current-required-CreditOwnerRequest 18ms
+     ✓ frozen-required-CreditOwnerRequest 9ms
+     ✓ current-closed-CreditOwnerRequest 16ms
+     ✓ frozen-closed-CreditOwnerRequest 9ms
+     ✓ current-full-CreditOwnerQueryRequest 18ms
+     ✓ frozen-full-CreditOwnerQueryRequest 11ms
+     ✓ current-required-CreditOwnerQueryRequest 16ms
+     ✓ frozen-required-CreditOwnerQueryRequest 12ms
+     ✓ current-closed-CreditOwnerQueryRequest 21ms
+     ✓ frozen-closed-CreditOwnerQueryRequest 12ms
+     ✓ current-full-CreditOwnerQueryResult 23ms
+     ✓ frozen-full-CreditOwnerQueryResult 15ms
+     ✓ current-required-CreditOwnerQueryResult 16ms
+     ✓ frozen-required-CreditOwnerQueryResult 9ms
+     ✓ current-closed-CreditOwnerQueryResult 18ms
+     ✓ frozen-closed-CreditOwnerQueryResult 10ms
+     ✓ current-full-CommercialOutcomeRef 21ms
+     ✓ frozen-full-CommercialOutcomeRef 14ms
+     ✓ current-required-CommercialOutcomeRef 17ms
+     ✓ frozen-required-CommercialOutcomeRef 10ms
+     ✓ current-closed-CommercialOutcomeRef 18ms
+     ✓ frozen-closed-CommercialOutcomeRef 11ms
+     ✓ current-full-CreditAuthorityReadRequest 18ms
+     ✓ frozen-full-CreditAuthorityReadRequest 14ms
+     ✓ current-required-CreditAuthorityReadRequest 21ms
+     ✓ frozen-required-CreditAuthorityReadRequest 9ms
+     ✓ current-closed-CreditAuthorityReadRequest 19ms
+     ✓ frozen-closed-CreditAuthorityReadRequest 18ms
+     ✓ current-full-CreditAuthorityReadResult 23ms
+     ✓ frozen-full-CreditAuthorityReadResult 14ms
+     ✓ current-required-CreditAuthorityReadResult 20ms
+     ✓ frozen-required-CreditAuthorityReadResult 9ms
+     ✓ current-closed-CreditAuthorityReadResult 26ms
+     ✓ frozen-closed-CreditAuthorityReadResult 10ms
+     ✓ current-full-CreditSelectionsQuery 17ms
+     ✓ frozen-full-CreditSelectionsQuery 9ms
+     ✓ current-required-CreditSelectionsQuery 16ms
+     ✓ frozen-required-CreditSelectionsQuery 10ms
+     ✓ current-closed-CreditSelectionsQuery 16ms
+     ✓ frozen-closed-CreditSelectionsQuery 9ms
+     ✓ current-full-CreditSelectionPage 23ms
+     ✓ frozen-full-CreditSelectionPage 17ms
+     ✓ current-required-CreditSelectionPage 24ms
+     ✓ frozen-required-CreditSelectionPage 14ms
+     ✓ current-closed-CreditSelectionPage 25ms
+     ✓ frozen-closed-CreditSelectionPage 16ms
+     ✓ current-full-CreditPrepare 29ms
+     ✓ frozen-full-CreditPrepare 17ms
+     ✓ current-required-CreditPrepare 25ms
+     ✓ frozen-required-CreditPrepare 14ms
+     ✓ current-closed-CreditPrepare 31ms
+     ✓ frozen-closed-CreditPrepare 18ms
+     ✓ current-full-PostInput 38ms
+     ✓ frozen-full-PostInput 21ms
+     ✓ current-required-PostInput 35ms
+     ✓ frozen-required-PostInput 17ms
+     ✓ current-closed-PostInput 31ms
+     ✓ frozen-closed-PostInput 17ms
+     ✓ current-full-SafeOperationDetail 27ms
+     ✓ frozen-full-SafeOperationDetail 15ms
+     ✓ current-required-SafeOperationDetail 25ms
+     ✓ frozen-required-SafeOperationDetail 25ms
+     ✓ current-closed-SafeOperationDetail 26ms
+     ✓ frozen-closed-SafeOperationDetail 15ms
+     ✓ current-full-CommandResult 26ms
+     ✓ frozen-full-CommandResult 15ms
+     ✓ current-required-CommandResult 23ms
+     ✓ frozen-required-CommandResult 14ms
+     ✓ current-closed-CommandResult 24ms
+     ✓ frozen-closed-CommandResult 14ms
+     ✓ current-full-TerminalCommandReceipt 19ms
+     ✓ frozen-full-TerminalCommandReceipt 25ms
+     ✓ current-required-TerminalCommandReceipt 25ms
+     ✓ frozen-required-TerminalCommandReceipt 14ms
+     ✓ current-closed-TerminalCommandReceipt 24ms
+     ✓ frozen-closed-TerminalCommandReceipt 14ms
+     ✓ current-full-FinArObservation 25ms
+     ✓ frozen-full-FinArObservation 17ms
+     ✓ current-required-FinArObservation 29ms
+     ✓ frozen-required-FinArObservation 15ms
+     ✓ current-closed-FinArObservation 31ms
+     ✓ frozen-closed-FinArObservation 22ms
+     ✓ current-wms--0 34ms
+     ✓ frozen-wms--0 16ms
+     ✓ current-wms-1.0 27ms
+     ✓ frozen-wms-1.0 17ms
+     ✓ current-wms--123456789012345678901234567890.12345678 30ms
+     ✓ frozen-wms--123456789012345678901234567890.12345678 24ms
+     ✓ current-wms-999999999999999999999999999999.99999999 27ms
+     ✓ frozen-wms-999999999999999999999999999999.99999999 17ms
+     ✓ current-wms-invalid-'+1' 26ms
+     ✓ frozen-wms-invalid-'+1' 16ms
+     ✓ current-wms-invalid-'01' 27ms
+     ✓ frozen-wms-invalid-'01' 14ms
+     ✓ current-wms-invalid-'1e0' 25ms
+     ✓ frozen-wms-invalid-'1e0' 15ms
+     ✓ current-wms-invalid-'1.123456789' 25ms
+     ✓ frozen-wms-invalid-'1.123456789' 15ms
+     ✓ current-wms-invalid-'1000000000000000000000000000000' 24ms
+     ✓ frozen-wms-invalid-'1000000000000000000000000000000' 14ms
+     ✓ current-wms-invalid-'NaN' 25ms
+     ✓ frozen-wms-invalid-'NaN' 15ms
+     ✓ current-wms-invalid-'1\n' 26ms
+     ✓ frozen-wms-invalid-'1\n' 14ms
+     ✓ current-money-alias 32ms
+     ✓ frozen-money-alias 17ms
+     ✓ current-money-extra 30ms
+     ✓ frozen-money-extra 20ms
+     ✓ current-money-number 32ms
+     ✓ frozen-money-number 16ms
+     ✓ current-ar--0 27ms
+     ✓ frozen-ar--0 15ms
+     ✓ current-ar-1.0 26ms
+     ✓ frozen-ar-1.0 14ms
+     ✓ current-ar--12345678901234567890.12345678 28ms
+     ✓ frozen-ar--12345678901234567890.12345678 16ms
+     ✓ current-ar-invalid-'123456789012345678901' 26ms
+     ✓ frozen-ar-invalid-'123456789012345678901' 16ms
+     ✓ current-ar-invalid-'1.123456789' 24ms
+     ✓ frozen-ar-invalid-'1.123456789' 21ms
+     ✓ current-ar-invalid-'+1' 29ms
+     ✓ frozen-ar-invalid-'+1' 14ms
+     ✓ current-ar-invalid-'1e0' 27ms
+     ✓ frozen-ar-invalid-'1e0' 14ms
+     ✓ current-ar-invalid-'01' 25ms
+     ✓ frozen-ar-invalid-'01' 15ms
+     ✓ current-ar-invalid-'1\n' 25ms
+     ✓ frozen-ar-invalid-'1\n' 18ms
+     ✓ current-outcome-APPLIED-False 24ms
+     ✓ frozen-outcome-APPLIED-False 14ms
+     ✓ current-outcome-REJECTED-True 27ms
+     ✓ frozen-outcome-REJECTED-True 15ms
+     ✓ current-outcome-NO_CHANGE-True 28ms
+     ✓ frozen-outcome-NO_CHANGE-True 19ms
+     ✓ current-outcome-NO_CHANGE-False 26ms
+     ✓ frozen-outcome-NO_CHANGE-False 14ms
+     ✓ current-found-no-change 35ms
+     ✓ frozen-found-no-change 13ms
+     ✓ current-unproven-completed 29ms
+     ✓ frozen-unproven-completed 20ms
+     ✓ current-no-effect-reordered 30ms
+     ✓ frozen-no-effect-reordered 22ms
+     ✓ current-no-effect-hash 24ms
+     ✓ frozen-no-effect-hash 14ms
+     ✓ current-no-effect-projection 24ms
+     ✓ frozen-no-effect-projection 15ms
+     ✓ current-no-effect-duplicate 25ms
+     ✓ frozen-no-effect-duplicate 14ms
+     ✓ current-found-projection 28ms
+     ✓ frozen-found-projection 30ms
+     ✓ current-unique 30ms
+     ✓ frozen-unique 15ms
+     ✓ current-range-measure 26ms
+     ✓ frozen-range-measure 15ms
+     ✓ current-money-sum 28ms
+     ✓ frozen-money-sum 17ms
+     ✓ current-money-currency 26ms
+     ✓ frozen-money-currency 14ms
+     ✓ current-range-empty 26ms
+     ✓ frozen-range-empty 16ms
+     ✓ current-range-overlap 25ms
+     ✓ frozen-range-overlap 14ms
+     ✓ current-members 24ms
+     ✓ frozen-members 14ms
+     ✓ current-ar-sum 24ms
+     ✓ frozen-ar-sum 18ms
+     ✓ current-strict-168 30ms
+     ✓ frozen-strict-169 15ms
+     ✓ current-strict-170 24ms
+     ✓ frozen-strict-171 17ms
+     ✓ current-strict-172 34ms
+     ✓ frozen-strict-173 16ms
+     ✓ current-strict-174 27ms
+     ✓ frozen-strict-175 14ms
+     ✓ current-strict-176 30ms
+     ✓ frozen-strict-177 18ms
+     ✓ current-strict-178 27ms
+     ✓ frozen-strict-179 16ms
+     ✓ current-strict-180 28ms
+     ✓ frozen-strict-181 16ms
+     ✓ current-integer-1.0 29ms
+     ✓ frozen-integer-1.0 20ms
+     ✓ current-integer-1e0 28ms
+     ✓ frozen-integer-1e0 17ms
+     ✓ current-integer-1.000000000000000000001 25ms
+     ✓ frozen-integer-1.000000000000000000001 13ms
+     ✓ current-integer-9007199254740993 26ms
+     ✓ frozen-integer-9007199254740993 16ms
+     ✓ current-integer-1e999999999999999999999 35ms
+     ✓ frozen-integer-1e999999999999999999999 14ms
+     ✓ current-receipt-null-only-problemDigest 27ms
+     ✓ frozen-receipt-null-only-problemDigest 20ms
+     ✓ current-receipt-null-required-problemDigest 25ms
+     ✓ frozen-receipt-null-required-problemDigest 20ms
+     ✓ current-receipt-null-only-localNoEffectEvidenceId 27ms
+     ✓ frozen-receipt-null-only-localNoEffectEvidenceId 23ms
+     ✓ current-receipt-null-required-localNoEffectEvidenceId 24ms
+     ✓ frozen-receipt-null-required-localNoEffectEvidenceId 15ms
+     ✓ current-receipt-null-only-ownerCommandResultDigest 28ms
+     ✓ frozen-receipt-null-only-ownerCommandResultDigest 15ms
+     ✓ current-receipt-null-required-ownerCommandResultDigest 27ms
+     ✓ frozen-receipt-null-required-ownerCommandResultDigest 14ms
+     ✓ current-native-object-money-alias 24ms
+     ✓ frozen-native-object-money-alias 15ms
+     ✓ current-native-object-30-digits 30ms
+     ✓ frozen-native-object-30-digits 20ms
+     ✓ current-nested-money-invariant 25ms
+     ✓ frozen-nested-money-invariant 15ms
+     ✓ current-nested-current-command-semantics 23ms
+     ✓ current-unknown-APPLIED 27ms
+     ✓ current-unknown-NO_CHANGE 28ms
+     ✓ current-unknown-REJECTED 32ms
+     ✓ current-requested-native-array 33ms
+     ✓ frozen-requested-native-array 19ms
+     ✓ current-singleton-native 37ms
+     ✓ frozen-singleton-native 21ms
+     ✓ current-conditional-maxItems-without-type 27ms
+     ✓ frozen-conditional-maxItems-without-type 16ms
+     ✓ current-refund-native 37ms
+     ✓ frozen-refund-native 27ms
+     ✓ current-refund-cap 32ms
+     ✓ frozen-refund-cap 20ms
+     ✓ current-conditional-contains-credit 30ms
+     ✓ frozen-conditional-contains-credit 17ms
+     ✓ current-refund-link 36ms
+     ✓ frozen-refund-link 17ms
+     ✓ current-ar-native-slice 28ms
+     ✓ frozen-ar-native-slice 17ms
+     ✓ current-calendar-2026-02-30 42ms
+     ✓ frozen-calendar-2026-02-30 21ms
+     ✓ current-calendar-0000-01-01 31ms
+     ✓ frozen-calendar-0000-01-01 16ms
+     ✓ current-timestamp-2024-02-29T23:59:59.123456789Z 33ms
+     ✓ frozen-timestamp-2024-02-29T23:59:59.123456789Z 22ms
+     ✓ current-timestamp-2026-02-30T00:00:00.000Z 28ms
+     ✓ frozen-timestamp-2026-02-30T00:00:00.000Z 17ms
+     ✓ current-timestamp-2026-10-13T24:00:00.000Z 41ms
+     ✓ frozen-timestamp-2026-10-13T24:00:00.000Z 20ms
+     ✓ current-prototype-toString 29ms
+     ✓ frozen-prototype-toString 18ms
+     ✓ current-prototype-hasOwnProperty 32ms
+     ✓ frozen-prototype-hasOwnProperty 21ms
+     ✓ current-prototype-__proto__ 31ms
+     ✓ frozen-prototype-__proto__ 16ms
+     ✓ current-base64-whitespace 28ms
+     ✓ frozen-base64-whitespace 16ms
+     ✓ current-structural-ref-key-no-NUL-collision 41ms
+     ✓ frozen-structural-ref-key-no-NUL-collision 27ms
+     ✓ current-query-branch-STALE_HEAD 31ms
+     ✓ frozen-query-branch-STALE_HEAD 19ms
+     ✓ current-query-null-STALE_HEAD 26ms
+     ✓ frozen-query-null-STALE_HEAD 17ms
+     ✓ current-query-branch-NOT_OBSERVED 43ms
+     ✓ frozen-query-branch-NOT_OBSERVED 26ms
+     ✓ current-query-null-NOT_OBSERVED 29ms
+     ✓ frozen-query-null-NOT_OBSERVED 20ms
+     ✓ current-query-branch-UNKNOWN 34ms
+     ✓ frozen-query-branch-UNKNOWN 22ms
+     ✓ current-query-null-UNKNOWN 29ms
+     ✓ frozen-query-null-UNKNOWN 18ms
+     ✓ current-query-branch-PENDING 35ms
+     ✓ frozen-query-branch-PENDING 19ms
+     ✓ current-query-null-PENDING 29ms
+     ✓ frozen-query-null-PENDING 19ms
+     ✓ current-query-branch-REQUIRED_FENCED 40ms
+     ✓ frozen-query-branch-REQUIRED_FENCED 18ms
+     ✓ current-query-null-REQUIRED_FENCED 31ms
+     ✓ frozen-query-null-REQUIRED_FENCED 16ms
+     ✓ current-authority-branch-NOT_OBSERVED 35ms
+     ✓ frozen-authority-branch-NOT_OBSERVED 19ms
+     ✓ current-authority-required-NOT_OBSERVED 30ms
+     ✓ frozen-authority-required-NOT_OBSERVED 14ms
+     ✓ current-authority-branch-DENIED 26ms
+     ✓ frozen-authority-branch-DENIED 14ms
+     ✓ current-authority-required-DENIED 21ms
+     ✓ frozen-authority-required-DENIED 12ms
+     ✓ current-authority-branch-UNPROVEN 30ms
+     ✓ frozen-authority-branch-UNPROVEN 16ms
+     ✓ current-authority-branch-UNKNOWN 24ms
+     ✓ frozen-authority-branch-UNKNOWN 13ms
+     ✓ current-command-PENDING 24ms
+     ✓ frozen-command-PENDING 15ms
+     ✓ current-command-required-PENDING 24ms
+     ✓ frozen-command-required-PENDING 15ms
+     ✓ current-pending-projection 27ms
+     ✓ frozen-pending-projection 15ms
+     ✓ current-pending-projection-mismatch 23ms
+     ✓ frozen-pending-projection-mismatch 13ms
+     ✓ current-command-OUTCOME_UNKNOWN 23ms
+     ✓ frozen-command-OUTCOME_UNKNOWN 15ms
+     ✓ current-command-required-OUTCOME_UNKNOWN 24ms
+     ✓ frozen-command-required-OUTCOME_UNKNOWN 13ms
+     ✓ current-not-observed 28ms
+     ✓ frozen-not-observed 16ms
+     ✓ current-not-observed-no-proof 26ms
+     ✓ frozen-not-observed-no-proof 14ms
+     ✓ current-terminal-REJECTED_NO_EFFECT 28ms
+     ✓ frozen-terminal-REJECTED_NO_EFFECT 16ms
+     ✓ current-terminal-forbidden-REJECTED_NO_EFFECT 24ms
+     ✓ frozen-terminal-forbidden-REJECTED_NO_EFFECT 22ms
+     ✓ current-terminal-SEALED_NO_EFFECT 28ms
+     ✓ frozen-terminal-SEALED_NO_EFFECT 20ms
+     ✓ current-terminal-forbidden-SEALED_NO_EFFECT 20ms
+     ✓ frozen-terminal-forbidden-SEALED_NO_EFFECT 16ms
+     ✓ current-component-REPLACEMENT 41ms
+     ✓ frozen-component-REPLACEMENT 24ms
+     ✓ current-component-quantity-REPLACEMENT 24ms
+     ✓ frozen-component-quantity-REPLACEMENT 16ms
+     ✓ current-component-SUPPLEMENTARY_SHIPMENT 30ms
+     ✓ frozen-component-SUPPLEMENTARY_SHIPMENT 18ms
+     ✓ current-component-quantity-SUPPLEMENTARY_SHIPMENT 25ms
+     ✓ frozen-component-quantity-SUPPLEMENTARY_SHIPMENT 15ms
+     ✓ current-component-REJECTED 31ms
+     ✓ frozen-component-REJECTED 18ms
+     ✓ current-component-quantity-REJECTED 23ms
+     ✓ frozen-component-quantity-REJECTED 13ms
+     ✓ current-nonempty-native-selection-page 31ms
+     ✓ frozen-nonempty-native-selection-page 25ms
+     ✓ current-selection-no-execution-permit 40ms
+     ✓ frozen-selection-no-execution-permit 22ms
+     ✓ current-nonempty-native-operation 34ms
+     ✓ frozen-nonempty-native-operation 22ms
+     ✓ current-cell-closed-union 35ms
+     ✓ frozen-cell-closed-union 25ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-0 29ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-0 15ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-0 24ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-0 14ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-1 25ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-1 16ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-1 24ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-1 14ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-2 25ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-2 15ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-2 23ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-2 15ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-3 27ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-3 15ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-3 25ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-3 17ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-4 30ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-4 17ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-4 28ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-4 17ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-5 29ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-5 16ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-5 27ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-5 17ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-6 30ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-6 16ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-6 31ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-6 23ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-7 29ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-7 16ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-7 26ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-7 19ms
+     ✓ current-selected-Money-multi_mixed_complete_public_q14-8 23ms
+     ✓ frozen-selected-Money-multi_mixed_complete_public_q14-8 12ms
+     ✓ current-selected-Money-alias-multi_mixed_complete_public_q14-8 24ms
+     ✓ frozen-selected-Money-alias-multi_mixed_complete_public_q14-8 15ms
+     ✓ current-selected-Money-wn11_c06_exact_saved_200-0 25ms
+     ✓ frozen-selected-Money-wn11_c06_exact_saved_200-0 14ms
+     ✓ current-selected-Money-alias-wn11_c06_exact_saved_200-0 26ms
+     ✓ frozen-selected-Money-alias-wn11_c06_exact_saved_200-0 18ms
+     ✓ current-selected-Money-wn11_c06_exact_saved_200-1 32ms
+     ✓ frozen-selected-Money-wn11_c06_exact_saved_200-1 15ms
+     ✓ current-selected-Money-alias-wn11_c06_exact_saved_200-1 24ms
+     ✓ frozen-selected-Money-alias-wn11_c06_exact_saved_200-1 13ms
+     ✓ current-selected-Money-wn11_c06_exact_saved_200-2 22ms
+     ✓ frozen-selected-Money-wn11_c06_exact_saved_200-2 14ms
+     ✓ current-selected-Money-alias-wn11_c06_exact_saved_200-2 34ms
+     ✓ frozen-selected-Money-alias-wn11_c06_exact_saved_200-2 26ms
+     ✓ current-selected-Money-wn11_complete_current_q14-0 35ms
+     ✓ frozen-selected-Money-wn11_complete_current_q14-0 19ms
+     ✓ current-selected-Money-alias-wn11_complete_current_q14-0 32ms
+     ✓ frozen-selected-Money-alias-wn11_complete_current_q14-0 19ms
+     ✓ current-selected-Money-wn11_complete_current_q14-1 27ms
+     ✓ frozen-selected-Money-wn11_complete_current_q14-1 14ms
+     ✓ current-selected-Money-alias-wn11_complete_current_q14-1 22ms
+     ✓ frozen-selected-Money-alias-wn11_complete_current_q14-1 15ms
+     ✓ current-selected-Money-wn11_complete_current_q14-2 24ms
+     ✓ frozen-selected-Money-wn11_complete_current_q14-2 15ms
+     ✓ current-selected-Money-alias-wn11_complete_current_q14-2 25ms
+     ✓ frozen-selected-Money-alias-wn11_complete_current_q14-2 17ms
+     ✓ current-selected-Money-wn11_existing_target_c06_saved_200-0 25ms
+     ✓ frozen-selected-Money-wn11_existing_target_c06_saved_200-0 14ms
+     ✓ current-selected-Money-alias-wn11_existing_target_c06_saved_200-0 24ms
+     ✓ frozen-selected-Money-alias-wn11_existing_target_c06_saved_200-0 13ms
+     ✓ current-selected-Money-wn11_existing_target_c06_saved_200-1 29ms
+     ✓ frozen-selected-Money-wn11_existing_target_c06_saved_200-1 15ms
+     ✓ current-selected-Money-alias-wn11_existing_target_c06_saved_200-1 23ms
+     ✓ frozen-selected-Money-alias-wn11_existing_target_c06_saved_200-1 13ms
+     ✓ current-selected-Money-wn11_existing_target_c06_saved_200-2 28ms
+     ✓ frozen-selected-Money-wn11_existing_target_c06_saved_200-2 14ms
+     ✓ current-selected-Money-alias-wn11_existing_target_c06_saved_200-2 28ms
+     ✓ frozen-selected-Money-alias-wn11_existing_target_c06_saved_200-2 16ms
+     ✓ current-selected-native-outcome-projection 37ms
+     ✓ frozen-selected-native-outcome-projection 25ms
+     ✓ VERSION-001 0ms
+     ✓ VERSION-002 0ms
+     ✓ VERSION-003 0ms
+     ✓ VERSION-004 0ms
+     ✓ VERSION-005 0ms
+     ✓ VERSION-006 0ms
+     ✓ VERSION-007 0ms
+     ✓ VERSION-008 0ms
+     ✓ BYTES-001 14ms
+     ✓ BYTES-002 14ms
+     ✓ current exact routes, schema pins, immutable snapshots 67ms
+     ✓ frozen exact routes, schema pins, immutable snapshots 35ms
+     ✓ C01 replays the complete original HTTP201 COMMITTED body as HTTP200 24ms
+     ✓ C02 replays the complete original HTTP201 COMMITTED body as HTTP200 21ms
+     ✓ CommandResult cannot authorize FOUND or release without trusted Owner integration 32ms
+     ✓ FinArObservation cannot authorize FOUND or release without trusted Owner integration 35ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > current decode isolates Buffer changes during validation and returned bytes
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > current decode isolates Buffer changes after validation and returned bytes
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > frozen decode isolates Buffer changes during validation and returned bytes
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > frozen decode isolates Buffer changes after validation and returned bytes
+AssertionError: expected [ +0, 34, 99, 111, 109, 109, …(112) ] to deeply equal [ 123, 34, 99, 111, 109, 109, …(112) ]
+
+- Expected
++ Received
+
+@@ -1,7 +1,7 @@
+  [
+-   123,
++   0,
+    34,
+    99,
+    111,
+    109,
+    109,
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:31:44
+     29|         const parsed = await pending
+     30|         if (timing === 'after') input[0] = 0
+     31|         expect([...parsed.originalUtf8()]).toEqual([...original])
+       |                                            ^
+     32|         expect(parsed.sha256).toBe(await sha256(original))
+     33|         parsed.originalUtf8()[1] = 0
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > current schema pin and parsed schema use the same Buffer snapshot
+AssertionError: promise resolved "{ identity: { …(6) }, …(3) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "identity": {
++     "codecNamespace": "Cp6.ErpCredit.CurrentV1.Generated",
++     "profileId": "erp-credit-current-v1",
++     "registrySha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
++     "root": "Money",
++     "schemaFile": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
++     "schemaSha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
++   },
++   "originalUtf8": [Function originalUtf8],
++   "sha256": "222aba3bf0743a26befce9bd4d9ce8f6d1140e7519a2644e599804775c3676e0",
++   "value": {
++     "currency": "USD",
++     "value": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
++   },
+  }
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:47:107
+     45|       const codec = await pending
+     46|       await expect(codec.parseWmsMoney(bytes(JSON.stringify({ value: '…
+     47|       await expect(codec.parseWmsMoney(bytes(JSON.stringify({ value: '…
+       |                                                                                                           ^
+     48|       await expect(codec.finArPostInput.parse(objectBytes('PostInput')…
+     49|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > frozen schema pin and parsed schema use the same Buffer snapshot
+AssertionError: promise resolved "{ identity: { …(6) }, …(3) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "identity": {
++     "codecNamespace": "Cp6.ErpCredit.Generated",
++     "profileId": "erp-credit-frozen-r8",
++     "registrySha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
++     "root": "Money",
++     "schemaFile": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
++     "schemaSha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
++   },
++   "originalUtf8": [Function originalUtf8],
++   "sha256": "222aba3bf0743a26befce9bd4d9ce8f6d1140e7519a2644e599804775c3676e0",
++   "value": {
++     "currency": "USD",
++     "value": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
++   },
+  }
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:47:107
+     45|       const codec = await pending
+     46|       await expect(codec.parseWmsMoney(bytes(JSON.stringify({ value: '…
+     47|       await expect(codec.parseWmsMoney(bytes(JSON.stringify({ value: '…
+       |                                                                                                           ^
+     48|       await expect(codec.finArPostInput.parse(objectBytes('PostInput')…
+     49|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > captureOriginalBytes isolates Buffer changes during validation and returned bytes
+Error: JSON_VALUE
+ ❯ requireValue src/contracts/erp-credit/creditCodec.ts:15:79
+     13| export type NativeCreditCodec = Readonly<{ identity: CreditWireIdentit…
+     14| export class CreditWireError extends Error { constructor(readonly code…
+     15| function requireValue(ok: unknown, code: string): asserts ok { if (!ok…
+       |                                                                               ^
+     16| const own = (value: object, key: string) => Object.prototype.hasOwnPro…
+     17| export const sha256 = async (raw: Uint8Array): Promise<string> => [...…
+ ❯ value src/contracts/erp-credit/creditCodec.ts:95:5
+ ❯ parseStrict src/contracts/erp-credit/creditCodec.ts:97:18
+ ❯ captureOriginalBytes src/contracts/erp-credit/creditCodec.ts:304:106
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:57:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > captureOriginalBytes isolates Buffer changes after validation and returned bytes
+AssertionError: expected [ +0, 34, 111, 114, 105, 103, …(10) ] to deeply equal [ 123, 34, 111, 114, 105, 103, …(10) ]
+
+- Expected
++ Received
+
+@@ -1,7 +1,7 @@
+  [
+-   123,
++   0,
+    34,
+    111,
+    114,
+    105,
+    103,
+
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:59:44
+     57|       const captured = await pending
+     58|       if (timing === 'after') input[0] = 0
+     59|       expect([...captured.originalUtf8()]).toEqual([...original])
+       |                                            ^
+     60|       captured.originalUtf8()[1] = 0
+     61|       expect([...captured.originalUtf8()]).toEqual([...original])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > C01 isolates request and response Buffers during capture and on return
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > C02 isolates request and response Buffers during capture and on return
+Error: FROZEN_REPLAY_DIGEST
+ ❯ requireValue src/contracts/erp-credit/creditCodec.ts:15:79
+     13| export type NativeCreditCodec = Readonly<{ identity: CreditWireIdentit…
+     14| export class CreditWireError extends Error { constructor(readonly code…
+     15| function requireValue(ok: unknown, code: string): asserts ok { if (!ok…
+       |                                                                               ^
+     16| const own = (value: object, key: string) => Object.prototype.hasOwnPro…
+     17| export const sha256 = async (raw: Uint8Array): Promise<string> => [...…
+ ❯ CreditCodecSet.captureReplay src/contracts/erp-credit/creditCodec.ts:283:5
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:75:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > C01 isolates request and response Buffers after capture and on return
+ FAIL  src/contracts/erp-credit/creditCodec.test.ts > Buffer ownership regression #196 > C02 isolates request and response Buffers after capture and on return
+Error: COMMAND_PAYLOAD_CONFLICT
+ ❯ requireValue src/contracts/erp-credit/creditCodec.ts:15:79
+     13| export type NativeCreditCodec = Readonly<{ identity: CreditWireIdentit…
+     14| export class CreditWireError extends Error { constructor(readonly code…
+     15| function requireValue(ok: unknown, code: string): asserts ok { if (!ok…
+       |                                                                               ^
+     16| const own = (value: object, key: string) => Object.prototype.hasOwnPro…
+     17| export const sha256 = async (raw: Uint8Array): Promise<string> => [...…
+ ❯ FrozenHttpReplay.replay src/contracts/erp-credit/creditCodec.ts:315:5
+ ❯ src/contracts/erp-credit/creditCodec.test.ts:77:39
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed | 416 passed (428)
+   Start at  06:36:07
+   Duration  11.41s (transform 76ms, setup 0ms, import 162ms, tests 9.22s, environment 1.76s)
+
+JSON report written to D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/vitest.json

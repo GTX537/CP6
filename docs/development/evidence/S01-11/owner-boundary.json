@@ -1,0 +1,32 @@
+{
+  "task": "S01-11",
+  "observed_at": "2026-10-13T05:11:53.816838+00:00",
+  "baseline": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "read_only_existing_owner_paths": [
+    {
+      "path": "CP6.Core/Services/Erp/CreditNoteService.cs",
+      "git_blob": "5d8b01a0204d15a2b4295fc8cfe1713f0121a137",
+      "sha256_git_blob": "ef51c5091b88b53a803c035d41cb46c8db4a8779e0297456d564656fb54f6c17",
+      "sha256_worktree_file": "388926edac84fb0ef8d0a19603e73090282b66e87a6934c02dd9b07e5e482225"
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Erp/CreditNote.cs",
+      "git_blob": "e7417ad6aca31c939588dc44d7b8a01cfa24e365",
+      "sha256_git_blob": "814d04010d8ee2f038e6998b9c5d467969c426211d2bf4305b85d3e96e4bac36",
+      "sha256_worktree_file": "82b0c62e14bb5a8fdabe22e993bbda56883e6cc55f48bfbc83019e20acc664cd"
+    },
+    {
+      "path": "CP6.Entity/DTOs/Erp/CreditNoteDto.cs",
+      "git_blob": "663e8e79a87fd56c2d735f836be0cfd2d5170952",
+      "sha256_git_blob": "9df17c038e800d06f3de4b926cf7cfd6d40b2a5d766c2ad4a1ff23b923774b1b",
+      "sha256_worktree_file": "3637efdce9d5b539e7539e4b085af6b60be0295dddfb5aa0ba774edb697519f6"
+    },
+    {
+      "path": "CP6.WebApi/Controllers/Erp/CreditNoteController.cs",
+      "git_blob": "441e261879eaba4f40330307f03d75b49370aaa4",
+      "sha256_git_blob": "74cdfbed92a1087bec077b52b9ecaa2e4d57473e49309c7848772b0da7cf06d2",
+      "sha256_worktree_file": "e8eefe78b40d8b15606bdba54d3ec405d5ac422cbc4a46758813b29b578079b2"
+    }
+  ],
+  "scope": "Existing query/controller/entity inspection only; no business Owner or database adoption. Existing legacy Qty decimal(21,8)/Amount decimal(18,4) remain unchanged and are not claimed exact native WMS/FIN-AR storage."
+}

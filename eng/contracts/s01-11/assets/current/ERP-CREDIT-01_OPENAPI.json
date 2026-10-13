@@ -1,0 +1,2720 @@
+{
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "flows": {
+          "clientCredentials": {
+            "scopes": {
+              "erp.credit.audit.export": "erp.credit.audit.export",
+              "erp.credit.audit.read": "erp.credit.audit.read",
+              "erp.credit.authority.read": "erp.credit.authority.read",
+              "erp.credit.correct": "erp.credit.correct",
+              "erp.credit.cutover.read": "erp.credit.cutover.read",
+              "erp.credit.decide": "erp.credit.decide",
+              "erp.credit.draft": "erp.credit.draft",
+              "erp.credit.evidence.read": "erp.credit.evidence.read",
+              "erp.credit.finance.post.request": "erp.credit.finance.post.request",
+              "erp.credit.finance.request": "erp.credit.finance.request",
+              "erp.credit.read": "erp.credit.read",
+              "erp.credit.recover": "erp.credit.recover",
+              "erp.credit.source.query": "erp.credit.source.query",
+              "erp.credit.source.receive": "erp.credit.source.receive",
+              "erp.credit.submit": "erp.credit.submit",
+              "erp.credit.withdraw": "erp.credit.withdraw"
+            },
+            "tokenUrl": "/oauth/token"
+          }
+        },
+        "type": "oauth2"
+      }
+    }
+  },
+  "info": {
+    "description": "Original four SPEC and R0 46 GWT complete-scope working static design. All program/SQL/business execution NOT_RUN. Whole independent review not submitted; Owner runtime UNPROVEN.",
+    "title": "ERP-CREDIT-01",
+    "version": "WHOLE_RECOVERY_R2"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/erp/credit/v1/audit-events": {
+      "get": {
+        "operationId": "EC-Q15",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "objectKind",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/objectKind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "objectId",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/objectId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "commandId",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/commandId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "correlationId",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/correlationId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/from"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/to"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/AuditEventListQuery/properties/limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q15_READ_AuditEventPage"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q15_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.audit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "closed authorized audit projection; no raw database export",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "CURSOR_EXPIRED",
+          "VALIDATION_FAILED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q15_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/audit-exports": {
+      "post": {
+        "operationId": "EC-C09",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/PrepareAuditExport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C09_ADMITTED_AuditExportView"
+                }
+              }
+            },
+            "description": "ACCEPTED_PENDING"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C09_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.audit.export"
+            ]
+          }
+        ],
+        "x-cp6-decision": "freeze closed filter/columns/snapshot/generation field policy; limits 50000 rows and 20MiB without truncation",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "AUDIT_EXPORT_LIMIT_EXCEEDED",
+          "COMMAND_BINDING_CONFLICT"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C09_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/audit-exports/{exportId}": {
+      "get": {
+        "operationId": "EC-Q11",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exportId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q11_READ_AuditExportView"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q11_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.audit.export"
+            ]
+          }
+        ],
+        "x-cp6-decision": "READY is artifact state, not download authorization",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q11_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/audit-exports/{exportId}/content": {
+      "get": {
+        "operationId": "EC-Q12",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exportId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q12_READ_BinaryContentDescriptor"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q12_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.audit.export"
+            ]
+          }
+        ],
+        "x-cp6-decision": "re-check current scope/capability/field policy before bytes; append access decision",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "AUDIT_EXPORT_NOT_READY",
+          "AUDIT_EXPORT_EXPIRED",
+          "AUDIT_EXPORT_ACCESS_REVOKED",
+          "AUDIT_EXPORT_POLICY_CHANGED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q12_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/commands/{commandId}": {
+      "get": {
+        "operationId": "EC-Q05",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "commandId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "method",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommandQuery/properties/method"
+            }
+          },
+          {
+            "in": "query",
+            "name": "canonicalRoute",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommandQuery/properties/canonicalRoute"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q05_READ_LocalCommandQueryResult"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q05_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "exact trusted principal+method+canonical route+commandId; never most-recent lookup",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "EXPECTED_QUERY_IDENTITY_REQUIRED",
+          "NOT_FOUND_OR_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q05_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/context": {
+      "get": {
+        "operationId": "EC-Q00",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q00_READ_CommercialContext"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q00_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "no scope bootstrap input; derive visible contexts from principal",
+        "x-cp6-errors": [
+          "AUTHENTICATION_REQUIRED",
+          "CAPABILITY_DENIED",
+          "SCOPE_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q00_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/cutover": {
+      "get": {
+        "operationId": "EC-Q16",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q16_READ_CutoverView"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q16_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.cutover.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "Read actual EC44 DB-bound legacy source and scope, full writer inventory/current permissions and exact old row schema without nonexistent tenant/ledger fields; unproven/mixed rows remain read-only",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE",
+          "LEGACY_DATABASE_SCOPE_UNPROVEN",
+          "LEGACY_WRITER_INVENTORY_INCOMPLETE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q16_Problem"
+        },
+        "x-cp6-producer": "erp_credit.whole_q16_cutover"
+      }
+    },
+    "/api/erp/credit/v1/evidence-options": {
+      "get": {
+        "operationId": "EC-Q08",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "objectKind",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EvidenceOptionQuery/properties/objectKind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "objectId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EvidenceOptionQuery/properties/objectId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EvidenceOptionQuery/properties/cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EvidenceOptionQuery/properties/limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q08_READ_EvidenceOptionPage"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q08_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.evidence.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "server-signed option binds visible object/ref/field policy and expiry",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q08_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/evidence/content/{accessId}": {
+      "get": {
+        "operationId": "EC-Q10",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accessId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q10_READ_BinaryContentDescriptor"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q10_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.evidence.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "re-check on every byte delivery; denied means zero bytes and append AuditAccessDecision",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "EVIDENCE_EXPIRED",
+          "EVIDENCE_ACCESS_REVOKED",
+          "FIELD_POLICY_CHANGED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q10_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/evidence/open": {
+      "post": {
+        "operationId": "EC-Q09",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EvidenceOpenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q09_COMMITTED_EvidenceAccessView"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q09_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.evidence.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "resolve signed option and re-check current object/capability/field policy",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "EVIDENCE_EXPIRED",
+          "EVIDENCE_ACCESS_REVOKED",
+          "FIELD_POLICY_CHANGED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q09_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/fin-ar-works/{finArWorkId}": {
+      "get": {
+        "operationId": "EC-Q04",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "finArWorkId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q04_READ_FinArWorkView"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q04_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "read persisted exact FIN-AR observations without inferring from HTTP status",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q04_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/fin-ar-works/{finArWorkId}/post": {
+      "post": {
+        "operationId": "EC-C10",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "finArWorkId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/PostFinArCredit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C10_REPLAY_FinArWorkView"
+                }
+              }
+            },
+            "description": "COMMITTED_REPLAY"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C10_ADMITTED_CommandAdmissionReceipt"
+                }
+              }
+            },
+            "description": "ACCEPTED_PENDING"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C10_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.finance.post.request"
+            ]
+          }
+        ],
+        "x-cp6-decision": "finance-specific capability; server verifies FIN-AR PREPARED plan, exact approved chain/current rowVersion, freezes accepted A27 PostInput bytes and outbox in one local Uow; commercial approval alone never grants this action",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "SOD_VIOLATION",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "APPROVAL_REQUIRED",
+          "PERIOD_CLOSED",
+          "FIN_AR_ADOPTION_UNPROVEN",
+          "SOURCE_PROTECTION_UNPROVEN",
+          "FIN_AR_RESULT_UNKNOWN",
+          "EFFECTIVE_PROJECTION_CHANGED",
+          "CURRENCY_MISMATCH",
+          "MONEY_INVARIANT",
+          "POLICY_UNPROVEN",
+          "SOURCE_CHANGED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C10_Problem"
+        },
+        "x-cp6-producer": "erp_credit.whole_c10_post"
+      }
+    },
+    "/api/erp/credit/v1/fin-ar-works/{finArWorkId}/recover": {
+      "post": {
+        "operationId": "EC-C08",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "finArWorkId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RecoverFinArWork"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C08_REPLAY_FinArWorkView"
+                }
+              }
+            },
+            "description": "COMMITTED_REPLAY"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C08_ADMITTED_CommandAdmissionReceipt"
+                }
+              }
+            },
+            "description": "ACCEPTED_PENDING"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C08_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.recover"
+            ]
+          }
+        ],
+        "x-cp6-decision": "query A10 using original commandId/method/canonicalRoute; resend exact stored bytes only after proof-compatible result",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "FIN_AR_RESULT_UNKNOWN",
+          "LEASE_FENCE_CONFLICT"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C08_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/outcomes/{outcomeId}": {
+      "get": {
+        "operationId": "EC-Q14",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "outcomeId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q14_READ_OutcomeDetailView"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q14_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "Current exact outcome, new effective partitions/groups, actual general context/root tokens/children queries, refund/demand lineage and historical permanent fences from one authorized cut; original F09 GET/receipt bytes remain separate versioned exact branch",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE",
+          "EFFECTIVE_PROJECTION_CHANGED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q14_Problem"
+        },
+        "x-cp6-producer": "erp_credit.whole_q14_detail"
+      }
+    },
+    "/api/erp/credit/v1/outcomes/{outcomeId}/axes": {
+      "get": {
+        "operationId": "EC-Q07",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "outcomeId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q07_READ_CommercialAxisView"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q07_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "physical/quality/commercial/AR/cash/value/COGS/GL/demand axes remain separate",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q07_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/outcomes/{outcomeId}/corrections": {
+      "post": {
+        "operationId": "EC-C06",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "outcomeId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/WholeC06PublicRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C06_200_StoredTerminal"
+                }
+              }
+            },
+            "description": "COMMITTED_REPLAY"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C06_202_StoredAdmission"
+                }
+              }
+            },
+            "description": "ACCEPTED_PENDING"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C06_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.correct"
+            ]
+          }
+        ],
+        "x-cp6-decision": "General changes bind full sealed target/root/child sets, current exact source authority and actual positive delta reservation; permanent predecessor fence; changed money/range/options and already-dispatched/applied predecessors follow typed Owner recovery, then one terminal local succession. Narrow F09 retained unchanged.",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "SOD_VIOLATION",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "CORRECTION_AUTHORITY_REQUIRED",
+          "DESCENDANT_EFFECT_UNKNOWN",
+          "RANGE_OVERLAP",
+          "BUDGET_CONFLICT",
+          "BLOCKED_DEPENDENCY",
+          "SOURCE_PROTECTION_UNPROVEN",
+          "CORRECTION_INCREASE_INSUFFICIENT",
+          "FIN_RECOVERY_SOURCE_UNPROVEN",
+          "REFUND_AUTHORIZATION_EXHAUSTED",
+          "EFFECTIVE_PROJECTION_CHANGED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C06_Problem"
+        },
+        "x-cp6-producer": "erp_credit.whole_c06_admit;whole_c06_capture;whole_c06_observe_child;whole_c06_complete"
+      }
+    },
+    "/api/erp/credit/v1/outcomes/{outcomeId}/fin-ar-requests": {
+      "post": {
+        "operationId": "EC-C07",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "outcomeId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RequestFinArCredit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C07_REPLAY_FinArWorkView"
+                }
+              }
+            },
+            "description": "COMMITTED_REPLAY"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C07_ADMITTED_CommandAdmissionReceipt"
+                }
+              }
+            },
+            "description": "ACCEPTED_PENDING"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C07_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.finance.request"
+            ]
+          }
+        ],
+        "x-cp6-decision": "One actual bundle chooses one same-currency/customer/basis original InvoiceLine partition. Effective dispatch amount comes from EC49 ORIGINAL/proven-full-replacement/approved-increment. New financial policy/period/tax/currency/source gate applies before A26 as well as A27; zero outbox on missing professional input.",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "FIN_AR_ADOPTION_UNPROVEN",
+          "FIN_AR_SELECTION_UNPROVEN",
+          "SOURCE_PROTECTION_UNPROVEN",
+          "UNAPPLY_REQUIRED",
+          "PERIOD_CLOSED",
+          "POLICY_UNPROVEN",
+          "EFFECTIVE_PROJECTION_CHANGED",
+          "CURRENCY_MISMATCH",
+          "MONEY_INVARIANT",
+          "APPROVAL_REQUIRED",
+          "SOURCE_CHANGED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C07_Problem"
+        },
+        "x-cp6-producer": "erp_credit.whole_c07_prepare"
+      }
+    },
+    "/api/erp/credit/v1/outcomes/{outcomeId}/lineage": {
+      "get": {
+        "operationId": "EC-Q06",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "outcomeId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q06_READ_OutcomeLineageView"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q06_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "predecessor/current/successor and descendant financial/demand refs from one snapshot",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q06_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/works": {
+      "get": {
+        "operationId": "EC-Q01",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommercialWorkListQuery/properties/search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommercialWorkListQuery/properties/state"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommercialWorkListQuery/properties/cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CommercialWorkListQuery/properties/limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q01_READ_CommercialWorkPage"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q01_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "authorized immutable snapshot and opaque cursor",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "SCOPE_NOT_VISIBLE",
+          "CURSOR_EXPIRED",
+          "VALIDATION_FAILED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q01_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/works/{workId}": {
+      "get": {
+        "operationId": "EC-Q02",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q02_READ_CommercialWorkDetail"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q02_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "read exact current head and authorized field projection",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q02_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/works/{workId}/decision-context": {
+      "get": {
+        "operationId": "EC-Q03",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q03_READ_CommercialDecisionContext"
+                }
+              }
+            },
+            "description": "NO_EFFECT_READ"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q03_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.decide"
+            ]
+          }
+        ],
+        "x-cp6-decision": "Same authorized cut produces actual EC46 sealed context, closed six-outcome options and per-currency groups; all selections retain exact original source/current heads/RVs and isExecutionPermit=false",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "NOT_FOUND_OR_NOT_VISIBLE",
+          "SOURCE_CHANGED",
+          "COMMERCIAL_POLICY_UNPROVEN",
+          "QUALITY_REQUIRED_FENCED",
+          "UOM_NOT_EXACT",
+          "ORIGINAL_FULFILMENT_MISMATCH",
+          "BLOCKED_DEPENDENCY"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q03_Problem"
+        },
+        "x-cp6-producer": "erp_credit.whole_q03_context"
+      }
+    },
+    "/api/erp/credit/v1/works/{workId}/decisions": {
+      "post": {
+        "operationId": "EC-C05",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/DecideCommercialWork"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C05_COMMITTED_CommercialOutcomeView"
+                }
+              }
+            },
+            "description": "COMMITTED"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C05_ADMITTED_CommandAdmissionReceipt"
+                }
+              }
+            },
+            "description": "ACCEPTED_REQUIRED_FENCED"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C05_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.decide"
+            ]
+          }
+        ],
+        "x-cp6-decision": "under canonical lock order re-read every source/head/budget and either write one immutable terminal commercial outcome plus head or one immutable fenced admission; no partial component acceptance",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "SOD_VIOLATION",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "SOURCE_CHANGED",
+          "RANGE_INVALID",
+          "RANGE_OVERLAP",
+          "CURRENCY_MISMATCH",
+          "MONEY_INVARIANT",
+          "BUDGET_CONFLICT",
+          "PERIOD_CLOSED",
+          "COMMERCIAL_POLICY_UNPROVEN",
+          "QUALITY_REQUIRED_FENCED",
+          "OWNER_ADOPTION_UNPROVEN",
+          "UOM_NOT_EXACT",
+          "ORIGINAL_FULFILMENT_MISMATCH",
+          "BLOCKED_DEPENDENCY",
+          "REFUND_AUTHORIZATION_EXHAUSTED",
+          "SOURCE_PROTECTION_UNPROVEN"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C05_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/works/{workId}/drafts": {
+      "post": {
+        "operationId": "EC-C01",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/CreateCommercialDraft"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C01_COMMITTED_CommercialDraftView"
+                }
+              }
+            },
+            "description": "Exact saved COMMITTED body from first HTTP201; replay transport HTTP200; no body relabel, redaction or rebuild."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C01_COMMITTED_CommercialDraftView"
+                }
+              }
+            },
+            "description": "COMMITTED"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C01_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.draft"
+            ]
+          }
+        ],
+        "x-cp6-decision": "same Uow writes CommandBinding, immutable DraftFact, DraftHead, TerminalReceipt and Audit",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "SOURCE_CHANGED",
+          "VALIDATION_FAILED",
+          "UOM_NOT_EXACT",
+          "ORIGINAL_FULFILMENT_MISMATCH",
+          "BLOCKED_DEPENDENCY"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C01_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/works/{workId}/drafts/{draftId}/revisions": {
+      "post": {
+        "operationId": "EC-C02",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "draftId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/ReviseCommercialDraft"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C02_COMMITTED_CommercialDraftView"
+                }
+              }
+            },
+            "description": "Exact saved COMMITTED body from first HTTP201; replay transport HTTP200; no body relabel, redaction or rebuild."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C02_COMMITTED_CommercialDraftView"
+                }
+              }
+            },
+            "description": "COMMITTED"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C02_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.draft"
+            ]
+          }
+        ],
+        "x-cp6-decision": "append revision and CAS DraftHead; never update prior fact",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "SOURCE_CHANGED",
+          "VALIDATION_FAILED",
+          "UOM_NOT_EXACT",
+          "ORIGINAL_FULFILMENT_MISMATCH",
+          "BLOCKED_DEPENDENCY"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C02_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/works/{workId}/submit": {
+      "post": {
+        "operationId": "EC-C03",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/SubmitCommercialDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C03_REPLAY_TerminalCommandReceipt"
+                }
+              }
+            },
+            "description": "COMMITTED_REPLAY"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C03_ADMITTED_CommandAdmissionReceipt"
+                }
+              }
+            },
+            "description": "ACCEPTED_PENDING"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C03_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.submit"
+            ]
+          }
+        ],
+        "x-cp6-decision": "persist SUBMITTED successor and approval Work; 202 admission is immutable and is never overwritten into a terminal receipt",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "SOURCE_CHANGED",
+          "QUALITY_REQUIRED_FENCED",
+          "COMMERCIAL_POLICY_UNPROVEN",
+          "APPROVAL_REQUIRED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C03_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/api/erp/credit/v1/works/{workId}/withdraw": {
+      "post": {
+        "operationId": "EC-C04",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workId",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/Guid"
+            }
+          },
+          {
+            "description": "must equal request expectedRowVersion where present",
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/RowVersion"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/WithdrawCommercialDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C04_COMMITTED_TerminalCommandReceipt"
+                }
+              }
+            },
+            "description": "COMMITTED"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C04_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.withdraw"
+            ]
+          }
+        ],
+        "x-cp6-decision": "append WITHDRAWN only before an approved/result effect; preserve request/work history",
+        "x-cp6-errors": [
+          "CAPABILITY_DENIED",
+          "COMMAND_BINDING_CONFLICT",
+          "HEAD_CHANGED",
+          "DECISION_ALREADY_TERMINAL",
+          "EFFECT_ALREADY_DISPATCHED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_C04_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/internal/erp/credit/v1/fin-ar/credit-authority/read": {
+      "post": {
+        "operationId": "EC-Q13",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityReadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/CreditAuthorityReadResult"
+                }
+              }
+            },
+            "description": "accepted Owner root; no local JSON wrapper",
+            "headers": {
+              "X-CP6-Effect-Knowledge": {
+                "required": true,
+                "schema": {
+                  "const": "NO_EFFECT_READ"
+                }
+              },
+              "X-Correlation-Id": {
+                "required": true,
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q13_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.authority.read"
+            ]
+          }
+        ],
+        "x-cp6-decision": "Exact accepted FIN CREDIT_AUTHORITY root derives original invoice refs, current EC49 dispatch-authorized amount and actual full used/pending sets under current source protection; historical original authority bodies are not overwritten",
+        "x-cp6-errors": [
+          "AUTHENTICATION_REQUIRED",
+          "SERVICE_IDENTITY_DENIED",
+          "CONTRACT_NOT_REGISTERED",
+          "SCOPE_MISMATCH",
+          "UNSUPPORTED_SCHEMA"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_Q13_Problem"
+        },
+        "x-cp6-producer": "erp_credit.whole_q13_authority"
+      }
+    },
+    "/internal/erp/credit/v1/wms-rma/commercial-requests": {
+      "post": {
+        "operationId": "EC-I01",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerQueryResult"
+                }
+              }
+            },
+            "description": "accepted Owner root; no local JSON wrapper",
+            "headers": {
+              "X-CP6-Effect-Knowledge": {
+                "required": true,
+                "schema": {
+                  "const": "EXACT_OWNER_QUERY_RESULT"
+                }
+              },
+              "X-Correlation-Id": {
+                "required": true,
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_I01_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.source.receive"
+            ]
+          }
+        ],
+        "x-cp6-decision": "validate exact WMS request; one local Uow persists binding/request/source/snapshot/work/admission/checkpoint/audit; response body is exact WMS query-result root, normally PENDING or REQUIRED_FENCED until a terminal result exists",
+        "x-cp6-errors": [
+          "AUTHENTICATION_REQUIRED",
+          "SERVICE_IDENTITY_DENIED",
+          "CONTRACT_NOT_REGISTERED",
+          "SCOPE_MISMATCH",
+          "UNSUPPORTED_SCHEMA",
+          "COMMAND_BINDING_CONFLICT",
+          "SOURCE_CHANGED",
+          "QUALITY_REQUIRED_FENCED"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_I01_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    },
+    "/internal/erp/credit/v1/wms-rma/commercial-requests/query": {
+      "post": {
+        "operationId": "EC-I02",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Correlation-Id",
+            "required": true,
+            "schema": {
+              "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json#/$defs/CreditOwnerQueryResult"
+                }
+              }
+            },
+            "description": "accepted Owner root; no local JSON wrapper",
+            "headers": {
+              "X-CP6-Effect-Knowledge": {
+                "required": true,
+                "schema": {
+                  "const": "NO_EFFECT_READ"
+                }
+              },
+              "X-Correlation-Id": {
+                "required": true,
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/OpaqueId"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_I02_Problem"
+                }
+              }
+            },
+            "description": "operation-specific closed problem union"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "erp.credit.source.query"
+            ]
+          }
+        ],
+        "x-cp6-decision": "FOUND alone carries CommercialOutcomeRef; STALE_HEAD/NOT_OBSERVED/UNKNOWN/PENDING/REQUIRED_FENCED carry result=null",
+        "x-cp6-errors": [
+          "AUTHENTICATION_REQUIRED",
+          "SERVICE_IDENTITY_DENIED",
+          "CONTRACT_NOT_REGISTERED",
+          "SCOPE_MISMATCH",
+          "UNSUPPORTED_SCHEMA"
+        ],
+        "x-cp6-problem-schema": {
+          "$ref": "./ERP-CREDIT-01_TYPE-REGISTRY.json#/$defs/EC_I02_Problem"
+        },
+        "x-cp6-producer": "see original route Uow contract"
+      }
+    }
+  },
+  "revision": "R6",
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "x-cp6-revision": "R6",
+  "x-cp6-stage77-independent-removed-unused-branch": {
+    "actualOwnerSourceKernelRegistrationIamStoreAllWriterObjectEnlistDeployment": "UNPROVEN_FENCED",
+    "allExecution": "NOT_RUN",
+    "api": {
+      "commitDelivery": "Only actual known solecommit after mandatory final callback; same original slot query on unknown commit",
+      "noNewPublicFields": true,
+      "refundView": "WholeRefundAuthorizationView",
+      "replyType": "WholeOutcomeReadView / original strict public data shape",
+      "requestType": "WholeC06PublicRequest",
+      "savedReplyRaw": {
+        "blobRef": "cas://erp-credit/233f524c02fa95f04eb79a257aac44911a88f4c80b3df8203398a543632a65b3/9083",
+        "bodyDirectoryKey": "CREDIT15_REMOVED_STAGE76/target-c06-complete-fixed-current-committed-reply",
+        "bytes": 9083,
+        "digest": "233f524c02fa95f04eb79a257aac44911a88f4c80b3df8203398a543632a65b3",
+        "mediaType": "application/json",
+        "putReceiptId": "c7467ae8-eefb-50eb-8df0-f1cebec9a394",
+        "schema": "ERP_CREDIT.FLAT_FULL_RAW_REFERENCE.2",
+        "storeCreatedAt": "2026-10-03T18:11:20.000Z"
+      },
+      "savedTerminalRaw": {
+        "blobRef": "cas://erp-credit/26c7aece4cae4b929f8f9611c02845ddbd1fc5f9061a68e378e06c9c9950850d/1101",
+        "bodyDirectoryKey": "CREDIT15_REMOVED_STAGE76/target-c06-complete-fixed-original-terminal",
+        "bytes": 1101,
+        "digest": "26c7aece4cae4b929f8f9611c02845ddbd1fc5f9061a68e378e06c9c9950850d",
+        "mediaType": "application/json",
+        "putReceiptId": "7cfe6e73-2cda-5e70-b265-7f1ba0c2602e",
+        "schema": "ERP_CREDIT.FLAT_FULL_RAW_REFERENCE.2",
+        "storeCreatedAt": "2026-10-03T18:11:20.000Z"
+      }
+    },
+    "authorVerdict": "NO_PASS_AWAIT_INDEPENDENT_REVIEW",
+    "canonicalRoute": {
+      "methodRouteCommandSlotScopesOriginal": true,
+      "noAliasOrRouteSynthesis": true,
+      "queryUnknownOrPending": "Original stored command slot and original child/native query identity sets retained",
+      "source": "PRIOR_READONLY_ORIGINAL_CANONICAL_CONTRACT.json"
+    },
+    "completeOriginal46LiteralSource": "ORIGINAL_46AC_R0.json",
+    "entry": "ERP-CREDIT-01_STAGE77_REMOVED_ONE_COMPONENT_FULL_NORMAL_WORKING.json",
+    "failureAndNonemptyPending": "ERP-CREDIT-01_STAGE77_REMOVED_COMPLETE_FAILURE_AND_NONEMPTY_PENDING_NORMAL.json",
+    "flatRawDirectory": "ERP-CREDIT-01_STAGE77_REMOVED_FLAT_RAW_AND_STORE_DIRECTORY.json",
+    "formalProgressDomainNote": "Existing 59/61/5920 source text is the frozen input snapshot; latest independent-review context is separate EXC archive 60/61, with no CREDIT increment.",
+    "formalProgressUnchanged": "Registry83;59/61;5920/6100;CREDITstage10;V2/T06 unchanged",
+    "frontend": {
+      "currentAuthorizationDerivedByCurrentStateFilter": "No ACTIVE/USED/USED_UNKNOWN authorization is created in removed branch; old historical approved ceiling is not current spending authority",
+      "fullContract": "ERP-CREDIT-01_FRONTEND-CONTRACT.json",
+      "historyStateVisibleReadOnly": true,
+      "pending": "USED/UNKNOWN/RESERVED or source unproven remains pending, retains original origins/queries/history",
+      "refundAction": "Disabled after genuine unused removal; never create payment action from old view"
+    },
+    "fullCallerContract": "ERP-CREDIT-01_STAGE77_REMOVED_FULL_READONLY_CALLER_AND_OWNER_UNUSED_END_CONTRACT.json",
+    "fullDesign": "ERP-CREDIT-01_STAGE77_REMOVED_WITHOUT_SUCCESSOR_COMPLETE_DESIGN.md",
+    "fullPhysicalContract": "ERP-CREDIT-01_STAGE77_REMOVED_FULL_27_COLUMN_PHYSICAL_SUCCESSOR.json",
+    "fullStoreCurrentContract": "ERP-CREDIT-01_STAGE77_REMOVED_FULL_EC36_STORE_PUBLICATION_AND_CURRENT_MEMBERSHIP_CONTRACT.json",
+    "original46": "ALL_NOT_RUN",
+    "permission": {
+      "actualPermissionsObtained": "UNPROVEN_FENCED",
+      "allWriterFinalFencing": "Current original reachable writer/catalogue/IAM/inflight and no-future-use gate must stay protected until solecommit",
+      "approval": "erp.credit.approve with full maker-set SoD",
+      "maker": "erp.credit.correct",
+      "readOnlyIndependentCash": "Actual registered source read scope/object/field/decoder/Store policy only; no Cash writer grant"
+    },
+    "physical": {
+      "EC36": "All original PK/content-UQ/media/canonical receipt constraints plus exact full before/admission/final membership and late OUTPUT registration",
+      "EC47": "Same 5S capture_id/body_digest UQ for exact pair FK plus independent kind/current source semantics",
+      "EC48": "Full original 25 columns plus paired retirement proof; state width40 holds literal39; all original PK/UQ/raw/money/self-FK/checks retained",
+      "EC53": "REMOVED_NO_SUCCESSOR, zero target ceiling, planned/realized successor null, complete original right/members source protected",
+      "EC54": "OLD members complete, source-null admission then atomic source triple binding, no SUCCESSOR member",
+      "native11": "Complete columns/full sets unchanged in this caller"
+    },
+    "remainingOriginalScope": [
+      "Genuine inverse A20 applied versus A30/A31 unapplied compensation",
+      "Nonempty Cash used/unknown final Owner recovery",
+      "DP11 two bridges allwriters and fencing",
+      "Whole46 source/API/FE/permission/schema/canonical-route final complete closure"
+    ],
+    "requestBinding": {
+      "canonicalRoute": "/api/erp/credit/v1/outcomes/{outcomeId}/corrections",
+      "exactConcreteRoute": "/api/erp/credit/v1/outcomes/265b86c0-8754-5c50-bd1a-97b60db0fc2c/corrections",
+      "explicitRemovedRightIsSealedAuthorityOptionNotNewWireField": true,
+      "headers": [
+        "X-Correlation-Id",
+        "Idempotency-Key",
+        "If-Match"
+      ],
+      "method": "POST",
+      "newCallerDefinition": "CP6_CREDIT_REMOVED_UNUSED_CALLER_1",
+      "noNewCashOrFinanceOutbound": true,
+      "onlyOneCreditSelection": true,
+      "operation": "EC-C06",
+      "originalQueryRoutes": [
+        "EC-Q05",
+        "EC-Q07"
+      ],
+      "publicClosedFiveFields": [
+        "commandId",
+        "componentSelections",
+        "correctionAuthorityOptionId",
+        "expectedRowVersion",
+        "reason"
+      ]
+    },
+    "schema": "ERP_CREDIT.STAGE77_ONE_OLD_HISTORY_BOUNDARY_ROOT_LAYER_BINDINGS.1",
+    "scope": "One Stage76 OLD/current identity boundary root and full required raw/Store/consumer propagation only; accepted maincurrent five-root facts stay exact",
+    "source": {
+      "ec54Qualification": "All three source fields null at admission; after actual EC47/Store exists, atomic full PK+immutable before+source-null bind once",
+      "financeProofSeparatedFromCash": true,
+      "nativeBeforeEqualsAfter": true,
+      "nativeSelfChangeSet": [],
+      "nonemptyHistory": "Exact original three origins and complete query/command/history pending; final inverse/recovery remains open",
+      "sameActualObjects": "MainUow/DbConnection/DbTransaction/provider binding, registration/handler/decoder/IAM and protection-resource identity, not GUID labels",
+      "unusedOwnerEnd": "Genuine current already lawful original Owner end; complete module 7/read-only original eleven-table/native source; conditional prior end is not runtime proof"
+    },
+    "stage75ReturnRepairOnly": {
+      "currentHeadDecision": "Exact new result decision ID/version2 after original before CAS; all current/OUTPUT/final copies",
+      "decisionWorkOrdinal": 2,
+      "draftWorkOrdinal": 4,
+      "fullTargetAndSelectionRangeSha256": "ed395d686121e0741b44df37fed3ecf39f6be5a190fa90a31daa04d6662f8d30",
+      "fullWorkVersionDomain": "ERP-CREDIT-01_STAGE77_REMOVED_ONE_COMPONENT_FULL_NORMAL_WORKING.json#/completePhysicalContract/immutableWorkVersionDomain",
+      "ledgerOrdinalIsNotExecutionOrder": true,
+      "oldClaimHistoryRangeDigestNotRewritten": true,
+      "originalEC05EC08UqAndChecksUnchanged": true,
+      "outputRVAndDraftMetadata": "One opaque actual-output RV domain; phase5 draftVersion4 matches physical/raw/public",
+      "physicalPayloadCounts": "Typed new request_body_digest→exact_request_bytes and result_digest→outcome_bytes derive from final canonical bytes; all copies/Store/OUTPUT/final/rollback rebound",
+      "removedCurrentCash": "Full canonical current source, EC47/qualification/retirement proof and stage8/final current none/0; no phantom successor",
+      "rootCount": 5,
+      "stage74PrimaryPassNotReopened": true
+    },
+    "stage77OldImmutableHistoryRepairOnly": {
+      "affectedCurrentRawsReissued": 15,
+      "all88OldIdentityVersionFieldsRestored": true,
+      "allCurrentRaws": 72,
+      "creditIncrement": false,
+      "currentTypedPublicationAndNavigationOnly": true,
+      "exactOriginalSource": "Stage74 frozen complete-fresh-existing-child-source-cut; full 32/41 old history groups restored",
+      "latestOverallFormalProgress": "60/61 after separate EXC archive",
+      "noGlobalIdentityStringOrEncodedPayloadReplacement": true,
+      "originalStage74Stage75Stage76InputAndReviewBytesUnchanged": true,
+      "response": "STAGE77_ONE_NATURAL_HISTORY_ROOT_RESPONSE_AND_ALL_FIELD_PROPAGATION.json",
+      "rootCount": 1,
+      "stage76NewDraft4Decision2AndCorrectCurrentFactsRetained": true,
+      "stage8Old45ColumnClassification": "Exact actual released original af890…/v1 row, c851…/598 original preimage; mutable current capture proof references separately rebound"
+    },
+    "state": "RETIRED_WITHOUT_SUCCESSOR_PROVED_UNUSED",
+    "wholeComplete": false,
+    "wholeFreeze": false,
+    "wholeReady": false
+  },
+  "x-stage87-nonempty-cash-bounded-required-design": {
+    "currentBindingKey": "stage87CashOwnerRecoveryBoundedCurrent",
+    "publicWire": "original-C06-five-fields-and-WholeWorkView-envelope-unchanged",
+    "currentLocalIdentity": "5c69ab79e3127af6154e32df4b2ad410c9f6f86f57206f4eca32c527d81b757d",
+    "sourceContract": "ERP-CREDIT-01_STAGE87_REQUIRED_CURRENT_SOURCE_TYPED_RAW_OUTPUT_CALLBACK_CONTRACT.json",
+    "fullNestedInventory": "ERP-CREDIT-01_STAGE87_COMPLETE_CLOSED_TYPED_PROJECTION_DOMAIN_AND_FULL_NESTED_SOURCE_INVENTORY.json",
+    "erpCashMutationCapabilities": [],
+    "cashOwnerRoutesAreUnobtainedProposalLocators": true,
+    "actualSourceCodecIamStoreSchemaObjectsKnownCommit": "UNPROVEN_FENCED",
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage88-current-source-three-root-design": {
+    "currentBindingKey": "stage88CashOwnerRecoveryBoundedCurrent",
+    "recursiveTypedSource": "ERP-CREDIT-01_STAGE88_COMPLETE_RECURSIVE_CLOSED_TYPED_NATIVE_LOCAL_SOURCE_DOMAINS_AND_CURRENT_DISPATCH.json",
+    "publicC06WireAndOriginalNative8FinanceWireUnchanged": true,
+    "knownCommitRetryUsesSameFullCommittedCutAndZeroWrites": true,
+    "actual": "UNPROVEN_FENCED",
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage89-current-audit-scope-recovery-three-root-design": {
+    "currentBindingKey": "stage89CashOwnerRecoveryBoundedCurrent",
+    "currentLayerBindings": "STAGE89_FULL_CURRENT_AUDIT_SCOPE_RECOVERY_SOURCE_LAYER_BINDINGS.json",
+    "recursiveTypedSource": "ERP-CREDIT-01_STAGE89_COMPLETE_RECURSIVE_CLOSED_TYPED_NATIVE_LOCAL_SOURCE_DOMAINS_AND_CURRENT_DISPATCH.json",
+    "physicalAuditTimesEqualExactUnchangedBody": true,
+    "recoveryTupleBytesEqualExactUnchangedRawStoreAndCapture": true,
+    "originalBoundedScopeStringsSeparateFromStrictDigestDomain": true,
+    "currentRawStoreProjectionBodiesExactlyReused": true,
+    "publicC06WireAndOriginalNative8FinanceWireUnchanged": true,
+    "knownCommitRetryUsesSameFullCommittedCutAndZeroWrites": true,
+    "erpCashMutationCapabilities": [],
+    "actual": "UNPROVEN_FENCED",
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage90-one-db-unit-dp11-required-design": {
+    "currentBindingKey": "stage90Dp11SingleDatabaseBoundedCurrent",
+    "completeLayerBindings": "STAGE90_FULL_CURRENT_DP11_SINGLE_DB_ALL_WRITER_LAYER_BINDINGS.json",
+    "q16Producer": "erp_credit.stage90_dp11_q16",
+    "publicMutationRoutesAdded": [],
+    "originalQ16ClosedTypeAndP08ReadOnlyActionsPreserved": true,
+    "actualDeploymentModulePermissionsDatabaseAndSource": "UNPROVEN_FENCED",
+    "actualChanges": 0,
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage91-original-terminal-and-unknown-commit-dp11-required-design": {
+    "currentBindingKey": "stage91Dp11OriginalTerminalUnknownCommitBoundedCurrent",
+    "completeLayerBindings": "STAGE91_FULL_CURRENT_DP11_ORIGINAL_TERMINAL_UNKNOWN_COMMIT_LAYER_BINDINGS.json",
+    "q16Producer": "erp_credit.stage91_dp11_q16",
+    "publicMutationRoutesAdded": [],
+    "publicUnknownHeadStateAdded": false,
+    "originalKnownRetry89Local4SourceRolesPreserved": true,
+    "originalIntentRecoveryNewWrites": [],
+    "returned90CurrentFallbackAllowed": false,
+    "actualDeploymentModulePermissionsDatabaseAndSource": "UNPROVEN_FENCED",
+    "actualChanges": 0,
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage92-applied-inverse-commercial-c06-required-composed-source": {
+    "currentBindingKey": "stage92AppliedInverseC06ReturnOnlyBoundedCurrent",
+    "completeLayerBindings": "STAGE92_FULL_CURRENT_APPLIED_INVERSE_C06_RETURN_ONLY_LAYER_BINDINGS.json",
+    "publicMutationRoutesAdded": [],
+    "originalPublicC06FieldSetUnchanged": true,
+    "oldNativeFinanceInverseRepeats": 0,
+    "newPhysicalRangeSuccessorQuantity": 15,
+    "financialCreditTarget": 0,
+    "unknownOriginalCommitActualAfter": null,
+    "actualRuntimeSourceModulesIamStore": "UNPROVEN_FENCED",
+    "actualChanges": 0,
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage93-finite-media-ec26-c06-required-composed-source": {
+    "currentBindingKey": "stage93AppliedC06FiniteMediaEc26CurrentBoundedCurrent",
+    "completeLayerBindings": "STAGE93_FULL_CURRENT_APPLIED_INVERSE_C06_RETURN_ONLY_LAYER_BINDINGS.json",
+    "publicMutationRoutesAdded": [],
+    "originalPublicC06FieldSetUnchanged": true,
+    "oldNativeFinanceInverseRepeats": 0,
+    "newPhysicalRangeSuccessorQuantity": 15,
+    "financialCreditTarget": 0,
+    "unknownOriginalCommitActualAfter": null,
+    "actualRuntimeSourceModulesIamStore": "UNPROVEN_FENCED",
+    "actualChanges": 0,
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage94-nullable-authority-revision-c06-required-composed-source": {
+    "currentBindingKey": "stage94AppliedC06NullableAndAuthorityRevisionBoundedCurrent",
+    "completeLayerBindings": "STAGE94_FULL_CURRENT_APPLIED_INVERSE_C06_RETURN_ONLY_LAYER_BINDINGS.json",
+    "publicMutationRoutesAdded": [],
+    "originalPublicC06FieldSetUnchanged": true,
+    "oldNativeFinanceInverseRepeats": 0,
+    "newPhysicalRangeSuccessorQuantity": 15,
+    "financialCreditTarget": 0,
+    "unknownOriginalCommitActualAfter": null,
+    "actualRuntimeSourceModulesIamStore": "UNPROVEN_FENCED",
+    "actualChanges": 0,
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage95-unapplied-compensation-c06-required-composed-source": {
+    "currentBindingKey": "stage95UnappliedCompensationC06ReturnOnlyBoundedCurrent",
+    "completeLayerBindings": "STAGE95_FULL_CURRENT_UNAPPLIED_COMPENSATION_C06_RETURN_ONLY_LAYER_BINDINGS.json",
+    "publicMutationRoutesAdded": [],
+    "originalPublicC06FieldSetUnchanged": true,
+    "oldNativeFinanceCompensationRepeats": 0,
+    "newPhysicalRangeSuccessorQuantity": 15,
+    "financialCreditTarget": 0,
+    "unknownOriginalCommitActualAfter": null,
+    "actualRuntimeSourceModulesIamStore": "UNPROVEN_FENCED",
+    "actualChanges": 0,
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  },
+  "x-stage96-original-origin-canonical-head-proof-required-composed-source": {
+    "currentBindingKey": "stage96UnappliedC06OriginalOriginAndCanonicalHeadProofBoundedCurrent",
+    "completeLayerBindings": "STAGE96_FULL_CURRENT_UNAPPLIED_COMPENSATION_C06_RETURN_ONLY_LAYER_BINDINGS.json",
+    "publicMutationRoutesAdded": [],
+    "originalPublicC06FieldSetUnchanged": true,
+    "oldNativeFinanceCompensationRepeats": 0,
+    "newPhysicalRangeSuccessorQuantity": 15,
+    "financialCreditTarget": 0,
+    "unknownOriginalCommitActualAfter": null,
+    "actualRuntimeSourceModulesIamStore": "UNPROVEN_FENCED",
+    "actualChanges": 0,
+    "all46": "NOT_RUN",
+    "wholeReady": false,
+    "wholeComplete": false,
+    "wholeFreeze": false
+  }
+}

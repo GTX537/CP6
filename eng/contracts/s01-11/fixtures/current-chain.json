@@ -1,0 +1,3801 @@
+{
+  "origin": "SELECTED_CURRENT_DESIGN_PROJECTION_NOT_OWNER_PROOF",
+  "derivation_manifest_sha256": "7c0c97bce1498895fccdb11830f3d896f037dc49234419f856ca3be6385bfd75",
+  "credit_money": {
+    "canonicalization": "sorted compact UTF8 JSON; no trailing LF",
+    "money_pointers": {
+      "multi_mixed_complete_public_q14": [
+        "/data/outcome/value/components/0/invoiceAllocations/0/gross",
+        "/data/outcome/value/components/0/invoiceAllocations/0/net",
+        "/data/outcome/value/components/0/invoiceAllocations/0/tax",
+        "/data/outcome/value/components/0/invoiceAllocations/1/gross",
+        "/data/outcome/value/components/0/invoiceAllocations/1/net",
+        "/data/outcome/value/components/0/invoiceAllocations/1/tax",
+        "/data/outcome/value/components/1/invoiceAllocations/0/gross",
+        "/data/outcome/value/components/1/invoiceAllocations/0/net",
+        "/data/outcome/value/components/1/invoiceAllocations/0/tax"
+      ],
+      "wn11_c06_exact_saved_200": [
+        "/data/outcome/value/allocations/0/gross",
+        "/data/outcome/value/allocations/0/net",
+        "/data/outcome/value/allocations/0/tax"
+      ],
+      "wn11_complete_current_q14": [
+        "/data/outcome/value/allocations/0/gross",
+        "/data/outcome/value/allocations/0/net",
+        "/data/outcome/value/allocations/0/tax"
+      ],
+      "wn11_existing_target_c06_saved_200": [
+        "/publicSavedResponseTemplate/data/outcome/value/allocations/0/gross",
+        "/publicSavedResponseTemplate/data/outcome/value/allocations/0/net",
+        "/publicSavedResponseTemplate/data/outcome/value/allocations/0/tax"
+      ]
+    },
+    "body_identities": {
+      "multi_mixed_complete_public_q14": {
+        "before_digest": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+        "before_bytes": 21365,
+        "after_digest": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+        "after_bytes": 21356
+      },
+      "wn11_c06_exact_saved_200": {
+        "before_digest": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+        "before_bytes": 7353,
+        "after_digest": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+        "after_bytes": 7350
+      },
+      "wn11_complete_current_q14": {
+        "before_digest": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+        "before_bytes": 9049,
+        "after_digest": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+        "after_bytes": 9046
+      },
+      "wn11_existing_target_c06_saved_200": {
+        "before_digest": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+        "before_bytes": 9252,
+        "after_digest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "after_bytes": 9249
+      },
+      "multi_public_native_lookup_binding": {
+        "before_digest": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+        "before_bytes": 3304,
+        "after_digest": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+        "after_bytes": 3304
+      }
+    },
+    "dependency_operations": {
+      "02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS": 56,
+      "04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS": 9,
+      "05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS": 4,
+      "12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS": 648,
+      "13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES": 2
+    },
+    "dag": [
+      "4 public bodies -> MULTI lookup-binding body",
+      "all 5 bodies -> CURRENT02 body directory + rawRef8 + Store7 receipt canonical/hash/bytes",
+      "all 5 bodies -> CURRENT04 wholeBody",
+      "WN11 q14 + terminal -> CURRENT05 pins",
+      "WN11 existing-target terminal -> CURRENT12 324 typed sources + CURRENT13 root R98-03"
+    ],
+    "historical_index_and_evidence_mutations": 0,
+    "actual_runtime_receipts_created": 0
+  },
+  "credit_openapi": {
+    "parseable_format": "single JSON OpenAPI document",
+    "routes": 29,
+    "preserved_extension_blocks": [
+      "x-stage87-nonempty-cash-bounded-required-design",
+      "x-stage88-current-source-three-root-design",
+      "x-stage89-current-audit-scope-recovery-three-root-design",
+      "x-stage90-one-db-unit-dp11-required-design",
+      "x-stage91-original-terminal-and-unknown-commit-dp11-required-design",
+      "x-stage92-applied-inverse-commercial-c06-required-composed-source",
+      "x-stage93-finite-media-ec26-c06-required-composed-source",
+      "x-stage94-nullable-authority-revision-c06-required-composed-source",
+      "x-stage95-unapplied-compensation-c06-required-composed-source",
+      "x-stage96-original-origin-canonical-head-proof-required-composed-source"
+    ],
+    "stage94_duplicate_key_repaired": true,
+    "checked_local_and_type_refs": 192,
+    "replay": {
+      "C01": "HTTP201 COMMITTED saved body -> HTTP200 same exact body",
+      "C02": "HTTP201 COMMITTED saved body -> HTTP200 same exact body"
+    }
+  },
+  "records": [
+    {
+      "source_id": "composed-04",
+      "json_pointer": "/q14Body",
+      "selected_value": {
+        "bodyKey": "multi_mixed_complete_public_q14",
+        "expectedBytes": 21356,
+        "expectedDigest": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+        "wholeBytesPath": "BODIES/multi_mixed_complete_public_q14.json"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/bodies/34",
+      "selected_value": {
+        "actualIssuerRef": null,
+        "actualNativeCodecRef": null,
+        "actualRegisteredPublisherRef": null,
+        "actualStoreReceipt": null,
+        "bodyKey": "multi_public_native_lookup_binding",
+        "bodyType": "RequiredPublicNativeSourceLookupBinding",
+        "bytes": 3304,
+        "canonicalBytesStoredOnce": true,
+        "canonicalization": "UTF8_JSON_SORTED_KEYS_NO_WHITESPACE_NO_TRAILING_LF_DECIMAL_STRINGS",
+        "case": "MULTI",
+        "documentRawRef8": {
+          "byteLength": 3304,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+          "handle": "cas://erp-credit/f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f/3304",
+          "mediaType": "application/json",
+          "owner": "ERP-CREDIT-01",
+          "putReceiptId": "d7da7474-0a78-5170-a92d-1eeb5fbb041c",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-SC19",
+            "legalEntityKey": "LE-SC19",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "isExecutionPermit": false,
+        "mediaType": "application/json",
+        "path": "BODIES/multi_public_native_lookup_binding.json",
+        "qualifiedLookupContract": "REQUIRED98_EXACT_ORIGINAL_TYPED_DOMAIN_PHASE_LOOKUP",
+        "role": "NEW_REQUIRED_CONDITIONAL_DOCUMENT_BODY",
+        "sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+        "sourceQualification": "REQUIRED_UNACCEPTED_DOCUMENT_CONDITIONAL_NORMAL"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/bodies/41",
+      "selected_value": {
+        "actualIssuerRef": null,
+        "actualNativeCodecRef": null,
+        "actualRegisteredPublisherRef": null,
+        "actualStoreReceipt": null,
+        "bodyKey": "multi_mixed_complete_public_q14",
+        "bodyType": "OriginalClosedQ14FourteenFieldsCurrent",
+        "bytes": 21356,
+        "canonicalBytesStoredOnce": true,
+        "canonicalization": "UTF8_JSON_SORTED_KEYS_NO_WHITESPACE_NO_TRAILING_LF_DECIMAL_STRINGS",
+        "case": "MULTI",
+        "documentRawRef8": {
+          "byteLength": 21356,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+          "handle": "cas://erp-credit/ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4/21356",
+          "mediaType": "application/json",
+          "owner": "ERP-CREDIT-01",
+          "putReceiptId": "830550b0-c2ec-53b9-9e30-ad1a3e90cd77",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-SC19",
+            "legalEntityKey": "LE-SC19",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "isExecutionPermit": false,
+        "mediaType": "application/json",
+        "path": "BODIES/multi_mixed_complete_public_q14.json",
+        "qualifiedLookupContract": "REQUIRED98_EXACT_ORIGINAL_TYPED_DOMAIN_PHASE_LOOKUP",
+        "role": "NEW_REQUIRED_CONDITIONAL_DOCUMENT_BODY",
+        "sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+        "sourceQualification": "REQUIRED_UNACCEPTED_DOCUMENT_CONDITIONAL_NORMAL"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/bodies/45",
+      "selected_value": {
+        "actualIssuerRef": null,
+        "actualNativeCodecRef": null,
+        "actualRegisteredPublisherRef": null,
+        "actualStoreReceipt": null,
+        "bodyKey": "wn11_complete_current_q14",
+        "bodyType": "OriginalClosedQ14FourteenFieldsCurrent",
+        "bytes": 9046,
+        "canonicalBytesStoredOnce": true,
+        "canonicalization": "UTF8_JSON_SORTED_KEYS_NO_WHITESPACE_NO_TRAILING_LF_DECIMAL_STRINGS",
+        "case": "WN11",
+        "documentRawRef8": {
+          "byteLength": 9046,
+          "createdAt": "2026-10-07T15:39:20.000Z",
+          "digest": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+          "handle": "cas://erp-credit/880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365/9046",
+          "mediaType": "application/json",
+          "owner": "ERP-CREDIT-01",
+          "putReceiptId": "15193677-b33e-564e-adb2-20d909bf15a5",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-WHOLE",
+            "legalEntityKey": "LE-WHOLE",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "isExecutionPermit": false,
+        "mediaType": "application/json",
+        "path": "BODIES/wn11_complete_current_q14.json",
+        "qualifiedLookupContract": "REQUIRED98_EXACT_ORIGINAL_TYPED_DOMAIN_PHASE_LOOKUP",
+        "role": "NEW_REQUIRED_CONDITIONAL_DOCUMENT_BODY",
+        "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+        "sourceQualification": "REQUIRED_UNACCEPTED_DOCUMENT_CONDITIONAL_NORMAL"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/bodies/50",
+      "selected_value": {
+        "actualIssuerRef": null,
+        "actualNativeCodecRef": null,
+        "actualRegisteredPublisherRef": null,
+        "actualStoreReceipt": null,
+        "bodyKey": "wn11_c06_exact_saved_200",
+        "bodyType": "OriginalClosedC06SavedBusinessResponseCurrentOriginUnion",
+        "bytes": 7350,
+        "canonicalBytesStoredOnce": true,
+        "canonicalization": "UTF8_JSON_SORTED_KEYS_NO_WHITESPACE_NO_TRAILING_LF_DECIMAL_STRINGS",
+        "case": "WN11",
+        "documentRawRef8": {
+          "byteLength": 7350,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+          "handle": "cas://erp-credit/a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138/7350",
+          "mediaType": "application/json",
+          "owner": "ERP-CREDIT-01",
+          "putReceiptId": "ab654da5-cc86-5fe5-8dd9-1f8de56b2004",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-WHOLE",
+            "legalEntityKey": "LE-WHOLE",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "isExecutionPermit": false,
+        "mediaType": "application/json",
+        "path": "BODIES/wn11_c06_exact_saved_200.json",
+        "qualifiedLookupContract": "REQUIRED98_EXACT_ORIGINAL_TYPED_DOMAIN_PHASE_LOOKUP",
+        "role": "NEW_REQUIRED_CONDITIONAL_DOCUMENT_BODY",
+        "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+        "sourceQualification": "REQUIRED_UNACCEPTED_DOCUMENT_CONDITIONAL_NORMAL"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/bodies/63",
+      "selected_value": {
+        "actualIssuerRef": null,
+        "actualNativeCodecRef": null,
+        "actualRegisteredPublisherRef": null,
+        "actualStoreReceipt": null,
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "bodyType": "Required99_wn11_existing_target_c06_saved_200",
+        "bytes": 9249,
+        "canonicalBytesStoredOnce": true,
+        "canonicalization": "UTF8_JSON_SORTED_KEYS_NO_WHITESPACE_NO_TRAILING_LF_DECIMAL_STRINGS",
+        "case": "WN11",
+        "documentRawRef8": {
+          "byteLength": 9249,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+          "handle": "cas://erp-credit/def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07/9249",
+          "mediaType": "application/json",
+          "owner": "ERP-CREDIT-01",
+          "putReceiptId": "8a35d98c-fe3d-5749-8a10-7baad93067b9",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-WHOLE",
+            "legalEntityKey": "LE-WHOLE",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "isExecutionPermit": false,
+        "mediaType": "application/json",
+        "path": "BODIES/wn11_existing_target_c06_saved_200.json",
+        "qualifiedLookupContract": "CURRENT/12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+        "role": "PRIVATE_REQUIRED_PARAMETERIZED_WN11_04_BODY_RECIPE_NOT_NATIVE_PUBLIC_OR_STORE_FACT",
+        "sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "sourceQualification": "REQUIRED_UNACCEPTED_DOCUMENT_CONDITIONAL_NORMAL"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/storeReceipts/34",
+      "selected_value": {
+        "actualNewMetadataWrites": 0,
+        "actualRuntimeStoreReceipt": null,
+        "bodyBytes": 3304,
+        "bodyCanonicalPublishedAsWholeBytesNotQuotedString": true,
+        "bodyKey": "multi_public_native_lookup_binding",
+        "bodySha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+        "exactBodyPath": "BODIES/multi_public_native_lookup_binding.json",
+        "originalReceiptMetadata7": {
+          "byteLength": 3304,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+          "handle": "cas://erp-credit/f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f/3304",
+          "mediaType": "application/json",
+          "receiptId": "d7da7474-0a78-5170-a92d-1eeb5fbb041c",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-SC19",
+            "legalEntityKey": "LE-SC19",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "putIfAbsentSameScopeHandleFullBytesMetadataNoTimestampRenewal": true,
+        "receiptCanonicalBytes": 464,
+        "receiptCanonicalSha256": "b92105b7b48d861dcd249821c2a82fd539c35011cff52a0a62b5d0cda5c960d6",
+        "receiptCanonicalUtf8": "{\"byteLength\":3304,\"createdAt\":\"2026-10-07T15:35:00.000Z\",\"digest\":\"f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f\",\"handle\":\"cas://erp-credit/f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f/3304\",\"mediaType\":\"application/json\",\"receiptId\":\"d7da7474-0a78-5170-a92d-1eeb5fbb041c\",\"scope\":{\"environmentId\":\"demo\",\"ledgerKey\":\"LEDGER-SC19\",\"legalEntityKey\":\"LE-SC19\",\"mode\":\"DEMO\",\"tenantId\":\"11111111-1111-4111-8111-111111111111\"}}"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/storeReceipts/41",
+      "selected_value": {
+        "actualNewMetadataWrites": 0,
+        "actualRuntimeStoreReceipt": null,
+        "bodyBytes": 21356,
+        "bodyCanonicalPublishedAsWholeBytesNotQuotedString": true,
+        "bodyKey": "multi_mixed_complete_public_q14",
+        "bodySha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+        "exactBodyPath": "BODIES/multi_mixed_complete_public_q14.json",
+        "originalReceiptMetadata7": {
+          "byteLength": 21356,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+          "handle": "cas://erp-credit/ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4/21356",
+          "mediaType": "application/json",
+          "receiptId": "830550b0-c2ec-53b9-9e30-ad1a3e90cd77",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-SC19",
+            "legalEntityKey": "LE-SC19",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "putIfAbsentSameScopeHandleFullBytesMetadataNoTimestampRenewal": true,
+        "receiptCanonicalBytes": 466,
+        "receiptCanonicalSha256": "cda01f5959195e0405086e8cb6e9521d24afc50a801ac834e980e9b7d419fbbc",
+        "receiptCanonicalUtf8": "{\"byteLength\":21356,\"createdAt\":\"2026-10-07T15:35:00.000Z\",\"digest\":\"ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4\",\"handle\":\"cas://erp-credit/ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4/21356\",\"mediaType\":\"application/json\",\"receiptId\":\"830550b0-c2ec-53b9-9e30-ad1a3e90cd77\",\"scope\":{\"environmentId\":\"demo\",\"ledgerKey\":\"LEDGER-SC19\",\"legalEntityKey\":\"LE-SC19\",\"mode\":\"DEMO\",\"tenantId\":\"11111111-1111-4111-8111-111111111111\"}}"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/storeReceipts/45",
+      "selected_value": {
+        "actualNewMetadataWrites": 0,
+        "actualRuntimeStoreReceipt": null,
+        "bodyBytes": 9046,
+        "bodyCanonicalPublishedAsWholeBytesNotQuotedString": true,
+        "bodyKey": "wn11_complete_current_q14",
+        "bodySha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+        "exactBodyPath": "BODIES/wn11_complete_current_q14.json",
+        "originalReceiptMetadata7": {
+          "byteLength": 9046,
+          "createdAt": "2026-10-07T15:39:20.000Z",
+          "digest": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+          "handle": "cas://erp-credit/880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365/9046",
+          "mediaType": "application/json",
+          "receiptId": "15193677-b33e-564e-adb2-20d909bf15a5",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-WHOLE",
+            "legalEntityKey": "LE-WHOLE",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "putIfAbsentSameScopeHandleFullBytesMetadataNoTimestampRenewal": true,
+        "receiptCanonicalBytes": 466,
+        "receiptCanonicalSha256": "c714643e7e229fd671b0370fa0e122e0fc6aa61a27f0a37b90c22dfd810f0c17",
+        "receiptCanonicalUtf8": "{\"byteLength\":9046,\"createdAt\":\"2026-10-07T15:39:20.000Z\",\"digest\":\"880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365\",\"handle\":\"cas://erp-credit/880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365/9046\",\"mediaType\":\"application/json\",\"receiptId\":\"15193677-b33e-564e-adb2-20d909bf15a5\",\"scope\":{\"environmentId\":\"demo\",\"ledgerKey\":\"LEDGER-WHOLE\",\"legalEntityKey\":\"LE-WHOLE\",\"mode\":\"DEMO\",\"tenantId\":\"11111111-1111-4111-8111-111111111111\"}}"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/storeReceipts/50",
+      "selected_value": {
+        "actualNewMetadataWrites": 0,
+        "actualRuntimeStoreReceipt": null,
+        "bodyBytes": 7350,
+        "bodyCanonicalPublishedAsWholeBytesNotQuotedString": true,
+        "bodyKey": "wn11_c06_exact_saved_200",
+        "bodySha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+        "exactBodyPath": "BODIES/wn11_c06_exact_saved_200.json",
+        "originalReceiptMetadata7": {
+          "byteLength": 7350,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+          "handle": "cas://erp-credit/a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138/7350",
+          "mediaType": "application/json",
+          "receiptId": "ab654da5-cc86-5fe5-8dd9-1f8de56b2004",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-WHOLE",
+            "legalEntityKey": "LE-WHOLE",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "putIfAbsentSameScopeHandleFullBytesMetadataNoTimestampRenewal": true,
+        "receiptCanonicalBytes": 466,
+        "receiptCanonicalSha256": "2146c17a814e53ef53adde3a685bbedb3f9da15f54c503dda0971de82b652c79",
+        "receiptCanonicalUtf8": "{\"byteLength\":7350,\"createdAt\":\"2026-10-07T15:35:00.000Z\",\"digest\":\"a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138\",\"handle\":\"cas://erp-credit/a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138/7350\",\"mediaType\":\"application/json\",\"receiptId\":\"ab654da5-cc86-5fe5-8dd9-1f8de56b2004\",\"scope\":{\"environmentId\":\"demo\",\"ledgerKey\":\"LEDGER-WHOLE\",\"legalEntityKey\":\"LE-WHOLE\",\"mode\":\"DEMO\",\"tenantId\":\"11111111-1111-4111-8111-111111111111\"}}"
+      }
+    },
+    {
+      "source_id": "composed-05",
+      "json_pointer": "/storeReceipts/63",
+      "selected_value": {
+        "actualNewMetadataWrites": 0,
+        "actualRuntimeStoreReceipt": null,
+        "bodyBytes": 9249,
+        "bodyCanonicalPublishedAsWholeBytesNotQuotedString": true,
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "bodySha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "documentModelStoreTupleNeverRuntimeBodyStream": true,
+        "exactBodyPath": "BODIES/wn11_existing_target_c06_saved_200.json",
+        "originalReceiptMetadata7": {
+          "byteLength": 9249,
+          "createdAt": "2026-10-07T15:35:00.000Z",
+          "digest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+          "handle": "cas://erp-credit/def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07/9249",
+          "mediaType": "application/json",
+          "receiptId": "8a35d98c-fe3d-5749-8a10-7baad93067b9",
+          "scope": {
+            "environmentId": "demo",
+            "ledgerKey": "LEDGER-WHOLE",
+            "legalEntityKey": "LE-WHOLE",
+            "mode": "DEMO",
+            "tenantId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "putIfAbsentSameScopeHandleFullBytesMetadataNoTimestampRenewal": true,
+        "receiptCanonicalBytes": 466,
+        "receiptCanonicalSha256": "20b34d8affb7aa077a10439a2e7ebc380ce66ed9869d6eeb338aded4acb29a47",
+        "receiptCanonicalUtf8": "{\"byteLength\":9249,\"createdAt\":\"2026-10-07T15:35:00.000Z\",\"digest\":\"def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07\",\"handle\":\"cas://erp-credit/def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07/9249\",\"mediaType\":\"application/json\",\"receiptId\":\"8a35d98c-fe3d-5749-8a10-7baad93067b9\",\"scope\":{\"environmentId\":\"demo\",\"ledgerKey\":\"LEDGER-WHOLE\",\"legalEntityKey\":\"LE-WHOLE\",\"mode\":\"DEMO\",\"tenantId\":\"11111111-1111-4111-8111-111111111111\"}}"
+      }
+    },
+    {
+      "source_id": "composed-06",
+      "json_pointer": "/allNewDocumentBodyTypes/multi_mixed_complete_public_q14/wholeBody",
+      "selected_value": {
+        "bodyKey": "multi_mixed_complete_public_q14",
+        "bytes": 21356,
+        "path": "BODIES/multi_mixed_complete_public_q14.json",
+        "sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4"
+      }
+    },
+    {
+      "source_id": "composed-06",
+      "json_pointer": "/allNewDocumentBodyTypes/multi_public_native_lookup_binding/wholeBody",
+      "selected_value": {
+        "bodyKey": "multi_public_native_lookup_binding",
+        "bytes": 3304,
+        "path": "BODIES/multi_public_native_lookup_binding.json",
+        "sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f"
+      }
+    },
+    {
+      "source_id": "composed-06",
+      "json_pointer": "/allNewDocumentBodyTypes/wn11_c06_exact_saved_200/wholeBody",
+      "selected_value": {
+        "bodyKey": "wn11_c06_exact_saved_200",
+        "bytes": 7350,
+        "path": "BODIES/wn11_c06_exact_saved_200.json",
+        "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138"
+      }
+    },
+    {
+      "source_id": "composed-06",
+      "json_pointer": "/allNewDocumentBodyTypes/wn11_complete_current_q14/wholeBody",
+      "selected_value": {
+        "bodyKey": "wn11_complete_current_q14",
+        "bytes": 9046,
+        "path": "BODIES/wn11_complete_current_q14.json",
+        "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365"
+      }
+    },
+    {
+      "source_id": "composed-06",
+      "json_pointer": "/allNewDocumentBodyTypes/wn11_existing_target_c06_saved_200/wholeBody",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "bytes": 9249,
+        "path": "BODIES/wn11_existing_target_c06_saved_200.json",
+        "sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07"
+      }
+    },
+    {
+      "source_id": "composed-07",
+      "json_pointer": "/publicBodies/WN11/bodyPins/q14",
+      "selected_value": {
+        "bodyKey": "wn11_complete_current_q14",
+        "bytes": 9046,
+        "path": "BODIES/wn11_complete_current_q14.json",
+        "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365"
+      }
+    },
+    {
+      "source_id": "composed-07",
+      "json_pointer": "/publicBodies/WN11/bodyPins/terminal",
+      "selected_value": {
+        "bodyKey": "wn11_c06_exact_saved_200",
+        "bytes": 7350,
+        "path": "BODIES/wn11_c06_exact_saved_200.json",
+        "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/bodyStreams/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/admitted_budget_row_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/basis_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/budget_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/correction_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/currency/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/entitlement_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/increase_claim_row_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/member_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/old_basis_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/old_claim_count/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/old_claim_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/old_claim_row_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/old_claim_row_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/old_claim_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/original_budget_row_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/realized_successor_claim_row_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/realized_successor_claim_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/stable_economic_right_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/stable_effect_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/staged_successor_claim_row_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/target_gross/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/target_range_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:11/fields/target_range_set_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/child_key_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/child_ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/correction_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/dispatch_alias_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/dispatch_alias_set_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_canonical_route/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_command_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_command_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_fin_ar_work_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_method/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_query_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_query_identity_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_request_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/original_request_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/recorded_by_service/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/recovery_evidence_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/recovery_evidence_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/recovery_evidence_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/recovery_evidence_put_receipt_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/result_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/result_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/result_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/result_put_receipt_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/root_ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/source_capture_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/source_capture_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/source_contract_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:12/fields/source_registration_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/correction_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/linked_credit_selection_ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/original_component_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/original_source_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/planned_component_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/planned_draft_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/planned_draft_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/selection_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/selection_ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/selection_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/source_range_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/source_range_set_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:13/fields/stable_effect_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/actor_authority_ref_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/approval_ref_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/approved_at/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/approver_principal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/authority_head_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/correction_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/maker_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/revocation_event_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/revocation_reason/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/source_capture_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/source_capture_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/state/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/subject_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/subject_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/target_component_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/target_root_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/valid_until/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:15/fields/work_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/actor_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/decision_input_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/decision_input_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/decision_input_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/draft_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/draft_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/expected_work_head_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/expected_work_head_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/expected_work_head_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/expected_work_head_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/policy_head_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/policy_head_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/policy_head_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/policy_head_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/policy_member_canonical_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/policy_member_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/policy_member_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/predecessor_draft_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/predecessor_draft_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/source_snapshot_complete_marker/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/source_snapshot_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/source_snapshot_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/state/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/work_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:18/fields/work_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/approval_subject_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/basis_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/component_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/credit_component_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/credit_component_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/currency/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/draft_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/draft_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/new_demand_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/new_demand_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/new_demand_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/new_demand_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/quantity/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/reason_codes_json/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/requested_refund_amount/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:19/fields/stable_effect_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/actor_authority_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/actor_authority_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/actor_authority_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/actor_authority_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/actor_principal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/component_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/decision_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/decision_ref_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/decision_ref_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/decision_ref_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/draft_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/draft_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/makers_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_member_canonical_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_member_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_member_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_member_state/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/policy_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/source_snapshot_complete_marker/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/source_snapshot_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/source_snapshot_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/state/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/subject_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/subject_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/subject_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/subject_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:20/fields/work_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/approval_subject_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/approval_subject_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_member_canonical_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_member_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_member_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_member_state/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/authority_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/decision_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/decision_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/decision_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/decision_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/decision_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_member_canonical_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_member_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_member_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_member_state/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/policy_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/predecessor_decision_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/predecessor_decision_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/source_snapshot_complete_marker/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/source_snapshot_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/source_snapshot_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/state/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/work_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:21/fields/work_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/approval_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/approval_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/approval_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/approval_subject_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/approval_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/component_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/head_proof_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/local_source_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/outcome_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/outcome_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/previous_outcome_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/previous_outcome_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/previous_outcome_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/previous_outcome_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/result_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/schema_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:22/fields/work_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/allocation_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/allocation_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/budget_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/commercial_authority_capture_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/component_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/correction_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/draft_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/draft_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/entitlement_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/finance_recovery_capture_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/group_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/outcome_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/outcome_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/outcome_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/partition_ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/projection_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/projection_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/projection_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/projection_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/selection_ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:23/fields/stable_invoice_right_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/command_slot_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_evidence_preimage_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_evidence_preimage_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_evidence_preimage_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_response_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_response_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_response_created_at/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_response_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/local_response_media_type/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/no_effect_evidence_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/outcome/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/owner_command_result_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/owner_command_result_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/owner_command_result_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/owner_command_result_put_receipt_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/problem_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/problem_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/problem_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/receipt_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/receipt_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/receipt_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/request_body_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/result_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/result_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/result_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/result_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:29/fields/terminal_receipt_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/action/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/aggregate_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/aggregate_kind/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/audit_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/audit_ordinal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/capability/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/correlation_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/event_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/occurred_at/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/predecessor_audit_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/predecessor_audit_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/principal_or_service/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:30/fields/refs_json/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/body_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/body_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/body_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/capture_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/member_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/original_command_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/recorded_by_service/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/registered_source_principal/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/root_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/source_contract_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/source_control_revision/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/source_event_at/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/source_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/source_identity_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/source_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/source_registration_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:5/fields/valid_until/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/binding_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/business_object_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/canonical_route/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/command_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/command_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/command_identity_preimage_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/command_identity_preimage_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/command_identity_preimage_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/command_slot_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/exact_request_blob_ref/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/exact_request_bytes/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/method/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/operation/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/principal_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/request_body_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/request_key/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:6/fields/scope_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/admitted_actor/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/approval_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/approval_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/approval_owner/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/approval_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/approved_at/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/authority_option_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/child_count/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/command_slot_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/correction_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/expected_child_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/expected_head_row_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/expected_root_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/maker_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/original_request_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/original_request_utf8/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/predecessor_outcome_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/predecessor_outcome_id/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/predecessor_outcome_version/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/root_count/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/target_component_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/target_source_set_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/valid_until/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-08",
+      "json_pointer": "/operations/WN11-04:9/fields/work_identity_digest/valueRule/bodyProductionSources/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    },
+    {
+      "source_id": "composed-09",
+      "json_pointer": "/roots/R98-03/bodies/3",
+      "selected_value": {
+        "bodyKey": "wn11_existing_target_c06_saved_200",
+        "expectedBytes": 9249,
+        "expectedDigest": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "wholeBytesPath": "BODIES/wn11_existing_target_c06_saved_200.json"
+      }
+    }
+  ],
+  "source_counts": {
+    "composed-04": 1,
+    "composed-05": 10,
+    "composed-06": 5,
+    "composed-07": 2,
+    "composed-08": 324,
+    "composed-09": 1
+  }
+}

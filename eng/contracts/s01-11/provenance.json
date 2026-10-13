@@ -1,0 +1,398 @@
+{
+  "verification_level": "CONTRACT_DESIGN_ONLY",
+  "sources": [
+    {
+      "source_id": "composed-00",
+      "filename": "multi_mixed_complete_public_q14.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28",
+      "composed_sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/0"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-01",
+      "filename": "wn11_c06_exact_saved_200.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "2c1e10d8c3774f439651b993613b3cbc5456a2ebacd15c48b124f361f247db91",
+      "composed_sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/1"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-02",
+      "filename": "wn11_complete_current_q14.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "4be3772c15e03d7f9d472815e55c1ab04d3dd7ae4b4245aa4bcb1ce3aae2fac7",
+      "composed_sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/2"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-03",
+      "filename": "wn11_existing_target_c06_saved_200.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "8b9eb3a9053f6b1cbace34bba66f420db678d744c002cc6634d5072006f44731",
+      "composed_sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/3"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-04",
+      "filename": "multi_public_native_lookup_binding.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "5c9d29e12fbd0426924c1edc09ba31a045deef890b31c047f4031ccd5b91f8a2",
+      "composed_sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/4"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-05",
+      "filename": "02_UNIQUE_NEW_BODY_DIRECTORY_AND_STORE_BINDINGS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "ffee617f5e9117b9b2971d8938ce2cd43fb21b26b6b2bae6ec703872afb5062b",
+      "composed_sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/5"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-06",
+      "filename": "04_REQUIRED_TYPED_SOURCE_AND_DOMAIN_CONTRACTS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "d12052b9e2cc207c0dfef582b0b0b0309f58c9a261892dd5a1762be0eb955f87",
+      "composed_sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/6"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-07",
+      "filename": "05_API_FE_PERMISSION_DTO_AND_MODULE_BINDINGS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "932077285645b8238d9b1d85eee2f4b3ac7ff85d06e1086545a0e707caf5c8a4",
+      "composed_sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/7"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-08",
+      "filename": "12_WN11_EXISTING_TARGET_COMPLETE_BRANCH_TYPED_PRODUCERS.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "f7b99a4cf4a6ce61101a74f0ab1085ed2a5eace64616106f0cac72ac60e8467c",
+      "composed_sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/8"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-09",
+      "filename": "13_FOUR_ROOT_BOUNDED_REVISION_AND_SOURCE_ROUTES.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "771b25e2f89f7bb210d2c3ebf2eda1f61c8da80c2a1f82168437b8860d04e3b5",
+      "composed_sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/9"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-10",
+      "filename": "c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+      "selected_variants": [
+        "composed",
+        "original"
+      ],
+      "original_sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+      "composed_sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/10"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-11",
+      "filename": "319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+      "selected_variants": [
+        "composed",
+        "original"
+      ],
+      "original_sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+      "composed_sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/11"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "composed-12",
+      "filename": "533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+      "selected_variants": [
+        "composed",
+        "original"
+      ],
+      "original_sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+      "composed_sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+      "git_selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/12"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+          "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+          "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "erp-registry-current",
+      "filename": "c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "selected_variants": [
+        "composed"
+      ],
+      "original_sha256": "c69762861155ed95af608a9d4867e900f8287eccdad3c38bd9c4c6b50f2ee857",
+      "composed_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "git_selector": {
+        "path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+        "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+        "git_blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/33"
+      },
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/fixtures/bounded-patches.json",
+          "sha256": "d9aa79c4efad0ba5ef58da632d65f1f598da3b03f6919eeb1a67617aa1284d94",
+          "git_blob": "0f8916e374f7f2e0e9dad302cadbce0bbb39f7b6",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "source_id": "erp-registry-frozen",
+      "filename": "62effa1e0542784a__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "selected_variants": [
+        "original"
+      ],
+      "original_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "composed_sha256": null,
+      "git_selector": {
+        "path": "docs/design-handbook/indexes/all-files.json",
+        "sha256": "8d0573cd16677ae5e462d7f758f7a1f5e9514be08822eb47f04437066aae16f0",
+        "git_blob": "8e1c2958e633c65096df381e4089073037af1c2b",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/files/6155"
+      },
+      "patch_bundles": []
+    }
+  ],
+  "adopted_assets": [
+    {
+      "source_id": "native",
+      "destination": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+      "byte_length": 24947
+    },
+    {
+      "source_id": "native",
+      "destination": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+      "byte_length": 32481
+    },
+    {
+      "source_id": "erp-registry-current",
+      "variant": "composed",
+      "destination": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "byte_length": 542116
+    },
+    {
+      "source_id": "erp-registry-frozen",
+      "variant": "original",
+      "destination": "eng/contracts/s01-11/assets/frozen/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "byte_length": 232887
+    },
+    {
+      "source_id": "composed-10",
+      "variant": "composed",
+      "destination": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_OPENAPI.json",
+      "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "byte_length": 92180
+    }
+  ],
+  "historical_generated_programs": "Read only archive; neither executed nor copied. Live implementation is a bounded full-object facade, not adoption of SQL/Owner ports.",
+  "fixture_policy": "Constructed native unit inputs and selected body/identity projections only; no Owner issuer or Store proof."
+}

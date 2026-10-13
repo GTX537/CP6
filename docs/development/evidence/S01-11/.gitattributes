@@ -1,0 +1,3 @@
+* -text whitespace=cr-at-eol
+# Preserve actual local runner output, including its trailing whitespace.
+implementation/** whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

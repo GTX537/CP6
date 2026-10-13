@@ -1,0 +1,11 @@
+test_18_exact_native_money_locations (__main__.DesignFixtureAudit.test_18_exact_native_money_locations) ... ok
+test_OpenAPI_single_root_29_routes_10_extensions_C01_C02_identity (__main__.DesignFixtureAudit.test_OpenAPI_single_root_29_routes_10_extensions_C01_C02_identity) ... ok
+test_all_343_dependency_projections_and_Store7_remain_together (__main__.DesignFixtureAudit.test_all_343_dependency_projections_and_Store7_remain_together) ... ok
+test_exact_raw_assets_and_body_identities (__main__.DesignFixtureAudit.test_exact_raw_assets_and_body_identities) ... ok
+test_stale_digest_length_handle_receipt_and_self_asserted_proof_rejected (__main__.DesignFixtureAudit.test_stale_digest_length_handle_receipt_and_self_asserted_proof_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.011s
+
+OK
+{"verification_level": "SELECTED_DESIGN_FIXTURE_SUBASSERTIONS", "tests": 5, "passed": 5, "failed": 0, "skipped": 0, "projected_records": 343, "tamper_rejections": 60, "native_money_locations": 18, "runtime_Owner_Store_acceptance": "NOT_RUN", "actual_adoption": "UNPROVEN_FENCED", "whole_C06_decode": "NOT_EXPOSED"}

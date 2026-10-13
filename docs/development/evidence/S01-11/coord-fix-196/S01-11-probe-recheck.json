@@ -1,0 +1,36 @@
+{
+  "observed_at": "2026-10-13T10:43:08.127728+00:00",
+  "source_sha256": "f7108b4f2dd1d2e09ba8e38bda8d52dbb991b7d671ec25bccdf0aa4fa4dd36f5",
+  "probes": [
+    {
+      "name": "buffer_byte_retention",
+      "command": [
+        "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+        "-"
+      ],
+      "cwd": "D:\\CP6-worktrees\\s01-11-20261012",
+      "stdin_sha256": "223b43e61681588eb44454f4feee5a1d977f33331348fe681f5c7fdb48f7873f",
+      "exit_code": 0,
+      "stdout": "{\"probe\":\"Buffer aliasing in retained original UTF8\",\"node\":\"v20.19.0\",\"validInput\":true,\"beforeFirstBytes\":[123,34,99],\"afterInputMutation\":[123,34,99],\"afterReturnedMutation\":[123,34,99],\"byteGetterReturnsBuffer\":false,\"recordedHash\":\"823712373eada580305d7b160fb8e493d100ab486551142e348377a44712aa07\",\"afterHash\":\"823712373eada580305d7b160fb8e493d100ab486551142e348377a44712aa07\",\"valueReason\":\"fixture\",\"input_mutated_retained_bytes\":false,\"getter_mutated_retained_bytes\":false}\n",
+      "stderr": "",
+      "result": "EXPECTED_FIXED_BEHAVIOR",
+      "interpretation": "Unchanged original observation script; second exit1 is the expected rejected changed request, not a failed acceptance test. Complete positive replay and immutable response acceptance is covered by the 12 new regressions."
+    },
+    {
+      "name": "buffer_schema_pin_and_frozen_replay",
+      "command": [
+        "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+        "-"
+      ],
+      "cwd": "D:\\CP6-worktrees\\s01-11-20261012",
+      "stdin_sha256": "57263918f47c0ce95bac3779c6d3f53c4a9c0e7941fcb174f747fcddb12badbf",
+      "exit_code": 1,
+      "stdout": "{\"probe\":\"Buffer schema hash/parse time-of-check alias\",\"node\":\"v20.19.0\",\"pinnedHashBefore\":\"b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a\",\"mutatedHash\":\"6992b21a73b5450c0907b341a8f729d3b04fb048e8071a4550795e4ff3c50278\",\"factoryAccepted\":true,\"nativeMoney90DigitsAccepted\":false,\"error\":\"PATTERN\"}\n",
+      "stderr": "CreditWireError: COMMAND_PAYLOAD_CONFLICT\n    at requireValue (eval at <anonymous> ([stdin]:3:24), <anonymous>:26:11)\n    at FrozenHttpReplay.replay (eval at <anonymous> ([stdin]:3:24), <anonymous>:473:9)\n    at [stdin]:21:27 {\n  code: 'COMMAND_PAYLOAD_CONFLICT'\n}\n",
+      "result": "EXPECTED_FIXED_BEHAVIOR",
+      "interpretation": "Unchanged original observation script; second exit1 is the expected rejected changed request, not a failed acceptance test. Complete positive replay and immutable response acceptance is covered by the 12 new regressions."
+    }
+  ],
+  "result": "PASS",
+  "database_operations": 0
+}

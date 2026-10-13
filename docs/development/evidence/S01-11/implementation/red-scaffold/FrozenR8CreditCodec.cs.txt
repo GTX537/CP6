@@ -1,0 +1,5 @@
+using CP6.Entity.Contracts.ErpCredit;
+namespace Cp6.ErpCredit.Generated;
+public sealed class FrozenR8CreditCodec(IReadOnlyDictionary<string,ReadOnlyMemory<byte>> files):CreditCodecSet(false,files) {
+ public FrozenHttpReplay CaptureReplay(string operation,string commandKey,ReadOnlySpan<byte> request,string requestHash,int status,ReadOnlySpan<byte> response,string responseHash)=>new(IdentityFor("EC_"+operation+"_COMMITTED_CommercialDraftView"),response.ToArray());
+}
