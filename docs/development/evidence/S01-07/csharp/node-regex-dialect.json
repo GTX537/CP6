@@ -1,0 +1,42 @@
+{
+  "runtime": "v20.19.0",
+  "pattern": "^(0|[1-9][0-9]*)$",
+  "flags": "u",
+  "cases": [
+    {
+      "codepoints": [],
+      "accepted": true
+    },
+    {
+      "codepoints": [
+        10
+      ],
+      "accepted": false
+    },
+    {
+      "codepoints": [
+        13
+      ],
+      "accepted": false
+    },
+    {
+      "codepoints": [
+        13,
+        10
+      ],
+      "accepted": false
+    },
+    {
+      "codepoints": [
+        8232
+      ],
+      "accepted": false
+    },
+    {
+      "codepoints": [
+        8233
+      ],
+      "accepted": false
+    }
+  ]
+}

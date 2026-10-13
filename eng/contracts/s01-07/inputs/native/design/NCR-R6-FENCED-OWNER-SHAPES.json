@@ -1,0 +1,914 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:qa-ncr:fenced-owner-proposals:6",
+  "$defs": {
+    "WmsDispositionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "WMS-DISP-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "environment": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Environment"
+            },
+            "ncrId": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+            },
+            "decisionRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "approvalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "partitionId": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+            },
+            "workRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "effectIdentity": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/IntentKey"
+            },
+            "inputDigest": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Digest"
+            },
+            "basisRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "stockContext": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/StockDispositionContext"
+            },
+            "action": {
+              "type": "string",
+              "enum": [
+                "SCRAP",
+                "RETURN_TO_SOURCE"
+              ]
+            },
+            "reasonCode": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "expectedStockHeadRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "correctionPredecessorRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "originalShipmentOrReceiptRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "returnDestinationRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "policyRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+              },
+              "minItems": 1,
+              "maxItems": 1000
+            }
+          },
+          "required": [
+            "environment",
+            "ncrId",
+            "decisionRef",
+            "approvalRef",
+            "partitionId",
+            "workRef",
+            "effectIdentity",
+            "inputDigest",
+            "basisRef",
+            "stockContext",
+            "action",
+            "reasonCode",
+            "expectedStockHeadRef",
+            "correctionPredecessorRef",
+            "originalShipmentOrReceiptRef",
+            "returnDestinationRef",
+            "policyRefs"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    },
+    "WmsDispositionResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "WMS-DISP-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "environment": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Environment"
+            },
+            "ncrId": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+            },
+            "decisionRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "approvalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "partitionId": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+            },
+            "workRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "effectIdentity": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/IntentKey"
+            },
+            "inputDigest": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Digest"
+            },
+            "commandOriginalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "APPLIED",
+                "REJECTED",
+                "PENDING",
+                "UNKNOWN",
+                "UNAVAILABLE"
+              ]
+            },
+            "executedSegments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "range": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/CoordinateRange"
+                  },
+                  "movementOriginalRef": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                  },
+                  "stockTransactionOriginalRef": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                  },
+                  "ownerCommittedAtOriginal": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "range",
+                  "movementOriginalRef",
+                  "stockTransactionOriginalRef",
+                  "ownerCommittedAtOriginal"
+                ]
+              },
+              "minItems": 0,
+              "maxItems": 500
+            },
+            "remainingRanges": {
+              "type": "array",
+              "items": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/CoordinateRange"
+              },
+              "minItems": 0,
+              "maxItems": 500
+            },
+            "ownerCurrentProofRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "originalReceiptRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "minItems": 1,
+              "maxItems": 100
+            }
+          },
+          "required": [
+            "environment",
+            "ncrId",
+            "decisionRef",
+            "approvalRef",
+            "partitionId",
+            "workRef",
+            "effectIdentity",
+            "inputDigest",
+            "commandOriginalRef",
+            "outcome",
+            "executedSegments",
+            "remainingRanges",
+            "ownerCurrentProofRef",
+            "originalReceiptRef",
+            "reasonCodes"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    },
+    "PlmFeedbackResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "PLM-FBK-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "feedbackKey": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/IntentKey"
+            },
+            "sourceOriginalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "productRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "baseline": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/BaselineSelection"
+            },
+            "purpose": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Purpose"
+            },
+            "feedbackRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "previousFeedbackRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "ACCEPTED",
+                "MERGED",
+                "REJECTED"
+              ]
+            },
+            "mergedIntoFeedbackRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reasonCode": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "ownerCommittedAtOriginal": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "originalResultRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "currentProofRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "submissionIdentity": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/FeedbackSubmissionIdentity"
+            },
+            "ownerRequestIdentityRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            }
+          },
+          "required": [
+            "feedbackKey",
+            "sourceOriginalRef",
+            "productRef",
+            "baseline",
+            "purpose",
+            "feedbackRef",
+            "previousFeedbackRef",
+            "outcome",
+            "mergedIntoFeedbackRef",
+            "reasonCode",
+            "ownerCommittedAtOriginal",
+            "originalResultRef",
+            "currentProofRef",
+            "submissionIdentity",
+            "ownerRequestIdentityRef"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    },
+    "ChangeImpactSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "PLM-CHG-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "changeRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "technicalBaselineFromRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "technicalBaselineToRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "purpose": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Purpose"
+            },
+            "snapshotRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "watermark": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "impactItemRef": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                  },
+                  "objectRef": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                  },
+                  "responsibleOwner": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "ranges": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "NCR-R6-WIRE.json#/$defs/CoordinateRange"
+                    },
+                    "minItems": 1,
+                    "maxItems": 500
+                  },
+                  "assessmentRequirementRef": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                  }
+                },
+                "required": [
+                  "impactItemRef",
+                  "objectRef",
+                  "responsibleOwner",
+                  "ranges",
+                  "assessmentRequirementRef"
+                ]
+              },
+              "minItems": 0,
+              "maxItems": 10000
+            },
+            "complete": {
+              "const": true
+            },
+            "membershipDigest": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Digest"
+            },
+            "originalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "currentProofRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            }
+          },
+          "required": [
+            "changeRef",
+            "technicalBaselineFromRef",
+            "technicalBaselineToRef",
+            "purpose",
+            "snapshotRef",
+            "watermark",
+            "items",
+            "complete",
+            "membershipDigest",
+            "originalRef",
+            "currentProofRef"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    },
+    "ChangeImplementationItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "PLM-CHG-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "changeRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "impactSnapshotRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "impactItemRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "assessmentRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "implementationItemRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "responsibleOwner": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "targetObjectRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "ranges": {
+              "type": "array",
+              "items": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/CoordinateRange"
+              },
+              "minItems": 1,
+              "maxItems": 500
+            },
+            "actionCode": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "verificationRequirementRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "approvalOriginalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "effectiveFrom": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Time"
+            },
+            "effectiveUntil": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Time"
+            }
+          },
+          "required": [
+            "changeRef",
+            "impactSnapshotRef",
+            "impactItemRef",
+            "assessmentRef",
+            "implementationItemRef",
+            "responsibleOwner",
+            "targetObjectRef",
+            "ranges",
+            "actionCode",
+            "verificationRequirementRef",
+            "approvalOriginalRef",
+            "effectiveFrom",
+            "effectiveUntil"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    },
+    "ChangeExecutionResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "PLM-CHG-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "changeRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "impactItemRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "assessmentRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "implementationItemRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "executingOwner": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "commandOriginalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "receiptOriginalRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "ranges": {
+              "type": "array",
+              "items": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/CoordinateRange"
+              },
+              "minItems": 1,
+              "maxItems": 500
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "APPLIED",
+                "REJECTED",
+                "PARTIAL",
+                "PENDING",
+                "UNKNOWN"
+              ]
+            },
+            "verificationOriginalRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ownerCommittedAtOriginal": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "currentProofRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            }
+          },
+          "required": [
+            "changeRef",
+            "impactItemRef",
+            "assessmentRef",
+            "implementationItemRef",
+            "executingOwner",
+            "commandOriginalRef",
+            "receiptOriginalRef",
+            "ranges",
+            "outcome",
+            "verificationOriginalRef",
+            "ownerCommittedAtOriginal",
+            "currentProofRef"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    },
+    "DeviationTechnicalGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "PLM-DEV-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "grantRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "technicalBaselineRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "target": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/TargetSelector"
+            },
+            "purpose": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Purpose"
+            },
+            "validFrom": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Time"
+            },
+            "validUntil": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Time"
+            },
+            "technicalState": {
+              "type": "string",
+              "enum": [
+                "CURRENT",
+                "RESTRICTED",
+                "EXPIRED",
+                "REVOKED"
+              ]
+            },
+            "meterRequirementRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/OwnerRef"
+              },
+              "minItems": 1,
+              "maxItems": 64
+            },
+            "originalLimitAndMeterStateRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "originalGrantRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "currentProofRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            }
+          },
+          "required": [
+            "grantRef",
+            "technicalBaselineRef",
+            "target",
+            "purpose",
+            "validFrom",
+            "validUntil",
+            "technicalState",
+            "meterRequirementRefs",
+            "originalLimitAndMeterStateRef",
+            "originalGrantRef",
+            "currentProofRef"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    },
+    "DeviationOwnerBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractStatus": {
+          "const": "REQUIRED_FENCED"
+        },
+        "owner": {
+          "const": "PLM-DEV-01"
+        },
+        "mayDispatch": {
+          "const": false
+        },
+        "mayTreatAsProfessionalFact": {
+          "const": false
+        },
+        "expectedPayload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "identity": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/UseBindingIdentity"
+            },
+            "identityDigest": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Digest"
+            },
+            "ownerOriginalBindingRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "ownerUsageOriginalRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+              },
+              "minItems": 1,
+              "maxItems": 1000
+            },
+            "meterObservations": {
+              "type": "array",
+              "items": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/DeviationMeterObservation"
+              },
+              "minItems": 1,
+              "maxItems": 64
+            },
+            "previousOwnerReceiptRef": {
+              "oneOf": [
+                {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ownerQuotaVersionOriginal": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "originalOwnerOperation": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "currentProofRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            }
+          },
+          "required": [
+            "identity",
+            "identityDigest",
+            "ownerOriginalBindingRef",
+            "ownerUsageOriginalRefs",
+            "meterObservations",
+            "previousOwnerReceiptRef",
+            "ownerQuotaVersionOriginal",
+            "originalOwnerOperation",
+            "currentProofRef"
+          ]
+        }
+      },
+      "required": [
+        "contractStatus",
+        "owner",
+        "mayDispatch",
+        "mayTreatAsProfessionalFact",
+        "expectedPayload"
+      ]
+    }
+  },
+  "status": "OWNER_REVIEW_REQUIREMENT_NOT_ACCEPTED_PROTOCOL",
+  "currentUse": "Public integrations only return typed fence; these schemas cannot make a receipt satisfiable",
+  "mandatorySemanticChecks": [
+    "MERGED requires exact mergedInto ref; other outcomes null",
+    "WMS APPLIED expected range set exactly complete, partial remains unsatisfied",
+    "every H49 receipt binds its exact impact/assessment/implementation/command",
+    "H50 preserves original PLM U/H and original Owner measurement semantics; no local available calculation",
+    "no release from scrap/correction/revocation/timeout/unknown; original safe-release basis required",
+    "all source originals/currentness/authority must be validated by adopted exact Owner adapter before any future profile can bind",
+    "D01 complete submissionIdentity must equal exact original FeedbackDraft/version and original command/query tuple; professional feedbackRef.version is independent",
+    "D04 full Main UseBindingIdentity and its DEV-BINDING:6 digest equal local binding/Owner expected identity member-by-member; exact serial mapping pinned to original authority/source cut; serial count or DEV meter exposure never substitutes NCR source quantity"
+  ],
+  "candidateRevision": "R7"
+}

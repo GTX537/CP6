@@ -1,0 +1,4858 @@
+{
+  "identity": "C-QA-IPQC-RECOVERY-R4-SYSTEMIC-PAYLOAD-PUBLICATIONS",
+  "payloadTypeCount": 5,
+  "publications": [
+    {
+      "payloadType": "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+      "schemaType": "ExecQualityDisposition",
+      "publicationClass": "PERSISTED_IN_PRESERVED_F01_CHECKPOINT",
+      "relationalEvidence": {
+        "checkpoint": "checkpoints/F01_PHYSICALIDENTITY_TRANSITION_CHECKPOINT_R4.json",
+        "table": "DeliveryPayload",
+        "payloadDigest": "3e35bc6080b8e9edae1e11d26b21aed9aa48e9674e4dc0cf157857cb571eb832"
+      },
+      "body": {
+        "accepted": [
+          {
+            "from": "0",
+            "portionId": "94b534e9-0332-5731-bf65-e8eed9f1ef04",
+            "to": "1"
+          },
+          {
+            "from": "1",
+            "portionId": "aabec33c-b285-5749-b989-aeddf508a390",
+            "to": "2"
+          },
+          {
+            "from": "2",
+            "portionId": "e7f6ac7d-f003-592b-b9ff-30a068612b5a",
+            "to": "3"
+          },
+          {
+            "from": "3",
+            "portionId": "7dae08a9-bf46-566d-8b90-9c98e222540e",
+            "to": "4"
+          },
+          {
+            "from": "4",
+            "portionId": "5da556ce-7d25-5d2e-a119-ef2ee9bb29e3",
+            "to": "5"
+          },
+          {
+            "from": "5",
+            "portionId": "131a8679-1a8f-55fc-b1fe-876d25d111da",
+            "to": "6"
+          },
+          {
+            "from": "6",
+            "portionId": "ce62ed44-46a8-5728-8e53-a78df7ad7e68",
+            "to": "7"
+          },
+          {
+            "from": "7",
+            "portionId": "ca7de846-e022-573e-bf25-0418876037ea",
+            "to": "8"
+          },
+          {
+            "from": "8",
+            "portionId": "04b321fc-6efe-5661-9217-a57ea91e7318",
+            "to": "9"
+          },
+          {
+            "from": "9",
+            "portionId": "11719fc6-69fa-59fc-a54a-a491ddb16078",
+            "to": "10"
+          },
+          {
+            "from": "10",
+            "portionId": "f1a8a488-13f9-5ea5-b818-271c6eeecb13",
+            "to": "11"
+          },
+          {
+            "from": "11",
+            "portionId": "0247a1ee-dd50-59c3-99c4-ce33fe34b2e1",
+            "to": "12"
+          },
+          {
+            "from": "12",
+            "portionId": "9c8fabd8-da69-5d2c-8c59-3cc6a048b5fc",
+            "to": "13"
+          },
+          {
+            "from": "13",
+            "portionId": "7839fd71-9a3f-5af8-b909-9d242c9cad4a",
+            "to": "14"
+          },
+          {
+            "from": "14",
+            "portionId": "06d0fac9-df1c-530f-9bde-e2267ff869dd",
+            "to": "15"
+          },
+          {
+            "from": "15",
+            "portionId": "edd1ba16-1278-56c6-9042-a024e96d9ad8",
+            "to": "16"
+          },
+          {
+            "from": "16",
+            "portionId": "03df7bfb-d81c-54bf-a404-16379f84f0d1",
+            "to": "17"
+          },
+          {
+            "from": "17",
+            "portionId": "0100996a-5814-536e-93a4-6c15d08b70fa",
+            "to": "18"
+          },
+          {
+            "from": "18",
+            "portionId": "b7b1e38b-fda1-57f4-9153-6b14743885cd",
+            "to": "19"
+          },
+          {
+            "from": "19",
+            "portionId": "f65d98e6-07e9-5e11-ae90-6d37b96792a2",
+            "to": "20"
+          },
+          {
+            "from": "20",
+            "portionId": "da607f5d-b137-5b8d-9fd7-2766649dc904",
+            "to": "21"
+          },
+          {
+            "from": "21",
+            "portionId": "df9fba23-b69a-53e9-bdf3-1dbd7bec7598",
+            "to": "22"
+          },
+          {
+            "from": "22",
+            "portionId": "d8a090ce-9484-56d0-9f46-bed26d0b46d7",
+            "to": "23"
+          },
+          {
+            "from": "23",
+            "portionId": "46bd490c-3455-550f-874c-4f506751a06a",
+            "to": "24"
+          },
+          {
+            "from": "24",
+            "portionId": "417ffe47-40c3-57c6-9e4e-0b5b90f14965",
+            "to": "25"
+          },
+          {
+            "from": "25",
+            "portionId": "3216cc83-3693-5777-a1cb-69801a94025c",
+            "to": "26"
+          },
+          {
+            "from": "26",
+            "portionId": "b4addc6b-e9a9-58a3-bc30-752ef6c2ab24",
+            "to": "27"
+          },
+          {
+            "from": "27",
+            "portionId": "eaa1e8f9-84ac-58c2-88f1-c72c41a99319",
+            "to": "28"
+          },
+          {
+            "from": "28",
+            "portionId": "fb891bbe-04d3-5d51-b630-f9c13377d605",
+            "to": "29"
+          },
+          {
+            "from": "29",
+            "portionId": "db53b49b-e530-5dfd-a4c1-4283b81bef0e",
+            "to": "30"
+          },
+          {
+            "from": "30",
+            "portionId": "ca48f663-1106-59b5-8991-d4d1a3d92771",
+            "to": "31"
+          },
+          {
+            "from": "31",
+            "portionId": "d2145c65-321d-5443-b398-5a8732aa1d25",
+            "to": "32"
+          },
+          {
+            "from": "32",
+            "portionId": "69f10059-1f56-5942-9d8c-2d573f22b0de",
+            "to": "33"
+          },
+          {
+            "from": "33",
+            "portionId": "b834b25f-f902-5580-9cb8-3bbfea742b35",
+            "to": "34"
+          },
+          {
+            "from": "34",
+            "portionId": "c42b05ae-076c-5278-8ab6-50911ce6c6a6",
+            "to": "35"
+          },
+          {
+            "from": "35",
+            "portionId": "92cb2a36-b032-5d09-aaef-16b1de6f7e87",
+            "to": "36"
+          },
+          {
+            "from": "36",
+            "portionId": "1e0a1f1d-7f1e-5819-810f-f59e3e9102f0",
+            "to": "37"
+          },
+          {
+            "from": "37",
+            "portionId": "c72ba1be-e1f9-5cf9-abc7-dfad339efb86",
+            "to": "38"
+          },
+          {
+            "from": "38",
+            "portionId": "78667885-9a0b-5dc6-9106-e75cdc0f92e6",
+            "to": "39"
+          },
+          {
+            "from": "39",
+            "portionId": "3fd546b2-4390-5c9a-ade0-dd3350f00262",
+            "to": "40"
+          },
+          {
+            "from": "40",
+            "portionId": "dd0f3339-3023-5bc6-aaae-301585f6dc96",
+            "to": "41"
+          },
+          {
+            "from": "41",
+            "portionId": "5bae3902-b784-582e-b4a6-a6f7dd63e4b5",
+            "to": "42"
+          },
+          {
+            "from": "42",
+            "portionId": "6ccccae3-3e76-54fa-ab82-185c701bf447",
+            "to": "43"
+          },
+          {
+            "from": "43",
+            "portionId": "78caf2e5-4f05-5c02-a7d7-3e3a46b64e6c",
+            "to": "44"
+          },
+          {
+            "from": "44",
+            "portionId": "6b0cc6fd-eb2a-58e0-91b1-f3e6d4b684ed",
+            "to": "45"
+          },
+          {
+            "from": "45",
+            "portionId": "906c5f4d-60fa-5f0a-9c67-2578b572d4b7",
+            "to": "46"
+          },
+          {
+            "from": "46",
+            "portionId": "aa4d3f6f-a9cc-5046-80b7-9342ebdb1741",
+            "to": "47"
+          },
+          {
+            "from": "47",
+            "portionId": "1ec00920-63d4-5ead-be86-294e13111005",
+            "to": "48"
+          },
+          {
+            "from": "48",
+            "portionId": "8ac1735f-34df-5de2-b0f1-09aeabd072cc",
+            "to": "49"
+          },
+          {
+            "from": "49",
+            "portionId": "b82d6f5a-cdc1-5555-9564-1d421d39087d",
+            "to": "50"
+          },
+          {
+            "from": "50",
+            "portionId": "a856c9ef-7f98-5d52-87d3-4378474740ba",
+            "to": "51"
+          },
+          {
+            "from": "51",
+            "portionId": "5503ca07-c067-5e7a-9ba7-adba4d3b274b",
+            "to": "52"
+          },
+          {
+            "from": "52",
+            "portionId": "ce00fee1-ccf8-54dd-b785-31eaa7abd330",
+            "to": "53"
+          },
+          {
+            "from": "53",
+            "portionId": "b950726f-4b5e-5704-88c8-1ce260abe7b0",
+            "to": "54"
+          },
+          {
+            "from": "54",
+            "portionId": "67c289fa-8579-5725-b80c-dfbd3328f438",
+            "to": "55"
+          },
+          {
+            "from": "55",
+            "portionId": "fa52c00f-d7ed-593a-a14a-766852a3473b",
+            "to": "56"
+          },
+          {
+            "from": "56",
+            "portionId": "667e94a0-9f2a-598c-b532-e04ed380e5fb",
+            "to": "57"
+          },
+          {
+            "from": "57",
+            "portionId": "9f5721be-42a0-550b-9356-33814ae30310",
+            "to": "58"
+          },
+          {
+            "from": "58",
+            "portionId": "f3c1f20e-dcef-57e4-a593-5f614e69f33d",
+            "to": "59"
+          },
+          {
+            "from": "59",
+            "portionId": "8f0b990f-2c1e-5cb9-83b8-8a8966d9b3db",
+            "to": "60"
+          },
+          {
+            "from": "60",
+            "portionId": "37c70a0f-a608-5a3c-a7cf-2239ada433a0",
+            "to": "61"
+          },
+          {
+            "from": "61",
+            "portionId": "0b91f6c8-03f3-5c6e-9236-b17e2bbb1b92",
+            "to": "62"
+          },
+          {
+            "from": "62",
+            "portionId": "84d08c25-a57b-55cd-be94-3845fe54e8ca",
+            "to": "63"
+          },
+          {
+            "from": "63",
+            "portionId": "7e378250-2e74-581f-8792-fddcbe967a8b",
+            "to": "64"
+          },
+          {
+            "from": "64",
+            "portionId": "709b521d-c10e-5256-991a-d4fb5ce1ca41",
+            "to": "65"
+          },
+          {
+            "from": "65",
+            "portionId": "ef057988-41a6-5028-807c-8b048418d35c",
+            "to": "66"
+          },
+          {
+            "from": "66",
+            "portionId": "d7f8235e-f932-5353-bcb3-2506e850263c",
+            "to": "67"
+          },
+          {
+            "from": "67",
+            "portionId": "8b3f1634-0feb-5cf7-994e-c7d392a32676",
+            "to": "68"
+          },
+          {
+            "from": "68",
+            "portionId": "da778b81-fac2-580d-ba0a-da6d94e1aa55",
+            "to": "69"
+          },
+          {
+            "from": "69",
+            "portionId": "d1c0f458-48eb-589e-841d-746399ee3f0b",
+            "to": "70"
+          },
+          {
+            "from": "70",
+            "portionId": "185a5a7c-d170-5510-ae10-0960d2de23bc",
+            "to": "71"
+          },
+          {
+            "from": "71",
+            "portionId": "9482db49-5561-5f72-a132-cf6bcf3f547e",
+            "to": "72"
+          },
+          {
+            "from": "72",
+            "portionId": "d57b6ace-b949-5109-9773-be205f3ef385",
+            "to": "73"
+          },
+          {
+            "from": "73",
+            "portionId": "132b591c-6733-5c03-9eb2-6fe6e8930a42",
+            "to": "74"
+          },
+          {
+            "from": "74",
+            "portionId": "943b6f8e-3d20-5864-b19b-e71aa5cbe5c5",
+            "to": "75"
+          },
+          {
+            "from": "75",
+            "portionId": "26a8497b-2346-53d4-acae-be88f890102f",
+            "to": "76"
+          },
+          {
+            "from": "76",
+            "portionId": "e685ab0b-47fc-530b-ae84-ce056027752e",
+            "to": "77"
+          },
+          {
+            "from": "77",
+            "portionId": "cb73979e-dd09-5cfb-bbda-7da8b27b1032",
+            "to": "78"
+          },
+          {
+            "from": "78",
+            "portionId": "85ab8d88-04dc-5124-be48-81281bf19302",
+            "to": "79"
+          },
+          {
+            "from": "79",
+            "portionId": "21e17a2d-e5ee-5520-bce4-0b46bbe5e6d7",
+            "to": "80"
+          },
+          {
+            "from": "80",
+            "portionId": "1ea44500-00fa-5d72-9c07-9b011c2ae6f5",
+            "to": "81"
+          },
+          {
+            "from": "81",
+            "portionId": "8e7ba95c-9c63-50ba-9ef8-2c9071fcb54a",
+            "to": "82"
+          },
+          {
+            "from": "82",
+            "portionId": "ff7be7fb-cb54-58a3-b71c-514356534fe8",
+            "to": "83"
+          },
+          {
+            "from": "83",
+            "portionId": "807b5299-e777-5599-84be-bdd389a1d2e5",
+            "to": "84"
+          },
+          {
+            "from": "84",
+            "portionId": "6e046570-108a-5be8-8d63-e5dd88005681",
+            "to": "85"
+          },
+          {
+            "from": "85",
+            "portionId": "157e913f-d1d6-526b-8186-a2f9360a591d",
+            "to": "86"
+          },
+          {
+            "from": "86",
+            "portionId": "f1421672-e115-5bc5-bff7-249e0f8e7916",
+            "to": "87"
+          },
+          {
+            "from": "87",
+            "portionId": "7ae1f7d4-a72b-5fe7-adf6-9c830e34aedf",
+            "to": "88"
+          },
+          {
+            "from": "88",
+            "portionId": "1a0c861a-a6aa-5f7d-8428-93a1f1cb4729",
+            "to": "89"
+          },
+          {
+            "from": "89",
+            "portionId": "84d7eef7-04d0-558e-940c-3491d2af6bbf",
+            "to": "90"
+          }
+        ],
+        "authorityRef": {
+          "digest": "62b76253c4d1c571c85aba8d6ff8ed31917f09f110649acce90719bbe7995204",
+          "ref": {
+            "id": "approval-F01",
+            "owner": "IAM",
+            "version": "1"
+          }
+        },
+        "held": [],
+        "occurredAt": "2026-10-02T02:10:08Z",
+        "operationId": "OP-F01",
+        "policyRef": {
+          "id": "F01-POLICY",
+          "owner": "QA-POL",
+          "version": "1"
+        },
+        "previousRef": null,
+        "recordedAt": "2026-10-02T02:10:08Z",
+        "reference": {
+          "digest": "8e25d723023d0b13c5216cdba52bd8b301d12acc8c1637317eb2ce913e9147fe",
+          "ref": {
+            "id": "DISPOSITION-F01",
+            "owner": "QA-IPQC",
+            "version": "1"
+          }
+        },
+        "rejected": [
+          {
+            "from": "90",
+            "portionId": "be318646-34d3-5b76-aea5-e86b9f3c0466",
+            "to": "91"
+          },
+          {
+            "from": "91",
+            "portionId": "70163327-d659-53f2-913f-a096084b1883",
+            "to": "92"
+          },
+          {
+            "from": "92",
+            "portionId": "ccae84ec-efd5-55a2-8b72-015326f4a4c3",
+            "to": "93"
+          },
+          {
+            "from": "93",
+            "portionId": "a9c37923-2c57-5f48-a0bf-c75fbef52788",
+            "to": "94"
+          },
+          {
+            "from": "94",
+            "portionId": "a2097d2d-a596-56d6-a655-a65e654f2b2d",
+            "to": "95"
+          },
+          {
+            "from": "95",
+            "portionId": "60fe13f2-214c-542d-9d1c-a5071d880545",
+            "to": "96"
+          },
+          {
+            "from": "96",
+            "portionId": "1c1cb677-4991-59cf-a093-4576ae634031",
+            "to": "97"
+          },
+          {
+            "from": "97",
+            "portionId": "244b1eb9-628c-5cdf-afe0-8981f84b953d",
+            "to": "98"
+          },
+          {
+            "from": "98",
+            "portionId": "d8b82684-d9df-54ba-bc79-f82e4c1323f5",
+            "to": "99"
+          },
+          {
+            "from": "99",
+            "portionId": "657416fe-9f36-54b7-a660-ea28c116190f",
+            "to": "100"
+          }
+        ],
+        "revision": "1",
+        "rework": [],
+        "sampleCoverageRef": {
+          "digest": "dfb47cc410fae8e13101930c700d890bdf99c41d15c01fca2fd4a17053c38b94",
+          "ref": {
+            "id": "F01-COVERAGE",
+            "owner": "QA-IPQC",
+            "version": "1"
+          }
+        },
+        "schema": "EXEC-QA-DISPOSITION-PROPOSED-1",
+        "scope": {
+          "ranges": [
+            {
+              "from": "0",
+              "portionId": "F01-P001",
+              "to": "1"
+            },
+            {
+              "from": "1",
+              "portionId": "F01-P002",
+              "to": "2"
+            },
+            {
+              "from": "2",
+              "portionId": "F01-P003",
+              "to": "3"
+            },
+            {
+              "from": "3",
+              "portionId": "F01-P004",
+              "to": "4"
+            },
+            {
+              "from": "4",
+              "portionId": "F01-P005",
+              "to": "5"
+            },
+            {
+              "from": "5",
+              "portionId": "F01-P006",
+              "to": "6"
+            },
+            {
+              "from": "6",
+              "portionId": "F01-P007",
+              "to": "7"
+            },
+            {
+              "from": "7",
+              "portionId": "F01-P008",
+              "to": "8"
+            },
+            {
+              "from": "8",
+              "portionId": "F01-P009",
+              "to": "9"
+            },
+            {
+              "from": "9",
+              "portionId": "F01-P010",
+              "to": "10"
+            },
+            {
+              "from": "10",
+              "portionId": "F01-P011",
+              "to": "11"
+            },
+            {
+              "from": "11",
+              "portionId": "F01-P012",
+              "to": "12"
+            },
+            {
+              "from": "12",
+              "portionId": "F01-P013",
+              "to": "13"
+            },
+            {
+              "from": "13",
+              "portionId": "F01-P014",
+              "to": "14"
+            },
+            {
+              "from": "14",
+              "portionId": "F01-P015",
+              "to": "15"
+            },
+            {
+              "from": "15",
+              "portionId": "F01-P016",
+              "to": "16"
+            },
+            {
+              "from": "16",
+              "portionId": "F01-P017",
+              "to": "17"
+            },
+            {
+              "from": "17",
+              "portionId": "F01-P018",
+              "to": "18"
+            },
+            {
+              "from": "18",
+              "portionId": "F01-P019",
+              "to": "19"
+            },
+            {
+              "from": "19",
+              "portionId": "F01-P020",
+              "to": "20"
+            },
+            {
+              "from": "20",
+              "portionId": "F01-P021",
+              "to": "21"
+            },
+            {
+              "from": "21",
+              "portionId": "F01-P022",
+              "to": "22"
+            },
+            {
+              "from": "22",
+              "portionId": "F01-P023",
+              "to": "23"
+            },
+            {
+              "from": "23",
+              "portionId": "F01-P024",
+              "to": "24"
+            },
+            {
+              "from": "24",
+              "portionId": "F01-P025",
+              "to": "25"
+            },
+            {
+              "from": "25",
+              "portionId": "F01-P026",
+              "to": "26"
+            },
+            {
+              "from": "26",
+              "portionId": "F01-P027",
+              "to": "27"
+            },
+            {
+              "from": "27",
+              "portionId": "F01-P028",
+              "to": "28"
+            },
+            {
+              "from": "28",
+              "portionId": "F01-P029",
+              "to": "29"
+            },
+            {
+              "from": "29",
+              "portionId": "F01-P030",
+              "to": "30"
+            },
+            {
+              "from": "30",
+              "portionId": "F01-P031",
+              "to": "31"
+            },
+            {
+              "from": "31",
+              "portionId": "F01-P032",
+              "to": "32"
+            },
+            {
+              "from": "32",
+              "portionId": "F01-P033",
+              "to": "33"
+            },
+            {
+              "from": "33",
+              "portionId": "F01-P034",
+              "to": "34"
+            },
+            {
+              "from": "34",
+              "portionId": "F01-P035",
+              "to": "35"
+            },
+            {
+              "from": "35",
+              "portionId": "F01-P036",
+              "to": "36"
+            },
+            {
+              "from": "36",
+              "portionId": "F01-P037",
+              "to": "37"
+            },
+            {
+              "from": "37",
+              "portionId": "F01-P038",
+              "to": "38"
+            },
+            {
+              "from": "38",
+              "portionId": "F01-P039",
+              "to": "39"
+            },
+            {
+              "from": "39",
+              "portionId": "F01-P040",
+              "to": "40"
+            },
+            {
+              "from": "40",
+              "portionId": "F01-P041",
+              "to": "41"
+            },
+            {
+              "from": "41",
+              "portionId": "F01-P042",
+              "to": "42"
+            },
+            {
+              "from": "42",
+              "portionId": "F01-P043",
+              "to": "43"
+            },
+            {
+              "from": "43",
+              "portionId": "F01-P044",
+              "to": "44"
+            },
+            {
+              "from": "44",
+              "portionId": "F01-P045",
+              "to": "45"
+            },
+            {
+              "from": "45",
+              "portionId": "F01-P046",
+              "to": "46"
+            },
+            {
+              "from": "46",
+              "portionId": "F01-P047",
+              "to": "47"
+            },
+            {
+              "from": "47",
+              "portionId": "F01-P048",
+              "to": "48"
+            },
+            {
+              "from": "48",
+              "portionId": "F01-P049",
+              "to": "49"
+            },
+            {
+              "from": "49",
+              "portionId": "F01-P050",
+              "to": "50"
+            },
+            {
+              "from": "50",
+              "portionId": "F01-P051",
+              "to": "51"
+            },
+            {
+              "from": "51",
+              "portionId": "F01-P052",
+              "to": "52"
+            },
+            {
+              "from": "52",
+              "portionId": "F01-P053",
+              "to": "53"
+            },
+            {
+              "from": "53",
+              "portionId": "F01-P054",
+              "to": "54"
+            },
+            {
+              "from": "54",
+              "portionId": "F01-P055",
+              "to": "55"
+            },
+            {
+              "from": "55",
+              "portionId": "F01-P056",
+              "to": "56"
+            },
+            {
+              "from": "56",
+              "portionId": "F01-P057",
+              "to": "57"
+            },
+            {
+              "from": "57",
+              "portionId": "F01-P058",
+              "to": "58"
+            },
+            {
+              "from": "58",
+              "portionId": "F01-P059",
+              "to": "59"
+            },
+            {
+              "from": "59",
+              "portionId": "F01-P060",
+              "to": "60"
+            },
+            {
+              "from": "60",
+              "portionId": "F01-P061",
+              "to": "61"
+            },
+            {
+              "from": "61",
+              "portionId": "F01-P062",
+              "to": "62"
+            },
+            {
+              "from": "62",
+              "portionId": "F01-P063",
+              "to": "63"
+            },
+            {
+              "from": "63",
+              "portionId": "F01-P064",
+              "to": "64"
+            },
+            {
+              "from": "64",
+              "portionId": "F01-P065",
+              "to": "65"
+            },
+            {
+              "from": "65",
+              "portionId": "F01-P066",
+              "to": "66"
+            },
+            {
+              "from": "66",
+              "portionId": "F01-P067",
+              "to": "67"
+            },
+            {
+              "from": "67",
+              "portionId": "F01-P068",
+              "to": "68"
+            },
+            {
+              "from": "68",
+              "portionId": "F01-P069",
+              "to": "69"
+            },
+            {
+              "from": "69",
+              "portionId": "F01-P070",
+              "to": "70"
+            },
+            {
+              "from": "70",
+              "portionId": "F01-P071",
+              "to": "71"
+            },
+            {
+              "from": "71",
+              "portionId": "F01-P072",
+              "to": "72"
+            },
+            {
+              "from": "72",
+              "portionId": "F01-P073",
+              "to": "73"
+            },
+            {
+              "from": "73",
+              "portionId": "F01-P074",
+              "to": "74"
+            },
+            {
+              "from": "74",
+              "portionId": "F01-P075",
+              "to": "75"
+            },
+            {
+              "from": "75",
+              "portionId": "F01-P076",
+              "to": "76"
+            },
+            {
+              "from": "76",
+              "portionId": "F01-P077",
+              "to": "77"
+            },
+            {
+              "from": "77",
+              "portionId": "F01-P078",
+              "to": "78"
+            },
+            {
+              "from": "78",
+              "portionId": "F01-P079",
+              "to": "79"
+            },
+            {
+              "from": "79",
+              "portionId": "F01-P080",
+              "to": "80"
+            },
+            {
+              "from": "80",
+              "portionId": "F01-P081",
+              "to": "81"
+            },
+            {
+              "from": "81",
+              "portionId": "F01-P082",
+              "to": "82"
+            },
+            {
+              "from": "82",
+              "portionId": "F01-P083",
+              "to": "83"
+            },
+            {
+              "from": "83",
+              "portionId": "F01-P084",
+              "to": "84"
+            },
+            {
+              "from": "84",
+              "portionId": "F01-P085",
+              "to": "85"
+            },
+            {
+              "from": "85",
+              "portionId": "F01-P086",
+              "to": "86"
+            },
+            {
+              "from": "86",
+              "portionId": "F01-P087",
+              "to": "87"
+            },
+            {
+              "from": "87",
+              "portionId": "F01-P088",
+              "to": "88"
+            },
+            {
+              "from": "88",
+              "portionId": "F01-P089",
+              "to": "89"
+            },
+            {
+              "from": "89",
+              "portionId": "F01-P090",
+              "to": "90"
+            },
+            {
+              "from": "90",
+              "portionId": "F01-P091",
+              "to": "91"
+            },
+            {
+              "from": "91",
+              "portionId": "F01-P092",
+              "to": "92"
+            },
+            {
+              "from": "92",
+              "portionId": "F01-P093",
+              "to": "93"
+            },
+            {
+              "from": "93",
+              "portionId": "F01-P094",
+              "to": "94"
+            },
+            {
+              "from": "94",
+              "portionId": "F01-P095",
+              "to": "95"
+            },
+            {
+              "from": "95",
+              "portionId": "F01-P096",
+              "to": "96"
+            },
+            {
+              "from": "96",
+              "portionId": "F01-P097",
+              "to": "97"
+            },
+            {
+              "from": "97",
+              "portionId": "F01-P098",
+              "to": "98"
+            },
+            {
+              "from": "98",
+              "portionId": "F01-P099",
+              "to": "99"
+            },
+            {
+              "from": "99",
+              "portionId": "F01-P100",
+              "to": "100"
+            }
+          ],
+          "scopeId": "scope-F01",
+          "scopeVersion": "1"
+        },
+        "sourceRef": {
+          "digest": "cfc042b73ecb2cc91eb48e22eee8a3adf2d691ea82c8435cc79fadde247d7bc7",
+          "ref": {
+            "id": "EXEC-QA-F01",
+            "owner": "MES-EXEC",
+            "version": "1"
+          }
+        },
+        "taskRef": {
+          "digest": "7bd58c5895ecffa6861de70a530dc3387e0351f10479e27f39877b9aed5403f3",
+          "ref": {
+            "id": "5499c5de-d3ec-5410-b6ad-a2fda43e0215",
+            "owner": "QA-IPQC",
+            "version": "4"
+          }
+        },
+        "unexamined": [],
+        "unitRef": {
+          "id": "EA",
+          "owner": "MASTER",
+          "version": "1"
+        },
+        "workOrderId": "WO-F01"
+      },
+      "payloadDigest": "3e35bc6080b8e9edae1e11d26b21aed9aa48e9674e4dc0cf157857cb571eb832",
+      "registration": {
+        "ref": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+          "version": "1",
+          "digest": "a2816c76938507fae90606fda4eb368128fa120be50527d52095576a966c4d51"
+        },
+        "body": {
+          "payloadType": "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+          "schemaType": "ExecQualityDisposition",
+          "schemaId": "urn:cp6:qa-ipqc:recovery-r4-systemic:ExecQualityDisposition",
+          "destination": "MES-EXEC",
+          "protocolVersion": "1",
+          "state": "DESIGN_REGISTERED",
+          "runtimeAdoption": "UNPROVEN"
+        }
+      },
+      "frozenPayload": {
+        "payloadId": "PAYLOAD-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "payloadType": "MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "schemaType": "ExecQualityDisposition",
+        "payloadDigest": "3e35bc6080b8e9edae1e11d26b21aed9aa48e9674e4dc0cf157857cb571eb832",
+        "payloadBody": {
+          "accepted": [
+            {
+              "from": "0",
+              "portionId": "94b534e9-0332-5731-bf65-e8eed9f1ef04",
+              "to": "1"
+            },
+            {
+              "from": "1",
+              "portionId": "aabec33c-b285-5749-b989-aeddf508a390",
+              "to": "2"
+            },
+            {
+              "from": "2",
+              "portionId": "e7f6ac7d-f003-592b-b9ff-30a068612b5a",
+              "to": "3"
+            },
+            {
+              "from": "3",
+              "portionId": "7dae08a9-bf46-566d-8b90-9c98e222540e",
+              "to": "4"
+            },
+            {
+              "from": "4",
+              "portionId": "5da556ce-7d25-5d2e-a119-ef2ee9bb29e3",
+              "to": "5"
+            },
+            {
+              "from": "5",
+              "portionId": "131a8679-1a8f-55fc-b1fe-876d25d111da",
+              "to": "6"
+            },
+            {
+              "from": "6",
+              "portionId": "ce62ed44-46a8-5728-8e53-a78df7ad7e68",
+              "to": "7"
+            },
+            {
+              "from": "7",
+              "portionId": "ca7de846-e022-573e-bf25-0418876037ea",
+              "to": "8"
+            },
+            {
+              "from": "8",
+              "portionId": "04b321fc-6efe-5661-9217-a57ea91e7318",
+              "to": "9"
+            },
+            {
+              "from": "9",
+              "portionId": "11719fc6-69fa-59fc-a54a-a491ddb16078",
+              "to": "10"
+            },
+            {
+              "from": "10",
+              "portionId": "f1a8a488-13f9-5ea5-b818-271c6eeecb13",
+              "to": "11"
+            },
+            {
+              "from": "11",
+              "portionId": "0247a1ee-dd50-59c3-99c4-ce33fe34b2e1",
+              "to": "12"
+            },
+            {
+              "from": "12",
+              "portionId": "9c8fabd8-da69-5d2c-8c59-3cc6a048b5fc",
+              "to": "13"
+            },
+            {
+              "from": "13",
+              "portionId": "7839fd71-9a3f-5af8-b909-9d242c9cad4a",
+              "to": "14"
+            },
+            {
+              "from": "14",
+              "portionId": "06d0fac9-df1c-530f-9bde-e2267ff869dd",
+              "to": "15"
+            },
+            {
+              "from": "15",
+              "portionId": "edd1ba16-1278-56c6-9042-a024e96d9ad8",
+              "to": "16"
+            },
+            {
+              "from": "16",
+              "portionId": "03df7bfb-d81c-54bf-a404-16379f84f0d1",
+              "to": "17"
+            },
+            {
+              "from": "17",
+              "portionId": "0100996a-5814-536e-93a4-6c15d08b70fa",
+              "to": "18"
+            },
+            {
+              "from": "18",
+              "portionId": "b7b1e38b-fda1-57f4-9153-6b14743885cd",
+              "to": "19"
+            },
+            {
+              "from": "19",
+              "portionId": "f65d98e6-07e9-5e11-ae90-6d37b96792a2",
+              "to": "20"
+            },
+            {
+              "from": "20",
+              "portionId": "da607f5d-b137-5b8d-9fd7-2766649dc904",
+              "to": "21"
+            },
+            {
+              "from": "21",
+              "portionId": "df9fba23-b69a-53e9-bdf3-1dbd7bec7598",
+              "to": "22"
+            },
+            {
+              "from": "22",
+              "portionId": "d8a090ce-9484-56d0-9f46-bed26d0b46d7",
+              "to": "23"
+            },
+            {
+              "from": "23",
+              "portionId": "46bd490c-3455-550f-874c-4f506751a06a",
+              "to": "24"
+            },
+            {
+              "from": "24",
+              "portionId": "417ffe47-40c3-57c6-9e4e-0b5b90f14965",
+              "to": "25"
+            },
+            {
+              "from": "25",
+              "portionId": "3216cc83-3693-5777-a1cb-69801a94025c",
+              "to": "26"
+            },
+            {
+              "from": "26",
+              "portionId": "b4addc6b-e9a9-58a3-bc30-752ef6c2ab24",
+              "to": "27"
+            },
+            {
+              "from": "27",
+              "portionId": "eaa1e8f9-84ac-58c2-88f1-c72c41a99319",
+              "to": "28"
+            },
+            {
+              "from": "28",
+              "portionId": "fb891bbe-04d3-5d51-b630-f9c13377d605",
+              "to": "29"
+            },
+            {
+              "from": "29",
+              "portionId": "db53b49b-e530-5dfd-a4c1-4283b81bef0e",
+              "to": "30"
+            },
+            {
+              "from": "30",
+              "portionId": "ca48f663-1106-59b5-8991-d4d1a3d92771",
+              "to": "31"
+            },
+            {
+              "from": "31",
+              "portionId": "d2145c65-321d-5443-b398-5a8732aa1d25",
+              "to": "32"
+            },
+            {
+              "from": "32",
+              "portionId": "69f10059-1f56-5942-9d8c-2d573f22b0de",
+              "to": "33"
+            },
+            {
+              "from": "33",
+              "portionId": "b834b25f-f902-5580-9cb8-3bbfea742b35",
+              "to": "34"
+            },
+            {
+              "from": "34",
+              "portionId": "c42b05ae-076c-5278-8ab6-50911ce6c6a6",
+              "to": "35"
+            },
+            {
+              "from": "35",
+              "portionId": "92cb2a36-b032-5d09-aaef-16b1de6f7e87",
+              "to": "36"
+            },
+            {
+              "from": "36",
+              "portionId": "1e0a1f1d-7f1e-5819-810f-f59e3e9102f0",
+              "to": "37"
+            },
+            {
+              "from": "37",
+              "portionId": "c72ba1be-e1f9-5cf9-abc7-dfad339efb86",
+              "to": "38"
+            },
+            {
+              "from": "38",
+              "portionId": "78667885-9a0b-5dc6-9106-e75cdc0f92e6",
+              "to": "39"
+            },
+            {
+              "from": "39",
+              "portionId": "3fd546b2-4390-5c9a-ade0-dd3350f00262",
+              "to": "40"
+            },
+            {
+              "from": "40",
+              "portionId": "dd0f3339-3023-5bc6-aaae-301585f6dc96",
+              "to": "41"
+            },
+            {
+              "from": "41",
+              "portionId": "5bae3902-b784-582e-b4a6-a6f7dd63e4b5",
+              "to": "42"
+            },
+            {
+              "from": "42",
+              "portionId": "6ccccae3-3e76-54fa-ab82-185c701bf447",
+              "to": "43"
+            },
+            {
+              "from": "43",
+              "portionId": "78caf2e5-4f05-5c02-a7d7-3e3a46b64e6c",
+              "to": "44"
+            },
+            {
+              "from": "44",
+              "portionId": "6b0cc6fd-eb2a-58e0-91b1-f3e6d4b684ed",
+              "to": "45"
+            },
+            {
+              "from": "45",
+              "portionId": "906c5f4d-60fa-5f0a-9c67-2578b572d4b7",
+              "to": "46"
+            },
+            {
+              "from": "46",
+              "portionId": "aa4d3f6f-a9cc-5046-80b7-9342ebdb1741",
+              "to": "47"
+            },
+            {
+              "from": "47",
+              "portionId": "1ec00920-63d4-5ead-be86-294e13111005",
+              "to": "48"
+            },
+            {
+              "from": "48",
+              "portionId": "8ac1735f-34df-5de2-b0f1-09aeabd072cc",
+              "to": "49"
+            },
+            {
+              "from": "49",
+              "portionId": "b82d6f5a-cdc1-5555-9564-1d421d39087d",
+              "to": "50"
+            },
+            {
+              "from": "50",
+              "portionId": "a856c9ef-7f98-5d52-87d3-4378474740ba",
+              "to": "51"
+            },
+            {
+              "from": "51",
+              "portionId": "5503ca07-c067-5e7a-9ba7-adba4d3b274b",
+              "to": "52"
+            },
+            {
+              "from": "52",
+              "portionId": "ce00fee1-ccf8-54dd-b785-31eaa7abd330",
+              "to": "53"
+            },
+            {
+              "from": "53",
+              "portionId": "b950726f-4b5e-5704-88c8-1ce260abe7b0",
+              "to": "54"
+            },
+            {
+              "from": "54",
+              "portionId": "67c289fa-8579-5725-b80c-dfbd3328f438",
+              "to": "55"
+            },
+            {
+              "from": "55",
+              "portionId": "fa52c00f-d7ed-593a-a14a-766852a3473b",
+              "to": "56"
+            },
+            {
+              "from": "56",
+              "portionId": "667e94a0-9f2a-598c-b532-e04ed380e5fb",
+              "to": "57"
+            },
+            {
+              "from": "57",
+              "portionId": "9f5721be-42a0-550b-9356-33814ae30310",
+              "to": "58"
+            },
+            {
+              "from": "58",
+              "portionId": "f3c1f20e-dcef-57e4-a593-5f614e69f33d",
+              "to": "59"
+            },
+            {
+              "from": "59",
+              "portionId": "8f0b990f-2c1e-5cb9-83b8-8a8966d9b3db",
+              "to": "60"
+            },
+            {
+              "from": "60",
+              "portionId": "37c70a0f-a608-5a3c-a7cf-2239ada433a0",
+              "to": "61"
+            },
+            {
+              "from": "61",
+              "portionId": "0b91f6c8-03f3-5c6e-9236-b17e2bbb1b92",
+              "to": "62"
+            },
+            {
+              "from": "62",
+              "portionId": "84d08c25-a57b-55cd-be94-3845fe54e8ca",
+              "to": "63"
+            },
+            {
+              "from": "63",
+              "portionId": "7e378250-2e74-581f-8792-fddcbe967a8b",
+              "to": "64"
+            },
+            {
+              "from": "64",
+              "portionId": "709b521d-c10e-5256-991a-d4fb5ce1ca41",
+              "to": "65"
+            },
+            {
+              "from": "65",
+              "portionId": "ef057988-41a6-5028-807c-8b048418d35c",
+              "to": "66"
+            },
+            {
+              "from": "66",
+              "portionId": "d7f8235e-f932-5353-bcb3-2506e850263c",
+              "to": "67"
+            },
+            {
+              "from": "67",
+              "portionId": "8b3f1634-0feb-5cf7-994e-c7d392a32676",
+              "to": "68"
+            },
+            {
+              "from": "68",
+              "portionId": "da778b81-fac2-580d-ba0a-da6d94e1aa55",
+              "to": "69"
+            },
+            {
+              "from": "69",
+              "portionId": "d1c0f458-48eb-589e-841d-746399ee3f0b",
+              "to": "70"
+            },
+            {
+              "from": "70",
+              "portionId": "185a5a7c-d170-5510-ae10-0960d2de23bc",
+              "to": "71"
+            },
+            {
+              "from": "71",
+              "portionId": "9482db49-5561-5f72-a132-cf6bcf3f547e",
+              "to": "72"
+            },
+            {
+              "from": "72",
+              "portionId": "d57b6ace-b949-5109-9773-be205f3ef385",
+              "to": "73"
+            },
+            {
+              "from": "73",
+              "portionId": "132b591c-6733-5c03-9eb2-6fe6e8930a42",
+              "to": "74"
+            },
+            {
+              "from": "74",
+              "portionId": "943b6f8e-3d20-5864-b19b-e71aa5cbe5c5",
+              "to": "75"
+            },
+            {
+              "from": "75",
+              "portionId": "26a8497b-2346-53d4-acae-be88f890102f",
+              "to": "76"
+            },
+            {
+              "from": "76",
+              "portionId": "e685ab0b-47fc-530b-ae84-ce056027752e",
+              "to": "77"
+            },
+            {
+              "from": "77",
+              "portionId": "cb73979e-dd09-5cfb-bbda-7da8b27b1032",
+              "to": "78"
+            },
+            {
+              "from": "78",
+              "portionId": "85ab8d88-04dc-5124-be48-81281bf19302",
+              "to": "79"
+            },
+            {
+              "from": "79",
+              "portionId": "21e17a2d-e5ee-5520-bce4-0b46bbe5e6d7",
+              "to": "80"
+            },
+            {
+              "from": "80",
+              "portionId": "1ea44500-00fa-5d72-9c07-9b011c2ae6f5",
+              "to": "81"
+            },
+            {
+              "from": "81",
+              "portionId": "8e7ba95c-9c63-50ba-9ef8-2c9071fcb54a",
+              "to": "82"
+            },
+            {
+              "from": "82",
+              "portionId": "ff7be7fb-cb54-58a3-b71c-514356534fe8",
+              "to": "83"
+            },
+            {
+              "from": "83",
+              "portionId": "807b5299-e777-5599-84be-bdd389a1d2e5",
+              "to": "84"
+            },
+            {
+              "from": "84",
+              "portionId": "6e046570-108a-5be8-8d63-e5dd88005681",
+              "to": "85"
+            },
+            {
+              "from": "85",
+              "portionId": "157e913f-d1d6-526b-8186-a2f9360a591d",
+              "to": "86"
+            },
+            {
+              "from": "86",
+              "portionId": "f1421672-e115-5bc5-bff7-249e0f8e7916",
+              "to": "87"
+            },
+            {
+              "from": "87",
+              "portionId": "7ae1f7d4-a72b-5fe7-adf6-9c830e34aedf",
+              "to": "88"
+            },
+            {
+              "from": "88",
+              "portionId": "1a0c861a-a6aa-5f7d-8428-93a1f1cb4729",
+              "to": "89"
+            },
+            {
+              "from": "89",
+              "portionId": "84d7eef7-04d0-558e-940c-3491d2af6bbf",
+              "to": "90"
+            }
+          ],
+          "authorityRef": {
+            "digest": "62b76253c4d1c571c85aba8d6ff8ed31917f09f110649acce90719bbe7995204",
+            "ref": {
+              "id": "approval-F01",
+              "owner": "IAM",
+              "version": "1"
+            }
+          },
+          "held": [],
+          "occurredAt": "2026-10-02T02:10:08Z",
+          "operationId": "OP-F01",
+          "policyRef": {
+            "id": "F01-POLICY",
+            "owner": "QA-POL",
+            "version": "1"
+          },
+          "previousRef": null,
+          "recordedAt": "2026-10-02T02:10:08Z",
+          "reference": {
+            "digest": "8e25d723023d0b13c5216cdba52bd8b301d12acc8c1637317eb2ce913e9147fe",
+            "ref": {
+              "id": "DISPOSITION-F01",
+              "owner": "QA-IPQC",
+              "version": "1"
+            }
+          },
+          "rejected": [
+            {
+              "from": "90",
+              "portionId": "be318646-34d3-5b76-aea5-e86b9f3c0466",
+              "to": "91"
+            },
+            {
+              "from": "91",
+              "portionId": "70163327-d659-53f2-913f-a096084b1883",
+              "to": "92"
+            },
+            {
+              "from": "92",
+              "portionId": "ccae84ec-efd5-55a2-8b72-015326f4a4c3",
+              "to": "93"
+            },
+            {
+              "from": "93",
+              "portionId": "a9c37923-2c57-5f48-a0bf-c75fbef52788",
+              "to": "94"
+            },
+            {
+              "from": "94",
+              "portionId": "a2097d2d-a596-56d6-a655-a65e654f2b2d",
+              "to": "95"
+            },
+            {
+              "from": "95",
+              "portionId": "60fe13f2-214c-542d-9d1c-a5071d880545",
+              "to": "96"
+            },
+            {
+              "from": "96",
+              "portionId": "1c1cb677-4991-59cf-a093-4576ae634031",
+              "to": "97"
+            },
+            {
+              "from": "97",
+              "portionId": "244b1eb9-628c-5cdf-afe0-8981f84b953d",
+              "to": "98"
+            },
+            {
+              "from": "98",
+              "portionId": "d8b82684-d9df-54ba-bc79-f82e4c1323f5",
+              "to": "99"
+            },
+            {
+              "from": "99",
+              "portionId": "657416fe-9f36-54b7-a660-ea28c116190f",
+              "to": "100"
+            }
+          ],
+          "revision": "1",
+          "rework": [],
+          "sampleCoverageRef": {
+            "digest": "dfb47cc410fae8e13101930c700d890bdf99c41d15c01fca2fd4a17053c38b94",
+            "ref": {
+              "id": "F01-COVERAGE",
+              "owner": "QA-IPQC",
+              "version": "1"
+            }
+          },
+          "schema": "EXEC-QA-DISPOSITION-PROPOSED-1",
+          "scope": {
+            "ranges": [
+              {
+                "from": "0",
+                "portionId": "F01-P001",
+                "to": "1"
+              },
+              {
+                "from": "1",
+                "portionId": "F01-P002",
+                "to": "2"
+              },
+              {
+                "from": "2",
+                "portionId": "F01-P003",
+                "to": "3"
+              },
+              {
+                "from": "3",
+                "portionId": "F01-P004",
+                "to": "4"
+              },
+              {
+                "from": "4",
+                "portionId": "F01-P005",
+                "to": "5"
+              },
+              {
+                "from": "5",
+                "portionId": "F01-P006",
+                "to": "6"
+              },
+              {
+                "from": "6",
+                "portionId": "F01-P007",
+                "to": "7"
+              },
+              {
+                "from": "7",
+                "portionId": "F01-P008",
+                "to": "8"
+              },
+              {
+                "from": "8",
+                "portionId": "F01-P009",
+                "to": "9"
+              },
+              {
+                "from": "9",
+                "portionId": "F01-P010",
+                "to": "10"
+              },
+              {
+                "from": "10",
+                "portionId": "F01-P011",
+                "to": "11"
+              },
+              {
+                "from": "11",
+                "portionId": "F01-P012",
+                "to": "12"
+              },
+              {
+                "from": "12",
+                "portionId": "F01-P013",
+                "to": "13"
+              },
+              {
+                "from": "13",
+                "portionId": "F01-P014",
+                "to": "14"
+              },
+              {
+                "from": "14",
+                "portionId": "F01-P015",
+                "to": "15"
+              },
+              {
+                "from": "15",
+                "portionId": "F01-P016",
+                "to": "16"
+              },
+              {
+                "from": "16",
+                "portionId": "F01-P017",
+                "to": "17"
+              },
+              {
+                "from": "17",
+                "portionId": "F01-P018",
+                "to": "18"
+              },
+              {
+                "from": "18",
+                "portionId": "F01-P019",
+                "to": "19"
+              },
+              {
+                "from": "19",
+                "portionId": "F01-P020",
+                "to": "20"
+              },
+              {
+                "from": "20",
+                "portionId": "F01-P021",
+                "to": "21"
+              },
+              {
+                "from": "21",
+                "portionId": "F01-P022",
+                "to": "22"
+              },
+              {
+                "from": "22",
+                "portionId": "F01-P023",
+                "to": "23"
+              },
+              {
+                "from": "23",
+                "portionId": "F01-P024",
+                "to": "24"
+              },
+              {
+                "from": "24",
+                "portionId": "F01-P025",
+                "to": "25"
+              },
+              {
+                "from": "25",
+                "portionId": "F01-P026",
+                "to": "26"
+              },
+              {
+                "from": "26",
+                "portionId": "F01-P027",
+                "to": "27"
+              },
+              {
+                "from": "27",
+                "portionId": "F01-P028",
+                "to": "28"
+              },
+              {
+                "from": "28",
+                "portionId": "F01-P029",
+                "to": "29"
+              },
+              {
+                "from": "29",
+                "portionId": "F01-P030",
+                "to": "30"
+              },
+              {
+                "from": "30",
+                "portionId": "F01-P031",
+                "to": "31"
+              },
+              {
+                "from": "31",
+                "portionId": "F01-P032",
+                "to": "32"
+              },
+              {
+                "from": "32",
+                "portionId": "F01-P033",
+                "to": "33"
+              },
+              {
+                "from": "33",
+                "portionId": "F01-P034",
+                "to": "34"
+              },
+              {
+                "from": "34",
+                "portionId": "F01-P035",
+                "to": "35"
+              },
+              {
+                "from": "35",
+                "portionId": "F01-P036",
+                "to": "36"
+              },
+              {
+                "from": "36",
+                "portionId": "F01-P037",
+                "to": "37"
+              },
+              {
+                "from": "37",
+                "portionId": "F01-P038",
+                "to": "38"
+              },
+              {
+                "from": "38",
+                "portionId": "F01-P039",
+                "to": "39"
+              },
+              {
+                "from": "39",
+                "portionId": "F01-P040",
+                "to": "40"
+              },
+              {
+                "from": "40",
+                "portionId": "F01-P041",
+                "to": "41"
+              },
+              {
+                "from": "41",
+                "portionId": "F01-P042",
+                "to": "42"
+              },
+              {
+                "from": "42",
+                "portionId": "F01-P043",
+                "to": "43"
+              },
+              {
+                "from": "43",
+                "portionId": "F01-P044",
+                "to": "44"
+              },
+              {
+                "from": "44",
+                "portionId": "F01-P045",
+                "to": "45"
+              },
+              {
+                "from": "45",
+                "portionId": "F01-P046",
+                "to": "46"
+              },
+              {
+                "from": "46",
+                "portionId": "F01-P047",
+                "to": "47"
+              },
+              {
+                "from": "47",
+                "portionId": "F01-P048",
+                "to": "48"
+              },
+              {
+                "from": "48",
+                "portionId": "F01-P049",
+                "to": "49"
+              },
+              {
+                "from": "49",
+                "portionId": "F01-P050",
+                "to": "50"
+              },
+              {
+                "from": "50",
+                "portionId": "F01-P051",
+                "to": "51"
+              },
+              {
+                "from": "51",
+                "portionId": "F01-P052",
+                "to": "52"
+              },
+              {
+                "from": "52",
+                "portionId": "F01-P053",
+                "to": "53"
+              },
+              {
+                "from": "53",
+                "portionId": "F01-P054",
+                "to": "54"
+              },
+              {
+                "from": "54",
+                "portionId": "F01-P055",
+                "to": "55"
+              },
+              {
+                "from": "55",
+                "portionId": "F01-P056",
+                "to": "56"
+              },
+              {
+                "from": "56",
+                "portionId": "F01-P057",
+                "to": "57"
+              },
+              {
+                "from": "57",
+                "portionId": "F01-P058",
+                "to": "58"
+              },
+              {
+                "from": "58",
+                "portionId": "F01-P059",
+                "to": "59"
+              },
+              {
+                "from": "59",
+                "portionId": "F01-P060",
+                "to": "60"
+              },
+              {
+                "from": "60",
+                "portionId": "F01-P061",
+                "to": "61"
+              },
+              {
+                "from": "61",
+                "portionId": "F01-P062",
+                "to": "62"
+              },
+              {
+                "from": "62",
+                "portionId": "F01-P063",
+                "to": "63"
+              },
+              {
+                "from": "63",
+                "portionId": "F01-P064",
+                "to": "64"
+              },
+              {
+                "from": "64",
+                "portionId": "F01-P065",
+                "to": "65"
+              },
+              {
+                "from": "65",
+                "portionId": "F01-P066",
+                "to": "66"
+              },
+              {
+                "from": "66",
+                "portionId": "F01-P067",
+                "to": "67"
+              },
+              {
+                "from": "67",
+                "portionId": "F01-P068",
+                "to": "68"
+              },
+              {
+                "from": "68",
+                "portionId": "F01-P069",
+                "to": "69"
+              },
+              {
+                "from": "69",
+                "portionId": "F01-P070",
+                "to": "70"
+              },
+              {
+                "from": "70",
+                "portionId": "F01-P071",
+                "to": "71"
+              },
+              {
+                "from": "71",
+                "portionId": "F01-P072",
+                "to": "72"
+              },
+              {
+                "from": "72",
+                "portionId": "F01-P073",
+                "to": "73"
+              },
+              {
+                "from": "73",
+                "portionId": "F01-P074",
+                "to": "74"
+              },
+              {
+                "from": "74",
+                "portionId": "F01-P075",
+                "to": "75"
+              },
+              {
+                "from": "75",
+                "portionId": "F01-P076",
+                "to": "76"
+              },
+              {
+                "from": "76",
+                "portionId": "F01-P077",
+                "to": "77"
+              },
+              {
+                "from": "77",
+                "portionId": "F01-P078",
+                "to": "78"
+              },
+              {
+                "from": "78",
+                "portionId": "F01-P079",
+                "to": "79"
+              },
+              {
+                "from": "79",
+                "portionId": "F01-P080",
+                "to": "80"
+              },
+              {
+                "from": "80",
+                "portionId": "F01-P081",
+                "to": "81"
+              },
+              {
+                "from": "81",
+                "portionId": "F01-P082",
+                "to": "82"
+              },
+              {
+                "from": "82",
+                "portionId": "F01-P083",
+                "to": "83"
+              },
+              {
+                "from": "83",
+                "portionId": "F01-P084",
+                "to": "84"
+              },
+              {
+                "from": "84",
+                "portionId": "F01-P085",
+                "to": "85"
+              },
+              {
+                "from": "85",
+                "portionId": "F01-P086",
+                "to": "86"
+              },
+              {
+                "from": "86",
+                "portionId": "F01-P087",
+                "to": "87"
+              },
+              {
+                "from": "87",
+                "portionId": "F01-P088",
+                "to": "88"
+              },
+              {
+                "from": "88",
+                "portionId": "F01-P089",
+                "to": "89"
+              },
+              {
+                "from": "89",
+                "portionId": "F01-P090",
+                "to": "90"
+              },
+              {
+                "from": "90",
+                "portionId": "F01-P091",
+                "to": "91"
+              },
+              {
+                "from": "91",
+                "portionId": "F01-P092",
+                "to": "92"
+              },
+              {
+                "from": "92",
+                "portionId": "F01-P093",
+                "to": "93"
+              },
+              {
+                "from": "93",
+                "portionId": "F01-P094",
+                "to": "94"
+              },
+              {
+                "from": "94",
+                "portionId": "F01-P095",
+                "to": "95"
+              },
+              {
+                "from": "95",
+                "portionId": "F01-P096",
+                "to": "96"
+              },
+              {
+                "from": "96",
+                "portionId": "F01-P097",
+                "to": "97"
+              },
+              {
+                "from": "97",
+                "portionId": "F01-P098",
+                "to": "98"
+              },
+              {
+                "from": "98",
+                "portionId": "F01-P099",
+                "to": "99"
+              },
+              {
+                "from": "99",
+                "portionId": "F01-P100",
+                "to": "100"
+              }
+            ],
+            "scopeId": "scope-F01",
+            "scopeVersion": "1"
+          },
+          "sourceRef": {
+            "digest": "cfc042b73ecb2cc91eb48e22eee8a3adf2d691ea82c8435cc79fadde247d7bc7",
+            "ref": {
+              "id": "EXEC-QA-F01",
+              "owner": "MES-EXEC",
+              "version": "1"
+            }
+          },
+          "taskRef": {
+            "digest": "7bd58c5895ecffa6861de70a530dc3387e0351f10479e27f39877b9aed5403f3",
+            "ref": {
+              "id": "5499c5de-d3ec-5410-b6ad-a2fda43e0215",
+              "owner": "QA-IPQC",
+              "version": "4"
+            }
+          },
+          "unexamined": [],
+          "unitRef": {
+            "id": "EA",
+            "owner": "MASTER",
+            "version": "1"
+          },
+          "workOrderId": "WO-F01"
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+          "version": "1",
+          "digest": "a2816c76938507fae90606fda4eb368128fa120be50527d52095576a966c4d51"
+        },
+        "sourceRefs": [],
+        "executionIdentity": {
+          "tenantId": "11111111-1111-4111-8111-111111111111",
+          "environmentId": "22222222-2222-4222-8222-222222222222",
+          "mode": "DEMO"
+        },
+        "state": "FROZEN"
+      },
+      "delivery": {
+        "deliveryId": "DELIVERY-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "payloadRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "PAYLOAD-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+            "version": "1"
+          },
+          "digest": "b52d9746a1c0703b52c42a51067e2d6281cfed0f704bc96aca32315ee07eb768"
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+          "version": "1",
+          "digest": "a2816c76938507fae90606fda4eb368128fa120be50527d52095576a966c4d51"
+        },
+        "destination": "MES-EXEC",
+        "protocolVersion": "1",
+        "state": "DESIGN_FROZEN",
+        "runtimeAdoption": "UNPROVEN"
+      },
+      "receipt": {
+        "receiptId": "RECEIPT-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+        "deliveryRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "DELIVERY-MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1",
+            "version": "1"
+          },
+          "digest": "79b26b316a07783da117148148b03b7c2a9927361bb6bea2a3bef0ffd53f182a"
+        },
+        "payloadDigest": "3e35bc6080b8e9edae1e11d26b21aed9aa48e9674e4dc0cf157857cb571eb832",
+        "terminalState": "DESIGN_ONLY_NOT_SENT",
+        "businessAC": "NOT_RUN",
+        "runtime": "UNPROVEN"
+      },
+      "ownerFacts": []
+    },
+    {
+      "payloadType": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+      "schemaType": "OutQualityTaskResult",
+      "publicationClass": "SCHEMA_EXAMPLE_NO_RELATIONAL_TRANSITION",
+      "relationalEvidence": null,
+      "body": {
+        "reference": {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "OUT-TASK-RESULT-F02",
+            "version": "1"
+          },
+          "digest": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9"
+        },
+        "sourceKey": "OUT-QA-F02",
+        "sourceRevision": "3",
+        "policyRef": {
+          "digest": "f90047f87e6de1dbf1da70115dcfdab239b933fa282b2a94c1f669e7a3ad4e6f",
+          "id": "policy-F02",
+          "owner": "QA-POL",
+          "version": "7"
+        },
+        "state": "CREATED",
+        "taskRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+            "version": "4"
+          },
+          "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870"
+        },
+        "exemptionRef": null,
+        "canonicalSourceRef": {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "OUT-QA-F02",
+            "version": "3"
+          },
+          "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96"
+        },
+        "coveredOutputRanges": [
+          {
+            "from": "0",
+            "to": "100"
+          }
+        ],
+        "coverageRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "F02-TASK-COVERAGE",
+            "version": "1"
+          },
+          "digest": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b"
+        },
+        "reasonCodes": []
+      },
+      "payloadDigest": "a3c9f0dbab44c33ef9814bd4906cb9f3e434bf57699eadef5db963ae7dda0e2a",
+      "registration": {
+        "ref": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+          "version": "1",
+          "digest": "c750d748f7f5a520c71e375e454caa5eaac233c5f528d99f8df1ab37efb3410b"
+        },
+        "body": {
+          "payloadType": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+          "schemaType": "OutQualityTaskResult",
+          "schemaId": "urn:cp6:qa-ipqc:recovery-r4-systemic:OutQualityTaskResult",
+          "destination": "MES-OUTPUT",
+          "protocolVersion": "1",
+          "state": "DESIGN_REGISTERED",
+          "runtimeAdoption": "UNPROVEN"
+        }
+      },
+      "frozenPayload": {
+        "payloadId": "PAYLOAD-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "payloadType": "MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "schemaType": "OutQualityTaskResult",
+        "payloadDigest": "a3c9f0dbab44c33ef9814bd4906cb9f3e434bf57699eadef5db963ae7dda0e2a",
+        "payloadBody": {
+          "reference": {
+            "ref": {
+              "owner": "MES-OUTPUT",
+              "id": "OUT-TASK-RESULT-F02",
+              "version": "1"
+            },
+            "digest": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9"
+          },
+          "sourceKey": "OUT-QA-F02",
+          "sourceRevision": "3",
+          "policyRef": {
+            "digest": "f90047f87e6de1dbf1da70115dcfdab239b933fa282b2a94c1f669e7a3ad4e6f",
+            "id": "policy-F02",
+            "owner": "QA-POL",
+            "version": "7"
+          },
+          "state": "CREATED",
+          "taskRef": {
+            "ref": {
+              "owner": "QA-IPQC",
+              "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+              "version": "4"
+            },
+            "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870"
+          },
+          "exemptionRef": null,
+          "canonicalSourceRef": {
+            "ref": {
+              "owner": "MES-OUTPUT",
+              "id": "OUT-QA-F02",
+              "version": "3"
+            },
+            "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96"
+          },
+          "coveredOutputRanges": [
+            {
+              "from": "0",
+              "to": "100"
+            }
+          ],
+          "coverageRef": {
+            "ref": {
+              "owner": "QA-IPQC",
+              "id": "F02-TASK-COVERAGE",
+              "version": "1"
+            },
+            "digest": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b"
+          },
+          "reasonCodes": []
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+          "version": "1",
+          "digest": "c750d748f7f5a520c71e375e454caa5eaac233c5f528d99f8df1ab37efb3410b"
+        },
+        "sourceRefs": [
+          {
+            "ref": {
+              "owner": "MES-OUTPUT",
+              "id": "OUT-QA-F02",
+              "version": "3"
+            },
+            "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96"
+          },
+          {
+            "ref": {
+              "owner": "QA-IPQC",
+              "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+              "version": "4"
+            },
+            "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870"
+          },
+          {
+            "ref": {
+              "owner": "QA-IPQC",
+              "id": "F02-TASK-COVERAGE",
+              "version": "1"
+            },
+            "digest": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b"
+          }
+        ],
+        "executionIdentity": {
+          "tenantId": "11111111-1111-4111-8111-111111111111",
+          "environmentId": "22222222-2222-4222-8222-222222222222",
+          "mode": "DEMO"
+        },
+        "state": "FROZEN"
+      },
+      "delivery": {
+        "deliveryId": "DELIVERY-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "payloadRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "PAYLOAD-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+            "version": "1"
+          },
+          "digest": "f3d2eb7b4b6410a5290e66d079230ef0056341815749acda194fa5b1bb01e598"
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+          "version": "1",
+          "digest": "c750d748f7f5a520c71e375e454caa5eaac233c5f528d99f8df1ab37efb3410b"
+        },
+        "destination": "MES-OUTPUT",
+        "protocolVersion": "1",
+        "state": "DESIGN_FROZEN",
+        "runtimeAdoption": "UNPROVEN"
+      },
+      "receipt": {
+        "receiptId": "RECEIPT-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+        "deliveryRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "DELIVERY-MES_OUTPUT_QUALITY_TASK_RESULT_V1",
+            "version": "1"
+          },
+          "digest": "f52b75fd169d7a72a74212f56191949fc22fca8319ce1890282d6597e64fc690"
+        },
+        "payloadDigest": "a3c9f0dbab44c33ef9814bd4906cb9f3e434bf57699eadef5db963ae7dda0e2a",
+        "terminalState": "DESIGN_ONLY_NOT_SENT",
+        "businessAC": "NOT_RUN",
+        "runtime": "UNPROVEN"
+      },
+      "ownerFacts": [
+        {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "OUT-QA-F02",
+            "version": "3",
+            "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96"
+          },
+          "body": {
+            "actualBaselineRef": {
+              "id": "BASELINE-F02",
+              "owner": "PLM",
+              "version": "7"
+            },
+            "outputRanges": [
+              {
+                "from": "0",
+                "to": "100"
+              }
+            ],
+            "outputRef": {
+              "digest": "e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884",
+              "ref": {
+                "id": "OUTPUT-F02",
+                "owner": "MES-OUTPUT",
+                "version": "4"
+              }
+            },
+            "outputUnitRef": {
+              "id": "EA",
+              "owner": "UOM",
+              "version": "1"
+            },
+            "policyRef": {
+              "digest": "f90047f87e6de1dbf1da70115dcfdab239b933fa282b2a94c1f669e7a3ad4e6f",
+              "id": "policy-F02",
+              "owner": "QA-POL",
+              "version": "7"
+            },
+            "previousRef": {
+              "digest": "30f826b491ef4e3e9af8a86a7d46659aa8f3450c79640c23484c31be66c9739b",
+              "ref": {
+                "id": "OUT-QA-F02",
+                "owner": "MES-OUTPUT",
+                "version": "2"
+              }
+            },
+            "purposeRef": {
+              "id": "PRODUCTION",
+              "owner": "MES-OUTPUT",
+              "version": "1"
+            },
+            "receiptMappings": [
+              {
+                "conversionRef": null,
+                "lineId": "C40",
+                "outputRange": {
+                  "from": "0",
+                  "to": "40"
+                },
+                "receiptRef": {
+                  "id": "RECEIPT-C40",
+                  "owner": "MES-OUTPUT",
+                  "version": "1"
+                },
+                "receiptSubject": {
+                  "range": {
+                    "from": "0",
+                    "to": "40"
+                  },
+                  "receiptLineKey": "C40",
+                  "receiptSource": {
+                    "documentId": "OUTPUT-F02",
+                    "executionKey": "OUTPUT/F02/RECEIPT/C40",
+                    "lineId": "C40",
+                    "producer": "MES_OUTPUT",
+                    "sourceKind": "PRODUCTION_RECEIPT",
+                    "sourceVersion": "2"
+                  }
+                },
+                "rootRange": {
+                  "from": "0",
+                  "to": "40"
+                }
+              },
+              {
+                "conversionRef": null,
+                "lineId": "D60",
+                "outputRange": {
+                  "from": "40",
+                  "to": "100"
+                },
+                "receiptRef": {
+                  "id": "RECEIPT-D60",
+                  "owner": "MES-OUTPUT",
+                  "version": "1"
+                },
+                "receiptSubject": {
+                  "range": {
+                    "from": "40",
+                    "to": "100"
+                  },
+                  "receiptLineKey": "D60",
+                  "receiptSource": {
+                    "documentId": "OUTPUT-F02",
+                    "executionKey": "OUTPUT/F02/RECEIPT/D60",
+                    "lineId": "D60",
+                    "producer": "MES_OUTPUT",
+                    "sourceKind": "PRODUCTION_RECEIPT",
+                    "sourceVersion": "3"
+                  }
+                },
+                "rootRange": {
+                  "from": "40",
+                  "to": "100"
+                }
+              }
+            ],
+            "revision": "3",
+            "sampleBatchRef": null,
+            "schema": "OUT-QA-SOURCE-1",
+            "sourceCoverageRef": {
+              "digest": "ba32e3866e9db46c4819a7aaee4e36224d0229806a714412f85f8944da1263c4",
+              "ref": {
+                "id": "OUT-COVERAGE-F02",
+                "owner": "MES-OUTPUT",
+                "version": "3"
+              }
+            },
+            "sourceKey": "OUT-QA-F02",
+            "stage": "FQC"
+          }
+        },
+        {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+            "version": "4",
+            "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870"
+          },
+          "body": {
+            "planInstanceRef": {
+              "digest": "9be8316937f8d63ddbdb454d4243c7fe4f6f56209019412e3c5b7cf47f2f55ce",
+              "id": "plan-instance-F02",
+              "owner": "QA-POL",
+              "version": "1"
+            },
+            "policyContextRef": {
+              "digest": "88bb0a02547de9b7f4afb54dcc8f7828738a6d633d18f2899436c3e89c634253",
+              "id": "resolution-F02",
+              "owner": "QA-POL",
+              "version": "1"
+            },
+            "revision": "4",
+            "sourceRef": {
+              "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+              "id": "OUT-QA-F02",
+              "owner": "MES-OUTPUT",
+              "version": "3"
+            },
+            "stage": "FQC",
+            "state": "RESULT_FROZEN",
+            "taskId": "0478bb34-4027-526a-8f03-0d02fe11ed87"
+          }
+        },
+        {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "F02-TASK-COVERAGE",
+            "version": "1",
+            "digest": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b"
+          },
+          "body": {
+            "sourceRef": {
+              "ref": {
+                "owner": "MES-OUTPUT",
+                "id": "OUT-QA-F02",
+                "version": "3"
+              },
+              "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96"
+            },
+            "taskRef": {
+              "ref": {
+                "owner": "QA-IPQC",
+                "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+                "version": "4"
+              },
+              "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870"
+            },
+            "ranges": [
+              {
+                "from": "0",
+                "to": "100"
+              }
+            ],
+            "basis": "CURRENT_RESULTSET_AND_PARTITION"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "OUT-TASK-RESULT-F02",
+            "version": "1",
+            "digest": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9"
+          },
+          "body": {
+            "kind": "OUT_QUALITY_TASK_RESULT",
+            "sourceKey": "OUT-QA-F02",
+            "sourceRevision": "3",
+            "taskId": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+            "taskRevision": "4",
+            "state": "CREATED"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "disposition-F02",
+            "version": "1",
+            "digest": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46"
+          },
+          "body": {
+            "decision": "57cecbef-7195-5dd9-bed6-5c13b92f8b58",
+            "version": 1
+          }
+        },
+        {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "coverage-F02",
+            "version": "1",
+            "digest": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8"
+          },
+          "body": {
+            "resultSetId": "6ad0d998-9950-55e1-984b-9a050320127e",
+            "ranges": [
+              {
+                "from": "0",
+                "to": "100"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "payloadType": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+      "schemaType": "OutQualityDisposition",
+      "publicationClass": "PERSISTED_IN_F02_RELATIONAL_DELIVERY",
+      "relationalEvidence": {
+        "fixtureId": "F02",
+        "table": "DeliveryPayload",
+        "payloadDigest": "e4205038d87933459c6cc1e3598b807ab2e9312cdb540558aa55868fd1e97786"
+      },
+      "body": {
+        "accepted": [
+          {
+            "from": "0",
+            "to": "1"
+          },
+          {
+            "from": "1",
+            "to": "2"
+          },
+          {
+            "from": "2",
+            "to": "3"
+          },
+          {
+            "from": "3",
+            "to": "4"
+          },
+          {
+            "from": "4",
+            "to": "5"
+          },
+          {
+            "from": "5",
+            "to": "6"
+          },
+          {
+            "from": "6",
+            "to": "7"
+          },
+          {
+            "from": "7",
+            "to": "8"
+          },
+          {
+            "from": "8",
+            "to": "9"
+          },
+          {
+            "from": "9",
+            "to": "10"
+          },
+          {
+            "from": "10",
+            "to": "11"
+          },
+          {
+            "from": "11",
+            "to": "12"
+          },
+          {
+            "from": "12",
+            "to": "13"
+          },
+          {
+            "from": "13",
+            "to": "14"
+          },
+          {
+            "from": "14",
+            "to": "15"
+          },
+          {
+            "from": "15",
+            "to": "16"
+          },
+          {
+            "from": "16",
+            "to": "17"
+          },
+          {
+            "from": "17",
+            "to": "18"
+          },
+          {
+            "from": "18",
+            "to": "19"
+          },
+          {
+            "from": "19",
+            "to": "20"
+          },
+          {
+            "from": "20",
+            "to": "21"
+          },
+          {
+            "from": "21",
+            "to": "22"
+          },
+          {
+            "from": "22",
+            "to": "23"
+          },
+          {
+            "from": "23",
+            "to": "24"
+          },
+          {
+            "from": "24",
+            "to": "25"
+          },
+          {
+            "from": "25",
+            "to": "26"
+          },
+          {
+            "from": "26",
+            "to": "27"
+          },
+          {
+            "from": "27",
+            "to": "28"
+          },
+          {
+            "from": "28",
+            "to": "29"
+          },
+          {
+            "from": "29",
+            "to": "30"
+          },
+          {
+            "from": "30",
+            "to": "31"
+          },
+          {
+            "from": "31",
+            "to": "32"
+          },
+          {
+            "from": "32",
+            "to": "33"
+          },
+          {
+            "from": "33",
+            "to": "34"
+          },
+          {
+            "from": "34",
+            "to": "35"
+          },
+          {
+            "from": "35",
+            "to": "36"
+          },
+          {
+            "from": "36",
+            "to": "37"
+          },
+          {
+            "from": "37",
+            "to": "38"
+          },
+          {
+            "from": "38",
+            "to": "39"
+          },
+          {
+            "from": "39",
+            "to": "40"
+          },
+          {
+            "from": "40",
+            "to": "41"
+          },
+          {
+            "from": "41",
+            "to": "42"
+          },
+          {
+            "from": "42",
+            "to": "43"
+          },
+          {
+            "from": "43",
+            "to": "44"
+          },
+          {
+            "from": "44",
+            "to": "45"
+          },
+          {
+            "from": "45",
+            "to": "46"
+          },
+          {
+            "from": "46",
+            "to": "47"
+          },
+          {
+            "from": "47",
+            "to": "48"
+          },
+          {
+            "from": "48",
+            "to": "49"
+          },
+          {
+            "from": "49",
+            "to": "50"
+          },
+          {
+            "from": "50",
+            "to": "51"
+          },
+          {
+            "from": "51",
+            "to": "52"
+          },
+          {
+            "from": "52",
+            "to": "53"
+          },
+          {
+            "from": "53",
+            "to": "54"
+          },
+          {
+            "from": "54",
+            "to": "55"
+          },
+          {
+            "from": "55",
+            "to": "56"
+          },
+          {
+            "from": "56",
+            "to": "57"
+          },
+          {
+            "from": "57",
+            "to": "58"
+          },
+          {
+            "from": "58",
+            "to": "59"
+          },
+          {
+            "from": "59",
+            "to": "60"
+          },
+          {
+            "from": "60",
+            "to": "61"
+          },
+          {
+            "from": "61",
+            "to": "62"
+          },
+          {
+            "from": "62",
+            "to": "63"
+          },
+          {
+            "from": "63",
+            "to": "64"
+          },
+          {
+            "from": "64",
+            "to": "65"
+          },
+          {
+            "from": "65",
+            "to": "66"
+          },
+          {
+            "from": "66",
+            "to": "67"
+          },
+          {
+            "from": "67",
+            "to": "68"
+          },
+          {
+            "from": "68",
+            "to": "69"
+          },
+          {
+            "from": "69",
+            "to": "70"
+          },
+          {
+            "from": "70",
+            "to": "71"
+          },
+          {
+            "from": "71",
+            "to": "72"
+          },
+          {
+            "from": "72",
+            "to": "73"
+          },
+          {
+            "from": "73",
+            "to": "74"
+          },
+          {
+            "from": "74",
+            "to": "75"
+          },
+          {
+            "from": "75",
+            "to": "76"
+          },
+          {
+            "from": "76",
+            "to": "77"
+          },
+          {
+            "from": "77",
+            "to": "78"
+          },
+          {
+            "from": "78",
+            "to": "79"
+          },
+          {
+            "from": "79",
+            "to": "80"
+          }
+        ],
+        "authorityRef": {
+          "digest": "adb89ab3244866cbba315ef7210a6d66ae7e91965773508cc9e9dd415bcf7b8b",
+          "ref": {
+            "id": "approver-F02",
+            "owner": "IAM",
+            "version": "1"
+          }
+        },
+        "held": [],
+        "occurredAt": "2026-10-01T17:30:08Z",
+        "outputRef": {
+          "digest": "e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884",
+          "ref": {
+            "id": "OUTPUT-F02",
+            "owner": "MES-OUTPUT",
+            "version": "4"
+          }
+        },
+        "policyRef": {
+          "digest": "f90047f87e6de1dbf1da70115dcfdab239b933fa282b2a94c1f669e7a3ad4e6f",
+          "id": "policy-F02",
+          "owner": "QA-POL",
+          "version": "7"
+        },
+        "previousRef": null,
+        "recordedAt": "2026-10-01T17:30:08Z",
+        "reference": {
+          "digest": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46",
+          "ref": {
+            "id": "disposition-F02",
+            "owner": "MES-OUTPUT",
+            "version": "1"
+          }
+        },
+        "rejected": [],
+        "revision": "1",
+        "rework": [
+          {
+            "from": "80",
+            "to": "81"
+          },
+          {
+            "from": "81",
+            "to": "82"
+          },
+          {
+            "from": "82",
+            "to": "83"
+          },
+          {
+            "from": "83",
+            "to": "84"
+          },
+          {
+            "from": "84",
+            "to": "85"
+          },
+          {
+            "from": "85",
+            "to": "86"
+          },
+          {
+            "from": "86",
+            "to": "87"
+          },
+          {
+            "from": "87",
+            "to": "88"
+          },
+          {
+            "from": "88",
+            "to": "89"
+          },
+          {
+            "from": "89",
+            "to": "90"
+          }
+        ],
+        "sampleCoverageRef": {
+          "digest": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8",
+          "ref": {
+            "id": "coverage-F02",
+            "owner": "QA-IPQC",
+            "version": "1"
+          }
+        },
+        "schema": "OUT-QA-DISPOSITION-1",
+        "sourceRef": {
+          "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+          "ref": {
+            "id": "OUT-QA-F02",
+            "owner": "MES-OUTPUT",
+            "version": "3"
+          }
+        },
+        "taskRef": {
+          "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870",
+          "ref": {
+            "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+            "owner": "QA-IPQC",
+            "version": "4"
+          }
+        },
+        "unexamined": [
+          {
+            "from": "90",
+            "to": "91"
+          },
+          {
+            "from": "91",
+            "to": "92"
+          },
+          {
+            "from": "92",
+            "to": "93"
+          },
+          {
+            "from": "93",
+            "to": "94"
+          },
+          {
+            "from": "94",
+            "to": "95"
+          },
+          {
+            "from": "95",
+            "to": "96"
+          },
+          {
+            "from": "96",
+            "to": "97"
+          },
+          {
+            "from": "97",
+            "to": "98"
+          },
+          {
+            "from": "98",
+            "to": "99"
+          },
+          {
+            "from": "99",
+            "to": "100"
+          }
+        ],
+        "unitRef": {
+          "id": "EA",
+          "owner": "UOM",
+          "version": "1"
+        }
+      },
+      "payloadDigest": "e4205038d87933459c6cc1e3598b807ab2e9312cdb540558aa55868fd1e97786",
+      "registration": {
+        "ref": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+          "version": "1",
+          "digest": "350792ea193fef4ad4e2bff866ab5a50752450779a2e3aa2683cf5dbc628cfcf"
+        },
+        "body": {
+          "payloadType": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+          "schemaType": "OutQualityDisposition",
+          "schemaId": "urn:cp6:qa-ipqc:recovery-r4-systemic:OutQualityDisposition",
+          "destination": "MES-OUTPUT",
+          "protocolVersion": "1",
+          "state": "DESIGN_REGISTERED",
+          "runtimeAdoption": "UNPROVEN"
+        }
+      },
+      "frozenPayload": {
+        "payloadId": "PAYLOAD-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "payloadType": "MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "schemaType": "OutQualityDisposition",
+        "payloadDigest": "e4205038d87933459c6cc1e3598b807ab2e9312cdb540558aa55868fd1e97786",
+        "payloadBody": {
+          "accepted": [
+            {
+              "from": "0",
+              "to": "1"
+            },
+            {
+              "from": "1",
+              "to": "2"
+            },
+            {
+              "from": "2",
+              "to": "3"
+            },
+            {
+              "from": "3",
+              "to": "4"
+            },
+            {
+              "from": "4",
+              "to": "5"
+            },
+            {
+              "from": "5",
+              "to": "6"
+            },
+            {
+              "from": "6",
+              "to": "7"
+            },
+            {
+              "from": "7",
+              "to": "8"
+            },
+            {
+              "from": "8",
+              "to": "9"
+            },
+            {
+              "from": "9",
+              "to": "10"
+            },
+            {
+              "from": "10",
+              "to": "11"
+            },
+            {
+              "from": "11",
+              "to": "12"
+            },
+            {
+              "from": "12",
+              "to": "13"
+            },
+            {
+              "from": "13",
+              "to": "14"
+            },
+            {
+              "from": "14",
+              "to": "15"
+            },
+            {
+              "from": "15",
+              "to": "16"
+            },
+            {
+              "from": "16",
+              "to": "17"
+            },
+            {
+              "from": "17",
+              "to": "18"
+            },
+            {
+              "from": "18",
+              "to": "19"
+            },
+            {
+              "from": "19",
+              "to": "20"
+            },
+            {
+              "from": "20",
+              "to": "21"
+            },
+            {
+              "from": "21",
+              "to": "22"
+            },
+            {
+              "from": "22",
+              "to": "23"
+            },
+            {
+              "from": "23",
+              "to": "24"
+            },
+            {
+              "from": "24",
+              "to": "25"
+            },
+            {
+              "from": "25",
+              "to": "26"
+            },
+            {
+              "from": "26",
+              "to": "27"
+            },
+            {
+              "from": "27",
+              "to": "28"
+            },
+            {
+              "from": "28",
+              "to": "29"
+            },
+            {
+              "from": "29",
+              "to": "30"
+            },
+            {
+              "from": "30",
+              "to": "31"
+            },
+            {
+              "from": "31",
+              "to": "32"
+            },
+            {
+              "from": "32",
+              "to": "33"
+            },
+            {
+              "from": "33",
+              "to": "34"
+            },
+            {
+              "from": "34",
+              "to": "35"
+            },
+            {
+              "from": "35",
+              "to": "36"
+            },
+            {
+              "from": "36",
+              "to": "37"
+            },
+            {
+              "from": "37",
+              "to": "38"
+            },
+            {
+              "from": "38",
+              "to": "39"
+            },
+            {
+              "from": "39",
+              "to": "40"
+            },
+            {
+              "from": "40",
+              "to": "41"
+            },
+            {
+              "from": "41",
+              "to": "42"
+            },
+            {
+              "from": "42",
+              "to": "43"
+            },
+            {
+              "from": "43",
+              "to": "44"
+            },
+            {
+              "from": "44",
+              "to": "45"
+            },
+            {
+              "from": "45",
+              "to": "46"
+            },
+            {
+              "from": "46",
+              "to": "47"
+            },
+            {
+              "from": "47",
+              "to": "48"
+            },
+            {
+              "from": "48",
+              "to": "49"
+            },
+            {
+              "from": "49",
+              "to": "50"
+            },
+            {
+              "from": "50",
+              "to": "51"
+            },
+            {
+              "from": "51",
+              "to": "52"
+            },
+            {
+              "from": "52",
+              "to": "53"
+            },
+            {
+              "from": "53",
+              "to": "54"
+            },
+            {
+              "from": "54",
+              "to": "55"
+            },
+            {
+              "from": "55",
+              "to": "56"
+            },
+            {
+              "from": "56",
+              "to": "57"
+            },
+            {
+              "from": "57",
+              "to": "58"
+            },
+            {
+              "from": "58",
+              "to": "59"
+            },
+            {
+              "from": "59",
+              "to": "60"
+            },
+            {
+              "from": "60",
+              "to": "61"
+            },
+            {
+              "from": "61",
+              "to": "62"
+            },
+            {
+              "from": "62",
+              "to": "63"
+            },
+            {
+              "from": "63",
+              "to": "64"
+            },
+            {
+              "from": "64",
+              "to": "65"
+            },
+            {
+              "from": "65",
+              "to": "66"
+            },
+            {
+              "from": "66",
+              "to": "67"
+            },
+            {
+              "from": "67",
+              "to": "68"
+            },
+            {
+              "from": "68",
+              "to": "69"
+            },
+            {
+              "from": "69",
+              "to": "70"
+            },
+            {
+              "from": "70",
+              "to": "71"
+            },
+            {
+              "from": "71",
+              "to": "72"
+            },
+            {
+              "from": "72",
+              "to": "73"
+            },
+            {
+              "from": "73",
+              "to": "74"
+            },
+            {
+              "from": "74",
+              "to": "75"
+            },
+            {
+              "from": "75",
+              "to": "76"
+            },
+            {
+              "from": "76",
+              "to": "77"
+            },
+            {
+              "from": "77",
+              "to": "78"
+            },
+            {
+              "from": "78",
+              "to": "79"
+            },
+            {
+              "from": "79",
+              "to": "80"
+            }
+          ],
+          "authorityRef": {
+            "digest": "adb89ab3244866cbba315ef7210a6d66ae7e91965773508cc9e9dd415bcf7b8b",
+            "ref": {
+              "id": "approver-F02",
+              "owner": "IAM",
+              "version": "1"
+            }
+          },
+          "held": [],
+          "occurredAt": "2026-10-01T17:30:08Z",
+          "outputRef": {
+            "digest": "e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884",
+            "ref": {
+              "id": "OUTPUT-F02",
+              "owner": "MES-OUTPUT",
+              "version": "4"
+            }
+          },
+          "policyRef": {
+            "digest": "f90047f87e6de1dbf1da70115dcfdab239b933fa282b2a94c1f669e7a3ad4e6f",
+            "id": "policy-F02",
+            "owner": "QA-POL",
+            "version": "7"
+          },
+          "previousRef": null,
+          "recordedAt": "2026-10-01T17:30:08Z",
+          "reference": {
+            "digest": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46",
+            "ref": {
+              "id": "disposition-F02",
+              "owner": "MES-OUTPUT",
+              "version": "1"
+            }
+          },
+          "rejected": [],
+          "revision": "1",
+          "rework": [
+            {
+              "from": "80",
+              "to": "81"
+            },
+            {
+              "from": "81",
+              "to": "82"
+            },
+            {
+              "from": "82",
+              "to": "83"
+            },
+            {
+              "from": "83",
+              "to": "84"
+            },
+            {
+              "from": "84",
+              "to": "85"
+            },
+            {
+              "from": "85",
+              "to": "86"
+            },
+            {
+              "from": "86",
+              "to": "87"
+            },
+            {
+              "from": "87",
+              "to": "88"
+            },
+            {
+              "from": "88",
+              "to": "89"
+            },
+            {
+              "from": "89",
+              "to": "90"
+            }
+          ],
+          "sampleCoverageRef": {
+            "digest": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8",
+            "ref": {
+              "id": "coverage-F02",
+              "owner": "QA-IPQC",
+              "version": "1"
+            }
+          },
+          "schema": "OUT-QA-DISPOSITION-1",
+          "sourceRef": {
+            "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+            "ref": {
+              "id": "OUT-QA-F02",
+              "owner": "MES-OUTPUT",
+              "version": "3"
+            }
+          },
+          "taskRef": {
+            "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870",
+            "ref": {
+              "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+              "owner": "QA-IPQC",
+              "version": "4"
+            }
+          },
+          "unexamined": [
+            {
+              "from": "90",
+              "to": "91"
+            },
+            {
+              "from": "91",
+              "to": "92"
+            },
+            {
+              "from": "92",
+              "to": "93"
+            },
+            {
+              "from": "93",
+              "to": "94"
+            },
+            {
+              "from": "94",
+              "to": "95"
+            },
+            {
+              "from": "95",
+              "to": "96"
+            },
+            {
+              "from": "96",
+              "to": "97"
+            },
+            {
+              "from": "97",
+              "to": "98"
+            },
+            {
+              "from": "98",
+              "to": "99"
+            },
+            {
+              "from": "99",
+              "to": "100"
+            }
+          ],
+          "unitRef": {
+            "id": "EA",
+            "owner": "UOM",
+            "version": "1"
+          }
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+          "version": "1",
+          "digest": "350792ea193fef4ad4e2bff866ab5a50752450779a2e3aa2683cf5dbc628cfcf"
+        },
+        "sourceRefs": [
+          {
+            "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+            "ref": {
+              "id": "OUT-QA-F02",
+              "owner": "MES-OUTPUT",
+              "version": "3"
+            }
+          },
+          {
+            "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870",
+            "ref": {
+              "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+              "owner": "QA-IPQC",
+              "version": "4"
+            }
+          },
+          {
+            "digest": "e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884",
+            "ref": {
+              "id": "OUTPUT-F02",
+              "owner": "MES-OUTPUT",
+              "version": "4"
+            }
+          },
+          {
+            "digest": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8",
+            "ref": {
+              "id": "coverage-F02",
+              "owner": "QA-IPQC",
+              "version": "1"
+            }
+          }
+        ],
+        "executionIdentity": {
+          "tenantId": "11111111-1111-4111-8111-111111111111",
+          "environmentId": "22222222-2222-4222-8222-222222222222",
+          "mode": "DEMO"
+        },
+        "state": "FROZEN"
+      },
+      "delivery": {
+        "deliveryId": "DELIVERY-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "payloadRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "PAYLOAD-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+            "version": "1"
+          },
+          "digest": "1e1725135ff1ade2a1c0341b150f08eb2fb0866b4fbf1b452674841ef0c5f097"
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+          "version": "1",
+          "digest": "350792ea193fef4ad4e2bff866ab5a50752450779a2e3aa2683cf5dbc628cfcf"
+        },
+        "destination": "MES-OUTPUT",
+        "protocolVersion": "1",
+        "state": "DESIGN_FROZEN",
+        "runtimeAdoption": "UNPROVEN"
+      },
+      "receipt": {
+        "receiptId": "RECEIPT-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+        "deliveryRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "DELIVERY-MES_OUTPUT_QUALITY_DISPOSITION_V1",
+            "version": "1"
+          },
+          "digest": "fe18844e20d47d5752d02c06080afb84393375a18003fabd4aa2d0cd72413e38"
+        },
+        "payloadDigest": "e4205038d87933459c6cc1e3598b807ab2e9312cdb540558aa55868fd1e97786",
+        "terminalState": "DESIGN_ONLY_NOT_SENT",
+        "businessAC": "NOT_RUN",
+        "runtime": "UNPROVEN"
+      },
+      "ownerFacts": [
+        {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "OUT-QA-F02",
+            "version": "3",
+            "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96"
+          },
+          "body": {
+            "actualBaselineRef": {
+              "id": "BASELINE-F02",
+              "owner": "PLM",
+              "version": "7"
+            },
+            "outputRanges": [
+              {
+                "from": "0",
+                "to": "100"
+              }
+            ],
+            "outputRef": {
+              "digest": "e8a7b3a9f12b0647721f6f8331f89d788597c6d788340782f6a820fc97b3e884",
+              "ref": {
+                "id": "OUTPUT-F02",
+                "owner": "MES-OUTPUT",
+                "version": "4"
+              }
+            },
+            "outputUnitRef": {
+              "id": "EA",
+              "owner": "UOM",
+              "version": "1"
+            },
+            "policyRef": {
+              "digest": "f90047f87e6de1dbf1da70115dcfdab239b933fa282b2a94c1f669e7a3ad4e6f",
+              "id": "policy-F02",
+              "owner": "QA-POL",
+              "version": "7"
+            },
+            "previousRef": {
+              "digest": "30f826b491ef4e3e9af8a86a7d46659aa8f3450c79640c23484c31be66c9739b",
+              "ref": {
+                "id": "OUT-QA-F02",
+                "owner": "MES-OUTPUT",
+                "version": "2"
+              }
+            },
+            "purposeRef": {
+              "id": "PRODUCTION",
+              "owner": "MES-OUTPUT",
+              "version": "1"
+            },
+            "receiptMappings": [
+              {
+                "conversionRef": null,
+                "lineId": "C40",
+                "outputRange": {
+                  "from": "0",
+                  "to": "40"
+                },
+                "receiptRef": {
+                  "id": "RECEIPT-C40",
+                  "owner": "MES-OUTPUT",
+                  "version": "1"
+                },
+                "receiptSubject": {
+                  "range": {
+                    "from": "0",
+                    "to": "40"
+                  },
+                  "receiptLineKey": "C40",
+                  "receiptSource": {
+                    "documentId": "OUTPUT-F02",
+                    "executionKey": "OUTPUT/F02/RECEIPT/C40",
+                    "lineId": "C40",
+                    "producer": "MES_OUTPUT",
+                    "sourceKind": "PRODUCTION_RECEIPT",
+                    "sourceVersion": "2"
+                  }
+                },
+                "rootRange": {
+                  "from": "0",
+                  "to": "40"
+                }
+              },
+              {
+                "conversionRef": null,
+                "lineId": "D60",
+                "outputRange": {
+                  "from": "40",
+                  "to": "100"
+                },
+                "receiptRef": {
+                  "id": "RECEIPT-D60",
+                  "owner": "MES-OUTPUT",
+                  "version": "1"
+                },
+                "receiptSubject": {
+                  "range": {
+                    "from": "40",
+                    "to": "100"
+                  },
+                  "receiptLineKey": "D60",
+                  "receiptSource": {
+                    "documentId": "OUTPUT-F02",
+                    "executionKey": "OUTPUT/F02/RECEIPT/D60",
+                    "lineId": "D60",
+                    "producer": "MES_OUTPUT",
+                    "sourceKind": "PRODUCTION_RECEIPT",
+                    "sourceVersion": "3"
+                  }
+                },
+                "rootRange": {
+                  "from": "40",
+                  "to": "100"
+                }
+              }
+            ],
+            "revision": "3",
+            "sampleBatchRef": null,
+            "schema": "OUT-QA-SOURCE-1",
+            "sourceCoverageRef": {
+              "digest": "ba32e3866e9db46c4819a7aaee4e36224d0229806a714412f85f8944da1263c4",
+              "ref": {
+                "id": "OUT-COVERAGE-F02",
+                "owner": "MES-OUTPUT",
+                "version": "3"
+              }
+            },
+            "sourceKey": "OUT-QA-F02",
+            "stage": "FQC"
+          }
+        },
+        {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+            "version": "4",
+            "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870"
+          },
+          "body": {
+            "planInstanceRef": {
+              "digest": "9be8316937f8d63ddbdb454d4243c7fe4f6f56209019412e3c5b7cf47f2f55ce",
+              "id": "plan-instance-F02",
+              "owner": "QA-POL",
+              "version": "1"
+            },
+            "policyContextRef": {
+              "digest": "88bb0a02547de9b7f4afb54dcc8f7828738a6d633d18f2899436c3e89c634253",
+              "id": "resolution-F02",
+              "owner": "QA-POL",
+              "version": "1"
+            },
+            "revision": "4",
+            "sourceRef": {
+              "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96",
+              "id": "OUT-QA-F02",
+              "owner": "MES-OUTPUT",
+              "version": "3"
+            },
+            "stage": "FQC",
+            "state": "RESULT_FROZEN",
+            "taskId": "0478bb34-4027-526a-8f03-0d02fe11ed87"
+          }
+        },
+        {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "F02-TASK-COVERAGE",
+            "version": "1",
+            "digest": "894fb8aab11d87c425d54545931cdd00c09740bc67a07d3ac5b6fae6da4fa74b"
+          },
+          "body": {
+            "sourceRef": {
+              "ref": {
+                "owner": "MES-OUTPUT",
+                "id": "OUT-QA-F02",
+                "version": "3"
+              },
+              "digest": "ad4a6b47fd8861dc233cfa0d2da7a761638149b3db7f5e034581efd1739c0d96"
+            },
+            "taskRef": {
+              "ref": {
+                "owner": "QA-IPQC",
+                "id": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+                "version": "4"
+              },
+              "digest": "a1b78835289066d685cc3d6ab2bb834d6509cb9156cb03d1da83ef3a7c919870"
+            },
+            "ranges": [
+              {
+                "from": "0",
+                "to": "100"
+              }
+            ],
+            "basis": "CURRENT_RESULTSET_AND_PARTITION"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "OUT-TASK-RESULT-F02",
+            "version": "1",
+            "digest": "97105e4431e89af58372c574460db370324ca6832bdab75a93573184893df6d9"
+          },
+          "body": {
+            "kind": "OUT_QUALITY_TASK_RESULT",
+            "sourceKey": "OUT-QA-F02",
+            "sourceRevision": "3",
+            "taskId": "0478bb34-4027-526a-8f03-0d02fe11ed87",
+            "taskRevision": "4",
+            "state": "CREATED"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-OUTPUT",
+            "id": "disposition-F02",
+            "version": "1",
+            "digest": "a71e01ff1a9b899c46e2baf96f8d4ac859a2d36df8475c8be6635ee2a5136a46"
+          },
+          "body": {
+            "decision": "57cecbef-7195-5dd9-bed6-5c13b92f8b58",
+            "version": 1
+          }
+        },
+        {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "coverage-F02",
+            "version": "1",
+            "digest": "ddfd1972fcfc72c8b2e7c7cad85b74482865bf07afdc15b590a36f17923272e8"
+          },
+          "body": {
+            "resultSetId": "6ad0d998-9950-55e1-984b-9a050320127e",
+            "ranges": [
+              {
+                "from": "0",
+                "to": "100"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "payloadType": "PLM_RAW_EVIDENCE_HANDOFF_V1",
+      "schemaType": "RawEvidenceHandoff",
+      "publicationClass": "PERSISTED_IN_F03_RELATIONAL_DELIVERY",
+      "relationalEvidence": {
+        "fixtureId": "F03",
+        "table": "DeliveryPayload",
+        "payloadDigest": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387"
+      },
+      "body": {
+        "actualBaselineRef": {
+          "digest": "c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d",
+          "id": "BASELINE-F03",
+          "owner": "PLM",
+          "version": "7"
+        },
+        "contentHashes": [
+          "0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b"
+        ],
+        "coverageRanges": [
+          {
+            "from": "0",
+            "to": "10"
+          }
+        ],
+        "decisionRef": {
+          "digest": "7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149",
+          "id": "790f5388-6025-5077-ba72-b85d1e0838f8",
+          "owner": "QA-IPQC",
+          "version": "1"
+        },
+        "documentRefs": [
+          {
+            "digest": "20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958",
+            "id": "REPORT-F03",
+            "owner": "PLM-DOC",
+            "version": "1"
+          }
+        ],
+        "environmentRefs": [
+          {
+            "digest": "56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799",
+            "id": "ENV-F03",
+            "owner": "QUALITY-MASTER",
+            "version": "3"
+          }
+        ],
+        "handoffId": "923fb8f9-114a-51f2-8979-6dce60aec5f8",
+        "methodVersionRefs": [
+          {
+            "digest": "1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe",
+            "id": "DIMENSIONAL-FULL-COUNT",
+            "owner": "QUALITY-MASTER",
+            "version": "4"
+          }
+        ],
+        "occurredAt": "2026-10-01T17:30:05Z",
+        "previousRef": null,
+        "qualityTaskRef": {
+          "digest": "5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79",
+          "id": "d6d74197-72ce-55b8-85c1-75f5a700a15d",
+          "owner": "QA-IPQC",
+          "version": "4"
+        },
+        "rawRecordRefs": [
+          {
+            "digest": "47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41",
+            "id": "F03-raw-1",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df",
+            "id": "F03-raw-2",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29",
+            "id": "F03-raw-3",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba",
+            "id": "F03-raw-4",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9",
+            "id": "F03-raw-5",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1",
+            "id": "F03-raw-6",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010",
+            "id": "F03-raw-7",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e",
+            "id": "F03-raw-8",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821",
+            "id": "F03-raw-9",
+            "owner": "PLM-DOC",
+            "version": "1"
+          },
+          {
+            "digest": "cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3",
+            "id": "F03-raw-10",
+            "owner": "PLM-DOC",
+            "version": "1"
+          }
+        ],
+        "resultSetRef": {
+          "digest": "fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f",
+          "id": "ca18828e-aafc-5f37-adcd-0397a4409743",
+          "owner": "QA-IPQC",
+          "version": "1"
+        },
+        "revision": "1",
+        "sampleRefs": [
+          {
+            "digest": "edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9",
+            "id": "F03-SAMPLE-1",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f",
+            "id": "F03-SAMPLE-2",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256",
+            "id": "F03-SAMPLE-3",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa",
+            "id": "F03-SAMPLE-4",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88",
+            "id": "F03-SAMPLE-5",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a",
+            "id": "F03-SAMPLE-6",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493",
+            "id": "F03-SAMPLE-7",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7",
+            "id": "F03-SAMPLE-8",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45",
+            "id": "F03-SAMPLE-9",
+            "owner": "PLM",
+            "version": "1"
+          },
+          {
+            "digest": "ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5",
+            "id": "F03-SAMPLE-10",
+            "owner": "PLM",
+            "version": "1"
+          }
+        ],
+        "schema": "QA-IPQC-PLM-EVIDENCE-1",
+        "sourceRef": {
+          "digest": "8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4",
+          "id": "OUT-TRIAL-F03",
+          "owner": "MES-OUTPUT",
+          "version": "1"
+        },
+        "testExecutionRef": {
+          "digest": "7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9",
+          "id": "TEST-F03",
+          "owner": "PLM-VER",
+          "version": "1"
+        }
+      },
+      "payloadDigest": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+      "registration": {
+        "ref": {
+          "owner": "QA-IPQC",
+          "id": "REG-PLM_RAW_EVIDENCE_HANDOFF_V1",
+          "version": "1",
+          "digest": "19d8fb652959bbf5f73cb4581b5560bddf9e0d3615344836e674dabe5f3877a9"
+        },
+        "body": {
+          "payloadType": "PLM_RAW_EVIDENCE_HANDOFF_V1",
+          "schemaType": "RawEvidenceHandoff",
+          "schemaId": "urn:cp6:qa-ipqc:recovery-r4-systemic:RawEvidenceHandoff",
+          "destination": "PLM-VER",
+          "protocolVersion": "1",
+          "state": "DESIGN_REGISTERED",
+          "runtimeAdoption": "UNPROVEN"
+        }
+      },
+      "frozenPayload": {
+        "payloadId": "PAYLOAD-PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "payloadType": "PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "schemaType": "RawEvidenceHandoff",
+        "payloadDigest": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+        "payloadBody": {
+          "actualBaselineRef": {
+            "digest": "c4d7e62069d32217021051ec5cbf0f24af7407e5068480225ee47e87f284c28d",
+            "id": "BASELINE-F03",
+            "owner": "PLM",
+            "version": "7"
+          },
+          "contentHashes": [
+            "0b7f6b86ced505b1ee49403656fc93ffb9388f32c65f5a4e337e6fac252cfc2b"
+          ],
+          "coverageRanges": [
+            {
+              "from": "0",
+              "to": "10"
+            }
+          ],
+          "decisionRef": {
+            "digest": "7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149",
+            "id": "790f5388-6025-5077-ba72-b85d1e0838f8",
+            "owner": "QA-IPQC",
+            "version": "1"
+          },
+          "documentRefs": [
+            {
+              "digest": "20ec2f38fc96bc7d416a9af537493ae0bae26c5ad4c5a0f2d94f56f9c3e04958",
+              "id": "REPORT-F03",
+              "owner": "PLM-DOC",
+              "version": "1"
+            }
+          ],
+          "environmentRefs": [
+            {
+              "digest": "56065609dc6b91d3305baf4efb52a325db1c6db2cb78c0a8dc2d3d509bb31799",
+              "id": "ENV-F03",
+              "owner": "QUALITY-MASTER",
+              "version": "3"
+            }
+          ],
+          "handoffId": "923fb8f9-114a-51f2-8979-6dce60aec5f8",
+          "methodVersionRefs": [
+            {
+              "digest": "1ade6a82b3e09c48ef58865f605017a31dfc25bfb1b8dacef1890bc0210b2ffe",
+              "id": "DIMENSIONAL-FULL-COUNT",
+              "owner": "QUALITY-MASTER",
+              "version": "4"
+            }
+          ],
+          "occurredAt": "2026-10-01T17:30:05Z",
+          "previousRef": null,
+          "qualityTaskRef": {
+            "digest": "5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79",
+            "id": "d6d74197-72ce-55b8-85c1-75f5a700a15d",
+            "owner": "QA-IPQC",
+            "version": "4"
+          },
+          "rawRecordRefs": [
+            {
+              "digest": "47f1f47a2888b1dc97b7ec106a8b5fdef3a540e638e8c03d8e9c908ef8ab2e41",
+              "id": "F03-raw-1",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "795230c324d52dc4199b04d53144580a22266aa64745263bdad4c649589690df",
+              "id": "F03-raw-2",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "b4a79dcd164cc374f5b0272fcd91536665f611cb497dd8cb2c30354024753d29",
+              "id": "F03-raw-3",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "5d619f832581df25fe529cdf51f0324ef5fc4882581adc81cd50b8d595edb9ba",
+              "id": "F03-raw-4",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "556d95413d31916858bf7712be51cb559b557bc934e392f0890443b6d02cdba9",
+              "id": "F03-raw-5",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "23bf3b88d8e42e59b8687112ecbf161404a00681bed4522493066442ac86bca1",
+              "id": "F03-raw-6",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "d56d7c68386104763c1dfe3ded583f02023723939b0d31b69d357b2e3f69b010",
+              "id": "F03-raw-7",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "5b46f3f309ccc76e9f53faec8a4db9a3263c998a1f9c23c4c499123e0818dc4e",
+              "id": "F03-raw-8",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "12ac58d697d1a5f9470fb80ffaf9cb3096379bf40ca6b9b3c5b6efd98f9c7821",
+              "id": "F03-raw-9",
+              "owner": "PLM-DOC",
+              "version": "1"
+            },
+            {
+              "digest": "cc23ec1f472be5ee07149e5d40f55f681902c50d329afa09a08575656560e9c3",
+              "id": "F03-raw-10",
+              "owner": "PLM-DOC",
+              "version": "1"
+            }
+          ],
+          "resultSetRef": {
+            "digest": "fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f",
+            "id": "ca18828e-aafc-5f37-adcd-0397a4409743",
+            "owner": "QA-IPQC",
+            "version": "1"
+          },
+          "revision": "1",
+          "sampleRefs": [
+            {
+              "digest": "edfb8a4289ca327861acc10785d67ed3a9e415b88a23930bc1ee6d03376d41d9",
+              "id": "F03-SAMPLE-1",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "701bb236c1390e1267247218fb1ece30e0cbe244447bbb50a4f655513f76f82f",
+              "id": "F03-SAMPLE-2",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "0d4475dcba7f5e9ac9687c4f25e470fb50787086b20e0ad8e4d2ce6d3f83b256",
+              "id": "F03-SAMPLE-3",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "6e31b7743bed614aaaff57292b5bc6bd353186e1ba4f7f70446e75dd3722dafa",
+              "id": "F03-SAMPLE-4",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "15bc8695470391e542667a5fd83350545f5b663307a458074316fa97c0303e88",
+              "id": "F03-SAMPLE-5",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "19391900885eff517fd17c9d1720f4ddb45e7a8d475d0c3262551a4c751e3c2a",
+              "id": "F03-SAMPLE-6",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "d8806f91b51c46b64699ead3f18cd1b9e8d16719b4c3bbe7c26459abded44493",
+              "id": "F03-SAMPLE-7",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "e0b4883f74cc6f63c6f0fa01d4b9573de0eb00aa2a8e2bcc07283b04e6d8bde7",
+              "id": "F03-SAMPLE-8",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "93daac644faf3597768f086606a666e9b1c68fb529312a9d05cbb85196744a45",
+              "id": "F03-SAMPLE-9",
+              "owner": "PLM",
+              "version": "1"
+            },
+            {
+              "digest": "ecff85f61e453bd00c828fe0bf0de4cd6c9202455de317c06f0a983ea3a506c5",
+              "id": "F03-SAMPLE-10",
+              "owner": "PLM",
+              "version": "1"
+            }
+          ],
+          "schema": "QA-IPQC-PLM-EVIDENCE-1",
+          "sourceRef": {
+            "digest": "8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4",
+            "id": "OUT-TRIAL-F03",
+            "owner": "MES-OUTPUT",
+            "version": "1"
+          },
+          "testExecutionRef": {
+            "digest": "7ca7a6066a0c3112e9cb43b88f256f0d20887dea9e7af79abf4cfe9ec9f9b5a9",
+            "id": "TEST-F03",
+            "owner": "PLM-VER",
+            "version": "1"
+          }
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-PLM_RAW_EVIDENCE_HANDOFF_V1",
+          "version": "1",
+          "digest": "19d8fb652959bbf5f73cb4581b5560bddf9e0d3615344836e674dabe5f3877a9"
+        },
+        "sourceRefs": [
+          {
+            "digest": "8aacdd7c63db9733b495f2ca45e50785b7ba513c80fbad7db83950cf03323fc4",
+            "id": "OUT-TRIAL-F03",
+            "owner": "MES-OUTPUT",
+            "version": "1"
+          },
+          {
+            "digest": "5e4430930696ccb3a957ad9b00da0e9453aa11e045d41874b5e8430bacd15f79",
+            "id": "d6d74197-72ce-55b8-85c1-75f5a700a15d",
+            "owner": "QA-IPQC",
+            "version": "4"
+          },
+          {
+            "digest": "fda4c32fe60e83e90a438bdeeb2409227fdaa9c5624b2008a3455ffb817c336f",
+            "id": "ca18828e-aafc-5f37-adcd-0397a4409743",
+            "owner": "QA-IPQC",
+            "version": "1"
+          },
+          {
+            "digest": "7aa20e14d539dc0986c4a85322f76c21e14e876d3f02f7c7dfe6c8a1445cc149",
+            "id": "790f5388-6025-5077-ba72-b85d1e0838f8",
+            "owner": "QA-IPQC",
+            "version": "1"
+          }
+        ],
+        "executionIdentity": {
+          "tenantId": "11111111-1111-4111-8111-111111111111",
+          "environmentId": "22222222-2222-4222-8222-222222222222",
+          "mode": "DEMO"
+        },
+        "state": "FROZEN"
+      },
+      "delivery": {
+        "deliveryId": "DELIVERY-PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "payloadRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "PAYLOAD-PLM_RAW_EVIDENCE_HANDOFF_V1",
+            "version": "1"
+          },
+          "digest": "5be6489b942a1a61f9708808dbb2dd658239cc007b5284a5e7ee000e48a20e77"
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-PLM_RAW_EVIDENCE_HANDOFF_V1",
+          "version": "1",
+          "digest": "19d8fb652959bbf5f73cb4581b5560bddf9e0d3615344836e674dabe5f3877a9"
+        },
+        "destination": "PLM-VER",
+        "protocolVersion": "1",
+        "state": "DESIGN_FROZEN",
+        "runtimeAdoption": "UNPROVEN"
+      },
+      "receipt": {
+        "receiptId": "RECEIPT-PLM_RAW_EVIDENCE_HANDOFF_V1",
+        "deliveryRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "DELIVERY-PLM_RAW_EVIDENCE_HANDOFF_V1",
+            "version": "1"
+          },
+          "digest": "22c2881433b3fdf92972bd2a16b46e7a419938d2b7b89778b3eef0299f133fc5"
+        },
+        "payloadDigest": "11b909a9a8f76aaddd3b642c660ef5cbb9e4b273334e63e250dd0788d6e70387",
+        "terminalState": "DESIGN_ONLY_NOT_SENT",
+        "businessAC": "NOT_RUN",
+        "runtime": "UNPROVEN"
+      },
+      "ownerFacts": []
+    },
+    {
+      "payloadType": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+      "schemaType": "ExecQualityTaskResult",
+      "publicationClass": "SCHEMA_EXAMPLE_NO_RELATIONAL_TRANSITION",
+      "relationalEvidence": null,
+      "body": {
+        "schema": "EXEC-QUALITY-TASK-RESULT-PROPOSED-1",
+        "reference": {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "EXEC-TASK-RESULT-F08-REAL",
+            "version": "1"
+          },
+          "digest": "79ccde31b2b05abb19d913969faa0820c526ab635b47895a25f7258cee628d86"
+        },
+        "sourceId": "EXEC-QA-F08-REAL",
+        "sourceRevision": "1",
+        "workOrderId": "WO-F08-REAL",
+        "operationId": "OP-F08-REAL",
+        "policyRef": {
+          "owner": "QA-POL",
+          "id": "POLICY-F08-REAL",
+          "version": "1"
+        },
+        "state": "REJECTED",
+        "taskRef": null,
+        "canonicalSourceRef": {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "EXEC-QA-F08-REAL",
+            "version": "1"
+          },
+          "digest": "9be25cbe51b8d95985b5799b55f28f9d1e5920620224540d796ca863e6c53cdb"
+        },
+        "coveredRanges": [
+          {
+            "portionId": "PORTION-F08-REAL",
+            "from": "0",
+            "to": "10"
+          }
+        ],
+        "coverageRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "F08-REAL-COVERAGE",
+            "version": "1"
+          },
+          "digest": "bb558c46097296292eadef7f6cbf28351ad8cbd99eaa1dc84b70068ac4a3c071"
+        },
+        "reasonCodes": [
+          "OWNER_PROTOCOL_NOT_READY"
+        ]
+      },
+      "payloadDigest": "67945ed83a40f06cd113cd8a7e8fd49116ca6d1355960c2b78a6b51eab814efc",
+      "registration": {
+        "ref": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+          "version": "1",
+          "digest": "209212d6383c298ee2cc70d58e58cf4df71530f18f7a7f989608b8ac8c4aa1b4"
+        },
+        "body": {
+          "payloadType": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+          "schemaType": "ExecQualityTaskResult",
+          "schemaId": "urn:cp6:qa-ipqc:recovery-r4-systemic:ExecQualityTaskResult",
+          "destination": "MES-EXEC",
+          "protocolVersion": "1",
+          "state": "DESIGN_REGISTERED",
+          "runtimeAdoption": "UNPROVEN"
+        }
+      },
+      "frozenPayload": {
+        "payloadId": "PAYLOAD-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "payloadType": "MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "schemaType": "ExecQualityTaskResult",
+        "payloadDigest": "67945ed83a40f06cd113cd8a7e8fd49116ca6d1355960c2b78a6b51eab814efc",
+        "payloadBody": {
+          "schema": "EXEC-QUALITY-TASK-RESULT-PROPOSED-1",
+          "reference": {
+            "ref": {
+              "owner": "MES-EXEC",
+              "id": "EXEC-TASK-RESULT-F08-REAL",
+              "version": "1"
+            },
+            "digest": "79ccde31b2b05abb19d913969faa0820c526ab635b47895a25f7258cee628d86"
+          },
+          "sourceId": "EXEC-QA-F08-REAL",
+          "sourceRevision": "1",
+          "workOrderId": "WO-F08-REAL",
+          "operationId": "OP-F08-REAL",
+          "policyRef": {
+            "owner": "QA-POL",
+            "id": "POLICY-F08-REAL",
+            "version": "1"
+          },
+          "state": "REJECTED",
+          "taskRef": null,
+          "canonicalSourceRef": {
+            "ref": {
+              "owner": "MES-EXEC",
+              "id": "EXEC-QA-F08-REAL",
+              "version": "1"
+            },
+            "digest": "9be25cbe51b8d95985b5799b55f28f9d1e5920620224540d796ca863e6c53cdb"
+          },
+          "coveredRanges": [
+            {
+              "portionId": "PORTION-F08-REAL",
+              "from": "0",
+              "to": "10"
+            }
+          ],
+          "coverageRef": {
+            "ref": {
+              "owner": "QA-IPQC",
+              "id": "F08-REAL-COVERAGE",
+              "version": "1"
+            },
+            "digest": "bb558c46097296292eadef7f6cbf28351ad8cbd99eaa1dc84b70068ac4a3c071"
+          },
+          "reasonCodes": [
+            "OWNER_PROTOCOL_NOT_READY"
+          ]
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+          "version": "1",
+          "digest": "209212d6383c298ee2cc70d58e58cf4df71530f18f7a7f989608b8ac8c4aa1b4"
+        },
+        "sourceRefs": [
+          {
+            "ref": {
+              "owner": "MES-EXEC",
+              "id": "EXEC-QA-F08-REAL",
+              "version": "1"
+            },
+            "digest": "9be25cbe51b8d95985b5799b55f28f9d1e5920620224540d796ca863e6c53cdb"
+          },
+          {
+            "ref": {
+              "owner": "QA-IPQC",
+              "id": "F08-REAL-COVERAGE",
+              "version": "1"
+            },
+            "digest": "bb558c46097296292eadef7f6cbf28351ad8cbd99eaa1dc84b70068ac4a3c071"
+          }
+        ],
+        "executionIdentity": {
+          "tenantId": "11111111-1111-4111-8111-111111111111",
+          "environmentId": "22222222-2222-4222-8222-222222222222",
+          "mode": "REAL"
+        },
+        "state": "REJECTED"
+      },
+      "delivery": {
+        "deliveryId": "DELIVERY-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "payloadRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "PAYLOAD-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+            "version": "1"
+          },
+          "digest": "20cb6119795723a77be1a8d49933195acdaa30c22da33aa3afc2c98a0163620e"
+        },
+        "registrationRef": {
+          "owner": "QA-IPQC",
+          "id": "REG-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+          "version": "1",
+          "digest": "209212d6383c298ee2cc70d58e58cf4df71530f18f7a7f989608b8ac8c4aa1b4"
+        },
+        "destination": "MES-EXEC",
+        "protocolVersion": "1",
+        "state": "DESIGN_FROZEN",
+        "runtimeAdoption": "UNPROVEN"
+      },
+      "receipt": {
+        "receiptId": "RECEIPT-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+        "deliveryRef": {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "DELIVERY-MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1",
+            "version": "1"
+          },
+          "digest": "b9a8084531fead2865d40c217f32ae75cb16024ce70759a496232674bf49e0ba"
+        },
+        "payloadDigest": "67945ed83a40f06cd113cd8a7e8fd49116ca6d1355960c2b78a6b51eab814efc",
+        "terminalState": "DESIGN_ONLY_NOT_SENT",
+        "businessAC": "NOT_RUN",
+        "runtime": "UNPROVEN"
+      },
+      "ownerFacts": [
+        {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "EXEC-QA-F08-REAL",
+            "version": "1",
+            "digest": "9be25cbe51b8d95985b5799b55f28f9d1e5920620224540d796ca863e6c53cdb"
+          },
+          "body": {
+            "schema": "EXEC-QA-SOURCE-1",
+            "sourceId": "EXEC-QA-F08-REAL",
+            "revision": "1",
+            "previousRevision": null,
+            "workOrderId": "WO-F08-REAL",
+            "operationId": "OP-F08-REAL",
+            "actualManifestRef": {
+              "ref": {
+                "owner": "MES-EXEC",
+                "id": "EXEC-MANIFEST-F08-REAL",
+                "version": "1"
+              },
+              "digest": "a0be8ef34d3b30e7957883400fcdd5c22b41ea2e198a097528e19409f4da04d0"
+            },
+            "reportRefs": [
+              {
+                "ref": {
+                  "owner": "MES-EXEC",
+                  "id": "EXEC-REPORT-F08-REAL",
+                  "version": "1"
+                },
+                "digest": "7c97680f6b55483c5034f9b4cdbd84280bd5767c6a3ad0864c099cf6e9c5ce6c"
+              }
+            ],
+            "scope": {
+              "scopeId": "SCOPE-F08-REAL",
+              "scopeVersion": "1",
+              "ranges": [
+                {
+                  "portionId": "PORTION-F08-REAL",
+                  "from": "0",
+                  "to": "10"
+                }
+              ]
+            },
+            "inspectionPolicyRef": {
+              "owner": "QA-POL",
+              "id": "POLICY-F08-REAL",
+              "version": "1"
+            },
+            "actualBaselineRef": {
+              "owner": "PLM",
+              "id": "BASELINE-F08-REAL",
+              "version": "1"
+            },
+            "quantity": {
+              "value": "10",
+              "unitRef": {
+                "owner": "UOM",
+                "id": "EA",
+                "version": "1"
+              }
+            },
+            "evidenceRefs": [
+              {
+                "ref": {
+                  "owner": "MES-EXEC",
+                  "id": "ADAPTER-EVIDENCE-F08-REAL",
+                  "version": "1"
+                },
+                "digest": "647a21595383aedf8bcc20d96b5674821b9b4620ebe0bd8bbc0cda7efa404c04"
+              }
+            ],
+            "digest": "92b497a99584f15c903fba647ff8c564c48f840b05ba0ed8838b04edf92d3790"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "EXEC-MANIFEST-F08-REAL",
+            "version": "1",
+            "digest": "a0be8ef34d3b30e7957883400fcdd5c22b41ea2e198a097528e19409f4da04d0"
+          },
+          "body": {
+            "manifestId": "EXEC-MANIFEST-F08-REAL",
+            "workOrderId": "WO-F08-REAL",
+            "operationId": "OP-F08-REAL",
+            "scopeId": "SCOPE-F08-REAL",
+            "revision": "1"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "EXEC-REPORT-F08-REAL",
+            "version": "1",
+            "digest": "7c97680f6b55483c5034f9b4cdbd84280bd5767c6a3ad0864c099cf6e9c5ce6c"
+          },
+          "body": {
+            "reportId": "EXEC-REPORT-F08-REAL",
+            "manifestId": "EXEC-MANIFEST-F08-REAL",
+            "state": "OWNER_PROTOCOL_NOT_READY",
+            "revision": "1"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "ADAPTER-EVIDENCE-F08-REAL",
+            "version": "1",
+            "digest": "647a21595383aedf8bcc20d96b5674821b9b4620ebe0bd8bbc0cda7efa404c04"
+          },
+          "body": {
+            "kind": "REQUIRED_ADAPTER_EVIDENCE",
+            "adapter": "MES-EXEC-01",
+            "state": "UNPROVEN",
+            "executionIdentity": {
+              "tenantId": "11111111-1111-4111-8111-111111111111",
+              "environmentId": "22222222-2222-4222-8222-222222222222",
+              "mode": "REAL"
+            },
+            "revision": "1"
+          }
+        },
+        {
+          "ref": {
+            "owner": "QA-IPQC",
+            "id": "F08-REAL-COVERAGE",
+            "version": "1",
+            "digest": "bb558c46097296292eadef7f6cbf28351ad8cbd99eaa1dc84b70068ac4a3c071"
+          },
+          "body": {
+            "sourceId": "EXEC-QA-F08-REAL",
+            "sourceRevision": "1",
+            "ranges": [
+              {
+                "portionId": "PORTION-F08-REAL",
+                "from": "0",
+                "to": "10"
+              }
+            ],
+            "state": "REJECTED",
+            "reason": "OWNER_PROTOCOL_NOT_READY"
+          }
+        },
+        {
+          "ref": {
+            "owner": "MES-EXEC",
+            "id": "EXEC-TASK-RESULT-F08-REAL",
+            "version": "1",
+            "digest": "79ccde31b2b05abb19d913969faa0820c526ab635b47895a25f7258cee628d86"
+          },
+          "body": {
+            "kind": "EXEC_QUALITY_TASK_RESULT",
+            "sourceId": "EXEC-QA-F08-REAL",
+            "sourceRevision": "1",
+            "state": "REJECTED",
+            "reasonCodes": [
+              "OWNER_PROTOCOL_NOT_READY"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "businessAC": "NOT_RUN",
+  "runtime": "UNPROVEN",
+  "externalSend": "NOT_RUN"
+}

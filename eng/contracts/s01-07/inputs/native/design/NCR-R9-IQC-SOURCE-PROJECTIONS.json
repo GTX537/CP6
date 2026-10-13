@@ -1,0 +1,675 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:ncr-main6:iqc-source-projection-candidate",
+  "title": "Explicit candidate strict projection of exact accepted IQC R5 TS fields, full original body remains OriginalAnchor",
+  "$defs": {
+    "DecisionBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "IQC-DISPOSITION-1"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "taskRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/OwnerRef"
+        },
+        "familyRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "sourceBundleRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "scopeRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "domainRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "policyVersionRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "planInstanceRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "previousDecisionRef": {
+          "oneOf": [
+            {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stream": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "epoch": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "sequence": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+            },
+            "previousSequence": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Sequence0"
+            }
+          },
+          "required": [
+            "id",
+            "epoch",
+            "sequence",
+            "previousSequence"
+          ]
+        },
+        "stateForm": {
+          "enum": [
+            "DELTA",
+            "FULL_SNAPSHOT"
+          ]
+        },
+        "declaredRanges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "from": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+              },
+              "to": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "completePartition": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "range": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "from": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+                  },
+                  "to": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to"
+                ]
+              },
+              "quality": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/BusinessPartitionState"
+              },
+              "basisRefs": {
+                "type": "array",
+                "items": {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                "minItems": 1,
+                "maxItems": 1000
+              },
+              "concessionRef": {
+                "oneOf": [
+                  {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "range",
+              "quality",
+              "basisRefs",
+              "concessionRef",
+              "reason"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "unitRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/QapUom"
+        },
+        "reviewPacketRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "approvalRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "resultSubmissionRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "resultReviewRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "inferenceAssessmentRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "occurredAt": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Time"
+        },
+        "recordedAt": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Time"
+        },
+        "mode": {
+          "enum": [
+            "REAL",
+            "DEMO"
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "id",
+        "version",
+        "taskRef",
+        "familyRef",
+        "sourceBundleRef",
+        "scopeRef",
+        "domainRef",
+        "policyVersionRef",
+        "planInstanceRef",
+        "previousDecisionRef",
+        "stream",
+        "stateForm",
+        "declaredRanges",
+        "completePartition",
+        "unitRef",
+        "reviewPacketRef",
+        "approvalRef",
+        "resultSubmissionRef",
+        "resultReviewRefs",
+        "inferenceAssessmentRefs",
+        "occurredAt",
+        "recordedAt",
+        "mode"
+      ]
+    },
+    "SourceBundleProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "purchaseContextRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "poId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "poRevisionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "grSourceOriginalAnchorRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "coordinateDomainOriginalAnchorRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "currentScopeOriginalAnchorRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "scopeSetRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "sourceContextRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "sourceHeadRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "sourceMappingRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "aliasSetRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "effectMappingRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "mappingHead": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "itemRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "siteId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "supplierRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "lotRef": {
+          "oneOf": [
+            {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "purposeRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "technical": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "BASELINE"
+                },
+                "baselineRef": {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                },
+                "manifestRef": {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                }
+              },
+              "required": [
+                "kind",
+                "baselineRef",
+                "manifestRef"
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "NOT_APPLICABLE"
+                },
+                "basisRef": {
+                  "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+                }
+              },
+              "required": [
+                "kind",
+                "basisRef"
+              ]
+            }
+          ]
+        },
+        "qualityRequirementsRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "memberSetRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "memberCount": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Sequence0"
+        },
+        "populationComplete": {
+          "type": "boolean"
+        },
+        "coverage": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "UNKNOWN",
+            "CONFLICT"
+          ]
+        }
+      },
+      "required": [
+        "ref",
+        "purchaseContextRef",
+        "poId",
+        "poRevisionId",
+        "grSourceOriginalAnchorRef",
+        "coordinateDomainOriginalAnchorRef",
+        "currentScopeOriginalAnchorRef",
+        "scopeSetRef",
+        "sourceContextRef",
+        "sourceHeadRef",
+        "sourceMappingRef",
+        "aliasSetRef",
+        "effectMappingRef",
+        "mappingHead",
+        "itemRef",
+        "siteId",
+        "supplierRef",
+        "lotRef",
+        "purposeRef",
+        "technical",
+        "qualityRequirementsRef",
+        "memberSetRef",
+        "memberCount",
+        "populationComplete",
+        "coverage"
+      ]
+    },
+    "CurrentGuardInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "registrationRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "consumer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "effectKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "businessDigest": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Digest"
+        },
+        "action": {
+          "enum": [
+            "QUALITY_APPLY",
+            "RESERVE",
+            "ALLOCATE",
+            "PICK",
+            "SHIP",
+            "CONSUME",
+            "MOVE_OUT"
+          ]
+        },
+        "domainRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "scopeRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "sourceHeadRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "mappingRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "mappingHead": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "ranges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "from": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+              },
+              "to": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "unitRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/QapUom"
+        },
+        "purposeRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "decisionRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        }
+      },
+      "required": [
+        "registrationRef",
+        "consumer",
+        "effectKey",
+        "businessDigest",
+        "action",
+        "domainRef",
+        "scopeRef",
+        "sourceHeadRef",
+        "mappingRef",
+        "mappingHead",
+        "ranges",
+        "unitRef",
+        "purposeRef",
+        "decisionRefs"
+      ]
+    },
+    "FinalCut": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "IQC-FINAL-CUT-1"
+        },
+        "input": {
+          "$ref": "#/$defs/CurrentGuardInput"
+        },
+        "familyCutRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "currentDecisionRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        },
+        "sourceHeadRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "scopeRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+        },
+        "controlRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        },
+        "validatedRanges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "from": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+              },
+              "to": {
+                "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "checkedAt": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "input",
+        "familyCutRef",
+        "currentDecisionRefs",
+        "sourceHeadRef",
+        "scopeRef",
+        "controlRefs",
+        "validatedRanges",
+        "checkedAt"
+      ]
+    },
+    "CurrentGuardResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "enum": [
+                "ALLOWED",
+                "HISTORY_ONLY"
+              ]
+            },
+            "cutRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "familyCutRef": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Evidence"
+            },
+            "validatedRanges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "from": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+                  },
+                  "to": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 500
+            },
+            "requiresSameUowCommit": {
+              "const": true
+            }
+          },
+          "required": [
+            "state",
+            "cutRef",
+            "familyCutRef",
+            "validatedRanges",
+            "requiresSameUowCommit"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "enum": [
+                "BLOCKED",
+                "UNKNOWN"
+              ]
+            },
+            "cutRef": {
+              "type": "null"
+            },
+            "reasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "minItems": 1,
+              "maxItems": 1000
+            },
+            "requiresSameUowCommit": {
+              "const": true
+            }
+          },
+          "required": [
+            "state",
+            "cutRef",
+            "reasonCodes",
+            "requiresSameUowCommit"
+          ]
+        }
+      ]
+    }
+  },
+  "sourceStatus": "SOURCE_MIRROR_CANDIDATE_NOT_ACCEPTED_OWNER_JSON",
+  "sourcePins": {
+    "mainSha256": "709e1399a9e1b6c0320fa2383958fcbfee0415e706910c3cea235f1fbefe4db4",
+    "DecisionBodyLines": [
+      569,
+      569
+    ],
+    "SourceBundleLines": [
+      501,
+      501
+    ],
+    "FinalCutLines": [
+      577,
+      579
+    ]
+  },
+  "projectionRule": "SourceBundleProjection GR/domain/current-scope fields link full original anchors; original Coverage is exact COMPLETE/PARTIAL/UNKNOWN/CONFLICT string; gates retained in full original, no permission trimming; candidate bounded field projection rejects unsupported wider original values rather than truncating",
+  "notAllowed": "never send candidate projection as IQC original wire or replace its original bytes/profile"
+}

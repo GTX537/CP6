@@ -1,0 +1,110 @@
+{
+  "scope": "Read-only source identity and consumer inventory; no Owner adoption or storage acceptance",
+  "files": [
+    {
+      "path": "CP6.Core/Services/Mes/QualityInspectionService.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "6cc2eb34faa63d55567128b9db8e65c5f9dc2cdb255aee37822a4adf79e89f15",
+      "working_bytes_sha256": "722e768d0fa6fea824c7de4db09b59162c2d8e410f2b92d518606dd675b4017e",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Core/Services/Mes/DefectRecordService.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "5a77c6f936fd1c514c7508ec2b554bf42d58aad0c0fd99338e11dd2f7c5d1578",
+      "working_bytes_sha256": "dec57957a6ac812da5a1e5f2bc75dd4693816e35ba6fff0b549e9814cba496a7",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Core/Services/Mes/IQualityInspectionService.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "479d98e18d2bfde232afb6caa6e70f3adc8f52544f5a7014a243f0fc6afaabd8",
+      "working_bytes_sha256": "7b5a5b99be60d3b53118317098162fe08bee0c8d51e00291c9cada4ec208c2d1",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Core/Services/Mes/IDefectRecordService.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "fa5444d3d0a260f7b59c6095907d448fe2ab26bbc5e09a807159c468fd9e1ecd",
+      "working_bytes_sha256": "2e7d7e4bca262edbfb76568335da7cbda60779e29ff6871ff8833446c121e888",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Entity/DTOs/Mes/QualityInspectionDto.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "a7d3be369977fe3e9241676ed2c5af22b4e3b2eafc9b724ee72fed89b905a6a7",
+      "working_bytes_sha256": "f1b83858dfb487d1e5fc2948ec7b9b2b680835ac286a8343cf2066d81f41eb4c",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Entity/DTOs/Mes/DefectRecordDto.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "b23dceec668fd5fa1fee850d08f1c78aa854b41007017a5dc9323782b1ecb3c9",
+      "working_bytes_sha256": "58ea9577621bb2ff0e5f293ac6898cf01c065497b210e4fd9a4f36931765c835",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Mes/QualityInspection.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "06a934a9fc9ba79126405d830b75904a86cec6547c0e60f11458a0f8f1f9ceb9",
+      "working_bytes_sha256": "8ff3e5dc8b4c30c8af9bce5ff1fef305a5881e5a08340fcecd76562c15093ec6",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "e11bd64d974b4f4b93826bc12a62a3632ba252f40551387fa95307cca99da3f4",
+      "working_bytes_sha256": "4ca965c46712d8d8a03e8a4c52f31b98a8b537e6d67f8031a131f9ab555d7db3",
+      "read_only": true
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Mes/DefectRecord.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "55b4805e6a6b12e06e61a66ffd90d2106b68c438e422316ae74527a9ecd5e0b5",
+      "working_bytes_sha256": "60559932b5bb14b50c095aac5c35a116ed92dafe1abd6d9d6edc4fac2d3c439f",
+      "read_only": true
+    },
+    {
+      "path": "CP6.WebApi/Controllers/Mes/QualityInspectionController.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "39d1bdfcc00f05d18defd3d0ca71ff8760dec820d4de41f62a61bdf66a1b6a5b",
+      "working_bytes_sha256": "d6b2beb31ba5a54a63966ead912d57d0c7d0247d67f5889db817020071d6c343",
+      "read_only": true
+    },
+    {
+      "path": "CP6.WebApi/Controllers/Mes/DefectRecordController.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "15f6e82f00ac4e1b6f910f178eb22270c27596eef602203527f2db058d2143f1",
+      "working_bytes_sha256": "6d0e55cb81c6a8eba1e1ebeaae0fed01023d3672829b5b6124f9a6e28c869cb3",
+      "read_only": true
+    },
+    {
+      "path": "CP6.WebApi/Program.cs",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "e8780458a545023d435abdf8f7b32b620dd7c97eb5ccba8a3b001ecc5fbfeff9",
+      "working_bytes_sha256": "680ebe62afbe616ae79368137aabafa4efef11fa8673b15cd837a1e9408fbf19",
+      "read_only": true
+    },
+    {
+      "path": "cp6.web/src/api/mes/mes.ts",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "63dcede2074f74305cf4ad9fae2792288ab7e02d1c8ca6eb1f17c0ade315ed3b",
+      "working_bytes_sha256": "b612d9e88173ab6f8a2db1acdc30e9f8b184a90054bb5950d4804f9d18e5347c",
+      "read_only": true
+    },
+    {
+      "path": "cp6.web/src/views/mes/QualityInspectionListView.vue",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "423fb600e22ae671b22e7faca1f98882db1a53e36891fe91c8ade479c741d3c6",
+      "working_bytes_sha256": "8ec1e9405e750d923ab7b3d96362f5a0037a4fbdf52b15beaf3c3667ba252afe",
+      "read_only": true
+    },
+    {
+      "path": "cp6.web/src/views/mes/QualityInspectionEntryView.vue",
+      "source_commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "git_bytes_sha256": "b36847251f927c7cd1af091a6586cad2db82da9aaf3ebd6a3240938e34f494de",
+      "working_bytes_sha256": "ee9567e4f4981e39395d242bd4e094668f01b18541098d2b98d18fb79e03c544",
+      "read_only": true
+    }
+  ]
+}

@@ -1,0 +1,3088 @@
+{
+  "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "role": "EXPECTED_VECTORS_NOT_EXECUTION_RESULTS",
+  "execution": "NOT_RUN",
+  "source_pins": [
+    {
+      "path": "docs/design-handbook/remediation/00-disposition-register.json",
+      "sha256": "328eba952efffba44ad0ae2e3361f97a0bf10237902750887e1d4307ee47886b",
+      "git_blob": "0d86156b857796ff9b40a3459c014d7d2bbb6d04",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+      "sha256": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030",
+      "git_blob": "a7913dbbf892d91bd98ce9ca8b232fc112df62e6",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+      "sha256": "44e4ceb8b1f0d4b673f4745c2508e1b55fb37cad58b84a9ef160ff9424ec93b2",
+      "git_blob": "5e55897d4ecea3042dd521fa9cf6226f2b2879f5",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+      "sha256": "05d84c3fbdae39584c6dab0f42b77c74373edfe81110a211c55f17f7f0585d4f",
+      "git_blob": "07f05990d042b5871ec9463a6cae0473ae1ff2d1",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+      "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+      "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+      "sha256": "913057ab2df1788b1043931cd64d6dd430c50be049d3f1f1cdffc41660cfcc43",
+      "git_blob": "f58e20dff9b268af67cd1af229fc8ce6750c2fb9",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/development/s01-input-index.json",
+      "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+      "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+      "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "hash_basis": "file_bytes"
+    }
+  ],
+  "cases": [
+    {
+      "id": "NUM-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/0"
+      },
+      "input": "99999999999999999999999999999999999999",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "99999999999999999999999999999999999999",
+          "scale": 0
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/1"
+      },
+      "input": "-99999999999999999999999999999999999999",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "-99999999999999999999999999999999999999",
+          "scale": 0
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/2"
+      },
+      "input": "999999999999999999999999999999.12345678",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "99999999999999999999999999999912345678",
+          "scale": 8
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-004",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/3"
+      },
+      "input": "9999999999999999999999999999999.12345678",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/4"
+      },
+      "input": "0.00000001",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "1",
+          "scale": 8
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/5"
+      },
+      "input": "0",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "0",
+          "scale": 0
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-007",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/6"
+      },
+      "input": "-0",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-008",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/7"
+      },
+      "input": "1.0",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-009",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyPositive/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/fxEvidence/properties/rate",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservationInput/properties/requestedQuantity",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/8"
+      },
+      "input": "0",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "positiveDecimal"
+    },
+    {
+      "id": "NUM-010",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/9"
+      },
+      "input": "1e3",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "NUM-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyNonNegative/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arCut/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/reservationSet/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/totalExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/currentCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/postedOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/effectiveCreditContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/appliedReceiptContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/unbilledOrderContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/10"
+      },
+      "input": "-1",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "nonNegativeDecimal"
+    },
+    {
+      "id": "NUM-012",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Money/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueLayer/properties/unroundedOriginalValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/LayerConsumption/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/displayAverage18/anyOf/0",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/rawTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/targetTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/residue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/assignments/items/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/finalTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueEffectResult/properties/lines/items/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutMoney/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/11"
+      },
+      "input": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111111111",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledDigits": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999111111111111111111",
+          "scale": 18,
+          "originalWire": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111111111"
+        }
+      },
+      "wire_type": "Decimal18"
+    },
+    {
+      "id": "NUM-013",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Quantity/properties/value",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutQuantity/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/12"
+      },
+      "input": "-999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledDigits": "-999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999111111111111",
+          "scale": 12,
+          "originalWire": "-999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.111111111111"
+        }
+      },
+      "wire_type": "Qty12"
+    },
+    {
+      "id": "NUM-014",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Quantity/properties/value",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutQuantity/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/13"
+      },
+      "input": "-0.000",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledDigits": "0",
+          "scale": 0,
+          "originalWire": "-0.000"
+        }
+      },
+      "wire_type": "Qty12"
+    },
+    {
+      "id": "NUM-015",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Money/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueLayer/properties/unroundedOriginalValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/LayerConsumption/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/displayAverage18/anyOf/0",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/rawTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/targetTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/residue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/assignments/items/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/finalTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueEffectResult/properties/lines/items/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutMoney/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/14"
+      },
+      "input": "1.1111111111111111111",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "Decimal18"
+    },
+    {
+      "id": "NUM-016",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Quantity/properties/value",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutQuantity/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/15"
+      },
+      "input": "1e12",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "Qty12"
+    },
+    {
+      "id": "NUM-017",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/16"
+      },
+      "input": "UUUUUUUUUUUUUUUU",
+      "expected": {
+        "accepted": true
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "NUM-018",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/17"
+      },
+      "input": "UUUUUUUUUUUUUUUUU",
+      "expected": {
+        "accepted": true
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "NUM-019",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/18"
+      },
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected": {
+        "accepted": true
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "NUM-020",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/19"
+      },
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "NUM-021",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/20"
+      },
+      "input": "",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "NUM-022",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/21"
+      },
+      "input": "EA ",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "NUM-023",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/numeric-validation.json",
+        "json_pointer": "/cases/22"
+      },
+      "input": "公斤",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "CREDIT-001",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyNonNegative/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arCut/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/reservationSet/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/totalExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/currentCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/postedOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/effectiveCreditContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/appliedReceiptContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/unbilledOrderContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "0",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "0",
+          "scale": 0
+        }
+      },
+      "wire_type": "nonNegativeDecimal"
+    },
+    {
+      "id": "CREDIT-002",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyNonNegative/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arCut/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/reservationSet/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/totalExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/currentCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/postedOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/effectiveCreditContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/appliedReceiptContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/unbilledOrderContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "1",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "1",
+          "scale": 0
+        }
+      },
+      "wire_type": "nonNegativeDecimal"
+    },
+    {
+      "id": "CREDIT-003",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyPositive/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/fxEvidence/properties/rate",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservationInput/properties/requestedQuantity",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "0.00000001",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "1",
+          "scale": 8
+        }
+      },
+      "wire_type": "positiveDecimal"
+    },
+    {
+      "id": "CREDIT-004",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyPositive/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/fxEvidence/properties/rate",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservationInput/properties/requestedQuantity",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "-1",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "positiveDecimal"
+    },
+    {
+      "id": "CREDIT-005",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "01",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "CREDIT-006",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "999999999999999999999999999999999999999",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "CREDIT-007",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyNonNegative/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arCut/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/reservationSet/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/totalExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/currentCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/postedOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/effectiveCreditContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/appliedReceiptContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/unbilledOrderContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "99999999999999999999999999999999999999",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "99999999999999999999999999999999999999",
+          "scale": 0
+        }
+      },
+      "wire_type": "nonNegativeDecimal"
+    },
+    {
+      "id": "CREDIT-008",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyPositive/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/fxEvidence/properties/rate",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservationInput/properties/requestedQuantity",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "999999999999999999999999999999.12345678",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "99999999999999999999999999999912345678",
+          "scale": 8
+        }
+      },
+      "wire_type": "positiveDecimal"
+    },
+    {
+      "id": "CREDIT-009",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyNonNegative/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arCut/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/reservationSet/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/totalExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/currentCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/postedOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/effectiveCreditContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/appliedReceiptContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/unbilledOrderContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "-0",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "nonNegativeDecimal"
+    },
+    {
+      "id": "CREDIT-010",
+      "profile_id": "fin-credit-positive",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyPositive/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/fxEvidence/properties/rate",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservationInput/properties/requestedQuantity",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "1.0",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "positiveDecimal"
+    },
+    {
+      "id": "CREDIT-011",
+      "profile_id": "fin-credit-nonnegative",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneyNonNegative/properties/amount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arObligationAggregate/properties/openPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/arCut/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderExposureLineage/properties/committedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/reservationSet/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/arBookedExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExposureSnapshot/properties/totalExposure",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/currentCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/targetCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/requestedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/postedOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/partiallySettledOpenContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/effectiveCreditContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/appliedReceiptContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/unbilledOrderContribution/properties/policyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/activeReservationContribution/properties/policyAmount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 77
+      },
+      "input": "1e3",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "nonNegativeDecimal"
+    },
+    {
+      "id": "CREDIT-JS-001",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "input": "9007199254740991",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "9007199254740991",
+          "scale": 0
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "CREDIT-JS-002",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "input": "9007199254740992",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "9007199254740992",
+          "scale": 0
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "CREDIT-JS-003",
+      "profile_id": "fin-credit-signed",
+      "operation": "lexical",
+      "applicable_fields": [
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/absorptionLink/properties/signedPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/representationTransfer/properties/deltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/subject/properties/exposureDeltaPolicyAmount",
+        "https://cp6.example/design/fin-credit-wire-r4.schema.json#/$defs/moneySigned/properties/amount"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 99
+      },
+      "input": "9007199254740993",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledValue": "9007199254740993",
+          "scale": 0
+        }
+      },
+      "wire_type": "signedDecimal"
+    },
+    {
+      "id": "INV-001",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Quantity/properties/value",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutQuantity/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "input": "1.1111111111111",
+      "expected": {
+        "accepted": false,
+        "pair": null
+      },
+      "wire_type": "Qty12"
+    },
+    {
+      "id": "INV-002",
+      "profile_id": "fin-inv-qty12",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Quantity/properties/value",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterQty",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutQuantity/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "input": "1.111111111111",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledDigits": "1111111111111",
+          "scale": 12,
+          "originalWire": "1.111111111111"
+        }
+      },
+      "wire_type": "Qty12"
+    },
+    {
+      "id": "INV-003",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Money/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueLayer/properties/unroundedOriginalValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/LayerConsumption/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/displayAverage18/anyOf/0",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/rawTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/targetTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/residue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/assignments/items/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/finalTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueEffectResult/properties/lines/items/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutMoney/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "input": "1.111111111111111111",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledDigits": "1111111111111111111",
+          "scale": 18,
+          "originalWire": "1.111111111111111111"
+        }
+      },
+      "wire_type": "Decimal18"
+    },
+    {
+      "id": "INV-004",
+      "profile_id": "fin-inv-decimal18",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:fin-inv:r10:wire#/$defs/Money/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueLayer/properties/unroundedOriginalValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/LayerConsumption/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/beforeUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/deltaUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/afterUnroundedValue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/MovingAveragePoolRevision/properties/displayAverage18/anyOf/0",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/rawTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/targetTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/residue",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/assignments/items/properties/amount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/RoundingTrace/properties/finalTotal",
+        "urn:cp6:fin-inv:r10:wire#/$defs/ValueEffectResult/properties/lines/items/properties/rawAmount",
+        "urn:cp6:fin-inv:r10:wire#/$defs/OutMoney/properties/value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 87
+      },
+      "input": "-0.000",
+      "expected": {
+        "accepted": true,
+        "pair": {
+          "unscaledDigits": "0",
+          "scale": 0,
+          "originalWire": "-0.000"
+        }
+      },
+      "wire_type": "Decimal18"
+    },
+    {
+      "id": "ATP-R1-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/0"
+      },
+      "input": "EA",
+      "expected": {
+        "accepted": true
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/1"
+      },
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected": {
+        "accepted": true
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/2"
+      },
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/3"
+      },
+      "input": "EA\n",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/4"
+      },
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-006",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/5"
+      },
+      "input": "EA\r\n",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-007",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/6"
+      },
+      "input": "EA ",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-008",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/7"
+      },
+      "input": "公斤",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-009",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/8"
+      },
+      "input": "",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-R1-010",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/atp-stableid-vectors.json",
+        "json_pointer": "/cases/9"
+      },
+      "input": "0._:/-",
+      "expected": {
+        "accepted": true
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-LEADING-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "input": ".EA",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-LEADING-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "input": "_EA",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-LEADING-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "input": ":EA",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-LEADING-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "input": "/EA",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "ATP-LEADING-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "applicable_fields": [
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/Quantity/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/DemandRef/properties/uom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/fromUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/ConversionRule/properties/toUom",
+        "urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/AtpPolicySet/properties/resultUom"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 113
+      },
+      "input": "-EA",
+      "expected": {
+        "accepted": false
+      },
+      "wire_type": "ATP.StableId"
+    },
+    {
+      "id": "JSON-001",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "applicable_fields": [
+        "$ (every nested object)"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 61
+      },
+      "input": "{\"a\":1,\"b\":{\"a\":2}}",
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "JSON-002",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "applicable_fields": [
+        "$ (every nested object)"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 61
+      },
+      "input": "{\"a\":1,\"a\":2}",
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "JSON-003",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "applicable_fields": [
+        "$ (every nested object)"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 61
+      },
+      "input": "{\"outer\":{\"a\":1,\"a\":2}}",
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "JSON-004",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "applicable_fields": [
+        "$ (every nested object)"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 61
+      },
+      "input": "{\"items\":[{\"a\":1,\"a\":2}]}",
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "JSON-005",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "applicable_fields": [
+        "$ (every nested object)"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 61
+      },
+      "input": "{\"a\":1,\"\\u0061\":2}",
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "JSON-006",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "applicable_fields": [
+        "$ (every nested object)"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 61
+      },
+      "input": "{\"outer\":{\"a\":1,\"\\u0061\":2}}",
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "JSON-007",
+      "profile_id": "strict-json",
+      "operation": "strict_json_parse",
+      "applicable_fields": [
+        "$ (every nested object)"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+        "line": 61
+      },
+      "input": "{\"a\":1,\"A\":2}",
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "NULL-001",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "applicable_fields": [
+        "NullCarrier.fixedNull"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 8
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "fixedNull"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "NULL-002",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "applicable_fields": [
+        "NullCarrier.fixedNull"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 7
+      },
+      "input": {
+        "raw_json": "{\"fixedNull\":null}",
+        "required_property": "fixedNull"
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "NULL-003",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "applicable_fields": [
+        "NullCarrier.fixedNull"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 8
+      },
+      "input": {
+        "raw_json": "{\"fixedNull\":0}",
+        "required_property": "fixedNull"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "NULL-004",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "applicable_fields": [
+        "NullCarrier.fixedNull"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 8
+      },
+      "input": {
+        "raw_json": "{\"fixedNull\":1}",
+        "required_property": "fixedNull"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "NULL-005",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "applicable_fields": [
+        "NullCarrier.fixedNull"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 8
+      },
+      "input": {
+        "raw_json": "{\"fixedNull\":false}",
+        "required_property": "fixedNull"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "NULL-006",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "applicable_fields": [
+        "NullCarrier.fixedNull"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 8
+      },
+      "input": {
+        "raw_json": "{\"fixedNull\":\"null\"}",
+        "required_property": "fixedNull"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "NULL-007",
+      "profile_id": "null-only",
+      "operation": "required_null_property",
+      "applicable_fields": [
+        "NullCarrier.fixedNull"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 8
+      },
+      "input": {
+        "raw_json": "{\"fixedNull\":{}}",
+        "required_property": "fixedNull"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "NCR-NULL-001",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"originalQuery\": null}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-002",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-003",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"originalQuery\": 0}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-004",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload.originalQuery",
+        "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload.originalQuery"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"originalQuery\": {}}",
+        "required_property": "originalQuery"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-005",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": null}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-006",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-007",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": 0}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-008",
+      "profile_id": "ncr-main-r6",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/2/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": {}}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-009",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": null}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-010",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-011",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": 0}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-012",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.IpqcFinalGuardResult_Case2.guardRef"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/0"
+      },
+      "input": {
+        "raw_json": "{\"guardRef\": {}}",
+        "required_property": "guardRef"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-013",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"code\": null}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-014",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-015",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"code\": 0}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-016",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case1.code"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/1"
+      },
+      "input": {
+        "raw_json": "{\"code\": {}}",
+        "required_property": "code"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-017",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{\"value\": null}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-018",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-019",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{\"value\": 0}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "NCR-NULL-020",
+      "profile_id": "ncr-cp4",
+      "operation": "required_null_field_projection",
+      "applicable_fields": [
+        "SourceQA.ObservationInput_Case2.value"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/3/operations/2"
+      },
+      "input": {
+        "raw_json": "{\"value\": {}}",
+        "required_property": "value"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "LEAD-OWNER-001",
+      "profile_id": "crm-lead-cp20",
+      "operation": "required_owner_id_field_projection",
+      "applicable_fields": [
+        "CP6.CRM.CP21.Contracts.LeadQueryFilters.ownerId",
+        "CP20-qualification-h02.schema.json#/$defs/LeadQueryFilters/properties/ownerId"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/00-disposition-register.json",
+        "json_pointer": "/issues/25/evidence/1"
+      },
+      "input": {
+        "raw_json": "{\"ownerId\":null}",
+        "required_property": "ownerId"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "LEAD-OWNER-002",
+      "profile_id": "crm-lead-cp20",
+      "operation": "required_owner_id_field_projection",
+      "applicable_fields": [
+        "CP6.CRM.CP21.Contracts.LeadQueryFilters.ownerId",
+        "CP20-qualification-h02.schema.json#/$defs/LeadQueryFilters/properties/ownerId"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/00-disposition-register.json",
+        "json_pointer": "/issues/25/evidence/1"
+      },
+      "input": {
+        "raw_json": "{\"ownerId\":\"unassigned\"}",
+        "required_property": "ownerId"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "LEAD-OWNER-003",
+      "profile_id": "crm-lead-cp20",
+      "operation": "required_owner_id_field_projection",
+      "applicable_fields": [
+        "CP6.CRM.CP21.Contracts.LeadQueryFilters.ownerId",
+        "CP20-qualification-h02.schema.json#/$defs/LeadQueryFilters/properties/ownerId"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/00-disposition-register.json",
+        "json_pointer": "/issues/25/evidence/1"
+      },
+      "input": {
+        "raw_json": "{\"ownerId\":\"00000000-0000-4000-8000-000000000001\"}",
+        "required_property": "ownerId"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "LEAD-OWNER-004",
+      "profile_id": "crm-lead-cp20",
+      "operation": "required_owner_id_field_projection",
+      "applicable_fields": [
+        "CP6.CRM.CP21.Contracts.LeadQueryFilters.ownerId",
+        "CP20-qualification-h02.schema.json#/$defs/LeadQueryFilters/properties/ownerId"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/00-disposition-register.json",
+        "json_pointer": "/issues/25/evidence/1"
+      },
+      "input": {
+        "raw_json": "{\"ownerId\":\"arbitrary-owner\"}",
+        "required_property": "ownerId"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "LEAD-OWNER-005",
+      "profile_id": "crm-lead-cp20",
+      "operation": "required_owner_id_field_projection",
+      "applicable_fields": [
+        "CP6.CRM.CP21.Contracts.LeadQueryFilters.ownerId",
+        "CP20-qualification-h02.schema.json#/$defs/LeadQueryFilters/properties/ownerId"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/00-disposition-register.json",
+        "json_pointer": "/issues/25/evidence/1"
+      },
+      "input": {
+        "raw_json": "{}",
+        "required_property": "ownerId"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "FIELD_SUBASSERTION_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-001",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4FrozenPayload.registrationRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/0"
+      },
+      "input": {
+        "supplied_type": "QapEvidence"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-002",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4FrozenPayload.registrationRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/0"
+      },
+      "input": {
+        "supplied_type": "ExecEvidence"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-003",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].measurementUnitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "QapUom"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-004",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].measurementUnitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "Uom"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-005",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].rule.unitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "QapUom"
+      },
+      "expected": {
+        "accepted": true,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "IPQC-TYPE-006",
+      "profile_id": "ipqc-r4",
+      "operation": "native_type_binding",
+      "applicable_fields": [
+        "R4QapFullCountPlanContent.characteristics[].rule.unitRef"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "json_pointer": "/patches/6/operations/1"
+      },
+      "input": {
+        "supplied_type": "Uom"
+      },
+      "expected": {
+        "accepted": false,
+        "assertion_scope": "TYPE_BINDING_ONLY"
+      }
+    },
+    {
+      "id": "INQ-VERSION-001",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "applicable_fields": [
+        "crm-inq.openapi.json:info.version",
+        "crm-inq.openapi.json#/components/schemas"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "eng/contracts/s01/profile-inputs.json",
+        "json_pointer": "/profiles/12/schema_or_type_identity"
+      },
+      "input": {
+        "openapi": "3.1.0",
+        "title": "CRM-INQ-01 RECOVERY-R3 V15",
+        "version": "1.0-recovery-r3",
+        "schema_root": "/components/schemas",
+        "schema_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349"
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "INQ-VERSION-002",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "applicable_fields": [
+        "crm-inq.openapi.json:info.version",
+        "crm-inq.openapi.json#/components/schemas"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "eng/contracts/s01/profile-inputs.json",
+        "json_pointer": "/profiles/12/schema_or_type_identity"
+      },
+      "input": {
+        "openapi": "3.1.0",
+        "title": "CRM-INQ-01 RECOVERY-R3 V15",
+        "version": "unknown-version",
+        "schema_root": "/components/schemas",
+        "schema_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "INQ-VERSION-003",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "applicable_fields": [
+        "crm-inq.openapi.json:info.version",
+        "crm-inq.openapi.json#/components/schemas"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "eng/contracts/s01/profile-inputs.json",
+        "json_pointer": "/profiles/12/schema_or_type_identity"
+      },
+      "input": {
+        "openapi": "3.1.0",
+        "title": "CRM-INQ-01 RECOVERY-R3 V15",
+        "version": "1.0-recovery-r3",
+        "schema_root": "/$defs",
+        "schema_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "INQ-VERSION-004",
+      "profile_id": "crm-inq-r3-v15",
+      "operation": "native_schema_identity",
+      "applicable_fields": [
+        "crm-inq.openapi.json:info.version",
+        "crm-inq.openapi.json#/components/schemas"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "eng/contracts/s01/profile-inputs.json",
+        "json_pointer": "/profiles/12/schema_or_type_identity"
+      },
+      "input": {
+        "openapi": "3.1.0",
+        "title": "CRM-INQ-01 RECOVERY-R3 V15",
+        "version": "1.0-recovery-r3",
+        "schema_root": "/components/schemas",
+        "schema_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "EQUAL-001",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "applicable_fields": [
+        "JSON Schema const/enum/uniqueItems operands"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 14
+      },
+      "input": {
+        "left_raw_json": "{\"a\":1,\"b\":[true,null]}",
+        "right_raw_json": "{\"b\":[true,null],\"a\":1.0}"
+      },
+      "expected": {
+        "equal": true
+      }
+    },
+    {
+      "id": "EQUAL-002",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "applicable_fields": [
+        "JSON Schema const/enum/uniqueItems operands"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 15
+      },
+      "input": {
+        "left_raw_json": "[1,2]",
+        "right_raw_json": "[2,1]"
+      },
+      "expected": {
+        "equal": false
+      }
+    },
+    {
+      "id": "EQUAL-003",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "applicable_fields": [
+        "JSON Schema const/enum/uniqueItems operands"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 16
+      },
+      "input": {
+        "left_raw_json": "\"1\"",
+        "right_raw_json": "1"
+      },
+      "expected": {
+        "equal": false
+      }
+    },
+    {
+      "id": "EQUAL-004",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "applicable_fields": [
+        "JSON Schema const/enum/uniqueItems operands"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 17
+      },
+      "input": {
+        "left_raw_json": "-0.00",
+        "right_raw_json": "0e1000"
+      },
+      "expected": {
+        "equal": true
+      }
+    },
+    {
+      "id": "EQUAL-005",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "applicable_fields": [
+        "JSON Schema const/enum/uniqueItems operands"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 18
+      },
+      "input": {
+        "left_raw_json": "12345678901234567890123456789012345678",
+        "right_raw_json": "123456789012345678901234567890123456780e-1"
+      },
+      "expected": {
+        "equal": true
+      }
+    },
+    {
+      "id": "EQUAL-006",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "applicable_fields": [
+        "JSON Schema const/enum/uniqueItems operands"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 19
+      },
+      "input": {
+        "left_raw_json": "1e1000",
+        "right_raw_json": "10e999"
+      },
+      "expected": {
+        "equal": true
+      }
+    },
+    {
+      "id": "EQUAL-007",
+      "profile_id": "json-semantic-equality",
+      "operation": "json_semantic_equality",
+      "applicable_fields": [
+        "JSON Schema const/enum/uniqueItems operands"
+      ],
+      "verification_level": "CONTRACT_UNIT",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.cs",
+        "line": 20
+      },
+      "input": {
+        "left_raw_json": "{\"a:b\":\"x,y\"}",
+        "right_raw_json": "{\"a\":\"b:x,y\"}"
+      },
+      "expected": {
+        "equal": false
+      }
+    },
+    {
+      "id": "VERSION-001",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "VERSION-002",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-003",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-004",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-005",
+      "profile_id": "erp-credit-current-v1",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.unknown.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-006",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "VERSION-007",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "VERSION-008",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "native_registry_identity",
+      "applicable_fields": [
+        "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "codec namespace"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "json_pointer": "/patches/13"
+      },
+      "input": {
+        "codec_namespace": "Cp6.ErpCredit.CurrentV1.Generated",
+        "schema_file": "ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "schema_sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "BYTES-001",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "original_utf8_retention",
+      "applicable_fields": [
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/PostInput (bytes only)"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/development/s01-input-index.json",
+        "json_pointer": "/sources/11"
+      },
+      "input": {
+        "native_schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+        "native_schema_root": "PostInput",
+        "fixture_origin": "CONSTRUCTED_CONTRACT_UNIT_INPUT",
+        "original_utf8": "{ \"commandId\": \"00000000-0000-4000-8000-000000000001\", \"expectedRowVersion\": \"1\", \"reason\": \"fixture\", \"planRevision\": \"1\" }\r\n",
+        "replay_utf8": "{ \"commandId\": \"00000000-0000-4000-8000-000000000001\", \"expectedRowVersion\": \"1\", \"reason\": \"fixture\", \"planRevision\": \"1\" }\r\n"
+      },
+      "expected": {
+        "bytes_equal": true,
+        "digest_equal": true,
+        "original_sha256": "2146a8b0fe2836a1add75c17762009b4b9831ac9cea07a5e1cd107c3e87b03cb",
+        "replay_sha256": "2146a8b0fe2836a1add75c17762009b4b9831ac9cea07a5e1cd107c3e87b03cb"
+      }
+    },
+    {
+      "id": "BYTES-002",
+      "profile_id": "erp-credit-frozen-r8",
+      "operation": "original_utf8_retention",
+      "applicable_fields": [
+        "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json#/$defs/PostInput (bytes only)"
+      ],
+      "verification_level": "CONTRACT_ROUTING",
+      "source_case_id": null,
+      "source_ref": {
+        "path": "docs/development/s01-input-index.json",
+        "json_pointer": "/sources/11"
+      },
+      "input": {
+        "native_schema_file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+        "native_schema_root": "PostInput",
+        "fixture_origin": "CONSTRUCTED_CONTRACT_UNIT_INPUT",
+        "original_utf8": "{ \"commandId\": \"00000000-0000-4000-8000-000000000001\", \"expectedRowVersion\": \"1\", \"reason\": \"fixture\", \"planRevision\": \"1\" }\r\n",
+        "replay_utf8": "{\"planRevision\":\"1\",\"reason\":\"fixture\",\"expectedRowVersion\":\"1\",\"commandId\":\"00000000-0000-4000-8000-000000000001\"}"
+      },
+      "expected": {
+        "bytes_equal": false,
+        "digest_equal": false,
+        "original_sha256": "2146a8b0fe2836a1add75c17762009b4b9831ac9cea07a5e1cd107c3e87b03cb",
+        "replay_sha256": "48eaac86c06f5dfd4cd4f4a1ff45bc1c84a0f441871cfdd5e74914ad9ded22da"
+      }
+    }
+  ]
+}

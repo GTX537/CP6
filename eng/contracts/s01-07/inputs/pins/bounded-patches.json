@@ -1,0 +1,333 @@
+{
+  "revision": "CP6-DESIGN-REVISION-20261011/R1",
+  "role": "bounded_source_patches_not_historical_originals",
+  "patches": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "source_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "decision": "Versioned complete ASCII1..128 lexical rule; .NET absolute anchors reject final LF accepted by the old $ pattern. Historical original wire remains unchanged.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "Uom.Length is < 1 or > 16",
+          "after": "!System.Text.RegularExpressions.Regex.IsMatch(Uom, @\"\\A[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}\\z\", System.Text.RegularExpressions.RegexOptions.CultureInvariant)",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "JsonDocument.Parse(utf8);",
+          "after": "JsonDocument.Parse(utf8.ToArray());",
+          "expected_count": 1
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "source_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "decision": "All five UOM columns use 128 and exact lexical checks, nullable column remains nullable.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "  result_uom varchar(16),",
+          "after": "  result_uom varchar(128) CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "  uom varchar(16) NOT NULL,",
+          "after": "  uom varchar(128) NOT NULL CHECK (uom IS NULL OR uom !~ '[^A-Za-z0-9._:/-]' AND uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+          "expected_count": 2
+        },
+        {
+          "op": "replace_text",
+          "before": "  native_uom varchar(16) NOT NULL,",
+          "after": "  native_uom varchar(128) NOT NULL CHECK (native_uom IS NULL OR native_uom !~ '[^A-Za-z0-9._:/-]' AND native_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "  result_uom varchar(16) NOT NULL,",
+          "after": "  result_uom varchar(128) NOT NULL CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),",
+          "expected_count": 1
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f975e897bb9e2d0__NCR-R6-TYPES.cs.txt",
+      "source_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "decision": "NullOnly strict converter; required property; reject numeric zero or absent property.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "public required long OriginalQuery { get; init; } // const=null",
+          "after": "public required Cp6.DesignRevision.NullOnly OriginalQuery { get; init; } // const=null",
+          "expected_count": 3
+        },
+        {
+          "op": "replace_text",
+          "before": "public required long GuardRef { get; init; } // const=null",
+          "after": "public required Cp6.DesignRevision.NullOnly GuardRef { get; init; } // const=null",
+          "expected_count": 1
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/103ff257cd4ca8c7__CONSUMER-TYPES.cs.txt",
+      "source_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "source_finding_ids": [
+        "NCR-TYPE-01"
+      ],
+      "decision": "Replace invalid non-null integer getter with required strict null-only property.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "public int GuardRef => null;",
+          "after": "public required Cp6.DesignRevision.NullOnly GuardRef { get; init; }",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "public int Code => null;",
+          "after": "public required Cp6.DesignRevision.NullOnly Code { get; init; }",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "public int Value => null;",
+          "after": "public required Cp6.DesignRevision.NullOnly Value { get; init; }",
+          "expected_count": 1
+        }
+      ],
+      "additional_evidence": {
+        "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/93d5eabb725f756a__SOURCE-QA-SCHEMAS.json",
+        "json_pointer": "/$defs/ObservationInput",
+        "meaning": "numeric Code and categorical Value are required const-null; independently discovered during isolated compiler validation"
+      }
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bfc1d1febd24c7f__NCR-R6-FIELD-MAP.json",
+      "source_sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "source_finding_ids": [
+        "NCR-FIELD-01"
+      ],
+      "decision": "Nullable metadata follows unchanged exact shape; editing permissions unchanged.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/fields/1849/nullable",
+          "before": true,
+          "after": false
+        },
+        {
+          "op": "replace_json",
+          "path": "/fields/3338/nullable",
+          "before": false,
+          "after": true
+        },
+        {
+          "op": "replace_json",
+          "path": "/fields/3339/nullable",
+          "before": false,
+          "after": true
+        },
+        {
+          "op": "replace_json",
+          "path": "/fields/3341/nullable",
+          "before": false,
+          "after": true
+        },
+        {
+          "op": "replace_json",
+          "path": "/fields/3360/nullable",
+          "before": false,
+          "after": true
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/lead/CONTRACTS/CrmLeadCp20Contracts.cs",
+      "source_sha256": "24906126b63d07262dbe28fba3500add9bff7aaf98989256b7492c2051675b59",
+      "source_finding_ids": [
+        "COM-LEAD-GENERATED-CS-NULLABLE"
+      ],
+      "decision": "UUID/unassigned/null validator remains required.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "public required string?? OwnerId",
+          "after": "public required string? OwnerId",
+          "expected_count": 1
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/859768bc391d71df__QA-IPQC-01_TYPES_RECOVERY_R4_SYSTEMIC.ts",
+      "source_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "source_finding_ids": [
+        "OPS-IF-015"
+      ],
+      "decision": "R4 QAP payload registration uses QAP flat Evidence owner/id/version/digest; FullCount measurement and rule units use QAP id/version. ExecEvidence ref+digest is not substituted.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "registrationRef: Evidence;",
+          "after": "registrationRef: QapEvidence;",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "measurementUnitRef: Uom; rule: Readonly<{ kind: \"FULL_COUNT\"; unitRef: Uom }>;",
+          "after": "measurementUnitRef: QapUom; rule: Readonly<{ kind: \"FULL_COUNT\"; unitRef: QapUom }>;",
+          "expected_count": 1
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/8538042210844249__crm-inq.openapi.json",
+      "source_sha256": "853804221084424978e8f6040aa1070e203d9d0bc1febc6f9e44ae520542e13a",
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "decision": "Relocate references within unchanged OpenAPI components. No new wire fields.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "#/$defs/",
+          "after": "#/components/schemas/",
+          "expected_count": 55
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+      "source_sha256": "ef9b6e0bc3ac1b3f5128fa26040548b6d2cfa8db43473259206564d46844d329",
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "decision": "TS container index uses unknown; strict original schema still requires extra fields boolean.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "readonly [additional: string]: boolean",
+          "after": "readonly [additional: string]: unknown",
+          "expected_count": 6
+        },
+        {
+          "op": "replace_text",
+          "before": "const fail = (path:string, code:string): never =>",
+          "after": "const fail: (path:string, code:string) => never = (path, code) =>",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "const object = (v:unknown): v is JsonObject =>",
+          "after": "type JsonObject = Record<string, unknown>;\nconst object = (v:unknown): v is JsonObject =>",
+          "expected_count": 1
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+      "source_sha256": "253daab4784b29ba5180a8ed5d8d1d117e114e047b295a858f335583648d0b72",
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "decision": "Use same structural JSON equality for const/enum/uniqueItems; not a signature canonicalization.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "value.EnumerateArray().Select(x=>x.GetRawText()).Distinct(StringComparer.Ordinal)",
+          "after": "value.EnumerateArray().Select(Cp6.DesignRevision.JsonSemanticEquality.Key).Distinct(StringComparer.Ordinal)",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "left.ValueKind==right.ValueKind&&left.GetRawText()==right.GetRawText()",
+          "after": "Cp6.DesignRevision.JsonSemanticEquality.Key(left)==Cp6.DesignRevision.JsonSemanticEquality.Key(right)",
+          "expected_count": 1
+        },
+        {
+          "op": "replace_text",
+          "before": "new[] {}",
+          "after": "Array.Empty<string>()",
+          "expected_count": 7
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/22/229813cf102aad92__ui-positive-cases.json",
+      "source_sha256": "229813cf102aad92a560a87dda749969a9e1bccd7de564637d6b0fb8fef42c23",
+      "source_finding_ids": [
+        "COM-INQ-GENERATED-CONTRACT-ADOPTION"
+      ],
+      "decision": "Terminal99 public view expiresAtUtc=null; history time remains internal.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/46/value/export/expiresAtUtc",
+          "before": "2031-04-05T10:00:00Z",
+          "after": null
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+      "source_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "decision": "Explicit R1 successor fixes final-newline anchor ambiguity while preserving every complete ASCII1..128 identifier. Old bytes/profile retained for historical reads only.",
+      "operations": [
+        {
+          "op": "replace_json",
+          "path": "/$id",
+          "before": "urn:cp6:plan-atp:wire:recovery-r6",
+          "after": "urn:cp6:plan-atp:wire:design-revision-20261011-r1"
+        },
+        {
+          "op": "replace_json",
+          "path": "/$defs/StableId",
+          "before": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "after": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])"
+          }
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+      "source_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "source_finding_ids": [
+        "PLAN-IF-004"
+      ],
+      "decision": "Explicit R1 successor fixes final-newline anchor ambiguity while preserving every complete ASCII1..128 identifier. Old bytes/profile retained for historical reads only.",
+      "operations": [
+        {
+          "op": "replace_text",
+          "before": "const ID = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/u;",
+          "after": "const ID = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])/u;",
+          "expected_count": 1
+        }
+      ]
+    }
+  ],
+  "required_support": [
+    "remediation/assets/core-types/DesignRevisionTypes.cs"
+  ],
+  "execution": "Do not execute source programs. Apply only to derived copy after SHA/value/count checks."
+}

@@ -1,0 +1,905 @@
+{
+  "observed_at": "2026-10-13T05:45:10.304Z",
+  "scope": "Plain task branch push / protected main PR; no tag push or workflow dispatch authorized",
+  "entries": [
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/client-contract.yml",
+      "sha256": "50f33cf81307824a7b6accd5eb3417968494cf2ae1aaecaccbe878e1554f00f8",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "windows-and-web",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "windows-and-web",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "windows-and-web",
+          "uses": "actions/setup-node@v4"
+        },
+        {
+          "job": "windows-and-web",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "android",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "android",
+          "uses": "actions/setup-dotnet@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "sha256": "5024797a8d374361d394c24abccc7f45a2e2314c1113c3deea5518e44c685efc",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "sha256": "70e1a2fb2535bd82a43bdc6d199d18429768ab4e243c2523166a5863eeba85f9",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "sha256": "84bf014626442317ef4f27b6580832162aba444d7d40fc03ed331fe2e6d4bdb5",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "candidate_sha": {
+              "description": "Exact candidate commit to validate as data with protected-main rules",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "sha256": "a3059601bedbd49a8596852d964704305b4eff7030e8bd5a56607e4549e0911c",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "expected_sha": {
+              "description": "Exact main source of this read-only verifier",
+              "required": true,
+              "type": "string"
+            },
+            "release_tag": {
+              "description": "Existing Platform candidate whose publication has completed",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "verify",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "verify",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "sha256": "0c3f53a82e604fd37eb33bb0a952f5a59aea720347c6a5b37721688ae85d1b95",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "expected_sha": {
+              "description": "Exact main commit used by the completed validation",
+              "required": true,
+              "type": "string"
+            },
+            "release_tag": {
+              "description": "New Platform candidate identity, not a Git tag or production release",
+              "required": true,
+              "type": "string"
+            },
+            "validation_run_id": {
+              "description": "Successful completed P10 validation run",
+              "required": true,
+              "type": "string"
+            },
+            "validation_attempt": {
+              "description": "Exact completed validation attempt",
+              "required": true,
+              "type": "string"
+            },
+            "validation_artifact_id": {
+              "description": "Immutable validation artifact ID",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "publish",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "publish",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "publish",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "sha256": "dfa0648be36c85f800c6d475ba44d27313d0f17a7bc7fca2df696b630111316f",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "preflight",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "preflight",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "preflight",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "sha256": "e86a052bde1eebd0cff6d23be32b3cb7f637989880bdb74e3f41c260c11cccb6",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "expected_sha": {
+              "description": "Exact current main commit to validate",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "validate",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "validate",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "validate",
+          "uses": "docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f"
+        },
+        {
+          "job": "validate",
+          "uses": "docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9"
+        },
+        {
+          "job": "validate",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        },
+        {
+          "job": "validate",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-candidate.yml",
+      "sha256": "4cc534fbe26cc22c41875376fc08e6b68137ed30f2097e55d0fc050965151e7d",
+      "events": {
+        "push": {
+          "tags": [
+            "v*.*.*"
+          ]
+        }
+      },
+      "dependencies": [
+        {
+          "job": "source-gate",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "source-gate",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "source-gate",
+          "uses": "actions/setup-node@v4"
+        },
+        {
+          "job": "source-gate",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "images",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "images",
+          "uses": "docker/setup-buildx-action@v3"
+        },
+        {
+          "job": "images",
+          "uses": "docker/login-action@v3"
+        },
+        {
+          "job": "images",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/download-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/download-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/download-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/setup-node@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-deploy.yml",
+      "sha256": "6dbb5f13005bbf2f0442c67cc2f5551ef3fa280eceff4706b7596497396b74ea",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "version": {
+              "description": "Semantic release version without v prefix",
+              "required": true,
+              "type": "string"
+            },
+            "environment": {
+              "description": "Protected GitHub Environment",
+              "required": true,
+              "type": "environment"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "deploy",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "deploy",
+          "uses": "actions/setup-node@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-freeze.yml",
+      "sha256": "a9b998fff9f6cb4e67a1ddcccc794945007c7bde4eba052fdee79afc5df5e695",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "version": {
+              "description": "Semantic release version without v prefix",
+              "required": true,
+              "default": "1.0.0",
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "freeze",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "freeze",
+          "uses": "actions/setup-node@v4"
+        },
+        {
+          "job": "freeze",
+          "uses": "actions/create-github-app-token@v3"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "sha256": "5bc15531e10147c6e01637a1c63e4aa7820516c4f78543ba334c84c898301013",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "validate",
+          "uses": "actions/checkout@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "HEAD",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "sha256": "ca11573d8c2622f08ad4156ae0733a40c5b8cc6d41dc3b227c7b1b509d8ecc3a",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "sql-integration",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/upload-artifact@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/client-contract.yml",
+      "sha256": "50f33cf81307824a7b6accd5eb3417968494cf2ae1aaecaccbe878e1554f00f8",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "windows-and-web",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "windows-and-web",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "windows-and-web",
+          "uses": "actions/setup-node@v4"
+        },
+        {
+          "job": "windows-and-web",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "android",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "android",
+          "uses": "actions/setup-dotnet@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "sha256": "5024797a8d374361d394c24abccc7f45a2e2314c1113c3deea5518e44c685efc",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "sha256": "70e1a2fb2535bd82a43bdc6d199d18429768ab4e243c2523166a5863eeba85f9",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "sha256": "84bf014626442317ef4f27b6580832162aba444d7d40fc03ed331fe2e6d4bdb5",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "candidate_sha": {
+              "description": "Exact candidate commit to validate as data with protected-main rules",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "sha256": "a3059601bedbd49a8596852d964704305b4eff7030e8bd5a56607e4549e0911c",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "expected_sha": {
+              "description": "Exact main source of this read-only verifier",
+              "required": true,
+              "type": "string"
+            },
+            "release_tag": {
+              "description": "Existing Platform candidate whose publication has completed",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "verify",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "verify",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "verify",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "sha256": "0c3f53a82e604fd37eb33bb0a952f5a59aea720347c6a5b37721688ae85d1b95",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "expected_sha": {
+              "description": "Exact main commit used by the completed validation",
+              "required": true,
+              "type": "string"
+            },
+            "release_tag": {
+              "description": "New Platform candidate identity, not a Git tag or production release",
+              "required": true,
+              "type": "string"
+            },
+            "validation_run_id": {
+              "description": "Successful completed P10 validation run",
+              "required": true,
+              "type": "string"
+            },
+            "validation_attempt": {
+              "description": "Exact completed validation attempt",
+              "required": true,
+              "type": "string"
+            },
+            "validation_artifact_id": {
+              "description": "Immutable validation artifact ID",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "publish",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "publish",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "publish",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "sha256": "dfa0648be36c85f800c6d475ba44d27313d0f17a7bc7fca2df696b630111316f",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "preflight",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "preflight",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "preflight",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "sha256": "e86a052bde1eebd0cff6d23be32b3cb7f637989880bdb74e3f41c260c11cccb6",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "expected_sha": {
+              "description": "Exact current main commit to validate",
+              "required": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "validate",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "job": "validate",
+          "uses": "actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
+        },
+        {
+          "job": "validate",
+          "uses": "docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f"
+        },
+        {
+          "job": "validate",
+          "uses": "docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9"
+        },
+        {
+          "job": "validate",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        },
+        {
+          "job": "validate",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-candidate.yml",
+      "sha256": "4cc534fbe26cc22c41875376fc08e6b68137ed30f2097e55d0fc050965151e7d",
+      "events": {
+        "push": {
+          "tags": [
+            "v*.*.*"
+          ]
+        }
+      },
+      "dependencies": [
+        {
+          "job": "source-gate",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "source-gate",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "source-gate",
+          "uses": "actions/setup-node@v4"
+        },
+        {
+          "job": "source-gate",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "images",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "images",
+          "uses": "docker/setup-buildx-action@v3"
+        },
+        {
+          "job": "images",
+          "uses": "docker/login-action@v3"
+        },
+        {
+          "job": "images",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/download-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/download-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/download-artifact@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "sign-and-archive",
+          "uses": "actions/setup-node@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-deploy.yml",
+      "sha256": "6dbb5f13005bbf2f0442c67cc2f5551ef3fa280eceff4706b7596497396b74ea",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "version": {
+              "description": "Semantic release version without v prefix",
+              "required": true,
+              "type": "string"
+            },
+            "environment": {
+              "description": "Protected GitHub Environment",
+              "required": true,
+              "type": "environment"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "deploy",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "deploy",
+          "uses": "actions/setup-node@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-freeze.yml",
+      "sha256": "a9b998fff9f6cb4e67a1ddcccc794945007c7bde4eba052fdee79afc5df5e695",
+      "events": {
+        "workflow_dispatch": {
+          "inputs": {
+            "version": {
+              "description": "Semantic release version without v prefix",
+              "required": true,
+              "default": "1.0.0",
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dependencies": [
+        {
+          "job": "freeze",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "freeze",
+          "uses": "actions/setup-node@v4"
+        },
+        {
+          "job": "freeze",
+          "uses": "actions/create-github-app-token@v3"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "sha256": "5bc15531e10147c6e01637a1c63e4aa7820516c4f78543ba334c84c898301013",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "validate",
+          "uses": "actions/checkout@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    },
+    {
+      "ref": "origin/main",
+      "commit": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "sha256": "ca11573d8c2622f08ad4156ae0733a40c5b8cc6d41dc3b227c7b1b509d8ecc3a",
+      "events": {
+        "workflow_dispatch": null
+      },
+      "dependencies": [
+        {
+          "job": "sql-integration",
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/setup-dotnet@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/upload-artifact@v4"
+        },
+        {
+          "job": "sql-integration",
+          "uses": "actions/upload-artifact@v4"
+        }
+      ],
+      "branch_push_and_pr_safe": true
+    }
+  ],
+  "workflow_changes": false,
+  "triggered": [],
+  "rerun": [],
+  "cancelled": [],
+  "actions_policy": "Local validation only. R2 protected tag publishing gate preserved."
+}

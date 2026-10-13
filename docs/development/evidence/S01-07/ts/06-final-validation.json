@@ -1,0 +1,102 @@
+{
+  "started_at": "2026-10-13T05:39:27.813818+00:00",
+  "finished_at": "2026-10-13T05:39:57.613630+00:00",
+  "execution_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "scope": "Uncommitted S01-07 sources bound by SHA256; local contract and Web compiler evidence only",
+  "node": "v22.22.0",
+  "npm": "10.9.4",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "eng/contracts/s01-07/ts/generate.mjs",
+        "--check"
+      ],
+      "observed_at": "2026-10-13T05:39:27.882931+00:00",
+      "exit_code": 0,
+      "log": "docs/development/evidence/S01-07/ts/06-final-0.log",
+      "log_sha256": "72ce0a51a4717a9040b18a6f9c85fb1b6ae2a3dc70d367c15534bd03669b8afa"
+    },
+    {
+      "command": [
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/quality/ipqc.test.ts",
+        "--reporter=verbose"
+      ],
+      "observed_at": "2026-10-13T05:39:28.316874+00:00",
+      "exit_code": 1,
+      "log": "docs/development/evidence/S01-07/ts/06-final-1.log",
+      "log_sha256": "7b01cf69da511bf50bd572b102fe05b96032ce21ea375803c5fb61d13b2bd362"
+    },
+    {
+      "command": [
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "run",
+        "type-check"
+      ],
+      "observed_at": "2026-10-13T05:39:31.095929+00:00",
+      "exit_code": 0,
+      "log": "docs/development/evidence/S01-07/ts/06-final-2.log",
+      "log_sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+    }
+  ],
+  "inputs_sha256": {
+    "cp6.web/package-lock.json": "abc239f2460634d4e9417193c500db55959c0022337275be12daa61f8d92dbf7",
+    "cp6.web/package.json": "0bc9e00d33b8aacdae711d77ff1927abe4c1e70312d4da9b8778dc35569e8da3",
+    "cp6.web/src/contracts/quality/ipqc.g.ts": "0ef897abdcc7b1cc7e40340ef49c06bde319b89c91ac94ddd29a2ab1b43af096",
+    "cp6.web/src/contracts/quality/ipqc.test.ts": "c0b4e1ca913530486fc04b8dccfe1560e3f6d245d8ed6b8bc598d52c7764b109",
+    "cp6.web/src/contracts/quality/ipqc.ts": "589a6a98d46fe130e29d9dc6d13f18a2333c0e98187484935e62c3ce3de558a0",
+    "cp6.web/src/contracts/quality/ipqcSchemas.g.ts": "4a6b7760eeb97bd0797a52204a669accde580be154917d59e199e6aeaa06dc72",
+    "cp6.web/src/contracts/quality/schema.ts": "0713ecf08658e76b7fe9eb106d29c874aeb12f632dcc6fa07729a650d5b14b14",
+    "cp6.web/src/contracts/quality/strictJson.ts": "63d7d72dd62940a880b6c736d153a1817fd8c17e1c83fcdad7940851b5a6f97b",
+    "cp6.web/tsconfig.app.json": "75d8a9e8a7b917cedfcbfc8a2525177784c9786cee1eefde26fb92285808c337",
+    "cp6.web/tsconfig.json": "a109c18aa8f389dd73e0dcd47fb5785a2f2df60aa3a1a13955ba70118b584094",
+    "cp6.web/tsconfig.node.json": "b652935888d5dd6901d9501d9dd2aac3b4a78360a862fe99dcc9403c90b87c5e",
+    "cp6.web/vitest.config.ts": "d00b50a4a8c422ef24e6e63f420a332767a899db97a9f1d87c8e736ee802181f",
+    "eng/contracts/s01-07/inputs/composed/composed-15.cs.txt": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+    "eng/contracts/s01-07/inputs/composed/composed-16.cs.txt": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+    "eng/contracts/s01-07/inputs/composed/composed-17.json": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+    "eng/contracts/s01-07/inputs/composed/composed-19.ts.txt": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R6-FENCED-OWNER-SHAPES.json": "172f4d0f08b5bd4f79a067d4bac5da9f3d4ed1b69518fd99ed60da8c7fe625c4",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R6-MES-DISPATCH-SHAPE.json": "45604318db366d61face166e65e5672339abf06d47887a86ce8edc8e6fe5e524",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R9-IQC-SOURCE-PROJECTIONS.json": "45d7e3551df0940f9875c3bc02e0e7b2ba0ccce581fc0145187c111a1ab8a160",
+    "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/CONSUMER-WIRE.json": "a3e5c08a426bef34ed18118c2f9ee9d9285dfa70ec369bcc1b16587349b42dc7",
+    "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json": "392443aa5b52e47dd4947ee25aca57b61b7e454e5bd785e53ae0c630f714e356",
+    "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+    "eng/contracts/s01-07/inputs/native/design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+    "eng/contracts/s01-07/inputs/native/design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+    "eng/contracts/s01-07/inputs/native/design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+    "eng/contracts/s01-07/inputs/original/composed-15.cs.txt": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+    "eng/contracts/s01-07/inputs/original/composed-16.cs.txt": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+    "eng/contracts/s01-07/inputs/original/composed-17.json": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+    "eng/contracts/s01-07/inputs/original/composed-19.ts.txt": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+    "eng/contracts/s01-07/inputs/pins/2026-10-11-s01-task-breakdown.md": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+    "eng/contracts/s01-07/inputs/pins/bounded-patches.json": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+    "eng/contracts/s01-07/inputs/pins/composed-derivatives.json": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+    "eng/contracts/s01-07/inputs/pins/container-members.json": "730fd2a826e61b9cbad74e4e66e68fe478c0ce7135bd3469a9db4b8af22778a1",
+    "eng/contracts/s01-07/inputs/pins/profile-inputs.json": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+    "eng/contracts/s01-07/inputs/pins/required-inputs.json": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+    "eng/contracts/s01-07/inputs/pins/s01-input-index.json": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+    "eng/contracts/s01-07/inputs/pins/vectors.json": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+    "eng/contracts/s01-07/inputs/protocol/ACCEPTANCE.md": "7faae8212b09d21e656e386023e7380ce9c9eefff35c37c6a4832616f567ff18",
+    "eng/contracts/s01-07/inputs/protocol/CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json": "ec15532bb8820016f44af4dcf91823b2ec2af7684ec767cc1f25a4bbe61ec74b",
+    "eng/contracts/s01-07/inputs/protocol/LANGUAGE-CONTRACTS.md": "23c597a0e6230a922823f6805c91a3c9b2d641fafbddff313ec2bd86a1cb98d9",
+    "eng/contracts/s01-07/inputs/protocol/NCR-R6-LANGUAGE-CONTRACTS.json": "9e9ee118ded0250fa98ba6530d5c86f281a95ac0364ae15f1ee9e8481df08690",
+    "eng/contracts/s01-07/inputs/protocol/PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+    "eng/contracts/s01-07/inputs/protocol/QA-IPQC-01-SPEC.md": "c82ef3d5833b823cc562606af1a8bd8a68653416790bfc09c895df3a9a8c511b",
+    "eng/contracts/s01-07/sources.json": "bbd32a7c63ce81af6967f5e9d47bc04dbd5779e3b6012e3c7fbe8aaca397b9e4",
+    "eng/contracts/s01-07/ts/generate.mjs": "548f45529610da63f801aec0297c3447f67d5828df6c792f10bf2be219fc8875",
+    "eng/contracts/s01-07/ts/generation.json": "02ee87856d4832ca96cad4a4acde6911df3b596afbc8acff78970aa644017892",
+    "eng/contracts/s01-07/ts/manual-fixtures.json": "4b650c23ae818aecac78f6543de8402979e54fcbc47a961c2ed446952570b585",
+    "eng/contracts/s01-07/ts/validate.py": "2faea94b40e84bb56d517e18dcd7e777374fd73e8b4b8d421c95f68184602892"
+  },
+  "inputs_unchanged": true,
+  "business_acceptance": "NOT_RUN"
+}

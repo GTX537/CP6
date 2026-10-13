@@ -1,0 +1,6154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:ncr-owner-addenda:cp2",
+  "title": "Two Owner addenda closed design schemas",
+  "x-status": "CANDIDATE_REQUIRED_FENCED",
+  "x-design-adoption": "PENDING_OWNER_O1",
+  "x-runtime-adoption": "UNPROVEN",
+  "x-execution": "NOT_RUN",
+  "$defs": {
+    "UUID": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "Version": {
+      "type": "string",
+      "pattern": "^(?:[1-9][0-9]{0,17}|[1-8][0-9]{18}|9[0-1][0-9]{17}|92[0-1][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[0-1][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-6]|9223372036854775807)$",
+      "description": "Positive signed Int64 carried as canonical decimal string"
+    },
+    "Sequence0": {
+      "type": "string",
+      "pattern": "^(?:0|(?:[1-9][0-9]{0,17}|[1-8][0-9]{18}|9[0-1][0-9]{17}|92[0-1][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[0-1][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-6]|9223372036854775807))$"
+    },
+    "Decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,12})(\\.[0-9]{0,7}[1-9])?$"
+    },
+    "SignedDecimal": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]{0,12})(\\.[0-9]{0,7}[1-9])?$",
+      "description": "-0 forbidden by semantic validation",
+      "not": {
+        "const": "-0"
+      }
+    },
+    "Time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$",
+      "format": "date-time"
+    },
+    "OwnerTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Original offset/fraction retained; no reformat before Owner digest verification"
+    },
+    "Environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environmentId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "REAL",
+            "DEMO"
+          ]
+        },
+        "siteId": {
+          "$ref": "#/$defs/UUID"
+        }
+      },
+      "required": [
+        "tenantId",
+        "environmentId",
+        "mode",
+        "siteId"
+      ]
+    },
+    "OwnerRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "owner",
+        "id",
+        "version"
+      ]
+    },
+    "Evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "owner",
+        "id",
+        "version",
+        "digest"
+      ]
+    },
+    "NestedEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "ref",
+        "digest"
+      ]
+    },
+    "Range": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/Decimal"
+        },
+        "to": {
+          "$ref": "#/$defs/Decimal"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ]
+    },
+    "ScopeRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "portionId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "from": {
+          "$ref": "#/$defs/Decimal"
+        },
+        "to": {
+          "$ref": "#/$defs/Decimal"
+        }
+      },
+      "required": [
+        "portionId",
+        "from",
+        "to"
+      ]
+    },
+    "Scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scopeId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "scopeVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "ranges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScopeRange"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        }
+      },
+      "required": [
+        "scopeId",
+        "scopeVersion",
+        "ranges"
+      ]
+    },
+    "Quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/Decimal"
+        },
+        "unitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        }
+      },
+      "required": [
+        "value",
+        "unitRef"
+      ]
+    },
+    "ExecutionKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "initiatingOwner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "executionRequestKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "initiatingOwner",
+        "executionRequestKey"
+      ]
+    },
+    "OwnerBusinessRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "streamId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "businessId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "$ref": "#/$defs/Version"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "owner",
+        "streamId",
+        "businessId",
+        "revision",
+        "digest"
+      ]
+    },
+    "CoverageCut": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "streamId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "throughSequence": {
+          "$ref": "#/$defs/Version"
+        },
+        "coverageRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "completeness": {
+          "type": "string",
+          "enum": [
+            "COMPLETE",
+            "INCOMPLETE",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "required": [
+        "owner",
+        "streamId",
+        "throughSequence",
+        "coverageRef",
+        "digest",
+        "completeness"
+      ]
+    },
+    "Validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "validFrom": {
+          "$ref": "#/$defs/Time"
+        },
+        "validUntil": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "validFrom",
+        "validUntil"
+      ]
+    },
+    "OriginalObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceProtocol": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "exactRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "originalCanonicalBytesBase64": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "maxLength": 22369624
+        },
+        "rawSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "ownerDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "digestProfileRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "ownerCommittedAt": {
+          "$ref": "#/$defs/OwnerTime"
+        },
+        "ownerCommitRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "sourceProtocol",
+        "exactRef",
+        "originalCanonicalBytesBase64",
+        "rawSha256",
+        "ownerDigest",
+        "digestProfileRef",
+        "ownerCommittedAt",
+        "ownerCommitRef"
+      ]
+    },
+    "DigestProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "OWNER-DIGEST-PROFILE-1-CANDIDATE"
+        },
+        "profileId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "$ref": "#/$defs/Version"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "sourceProtocol": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "canonicalization": {
+          "type": "string",
+          "enum": [
+            "OWNER_UTF8_SORTED_KEYS",
+            "JCS_UTF8"
+          ]
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "RAW_SHA256",
+            "EXCLUDE_TOP_DIGEST_SHA256",
+            "EXEC_CANON_KIND_SHA256",
+            "WO_EVENT_WITHOUT_CONTENT_DIGEST_SHA256",
+            "OWNER_VERIFIED_EXACT_PROFILE"
+          ]
+        },
+        "excludedTopLevelFields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "domainTag": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "authorityRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "exampleVectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 32
+        }
+      },
+      "required": [
+        "schema",
+        "profileId",
+        "revision",
+        "owner",
+        "sourceProtocol",
+        "canonicalization",
+        "algorithm",
+        "excludedTopLevelFields",
+        "domainTag",
+        "authorityRef",
+        "exampleVectors"
+      ]
+    },
+    "ContractSchemaPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "sha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "schemaId",
+        "sha256"
+      ]
+    },
+    "ScopeRestriction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rootWorkOrderIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UUID"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "operationIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UUID"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        }
+      },
+      "required": [
+        "rootWorkOrderIds",
+        "operationIds",
+        "scope"
+      ]
+    },
+    "ContractRegistration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-OWNER-CONTRACT-REGISTRATION-1-CANDIDATE"
+        },
+        "contractId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "$ref": "#/$defs/Version"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "producerOwner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "consumerOwner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "supportedProtocols": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "minItems": 1,
+          "maxItems": 32
+        },
+        "schemaDigests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContractSchemaPin"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "digestProfiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 32
+        },
+        "capabilityRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "scopeRestriction": {
+          "$ref": "#/$defs/ScopeRestriction"
+        },
+        "validity": {
+          "$ref": "#/$defs/Validity"
+        },
+        "previousRegistrationRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "DESIGN_ADOPTED",
+            "RUNTIME_READY",
+            "DESIGN_WITHDRAWN",
+            "RUNTIME_SUSPENDED",
+            "RETIRED"
+          ]
+        },
+        "designAdoptionRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "runtimeAttestationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "uowRegistrationRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "contractId",
+        "version",
+        "environment",
+        "producerOwner",
+        "consumerOwner",
+        "supportedProtocols",
+        "schemaDigests",
+        "digestProfiles",
+        "capabilityRef",
+        "scopeRestriction",
+        "validity",
+        "previousRegistrationRef",
+        "state",
+        "designAdoptionRefs",
+        "runtimeAttestationRefs",
+        "uowRegistrationRef"
+      ]
+    },
+    "WriterHook": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "writerKind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "keyDefinitionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "rank": {
+          "$ref": "#/$defs/Version"
+        },
+        "hookRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "owner",
+        "writerKind",
+        "keyDefinitionRef",
+        "rank",
+        "hookRef"
+      ]
+    },
+    "UowRegistration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-EVIDENCE-UOW-REGISTRATION-1-CANDIDATE"
+        },
+        "registrationId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "$ref": "#/$defs/Version"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "databaseIdentityRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "transactionProtocol": {
+          "const": "NCR_MAIN_ATOMIC_EVIDENCE_V1"
+        },
+        "lockPlanRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "lockOrderDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "writers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WriterHook"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "authorityRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "designState": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "DESIGN_ADOPTED",
+            "WITHDRAWN"
+          ]
+        },
+        "runtimeState": {
+          "type": "string",
+          "enum": [
+            "UNPROVEN",
+            "READY",
+            "SUSPENDED",
+            "RETIRED"
+          ]
+        },
+        "runtimeAttestationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "previousRegistrationRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "designAdoptionRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "schema",
+        "registrationId",
+        "version",
+        "environment",
+        "databaseIdentityRef",
+        "transactionProtocol",
+        "lockPlanRef",
+        "lockOrderDigest",
+        "writers",
+        "authorityRefs",
+        "designState",
+        "runtimeState",
+        "runtimeAttestationRefs",
+        "previousRegistrationRef",
+        "designAdoptionRefs"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "designState": {
+                "const": "DRAFT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimeState": {
+                "const": "UNPROVEN"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "designState": {
+                "const": "DESIGN_ADOPTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "designAdoptionRefs": {
+                "minItems": 2
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "runtimeState": {
+                "const": "READY"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "designState": {
+                "const": "DESIGN_ADOPTED"
+              },
+              "designAdoptionRefs": {
+                "minItems": 2
+              },
+              "runtimeAttestationRefs": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "designState": {
+                "const": "WITHDRAWN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "previousRegistrationRef": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "designAdoptionRefs": {
+                "minItems": 1
+              },
+              "runtimeState": {
+                "enum": [
+                  "UNPROVEN",
+                  "SUSPENDED",
+                  "RETIRED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "runtimeState": {
+                "enum": [
+                  "SUSPENDED",
+                  "RETIRED"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "previousRegistrationRef": {
+                "$ref": "#/$defs/Evidence"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "EventOccurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "occurrenceRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "scopeRange": {
+          "$ref": "#/$defs/ScopeRange"
+        },
+        "meterKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "measurementPointRef": {
+          "$ref": "#/$defs/OwnerRef"
+        }
+      },
+      "required": [
+        "occurrenceRef",
+        "quantity",
+        "scopeRange",
+        "meterKey",
+        "measurementPointRef"
+      ]
+    },
+    "ExecutionEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "WO-EXECUTION-1"
+        },
+        "owner": {
+          "const": "MES-EXEC"
+        },
+        "streamId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "eventRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousEventRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Version"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ownerSequence": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousOwnerSequence": {
+          "$ref": "#/$defs/Sequence0"
+        },
+        "executionKey": {
+          "$ref": "#/$defs/ExecutionKey"
+        },
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "OPERATION_STARTED",
+            "CONTROLLED_ENTRY",
+            "OPERATION_ENDED",
+            "EXECUTION_CLOSED",
+            "MEASUREMENT_CORRECTION"
+          ]
+        },
+        "effectMode": {
+          "type": "string",
+          "enum": [
+            "FACT_SNAPSHOT",
+            "CORRECTION"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "actualOccurrences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EventOccurrence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "occurredAt": {
+          "$ref": "#/$defs/OwnerTime"
+        },
+        "ownerCommittedAt": {
+          "$ref": "#/$defs/OwnerTime"
+        },
+        "sourceEvidenceRef": {
+          "$ref": "#/$defs/NestedEvidence"
+        },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "STARTED",
+                "FINISHED",
+                "SAFE_STOPPED",
+                "UNKNOWN"
+              ]
+            },
+            "reasonCode": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "actualBaselineRef": {
+              "$ref": "#/$defs/OwnerRef"
+            }
+          },
+          "required": [
+            "state",
+            "reasonCode",
+            "actualBaselineRef"
+          ]
+        },
+        "correctionOf": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/OwnerBusinessRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coverageCut": {
+          "$ref": "#/$defs/CoverageCut"
+        },
+        "contentDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "evidenceMode": {
+          "type": "string",
+          "enum": [
+            "ACTUAL",
+            "MOCK"
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "owner",
+        "streamId",
+        "eventId",
+        "eventRevision",
+        "previousEventRevision",
+        "ownerSequence",
+        "previousOwnerSequence",
+        "executionKey",
+        "rootWorkOrderId",
+        "bindingId",
+        "kind",
+        "effectMode",
+        "scope",
+        "actualOccurrences",
+        "occurredAt",
+        "ownerCommittedAt",
+        "sourceEvidenceRef",
+        "result",
+        "correctionOf",
+        "coverageCut",
+        "contentDigest",
+        "evidenceMode"
+      ]
+    },
+    "OriginalExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/OriginalObject"
+        },
+        "body": {
+          "$ref": "#/$defs/ExecutionEvent"
+        }
+      },
+      "required": [
+        "original",
+        "body"
+      ]
+    },
+    "ClosureMeterCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "meterKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "profileRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "unitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "coveredScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "actualOccurrenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OwnerRef"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "actualKnownLowerBound": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "unresolvedUpperBound": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "coverageRef": {
+          "$ref": "#/$defs/OwnerRef"
+        }
+      },
+      "required": [
+        "meterKey",
+        "profileRef",
+        "unitRef",
+        "coveredScope",
+        "actualOccurrenceRefs",
+        "actualKnownLowerBound",
+        "unresolvedUpperBound",
+        "coverageRef"
+      ]
+    },
+    "ExecutionClosureProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "proofRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "executionKey": {
+          "$ref": "#/$defs/ExecutionKey"
+        },
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "bindingRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "expectedBindingRegistryRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "controlFenceRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "coveredScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "meterCoverage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ClosureMeterCoverage"
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "lastOwnerSequence": {
+          "$ref": "#/$defs/Version"
+        },
+        "coverageCut": {
+          "$ref": "#/$defs/CoverageCut"
+        },
+        "finalActualEventRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OwnerBusinessRef"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "remainingWillNotExecute": {
+          "type": "boolean"
+        },
+        "producerFenceRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "allDescendantsClosedRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "supersedesProofRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/OwnerRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contentDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "proofRef",
+        "executionKey",
+        "rootWorkOrderId",
+        "bindingId",
+        "bindingRevision",
+        "expectedBindingRegistryRevision",
+        "controlFenceRef",
+        "coveredScope",
+        "meterCoverage",
+        "lastOwnerSequence",
+        "coverageCut",
+        "finalActualEventRefs",
+        "remainingWillNotExecute",
+        "producerFenceRef",
+        "allDescendantsClosedRef",
+        "supersedesProofRef",
+        "contentDigest"
+      ]
+    },
+    "OriginalClosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/OriginalObject"
+        },
+        "body": {
+          "$ref": "#/$defs/ExecutionClosureProof"
+        }
+      },
+      "required": [
+        "original",
+        "body"
+      ]
+    },
+    "ProofValidationProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "MES-WO-NCR-PROOF-VALIDATION-1-CANDIDATE"
+        },
+        "originalRecordRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "proofRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "validationRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "predecessorValidationRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedRegistryRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "validatedRegistryRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "validatedBindingRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "coveredScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "inputDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "VALIDATED",
+            "STALE",
+            "REVOKED"
+          ]
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "originalRecordRef",
+        "proofRef",
+        "validationRevision",
+        "predecessorValidationRef",
+        "expectedRegistryRevision",
+        "validatedRegistryRevision",
+        "validatedBindingRevision",
+        "coveredScope",
+        "inputDigest",
+        "outcome",
+        "recordedAt"
+      ]
+    },
+    "RegistryReadCut": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/Version"
+        },
+        "controlEpoch": {
+          "$ref": "#/$defs/Version"
+        },
+        "evidenceVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "bindingRegistryRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "snapshotId": {
+          "$ref": "#/$defs/UUID"
+        }
+      },
+      "required": [
+        "revision",
+        "controlEpoch",
+        "evidenceVersion",
+        "bindingRegistryRevision",
+        "snapshotId"
+      ]
+    },
+    "RegistryMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bindingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "bindingRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "parentBindingId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/UUID"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operationId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "MAY_EXECUTE",
+            "CLOSED",
+            "UNKNOWN"
+          ]
+        },
+        "originalState": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "stateMappingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "currentBindingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "validationRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "bindingId",
+        "bindingRevision",
+        "parentBindingId",
+        "operationId",
+        "scope",
+        "state",
+        "originalState",
+        "stateMappingRef",
+        "currentBindingRef",
+        "validationRef"
+      ]
+    },
+    "RegistrySnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "MES-WO-NCR-REGISTRY-SNAPSHOT-1-CANDIDATE"
+        },
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "readCut": {
+          "$ref": "#/$defs/RegistryReadCut"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RegistryMember"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "registryDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "complete": {
+          "const": true
+        },
+        "coverageCuts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CoverageCut"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "capturedAt": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "rootWorkOrderId",
+        "readCut",
+        "members",
+        "registryDigest",
+        "complete",
+        "coverageCuts",
+        "capturedAt"
+      ]
+    },
+    "AdoptionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ownerBusinessRef": {
+          "$ref": "#/$defs/OwnerBusinessRef"
+        },
+        "bindingRevisionAtAdoption": {
+          "$ref": "#/$defs/Version"
+        },
+        "adoptedEvidenceVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "adoptedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "adoptionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "validationOutcome": {
+          "const": "ADOPTED"
+        }
+      },
+      "required": [
+        "ownerBusinessRef",
+        "bindingRevisionAtAdoption",
+        "adoptedEvidenceVersion",
+        "adoptedAt",
+        "adoptionRef",
+        "validationOutcome"
+      ]
+    },
+    "StreamSlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "streamId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "sequence": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousSequence": {
+          "$ref": "#/$defs/Sequence0"
+        },
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "eventRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "eventCoreDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "adoptionRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "owner",
+        "streamId",
+        "sequence",
+        "previousSequence",
+        "eventId",
+        "eventRevision",
+        "eventCoreDigest",
+        "adoptionRef"
+      ]
+    },
+    "OccurrenceMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identityDomainRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "stableOccurrenceKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "occurrenceRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "eventRef": {
+          "$ref": "#/$defs/OwnerBusinessRef"
+        },
+        "meterKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "measurementPointRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "profileRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "scopeRange": {
+          "$ref": "#/$defs/ScopeRange"
+        },
+        "physicalMappingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "actualBaselineRef": {
+          "$ref": "#/$defs/OwnerRef"
+        }
+      },
+      "required": [
+        "identityDomainRef",
+        "stableOccurrenceKey",
+        "occurrenceRef",
+        "eventRef",
+        "meterKey",
+        "measurementPointRef",
+        "profileRef",
+        "quantity",
+        "scopeRange",
+        "physicalMappingRef",
+        "actualBaselineRef"
+      ]
+    },
+    "MesCurrentVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rootRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "controlEpoch": {
+          "$ref": "#/$defs/Version"
+        },
+        "evidenceVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "snapshotId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "registryRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "registryDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "eventHeadRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "validationHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceControlRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "producerControlRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "registrationHeadRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        }
+      },
+      "required": [
+        "rootRevision",
+        "controlEpoch",
+        "evidenceVersion",
+        "snapshotId",
+        "registryRevision",
+        "registryDigest",
+        "eventHeadRefs",
+        "validationHeadRef",
+        "sourceControlRefs",
+        "producerControlRef",
+        "registrationHeadRefs"
+      ]
+    },
+    "CompletionSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "executionKey": {
+          "$ref": "#/$defs/ExecutionKey"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "admissionBindingRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "currentBindingRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "operationId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "snapshotId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "requestedScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "scopeUnitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        }
+      },
+      "required": [
+        "rootWorkOrderId",
+        "executionKey",
+        "bindingId",
+        "admissionBindingRevision",
+        "currentBindingRevision",
+        "operationId",
+        "snapshotId",
+        "requestedScope",
+        "scopeUnitRef"
+      ]
+    },
+    "BindingLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "admissionBindingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "executionBindingHistoryRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "currentBindingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "bindingLineageDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "admissionBindingRef",
+        "executionBindingHistoryRefs",
+        "currentBindingRef",
+        "bindingLineageDigest"
+      ]
+    },
+    "CompletionProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "MES-WO-NCR-COMPLETION-PROOF-1-CANDIDATE"
+        },
+        "proofId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "proofVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousProofRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "registrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "consumerOwner": {
+          "type": "string",
+          "enum": [
+            "QA-NCR",
+            "QA-IPQC"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/CompletionSubject"
+        },
+        "bindingLineage": {
+          "$ref": "#/$defs/BindingLineage"
+        },
+        "adoptedEventOriginals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OriginalExecution"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "eventHeadRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "adoptionRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdoptionRecord"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "streamSlots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StreamSlot"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "streamCoverageRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "occurrences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OccurrenceMember"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "closureProof": {
+          "$ref": "#/$defs/OriginalClosure"
+        },
+        "proofValidation": {
+          "$ref": "#/$defs/ProofValidationProjection"
+        },
+        "currentValidationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "registry": {
+          "$ref": "#/$defs/RegistrySnapshot"
+        },
+        "terminalState": {
+          "const": "FINISHED"
+        },
+        "completionKind": {
+          "type": "string",
+          "enum": [
+            "OPERATION_ENDED",
+            "EXECUTION_CLOSED"
+          ]
+        },
+        "finishedScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "unresolvedScope": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScopeRange"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "mayExecuteScope": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScopeRange"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "conflictRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "currentVector": {
+          "$ref": "#/$defs/MesCurrentVector"
+        },
+        "snapshotPublishedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "observedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "validUntil": {
+          "$ref": "#/$defs/Time"
+        },
+        "requiresLockedRecheck": {
+          "const": true
+        },
+        "proofDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "schema",
+        "proofId",
+        "proofVersion",
+        "previousProofRef",
+        "environment",
+        "registrationRef",
+        "consumerOwner",
+        "subject",
+        "bindingLineage",
+        "adoptedEventOriginals",
+        "eventHeadRefs",
+        "adoptionRecords",
+        "streamSlots",
+        "streamCoverageRef",
+        "occurrences",
+        "closureProof",
+        "proofValidation",
+        "currentValidationRef",
+        "registry",
+        "terminalState",
+        "completionKind",
+        "finishedScope",
+        "unresolvedScope",
+        "mayExecuteScope",
+        "conflictRefs",
+        "currentVector",
+        "snapshotPublishedAt",
+        "observedAt",
+        "validUntil",
+        "requiresLockedRecheck",
+        "proofDigest"
+      ]
+    },
+    "RegistryExpected": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/Version"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "revision",
+        "digest"
+      ]
+    },
+    "CompletionReadRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "MES-WO-NCR-COMPLETION-READ-1-CANDIDATE"
+        },
+        "requestId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "consumerRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "executionKey": {
+          "$ref": "#/$defs/ExecutionKey"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "admissionBindingRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "operationId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "requestedScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "requiredMeterProfileRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "expectedRegistry": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/RegistryExpected"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "requestId",
+        "environment",
+        "consumerRegistrationRef",
+        "rootWorkOrderId",
+        "executionKey",
+        "bindingId",
+        "admissionBindingRevision",
+        "operationId",
+        "requestedScope",
+        "requiredMeterProfileRefs",
+        "expectedRegistry"
+      ]
+    },
+    "Problem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "PROBLEM"
+        },
+        "status": {
+          "type": "integer",
+          "enum": [
+            400,
+            401,
+            403,
+            404,
+            409,
+            410,
+            422,
+            503
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "enum": [
+            "WIRE_INVALID",
+            "NUMERIC_BOUND_INVALID",
+            "REF_DIGEST_INVALID",
+            "REQUEST_ENVIRONMENT_MISMATCH",
+            "AUTHENTICATION_REQUIRED",
+            "SCOPE_NOT_AUTHORIZED",
+            "NOT_FOUND_OR_HIDDEN",
+            "EXPECTED_HEAD_CHANGED",
+            "CURRENT_VECTOR_CHANGED",
+            "PROOF_SUPERSEDED",
+            "STALE_SOURCE",
+            "STALE_MAPPING",
+            "REGISTRY_CHANGED",
+            "DECISION_WITHDRAWN",
+            "FAMILY_REOPENED",
+            "NEWER_TASK_REQUIRED",
+            "IDEMPOTENCY_CONFLICT",
+            "SOURCE_VERSION_CONFLICT",
+            "OCCURRENCE_CONFLICT",
+            "PROOF_EXPIRED",
+            "SCOPE_NOT_EXACT",
+            "OCCURRENCE_MISMATCH",
+            "UOM_DIMENSION_MISMATCH",
+            "TRANSFORM_INEXACT",
+            "MAPPING_NOT_BIJECTIVE",
+            "UNSUPPORTED_TRANSFORM",
+            "SLOT_SET_MISMATCH",
+            "COVERAGE_NOT_COMPLETE",
+            "QUALITY_NOT_ACCEPTED",
+            "COMPLETION_NOT_FINISHED",
+            "TARGET_SEMANTICS_CHANGED",
+            "CLOSE_MEMBER_SET_MISMATCH",
+            "OWNER_CONTRACT_NOT_DESIGN_ADOPTED",
+            "OWNER_RUNTIME_NOT_READY",
+            "UNSUPPORTED_OWNER_CONTRACT",
+            "REGISTRATION_NOT_CURRENT",
+            "UOW_NOT_REGISTERED",
+            "WRITER_HOOK_INCOMPLETE",
+            "GUARD_MODE_UNSUPPORTED",
+            "SOURCE_UNAVAILABLE",
+            "CURRENTNESS_UNKNOWN",
+            "CLOCK_UNVERIFIED",
+            "SUPPORT_PROJECTION_UNADOPTED"
+          ]
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "operation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "requestId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "retry": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "SAME_READ",
+            "REFRESH_READ_SAME_INTENT",
+            "QUERY_ORIGINAL",
+            "WAIT_OWNER",
+            "NEW_AUTHORIZED_INTENT"
+          ]
+        },
+        "commitKnowledge": {
+          "type": "string",
+          "enum": [
+            "NO_NEW_EFFECT",
+            "UNKNOWN"
+          ]
+        },
+        "reasonRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 64
+        },
+        "currentRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 64
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "kind",
+        "status",
+        "code",
+        "owner",
+        "operation",
+        "requestId",
+        "retry",
+        "commitKnowledge",
+        "reasonRefs",
+        "currentRefs",
+        "detail"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "WIRE_INVALID"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 400
+              },
+              "retry": {
+                "const": "NONE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "NUMERIC_BOUND_INVALID"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 400
+              },
+              "retry": {
+                "const": "NONE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "REF_DIGEST_INVALID"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 400
+              },
+              "retry": {
+                "const": "NONE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "REQUEST_ENVIRONMENT_MISMATCH"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 400
+              },
+              "retry": {
+                "const": "NONE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "AUTHENTICATION_REQUIRED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 401
+              },
+              "retry": {
+                "const": "NONE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "SCOPE_NOT_AUTHORIZED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 403
+              },
+              "retry": {
+                "const": "NONE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "NOT_FOUND_OR_HIDDEN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 404
+              },
+              "retry": {
+                "const": "NONE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "EXPECTED_HEAD_CHANGED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "CURRENT_VECTOR_CHANGED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "PROOF_SUPERSEDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "STALE_SOURCE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "STALE_MAPPING"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "REGISTRY_CHANGED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "DECISION_WITHDRAWN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "FAMILY_REOPENED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "NEWER_TASK_REQUIRED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "IDEMPOTENCY_CONFLICT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "SOURCE_VERSION_CONFLICT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "OCCURRENCE_CONFLICT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 409
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "PROOF_EXPIRED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 410
+              },
+              "retry": {
+                "const": "REFRESH_READ_SAME_INTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "SCOPE_NOT_EXACT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "OCCURRENCE_MISMATCH"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "UOM_DIMENSION_MISMATCH"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "TRANSFORM_INEXACT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "MAPPING_NOT_BIJECTIVE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "UNSUPPORTED_TRANSFORM"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "SLOT_SET_MISMATCH"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "COVERAGE_NOT_COMPLETE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "QUALITY_NOT_ACCEPTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "COMPLETION_NOT_FINISHED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "TARGET_SEMANTICS_CHANGED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "CLOSE_MEMBER_SET_MISMATCH"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 422
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "OWNER_CONTRACT_NOT_DESIGN_ADOPTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "OWNER_RUNTIME_NOT_READY"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "UNSUPPORTED_OWNER_CONTRACT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "REGISTRATION_NOT_CURRENT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "UOW_NOT_REGISTERED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "WRITER_HOOK_INCOMPLETE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "GUARD_MODE_UNSUPPORTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "SOURCE_UNAVAILABLE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "CURRENTNESS_UNKNOWN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "CLOCK_UNVERIFIED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "SUPPORT_PROJECTION_UNADOPTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": 503
+              },
+              "retry": {
+                "const": "WAIT_OWNER"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CompletionReadResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "FOUND_CURRENT_FINISHED"
+            },
+            "requestId": {
+              "$ref": "#/$defs/UUID"
+            },
+            "proof": {
+              "$ref": "#/$defs/CompletionProof"
+            },
+            "problem": {
+              "type": "null"
+            },
+            "canInferNoEffect": {
+              "const": false
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Time"
+            }
+          },
+          "required": [
+            "state",
+            "requestId",
+            "proof",
+            "problem",
+            "canInferNoEffect",
+            "observedAt"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "UNKNOWN",
+                "CONFLICT",
+                "SUPERSEDED",
+                "NOT_AUTHORIZED",
+                "UNAVAILABLE"
+              ]
+            },
+            "requestId": {
+              "$ref": "#/$defs/UUID"
+            },
+            "proof": {
+              "type": "null"
+            },
+            "problem": {
+              "$ref": "#/$defs/ReadIssue"
+            },
+            "canInferNoEffect": {
+              "const": false
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Time"
+            }
+          },
+          "required": [
+            "state",
+            "requestId",
+            "proof",
+            "problem",
+            "canInferNoEffect",
+            "observedAt"
+          ]
+        }
+      ]
+    },
+    "OccurrenceIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identityDomainRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "stableOccurrenceKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "occurrenceRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "meterKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "measurementPointRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "profileRef": {
+          "$ref": "#/$defs/OwnerRef"
+        }
+      },
+      "required": [
+        "identityDomainRef",
+        "stableOccurrenceKey",
+        "occurrenceRef",
+        "meterKey",
+        "measurementPointRef",
+        "profileRef"
+      ]
+    },
+    "OccurrenceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/OccurrenceIdentity"
+        },
+        "eventRef": {
+          "$ref": "#/$defs/OwnerBusinessRef"
+        },
+        "physicalMappingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourcePortionId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "mesRange": {
+          "$ref": "#/$defs/ScopeRange"
+        },
+        "unitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Decimal"
+        }
+      },
+      "required": [
+        "identity",
+        "eventRef",
+        "physicalMappingRef",
+        "sourcePortionId",
+        "sourceRange",
+        "mesRange",
+        "unitRef",
+        "quantity"
+      ]
+    },
+    "ExecSourceLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "EXEC-NCR-SOURCE-LINEAGE-1-CANDIDATE"
+        },
+        "lineageId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "revision": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "producerRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "execSourceRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "actualManifestRef": {
+          "$ref": "#/$defs/NestedEvidence"
+        },
+        "reportRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NestedEvidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "executionKey": {
+          "$ref": "#/$defs/ExecutionKey"
+        },
+        "bindingRefAtExecution": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "operationId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "completionEventRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OwnerBusinessRef"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "occurrenceLinks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OccurrenceLink"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "sourceScope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "unitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "actualBaselineRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "reworkRelationshipRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "currentControlRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "committedAt": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "lineageId",
+        "revision",
+        "previousRef",
+        "environment",
+        "producerRegistrationRef",
+        "execSourceRef",
+        "actualManifestRef",
+        "reportRefs",
+        "rootWorkOrderId",
+        "executionKey",
+        "bindingRefAtExecution",
+        "operationId",
+        "completionEventRefs",
+        "occurrenceLinks",
+        "sourceScope",
+        "unitRef",
+        "actualBaselineRef",
+        "reworkRelationshipRef",
+        "sourceHeadRef",
+        "currentControlRef",
+        "committedAt"
+      ]
+    },
+    "NcrTargetSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "QA-NCR-EXEC-TARGET-1-CANDIDATE"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "ncrId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "decisionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "partitionId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "workRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "ownerCommandRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "admissionReceiptRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "cycleRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "portionId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "localRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "unitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "operationId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "sourceScopeRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "targetHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "completionResultRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "environment",
+        "ncrId",
+        "decisionRef",
+        "partitionId",
+        "workRef",
+        "ownerCommandRef",
+        "admissionReceiptRef",
+        "cycleRef",
+        "portionId",
+        "localRanges",
+        "unitRef",
+        "rootWorkOrderId",
+        "bindingId",
+        "operationId",
+        "sourceScopeRef",
+        "targetHeadRef",
+        "recordedAt",
+        "completionResultRef"
+      ]
+    },
+    "ExactTransform": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "AFFINE_EXACT"
+        },
+        "numerator": {
+          "$ref": "#/$defs/Version"
+        },
+        "denominator": {
+          "$ref": "#/$defs/Version"
+        },
+        "offset": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "direction": {
+          "const": "FORWARD"
+        },
+        "conversionRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "kind",
+        "numerator",
+        "denominator",
+        "offset",
+        "direction",
+        "conversionRef"
+      ]
+    },
+    "CoordinateSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourcePortionId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "occurrenceIdentity": {
+          "$ref": "#/$defs/OccurrenceIdentity"
+        },
+        "mesRange": {
+          "$ref": "#/$defs/ScopeRange"
+        },
+        "canonicalRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "ncrPortionId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "localRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "sourceToCanonical": {
+          "$ref": "#/$defs/ExactTransform"
+        },
+        "canonicalToLocal": {
+          "$ref": "#/$defs/ExactTransform"
+        },
+        "memberManifestRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sourcePortionId",
+        "sourceRange",
+        "occurrenceIdentity",
+        "mesRange",
+        "canonicalRange",
+        "ncrPortionId",
+        "localRange",
+        "sourceToCanonical",
+        "canonicalToLocal",
+        "memberManifestRef"
+      ]
+    },
+    "MesCompletionIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rootWorkOrderId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "bindingRevisionAtExecution": {
+          "$ref": "#/$defs/Version"
+        },
+        "operationId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "eventRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OwnerBusinessRef"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "occurrenceSetDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "rootWorkOrderId",
+        "bindingId",
+        "bindingRevisionAtExecution",
+        "operationId",
+        "eventRefs",
+        "occurrenceSetDigest"
+      ]
+    },
+    "SourceCoordinateBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "QA-IPQC-NCR-EXEC-BRIDGE-1-CANDIDATE"
+        },
+        "mappingId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "version": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "execLineageRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "execSourceRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionSubject": {
+          "$ref": "#/$defs/MesCompletionIdentity"
+        },
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceMappingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "canonicalDomainRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceContextRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mappingHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceUnitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "canonicalUnitRef": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapUom"
+        },
+        "localUnitRef": {
+          "$ref": "#/$defs/OwnerRef"
+        },
+        "unitConversionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CoordinateSegment"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "coordinateValidation": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapCoordinateValidation"
+        },
+        "authorityRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "registrationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "committedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "taskBasisKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "schema",
+        "mappingId",
+        "version",
+        "previousRef",
+        "environment",
+        "execLineageRef",
+        "execSourceRef",
+        "mesCompletionSubject",
+        "ncrTargetRef",
+        "sourceMappingRef",
+        "sourceHeadRef",
+        "canonicalDomainRef",
+        "sourceContextRef",
+        "mappingHeadRef",
+        "sourceUnitRef",
+        "canonicalUnitRef",
+        "localUnitRef",
+        "unitConversionRef",
+        "segments",
+        "coordinateValidation",
+        "taskBasisKey",
+        "authorityRefs",
+        "registrationRefs",
+        "committedAt"
+      ]
+    },
+    "SlotEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "slotRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "taskRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "requirementRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "memberRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "canonicalRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "observationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "observationRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "reviewRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "effectiveResultRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "basisMode": {
+          "type": "string",
+          "enum": [
+            "MEASURED",
+            "INFERRED"
+          ]
+        },
+        "ruleRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "slotRef",
+        "taskRef",
+        "requirementRef",
+        "memberRef",
+        "canonicalRange",
+        "observationRef",
+        "observationRevision",
+        "reviewRef",
+        "effectiveResultRef",
+        "basisMode",
+        "ruleRef"
+      ]
+    },
+    "SetEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScopeRange"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "mesRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScopeRange"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "canonicalRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "localRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "populationRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "measuredRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "inferredRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "uncoveredRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 0,
+          "maxItems": 500
+        },
+        "inspectionMode": {
+          "type": "string",
+          "enum": [
+            "FULL_COUNT",
+            "OWNER_APPROVED_SAMPLING"
+          ]
+        },
+        "inferenceRuleRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "completeSlotSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "occurrenceSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "transformSetDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "sourceRanges",
+        "mesRanges",
+        "canonicalRanges",
+        "localRanges",
+        "populationRanges",
+        "measuredRanges",
+        "inferredRanges",
+        "uncoveredRanges",
+        "inspectionMode",
+        "inferenceRuleRefs",
+        "completeSlotSetDigest",
+        "occurrenceSetDigest",
+        "transformSetDigest"
+      ]
+    },
+    "QaCurrentVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceOwnerRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "sourceHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mappingHeadRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "mappingHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "familyDirectoryRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "familyCutRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "taskRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "observationSetRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "resultSetRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "currentResultHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "decisionSequence": {
+          "$ref": "#/$defs/Version"
+        },
+        "decisionHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "writerEpoch": {
+          "$ref": "#/$defs/Version"
+        },
+        "policyControlRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "authorityHeadRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "mesCurrentVector": {
+          "$ref": "#/$defs/MesCurrentVector"
+        },
+        "targetHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "registrationHeadRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "catalogRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "policyControlRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "planControlRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Version"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "groundControlRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Version"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "technicalControlRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "conversionControlRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "qualityRequirementControlRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "familyMemberHeadRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        }
+      },
+      "required": [
+        "sourceOwnerRevision",
+        "sourceHeadRef",
+        "mappingHeadRevision",
+        "mappingHeadRef",
+        "familyDirectoryRevision",
+        "familyCutRef",
+        "taskRevision",
+        "observationSetRevision",
+        "resultSetRevision",
+        "currentResultHeadRef",
+        "decisionSequence",
+        "decisionHeadRef",
+        "writerEpoch",
+        "policyControlRefs",
+        "authorityHeadRefs",
+        "mesCurrentVector",
+        "targetHeadRef",
+        "registrationHeadRefs",
+        "catalogRevision",
+        "policyControlRevision",
+        "planControlRevision",
+        "groundControlRevision",
+        "technicalControlRefs",
+        "conversionControlRefs",
+        "qualityRequirementControlRefs",
+        "familyMemberHeadRefs"
+      ]
+    },
+    "OriginalExecQaSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/OriginalObject"
+        },
+        "body": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecQaSource"
+        }
+      },
+      "required": [
+        "original",
+        "body"
+      ]
+    },
+    "OriginalQaDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/OriginalObject"
+        },
+        "body": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/Decision"
+        }
+      },
+      "required": [
+        "original",
+        "body"
+      ]
+    },
+    "OriginalQaResultSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/OriginalObject"
+        },
+        "body": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ResultSet"
+        }
+      },
+      "required": [
+        "original",
+        "body"
+      ]
+    },
+    "OriginalQaCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/OriginalObject"
+        },
+        "body": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ResultSetCoverageProof"
+        }
+      },
+      "required": [
+        "original",
+        "body"
+      ]
+    },
+    "QaOriginals": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "execSource": {
+          "$ref": "#/$defs/OriginalExecQaSource"
+        },
+        "decision": {
+          "$ref": "#/$defs/OriginalQaDecision"
+        },
+        "resultSet": {
+          "$ref": "#/$defs/OriginalQaResultSet"
+        },
+        "coverage": {
+          "$ref": "#/$defs/OriginalQaCoverage"
+        },
+        "sourceEnvelope": {
+          "$ref": "#/$defs/OriginalSourceEnvelope"
+        }
+      },
+      "required": [
+        "execSource",
+        "decision",
+        "resultSet",
+        "coverage",
+        "sourceEnvelope"
+      ]
+    },
+    "ExecReinspectionProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "QA-IPQC-NCR-REINSPECTION-PROOF-1-CANDIDATE"
+        },
+        "proofId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "version": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "registrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceLineageRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "coordinateBridgeRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "originals": {
+          "$ref": "#/$defs/QaOriginals"
+        },
+        "taskBasisOriginalRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "populationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sampleSelectionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "slotManifest": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SlotEvidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "approvalPacketRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "approvalRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "authorityRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "qualityState": {
+          "const": "ACCEPTED"
+        },
+        "mappedAcceptedRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Range"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "setEvidence": {
+          "$ref": "#/$defs/SetEvidence"
+        },
+        "currentVector": {
+          "$ref": "#/$defs/QaCurrentVector"
+        },
+        "observedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "validUntil": {
+          "$ref": "#/$defs/Time"
+        },
+        "requiresLockedRecheck": {
+          "const": true
+        },
+        "proofDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "targetContinuity": {
+          "$ref": "#/$defs/NcrTargetContinuity"
+        },
+        "snapshotPublishedAt": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "proofId",
+        "version",
+        "previousRef",
+        "environment",
+        "registrationRef",
+        "mesCompletionRef",
+        "sourceLineageRef",
+        "coordinateBridgeRef",
+        "ncrTargetRef",
+        "originals",
+        "taskBasisOriginalRef",
+        "populationRef",
+        "sampleSelectionRef",
+        "slotManifest",
+        "approvalPacketRef",
+        "approvalRef",
+        "authorityRef",
+        "qualityState",
+        "mappedAcceptedRanges",
+        "setEvidence",
+        "currentVector",
+        "observedAt",
+        "validUntil",
+        "requiresLockedRecheck",
+        "proofDigest",
+        "targetContinuity",
+        "snapshotPublishedAt"
+      ]
+    },
+    "ExecMappingReadRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "QA-IPQC-NCR-EXEC-MAPPING-READ-1-CANDIDATE"
+        },
+        "requestId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "consumerRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "execSourceRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "expectedMappingHead": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedTaskRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedResultSetRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedDecisionRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "requestId",
+        "environment",
+        "consumerRegistrationRef",
+        "mesCompletionRef",
+        "execSourceRef",
+        "ncrTargetRef",
+        "expectedMappingHead",
+        "expectedTaskRef",
+        "expectedResultSetRef",
+        "expectedDecisionRef"
+      ]
+    },
+    "ExecMappingReadResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "ALLOWED_CURRENT"
+            },
+            "requestId": {
+              "$ref": "#/$defs/UUID"
+            },
+            "proof": {
+              "$ref": "#/$defs/ExecReinspectionProof"
+            },
+            "problem": {
+              "type": "null"
+            },
+            "canInferNoEffect": {
+              "const": false
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Time"
+            }
+          },
+          "required": [
+            "state",
+            "requestId",
+            "proof",
+            "problem",
+            "canInferNoEffect",
+            "observedAt"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "UNKNOWN",
+                "CONFLICT",
+                "STALE_SOURCE",
+                "STALE_MAPPING",
+                "NOT_AUTHORIZED",
+                "UNAVAILABLE"
+              ]
+            },
+            "requestId": {
+              "$ref": "#/$defs/UUID"
+            },
+            "proof": {
+              "type": "null"
+            },
+            "problem": {
+              "$ref": "#/$defs/ReadIssue"
+            },
+            "canInferNoEffect": {
+              "const": false
+            },
+            "observedAt": {
+              "$ref": "#/$defs/Time"
+            }
+          },
+          "required": [
+            "state",
+            "requestId",
+            "proof",
+            "problem",
+            "canInferNoEffect",
+            "observedAt"
+          ]
+        }
+      ]
+    },
+    "EffectKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "consumerOwner": {
+          "const": "QA-NCR"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "BIND_EXECUTION_COMPLETION",
+            "BIND_REINSPECTION",
+            "CLOSE_REWORKED_NCR"
+          ]
+        },
+        "logicalIntentKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "businessDigest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "consumerOwner",
+        "operation",
+        "logicalIntentKey",
+        "businessDigest"
+      ]
+    },
+    "EvidenceUseGuardRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-EVIDENCE-GUARD-1-CANDIDATE"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "requestId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "effectKey": {
+          "$ref": "#/$defs/EffectKey"
+        },
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "qaMappingRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedMesVector": {
+          "$ref": "#/$defs/MesCurrentVector"
+        },
+        "expectedQaVector": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/QaCurrentVector"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "registrationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "uowRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "targetContinuity": {
+          "$ref": "#/$defs/NcrTargetContinuity"
+        }
+      },
+      "required": [
+        "schema",
+        "environment",
+        "requestId",
+        "effectKey",
+        "ncrTargetRef",
+        "mesCompletionRef",
+        "qaMappingRef",
+        "expectedMesVector",
+        "expectedQaVector",
+        "registrationRefs",
+        "uowRegistrationRef",
+        "targetContinuity"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "effectKey": {
+                "properties": {
+                  "operation": {
+                    "const": "BIND_EXECUTION_COMPLETION"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "qaMappingRef": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "qaMappingRef": {
+                "$ref": "#/$defs/Evidence"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effectKey": {
+                "properties": {
+                  "operation": {
+                    "const": "BIND_EXECUTION_COMPLETION"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expectedQaVector": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "expectedQaVector": {
+                "$ref": "#/$defs/QaCurrentVector"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "LockedCurrentVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mes": {
+          "$ref": "#/$defs/MesCurrentVector"
+        },
+        "qa": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/QaCurrentVector"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "uowRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "targetContinuity": {
+          "$ref": "#/$defs/NcrTargetContinuity"
+        }
+      },
+      "required": [
+        "mes",
+        "qa",
+        "targetHeadRef",
+        "uowRegistrationRef",
+        "targetContinuity"
+      ]
+    },
+    "GuardEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-EVIDENCE-GUARD-RESULT-1-CANDIDATE"
+        },
+        "guardId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "effectKey": {
+          "$ref": "#/$defs/EffectKey"
+        },
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "qaMappingRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lockedCurrentVector": {
+          "$ref": "#/$defs/LockedCurrentVector"
+        },
+        "registrationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "checkedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "requiresSameUowCommit": {
+          "const": true
+        },
+        "guardOwner": {
+          "type": "string",
+          "enum": [
+            "MES-WO",
+            "QA-IPQC"
+          ]
+        },
+        "ipqcFinalGuardResult": {
+          "oneOf": [
+            {
+              "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "qapCurrentCheckRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "guardId",
+        "environment",
+        "effectKey",
+        "ncrTargetRef",
+        "mesCompletionRef",
+        "qaMappingRef",
+        "lockedCurrentVector",
+        "registrationRefs",
+        "checkedAt",
+        "requiresSameUowCommit",
+        "guardOwner",
+        "ipqcFinalGuardResult",
+        "qapCurrentCheckRef"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "guardOwner": {
+                "const": "QA-IPQC"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ipqcFinalGuardResult": {
+                "allOf": [
+                  {
+                    "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult"
+                  },
+                  {
+                    "properties": {
+                      "state": {
+                        "const": "ALLOWED"
+                      }
+                    }
+                  }
+                ]
+              },
+              "qapCurrentCheckRef": {
+                "$ref": "#/$defs/Evidence"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "guardOwner": {
+                "const": "MES-WO"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ipqcFinalGuardResult": {
+                "type": "null"
+              },
+              "qapCurrentCheckRef": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effectKey": {
+                "properties": {
+                  "operation": {
+                    "const": "BIND_EXECUTION_COMPLETION"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "qaMappingRef": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "qaMappingRef": {
+                "$ref": "#/$defs/Evidence"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "GuardResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "ALLOWED"
+            },
+            "guard": {
+              "$ref": "#/$defs/GuardEvidence"
+            },
+            "problem": {
+              "type": "null"
+            },
+            "requiresSameUowCommit": {
+              "const": true
+            }
+          },
+          "required": [
+            "state",
+            "guard",
+            "problem",
+            "requiresSameUowCommit"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "BLOCKED",
+                "UNKNOWN"
+              ]
+            },
+            "guard": {
+              "type": "null"
+            },
+            "problem": {
+              "$ref": "#/$defs/Problem"
+            },
+            "requiresSameUowCommit": {
+              "const": true
+            }
+          },
+          "required": [
+            "state",
+            "guard",
+            "problem",
+            "requiresSameUowCommit"
+          ]
+        }
+      ]
+    },
+    "EvidenceUseFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-EVIDENCE-USE-1-CANDIDATE"
+        },
+        "useId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "effectKey": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/EffectKey"
+            },
+            {
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "enum": [
+                    "BIND_EXECUTION_COMPLETION",
+                    "BIND_REINSPECTION"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "qaMappingRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lockedCurrentVector": {
+          "$ref": "#/$defs/LockedCurrentVector"
+        },
+        "registrationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "guardRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "consumerResultRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "committedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "previousUseRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "useId",
+        "environment",
+        "effectKey",
+        "ncrTargetRef",
+        "mesCompletionRef",
+        "qaMappingRef",
+        "lockedCurrentVector",
+        "registrationRefs",
+        "guardRefs",
+        "consumerResultRef",
+        "committedAt",
+        "previousUseRef"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "effectKey": {
+                "properties": {
+                  "operation": {
+                    "const": "BIND_EXECUTION_COMPLETION"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "qaMappingRef": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "qaMappingRef": {
+                "$ref": "#/$defs/Evidence"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "UseLookupRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-EVIDENCE-USE-LOOKUP-1-CANDIDATE"
+        },
+        "requestId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "effectKey": {
+          "$ref": "#/$defs/EffectKey"
+        }
+      },
+      "required": [
+        "schema",
+        "requestId",
+        "environment",
+        "effectKey"
+      ]
+    },
+    "UseLookupResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "FOUND"
+            },
+            "record": {
+              "$ref": "#/$defs/EvidenceUseRecord"
+            },
+            "originalConsumerResult": {
+              "$ref": "#/$defs/OriginalObject"
+            },
+            "currentUsePermission": {
+              "type": "string",
+              "enum": [
+                "ALLOWED",
+                "BLOCKED",
+                "UNKNOWN"
+              ]
+            },
+            "canInferNoEffect": {
+              "const": false
+            }
+          },
+          "required": [
+            "state",
+            "record",
+            "originalConsumerResult",
+            "currentUsePermission",
+            "canInferNoEffect"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "NOT_OBSERVED",
+                "UNAVAILABLE"
+              ]
+            },
+            "record": {
+              "type": "null"
+            },
+            "originalConsumerResult": {
+              "type": "null"
+            },
+            "currentUsePermission": {
+              "const": "UNKNOWN"
+            },
+            "canInferNoEffect": {
+              "const": false
+            }
+          },
+          "required": [
+            "state",
+            "record",
+            "originalConsumerResult",
+            "currentUsePermission",
+            "canInferNoEffect"
+          ]
+        }
+      ]
+    },
+    "ExactReadRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "requestId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "exactRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "consumerRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "environment",
+        "requestId",
+        "exactRef",
+        "consumerRegistrationRef"
+      ]
+    },
+    "ExactReadResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "FOUND"
+            },
+            "original": {
+              "$ref": "#/$defs/OriginalObject"
+            },
+            "currentness": {
+              "type": "string",
+              "enum": [
+                "CURRENT",
+                "SUPERSEDED",
+                "REVOKED",
+                "UNKNOWN"
+              ]
+            },
+            "currentHeadRef": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Evidence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "original",
+            "currentness",
+            "currentHeadRef"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "NOT_AUTHORIZED",
+                "UNAVAILABLE",
+                "NOT_FOUND"
+              ]
+            },
+            "original": {
+              "type": "null"
+            },
+            "currentness": {
+              "const": "UNKNOWN"
+            },
+            "currentHeadRef": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "state",
+            "original",
+            "currentness",
+            "currentHeadRef"
+          ]
+        }
+      ]
+    },
+    "ReadIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "enum": [
+            "WIRE_INVALID",
+            "NUMERIC_BOUND_INVALID",
+            "REF_DIGEST_INVALID",
+            "REQUEST_ENVIRONMENT_MISMATCH",
+            "AUTHENTICATION_REQUIRED",
+            "SCOPE_NOT_AUTHORIZED",
+            "NOT_FOUND_OR_HIDDEN",
+            "EXPECTED_HEAD_CHANGED",
+            "CURRENT_VECTOR_CHANGED",
+            "PROOF_SUPERSEDED",
+            "STALE_SOURCE",
+            "STALE_MAPPING",
+            "REGISTRY_CHANGED",
+            "DECISION_WITHDRAWN",
+            "FAMILY_REOPENED",
+            "NEWER_TASK_REQUIRED",
+            "IDEMPOTENCY_CONFLICT",
+            "SOURCE_VERSION_CONFLICT",
+            "OCCURRENCE_CONFLICT",
+            "PROOF_EXPIRED",
+            "SCOPE_NOT_EXACT",
+            "OCCURRENCE_MISMATCH",
+            "UOM_DIMENSION_MISMATCH",
+            "TRANSFORM_INEXACT",
+            "MAPPING_NOT_BIJECTIVE",
+            "UNSUPPORTED_TRANSFORM",
+            "SLOT_SET_MISMATCH",
+            "COVERAGE_NOT_COMPLETE",
+            "QUALITY_NOT_ACCEPTED",
+            "COMPLETION_NOT_FINISHED",
+            "TARGET_SEMANTICS_CHANGED",
+            "CLOSE_MEMBER_SET_MISMATCH",
+            "OWNER_CONTRACT_NOT_DESIGN_ADOPTED",
+            "OWNER_RUNTIME_NOT_READY",
+            "UNSUPPORTED_OWNER_CONTRACT",
+            "REGISTRATION_NOT_CURRENT",
+            "UOW_NOT_REGISTERED",
+            "WRITER_HOOK_INCOMPLETE",
+            "GUARD_MODE_UNSUPPORTED",
+            "SOURCE_UNAVAILABLE",
+            "CURRENTNESS_UNKNOWN",
+            "CLOCK_UNVERIFIED",
+            "SUPPORT_PROJECTION_UNADOPTED",
+            "EXECUTION_ADMISSION_ONLY",
+            "PROJECTION_PENDING",
+            "TASK_OR_RESULT_PENDING",
+            "STREAM_GAP",
+            "OCCURRENCE_IDENTITY_UNKNOWN",
+            "OWNER_ORIGINAL_MISSING"
+          ]
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "retry": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "SAME_READ",
+            "REFRESH_READ_SAME_INTENT",
+            "QUERY_ORIGINAL",
+            "WAIT_OWNER",
+            "NEW_AUTHORIZED_INTENT"
+          ]
+        },
+        "reasonRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 64
+        },
+        "currentRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 64
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "code",
+        "owner",
+        "retry",
+        "reasonRefs",
+        "currentRefs",
+        "detail"
+      ]
+    },
+    "OriginalSourceEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/OriginalObject"
+        },
+        "body": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/SourceEnvelope"
+        }
+      },
+      "required": [
+        "original",
+        "body"
+      ]
+    },
+    "TargetContinuityStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "previousHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "nextHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "transitionResultRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "BIND_EXECUTION_COMPLETION",
+            "BIND_REINSPECTION",
+            "RECORD_POST_CLOSE_OBSERVATION"
+          ]
+        },
+        "semanticTargetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "changedFields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "minItems": 1,
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "previousHeadRef",
+        "nextHeadRef",
+        "transitionResultRef",
+        "operation",
+        "semanticTargetDigest",
+        "changedFields"
+      ]
+    },
+    "NcrTargetContinuity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "QA-NCR-TARGET-CONTINUITY-1-CANDIDATE"
+        },
+        "frozenTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "frozenHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "currentHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "semanticTargetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TargetContinuityStep"
+          },
+          "minItems": 0,
+          "maxItems": 500
+        },
+        "complete": {
+          "const": true
+        }
+      },
+      "required": [
+        "schema",
+        "frozenTargetRef",
+        "frozenHeadRef",
+        "currentHeadRef",
+        "semanticTargetDigest",
+        "steps",
+        "complete"
+      ]
+    },
+    "QapNcrCurrentCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "QAP-NCR-CURRENT-CHECK-1-CANDIDATE"
+        },
+        "checkId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "effectKey": {
+          "$ref": "#/$defs/EffectKey"
+        },
+        "sourceEnvelopeRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceContextRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "coordinateValidation": {
+          "$ref": "source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapCoordinateValidation"
+        },
+        "familyCutRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "catalogRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "policyControlRevision": {
+          "$ref": "#/$defs/Version"
+        },
+        "planControlRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Version"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "groundControlRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Version"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "controlRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "registrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "uowRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "checkedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "requiresSameUowCommit": {
+          "const": true
+        }
+      },
+      "required": [
+        "schema",
+        "checkId",
+        "environment",
+        "effectKey",
+        "sourceEnvelopeRef",
+        "sourceContextRef",
+        "coordinateValidation",
+        "familyCutRef",
+        "catalogRevision",
+        "policyControlRevision",
+        "planControlRevision",
+        "groundControlRevision",
+        "controlRefs",
+        "registrationRef",
+        "uowRegistrationRef",
+        "checkedAt",
+        "requiresSameUowCommit"
+      ]
+    },
+    "DigestVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "OWNER-DIGEST-BYTE-VECTOR-1-CANDIDATE"
+        },
+        "vectorId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "algorithm": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "sourceProtocol": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "inputCanonicalBytesBase64": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 22369624
+        },
+        "excludedTopLevelFields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "digestInputBytesBase64": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 22369624
+        },
+        "expectedSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "purpose": {
+          "const": "ALGORITHM_BYTES_ONLY_NOT_SOURCE_AUTHORITY"
+        }
+      },
+      "required": [
+        "schema",
+        "vectorId",
+        "algorithm",
+        "sourceProtocol",
+        "inputCanonicalBytesBase64",
+        "excludedTopLevelFields",
+        "digestInputBytesBase64",
+        "expectedSha256",
+        "purpose"
+      ]
+    },
+    "TaskBasisBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "QA-IPQC-NCR-TASK-BASIS-1-CANDIDATE"
+        },
+        "taskBasisKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "coordinateBridgeRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceEnvelopeRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mappingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mappingHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "populationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "planInstanceRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "cycleRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "frozenAt": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "taskBasisKey",
+        "coordinateBridgeRef",
+        "sourceRef",
+        "sourceEnvelopeRef",
+        "sourceHeadRef",
+        "mappingRef",
+        "mappingHeadRef",
+        "ncrTargetRef",
+        "populationRef",
+        "planInstanceRef",
+        "cycleRef",
+        "frozenAt"
+      ]
+    },
+    "CloseMemberRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "qaMappingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "expectedMesVector": {
+          "$ref": "#/$defs/MesCurrentVector"
+        },
+        "expectedQaVector": {
+          "$ref": "#/$defs/QaCurrentVector"
+        },
+        "targetContinuity": {
+          "$ref": "#/$defs/NcrTargetContinuity"
+        },
+        "boundCompletionResultRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "boundReinspectionResultRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "ncrTargetRef",
+        "mesCompletionRef",
+        "qaMappingRef",
+        "expectedMesVector",
+        "expectedQaVector",
+        "targetContinuity",
+        "boundCompletionResultRef",
+        "boundReinspectionResultRef"
+      ]
+    },
+    "CompositeCloseGuardRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-COMPOSITE-CLOSE-GUARD-1-CANDIDATE"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "requestId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "effectKey": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/EffectKey"
+            },
+            {
+              "properties": {
+                "operation": {
+                  "const": "CLOSE_REWORKED_NCR"
+                }
+              }
+            }
+          ]
+        },
+        "ncrId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "expectedNcrHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "completeClosureBasisRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CloseMemberRequest"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "memberSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "registrationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "uowRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "schema",
+        "environment",
+        "requestId",
+        "effectKey",
+        "ncrId",
+        "expectedNcrHeadRef",
+        "completeClosureBasisRef",
+        "members",
+        "memberSetDigest",
+        "registrationRefs",
+        "uowRegistrationRef"
+      ]
+    },
+    "CloseMemberEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ncrTargetRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "mesCompletionRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "qaMappingRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "lockedCurrentVector": {
+          "$ref": "#/$defs/LockedCurrentVector"
+        },
+        "guardRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "boundCompletionResultRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "boundReinspectionResultRef": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "ncrTargetRef",
+        "mesCompletionRef",
+        "qaMappingRef",
+        "lockedCurrentVector",
+        "guardRefs",
+        "boundCompletionResultRef",
+        "boundReinspectionResultRef"
+      ]
+    },
+    "CompositeCloseUseFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-COMPOSITE-CLOSE-USE-1-CANDIDATE"
+        },
+        "useId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "effectKey": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/EffectKey"
+            },
+            {
+              "properties": {
+                "operation": {
+                  "const": "CLOSE_REWORKED_NCR"
+                }
+              }
+            }
+          ]
+        },
+        "ncrId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "priorNcrHeadRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "completeClosureBasisRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CloseMemberEvidence"
+          },
+          "minItems": 1,
+          "maxItems": 500
+        },
+        "memberSetDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "registrationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "uowRegistrationRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "consumerResultRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "committedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "previousUseRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "useId",
+        "environment",
+        "effectKey",
+        "ncrId",
+        "priorNcrHeadRef",
+        "completeClosureBasisRef",
+        "members",
+        "memberSetDigest",
+        "registrationRefs",
+        "uowRegistrationRef",
+        "consumerResultRef",
+        "committedAt",
+        "previousUseRef"
+      ]
+    },
+    "EvidenceUseRecord": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/EvidenceUseFact"
+        },
+        {
+          "$ref": "#/$defs/CompositeCloseUseFact"
+        }
+      ]
+    },
+    "OwnerDesignAdoptionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-OWNER-DESIGN-ADOPTION-1-CANDIDATE"
+        },
+        "adoptionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "reviewRole": {
+          "enum": [
+            "OWNER",
+            "O1"
+          ]
+        },
+        "reviewOwner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "acceptedManifestRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "acceptedManifestSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "contractIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "decision": {
+          "enum": [
+            "ACCEPTED",
+            "WITHDRAWN"
+          ]
+        },
+        "authorityRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "decidedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "previousAdoptionRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "adoptionId",
+        "environment",
+        "reviewRole",
+        "reviewOwner",
+        "acceptedManifestRef",
+        "acceptedManifestSha256",
+        "contractIds",
+        "decision",
+        "authorityRef",
+        "decidedAt",
+        "previousAdoptionRef"
+      ]
+    },
+    "RuntimeAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "NCR-OWNER-RUNTIME-ATTESTATION-1-CANDIDATE"
+        },
+        "attestationId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "uowRegistrationId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "uowRegistrationVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "databaseIdentityRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "transactionProtocol": {
+          "const": "NCR_MAIN_ATOMIC_EVIDENCE_V1"
+        },
+        "lockPlanRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "writerHookRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "schemaDigests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContractSchemaPin"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "assertedCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "authorityRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "assertedAt": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "attestationId",
+        "environment",
+        "uowRegistrationId",
+        "uowRegistrationVersion",
+        "databaseIdentityRef",
+        "transactionProtocol",
+        "lockPlanRef",
+        "writerHookRefs",
+        "schemaDigests",
+        "assertedCriteria",
+        "authorityRef",
+        "assertedAt"
+      ]
+    },
+    "ProjectionRefreshTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "OWNER-EVIDENCE-PROJECTION-REFRESH-TASK-1-CANDIDATE"
+        },
+        "taskId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "taskVersion": {
+          "$ref": "#/$defs/Version"
+        },
+        "previousTaskRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "owner": {
+          "enum": [
+            "MES-WO",
+            "QA-IPQC"
+          ]
+        },
+        "subjectKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "cause": {
+          "enum": [
+            "INITIAL_OWNER_FACTS",
+            "DEPENDENCY_HEAD_CHANGED",
+            "TTL_DUE",
+            "DEPENDENCY_AVAILABLE"
+          ]
+        },
+        "predecessorProofRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "READY",
+            "WAITING_DEPENDENCY",
+            "PUBLISHED"
+          ]
+        },
+        "scheduledFor": {
+          "$ref": "#/$defs/Time"
+        },
+        "createdAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "observedAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finishedAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "publishedProofRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "publicationRecordRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "nextAttemptAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "taskId",
+        "taskVersion",
+        "previousTaskRef",
+        "environment",
+        "owner",
+        "subjectKey",
+        "cause",
+        "predecessorProofRef",
+        "state",
+        "scheduledFor",
+        "createdAt",
+        "observedAt",
+        "finishedAt",
+        "publishedProofRef",
+        "publicationRecordRef",
+        "reasonCodes",
+        "nextAttemptAt"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "PUBLISHED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "publishedProofRef": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "publicationRecordRef": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "observedAt": {
+                "$ref": "#/$defs/Time"
+              },
+              "finishedAt": {
+                "$ref": "#/$defs/Time"
+              },
+              "nextAttemptAt": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "publishedProofRef": {
+                "type": "null"
+              },
+              "publicationRecordRef": {
+                "type": "null"
+              },
+              "finishedAt": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProjectionPublication": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "OWNER-EVIDENCE-PROJECTION-PUBLICATION-1-CANDIDATE"
+        },
+        "publicationId": {
+          "$ref": "#/$defs/UUID"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "owner": {
+          "enum": [
+            "MES-WO",
+            "QA-IPQC"
+          ]
+        },
+        "taskRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "previousProofRef": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "proofRef": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "sourceVectorDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "sourceSemanticDigest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "observedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "publishedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "ownerCommittedAt": {
+          "$ref": "#/$defs/Time"
+        },
+        "validUntil": {
+          "$ref": "#/$defs/Time"
+        },
+        "nextRefreshDueAt": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "schema",
+        "publicationId",
+        "environment",
+        "owner",
+        "taskRef",
+        "previousProofRef",
+        "proofRef",
+        "sourceVectorDigest",
+        "sourceSemanticDigest",
+        "observedAt",
+        "publishedAt",
+        "ownerCommittedAt",
+        "validUntil",
+        "nextRefreshDueAt"
+      ]
+    }
+  },
+  "x-semantic-validation": "Schema closure and primitive checks do not prove identity, set equality, authorization, currentness, digest graph or same-UoW; normative constraints are mandatory"
+}

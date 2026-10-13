@@ -1,0 +1,730 @@
+{
+  "schema": "S01-07-CSHARP-ADAPTATION-1",
+  "command": "python eng/contracts/s01-07/csharp/generate.py --check",
+  "sourceHashes": {
+    "composed-15.cs.txt": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+    "composed-16.cs.txt": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+    "composed-17.json": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10"
+  },
+  "originalSourceHashes": {
+    "composed-15.cs.txt": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+    "composed-16.cs.txt": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+    "composed-17.json": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2"
+  },
+  "compositionPatchPointers": [
+    "inputs/pins/bounded-patches.json#/patches/2",
+    "inputs/pins/bounded-patches.json#/patches/3",
+    "inputs/pins/bounded-patches.json#/patches/4"
+  ],
+  "languageSourceHashes": {
+    "NCR-R6-LANGUAGE-CONTRACTS.json": "9e9ee118ded0250fa98ba6530d5c86f281a95ac0364ae15f1ee9e8481df08690",
+    "LANGUAGE-CONTRACTS.md": "23c597a0e6230a922823f6805c91a3c9b2d641fafbddff313ec2bd86a1cb98d9"
+  },
+  "patternDialect": {
+    "source": "ECMAScript without multiline; original patterns embedded unchanged",
+    "dotnetAdaptation": "Terminal unescaped $ -> \\z because .NET ECMAScript still accepts final LF; actual Node and net8 regression evidence recorded.",
+    "schemaRevision": false
+  },
+  "nativeSchemaHashes": {
+    "design/NCR-R6-MES-DISPATCH-SHAPE.json": "45604318db366d61face166e65e5672339abf06d47887a86ce8edc8e6fe5e524",
+    "design/NCR-R6-WIRE.json": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+    "design/references/consumer-cp4-r1/CONSUMER-WIRE.json": "a3e5c08a426bef34ed18118c2f9ee9d9285dfa70ec369bcc1b16587349b42dc7",
+    "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json": "392443aa5b52e47dd4947ee25aca57b61b7e454e5bd785e53ae0c630f714e356",
+    "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+    "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+    "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+    "design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c"
+  },
+  "adaptations": [
+    "Selected original declaration blocks by explicit root and complete CLR field/union closure.",
+    "Qualified original namespaces under CP6.Entity.Contracts.Quality.",
+    "Bound Cp6.DesignRevision.NullOnly and original JsonNull markers to existing Wire.NullOnly.",
+    "Attached strict native converter to all emitted declaration types.",
+    "Embedded exact referenced schema predicates with file-relative refs normalized; ignored annotations only.",
+    "Five metadata rows copied from composed-17 without guessing nullability."
+  ],
+  "roots": {
+    "QaNcrMainR6Declarations.Main_InitialSourceOptionQuery": "design/NCR-R6-WIRE.json#/$defs/InitialSourceOptionQuery",
+    "QaNcrMainR6Declarations.Main_InitialSourceOptionPage": "design/NCR-R6-WIRE.json#/$defs/InitialSourceOptionPage",
+    "QaNcrMainR6Declarations.Main_MainResult_Variant14_Payload": "design/NCR-R6-WIRE.json#/$defs/MainResult/oneOf/14",
+    "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem",
+    "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult",
+    "QaNcrMainR6Declarations.Main_Quantity": "design/NCR-R6-WIRE.json#/$defs/Quantity",
+    "QaNcrMainR6Declarations.Externalf70281e4_Ref": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/Ref",
+    "QaNcrMainR6Declarations.Externalf70281e4_ScopeRef": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/ScopeRef",
+    "QaNcrMainR6Declarations.External6aa69b80_Ref": "design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json#/$defs/Ref",
+    "QaNcrMainR6Declarations.External6aa69b80_Uom": "design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json#/$defs/Uom",
+    "QaNcrMainR6Declarations.External6d9d3eee__types_OutQualitySource_outputRef": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/OutQualitySource/properties/outputRef",
+    "QaNcrMainR6Declarations.External28fc80fc_RegisterExecutionBinding_scope": "design/NCR-R6-MES-DISPATCH-SHAPE.json#/$defs/RegisterExecutionBinding/properties/scope",
+    "SourceQA.ObservationInput": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput",
+    "SourceQA.IpqcFinalGuardResult": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult",
+    "SourceQA.EnvironmentKey": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/EnvironmentKey",
+    "SourceQA.QapRef": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapRef",
+    "SourceQA.QapEvidence": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapEvidence",
+    "SourceQA.QapUom": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapUom",
+    "SourceQA.ExecRef": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecRef",
+    "SourceQA.ExecEvidence": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecEvidence",
+    "SourceQA.ExecScope": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecScope",
+    "OwnerWire.Scope": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/Scope",
+    "OwnerWire.NestedEvidence": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/NestedEvidence",
+    "Consumer.ReferenceIdentity": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity"
+  },
+  "declarationCount": 92,
+  "schemaCount": 102,
+  "declarations": [
+    {
+      "original": "Consumer.ReferenceIdentity",
+      "adapted": "CP6.Entity.Contracts.Quality.Consumer.ReferenceIdentity",
+      "source": "composed-16",
+      "line": 4231,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity"
+    },
+    {
+      "original": "Consumer.ReferenceIdentity_Case1",
+      "adapted": "CP6.Entity.Contracts.Quality.Consumer.ReferenceIdentity_Case1",
+      "source": "composed-16",
+      "line": 4232,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/0"
+    },
+    {
+      "original": "Consumer.ReferenceIdentity_Case2",
+      "adapted": "CP6.Entity.Contracts.Quality.Consumer.ReferenceIdentity_Case2",
+      "source": "composed-16",
+      "line": 4236,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/1"
+    },
+    {
+      "original": "Consumer.ReferenceIdentity_Case3",
+      "adapted": "CP6.Entity.Contracts.Quality.Consumer.ReferenceIdentity_Case3",
+      "source": "composed-16",
+      "line": 4240,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/2"
+    },
+    {
+      "original": "OwnerWire.Evidence",
+      "adapted": "CP6.Entity.Contracts.Quality.OwnerWire.Evidence",
+      "source": "composed-16",
+      "line": 1845,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/Evidence"
+    },
+    {
+      "original": "OwnerWire.NestedEvidence",
+      "adapted": "CP6.Entity.Contracts.Quality.OwnerWire.NestedEvidence",
+      "source": "composed-16",
+      "line": 1851,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/NestedEvidence"
+    },
+    {
+      "original": "OwnerWire.OwnerBusinessRef",
+      "adapted": "CP6.Entity.Contracts.Quality.OwnerWire.OwnerBusinessRef",
+      "source": "composed-16",
+      "line": 1877,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/OwnerBusinessRef"
+    },
+    {
+      "original": "OwnerWire.OwnerRef",
+      "adapted": "CP6.Entity.Contracts.Quality.OwnerWire.OwnerRef",
+      "source": "composed-16",
+      "line": 1840,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/OwnerRef"
+    },
+    {
+      "original": "OwnerWire.Scope",
+      "adapted": "CP6.Entity.Contracts.Quality.OwnerWire.Scope",
+      "source": "composed-16",
+      "line": 1864,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/Scope"
+    },
+    {
+      "original": "OwnerWire.ScopeRange",
+      "adapted": "CP6.Entity.Contracts.Quality.OwnerWire.ScopeRange",
+      "source": "composed-16",
+      "line": 1859,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/ScopeRange"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External22294a65_ReferenceIdentity",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External22294a65_ReferenceIdentity",
+      "source": "composed-15",
+      "line": 72,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External22294a65_ReferenceIdentity_Variant0",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External22294a65_ReferenceIdentity_Variant0",
+      "source": "composed-15",
+      "line": 55,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External22294a65_ReferenceIdentity_Variant0_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External22294a65_ReferenceIdentity_Variant0_Payload",
+      "source": "composed-15",
+      "line": 50,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External22294a65_ReferenceIdentity_Variant1",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External22294a65_ReferenceIdentity_Variant1",
+      "source": "composed-15",
+      "line": 62,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External22294a65_ReferenceIdentity_Variant1_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External22294a65_ReferenceIdentity_Variant1_Payload",
+      "source": "composed-15",
+      "line": 57,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External22294a65_ReferenceIdentity_Variant2",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External22294a65_ReferenceIdentity_Variant2",
+      "source": "composed-15",
+      "line": 69,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/2"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External22294a65_ReferenceIdentity_Variant2_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External22294a65_ReferenceIdentity_Variant2_Payload",
+      "source": "composed-15",
+      "line": 64,
+      "schema": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json#/$defs/ReferenceIdentity/oneOf/2"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External28fc80fc_RegisterExecutionBinding_scope",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External28fc80fc_RegisterExecutionBinding_scope",
+      "source": "composed-15",
+      "line": 1243,
+      "schema": "design/NCR-R6-MES-DISPATCH-SHAPE.json#/$defs/RegisterExecutionBinding/properties/scope"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External28fc80fc_RegisterExecutionBinding_scope_ranges_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External28fc80fc_RegisterExecutionBinding_scope_ranges_Item",
+      "source": "composed-15",
+      "line": 1237,
+      "schema": "design/NCR-R6-MES-DISPATCH-SHAPE.json#/$defs/RegisterExecutionBinding/properties/scope/properties/ranges/items"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External2ef0f278_Environment",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External2ef0f278_Environment",
+      "source": "composed-15",
+      "line": 13,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/Environment"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External2ef0f278_Evidence",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External2ef0f278_Evidence",
+      "source": "composed-15",
+      "line": 20,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/Evidence"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External2ef0f278_OwnerBusinessRef",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External2ef0f278_OwnerBusinessRef",
+      "source": "composed-15",
+      "line": 33,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/OwnerBusinessRef"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External2ef0f278_OwnerRef",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External2ef0f278_OwnerRef",
+      "source": "composed-15",
+      "line": 27,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json#/$defs/OwnerRef"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External3713e7bd_QapUom",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External3713e7bd_QapUom",
+      "source": "composed-15",
+      "line": 74,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapUom"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6aa69b80_Ref",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6aa69b80_Ref",
+      "source": "composed-15",
+      "line": 4321,
+      "schema": "design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json#/$defs/Ref"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6aa69b80_Uom",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6aa69b80_Uom",
+      "source": "composed-15",
+      "line": 4333,
+      "schema": "design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json#/$defs/Uom"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult",
+      "source": "composed-15",
+      "line": 4466,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant0",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant0",
+      "source": "composed-15",
+      "line": 4441,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload",
+      "source": "composed-15",
+      "line": 4429,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload_familyCutRef",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload_familyCutRef",
+      "source": "composed-15",
+      "line": 4422,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/0/properties/familyCutRef"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload_guardRef",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload_guardRef",
+      "source": "composed-15",
+      "line": 4408,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/0/properties/guardRef"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload_sourceHeadRef",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant0_Payload_sourceHeadRef",
+      "source": "composed-15",
+      "line": 4415,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/0/properties/sourceHeadRef"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant1",
+      "source": "composed-15",
+      "line": 4463,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload",
+      "source": "composed-15",
+      "line": 4456,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload_missing_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload_missing_Item",
+      "source": "composed-15",
+      "line": 4449,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/1/properties/missing/items"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload_missing_Item_requiredRef_Value",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_IpqcFinalGuardResult_Variant1_Payload_missing_Item_requiredRef_Value",
+      "source": "composed-15",
+      "line": 4443,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/IpqcFinalGuardResult/oneOf/1/properties/missing/items/properties/requiredRef/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_OutQualitySource_outputRef",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_OutQualitySource_outputRef",
+      "source": "composed-15",
+      "line": 3199,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/OutQualitySource/properties/outputRef"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.External6d9d3eee__types_OutQualitySource_outputRef_ref",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.External6d9d3eee__types_OutQualitySource_outputRef_ref",
+      "source": "composed-15",
+      "line": 3193,
+      "schema": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json#/types/OutQualitySource/properties/outputRef/properties/ref"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem",
+      "source": "composed-15",
+      "line": 2012,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant0",
+      "source": "composed-15",
+      "line": 1977,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant0_Payload",
+      "source": "composed-15",
+      "line": 1968,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant0_Payload_issues_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant0_Payload_issues_Item",
+      "source": "composed-15",
+      "line": 1963,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/0/properties/issues/items"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant1",
+      "source": "composed-15",
+      "line": 1993,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant1_Payload",
+      "source": "composed-15",
+      "line": 1984,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant1_Payload_issues_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant1_Payload_issues_Item",
+      "source": "composed-15",
+      "line": 1979,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/1/properties/issues/items"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant2",
+      "source": "composed-15",
+      "line": 2009,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/2"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant2_Payload",
+      "source": "composed-15",
+      "line": 2000,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/2"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_C09FailedProblem_Variant2_Payload_issues_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_C09FailedProblem_Variant2_Payload_issues_Item",
+      "source": "composed-15",
+      "line": 1995,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/C09FailedProblem/oneOf/2/properties/issues/items"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_Ref",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_Ref",
+      "source": "composed-15",
+      "line": 1821,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/Ref"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Externalf70281e4_ScopeRef",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Externalf70281e4_ScopeRef",
+      "source": "composed-15",
+      "line": 2074,
+      "schema": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json#/$defs/ScopeRef"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_BaselineSelection",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_BaselineSelection",
+      "source": "composed-15",
+      "line": 126,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/BaselineSelection"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_BaselineSelection_Variant0",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_BaselineSelection_Variant0",
+      "source": "composed-15",
+      "line": 115,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/BaselineSelection/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_BaselineSelection_Variant0_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_BaselineSelection_Variant0_Payload",
+      "source": "composed-15",
+      "line": 109,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/BaselineSelection/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_BaselineSelection_Variant1",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_BaselineSelection_Variant1",
+      "source": "composed-15",
+      "line": 123,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/BaselineSelection/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_BaselineSelection_Variant1_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_BaselineSelection_Variant1_Payload",
+      "source": "composed-15",
+      "line": 117,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/BaselineSelection/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_CoordinateRange",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_CoordinateRange",
+      "source": "composed-15",
+      "line": 101,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/CoordinateRange"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_InitialSourceOption",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_InitialSourceOption",
+      "source": "composed-15",
+      "line": 7844,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/InitialSourceOption"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_InitialSourceOptionPage",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_InitialSourceOptionPage",
+      "source": "composed-15",
+      "line": 7858,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/InitialSourceOptionPage"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_InitialSourceOptionQuery",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_InitialSourceOptionQuery",
+      "source": "composed-15",
+      "line": 7837,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/InitialSourceOptionQuery"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_InitialSourceReadIssue",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_InitialSourceReadIssue",
+      "source": "composed-15",
+      "line": 7741,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/InitialSourceReadIssue"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_MainResult_Variant14_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_MainResult_Variant14_Payload",
+      "source": "composed-15",
+      "line": 6642,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/MainResult/oneOf/14"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_Quantity",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_Quantity",
+      "source": "composed-15",
+      "line": 96,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/Quantity"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_SourceSelection",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_SourceSelection",
+      "source": "composed-15",
+      "line": 148,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/SourceSelection"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_UnitIdentity",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_UnitIdentity",
+      "source": "composed-15",
+      "line": 94,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/UnitIdentity"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_UnitIdentity_Variant0",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_UnitIdentity_Variant0",
+      "source": "composed-15",
+      "line": 84,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/UnitIdentity/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_UnitIdentity_Variant0_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_UnitIdentity_Variant0_Payload",
+      "source": "composed-15",
+      "line": 79,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/UnitIdentity/oneOf/0"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_UnitIdentity_Variant1",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_UnitIdentity_Variant1",
+      "source": "composed-15",
+      "line": 91,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/UnitIdentity/oneOf/1"
+    },
+    {
+      "original": "QaNcrMainR6Declarations.Main_UnitIdentity_Variant1_Payload",
+      "adapted": "CP6.Entity.Contracts.Quality.Main.Main_UnitIdentity_Variant1_Payload",
+      "source": "composed-15",
+      "line": 86,
+      "schema": "design/NCR-R6-WIRE.json#/$defs/UnitIdentity/oneOf/1"
+    },
+    {
+      "original": "SourceQA.EnvironmentKey",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.EnvironmentKey",
+      "source": "composed-16",
+      "line": 8,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/EnvironmentKey"
+    },
+    {
+      "original": "SourceQA.ExecEvidence",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ExecEvidence",
+      "source": "composed-16",
+      "line": 37,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecEvidence"
+    },
+    {
+      "original": "SourceQA.ExecEvidence_Ref",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ExecEvidence_Ref",
+      "source": "composed-16",
+      "line": 434,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecEvidence/properties/ref"
+    },
+    {
+      "original": "SourceQA.ExecRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ExecRef",
+      "source": "composed-16",
+      "line": 32,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecRef"
+    },
+    {
+      "original": "SourceQA.ExecScope",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ExecScope",
+      "source": "composed-16",
+      "line": 46,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecScope"
+    },
+    {
+      "original": "SourceQA.ExecScope_Ranges_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ExecScope_Ranges_Item",
+      "source": "composed-16",
+      "line": 439,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ExecScope/properties/ranges/items"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult",
+      "source": "composed-16",
+      "line": 186,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult_Case1",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult_Case1",
+      "source": "composed-16",
+      "line": 187,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult/oneOf/0"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult_Case1_FamilyCutRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult_Case1_FamilyCutRef",
+      "source": "composed-16",
+      "line": 775,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult/oneOf/0/properties/familyCutRef"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult_Case1_GuardRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult_Case1_GuardRef",
+      "source": "composed-16",
+      "line": 763,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult/oneOf/0/properties/guardRef"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult_Case1_SourceHeadRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult_Case1_SourceHeadRef",
+      "source": "composed-16",
+      "line": 769,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult/oneOf/0/properties/sourceHeadRef"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult_Case2",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult_Case2",
+      "source": "composed-16",
+      "line": 198,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult/oneOf/1"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult_Case2_Missing_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult_Case2_Missing_Item",
+      "source": "composed-16",
+      "line": 781,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult/oneOf/1/properties/missing/items"
+    },
+    {
+      "original": "SourceQA.IpqcFinalGuardResult_Case2_Missing_Item_RequiredRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.IpqcFinalGuardResult_Case2_Missing_Item_RequiredRef",
+      "source": "composed-16",
+      "line": 1431,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/IpqcFinalGuardResult/oneOf/1/properties/missing/items/properties/requiredRef/oneOf/0"
+    },
+    {
+      "original": "SourceQA.ObservationInput",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ObservationInput",
+      "source": "composed-16",
+      "line": 410,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput"
+    },
+    {
+      "original": "SourceQA.ObservationInput_Case1",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ObservationInput_Case1",
+      "source": "composed-16",
+      "line": 411,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput/oneOf/0"
+    },
+    {
+      "original": "SourceQA.ObservationInput_Case1_RawRecordRefs_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ObservationInput_Case1_RawRecordRefs_Item",
+      "source": "composed-16",
+      "line": 1328,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput/oneOf/0/properties/rawRecordRefs/items"
+    },
+    {
+      "original": "SourceQA.ObservationInput_Case1_UnitRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ObservationInput_Case1_UnitRef",
+      "source": "composed-16",
+      "line": 1324,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput/oneOf/0/properties/unitRef"
+    },
+    {
+      "original": "SourceQA.ObservationInput_Case2",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ObservationInput_Case2",
+      "source": "composed-16",
+      "line": 420,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput/oneOf/1"
+    },
+    {
+      "original": "SourceQA.ObservationInput_Case2_RawRecordRefs_Item",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ObservationInput_Case2_RawRecordRefs_Item",
+      "source": "composed-16",
+      "line": 1338,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput/oneOf/1/properties/rawRecordRefs/items"
+    },
+    {
+      "original": "SourceQA.ObservationInput_Case2_UnitRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.ObservationInput_Case2_UnitRef",
+      "source": "composed-16",
+      "line": 1334,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/ObservationInput/oneOf/1/properties/unitRef"
+    },
+    {
+      "original": "SourceQA.QapEvidence",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.QapEvidence",
+      "source": "composed-16",
+      "line": 18,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapEvidence"
+    },
+    {
+      "original": "SourceQA.QapRef",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.QapRef",
+      "source": "composed-16",
+      "line": 13,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapRef"
+    },
+    {
+      "original": "SourceQA.QapUom",
+      "adapted": "CP6.Entity.Contracts.Quality.SourceQA.QapUom",
+      "source": "composed-16",
+      "line": 24,
+      "schema": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json#/$defs/QapUom"
+    }
+  ],
+  "outputs": {
+    "CP6.Entity/Contracts/Quality/Consumer.g.cs": "bf3375df99acf0ae453bf1b8aa326ea6eea1631932a33de3e4c0e41fffbf0258",
+    "CP6.Entity/Contracts/Quality/OwnerWire.g.cs": "dcce37dd788c60d66cc6da0d9296a187251185536d218cbdbbfbfbfedae389ed",
+    "CP6.Entity/Contracts/Quality/QaNcrMainR6Declarations.g.cs": "4cfc8684330a6d8d3bdc82cb0432b687f2792c16f8ebe6b58e48b14fafc9e2bf",
+    "CP6.Entity/Contracts/Quality/SourceQA.g.cs": "097081bf6cd84897cef5e9c059a9c55cec9740e6e7cccaac95406a75d55af3ec",
+    "CP6.Entity/Contracts/Quality/NativeContractCatalog.g.cs": "0e359e8bf3af79fc21700d487be42effd8eb94b059edffaa131e896f75581988",
+    "CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs": "48a1943837b9fe08c179efcc50a9146512b1b67a2f94edd4e02468ab2bf3f914",
+    "eng/contracts/s01-07/csharp/native-field-inventory.json": "cbde1363c08b97551e5a4cc285028aeb88e327793ffa6327c93e84c9ef4b483f"
+  },
+  "limitations": "Bounded contract codec routes only; unselected declarations, semantic/currentness/Owner checks, storage and business acceptance are not implemented or claimed."
+}

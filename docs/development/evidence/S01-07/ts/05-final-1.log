@@ -1,0 +1,135 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/quality/ipqc.test.ts --reporter=verbose
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-07-20261012/cp6.web
+
+ ✓ src/contracts/quality/ipqc.test.ts > pins the independent native publications and exact 23-root boundary 3ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root EnvironmentKey > accepts and roundtrips every field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root EnvironmentKey > rejects each missing required field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root EnvironmentKey > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapRef > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapRef > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapRef > rejects unknown fields and a wrong root kind 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapEvidence > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapEvidence > rejects each missing required field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapEvidence > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapUom > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapUom > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapUom > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapRange > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapRange > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root QapRange > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecRef > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecRef > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecRef > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecEvidence > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecEvidence > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecEvidence > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecRange > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecRange > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecRange > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecScope > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecScope > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecScope > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQuantity > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQuantity > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQuantity > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutRef > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutRef > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutRef > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutEvidence > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutEvidence > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutEvidence > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutFlatRef > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutFlatRef > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutFlatRef > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutRange > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutRange > rejects each missing required field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutRange > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQaSource > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQaSource > rejects each missing required field 2ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQaSource > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualitySource > accepts and roundtrips every field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualitySource > rejects each missing required field 2ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualitySource > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root R4FrozenPayload > accepts and roundtrips every field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root R4FrozenPayload > rejects each missing required field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root R4FrozenPayload > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root R4QapFullCountPlanContent > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root R4QapFullCountPlanContent > rejects each missing required field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root R4QapFullCountPlanContent > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQualityDisposition > accepts and roundtrips every field 3ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQualityDisposition > rejects each missing required field 7ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQualityDisposition > rejects unknown fields and a wrong root kind 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualityTaskResult > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualityTaskResult > rejects each missing required field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualityTaskResult > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualityDisposition > accepts and roundtrips every field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualityDisposition > rejects each missing required field 4ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root OutQualityDisposition > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root RawEvidenceHandoff > accepts and roundtrips every field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root RawEvidenceHandoff > rejects each missing required field 2ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root RawEvidenceHandoff > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQualityTaskResult > accepts and roundtrips every field 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQualityTaskResult > rejects each missing required field 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > complete native root ExecQualityTaskResult > rejects unknown fields and a wrong root kind 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > accepts original MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityTaskResult sent as MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityDisposition sent as MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects RawEvidenceHandoff sent as MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityTaskResult sent as MES_EXEC_QUALITY_DISPOSITION_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > accepts original MES_OUTPUT_QUALITY_TASK_RESULT_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityDisposition sent as MES_OUTPUT_QUALITY_TASK_RESULT_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityDisposition sent as MES_OUTPUT_QUALITY_TASK_RESULT_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects RawEvidenceHandoff sent as MES_OUTPUT_QUALITY_TASK_RESULT_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityTaskResult sent as MES_OUTPUT_QUALITY_TASK_RESULT_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > accepts original MES_OUTPUT_QUALITY_DISPOSITION_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityDisposition sent as MES_OUTPUT_QUALITY_DISPOSITION_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityTaskResult sent as MES_OUTPUT_QUALITY_DISPOSITION_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects RawEvidenceHandoff sent as MES_OUTPUT_QUALITY_DISPOSITION_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityTaskResult sent as MES_OUTPUT_QUALITY_DISPOSITION_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > accepts original PLM_RAW_EVIDENCE_HANDOFF_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityDisposition sent as PLM_RAW_EVIDENCE_HANDOFF_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityTaskResult sent as PLM_RAW_EVIDENCE_HANDOFF_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityDisposition sent as PLM_RAW_EVIDENCE_HANDOFF_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityTaskResult sent as PLM_RAW_EVIDENCE_HANDOFF_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > accepts original MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects ExecQualityDisposition sent as MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityTaskResult sent as MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects OutQualityDisposition sent as MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects RawEvidenceHandoff sent as MES_EXEC_QUALITY_TASK_RESULT_PROPOSED_V1 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > five exact native payload identities > rejects unknown event or schema version and crossed frozen metadata 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > pins the exact original IDs and expected bytes 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-001 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-002 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-003 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-004 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-005 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > six immutable type bindings, exercised inside complete native objects > IPQC-TYPE-006 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > rejects a foreign owner on a QAP unit 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > rejects escaped-equivalent duplicate member names 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > rejects an absent required member 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "0" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "01" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "+1" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "-1" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "1.0" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "1e2" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "1\n" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version "" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > canonical version " 1" 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > does not cap arbitrary version strings or round exact quantities 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > counts Unicode code points and keeps native owner length 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > keeps flat QAP evidence and nested Exec/Out evidence separate 0ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > validates nested identities, fields, and real calendar dates 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > keeps legal nullable alternatives and still requires presence 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > rejects nested duplicates, malformed JSON, and prototype route names 1ms
+ ✓ src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > validates programmatic values on encode as well as decode 0ms
+
+ Test Files  1 passed (1)
+      Tests  122 passed (122)
+   Start at  01:38:15
+   Duration  2.00s (transform 113ms, setup 0ms, import 205ms, tests 59ms, environment 1.52s)
+

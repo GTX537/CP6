@@ -1,0 +1,56 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/quality/ipqc.test.ts
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-07-20261012/cp6.web
+
+ ❯ src/contracts/quality/ipqc.test.ts (3 tests | 3 failed) 8ms
+     × rejects a foreign owner on a QAP unit 5ms
+     × rejects escaped-equivalent duplicate member names 1ms
+     × rejects an absent required member 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > rejects a foreign owner on a QAP unit
+AssertionError: expected [Function] to throw an error
+ ❯ src/contracts/quality/ipqc.test.ts:6:83
+      4| describe('IPQC native decoder boundary', () => {
+      5|   it('rejects a foreign owner on a QAP unit', () => {
+      6|     expect(() => decodeIpqc('QapUom', '{"id":"kg","version":"1","owner…
+       |                                                                                   ^
+      7|   })
+      8|   it('rejects escaped-equivalent duplicate member names', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > rejects escaped-equivalent duplicate member names
+AssertionError: expected [Function] to throw an error
+ ❯ src/contracts/quality/ipqc.test.ts:9:89
+      7|   })
+      8|   it('rejects escaped-equivalent duplicate member names', () => {
+      9|     expect(() => decodeIpqc('QapUom', '{"id":"kg","version":"1","\\u00…
+       |                                                                                         ^
+     10|   })
+     11|   it('rejects an absent required member', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/contracts/quality/ipqc.test.ts > IPQC native decoder boundary > rejects an absent required member
+AssertionError: expected [Function] to throw an error
+ ❯ src/contracts/quality/ipqc.test.ts:12:55
+     10|   })
+     11|   it('rejects an absent required member', () => {
+     12|     expect(() => decodeIpqc('QapUom', '{"id":"kg"}')).toThrow()
+       |                                                       ^
+     13|   })
+     14| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  01:32:46
+   Duration  10.37s (transform 60ms, setup 0ms, import 99ms, tests 8ms, environment 9.71s)
+

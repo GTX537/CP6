@@ -1,0 +1,269 @@
+{
+  "version": "CP6-S01-07-SOURCES/1",
+  "input_package": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47",
+  "assets": [
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-15.cs.txt",
+      "sha256": "f6485d343577c154a41802b05a2918da76c3d0dba1bb3f7594ffdadda78e76d4",
+      "source_id": "composed-15",
+      "variant": "composed",
+      "original_sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-15.cs.txt",
+      "sha256": "9f975e897bb9e2d05b95256e442bead2177b1ca3d13e06d01cddd3cf0b685352",
+      "source_id": "composed-15",
+      "variant": "original"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-16.cs.txt",
+      "sha256": "810063cb888d2cf231bf387bb19cc4a72d67a799b04203a2ac35687a1d00b88e",
+      "source_id": "composed-16",
+      "variant": "composed",
+      "original_sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-16.cs.txt",
+      "sha256": "103ff257cd4ca8c7da153e2d638fd8d6a61f5bca542dd1a42d336d8c53dbd941",
+      "source_id": "composed-16",
+      "variant": "original"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-17.json",
+      "sha256": "ebab68099342e796a43ee2eb0b60772013f28b16c52f89e456b331aaff208d10",
+      "source_id": "composed-17",
+      "variant": "composed",
+      "original_sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-17.json",
+      "sha256": "4bfc1d1febd24c7fd52130ae1a3c8a1d580d088c71e669ae5b17d8a740a310d2",
+      "source_id": "composed-17",
+      "variant": "original"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-19.ts.txt",
+      "sha256": "fa551a7f8dbce66ae17b72671f3fbc01406ea51e0e111cc396c4ed683f871b6c",
+      "source_id": "composed-19",
+      "variant": "composed",
+      "original_sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "patch_bundles": [
+        {
+          "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+          "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+          "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+          "hash_basis": "git_blob_bytes"
+        }
+      ]
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-19.ts.txt",
+      "sha256": "859768bc391d71dfcdf0671e66cdb61bb41c40d2c38b80bd539187205a85950a",
+      "source_id": "composed-19",
+      "variant": "original"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+      "sha256": "11b9077c2ccacb398a6e80f07d59a2895e8cc5ba5197f85dacf4348325b948c2",
+      "member": "design/NCR-R6-WIRE.json",
+      "schema_id": "urn:cp6:qa-ncr:main:6",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 40
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/CONSUMER-WIRE.json",
+      "sha256": "a3e5c08a426bef34ed18118c2f9ee9d9285dfa70ec369bcc1b16587349b42dc7",
+      "member": "design/references/consumer-cp4-r1/CONSUMER-WIRE.json",
+      "schema_id": "QA-NCR-CONSUMER-WIRE-5",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 148
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json",
+      "sha256": "93d5eabb725f756a1b824f99045f3617c5b15f8c2110b368921932d8ce198527",
+      "member": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json",
+      "schema_id": "urn:cp6:owner-addenda:source-qa-schemas:cp1",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 235
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-MES-DISPATCH-SHAPE.json",
+      "sha256": "45604318db366d61face166e65e5672339abf06d47887a86ce8edc8e6fe5e524",
+      "member": "design/NCR-R6-MES-DISPATCH-SHAPE.json",
+      "schema_id": "urn:cp6:qa-ncr:mes-dispatch-shape:6",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 29
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json",
+      "sha256": "392443aa5b52e47dd4947ee25aca57b61b7e454e5bd785e53ae0c630f714e356",
+      "member": "design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json",
+      "schema_id": "urn:cp6:ncr-owner-addenda:cp2",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 219
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "member": "design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json",
+      "schema_id": "urn:cp6:fin-inv:r10:wire",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 240
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-FENCED-OWNER-SHAPES.json",
+      "sha256": "172f4d0f08b5bd4f79a067d4bac5da9f3d4ed1b69518fd99ed60da8c7fe625c4",
+      "member": "design/NCR-R6-FENCED-OWNER-SHAPES.json",
+      "schema_id": "urn:cp6:qa-ncr:fenced-owner-proposals:6",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 25
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "9f0519fea751041c150c42bdeb155c6bc9f446a2420cbb2ae552ac6e3b0a3353",
+      "member": "design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+      "schema_id": "QA-IPQC-01-SCHEMAS-RECOVERY-R4-SYSTEMIC-R4",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 256
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+      "sha256": "45d7e3551df0940f9875c3bc02e0e7b2ba0ccce581fc0145187c111a1ab8a160",
+      "member": "design/NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+      "schema_id": "urn:cp6:ncr-main6:iqc-source-projection-candidate",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 54
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json",
+      "sha256": "fbac66e3f15e7da1502b63095ea5a5c006ed8417fc378f16d49f12dacb38866c",
+      "member": "design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json",
+      "schema_id": null,
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 270
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/NCR-R6-LANGUAGE-CONTRACTS.json",
+      "sha256": "9e9ee118ded0250fa98ba6530d5c86f281a95ac0364ae15f1ee9e8481df08690",
+      "member": "design/NCR-R6-LANGUAGE-CONTRACTS.json",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 28
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/LANGUAGE-CONTRACTS.md",
+      "sha256": "23c597a0e6230a922823f6805c91a3c9b2d641fafbddff313ec2bd86a1cb98d9",
+      "member": "design/references/consumer-cp4-r1/LANGUAGE-CONTRACTS.md",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 157
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/ACCEPTANCE.md",
+      "sha256": "7faae8212b09d21e656e386023e7380ce9c9eefff35c37c6a4832616f567ff18",
+      "member": "design/references/initial-sources/QA-IPQC-01/ACCEPTANCE.md",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 246
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "ec15532bb8820016f44af4dcf91823b2ec2af7684ec767cc1f25a4bbe61ec74b",
+      "member": "design/references/initial-sources/QA-IPQC-01/CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 249
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "27edb910bb416a4ffe2d6f489e70f17923e64803975e5354cdac6c0d6a7f2020",
+      "member": "design/references/initial-sources/QA-IPQC-01/PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 253
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/QA-IPQC-01-SPEC.md",
+      "sha256": "c82ef3d5833b823cc562606af1a8bd8a68653416790bfc09c895df3a9a8c511b",
+      "member": "design/references/initial-sources/QA-IPQC-01/QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC.md",
+      "container_sha256": "aa5764a71ada9447c7d0481a5d6faca3ead66b6965a204fd8452cf558307887d",
+      "container_member_ordinal": 255
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/profile-inputs.json",
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "upstream_path": "eng/contracts/s01/profile-inputs.json",
+      "git_blob": "40ccbc25727e0815dcb139f8ed01cb419d194920",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/vectors.json",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "upstream_path": "eng/contracts/s01/vectors.json",
+      "git_blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/s01-input-index.json",
+      "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+      "upstream_path": "docs/development/s01-input-index.json",
+      "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/2026-10-11-s01-task-breakdown.md",
+      "sha256": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+      "upstream_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/composed-derivatives.json",
+      "sha256": "6a83915461f592a16a3682ce4306a745be324a8e645ba0deb53f8143b1b5ab27",
+      "upstream_path": "docs/design-handbook/remediation/assets/composed-derivatives.json",
+      "git_blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/required-inputs.json",
+      "sha256": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996",
+      "upstream_path": "docs/design-handbook/indexes/required-inputs.json",
+      "git_blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/container-members.json",
+      "sha256": "730fd2a826e61b9cbad74e4e66e68fe478c0ce7135bd3469a9db4b8af22778a1",
+      "upstream_path": "docs/design-handbook/indexes/container-members.json",
+      "git_blob": "671e8a5f8870b29352e948f917a46d5b72e8a5fa",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/bounded-patches.json",
+      "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+      "upstream_path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+      "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+      "source_commit": "e6ccc89b3e62c7ed2c3d4739757b6ae9f4490c47"
+    }
+  ]
+}

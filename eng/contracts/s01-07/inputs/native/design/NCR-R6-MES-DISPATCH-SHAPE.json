@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:qa-ncr:mes-dispatch-shape:6",
+  "$defs": {
+    "RegisterExecutionBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "executionKey": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "initiatingOwner": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "executionRequestKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "initiatingOwner",
+            "executionRequestKey"
+          ]
+        },
+        "workOrderId": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+        },
+        "expectedRevision": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "expectedControlEpoch": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "expectedEvidenceVersion": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "expectedBindingRegistryRevision": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "expectedSnapshotId": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+        },
+        "ownerExecutionKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "operationId": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+        },
+        "parentBindingId": {
+          "oneOf": [
+            {
+              "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scopeId": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+            },
+            "scopeVersion": {
+              "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+            },
+            "ranges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "portionId": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/UUID"
+                  },
+                  "from": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+                  },
+                  "to": {
+                    "$ref": "NCR-R6-WIRE.json#/$defs/Decimal"
+                  }
+                },
+                "required": [
+                  "portionId",
+                  "from",
+                  "to"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 500
+            }
+          },
+          "required": [
+            "scopeId",
+            "scopeVersion",
+            "ranges"
+          ]
+        },
+        "sourceDelegationRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/OwnerRef"
+        },
+        "executorAuthorizationRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/OwnerRef"
+        },
+        "meterMappingRef": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/OwnerRef"
+        },
+        "expectedResourceBindingRevision": {
+          "$ref": "NCR-R6-WIRE.json#/$defs/Version"
+        },
+        "childKind": {
+          "type": "string",
+          "enum": [
+            "OPERATION",
+            "BATCH",
+            "SUB_WORK_ORDER"
+          ]
+        },
+        "plannedInterval": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "from": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "to": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "from",
+            "to"
+          ]
+        }
+      },
+      "required": [
+        "executionKey",
+        "workOrderId",
+        "expectedRevision",
+        "expectedControlEpoch",
+        "expectedEvidenceVersion",
+        "expectedBindingRegistryRevision",
+        "expectedSnapshotId",
+        "ownerExecutionKey",
+        "operationId",
+        "parentBindingId",
+        "scope",
+        "sourceDelegationRef",
+        "executorAuthorizationRef",
+        "meterMappingRef",
+        "expectedResourceBindingRevision",
+        "childKind",
+        "plannedInterval"
+      ]
+    }
+  },
+  "source": "MES-WO accepted main Library libfile_bd7cfde636608191af982415b98d1d17 lines154–179,535–547; full original file hash not reverified here",
+  "status": "exact textual-member transcription; independent shape/source review still required",
+  "semanticChecks": [
+    "Time has Z/offset or explicit null; original text retained",
+    "five expected domains flattened and independently compared",
+    "scope at least1 at most500, full nonoverlap; not physical serial identity",
+    "actor/Owner/tenant only trusted context",
+    "dispatchToken is internal and never exposed to Main public DTO",
+    "COMMITTED/MAY_EXECUTE is admission only, not completed work"
+  ],
+  "execution": "NOT_RUN"
+}
