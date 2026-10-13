@@ -1,0 +1,276 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/plan-atp/stableId.test.ts --reporter=verbose --reporter=json --outputFile=../docs/development/evidence/S01-06/red-ts.json
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-06-20261012/cp6.web
+
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > discovers exactly all assigned IDs and only supported lexical operations 3ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > extracts the exact four source assertions with a distinct fragment identity 1ms
+ × src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-017' / TypeScript lexical 5ms
+   → Not implemented
+ × src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-018' / TypeScript lexical 0ms
+   → Not implemented
+ × src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-019' / TypeScript lexical 0ms
+   → Not implemented
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-020' / TypeScript lexical 1ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-021' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-022' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-023' / TypeScript lexical 0ms
+ × src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-001' / TypeScript lexical 0ms
+   → Not implemented
+ × src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-002' / TypeScript lexical 0ms
+   → Not implemented
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-003' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-004' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-005' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-006' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-007' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-008' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-009' / TypeScript lexical 0ms
+ × src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-010' / TypeScript lexical 0ms
+   → Not implemented
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-001' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-002' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-003' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-004' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-005' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-017' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-018' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-019' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-020' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-021' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-022' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-023' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-001' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-002' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-003' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-004' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-005' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-006' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-007' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-008' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-009' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-010' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-001' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-002' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-003' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-004' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-005' / Schema fragment assertions 0ms
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 1 characters without truncation 0ms
+   → Not implemented
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 16 characters without truncation 0ms
+   → Not implemented
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 17 characters without truncation 0ms
+   → Not implemented
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 128 characters without truncation 0ms
+   → Not implemented
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects 129 characters in both scalar and fragment 2ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "" 1ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\n" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\r\n" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\r" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA " 1ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA " 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\u0000" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects " EA" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA " 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\t" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects ".EA" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "_EA" 1ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects ":EA" 1ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "/EA" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "-EA" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "公斤" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "ＥＡ" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "A😀" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "é" 0ms
+   → expected error to be instance of RangeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token null without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token undefined without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 0 without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 1.5 without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token true without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token false without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token {} without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token undefined without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 1n without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token EA without coercion 0ms
+   → expected error to be instance of TypeError
+ × src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > preserves case and legal punctuation and emits the original scalar string 0ms
+   → Not implemented
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 41 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-017' / TypeScript lexical
+ FAIL  src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-018' / TypeScript lexical
+ FAIL  src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-019' / TypeScript lexical
+ FAIL  src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-001' / TypeScript lexical
+ FAIL  src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-002' / TypeScript lexical
+ FAIL  src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-010' / TypeScript lexical
+Error: Not implemented
+ ❯ stableId src/contracts/plan-atp/stableId.ts:5:9
+      3|
+      4| export function stableId(_value: unknown): StableId {
+      5|   throw new Error('Not implemented')
+       |         ^
+      6| }
+      7|
+ ❯ src/contracts/plan-atp/stableId.test.ts:45:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/41]⎯
+
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 1 characters without truncation
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 16 characters without truncation
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 17 characters without truncation
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 128 characters without truncation
+Error: Not implemented
+ ❯ stableId src/contracts/plan-atp/stableId.ts:5:9
+      3|
+      4| export function stableId(_value: unknown): StableId {
+      5|   throw new Error('Not implemented')
+       |         ^
+      6| }
+      7|
+ ❯ src/contracts/plan-atp/stableId.test.ts:59:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/41]⎯
+
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects 129 characters in both scalar and fragment
+AssertionError: expected error to be instance of RangeError
+
+- Expected:
+[Function RangeError]
+
++ Received:
+Error {
+  "message": "Not implemented",
+}
+
+ ❯ src/contracts/plan-atp/stableId.test.ts:63:45
+     61|   })
+     62|   it('rejects 129 characters in both scalar and fragment', () => {
+     63|     expect(() => stableId('U'.repeat(129))).toThrow(RangeError)
+       |                                             ^
+     64|     expect(fragmentAccepts('U'.repeat(129))).toBe(false)
+     65|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/41]⎯
+
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects ""
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\n"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\r\n"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\r"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA "
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA "
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\u0000"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects " EA"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA "
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\t"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects ".EA"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "_EA"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects ":EA"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "/EA"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "-EA"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "公斤"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "ＥＡ"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "A😀"
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "é"
+AssertionError: expected error to be instance of RangeError
+
+- Expected:
+[Function RangeError]
+
++ Received:
+Error {
+  "message": "Not implemented",
+}
+
+ ❯ src/contracts/plan-atp/stableId.test.ts:67:35
+     65|   })
+     66|   it.each(['', 'EA\n', 'EA\r\n', 'EA\r', 'EA\u2028', 'EA\u2029', 'EA\0…
+     67|     expect(() => stableId(input)).toThrow(RangeError)
+       |                                   ^
+     68|     expect(fragmentAccepts(input)).toBe(false)
+     69|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/41]⎯
+
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token null without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token undefined without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 0 without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 1.5 without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token true without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token false without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token {} without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token undefined without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 1n without coercion
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token EA without coercion
+AssertionError: expected error to be instance of TypeError
+
+- Expected:
+[Function TypeError]
+
++ Received:
+Error {
+  "message": "Not implemented",
+}
+
+ ❯ src/contracts/plan-atp/stableId.test.ts:71:35
+     69|   })
+     70|   it.each([null, undefined, 0, 1.5, true, false, {}, [], 1n, new Strin…
+     71|     expect(() => stableId(input)).toThrow(TypeError)
+       |                                   ^
+     72|     expect(fragmentAccepts(input)).toBe(false)
+     73|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/41]⎯
+
+ FAIL  src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > preserves case and legal punctuation and emits the original scalar string
+Error: Not implemented
+ ❯ stableId src/contracts/plan-atp/stableId.ts:5:9
+      3|
+      4| export function stableId(_value: unknown): StableId {
+      5|   throw new Error('Not implemented')
+       |         ^
+      6| }
+      7|
+ ❯ src/contracts/plan-atp/stableId.test.ts:76:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/41]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  41 failed | 40 passed (81)
+   Start at  20:32:34
+   Duration  920ms (transform 158ms, setup 0ms, import 285ms, tests 31ms, environment 0ms)
+
+JSON report written to D:/CP6-worktrees/s01-06-20261012/docs/development/evidence/S01-06/red-ts.json

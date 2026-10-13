@@ -1,0 +1,95 @@
+
+> cp6.web@0.0.0 test
+> vitest run src/contracts/plan-atp/stableId.test.ts --reporter=verbose --reporter=json --outputFile=../docs/development/evidence/S01-06/green-ts.json
+
+
+ RUN  v4.1.11 D:/CP6-worktrees/s01-06-20261012/cp6.web
+
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > discovers exactly all assigned IDs and only supported lexical operations 3ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > extracts the exact four source assertions with a distinct fragment identity 1ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-017' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-018' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-019' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-020' / TypeScript lexical 1ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-021' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-022' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-023' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-001' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-002' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-003' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-004' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-005' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-006' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-007' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-008' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-009' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-010' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-001' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-002' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-003' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-004' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-005' / TypeScript lexical 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-017' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-018' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-019' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-020' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-021' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-022' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'NUM-023' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-001' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-002' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-003' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-004' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-005' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-006' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-007' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-008' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-009' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-R1-010' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-001' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-002' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-003' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-004' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > S01-06 exact shared vectors > 'ATP-LEADING-005' / Schema fragment assertions 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 1 characters without truncation 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 16 characters without truncation 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 17 characters without truncation 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > accepts all 128 characters without truncation 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects 129 characters in both scalar and fragment 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\n" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\r\n" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\r" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA " 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA " 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\u0000" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects " EA" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA " 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "EA\t" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects ".EA" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "_EA" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects ":EA" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "/EA" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "-EA" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "公斤" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "ＥＡ" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "A😀" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects "é" 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token null without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token undefined without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 0 without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 1.5 without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token true without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token false without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token {} without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token undefined without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token 1n without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > rejects wrong token EA without coercion 0ms
+ ✓ src/contracts/plan-atp/stableId.test.ts > R1 boundaries without coercion or normalization > preserves case and legal punctuation and emits the original scalar string 0ms
+
+ Test Files  1 passed (1)
+      Tests  81 passed (81)
+   Start at  20:37:18
+   Duration  642ms (transform 129ms, setup 0ms, import 254ms, tests 15ms, environment 0ms)
+
+JSON report written to D:/CP6-worktrees/s01-06-20261012/docs/development/evidence/S01-06/green-ts.json

@@ -1,0 +1,15 @@
+{
+  "observed_utc": "2026-10-13T00:44:20.924991+00:00",
+  "repository": "GTX537/CP6.AI-Handoff",
+  "message_type": "START",
+  "commit": "b3fb82ab18e993cea992331f9f193dad036e91df",
+  "path": "handoffs/CP6-DEV-20261012/tasks/S01-06/messages/20261013T002811Z-c-start/MESSAGE.md",
+  "sha256": "4deaf6eb02bdae9203e105164ced9beece7d4708d9a07bd4b6b8f18ed642f355",
+  "bytes": 2609,
+  "raw_remote_equals_local": true,
+  "remote_branch_head": "b3fb82ab18e993cea992331f9f193dad036e91df",
+  "default_branch": "codex/t02c-entry-handoff-20260921",
+  "private": true,
+  "actions_enabled": false,
+  "receipt_scope": "Transport only, not coordinator ACK or task DONE."
+}
