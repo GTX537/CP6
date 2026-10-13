@@ -1,0 +1,415 @@
+{
+  "observed_at": "2026-10-13T10:35:43.725477+00:00",
+  "head": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+  "protected_main": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "workflows": [
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/client-contract.yml",
+      "blob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "blob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "blob": "7826de728d692846184dc7113848109a6a56a92e",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "blob": "be9a37138cb903c45c4638c65929610d24362730",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "blob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "blob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "blob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "blob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-candidate.yml",
+      "blob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "on_block": "  push:\n    tags:\n      - \"v*.*.*\"\n\n",
+      "events": [
+        "push"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-deploy.yml",
+      "blob": "d259013345adf115865007cc5f05c70939a902bf",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-freeze.yml",
+      "blob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "blob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "blob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/client-contract.yml",
+      "blob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "blob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "blob": "7826de728d692846184dc7113848109a6a56a92e",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "blob": "be9a37138cb903c45c4638c65929610d24362730",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "blob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "blob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "blob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "blob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/r2-candidate.yml",
+      "blob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "on_block": "  push:\n    tags:\n      - \"v*.*.*\"\n\n",
+      "events": [
+        "push"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/r2-deploy.yml",
+      "blob": "d259013345adf115865007cc5f05c70939a902bf",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/r2-freeze.yml",
+      "blob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "blob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "blob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    }
+  ],
+  "pipeline_dependencies": [
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": "azure-pipelines.yml",
+      "blob": "9c3217891b2519753d7b83e43a1caddb7932689a",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": "azure-pipelines-dev.yml",
+      "blob": "b0f6d4afab9f9fa7af5d893e9584b5672c4fa4f7",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": "azure-pipelines-deploy-agent-readiness.yml",
+      "blob": "3e5ad534e70326cf2ba72d19b5936c66a24de869",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": "azure-pipelines-release-shadow.yml",
+      "blob": "dec2f58657d5e0a313457cf708a579df192c5cce",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": "azure-pipelines.yml",
+      "blob": "9c3217891b2519753d7b83e43a1caddb7932689a",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": "azure-pipelines-dev.yml",
+      "blob": "b0f6d4afab9f9fa7af5d893e9584b5672c4fa4f7",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": "azure-pipelines-deploy-agent-readiness.yml",
+      "blob": "3e5ad534e70326cf2ba72d19b5936c66a24de869",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "path": "azure-pipelines-release-shadow.yml",
+      "blob": "dec2f58657d5e0a313457cf708a579df192c5cce",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    }
+  ],
+  "changed_paths": [
+    "CP6.Entity/Contracts/Quality/.gitattributes",
+    "CP6.Entity/Contracts/Quality/Consumer.g.cs",
+    "CP6.Entity/Contracts/Quality/NativeContractCatalog.g.cs",
+    "CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs",
+    "CP6.Entity/Contracts/Quality/NcrJson.cs",
+    "CP6.Entity/Contracts/Quality/OwnerWire.g.cs",
+    "CP6.Entity/Contracts/Quality/QaNcrMainR6Declarations.g.cs",
+    "CP6.Entity/Contracts/Quality/README.md",
+    "CP6.Entity/Contracts/Quality/SourceQA.g.cs",
+    "cp6.web/src/contracts/quality/.gitattributes",
+    "cp6.web/src/contracts/quality/ipqc.g.ts",
+    "cp6.web/src/contracts/quality/ipqc.test.ts",
+    "cp6.web/src/contracts/quality/ipqc.ts",
+    "cp6.web/src/contracts/quality/ipqcSchemas.g.ts",
+    "cp6.web/src/contracts/quality/schema.ts",
+    "cp6.web/src/contracts/quality/strictJson.ts",
+    "docs/development/evidence/S01-07/.gitattributes",
+    "docs/development/evidence/S01-07/DELIVERY.md",
+    "docs/development/evidence/S01-07/OWNER-CONSUMERS.md",
+    "docs/development/evidence/S01-07/PLAN.md",
+    "docs/development/evidence/S01-07/REVIEW.md",
+    "docs/development/evidence/S01-07/csharp/README.md",
+    "docs/development/evidence/S01-07/csharp/environment.txt",
+    "docs/development/evidence/S01-07/csharp/first-codec-gate.log",
+    "docs/development/evidence/S01-07/csharp/native-final-gate.log",
+    "docs/development/evidence/S01-07/csharp/native-format-final-gate.log",
+    "docs/development/evidence/S01-07/csharp/native-gate.log",
+    "docs/development/evidence/S01-07/csharp/node-regex-dialect.json",
+    "docs/development/evidence/S01-07/csharp/quality-contracts-final.trx",
+    "docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+    "docs/development/evidence/S01-07/csharp/quality-contracts.trx",
+    "docs/development/evidence/S01-07/csharp/red-declaration-boundary.log",
+    "docs/development/evidence/S01-07/csharp/red-full-native.log",
+    "docs/development/evidence/S01-07/csharp/red-regex-dialect.log",
+    "docs/development/evidence/S01-07/csharp/red-rfc3339-format.log",
+    "docs/development/evidence/S01-07/csharp/red-writer-identity.log",
+    "docs/development/evidence/S01-07/csharp/verification.json",
+    "docs/development/evidence/S01-07/final-integrity.json",
+    "docs/development/evidence/S01-07/fixed-vectors.json",
+    "docs/development/evidence/S01-07/owner-consumers.json",
+    "docs/development/evidence/S01-07/scope-review.json",
+    "docs/development/evidence/S01-07/ts/00-npm-ci.log",
+    "docs/development/evidence/S01-07/ts/01-red.log",
+    "docs/development/evidence/S01-07/ts/02-native-tests.log",
+    "docs/development/evidence/S01-07/ts/03-native-tests.log",
+    "docs/development/evidence/S01-07/ts/04-type-check.log",
+    "docs/development/evidence/S01-07/ts/05-final-0.log",
+    "docs/development/evidence/S01-07/ts/05-final-1.log",
+    "docs/development/evidence/S01-07/ts/05-harness-failure.md",
+    "docs/development/evidence/S01-07/ts/06-final-0.log",
+    "docs/development/evidence/S01-07/ts/06-final-1.log",
+    "docs/development/evidence/S01-07/ts/06-final-2.log",
+    "docs/development/evidence/S01-07/ts/06-final-validation.json",
+    "docs/development/evidence/S01-07/ts/07-final-0.log",
+    "docs/development/evidence/S01-07/ts/07-final-1.log",
+    "docs/development/evidence/S01-07/ts/07-final-2.log",
+    "docs/development/evidence/S01-07/ts/07-final-validation.json",
+    "docs/development/evidence/S01-07/ts/08-date-regression-0.log",
+    "docs/development/evidence/S01-07/ts/08-date-regression-1.log",
+    "docs/development/evidence/S01-07/ts/08-date-regression-2.log",
+    "docs/development/evidence/S01-07/ts/08-date-regression-validation.json",
+    "docs/development/evidence/S01-07/workflows.json",
+    "eng/contracts/exact-values-tests/QualityContractTests.cs",
+    "eng/contracts/s01-07/.gitattributes",
+    "eng/contracts/s01-07/README.md",
+    "eng/contracts/s01-07/check_workflows.mjs",
+    "eng/contracts/s01-07/csharp/capture_evidence.py",
+    "eng/contracts/s01-07/csharp/full-object-fixtures.json",
+    "eng/contracts/s01-07/csharp/generate.py",
+    "eng/contracts/s01-07/csharp/generation-manifest.json",
+    "eng/contracts/s01-07/csharp/make_fixtures.py",
+    "eng/contracts/s01-07/csharp/native-field-inventory.json",
+    "eng/contracts/s01-07/import_sources.py",
+    "eng/contracts/s01-07/inputs/composed/composed-15.cs.txt",
+    "eng/contracts/s01-07/inputs/composed/composed-16.cs.txt",
+    "eng/contracts/s01-07/inputs/composed/composed-17.json",
+    "eng/contracts/s01-07/inputs/composed/composed-19.ts.txt",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R6-FENCED-OWNER-SHAPES.json",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R6-MES-DISPATCH-SHAPE.json",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+    "eng/contracts/s01-07/inputs/native/design/NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+    "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/CONSUMER-WIRE.json",
+    "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json",
+    "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json",
+    "eng/contracts/s01-07/inputs/native/design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json",
+    "eng/contracts/s01-07/inputs/native/design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+    "eng/contracts/s01-07/inputs/native/design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json",
+    "eng/contracts/s01-07/inputs/original/composed-15.cs.txt",
+    "eng/contracts/s01-07/inputs/original/composed-16.cs.txt",
+    "eng/contracts/s01-07/inputs/original/composed-17.json",
+    "eng/contracts/s01-07/inputs/original/composed-19.ts.txt",
+    "eng/contracts/s01-07/inputs/pins/2026-10-11-s01-task-breakdown.md",
+    "eng/contracts/s01-07/inputs/pins/bounded-patches.json",
+    "eng/contracts/s01-07/inputs/pins/composed-derivatives.json",
+    "eng/contracts/s01-07/inputs/pins/container-members.json",
+    "eng/contracts/s01-07/inputs/pins/profile-inputs.json",
+    "eng/contracts/s01-07/inputs/pins/required-inputs.json",
+    "eng/contracts/s01-07/inputs/pins/s01-input-index.json",
+    "eng/contracts/s01-07/inputs/pins/vectors.json",
+    "eng/contracts/s01-07/inputs/protocol/ACCEPTANCE.md",
+    "eng/contracts/s01-07/inputs/protocol/CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+    "eng/contracts/s01-07/inputs/protocol/LANGUAGE-CONTRACTS.md",
+    "eng/contracts/s01-07/inputs/protocol/NCR-R6-LANGUAGE-CONTRACTS.json",
+    "eng/contracts/s01-07/inputs/protocol/PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+    "eng/contracts/s01-07/inputs/protocol/QA-IPQC-01-SPEC.md",
+    "eng/contracts/s01-07/sources.json",
+    "eng/contracts/s01-07/ts/generate.mjs",
+    "eng/contracts/s01-07/ts/generation.json",
+    "eng/contracts/s01-07/ts/manual-fixtures.json",
+    "eng/contracts/s01-07/ts/validate.py"
+  ],
+  "workflow_or_dependency_changes": [],
+  "queued_or_running": [],
+  "result": "SAFE_FOR_BRANCH_PUSH_PR_AND_MAIN_MERGE",
+  "scope": "Main dispatch/tag-only events; Azure git triggers none and bridge is not run; Platform RFC3161 PR path filters exclude entire candidate; no tag push, dispatch, workflow or dependency changes. Both exact refs inspected. No remote test invoked or cancelled."
+}

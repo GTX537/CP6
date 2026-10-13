@@ -1,0 +1,488 @@
+{
+  "schema": "CP6-S01-11-ISSUE196-TARGETED-FIX-REVIEW/1",
+  "observed_at": "2026-10-13T10:48:01.490549+00:00",
+  "reviewer": "/root/wave4_review_quality",
+  "task": "S01-11",
+  "issue": 196,
+  "issue_url": "https://github.com/GTX537/CP6/issues/196",
+  "branch": "codex/bug-196-credit-byte-ownership",
+  "base_sha": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+  "observed_head": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+  "candidate_sha": null,
+  "reviewed_state": "Uncommitted working tree delta; only the exact source/test hashes below are accepted by this review.",
+  "review_result": "ACCEPT",
+  "findings": [],
+  "review_kind": "TARGETED_STATIC_FIX_REVIEW_AND_EXISTING_EVIDENCE_READ",
+  "supersedes_initial_finding": "S01-11-R1 only; prior complete 93-file review and its unaffected scope/limitations are not rerun.",
+  "initial_review": {
+    "path": "C:/Users/tt/CP6-planning-reports/20261013-wave4-integration/S01-11-review.md",
+    "sha256": "51efc4444b3de5ff441f4be478b6706d76b98035f11ee251360edd6da2a2bd3c"
+  },
+  "source_test_binding": [
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "absolute_path": "D:/CP6-worktrees/s01-11-20261012/cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "sha256": "f7108b4f2dd1d2e09ba8e38bda8d52dbb991b7d671ec25bccdf0aa4fa4dd36f5"
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+      "absolute_path": "D:/CP6-worktrees/s01-11-20261012/cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+      "sha256": "f4b05aef2944ddae2486aca7765d16d1267b6e8b629325ba6efb4abb5fe18b49"
+    }
+  ],
+  "correctness": [
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "lines": [
+        18,
+        19
+      ],
+      "conclusion": "new Uint8Array(raw) allocates independent Uint8Array storage for the supplied typed-array view and does not invoke Buffer.slice/subclass slice. SHA256 consumes a copied snapshot."
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "lines": [
+        272,
+        274,
+        295
+      ],
+      "conclusion": "decodeCore copies before validation await; load copies all three files before the first hash await. Hashing and Schema parsing use the same owned bytes, closing source-mutation Schema pin bypass."
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "lines": [
+        284,
+        305,
+        307,
+        314,
+        316,
+        320
+      ],
+      "conclusion": "captureOriginalBytes, C01/C02 capture, replay request checks and stored request ownership copy inputs; byte accessors return fresh independent copies. Response body delegates to the now-copying originalUtf8 accessor."
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "conclusion": "Schema/hash constants, profile identities, parser/validator, public root selection, native predicates and Owner fences are unchanged. The fix does not alter wire acceptance rules."
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+      "lines": [
+        22,
+        25,
+        38,
+        52,
+        68
+      ],
+      "conclusion": "12 Buffer ownership regressions cover both profiles during/after decode, both Schema factories, captureOriginalBytes during/after, and both C01/C02 request/response capture during/after, including mutation of returned byte copies."
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+      "lines": [
+        99,
+        130,
+        132,
+        155,
+        158
+      ],
+      "conclusion": "Five existing equality assertions compare spread byte arrays to ignore Node/jsdom TypedArray prototype identity while retaining exact byte length/order/value equality."
+    }
+  ],
+  "regression_quality": {
+    "complete_red_source_is_base_git_bytes": true,
+    "complete_red": {
+      "total": 428,
+      "old_passed": 416,
+      "new_failed": 12,
+      "pending": 0
+    },
+    "final": {
+      "total": 428,
+      "passed": 428,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "unique_names": 428,
+      "new_regressions_passed": 12
+    },
+    "old_416_names_removed": [],
+    "added_names": [
+      "Buffer ownership regression #196 C01 isolates request and response Buffers after capture and on return",
+      "Buffer ownership regression #196 C01 isolates request and response Buffers during capture and on return",
+      "Buffer ownership regression #196 C02 isolates request and response Buffers after capture and on return",
+      "Buffer ownership regression #196 C02 isolates request and response Buffers during capture and on return",
+      "Buffer ownership regression #196 captureOriginalBytes isolates Buffer changes after validation and returned bytes",
+      "Buffer ownership regression #196 captureOriginalBytes isolates Buffer changes during validation and returned bytes",
+      "Buffer ownership regression #196 current decode isolates Buffer changes after validation and returned bytes",
+      "Buffer ownership regression #196 current decode isolates Buffer changes during validation and returned bytes",
+      "Buffer ownership regression #196 current schema pin and parsed schema use the same Buffer snapshot",
+      "Buffer ownership regression #196 frozen decode isolates Buffer changes after validation and returned bytes",
+      "Buffer ownership regression #196 frozen decode isolates Buffer changes during validation and returned bytes",
+      "Buffer ownership regression #196 frozen schema pin and parsed schema use the same Buffer snapshot"
+    ],
+    "new_regression_names": [
+      "Buffer ownership regression #196 current decode isolates Buffer changes during validation and returned bytes",
+      "Buffer ownership regression #196 current decode isolates Buffer changes after validation and returned bytes",
+      "Buffer ownership regression #196 current schema pin and parsed schema use the same Buffer snapshot",
+      "Buffer ownership regression #196 frozen decode isolates Buffer changes during validation and returned bytes",
+      "Buffer ownership regression #196 frozen decode isolates Buffer changes after validation and returned bytes",
+      "Buffer ownership regression #196 frozen schema pin and parsed schema use the same Buffer snapshot",
+      "Buffer ownership regression #196 captureOriginalBytes isolates Buffer changes during validation and returned bytes",
+      "Buffer ownership regression #196 captureOriginalBytes isolates Buffer changes after validation and returned bytes",
+      "Buffer ownership regression #196 C01 isolates request and response Buffers during capture and on return",
+      "Buffer ownership regression #196 C01 isolates request and response Buffers after capture and on return",
+      "Buffer ownership regression #196 C02 isolates request and response Buffers during capture and on return",
+      "Buffer ownership regression #196 C02 isolates request and response Buffers after capture and on return"
+    ],
+    "red_final_regression_name_sets_equal": true,
+    "five_assertion_reconstruction": "Reversing only the five value-array comparisons and explanatory comment in the final test recreates complete RED test SHA256 c92d8ae9be9f702d0999263b08ae7a0ff4ddaaaf7588aee0488dcb91809ea5e5. Thus all 12 regression bodies are unchanged from full RED.",
+    "intermediate_failures": {
+      "total": 149,
+      "new_regressions_passed": 12,
+      "all_failure_messages_typedarray_deep_equality": true,
+      "source_test_locations": {
+        "98": 145,
+        "129": 2,
+        "154": 2
+      },
+      "retained_as_failure_evidence": true
+    },
+    "typecheck_exit_code": 0
+  },
+  "original_runs_read": [
+    {
+      "role": "initial_red",
+      "run": "20261013T073925Z-ts-bug196-red-5c44645d",
+      "metadata_path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T073925Z-ts-bug196-red-5c44645d/metadata.json",
+      "metadata_sha256": "fe53b72653b7e2a1dff6601e7f318001e27275c9f57e56a6f2973425f03a753f",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/erp-credit/creditCodec.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T073925Z-ts-bug196-red-5c44645d\\vitest.json"
+      ],
+      "started_utc": "2026-10-13T07:39:25.653904+00:00",
+      "ended_utc": "2026-10-13T07:39:37.902375+00:00",
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "exit_code": 1,
+      "counts": {
+        "numTotalTests": 428,
+        "numPassedTests": 418,
+        "numFailedTests": 10,
+        "numPendingTests": 0
+      },
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "node": "v20.19.0",
+        "npm": "10.8.2"
+      },
+      "source_test_hashes": {
+        "cp6.web/src/contracts/erp-credit/creditCodec.ts": "13d65b491d18e1fea1486f7a662cbc8dc409df8776be2f4ddd395e6079b2b6b2",
+        "cp6.web/src/contracts/erp-credit/creditCodec.test.ts": "281e3c5a535adb2245c088284738bd194b204f89100b32fced29548c6222f406"
+      },
+      "recorded_inputs_before_after_equal": true,
+      "artifact_hash_checks": {
+        "output.log": true,
+        "vitest.json": true
+      },
+      "artifacts": [
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T073925Z-ts-bug196-red-5c44645d/output.log",
+          "sha256": "41c5ade814c8551f2690a75d4434d4361baa06f78001dd27ac0b40515eff9df3"
+        },
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T073925Z-ts-bug196-red-5c44645d/vitest.json",
+          "sha256": "22e47dff8dbeb52ec6b61c6b3157e2af06bc32295dc656f73bb39419685789dd"
+        }
+      ],
+      "executed_by_this_reviewer": false,
+      "actual_assertions": 428,
+      "outcomes": {
+        "failed": 10,
+        "passed": 418
+      },
+      "unique_assertion_names": 428,
+      "new_regression_outcomes": {
+        "failed": 10,
+        "passed": 2
+      },
+      "pending": 0,
+      "todo": 0
+    },
+    {
+      "role": "complete_red",
+      "run": "20261013T103604Z-ts-bug196-red-complete-f6cf63b1",
+      "metadata_path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/metadata.json",
+      "metadata_sha256": "ea78f7f5a77f02f74d9e492fbe9fb37f1519265de2970c149d143bfd6eb848f7",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/erp-credit/creditCodec.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T103604Z-ts-bug196-red-complete-f6cf63b1\\vitest.json"
+      ],
+      "started_utc": "2026-10-13T10:36:04.152369+00:00",
+      "ended_utc": "2026-10-13T10:36:19.104840+00:00",
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "exit_code": 1,
+      "counts": {
+        "numTotalTests": 428,
+        "numPassedTests": 416,
+        "numFailedTests": 12,
+        "numPendingTests": 0
+      },
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "node": "v20.19.0",
+        "npm": "10.8.2"
+      },
+      "source_test_hashes": {
+        "cp6.web/src/contracts/erp-credit/creditCodec.ts": "13d65b491d18e1fea1486f7a662cbc8dc409df8776be2f4ddd395e6079b2b6b2",
+        "cp6.web/src/contracts/erp-credit/creditCodec.test.ts": "c92d8ae9be9f702d0999263b08ae7a0ff4ddaaaf7588aee0488dcb91809ea5e5"
+      },
+      "recorded_inputs_before_after_equal": true,
+      "artifact_hash_checks": {
+        "output.log": true,
+        "vitest.json": true
+      },
+      "artifacts": [
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/output.log",
+          "sha256": "05fd20808052e3de7b44bfeac206c9c69609d3bcdcca54b20814894b2607e15d"
+        },
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/vitest.json",
+          "sha256": "dd43bd2905621d0d568542aefee0e8df7b3d8750900f3dac4c40be9131bb628b"
+        }
+      ],
+      "executed_by_this_reviewer": false,
+      "actual_assertions": 428,
+      "outcomes": {
+        "failed": 12,
+        "passed": 416
+      },
+      "unique_assertion_names": 428,
+      "new_regression_outcomes": {
+        "failed": 12
+      },
+      "pending": 0,
+      "todo": 0
+    },
+    {
+      "role": "intermediate",
+      "run": "20261013T103806Z-ts-bug196-green-3e6985e2",
+      "metadata_path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103806Z-ts-bug196-green-3e6985e2/metadata.json",
+      "metadata_sha256": "437212ddf6f95334bfe6147b9db5f0a95f201924ced59c9e6e65aa9af725d2ca",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/erp-credit/creditCodec.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T103806Z-ts-bug196-green-3e6985e2\\vitest.json"
+      ],
+      "started_utc": "2026-10-13T10:38:06.510809+00:00",
+      "ended_utc": "2026-10-13T10:38:21.244034+00:00",
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "exit_code": 1,
+      "counts": {
+        "numTotalTests": 428,
+        "numPassedTests": 279,
+        "numFailedTests": 149,
+        "numPendingTests": 0
+      },
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "node": "v20.19.0",
+        "npm": "10.8.2"
+      },
+      "source_test_hashes": {
+        "cp6.web/src/contracts/erp-credit/creditCodec.ts": "f7108b4f2dd1d2e09ba8e38bda8d52dbb991b7d671ec25bccdf0aa4fa4dd36f5",
+        "cp6.web/src/contracts/erp-credit/creditCodec.test.ts": "c92d8ae9be9f702d0999263b08ae7a0ff4ddaaaf7588aee0488dcb91809ea5e5"
+      },
+      "recorded_inputs_before_after_equal": true,
+      "artifact_hash_checks": {
+        "output.log": true,
+        "vitest.json": true
+      },
+      "artifacts": [
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103806Z-ts-bug196-green-3e6985e2/output.log",
+          "sha256": "c41594c62310181da7316e7933aa53751e4fa255f70b5aee837e8304db5c723f"
+        },
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103806Z-ts-bug196-green-3e6985e2/vitest.json",
+          "sha256": "bf274ef4b8d9e8ad9b3dbd3ade50bd3dcee6a1537346a81e846ec425122a1fb3"
+        }
+      ],
+      "executed_by_this_reviewer": false,
+      "actual_assertions": 428,
+      "outcomes": {
+        "passed": 279,
+        "failed": 149
+      },
+      "unique_assertion_names": 428,
+      "new_regression_outcomes": {
+        "passed": 12
+      },
+      "pending": 0,
+      "todo": 0
+    },
+    {
+      "role": "final",
+      "run": "20261013T103957Z-ts-bug196-final-3c3e1efc",
+      "metadata_path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/metadata.json",
+      "metadata_sha256": "24117fa0c87abd8889885243d9bd078461df40558845c22788698c991820796f",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/erp-credit/creditCodec.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T103957Z-ts-bug196-final-3c3e1efc\\vitest.json"
+      ],
+      "started_utc": "2026-10-13T10:39:57.374625+00:00",
+      "ended_utc": "2026-10-13T10:40:13.475298+00:00",
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "exit_code": 0,
+      "counts": {
+        "numTotalTests": 428,
+        "numPassedTests": 428,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "node": "v20.19.0",
+        "npm": "10.8.2"
+      },
+      "source_test_hashes": {
+        "cp6.web/src/contracts/erp-credit/creditCodec.ts": "f7108b4f2dd1d2e09ba8e38bda8d52dbb991b7d671ec25bccdf0aa4fa4dd36f5",
+        "cp6.web/src/contracts/erp-credit/creditCodec.test.ts": "f4b05aef2944ddae2486aca7765d16d1267b6e8b629325ba6efb4abb5fe18b49"
+      },
+      "recorded_inputs_before_after_equal": true,
+      "artifact_hash_checks": {
+        "output.log": true,
+        "vitest.json": true
+      },
+      "artifacts": [
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/output.log",
+          "sha256": "82ada9dcef2e91b3d85c9252b3b544e178e30ae857202b58d76832ad25f0ea5c"
+        },
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/vitest.json",
+          "sha256": "1684f2de06e333289a82d71589572e2533665c5baaba5203d0594bc1efb31e68"
+        }
+      ],
+      "executed_by_this_reviewer": false,
+      "actual_assertions": 428,
+      "outcomes": {
+        "passed": 428
+      },
+      "unique_assertion_names": 428,
+      "new_regression_outcomes": {
+        "passed": 12
+      },
+      "pending": 0,
+      "todo": 0
+    },
+    {
+      "role": "typecheck",
+      "run": "20261013T103957Z-typecheck-edf96295",
+      "metadata_path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103957Z-typecheck-edf96295/metadata.json",
+      "metadata_sha256": "a7c0f7d9a8a483d61c9559321ebf03d870cbcb0489d2ac096989f0d4f1d06248",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "run",
+        "type-check"
+      ],
+      "started_utc": "2026-10-13T10:39:57.687598+00:00",
+      "ended_utc": "2026-10-13T10:40:54.099682+00:00",
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "exit_code": 0,
+      "counts": null,
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "node": "v20.19.0",
+        "npm": "10.8.2"
+      },
+      "source_test_hashes": {
+        "cp6.web/src/contracts/erp-credit/creditCodec.ts": "f7108b4f2dd1d2e09ba8e38bda8d52dbb991b7d671ec25bccdf0aa4fa4dd36f5",
+        "cp6.web/src/contracts/erp-credit/creditCodec.test.ts": "f4b05aef2944ddae2486aca7765d16d1267b6e8b629325ba6efb4abb5fe18b49"
+      },
+      "recorded_inputs_before_after_equal": true,
+      "artifact_hash_checks": {
+        "output.log": true
+      },
+      "artifacts": [
+        {
+          "path": "D:/CP6-worktrees/s01-11-20261012/docs/development/evidence/S01-11/implementation/20261013T103957Z-typecheck-edf96295/output.log",
+          "sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+        }
+      ],
+      "executed_by_this_reviewer": false
+    }
+  ],
+  "static_read_commands": [
+    "git --no-optional-locks -c core.longpaths=true diff b27fbe5422bbe487efce2aa4de1bf14713bd396a -- cp6.web/src/contracts/erp-credit/creditCodec.ts cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+    "Read initial scratch review, changed source/test and existing metadata/output.log/vitest.json",
+    "Read-only hash and JSON record inspection; in-memory reversal of five assertion edits for source hash comparison (no application code evaluated)"
+  ],
+  "not_performed": [
+    "No probe",
+    "No application code execution/transpile",
+    "No npm/dotnet/type-check/test command",
+    "No full 93-file review",
+    "No source/Git/ledger edits",
+    "No network/DB/Actions"
+  ],
+  "limits": [
+    "This review statically closes S01-11-R1 against the bound working bytes and verifies existing regression records; root independently owns the original-step reproduction and Issue closure.",
+    "No fix commit SHA was available at review time. Coordinator must bind any later commit to these exact reviewed source/test hashes.",
+    "Unchanged C# and design validation may be reused under prior review scope; this targeted review does not claim a new execution.",
+    "Prior Q-NB-01 capacity limitation, real Owner/currentness/permissions/tenant/store/issuer integration and all business/DB/HTTP/production NOT_RUN boundaries remain."
+  ],
+  "read_harness_note": "One metadata display script shadowed its assertion list variable after printing full RED results; corrected read-only inspection completed. This was not a product/test failure."
+}

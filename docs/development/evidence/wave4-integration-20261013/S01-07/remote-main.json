@@ -1,0 +1,459 @@
+{
+  "result": "PASS",
+  "task": "S01-07",
+  "repository": "GTX537/CP6",
+  "source_sha": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+  "baseline": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "remote_main_sha": "d9d6ced01291f9f07487e6f40d4925908926923e",
+  "pr_url": "https://github.com/GTX537/CP6/pull/197",
+  "merged_at": "2026-10-13T10:36:04Z",
+  "candidate_files_match": [
+    {
+      "path": "CP6.Entity/Contracts/Quality/.gitattributes",
+      "blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/Consumer.g.cs",
+      "blob": "0ee6073e80ee379a12193c2200b3a2552f5d1d0e"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/NativeContractCatalog.g.cs",
+      "blob": "cbb6f9aa1e2feac79c31f8188ef109c88d3eed11"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/NcrFieldMetadata.g.cs",
+      "blob": "ec814715eb94e1d647c3e3eba22a40ed40e62c63"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/NcrJson.cs",
+      "blob": "fde1a5b3f77dfbb98a93f58771ff1d9f52e136dc"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/OwnerWire.g.cs",
+      "blob": "63491ccda458368338ae9b8df2910d6a636d9ecc"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/QaNcrMainR6Declarations.g.cs",
+      "blob": "016b82900a920be618df7b0c811cec5a93fe6a70"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/README.md",
+      "blob": "cb6c1a70581390aa7c67969a4d4fb9566292e53c"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Quality/SourceQA.g.cs",
+      "blob": "93de501228df61e9bf7043caefcedddcfcbd1216"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/.gitattributes",
+      "blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqc.g.ts",
+      "blob": "5f3f13987cfc6c96ce511ab50ec1373d3f30573b"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqc.test.ts",
+      "blob": "69e32c56bef7cde05a48141ef322dc3dbd7def34"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqc.ts",
+      "blob": "a4a58acef568f041d63e8097e9ac9ba9e098afa4"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/ipqcSchemas.g.ts",
+      "blob": "6fde10e03feebf50cbeff2f39a0e65a2c79d8a8a"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/schema.ts",
+      "blob": "f650870eb4c5f30e07d295170c16cb4b66a67157"
+    },
+    {
+      "path": "cp6.web/src/contracts/quality/strictJson.ts",
+      "blob": "b564656ed8f1a595b015e5af0b5a3a4797368d7c"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/.gitattributes",
+      "blob": "5f8f1e585f1f15eaa74861b22b67c12e5c4d7473"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/DELIVERY.md",
+      "blob": "d1daabea78b1da21926217ad71e756218bb785c7"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/OWNER-CONSUMERS.md",
+      "blob": "1324415f82e857cfe04e3e3c198bc7656f0d5f13"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/PLAN.md",
+      "blob": "ab5d169b47efef9e55d613a2cda6b56a8cfc2a99"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/REVIEW.md",
+      "blob": "3f5fec76cd91e355aa9d0aa13b838aad24be9c0a"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/README.md",
+      "blob": "ea3c9066cfba316333a809b09e0bfc19db073bc3"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/environment.txt",
+      "blob": "c6e5af88f841113d61adf6c0f52e7b05eef713f3"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/first-codec-gate.log",
+      "blob": "9e52ce857b97ddebe6d897e335e5a2cb83ee2cc8"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/native-final-gate.log",
+      "blob": "2964cae1ad5d54be18690287c37538d413f96d60"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/native-format-final-gate.log",
+      "blob": "3e230c60803c280bbdb8557484bbcb219150e781"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/native-gate.log",
+      "blob": "e9b99b000cd34944aadc0676a9983db1db716900"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/node-regex-dialect.json",
+      "blob": "f70622b4dd1ab708ec9f2056c2d858042981278b"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/quality-contracts-final.trx",
+      "blob": "1d3fe84319fa1d0dc4eba7b2dc0e5455ee8f464b"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/quality-contracts-format-final.trx",
+      "blob": "5a84f1e1ddf15835c089dee44e6318eaaff71150"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/quality-contracts.trx",
+      "blob": "9175fc2c2db82d72bc1d6c0f4451276c943f8836"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-declaration-boundary.log",
+      "blob": "192a6d665b86178dedf87b17a95d12f7419e960d"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-full-native.log",
+      "blob": "d9340937d9098ffa86975f3737e184e3286ec28a"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-regex-dialect.log",
+      "blob": "5bea62d4010fbb530c64c767cb239badf59ef69a"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-rfc3339-format.log",
+      "blob": "9e3d925fbbd5ed3183b2754526fbb9344f7ccb72"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/red-writer-identity.log",
+      "blob": "cab8ac829e0b0fccc39729a845bbbf0bf9e42ea1"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/csharp/verification.json",
+      "blob": "20d04f838bbc9254da477692ca37d7cf302eb1c5"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/final-integrity.json",
+      "blob": "70f7c6ffe681a8e020379342945a2ba865ccbdaa"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/fixed-vectors.json",
+      "blob": "938fda7330248178701f1536611bc0277d745ff8"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/owner-consumers.json",
+      "blob": "1ba61e164308e232bd424f1377d1f40d7ae4b201"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/scope-review.json",
+      "blob": "c6d5d6427439afe0640d5024b414e23334927f6e"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/00-npm-ci.log",
+      "blob": "3b2ede6bc02e9d4e0025d6e3ec14ce1ee2fa2a6a"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/01-red.log",
+      "blob": "d5c6756066398ceddb99d76a309a37350f996d80"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/02-native-tests.log",
+      "blob": "626808444f4c05bb98ff6219503db6a21fda3c76"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/03-native-tests.log",
+      "blob": "dea2e84baea53882a46008b9d30f2c4bdf6b893d"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/04-type-check.log",
+      "blob": "905c99dc702c215d0802d6faef3a4bf4290ca39e"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/05-final-0.log",
+      "blob": "9d89fa52bdfe83e5f25ec9f5c20f5a3efcbc87ff"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/05-final-1.log",
+      "blob": "de7049276d105ad373e36ed46318e98db18c7e30"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/05-harness-failure.md",
+      "blob": "ceaa343b72c7923e6b4d8782589f43a2d525238d"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-0.log",
+      "blob": "9d89fa52bdfe83e5f25ec9f5c20f5a3efcbc87ff"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-1.log",
+      "blob": "526c5cba45c3a322695aa510dededeb00ff6de11"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-2.log",
+      "blob": "908099fa9f439d0b95c5f081798ed23891d318cc"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/06-final-validation.json",
+      "blob": "96a8ba32f11349856271d159b47dccd0272e04e0"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-0.log",
+      "blob": "9d89fa52bdfe83e5f25ec9f5c20f5a3efcbc87ff"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-1.log",
+      "blob": "65a6adef15a02b704704c94e7937eead0418206e"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-2.log",
+      "blob": "908099fa9f439d0b95c5f081798ed23891d318cc"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/07-final-validation.json",
+      "blob": "14234522b4465949eda6047e1f45573ca321325e"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-0.log",
+      "blob": "9d89fa52bdfe83e5f25ec9f5c20f5a3efcbc87ff"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-1.log",
+      "blob": "d3238b0853d31b2c28c7e2dfee51f5dc31b9a465"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-2.log",
+      "blob": "908099fa9f439d0b95c5f081798ed23891d318cc"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/ts/08-date-regression-validation.json",
+      "blob": "5973c8c0ce993d3ee351728f1b913299192d704b"
+    },
+    {
+      "path": "docs/development/evidence/S01-07/workflows.json",
+      "blob": "06ef034f3263b91cfa93cef4e8be835c3eba129b"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/QualityContractTests.cs",
+      "blob": "6ba6ec12b9d5a833515e4afc8df09a6c1dfd0888"
+    },
+    {
+      "path": "eng/contracts/s01-07/.gitattributes",
+      "blob": "decacdc6e0e476e5386aae48b97315bc42e9be47"
+    },
+    {
+      "path": "eng/contracts/s01-07/README.md",
+      "blob": "ae5993c7c64e7925fb73a4322ecd274533d232e0"
+    },
+    {
+      "path": "eng/contracts/s01-07/check_workflows.mjs",
+      "blob": "457b415f50616382f365db66e0c5c179423b6c67"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/capture_evidence.py",
+      "blob": "43615ab8e53eab600d266a95b08b1a0c9b523e4c"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/full-object-fixtures.json",
+      "blob": "ecc29c60418dcad51f319302c3547c5e8d6aa98d"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/generate.py",
+      "blob": "9069b5c6df51e87840b2f21220397ae7af0b2c06"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/generation-manifest.json",
+      "blob": "7b90fb99db90a5cb3892ffe6d4975847a80df216"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/make_fixtures.py",
+      "blob": "ba9580d031187061ca1be9bb9d38c30b012805ea"
+    },
+    {
+      "path": "eng/contracts/s01-07/csharp/native-field-inventory.json",
+      "blob": "cbf9168c406ae959d66dca9f9e841f9f21532a27"
+    },
+    {
+      "path": "eng/contracts/s01-07/import_sources.py",
+      "blob": "7c742d4149b05e5abcc54c946ad24ee4ed596774"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-15.cs.txt",
+      "blob": "5a03ae675ef853b6bdc686aa9cbd9b1867921b04"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-16.cs.txt",
+      "blob": "276fd124a2aff0115ee6091efc3beb233df78279"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-17.json",
+      "blob": "d6faebc8472640c29090b12d9789ad25870859ef"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/composed/composed-19.ts.txt",
+      "blob": "c6497a428d46cbb7a67f5431566e2b2af974ca29"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-FENCED-OWNER-SHAPES.json",
+      "blob": "d461aa6c3bc98f41f40c263bd1b2fee5bd2bb808"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-MES-DISPATCH-SHAPE.json",
+      "blob": "370a5744a62c194cc4ce84fe427b4eecfaf28a8c"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R6-WIRE.json",
+      "blob": "fb074fb8afb4946079b5e0076bb15234e7780348"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/NCR-R9-IQC-SOURCE-PROJECTIONS.json",
+      "blob": "95ca965191a41f88ade003714a1df6391b4cff21"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/CONSUMER-WIRE.json",
+      "blob": "376fe0593a783edf535b3d623a450bac189c7b29"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/CONTRACT-SCHEMAS.json",
+      "blob": "c0432629f3151a2b7f0f92006138f2a805a0179c"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/consumer-cp4-r1/references/owner-addenda-cp2/source-contracts/SOURCE-QA-SCHEMAS.json",
+      "blob": "6abb8834b53b0cd6e3bc146ce603b27f847491fc"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/finance-r10/CLOSED-WIRE-SCHEMA_R10.json",
+      "blob": "737c6c14a27758b936d450b8781b0ca11acbac15"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/initial-sources/QA-IPQC-01/SCHEMA_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+      "blob": "3010f99ff2c89b713478d8b1a6e29681d837efd8"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/native/design/references/initial-sources/WMS-RMA-01/WMS-RMA-01_CANONICAL-CONTRACT.json",
+      "blob": "739c36595b45c3c5ae699d2c80d57817c128420a"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-15.cs.txt",
+      "blob": "ff925ad4491bf427ba6bd728ff4668b0f24bee08"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-16.cs.txt",
+      "blob": "efb1735450be4865d7f6b19e0f4b8935b7bfbf49"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-17.json",
+      "blob": "945de2c2eec7ee23c1dfb34b5a36ec79d7c12fc6"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/original/composed-19.ts.txt",
+      "blob": "398996b362d59ef35babd2488b95e3ecd8a3e02d"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/2026-10-11-s01-task-breakdown.md",
+      "blob": "f328bd68a4fde7a61a88f159022a2c9538650784"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/bounded-patches.json",
+      "blob": "72b12a06f9a172bf981000eaf976edabe2a28570"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/composed-derivatives.json",
+      "blob": "f8036ac621328d8953eb8f5e7353401aaf2aa69d"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/container-members.json",
+      "blob": "671e8a5f8870b29352e948f917a46d5b72e8a5fa"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/profile-inputs.json",
+      "blob": "40ccbc25727e0815dcb139f8ed01cb419d194920"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/required-inputs.json",
+      "blob": "1c4811224e3744bce13ddb0cf988cdc410b9c7f0"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/s01-input-index.json",
+      "blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/pins/vectors.json",
+      "blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/ACCEPTANCE.md",
+      "blob": "8f4142fe40260d4b3a4e24e5024592d404acb357"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/CANONICAL_CONTRACT_RECOVERY_R4_SYSTEMIC.json",
+      "blob": "94d425d17a54478fff14fe4bf7a7a8b4bd3b84db"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/LANGUAGE-CONTRACTS.md",
+      "blob": "9d077710987f7f1d92cbcd795d8f909346d7a28e"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/NCR-R6-LANGUAGE-CONTRACTS.json",
+      "blob": "8cdaeb41298a9c39ae2fc7a2ae2dda70ee5789bc"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/PAYLOAD_PUBLICATIONS_RECOVERY_R4_SYSTEMIC.json",
+      "blob": "cbfd09572ca1910f0916e67137faba54efbf0812"
+    },
+    {
+      "path": "eng/contracts/s01-07/inputs/protocol/QA-IPQC-01-SPEC.md",
+      "blob": "b086f149b18a989410e1770056ecf11c6ceaaf24"
+    },
+    {
+      "path": "eng/contracts/s01-07/sources.json",
+      "blob": "ce978d861eec518c320cd2d18f8688783cc67012"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/generate.mjs",
+      "blob": "f7c17b9c3e6e18d952f85569e3056807abf37aba"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/generation.json",
+      "blob": "714cc7e24d310252a960cf52edffed541b653001"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/manual-fixtures.json",
+      "blob": "9df72b0f340c4f15056d54c4884a69129130b755"
+    },
+    {
+      "path": "eng/contracts/s01-07/ts/validate.py",
+      "blob": "9719d3437d5a81456e3ac9646d7171cef516deed"
+    }
+  ],
+  "observed_at": "2026-10-13T10:36:15.037951+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

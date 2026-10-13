@@ -1,0 +1,8 @@
+{
+  "closedAt": "2026-10-13T10:56:27Z",
+  "state": "CLOSED",
+  "url": "https://github.com/GTX537/CP6/issues/196",
+  "verified_remote_main": "b7d8da0182530aec3d33d3d5d9e4bc3a86b0f0e9",
+  "observed_at": "2026-10-13T10:56:11.663456+00:00",
+  "clock_basis": "closedAt is GitHub server UTC; observed_at is coordinator host UTC taken after gh issue view returned CLOSED, not the action start. The service clock is approximately16 seconds ahead of the host here; fields retain their own clock identities and must not be ordered across clocks."
+}
