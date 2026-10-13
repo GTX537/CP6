@@ -1,0 +1,17 @@
+{
+  "observed_at": "2026-10-13T11:23:16.423255+00:00",
+  "postgres_bin": "C:\\Program Files\\PostgreSQL\\18\\bin",
+  "binaries": {
+    "initdb": true,
+    "pg_ctl": true,
+    "psql": true,
+    "postgres": true
+  },
+  "binary_version": "postgres (PostgreSQL) 18.6",
+  "reserved_endpoint": "127.0.0.1:55427",
+  "listeners_at_probe": [],
+  "reserved_resource_root": "D:/CP6-local-test/WP02-07/",
+  "reserved_root_exists": false,
+  "resource_provisioned": false,
+  "scope": "Binary version and listener read only. No database connected/created; existing service5432 untouched. Worker must recheck immediately before provisioning."
+}

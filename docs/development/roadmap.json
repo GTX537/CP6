@@ -158622,6 +158622,11 @@
       "date": "2026-10-13",
       "change": "Wave4 S01-11/10/07 and WP02-01 normally merged and remote verified;16/375 tasks DONE,S01 11/12. Issue196 corrected; formal PG mapping adopted with20 lossless scale capacities. Business0/125,247 NOT_RUN and historical gaps unchanged. No next-wave assignment.",
       "evidence": "docs/development/evidence/wave4-integration-20261013/README.md"
+    },
+    {
+      "date": "2026-10-13",
+      "change": "Wave5: S01-12 / WP02-27 / WP02-07 / WP02-11 READY/CONFIRMED with disjoint windows; WP02-02 BLOCKED on trusted Main-consumable ctx-binding artifact. No actual START;16/375 DONE,0/125 business,247 NOT_RUN unchanged.",
+      "evidence": "docs/development/dispatch/20261013-wave5/README.md"
     }
   ],
   "implementation_assessment": {
@@ -159586,15 +159591,31 @@
       ],
       "relative_size": "M",
       "kind": "DESIGN",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "A / S01-12（沿用原S01-11对话）",
+        "repository": "Main",
+        "branch": "codex/s01-12-adoption-20261013",
+        "worktree": "D:/CP6-worktrees/s01-12-20261013",
+        "claimed_at": "2026-10-13T11:35:46.819214+00:00",
+        "baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "docs/development/evidence/s01-adoption/",
+          "eng/contracts/s01-12/"
+        ],
+        "handoff_branch": "codex/dev-handoff-s01-12",
+        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665"
+      },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
         "PostgreSQL方向与当前授权/历史接受保持；协调对话确认共享文件窗口，不能把模拟或静态通过当运行证据。"
@@ -159766,12 +159787,14 @@
         "file:Main:CP6.WebApi/Controllers/Sys/AuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "BLOCKED",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-02",
       "entry_gate": "NOT_CHECKED",
       "assignment": null,
-      "blockers": [],
+      "blockers": [
+        "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
+      ],
       "validation_evidence": [],
       "delivery_evidence": null,
       "entry_conditions": [
@@ -159935,11 +159958,47 @@
         "file:Platform:src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-07",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / WP02-07（沿用原WP02-01对话）",
+        "repository": "Platform",
+        "branch": "codex/wp02-07-caller-inbox-20261013",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-07-20261013",
+        "claimed_at": "2026-10-13T11:35:46.819214+00:00",
+        "baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.EntityFramework/InboxV1/",
+          "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+          "tests/CP6.Platform.UnitTests/InboxV1/",
+          "tests/CP6.Platform.WP0207.PostgreSqlTests/",
+          "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+          "docs/development/evidence/WP02-07/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-07",
+        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "reserved_local_resource": {
+          "endpoint": "127.0.0.1:55427",
+          "root": "D:/CP6-local-test/WP02-07/",
+          "run_directory": "D:/CP6-local-test/WP02-07/<owner32>/",
+          "provisioned": false,
+          "postgres_bin": "C:/Program Files/PostgreSQL/18/bin",
+          "binary_version_at_probe": "18.6",
+          "owner_marker": "CP6-WP02-07:<owner32>",
+          "database_name": "cp6_wp0207_<UTCyyyyMMdd>_<owner8>",
+          "authentication": "New task-only SCRAM credentials in protected private pwfile, no existing appsettings/production credentials",
+          "roles": "Task bootstrap only for owned setup; runtime login NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS, minimum DML",
+          "identity": "Match full owner token, canonical data/run paths, endpoint, server system identity, DB OID/name/owner and runtime session_user before DDL/test/cleanup",
+          "cleanup": "Only own pg_ctl cluster and resources after identity checks and zero unexpected sessions; no force termination; verify canonical containment before recursive delete and keep evidence outside removed runtime data",
+          "failure": "Provisioning/identity failure fails closed and records NOT_RUN/BLOCKED, never skip as PASS",
+          "forbidden": "Existing5432 service, business databases, global credentials/config, other task resources"
+        }
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -160074,11 +160133,31 @@
         "Platform:http-resilience"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-11",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "D / WP02-11（沿用原S01-07对话）",
+        "repository": "Platform",
+        "branch": "codex/wp02-11-http-resilience-20261013",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-11-20261013",
+        "claimed_at": "2026-10-13T11:35:46.819214+00:00",
+        "baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.AspNetCore/HttpV2/",
+          "src/CP6.Platform.AspNetCore/Cp6HttpResilienceServiceCollectionExtensions.cs",
+          "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+          "tests/CP6.Platform.AspNetCoreTests/HttpV2/",
+          "docs/WP02-11-HTTP-V2.md",
+          "docs/development/evidence/WP02-11/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-11",
+        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -160596,11 +160675,33 @@
         "Platform:package-trust"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-27",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "B / WP02-27（沿用原S01-10对话）",
+        "repository": "Platform",
+        "branch": "codex/wp02-27-package-capabilities-20261013",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-27-20261013",
+        "claimed_at": "2026-10-13T11:35:46.819214+00:00",
+        "baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
+        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.Release/CapabilitiesV1/",
+          "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+          "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+          "contracts/release/capabilities/v1/",
+          "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/",
+          "eng/wp02-27/",
+          "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+          "docs/development/evidence/WP02-27/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-27",
+        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,

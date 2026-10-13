@@ -1,0 +1,453 @@
+{
+  "version": "CP6-WAVE5-DISPATCH/1",
+  "issued_at": "2026-10-13T11:35:46.819214+00:00",
+  "clock_basis": "coordinator host UTC",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "queued_or_running": []
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "queued_or_running": []
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": []
+    }
+  },
+  "main_baseline": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+  "platform_baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "tasks": [
+    {
+      "title": "采用证据与消费者交接",
+      "write_paths": [
+        "docs/development/evidence/s01-adoption/",
+        "eng/contracts/s01-12/"
+      ],
+      "write_notes": "只新增采用清单、证据比较器和必要的只读验证harness。产品代码、原向量/expected、profile/Schema/映射、所有现有项目与锁文件只读；不要把缺失的旧DLL hash补造成原执行事实。任务私有比较器入口固定为 eng/contracts/s01-12/verify_adoption.py，参数和可复现运行步骤写README。不得修改其他S01报告。",
+      "checks": [
+        "固定S01-02至11全部远端交付和实际消费代码/输入/环境身份；Main、CRM、Platform源码与未发布包能力分开登记，源码祖先关系不代替当前字节/消费者接线核查。",
+        "以CP6-S01-CONTRACT-INPUTS/1.0.0的16 profile、122条固定向量建逐ID比较矩阵，标清各消费者的实际适用域。56条词法向量（25 CREDIT+9 INV+22 ATP）可作C#/TS/PG对应比较；QA等投影/类型/路由向量不强行声称三语言等价。独立expected不由某实现输出生成。",
+        "纳入S01-11最终TS428与Buffer所有权回归、S01-08终态版本补充、S01-10正式映射采纳与20项无损尺度决定；保留原运行时PROPOSED身份和失败历史。旧PG结果仅在消费语义/源码/依赖等复用条件成立时引用，不能改称本轮新执行。",
+        "按S01关联修订case逐项写完整/部分/未覆盖子断言与证据；静态或codec成功不把整条247业务运行场景标PASS。列出所有已接消费者、未接Owner/writer/HTTP/存储/页面及准确责任任务。",
+        "输出给S02/S03/S05/S07/S08/S09的可用能力、准确版本、尚缺Owner门。核实共同主线组合：只有新增比较或合并组合的实际风险需要补跑相应局部验证，其余输入未变结果复用并保留适用边界。",
+        "交付manifest.json、README.md及可复现校验报告，机器清单无悬空证据/hash/向量，写明07原DLL hash缺失、发布包/生产/租户业务尚未验收。共享台账更新建议交COORD完成，不在本分支直接更新。"
+      ],
+      "boundary": "本任务是采用证据收口，不补写产品行为、迁移或真实Owner接线。发现合同差异应发QUESTION附固定输入与最小反例，不能改expected使比较通过。没有数据库资源窗口；已有PG结果优先准确复用，确有新输入风险再申请具体独占窗口。",
+      "commands": [
+        "python eng/contracts/s01-12/verify_adoption.py",
+        "python docs/development/tools/manage_roadmap.py"
+      ],
+      "id": "S01-12",
+      "lane": "A",
+      "previous_task": "S01-11",
+      "repository": "Main",
+      "repo_slug": "GTX537/CP6",
+      "branch": "codex/s01-12-adoption-20261013",
+      "worktree": "D:/CP6-worktrees/s01-12-20261013",
+      "baseline": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-s01-12",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/S01-12/messages/",
+      "dependencies": [
+        {
+          "task": "S01-02",
+          "delivery": {
+            "source_sha": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+            "remote_main_sha": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+            "pr_url": "https://github.com/GTX537/CP6/pull/184",
+            "observed_at": "2026-10-12T13:45:22.652158+00:00",
+            "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave2-integration-20261012/S01-02/remote-main.json"
+          }
+        },
+        {
+          "task": "S01-03",
+          "delivery": {
+            "source_sha": "b24f76445ffdc9b4df0de77eb394a6aa47726a0c",
+            "remote_main_sha": "08bf7c923fa0b21af39d5e1f1fd550ed635246ed",
+            "pr_url": "https://github.com/GTX537/CP6/pull/188",
+            "observed_at": "2026-10-13T03:40:43.067932+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave3-integration-20261012/S01-03/remote-main.json",
+            "scope": "Normal protected merge; remote main ancestry and all final candidate Git blobs verified. Scoped contract task only, not business acceptance. Fresh verification time uses the coordinator host clock; original host/server timestamps are retained separately in receipt.",
+            "original_host_observed_at": "2026-10-13T02:57:27.194733+00:00",
+            "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263"
+          }
+        },
+        {
+          "task": "S01-04",
+          "delivery": {
+            "source_sha": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+            "remote_main_sha": "688383439311a3babf00bae98ee426122ce60cd1",
+            "pr_url": "https://github.com/GTX537/CP6/pull/190",
+            "observed_at": "2026-10-13T03:40:43.897257+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave3-integration-20261012/S01-04/remote-main.json",
+            "scope": "Normal protected merge; remote main ancestry and all final candidate Git blobs verified. Scoped contract task only, not business acceptance. Fresh verification time uses the coordinator host clock; original host/server timestamps are retained separately in receipt.",
+            "original_host_observed_at": "2026-10-13T03:07:10.474156+00:00",
+            "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263"
+          }
+        },
+        {
+          "task": "S01-05",
+          "delivery": {
+            "source_sha": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+            "remote_main_sha": "8b55fb3b6dd4f99909897926ecc83d5c0d1efcd2",
+            "pr_url": "https://github.com/GTX537/CP6/pull/185",
+            "observed_at": "2026-10-12T13:46:42.477768+00:00",
+            "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave2-integration-20261012/S01-05/remote-main.json"
+          }
+        },
+        {
+          "task": "S01-06",
+          "delivery": {
+            "source_sha": "f406e4e515a7ce82d77db5307e467e7bcdbc25e4",
+            "remote_main_sha": "bd25558ea4c0981b0cff1e4fa77ab8f61277211c",
+            "pr_url": "https://github.com/GTX537/CP6/pull/191",
+            "observed_at": "2026-10-13T03:40:45.917413+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave3-integration-20261012/S01-06/remote-main.json",
+            "scope": "Normal protected merge; remote main ancestry and all final candidate Git blobs verified. Scoped contract task only, not business acceptance. Fresh verification time uses the coordinator host clock; original host/server timestamps are retained separately in receipt.",
+            "original_host_observed_at": "2026-10-13T03:09:25.841315+00:00",
+            "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263"
+          }
+        },
+        {
+          "task": "S01-07",
+          "delivery": {
+            "source_sha": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+            "remote_main_sha": "d9d6ced01291f9f07487e6f40d4925908926923e",
+            "pr_url": "https://github.com/GTX537/CP6/pull/197",
+            "observed_at": "2026-10-13T10:36:15.037951+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave4-integration-20261013/S01-07/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        },
+        {
+          "task": "S01-08",
+          "delivery": {
+            "source_sha": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+            "remote_main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+            "pr_url": "https://github.com/GTX537/CP6.CRM/pull/90",
+            "observed_at": "2026-10-13T03:40:55.373292+00:00",
+            "repository": "GTX537/CP6.CRM",
+            "path": "docs/development/evidence/wave3-integration-20261012/S01-08/remote-main.json",
+            "scope": "Normal protected merge; remote main ancestry and all final candidate Git blobs verified. Scoped contract task only, not business acceptance. Fresh verification time uses the coordinator host clock; original host/server timestamps are retained separately in receipt.",
+            "original_host_observed_at": "2026-10-13T03:35:07.964360+00:00",
+            "verification_remote_main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339"
+          }
+        },
+        {
+          "task": "S01-09",
+          "delivery": {
+            "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+            "remote_main_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/58",
+            "observed_at": "2026-10-12T13:49:03.966283+00:00",
+            "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json"
+          }
+        },
+        {
+          "task": "S01-10",
+          "delivery": {
+            "source_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+            "remote_main_sha": "8e48ee78fd70a2b53ebb39efe7ba7deb351b6840",
+            "pr_url": "https://github.com/GTX537/CP6/pull/198",
+            "observed_at": "2026-10-13T10:47:56.086663+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave4-integration-20261013/S01-10/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        },
+        {
+          "task": "S01-11",
+          "delivery": {
+            "source_sha": "6dbc1a00cec1349c2ff7fdc2fe633d64ce2cf82d",
+            "remote_main_sha": "b7d8da0182530aec3d33d3d5d9e4bc3a86b0f0e9",
+            "pr_url": "https://github.com/GTX537/CP6/pull/199",
+            "observed_at": "2026-10-13T10:55:15.593155+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave4-integration-20261013/S01-11/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/S01-12-admission.md",
+          "sha256": "8df005e30f4cc82b8578393e3b73553de7e27881f0ee822d43e3b250bb056f49",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/S01-12-admission.json",
+          "sha256": "bbb73d48de294492d93aa9a0a047c65dc1483d0e54eb49c5cf52e8d2720b6891",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    },
+    {
+      "title": "Platform包能力矩阵与不可变信任验证",
+      "write_paths": [
+        "src/CP6.Platform.Release/CapabilitiesV1/",
+        "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+        "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+        "contracts/release/capabilities/v1/",
+        "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/",
+        "eng/wp02-27/",
+        "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+        "docs/development/evidence/WP02-27/"
+      ],
+      "write_notes": "能力合同用独立CapabilitiesV1命名空间和contracts/release/capabilities/v1，不更改历史formal v1协议。Release csproj仅登记/打包本任务新资产，不改变依赖、稳定版本或签名规则。既有FormalPackagePublicationValidator仅可增加兼容入口，优先在新目录组合。CLI Program.cs、ReleaseContractIds/MediaTypes、根版本/项目/锁、P10脚本/信任根/证书、旧测试设施均只读。任务脚本只本地构建/检查，不提供发布路径；新测试namespace包含CapabilitiesV1。",
+      "checks": [
+        "先读Main docs/devops/README.md、docs/client/r2/README.md及Platform P10-RELEASE-GOVERNANCE，核原PLT-RELEASE和现有七包正式清单。保持已有发布权威、信任和Build once/deploy many；本任务没有发布执行授权。",
+        "分别记录SourceFrozen、ContractShapeValid、ArtifactBytesVerified、TrustCurrentlyAccepted及后续Host/Runtime/Business状态；精确固定仓库完整SHA、包ID/version/hash、feed和证据，源码存在不代表0.10.2制品已含ctx-binding-v1。",
+        "实现有版本的能力/兼容矩阵与本地校验，覆盖准确S01-09 profile、ctx-binding-v1及已知上下文边界；未测SDK/OS/arch/schema/profile/DB/host组合保持UNKNOWN并失败关闭，不按major兼容猜测。生成后续可准确引用的consumer identity/lock文档。",
+        "拒绝mutable tag/latest充身份、同ID/version不同hash、改source、混版本/包集合/错feed、未知能力或兼容范围、重复/非法JSON；原记录和签名字节不可改写。",
+        "以现有固定根和真正包验证器检查签名/时间戳/当前撤销，加入撤销/历史/未知根/坏时间戳/篡改archive反例，fixture只能放本人目录。在线撤销不可用保留失败或UNKNOWN，不降级离线成功、不改信任根、不伪造workflow/run身份。",
+        "对本机七个0.10.2缓存原包实际重新核hash并运行当前正式验证器，记录真实结论与评估时间；当前准入仅hash7/7，并非签名成功。新源码如做本地pack用唯一test prerelease/source/attempt及独占产物目录，验资产/API/hash并保持NOT_PUBLISHED/NOT_FORMALLY_TRUSTED。",
+        "执行新能力/Schema/兼容/签名反例及相关既有Release、架构回归，保留失败和输入/产物身份。按原32AC列出库内子断言与正式发布/宿主未验收责任，明确MainPG解除阻塞所缺的准确制品和后续动作。"
+      ],
+      "boundary": "可交付本地校验与身份能力，不能占用新正式版本、发布feed/tag、访问签名私钥/改全局信任、运行Actions或启用Main/CRM。WP02-02保持BLOCKED，直到其准确受信任不可变消费身份独立满足；本地candidate/test包不替代正式制品。无数据库窗口。",
+      "commands": [
+        "dotnet test tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj -c Release --filter \"FullyQualifiedName~CapabilitiesV1|FullyQualifiedName~FormalPackagePublicationTests|FullyQualifiedName~PinnedNuGetTrustPolicyTests|FullyQualifiedName~FormalPackageVerifierTests\" --logger \"trx;LogFileName=wp02-27-release.trx\" --results-directory artifacts/wp02-27/test-results",
+        "dotnet test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj -c Release --logger \"trx;LogFileName=wp02-27-architecture.trx\" --results-directory artifacts/wp02-27/test-results",
+        "# 再按任务私有runner运行七包实际verify-formal-package与本地候选pack/inspect，完整参数留在执行证据。"
+      ],
+      "id": "WP02-27",
+      "lane": "B",
+      "previous_task": "S01-10",
+      "repository": "Platform",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-27-package-capabilities-20261013",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-27-20261013",
+      "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-27",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-27/messages/",
+      "dependencies": [
+        {
+          "task": "S01-09",
+          "delivery": {
+            "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+            "remote_main_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/58",
+            "observed_at": "2026-10-12T13:49:03.966283+00:00",
+            "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json"
+          }
+        },
+        {
+          "task": "WP02-01",
+          "delivery": {
+            "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+            "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+            "observed_at": "2026-10-13T07:39:05.879535+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-package.md",
+          "sha256": "60e6b23953da3c13d74c8c0128e306c472bd9e4f7f9db99666b4a46184fe150d",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-package.json",
+          "sha256": "fdb4a2f63b922cad2569993070b404b0fa0b408b8f71876a38dbde14a82135b8",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.md",
+          "sha256": "8c9f2c67e3c96677c15dbf7ecd82c8048cd09ba4ab08948ec58785995d8bbd45",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.json",
+          "sha256": "051d719fca3efa40ede09aa29ed89b97046e98e7e4c7fe7a38434e44e2ed0578",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    },
+    {
+      "title": "Platform调用方同事务Inbox与原结果槽",
+      "write_paths": [
+        "src/CP6.Platform.EntityFramework/InboxV1/",
+        "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+        "tests/CP6.Platform.UnitTests/InboxV1/",
+        "tests/CP6.Platform.WP0207.PostgreSqlTests/",
+        "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+        "docs/development/evidence/WP02-07/"
+      ],
+      "write_notes": "新增API置于InboxV1独有命名空间；Cp6InboxProcessor.cs仅可增加兼容重载/委托，旧行为与模型保持。任务私有net8.0测试项目可新增csproj及Directory.Packages.props，显式导入根中心版本并只新增Npgsql8.0.8、Npgsql.EntityFrameworkCore.PostgreSQL8.0.11固定依赖，沿用EF8.0.30/现有SDK测试依赖，不关闭审计或警告，不改根项目/solution。新单元测试命名空间包含InboxV1。共同Contracts/Abstractions/旧EF实体/映射/Retention/Outbox只读；若证明必改须先申请准确兼容窗口。",
+      "checks": [
+        "按原PLT-DEL、S6及修订来源实现调用方持有真实DbContext/DbTransaction的入口；保留旧ProcessAsync，不能新开事务、自行commit或把现callback位置当完整precheckpoint门。库pending结果与已确认commit结果明确分开。",
+        "重复/低版/同版/唯一冲突后重读也先经过权威内容准入；七decision封闭、运输identity冲突优先。rawHash、data/contentHash、原key与原字节各有独立域，不重编码或让incoming自证当前权威。",
+        "Owner业务、原结果槽、观察/冲突、Inbox及checkpoint在同连接同事务提交；调用方证实原合同锁序，txId字符串/布尔声明不冒充真实锁持有。原结果披露用当前读权；ERP原CommandInbox仍由原Owner管理。",
+        "真实PG验证提交/完整回滚、缺/异连接/已结束事务、A/B错误绑定、并发同键、序列化失败、同raw冲突/同版data冲突/合法运输差异、commit确认丢失后的原key只读查询。未知提交不换key、不先返回transport成功，不用InMemory/SQLite替代。",
+        "独立新增PG映射要验证实际并发token，不能把SQL Server byte[] rowversion视为PG能力。新增结果不能被旧技术保留清理误删；不扩为全lease/retention/requeue重构。",
+        "以完整原60AC和关联修订为索引标记本任务子断言、宿主与后继责任；任务私有PG测试实际发现/通过/失败/跳过、源/依赖/产物/事务身份与故障证据可追溯，未执行真实业务保持NOT_RUN。"
+      ],
+      "boundary": "这是Platform库的调用方事务能力与隔离PG验证，Main/CRM真实Owner采用、全链库存/财务效果和发布包未自动完成。只准操作下面独占测试资源，实际操作前重新查占用并登记owner，禁止连接既有业务库或读取应用凭据。 独占127.0.0.1:55427及D:/CP6-local-test/WP02-07/<owner32>/，数据库cp6_wp0207_<UTCyyyyMMdd>_<owner8>、marker CP6-WP02-07:<owner32>。新SCRAM任务凭据与最小权限角色；先核完整owner/真实路径/端口/系统身份/DB OID及principal。清理前再核身份和非任务会话，禁止强杀；递归删除先核绝对路径包含性并保留日志。本轮尚未建库。",
+      "commands": [
+        "dotnet test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj --filter FullyQualifiedName~InboxV1",
+        "dotnet test tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+        "dotnet test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj"
+      ],
+      "local_resource": {
+        "endpoint": "127.0.0.1:55427",
+        "root": "D:/CP6-local-test/WP02-07/",
+        "run_directory": "D:/CP6-local-test/WP02-07/<owner32>/",
+        "provisioned": false,
+        "postgres_bin": "C:/Program Files/PostgreSQL/18/bin",
+        "binary_version_at_probe": "18.6",
+        "owner_marker": "CP6-WP02-07:<owner32>",
+        "database_name": "cp6_wp0207_<UTCyyyyMMdd>_<owner8>",
+        "authentication": "New task-only SCRAM credentials in protected private pwfile, no existing appsettings/production credentials",
+        "roles": "Task bootstrap only for owned setup; runtime login NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS, minimum DML",
+        "identity": "Match full owner token, canonical data/run paths, endpoint, server system identity, DB OID/name/owner and runtime session_user before DDL/test/cleanup",
+        "cleanup": "Only own pg_ctl cluster and resources after identity checks and zero unexpected sessions; no force termination; verify canonical containment before recursive delete and keep evidence outside removed runtime data",
+        "failure": "Provisioning/identity failure fails closed and records NOT_RUN/BLOCKED, never skip as PASS",
+        "forbidden": "Existing5432 service, business databases, global credentials/config, other task resources"
+      },
+      "id": "WP02-07",
+      "lane": "C",
+      "previous_task": "WP02-01",
+      "repository": "Platform",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-07-caller-inbox-20261013",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-07-20261013",
+      "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-07",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-07/messages/",
+      "dependencies": [
+        {
+          "task": "S01-09",
+          "delivery": {
+            "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+            "remote_main_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/58",
+            "observed_at": "2026-10-12T13:49:03.966283+00:00",
+            "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json"
+          }
+        },
+        {
+          "task": "WP02-01",
+          "delivery": {
+            "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+            "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+            "observed_at": "2026-10-13T07:39:05.879535+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.md",
+          "sha256": "f1de6612255caf602211bde5d25e4d903278fc65d94f46bc6a38c4cca99f842a",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.json",
+          "sha256": "490b497a92a805967f24a9de29cb2a547b69844110a7bf88a5e366fbe6ee1e31",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    },
+    {
+      "title": "Platform HTTP错误、安全重试和截止时间",
+      "write_paths": [
+        "src/CP6.Platform.AspNetCore/HttpV2/",
+        "src/CP6.Platform.AspNetCore/Cp6HttpResilienceServiceCollectionExtensions.cs",
+        "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+        "tests/CP6.Platform.AspNetCoreTests/HttpV2/",
+        "docs/WP02-11-HTTP-V2.md",
+        "docs/development/evidence/WP02-11/"
+      ],
+      "write_notes": "新功能在HttpV2命名空间，通过显式opt-in重载使用；两个既有extensions文件只能增加兼容入口，旧API/profile/default保留。新测试命名空间包含HttpV2；既有测试及共享Contracts/Abstractions/Testing、根项目/锁/依赖配置均只读，复用TimeProvider与当前HTTP resilience依赖，不新增共享helper。",
+      "checks": [
+        "新增安全错误正文与traceId映射，按准确端点白名单/数量/字节上限处理errors，避免异常/输入/secret原样输出；正文已开始或连接已断不拼第二份正文。保留既有CRM错误合同和认证流程。",
+        "有名client/operation可信绑定才可选择写重试；绑定tenant/action/key/version/digest、原receipt/query/retention及目标/凭据/route epoch证据。外部header、Idempotency-Key格式或bool声明不授durable dedup能力；真实Owner未证明的写profile必须Disabled。",
+        "monotonic剩余budget及取消贯穿子调用，准确区分attempt/total超时，不按duration猜来源。caller取消不重试，未知来源停止；HttpClient和pipeline总预算有唯一权威。",
+        "严格执行来源报告列出的Retry-After单值/整数/三日期、UTC到monotonic锚定、一次jitter、max(S,L)、等待上限与W+A≤R的决策/发送双核。超大合法等待直接停止；提前/迟醒重验，取消零后续attempt。固定边界和正反例逐条运行。",
+        "写Unknown保留原key/body/digest/binding并先查询原结果，不能改身份/租户/key再次制造效果；CircuitOpen不把已有Unknown改为NotSent。07同轮候选不是远端Owner已原子去重的证据。",
+        "实际本地loopback HTTP验证attempt数、取消和预算，确定性clock覆盖精确边界；原API与既有HTTP回归按影响运行。原42AC逐项标明本任务子断言及宿主责任，不把fixture协议成功写为生产exactly-once。"
+      ],
+      "boundary": "本任务无数据库窗口，无真实远端写profile启用或生产接线。测试fixture证明库策略，不证明远端业务去重；声明未经证实的能力必须失败关闭。",
+      "commands": [
+        "dotnet test tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj --filter FullyQualifiedName~HttpV2",
+        "dotnet test tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj --filter \"FullyQualifiedName~HttpResilienceTests|FullyQualifiedName~GatewayContractTests|FullyQualifiedName~AuthenticationContractTests\"",
+        "dotnet test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj"
+      ],
+      "id": "WP02-11",
+      "lane": "D",
+      "previous_task": "S01-07",
+      "repository": "Platform",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-11-http-resilience-20261013",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-11-20261013",
+      "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-11",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-11/messages/",
+      "dependencies": [
+        {
+          "task": "WP02-01",
+          "delivery": {
+            "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+            "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+            "observed_at": "2026-10-13T07:39:05.879535+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.md",
+          "sha256": "f1de6612255caf602211bde5d25e4d903278fc65d94f46bc6a38c4cca99f842a",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.json",
+          "sha256": "490b497a92a805967f24a9de29cb2a547b69844110a7bf88a5e366fbe6ee1e31",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    }
+  ],
+  "held_task": {
+    "id": "WP02-02",
+    "state": "BLOCKED",
+    "reason": [
+      "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
+    ]
+  },
+  "worker_acknowledgements": [],
+  "shared_write_owner": "COORD",
+  "formal_wp05_adoption": "PROPOSED",
+  "business_result": "NOT_RUN"
+}

@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "kind": "READ_ONLY_ADMISSION_RECOMMENDATION",
+  "date": "2026-10-13",
+  "main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+  "platform_pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "platform_read_worktree": "D:/CP6.Platform-worktrees/wp02-01-20261012",
+  "platform_read_worktree_head": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+  "read_worktree_tree_matches_platform_main": true,
+  "remote_scope": "Parent-supplied remote pin plus existing integration receipts; independently checked local main/origin/main, ancestry and whole-tree equality. No new ls-remote/fetch/API requests by this agent.",
+  "recommendation": "ADMIT_TWO_DISJOINT_LIBRARY_IMPLEMENTATION_LANES_AFTER_COORD_CLAIM_AND_EXPLICIT_RESOURCE_RESERVATION",
+  "prerequisites": [
+    {
+      "task": "S01-09",
+      "state": "DONE",
+      "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+      "implementation_sha": "708253360269396a43c2b25cce1c87cd9f59f9d2",
+      "remote_main_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "pr": 58,
+      "ancestor_of_current_main": true,
+      "scope": "Exact native contract routing, strict original byte capture and pinned bundle overload; 110 local assertions in original evidence. No runtime Owner adoption, DB atomicity or package publication."
+    },
+    {
+      "task": "WP02-01",
+      "state": "DONE",
+      "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+      "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "pr": 59,
+      "ancestor_of_current_main": true,
+      "scope": "ctx-binding-v1 source, explicit scopes, current authority/verifier hooks and compatibility; original 243 HTTP + 259 unit and coordinator 98 architecture assertions. No new published package or real host/PG/final Owner fence proof."
+    }
+  ],
+  "lanes": [
+    {
+      "task": "WP02-07",
+      "suggested_lane": "C",
+      "entry_decision": "ADMISSIBLE_AFTER_COORD_CLAIM_AND_PG_TEST_WINDOW",
+      "ledger_state": "PLANNED",
+      "ledger_entry_gate": "NOT_CHECKED",
+      "allowed_write_paths": [
+        "src/CP6.Platform.EntityFramework/InboxV1/",
+        "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+        "tests/CP6.Platform.UnitTests/InboxV1/",
+        "tests/CP6.Platform.WP0207.PostgreSqlTests/",
+        "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+        "docs/development/evidence/WP02-07/"
+      ],
+      "conditional_existing_file_rule": "Cp6InboxProcessor.cs additive versioned entrypoint/delegation only; retain old ProcessAsync, constructor and enum semantics. Exact new public signatures go in task PLAN. If implementation genuinely needs other legacy entity/model files, stop only those dependent edits and request coordinator window expansion with evidence.",
+      "project_dependency_window": {
+        "owner": "WP02-07 only",
+        "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/",
+        "allowed": "Non-packable net8.0 project; local Directory.Packages.props explicitly imports ../../Directory.Packages.props and adds exact Npgsql 8.0.8 / Npgsql.EntityFrameworkCore.PostgreSQL 8.0.11 pins. Reuse root EF8.0.30, xunit, test SDK. No disabling central versions/audits/warnings, no root dependency edits, no version upgrades.",
+        "solution": "No .sln edit needed to run project directly.",
+        "resource": "Dedicated WP02-07 isolated PostgreSQL database/schema/role namespace to be reserved before DB writes. Do not reuse Main/CRM task DB or business environments."
+      },
+      "readonly_inputs": [
+        "S01-09 Messaging native catalog/byte capture",
+        "WP02-01 Contracts/Abstractions/Context and Messaging/Context",
+        "Existing EF entities/types/model, retention, Outbox store/dispatcher",
+        "All other test projects and shared Testing helpers"
+      ],
+      "required_runtime": [
+        "Real PostgreSQL caller-owned same-connection same-transaction business+receipt+Inbox/checkpoint/observation commit and rollback",
+        "Every duplicate/old/equal/unique-conflict reread route passes precheckpoint",
+        "Raw/content digest domain conflicts and immutable original results",
+        "No successful transport outcome before confirmed outer commit; commit-unknown same-key recovery",
+        "Concurrent same key and serialization/unique conflict recover without second business effect",
+        "Wrong/missing/ended/different transaction and tenant binding rejected; no provider-free memory substitute"
+      ],
+      "excluded": [
+        "CRM/Main adoption or migrations",
+        "Owner identity/financial/inventory authority",
+        "Lease-v2/requeue/retention implementation",
+        "New Platform business ledger",
+        "Package publication",
+        "SQL Server expansion"
+      ]
+    },
+    {
+      "task": "WP02-11",
+      "suggested_lane": "D",
+      "entry_decision": "ADMISSIBLE_AFTER_COORD_CLAIM_WITH_UNPROVEN_WRITE_PROFILES_DISABLED",
+      "ledger_state": "PLANNED",
+      "ledger_entry_gate": "NOT_CHECKED",
+      "allowed_write_paths": [
+        "src/CP6.Platform.AspNetCore/HttpV2/",
+        "src/CP6.Platform.AspNetCore/Cp6HttpResilienceServiceCollectionExtensions.cs",
+        "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+        "tests/CP6.Platform.AspNetCoreTests/HttpV2/",
+        "docs/WP02-11-HTTP-V2.md",
+        "docs/development/evidence/WP02-11/"
+      ],
+      "conditional_existing_file_rule": "Only additive opt-in entrypoints in two existing extension files; old writer/profile/signature/behavior retained. New versioned types remain under AspNetCore/HttpV2. Legacy tests untouched/read-only unless coordinator explicitly expands.",
+      "dependency_rule": "Use existing Microsoft.Extensions.Http.Resilience 10.9.0 / shared framework / TimeProvider. No csproj, root props, Testing, Contracts or Abstractions changes. Test-only helper copies/new helpers stay task local.",
+      "required_runtime": [
+        "Deterministic monotonic budget, nested deadline no reset, precise strategy-source timeout classification even equal durations",
+        "Retry-After single value including three HTTP date forms, giant nonnegative integer stop, max(S,L), cap and W+A budget boundaries, cancellation/early-late wake",
+        "HTTP loopback real transport attempts with unchanged key/body/digest/binding; reads can demonstrate bounded retry, unproven writes zero retry",
+        "Safe errors whitelist/count/length/total size, no input/exception echo; started/aborted response no second body",
+        "Owner-proven write adapter contract exercised only with clearly labelled fixture evidence, no real production binding enabled without actual durable receipt/query proof"
+      ],
+      "excluded": [
+        "Gateway route rollout or global behavior replacement",
+        "CRM browser/OIDC/CSRF adoption",
+        "WP02-07 unpublished candidate dependency",
+        "Owner database or receipt implementation",
+        "Package publication",
+        "Shared Release/Testing code"
+      ]
+    }
+  ],
+  "shared_readonly": [
+    "src/CP6.Platform.Contracts/",
+    "src/CP6.Platform.Abstractions/",
+    "src/CP6.Platform.Messaging/",
+    "src/CP6.Platform.Testing/",
+    "src/CP6.Platform.Release/",
+    "tests/CP6.Platform.ReleaseTests/",
+    "tests/CP6.Platform.ArchitectureTests/",
+    "Directory.Build.props",
+    "Directory.Packages.props",
+    "global.json",
+    "CP6.Platform.sln",
+    "all existing *.csproj",
+    ".github/workflows/",
+    "eng/ publication and trust inputs",
+    "Main roadmap/generated/state files"
+  ],
+  "pending_coordination": [
+    "Assign unique chats/branches/new worktrees from confirmed latest Platform main; ledger assignment and entry_gate",
+    "Register isolated WP02-07 PG resource and task-local project/dependency window",
+    "Record additive public surface boundaries before edits; no unapproved shared contract changes",
+    "Serial merge and complete-diff review; refresh remote heads, candidate/protected workflow triggers and relevant queued runs before push/PR"
+  ],
+  "alternatives": "No reason to replace 07 or11 with25. Parent is independently admitting27 as laneB; these windows deliberately exclude all Release and shared trust/testing assets.",
+  "actions": {
+    "product_edits": 0,
+    "tests_executed": 0,
+    "database_operations": 0,
+    "git_mutations": 0,
+    "network_writes": 0,
+    "actions_triggered": 0,
+    "actions_cancelled": 0,
+    "workflows_changed": 0,
+    "package_publications": 0,
+    "deployments": 0
+  },
+  "unverified": [
+    "New task behavior NOT_RUN",
+    "Real PG runtime availability/allocated database not checked",
+    "Remote active workflow runs not checked by this agent",
+    "Formal packages/consumer adoption/real Owner and final authorization remain unproven"
+  ],
+  "source_evidence": [
+    {
+      "path": "AGENTS.md",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/development/08-postgresql-baseline.md",
+      "git_blob": "1956afc1e6e90719703a25e78a68e3a3a8e0877c",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/development/09-parallel-development.md",
+      "git_blob": "2acb2a1935bec3283488523437d7b94764aaf9d2",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-DEL-01.md",
+      "git_blob": "1315781efd898e39c76e73654f99cd2980639921",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-HTTP-01.md",
+      "git_blob": "a20b2b45637de71d31d5e20964f68652f567696b",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/design-handbook/remediation/03-transactions-and-recovery.md",
+      "git_blob": "601bb530c6c3a7d9c58b3b73f887a04c93facabb",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/finance-recovery/owner-adoption.json",
+      "git_blob": "465d522e2b47e787d0839b993827b54549b95db5",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+      "git_blob": "cf5ff6cb51c583f8db8058db56764da7b8ee0773",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json",
+      "git_blob": "6a85e2994808887c58adbdf9a197a1e7ab96e650",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+      "git_blob": "de4b9aa3d8366aa70dded6ebfa498380e4908410",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs",
+      "git_blob": "5459f5f3896a8bf9346466659b7124aabdde9662",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "git_blob": "c2d10c851bb2567da7dd7cafd8645864d49023f2",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+      "git_blob": "c682d6c5d599710c32bb20c84d2bc3a16c5b35df",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpResilienceServiceCollectionExtensions.cs",
+      "git_blob": "6700da329bf5974f6b72ecd238b8c4b0d35c2fde",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpResilienceProfile.cs",
+      "git_blob": "73ab6f7c5aee2980b5d9e8f7b3cfa90b10e8eb8a",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+      "git_blob": "b83b355653c0b382a79c97cbdeb83fc20a7492a5",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+      "git_blob": "0436729bb3f3dd8131dd35fab38d0005f7d8f968",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+      "git_blob": "b52fcc9fd98294896a09c2c70763d95c19e7fabb",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/TrustedContextExecutorV1.cs",
+      "git_blob": "94840cf64832d30af6455e833625a74d000deda8",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "git_blob": "768d4ae02403f682963025d762ff7ed022a9c18d",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "Directory.Build.props",
+      "git_blob": "42131cd740450f08305e95b08b855cfb981c022a",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+      "git_blob": "951337940fa5a3d4a3be6709fb0041758b69ec76",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj",
+      "git_blob": "7f61240ebda42c85cc94d669414fe54d70e5db42",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "git_blob": "37e82dfc18877052ba7a826f5ef2f67a5f371bf1",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "docs/WP02-01-TRUSTED-CONTEXT.md",
+      "git_blob": "7a7c5f50092349e10f6f7683def23a3695037fa5",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/README.md",
+      "git_blob": "05dff70323d99312e6515976dd2af689d1cf6738",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    },
+    {
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "git_blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform"
+    }
+  ],
+  "archived_originals": [
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+      "sha256": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84",
+      "read_lines": [
+        "1-108",
+        "249-275"
+      ]
+    },
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d1416cbd7d0ea6e__PLT-HTTP-01_完整静态设计_v0.2.md",
+      "sha256": "9d1416cbd7d0ea6e58a0da79de80dcb2a4e675890345dfb4558194c61048eb3f",
+      "read_lines": [
+        "1-133",
+        "93-97 repeated"
+      ]
+    },
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+      "read_lines": [
+        "213-267"
+      ]
+    }
+  ],
+  "coordinator_reservations": {
+    "reported_by": "Parent coordinator message during this admission; this agent did not perform service or database operations",
+    "WP0211": {
+      "network": "Task-owned loopback HTTP random port only; no PostgreSQL resource",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-11-20261013",
+      "branch": "codex/wp02-11-http-resilience-20261013"
+    },
+    "WP0207": {
+      "postgres_binary_version": "18.6",
+      "branch": "codex/wp02-07-caller-inbox-20261013",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-07-20261013",
+      "postgres_host": "127.0.0.1",
+      "postgres_port": 55427,
+      "requirements": "Do not modify existing5432 service or credentials. Verify exact owner/database OID/path/principal before database work or cleanup; only owned resources cleaned. No DB created in planning.",
+      "cluster_path_template": "D:/CP6-local-test/WP02-07/<owner32>",
+      "probe": "Parent pg-resource-probe.json says binary exists; no listener/root created"
+    }
+  }
+}

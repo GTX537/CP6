@@ -1,0 +1,360 @@
+{
+  "task_id": "WP02-02",
+  "decision": "HOLD",
+  "entry_gate": "NOT_CONFIRMED",
+  "recommended_task_state": "PLANNED",
+  "reason": "Platform ctx-binding-v1 exists in delivered source but not published 0.10.2 API consumed by Main; no approved compatible immutable signed artifact. Do not substitute legacy context, fixture authority, unsigned or same-version local packages, copied APIs or machine-specific source reference.",
+  "observed_at": "2026-10-13T11:23:21.429904+00:00",
+  "scope": "Read-only admission; no tests/DB/builds/network writes/repository edits. Unique report files only.",
+  "baseline": {
+    "Main": [
+      "D:/CP6",
+      "a1824fec3d4824d45e27693f2e715b311ee5f665"
+    ],
+    "Platform": [
+      "D:/CP6.Platform-worktrees/wp02-01-20261012",
+      "9259a45d39bae7e98ca804a74778a588c1ad4619"
+    ]
+  },
+  "dependencies": {
+    "S01-10": {
+      "state": "DONE",
+      "delivery": {
+        "source_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+        "remote_main_sha": "8e48ee78fd70a2b53ebb39efe7ba7deb351b6840",
+        "pr_url": "https://github.com/GTX537/CP6/pull/198",
+        "observed_at": "2026-10-13T10:47:56.086663+00:00",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-10/remote-main.json",
+        "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+      }
+    },
+    "S02-00": {
+      "state": "DONE",
+      "delivery": {
+        "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+        "remote_main_sha": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
+        "pr_url": "https://github.com/GTX537/CP6/pull/178",
+        "observed_at": "2026-10-12T07:31:41.369832+00:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/evidence/S02-00/coordination/remote-main.json"
+      }
+    },
+    "WP02-01": {
+      "state": "DONE",
+      "delivery": {
+        "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+        "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+        "observed_at": "2026-10-13T07:39:05.879535+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+        "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "PGT-001",
+      "title": "可信绑定和正向读写",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-002",
+      "title": "进程内 A/B 交替池复用",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-003",
+      "title": "强制向 B 出借 A 物理连接",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-005",
+      "title": "标识符长度和碰撞",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-006",
+      "title": "显式跨 schema 读写",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-007",
+      "title": "角色与 GUC 伪造",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-008",
+      "title": "共享表 RLS 与目录最小权限",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-009",
+      "title": "public/临时对象污染",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-010",
+      "title": "连接取消失败与保存点",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-012",
+      "title": "EF 模型和显式映射",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-018",
+      "title": "逐租户迁移互斥与事务中断",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-019",
+      "title": "非事务步骤和共享升级失败",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-021",
+      "title": "单租户完整恢复和他租保护",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-022",
+      "title": "不完整备份与旧消息恢复",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-023",
+      "title": "缓存/池容量与凭据轮换",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-024",
+      "title": "混合版本与回退",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "PGT-027",
+      "title": "租户列与共享引用完整性",
+      "status": "NOT_RUN"
+    }
+  ],
+  "source_anchors": [
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "committed_bytes_sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
+      "git_blob": "1c32c3af16afe925fce41d1c8bf7bedf489d17c6",
+      "committed_bytes_sha256": "dfcaea44365d92f7457db783908dd8eb6f1eaa7651c67016bdff68281a0148c3"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/acceptance/postgresql-tenancy.json",
+      "git_blob": "c610a7676e3573d5696922e2ce56cebd4618b129",
+      "committed_bytes_sha256": "b56363bd547034d45e5556bf112b41f71cbb4d7b9dc565de25876d297deefbd5"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "git_blob": "a5ca89c3572b6f64a1db409a5b7faada899b5ae9",
+      "committed_bytes_sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "git_blob": "7012e57b353864125e6f220fe29ba821fd1cb572",
+      "committed_bytes_sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "NuGet.config",
+      "git_blob": "21a9499d52988046bec0d8b253867ba0fc506778",
+      "committed_bytes_sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "git_blob": "f5e03f8cb8eadcf5040476cfee2594d9ac516531",
+      "committed_bytes_sha256": "85be931fb3a13ef469ba874f249c0100470454fe0f4213beac91b7d233b37e0e"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Persistence/DatabaseConnectionFactory.cs",
+      "git_blob": "23b4dcda5b5de85724588d0f74e8a406d06bfe90",
+      "committed_bytes_sha256": "c7bc3b38678fba0c6b077c9d75c0491fa9892d481fd6e441cb3a894ee50121db"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "git_blob": "4b09f7d12a1d57361934360381a617848901d4eb",
+      "committed_bytes_sha256": "4c9d64f50eda4bbfe9f4a80b63cf76ed52f3db4abba62018b5f922c27fc1dc32"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+      "git_blob": "7a88581d00d203c2b433ef334d83e4d2501f03ee",
+      "committed_bytes_sha256": "b96f48644858d3add4290ac0ed7e0d97af15891c4c0a495f5ce2bfd6580322b3"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Persistence/DatabaseSharedContext.cs",
+      "git_blob": "c7c6379967312473f7877ca7753c51363290e38d",
+      "committed_bytes_sha256": "fd06c38c2b003b9b6644c476635cb1d17f61321875cecbd4531772f450f511f5"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Common/ITenantContext.cs",
+      "git_blob": "71b769bf47c33c38c40fc7f45e01b50fa2b56408",
+      "committed_bytes_sha256": "14de0ac54355cdad653dcc04fa35ab04ee5d5a458c40dbf5d0ba456f17dc08e3"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Common/TenantScope.cs",
+      "git_blob": "08b28909a97d98561eab91737f81e339eb9babb5",
+      "committed_bytes_sha256": "4cc783c97544ef87d875e7c0dc4703f406b9248749f3d2f94249e3ebefd1e1d7"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "git_blob": "6a7800f4eacd911d97c96e1efc31bb926caec5ad",
+      "committed_bytes_sha256": "a2fac8a0efbc278082698e67c1088b1f37e6fd5801b640ea4638e39a26d3c472"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+      "git_blob": "481231beec2fe80bbbc327195964eb80140bbee4",
+      "committed_bytes_sha256": "cdaa7041baf247a40de1c0a6ebc0152d002f7ac1da30cfdcbb6a63cdc984901f"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs",
+      "git_blob": "a184686b0761fe34e2a25749a6ea111340c065ef",
+      "committed_bytes_sha256": "47ecfcde241ab41e118860bf14539aef1a24b51b8750d10117c1c1e6aadab927"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Platform/TenantAdminService.cs",
+      "git_blob": "b9eebe1bd29d8fe59e253d4e48e3cd28c9fea197",
+      "committed_bytes_sha256": "c7a8c123ddc1d1501f9c6127718946d76532df68c9f2193b959cf3867cc11ff8"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.WebApi/Middleware/TenantMiddleware.cs",
+      "git_blob": "515953feb75c8fb32e95258a261ae48b7d60954a",
+      "committed_bytes_sha256": "9583e84be04a63259cbde1ec2ed07a4fe45e7af8a0ab7f69cd828116d7135d96"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.WebApi/Program.cs",
+      "git_blob": "ad77acc54be6c6d18c48d38dc478381e7a0ba52e",
+      "committed_bytes_sha256": "e8780458a545023d435abdf8f7b32b620dd7c97eb5ccba8a3b001ecc5fbfeff9"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.WebApi/Controllers/Sys/AuthController.cs",
+      "git_blob": "8ff76637df7ae35988b950657810d191ae722b57",
+      "committed_bytes_sha256": "e2a6032dd6848d7f0346b18e2103bcebdb70a92b7975ab1447dc644455122b0b"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs",
+      "git_blob": "577ca148dd73b9439d80d919addb83c80b77b9c6",
+      "committed_bytes_sha256": "f0514c0253a1d3a2c22d1a5e925eeb0b51b2f2faf8017f6d17dcb481eef99859"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "eng/contracts/s01/postgresql-mappings.json",
+      "git_blob": "c8aa98beced3262e461c22b4a37636bc188eac33",
+      "committed_bytes_sha256": "96ef3c9f22919e790f750773c2a4bdc675b7df5f145f7b9bfffeda6d19c1ec16"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Space.Infrastructure/SpaceContext.cs",
+      "git_blob": "40795baeb2e22c51d47c420d1f33b661158ae7dd",
+      "committed_bytes_sha256": "75747bafdd6acf53244ad76304277eb8f26438c24665f015b5971853e5793f5b"
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Tests/Persistence/DatabaseSearchPathTests.cs",
+      "git_blob": "8e7f861f655b917c05d8edce78d7263686329d76",
+      "committed_bytes_sha256": "a62f6f027c5e8af81d89c372094178c657c8bf99134d620510ae19a9c88f331e"
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "docs/WP02-01-TRUSTED-CONTEXT.md",
+      "git_blob": "7a7c5f50092349e10f6f7683def23a3695037fa5",
+      "committed_bytes_sha256": "14d6c611c3853fd9b230c6b09d50a8484ce4cc7efc82a7348cf19073e1a2a52e"
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.Abstractions/Context/ContextBoundariesV1.cs",
+      "git_blob": "6170302e84e5dcf43ea67dbb96f46b45a115fb4d",
+      "committed_bytes_sha256": "ba9f3d52ec6dde335522f45702967be5eaf3e25021463777c756c0b14b92d7ef"
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.Abstractions/Context/TrustedContextExecutorV1.cs",
+      "git_blob": "94840cf64832d30af6455e833625a74d000deda8",
+      "committed_bytes_sha256": "b7108e3c703a3d62ec5ef85836a2dec6005d96480b44dbfd6273330154bff581"
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+      "git_blob": "aafabad8ae1c1c9ca7a4a193dd2807f975bbd100",
+      "committed_bytes_sha256": "af5a6a520422a2e75148839c730f30bf9cc6fb7afa29612c46af22d6083e5908"
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.Contracts/Context/ContextContractsV1.cs",
+      "git_blob": "b0d306b08c10780b1928a5273af902c96d41a09c",
+      "committed_bytes_sha256": "2840946a04e1b7599236f4710b904024886a3630ecb867e579efd15231153922"
+    }
+  ],
+  "resource_recommendation": {
+    "endpoint": "127.0.0.1:55422",
+    "owned_root": "D:/CP6-local-test/WP02-02/",
+    "state": "PROPOSED_ONLY_NOT_RESERVED",
+    "provisioned": false,
+    "occupancy_checked": false,
+    "excluded": [
+      "5432 existing service",
+      "55410 S01-10 resource",
+      "all existing business databases"
+    ]
+  }
+}

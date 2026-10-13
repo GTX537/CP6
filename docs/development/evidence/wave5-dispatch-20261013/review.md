@@ -1,0 +1,16 @@
+# Wave5 dispatch task-level review
+
+Result: **PASS — ready_for_document_delivery=true**. No actionable findings.
+
+Reviewed all 30 staged documentation files in `D:/CP6-worktrees/fw-s02-1012`, branch `codex/wave5-dispatch-20261013`, against base/HEAD `a1824fec3d4824d45e27693f2e715b311ee5f665`. The complete `git -c core.longpaths=true diff --cached` SHA-256 is `43d25eed1a990a595fdfa1784a49cc354f78be7d4a70964ded28580f1722ab57`. Exact per-path index Git blobs and byte hashes are in [review.json](review.json).
+
+- A=S01-12, B=WP02-27, C=WP02-07 and D=WP02-11 match the original task scopes and delivered dependencies. All are READY/CONFIRMED pending actual START; neither prepared worktrees nor current worker refs establish START.
+- Independently matched 122 source blob/SHA-256 pins, three archive hashes and their 134 original AC identities, copied report hashes, dependency ancestry, and seven existing 0.10.2 package hashes. No signature success is inferred from those hashes.
+- Main's [0.10.2] published producer remains distinct from current Platform source-only ctx-binding/native-routing capabilities. WP02-02 is BLOCKED and retains all 17 PGT cases. WP02-27 can complete its original local validation/identity scope without publishing; its completion does not automatically resolve Main's artifact gate.
+- Three Platform write windows are disjoint and include the narrow registration/extension seams needed for implementation. The new C-owned PG test project has its own explicit dependency window. Only C reserves fresh owner-scoped resources on 127.0.0.1:55427; no database was provisioned by this dispatch.
+- Only five roadmap task entries and one appended change-log record change. Four project pages preserve their prior text. 16/375 DONE, business0/125,247 NOT_RUN and41 REFERENCE_ONLY stay unchanged; the generated view agrees with the assignments. Reused the coordinator's existing ledger-check PASS without relabeling it as a new execution.
+- Checked 57 new relative Markdown links and 21 distinct Main/Platform workflow definitions against their pinned source blobs. Main candidate workflow bytes equal the protected baseline; no branch/PR automatic test event applies. Platform's two RFC3161 PR trigger paths are excluded from every worker window. Azure dependencies retain trigger/pr none. No trigger/configuration change or Actions run was made.
+
+The copied proposal-time reports remain historical recommendations; the evidence README, formal cards/admission decision and roadmap correctly establish the final READY/BLOCKED decisions. Signature/revocation, runtime behavior, real Owner adoption and production acceptance remain unverified future work. Existing test results retain their original provenance and scope.
+
+The reviewer performed no repository edits, build/test execution, database work, signature verification, Actions operation or network write. Remote/queue freshness is based on the coordinator's intake receipts; the coordinator must still perform the prescribed current protected-ref/queue check before each push or PR. Initial long-path false deletion output was resolved by core.longpaths=true and direct absolute-path existence checks; no actual unrelated deletion exists.
