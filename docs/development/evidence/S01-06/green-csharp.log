@@ -1,0 +1,10 @@
+  CP6.Entity -> D:\CP6-worktrees\s01-06-20261012\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.ExactValues.Tests -> D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll
+Test run for D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.11.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6-worktrees\s01-06-20261012\docs\development\evidence\S01-06\green-csharp.trx
+
+Passed!  - Failed:     0, Passed:    60, Skipped:     0, Total:    60, Duration: 62 ms - CP6.ExactValues.Tests.dll (net8.0)

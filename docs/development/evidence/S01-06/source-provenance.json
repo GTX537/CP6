@@ -1,0 +1,303 @@
+{
+  "source_repository": "GTX537/CP6",
+  "fixed_commit": "d7a210256783e45291a5e724ea068ed4fc165ecc",
+  "package_version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+  "manifest_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+  "vectors_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+  "profile": "atp-stableid-r1",
+  "profile_version": "ATP-STABLEID-LEXICAL/20261011-R1",
+  "sources": [
+    {
+      "source_id": "composed-13",
+      "original_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "composed_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "original_bytes": 40100,
+      "composed_bytes": 40240,
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/13"
+      },
+      "patch_bundles": [
+        {
+          "pin": {
+            "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+            "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+            "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+            "hash_basis": "git_blob_bytes"
+          },
+          "applicable_pointers": [
+            "/patches/0"
+          ],
+          "findings": [
+            "PLAN-IF-004"
+          ]
+        }
+      ],
+      "scope": "Verified source input only; only StableId lexical subset is implemented here"
+    },
+    {
+      "source_id": "composed-14",
+      "original_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "composed_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "original_bytes": 182617,
+      "composed_bytes": 184364,
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/14"
+      },
+      "patch_bundles": [
+        {
+          "pin": {
+            "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+            "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+            "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+            "hash_basis": "git_blob_bytes"
+          },
+          "applicable_pointers": [
+            "/patches/1"
+          ],
+          "findings": [
+            "PLAN-IF-004",
+            "PLAN-IF-005"
+          ]
+        },
+        {
+          "pin": {
+            "path": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+            "sha256": "0576480ba7a59bc6c7406dce6f99630a153e8b660ee47655b846d1206d7845e5",
+            "git_blob": "b73373c7a7ad949e2aadc4e290081c32154803c4",
+            "hash_basis": "git_blob_bytes"
+          },
+          "applicable_pointers": [
+            "/patches/0",
+            "/patches/1",
+            "/patches/2",
+            "/patches/3",
+            "/patches/4"
+          ],
+          "findings": [
+            "PLAN-IF-004",
+            "PLAN-IF-005"
+          ]
+        }
+      ],
+      "scope": "Verified source input only; only StableId lexical subset is implemented here"
+    },
+    {
+      "source_id": "composed-24",
+      "original_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "composed_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "original_bytes": 49184,
+      "composed_bytes": 88613,
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/24"
+      },
+      "patch_bundles": [
+        {
+          "pin": {
+            "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+            "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+            "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+            "hash_basis": "git_blob_bytes"
+          },
+          "applicable_pointers": [
+            "/patches/11"
+          ],
+          "findings": [
+            "PLAN-IF-004"
+          ]
+        }
+      ],
+      "scope": "Verified source input only; only StableId lexical subset is implemented here"
+    },
+    {
+      "source_id": "composed-25",
+      "original_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "composed_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "original_bytes": 25793,
+      "composed_bytes": 25802,
+      "selector": {
+        "path": "docs/development/s01-input-index.json",
+        "sha256": "0a72688862102523983838a0ee0276b6f5178a8678093a23902cd14e18a85d95",
+        "git_blob": "bdbb75f5c53127e32d94b1713443bd3cf4d3ec7f",
+        "hash_basis": "git_blob_bytes",
+        "json_pointer": "/sources/25"
+      },
+      "patch_bundles": [
+        {
+          "pin": {
+            "path": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+            "sha256": "1aa5c60f941c770d5af1f2a6d5294e79fd96737f4faadb904a21f0f145d420b3",
+            "git_blob": "72b12a06f9a172bf981000eaf976edabe2a28570",
+            "hash_basis": "git_blob_bytes"
+          },
+          "applicable_pointers": [
+            "/patches/12"
+          ],
+          "findings": [
+            "PLAN-IF-004"
+          ]
+        }
+      ],
+      "scope": "Verified source input only; only StableId lexical subset is implemented here"
+    }
+  ],
+  "schema_fragment": {
+    "path": "eng/contracts/s01/atp-stable-id.schema.json",
+    "definition": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])"
+    },
+    "source_id": "urn:cp6:plan-atp:wire:design-revision-20261011-r1",
+    "pointer": "/$defs/StableId",
+    "sha256": "db14cb345c5adaf9bac3bd435f6545800c8ba26ad96c4c5202991168d4691469"
+  },
+  "postgresql": {
+    "source_composed_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+    "five_columns": [
+      {
+        "table": "plan_atp.evaluation",
+        "column": "result_uom",
+        "line": 132,
+        "nullable": true,
+        "exact_definition": "result_uom varchar(128) CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),"
+      },
+      {
+        "table": "plan_atp.segment",
+        "column": "uom",
+        "line": 291,
+        "nullable": false,
+        "exact_definition": "uom varchar(128) NOT NULL CHECK (uom IS NULL OR uom !~ '[^A-Za-z0-9._:/-]' AND uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),"
+      },
+      {
+        "table": "plan_atp.basis",
+        "column": "native_uom",
+        "line": 325,
+        "nullable": false,
+        "exact_definition": "native_uom varchar(128) NOT NULL CHECK (native_uom IS NULL OR native_uom !~ '[^A-Za-z0-9._:/-]' AND native_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),"
+      },
+      {
+        "table": "plan_atp.basis",
+        "column": "result_uom",
+        "line": 327,
+        "nullable": false,
+        "exact_definition": "result_uom varchar(128) NOT NULL CHECK (result_uom IS NULL OR result_uom !~ '[^A-Za-z0-9._:/-]' AND result_uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),"
+      },
+      {
+        "table": "plan_atp.reservation_ledger",
+        "column": "uom",
+        "line": 382,
+        "nullable": false,
+        "exact_definition": "uom varchar(128) NOT NULL CHECK (uom IS NULL OR uom !~ '[^A-Za-z0-9._:/-]' AND uom ~ '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$'),"
+      }
+    ],
+    "recomposed_full_patch_set_matches": true,
+    "patch_operations": [
+      {
+        "bundle": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "pointer": "/patches/1",
+        "operation_index": 0,
+        "finding": [
+          "PLAN-IF-004"
+        ],
+        "expected_count": 1,
+        "before_sha256": "37fbc8cffa39688049569498c12560865b992af09ec359e87730199279c8342c",
+        "after_sha256": "88abddc94eda917f9b5e54d2629b991acb5301694808025f18a5996c0d570b50"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "pointer": "/patches/1",
+        "operation_index": 1,
+        "finding": [
+          "PLAN-IF-004"
+        ],
+        "expected_count": 2,
+        "before_sha256": "b860b64868097b4fca9378ddec7d53b07bc4cdf186308d3eee4f61f9049ced84",
+        "after_sha256": "026ea1d48a6bce97ccd32ef09d25cb4da251c1647a35f7e1dcf61593af6dd057"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "pointer": "/patches/1",
+        "operation_index": 2,
+        "finding": [
+          "PLAN-IF-004"
+        ],
+        "expected_count": 1,
+        "before_sha256": "81e153c264828ae9325ff1818ab85449d56220d6f0867f1be85b0158cf361c5e",
+        "after_sha256": "c1d4341c8f230af61aede5d0970ee783610468e67133bc9c8332dad93dc37b99"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "pointer": "/patches/1",
+        "operation_index": 3,
+        "finding": [
+          "PLAN-IF-004"
+        ],
+        "expected_count": 1,
+        "before_sha256": "bef6914f1b66b9145b2fdad2d9de29af159fc4a14610680b823466b7b40efd25",
+        "after_sha256": "07154ab6c1473334f0a4f3b3dab609bf979bd50a3797df168b4417ef1b692db2"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+        "pointer": "/patches/0",
+        "operation_index": 0,
+        "finding": "PLAN-IF-005",
+        "expected_count": 1,
+        "before_sha256": "e4a7d6faa50f28e901caf953efbdd7590ba7c7ebe0cbcc7e6f9ea02db16358af",
+        "after_sha256": "c12d81328addad7d8565e1fc50e315a80be9c177985b3b03532a2557624bf5f5"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+        "pointer": "/patches/1",
+        "operation_index": 0,
+        "finding": "PLAN-IF-005",
+        "expected_count": 1,
+        "before_sha256": "b85787eeaccef13f85fd9bb1a4be1d8f82440546f65ba73045e9d74409ebf1e8",
+        "after_sha256": "083f2ba691a806d85833489b5c59e0e536000b3fc13762b1185c4dcaee9073e1"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+        "pointer": "/patches/2",
+        "operation_index": 0,
+        "finding": "PLAN-IF-005",
+        "expected_count": 1,
+        "before_sha256": "2aa6bc6234ca8aed5e7f54e5834dc2dd8946d1d0b92317bc519f144c75e4c22c",
+        "after_sha256": "58cbaa6b8fd43b55649b7209a48c32251544f0c698bc9eba81bc62d79bc28fa3"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+        "pointer": "/patches/3",
+        "operation_index": 0,
+        "finding": "PLAN-IF-005",
+        "expected_count": 1,
+        "before_sha256": "6d2f64e96ea16c601409912af3d2a4e39c8e1f53dd76914a181f380a7a7e8549",
+        "after_sha256": "80d7bd14834740a84680ea018246c26ae2e32b608d8d0affb2fe94a7222fa67d"
+      },
+      {
+        "bundle": "docs/design-handbook/remediation/assets/finance-recovery/source-patches.json",
+        "pointer": "/patches/4",
+        "operation_index": 0,
+        "finding": "PLAN-IF-005",
+        "expected_count": 1,
+        "before_sha256": "6fb6590b34a7fb94d5bba600c046e9f010a8bf36d5fc2ecf78bb62dcad6174c6",
+        "after_sha256": "ba42d524a798f2564530d60b1e93c9ad424d6abacb930eb35fd4cc74300085e3"
+      }
+    ],
+    "plan_if_005": "Five exact recovery/replay lock-order/binding replacements in addition to lexical column changes; full input retained for S01-10.",
+    "execution": "NOT_RUN",
+    "migration": "NOT_RUN"
+  },
+  "owner": "Existing ISupplyService is decimal scalar MRP supply; new ATP R11 Owner not adopted by this task."
+}

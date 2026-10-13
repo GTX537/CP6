@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:plan-atp:stable-id:20261011-r1",
+  "$comment": "ATP-STABLEID-LEXICAL/20261011-R1. Scalar fragment extracted from urn:cp6:plan-atp:wire:design-revision-20261011-r1#/$defs/StableId; full source composed SHA256=c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5. This fragment does not validate the full ATP wire contract.",
+  "type": "string",
+  "minLength": 1,
+  "maxLength": 128,
+  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])"
+}

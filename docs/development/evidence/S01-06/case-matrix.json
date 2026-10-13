@@ -1,0 +1,227 @@
+{
+  "vectors_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+  "observation_basis": "Per-ID passing assertions in green-csharp.trx and green-ts.json against unchanged fixed expectations.",
+  "schema_scope": "Four extracted scalar assertions evaluated with ECMA-262 regexp and code-point length; not a general Schema engine or full ATP validation.",
+  "cases": [
+    {
+      "id": "NUM-017",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "UUUUUUUUUUUUUUUU",
+      "expected_accepted": true,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "NUM-018",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "UUUUUUUUUUUUUUUUU",
+      "expected_accepted": true,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "NUM-019",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected_accepted": true,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "NUM-020",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "NUM-021",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "NUM-022",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "EA ",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "NUM-023",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "公斤",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "EA",
+      "expected_accepted": true,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected_accepted": true,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "EA\n",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-006",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "EA\r\n",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-007",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "EA ",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-008",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "公斤",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-009",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-R1-010",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "0._:/-",
+      "expected_accepted": true,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-LEADING-001",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": ".EA",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-LEADING-002",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "_EA",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-LEADING-003",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": ":EA",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-LEADING-004",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "/EA",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    },
+    {
+      "id": "ATP-LEADING-005",
+      "profile_id": "atp-stableid-r1",
+      "operation": "lexical",
+      "input": "-EA",
+      "expected_accepted": false,
+      "csharp_assertions": "Passed",
+      "typescript_assertions": "passed",
+      "schema_fragment_assertions": "passed"
+    }
+  ]
+}

@@ -1,0 +1,476 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="bdeec51b-8f3e-4d10-973c-e24c0566b620" name="tt@LAPTOP-3QQ44FJS 2026-10-12 20:37:20" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-12T20:37:20.9951990-04:00" queuing="2026-10-12T20:37:20.9951994-04:00" start="2026-10-12T20:37:19.9540143-04:00" finish="2026-10-12T20:37:21.0420387-04:00" />
+  <TestSettings name="default" id="52d0fa6d-c2cf-4af8-8038-61ef706f76d0">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-12_20_37_20" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ac9a8bc5-e8a7-4bf1-b709-4bd7cc221b75" testId="47a9482e-70f5-474f-a1ff-d8fae0f25505" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000072" startTime="2026-10-12T20:37:20.9524977-04:00" endTime="2026-10-12T20:37:20.9525368-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ac9a8bc5-e8a7-4bf1-b709-4bd7cc221b75" />
+    <UnitTestResult executionId="8d4f92df-29e8-471b-a342-2a7ea689525e" testId="56e9b32d-29e4-b1d6-41e2-0d034a4106e1" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;ＥＡ&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000239" startTime="2026-10-12T20:37:20.9214854-04:00" endTime="2026-10-12T20:37:20.9215223-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d4f92df-29e8-471b-a342-2a7ea689525e" />
+    <UnitTestResult executionId="1e0b2213-b104-40c3-a3ce-7ae52c170580" testId="27330f86-1761-6c63-3725-a23c58e11e8f" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-020&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001352" startTime="2026-10-12T20:37:20.9587116-04:00" endTime="2026-10-12T20:37:20.9587392-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1e0b2213-b104-40c3-a3ce-7ae52c170580">
+      <Output>
+        <StdOut>NUM-020; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7af035a9-3aaa-4c83-8478-d3e1ab1cc54d" testId="be765ea3-a9af-2481-0a10-4c4431d1c717" testName="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;{}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000579" startTime="2026-10-12T20:37:20.9613651-04:00" endTime="2026-10-12T20:37:20.9613960-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7af035a9-3aaa-4c83-8478-d3e1ab1cc54d" />
+    <UnitTestResult executionId="7f7dc3f1-eece-40e4-9c16-5d52bac519ec" testId="16d4aad1-9ceb-8624-0c3c-22250b40242a" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;A\ud83d\ude00&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000067" startTime="2026-10-12T20:37:20.9545046-04:00" endTime="2026-10-12T20:37:20.9545446-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f7dc3f1-eece-40e4-9c16-5d52bac519ec" />
+    <UnitTestResult executionId="e5816230-9298-44ee-b646-36fc3ad2bacf" testId="c9d5fb02-cb54-373f-fb3f-59f22e33d05e" testName="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{\&quot;id\&quot;:\&quot;EA\&quot;,\&quot;extra\&quot;:[{\&quot;x\&quot;:0,\&quot;x\&quot;:0}]}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002549" startTime="2026-10-12T20:37:20.9618095-04:00" endTime="2026-10-12T20:37:20.9618296-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5816230-9298-44ee-b646-36fc3ad2bacf" />
+    <UnitTestResult executionId="44de8e87-e572-41c4-b8d9-0102995dfa13" testId="c5986125-01ca-3159-0127-33bcce917496" testName="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;0&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000501" startTime="2026-10-12T20:37:20.9607110-04:00" endTime="2026-10-12T20:37:20.9607400-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="44de8e87-e572-41c4-b8d9-0102995dfa13" />
+    <UnitTestResult executionId="3592c956-3666-4b2a-ad7d-96d9231d1107" testId="f9867106-e963-4b06-3ce2-95849d13ec3d" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-005&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000659" startTime="2026-10-12T20:37:20.9603220-04:00" endTime="2026-10-12T20:37:20.9603597-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3592c956-3666-4b2a-ad7d-96d9231d1107">
+      <Output>
+        <StdOut>ATP-R1-005; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cd2bfaae-27cd-4f74-a2c0-6255c7f4cfd3" testId="1f934356-f191-ff95-5ecc-ad18e58c186c" testName="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 16, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000041" startTime="2026-10-12T20:37:20.9625753-04:00" endTime="2026-10-12T20:37:20.9625969-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd2bfaae-27cd-4f74-a2c0-6255c7f4cfd3" />
+    <UnitTestResult executionId="82e8c607-0144-482f-82c4-fc72cc3af464" testId="dfc146c0-bfc1-a192-a616-93aa7a7c3869" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-009&quot;, input: &quot;&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000509" startTime="2026-10-12T20:37:20.9582926-04:00" endTime="2026-10-12T20:37:20.9583417-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82e8c607-0144-482f-82c4-fc72cc3af464">
+      <Output>
+        <StdOut>ATP-R1-009; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0026e4ff-f494-4164-a3f6-99897f2243a6" testId="70ef0e99-1895-15a6-4d85-9110efcfaca1" testName="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0049615" startTime="2026-10-12T20:37:20.9616314-04:00" endTime="2026-10-12T20:37:20.9616514-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0026e4ff-f494-4164-a3f6-99897f2243a6" />
+    <UnitTestResult executionId="45b33881-5c04-4e90-a91e-224375616633" testId="b9187415-667c-794c-7588-f948ffdbcaff" testName="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{\&quot;id\&quot;:\&quot;EA\&quot;,\&quot;\\u0069d\&quot;:\&quot;KG\&quot;}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0012565" startTime="2026-10-12T20:37:20.9616834-04:00" endTime="2026-10-12T20:37:20.9617043-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45b33881-5c04-4e90-a91e-224375616633" />
+    <UnitTestResult executionId="84e2157e-2797-4f5b-afc4-1aebec03dc38" testId="ea40bec4-0e2f-8ac2-e2e0-914cf25c62c3" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-007&quot;, input: &quot;EA &quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001217" startTime="2026-10-12T20:37:20.9587720-04:00" endTime="2026-10-12T20:37:20.9588035-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84e2157e-2797-4f5b-afc4-1aebec03dc38">
+      <Output>
+        <StdOut>ATP-R1-007; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ca6b2fe3-35a7-4e0b-847d-698ac8f0a7f2" testId="409ef1cc-8ae4-98c4-4183-866de9fa07fa" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-022&quot;, input: &quot;EA &quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000450" startTime="2026-10-12T20:37:20.9599752-04:00" endTime="2026-10-12T20:37:20.9600175-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca6b2fe3-35a7-4e0b-847d-698ac8f0a7f2">
+      <Output>
+        <StdOut>NUM-022; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="64644fd8-2dd7-4ec3-a2d6-846340a51170" testId="ba4e82ae-f2cb-cd46-8c93-63b8a79de5a6" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-002&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000275" startTime="2026-10-12T20:37:20.9598382-04:00" endTime="2026-10-12T20:37:20.9598963-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64644fd8-2dd7-4ec3-a2d6-846340a51170">
+      <Output>
+        <StdOut>ATP-R1-002; C# lexical and string JSON; accepted=True</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e254e9fd-4133-41ca-b8e3-99eae7e8b0d1" testId="7ba1f203-4bbc-b6c7-6b38-a5edd50e78a1" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-004&quot;, input: &quot;/EA&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000526" startTime="2026-10-12T20:37:20.9561369-04:00" endTime="2026-10-12T20:37:20.9561817-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e254e9fd-4133-41ca-b8e3-99eae7e8b0d1">
+      <Output>
+        <StdOut>ATP-LEADING-004; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="97827bbb-6ca2-4583-ab57-ff97e6004dd8" testId="b77339f6-c1c0-dbef-626f-65ccaac410ee" testName="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{\&quot;id\&quot;:null}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0008425" startTime="2026-10-12T20:37:20.9617417-04:00" endTime="2026-10-12T20:37:20.9617767-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97827bbb-6ca2-4583-ab57-ff97e6004dd8" />
+    <UnitTestResult executionId="eb7b1ac5-ee1a-4713-9b23-b5867c9083a4" testId="efc9db84-8f0f-9b26-7a29-d788be1cbfc8" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA &quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000064" startTime="2026-10-12T20:37:20.9529538-04:00" endTime="2026-10-12T20:37:20.9529799-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb7b1ac5-ee1a-4713-9b23-b5867c9083a4" />
+    <UnitTestResult executionId="7d25935b-4e84-41cb-af8a-c7e7597ecbf3" testId="1da66bb4-57ce-bbb6-94e6-e65b144b2142" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-002&quot;, input: &quot;_EA&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000384" startTime="2026-10-12T20:37:20.9584027-04:00" endTime="2026-10-12T20:37:20.9584339-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d25935b-4e84-41cb-af8a-c7e7597ecbf3">
+      <Output>
+        <StdOut>ATP-LEADING-002; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0afeaf44-c9f3-47a0-b3ac-1ea70839e9ff" testId="20001c4d-708f-b812-12e5-367ee955c5e7" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-018&quot;, input: &quot;UUUUUUUUUUUUUUUUU&quot;, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000083" startTime="2026-10-12T20:37:20.9602384-04:00" endTime="2026-10-12T20:37:20.9602764-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0afeaf44-c9f3-47a0-b3ac-1ea70839e9ff">
+      <Output>
+        <StdOut>NUM-018; C# lexical and string JSON; accepted=True</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f5fc5433-d103-478f-a578-7084ca52fb70" testId="15f86ecd-e37a-ef08-344e-2aa893ab5e69" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\t&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000067" startTime="2026-10-12T20:37:20.9523668-04:00" endTime="2026-10-12T20:37:20.9524122-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5fc5433-d103-478f-a578-7084ca52fb70" />
+    <UnitTestResult executionId="643c183e-f49d-4160-a666-ee0da351c359" testId="2b66c1d7-3345-005b-b2c6-4c92f6d41a18" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\r\n&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000065" startTime="2026-10-12T20:37:20.9530265-04:00" endTime="2026-10-12T20:37:20.9530612-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="643c183e-f49d-4160-a666-ee0da351c359" />
+    <UnitTestResult executionId="4d153380-12b0-4bb6-8b1a-f502d36db4bf" testId="90c005b4-02bc-33e5-36f2-0124cd8f4c8e" testName="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 17, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001460" startTime="2026-10-12T20:37:20.9624975-04:00" endTime="2026-10-12T20:37:20.9625187-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d153380-12b0-4bb6-8b1a-f502d36db4bf" />
+    <UnitTestResult executionId="22880c78-d92e-4cb1-babb-8be2d9b0b8f4" testId="962ba691-1be8-d432-c476-b6ec680c7be1" testName="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;[]&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000250" startTime="2026-10-12T20:37:20.9614528-04:00" endTime="2026-10-12T20:37:20.9614735-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22880c78-d92e-4cb1-babb-8be2d9b0b8f4" />
+    <UnitTestResult executionId="2a31451f-47e9-4dcb-ae6e-560655a82785" testId="4f522040-d9ab-c1a6-215c-65016c287466" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\n&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000067" startTime="2026-10-12T20:37:20.9528679-04:00" endTime="2026-10-12T20:37:20.9529020-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a31451f-47e9-4dcb-ae6e-560655a82785" />
+    <UnitTestResult executionId="833980af-197a-4b62-a0b0-6ebabf0b1476" testId="b3ee39f7-a8b5-a179-e951-8515b8e654cf" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;_EA&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000066" startTime="2026-10-12T20:37:20.9526858-04:00" endTime="2026-10-12T20:37:20.9527202-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="833980af-197a-4b62-a0b0-6ebabf0b1476" />
+    <UnitTestResult executionId="83236f54-8269-4f07-9455-3f33fa0150e4" testId="71cc7096-b83f-fccf-d9f6-6f6a93c71bdc" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-003&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0004121" startTime="2026-10-12T20:37:20.9557993-04:00" endTime="2026-10-12T20:37:20.9558666-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83236f54-8269-4f07-9455-3f33fa0150e4">
+      <Output>
+        <StdOut>ATP-R1-003; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="097498ad-f632-43f5-91e6-a6226514d7fd" testId="a63ecaa2-13af-20ac-0588-099568f39b8c" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-004&quot;, input: &quot;EA\n&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001914" startTime="2026-10-12T20:37:20.9585402-04:00" endTime="2026-10-12T20:37:20.9585953-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="097498ad-f632-43f5-91e6-a6226514d7fd">
+      <Output>
+        <StdOut>ATP-R1-004; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="941c6a84-8173-4c69-91b8-104b0fb6c160" testId="659867ad-3ddc-9cf8-6b03-d03bac7e3daa" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-017&quot;, input: &quot;UUUUUUUUUUUUUUUU&quot;, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000126" startTime="2026-10-12T20:37:20.9600691-04:00" endTime="2026-10-12T20:37:20.9601087-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="941c6a84-8173-4c69-91b8-104b0fb6c160">
+      <Output>
+        <StdOut>NUM-017; C# lexical and string JSON; accepted=True</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d3cdd826-fcbd-43c9-938a-82cc920a484e" testId="52b4064c-b3ad-a85f-01a7-07021b8da644" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-008&quot;, input: &quot;公斤&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0058839" startTime="2026-10-12T20:37:20.9584729-04:00" endTime="2026-10-12T20:37:20.9585058-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3cdd826-fcbd-43c9-938a-82cc920a484e">
+      <Output>
+        <StdOut>ATP-R1-008; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="367a2f4f-d52a-4cb1-b6e3-22ded030b3a9" testId="f763f673-a391-9013-aec3-89ed1d1b37bc" testName="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 1, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000011" startTime="2026-10-12T20:37:20.9626880-04:00" endTime="2026-10-12T20:37:20.9627078-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="367a2f4f-d52a-4cb1-b6e3-22ded030b3a9" />
+    <UnitTestResult executionId="72dcbcc9-30da-4642-85eb-039336d28c1d" testId="84d88b4c-9a13-c309-96a8-1389e610a701" testName="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;1.5&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000254" startTime="2026-10-12T20:37:20.9615086-04:00" endTime="2026-10-12T20:37:20.9615282-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72dcbcc9-30da-4642-85eb-039336d28c1d" />
+    <UnitTestResult executionId="fccfbeab-cdf5-4141-b292-79c291aa0899" testId="68db94e6-8f0c-3c4b-c683-8e1c01e96b14" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;é&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002551" startTime="2026-10-12T20:37:20.9205883-04:00" endTime="2026-10-12T20:37:20.9206720-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fccfbeab-cdf5-4141-b292-79c291aa0899" />
+    <UnitTestResult executionId="1cc3673f-3faa-4975-bb81-051305dda941" testId="8cade2f7-650d-68a9-e457-78131bea9fba" testName="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 129, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001959" startTime="2026-10-12T20:37:20.9624087-04:00" endTime="2026-10-12T20:37:20.9624387-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1cc3673f-3faa-4975-bb81-051305dda941" />
+    <UnitTestResult executionId="64c5d218-c27a-459e-ae9c-31f477324309" testId="f7f1a34f-50f4-b79c-0f8d-48d2f7ee8ad0" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;/EA&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000064" startTime="2026-10-12T20:37:20.9527746-04:00" endTime="2026-10-12T20:37:20.9528088-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64c5d218-c27a-459e-ae9c-31f477324309" />
+    <UnitTestResult executionId="3d145fc8-e7dc-4df9-bca4-3e2a29c1baba" testId="2fba8a5b-6027-2b4c-ff4c-6469de0f48b1" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-010&quot;, input: &quot;0._:/-&quot;, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000173" startTime="2026-10-12T20:37:20.9562332-04:00" endTime="2026-10-12T20:37:20.9562742-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3d145fc8-e7dc-4df9-bca4-3e2a29c1baba">
+      <Output>
+        <StdOut>ATP-R1-010; C# lexical and string JSON; accepted=True</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3a8f1391-052f-4d2a-8253-27e0d671c3e4" testId="640fb410-4dce-7941-7316-651f04a8a603" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot; EA&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000080" startTime="2026-10-12T20:37:20.9218621-04:00" endTime="2026-10-12T20:37:20.9218970-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a8f1391-052f-4d2a-8253-27e0d671c3e4" />
+    <UnitTestResult executionId="e37902e0-a834-4ec3-a711-df3030f9b2d7" testId="6dd67373-87da-db99-9141-b44c9bf0e1db" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-003&quot;, input: &quot;:EA&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000766" startTime="2026-10-12T20:37:20.9589361-04:00" endTime="2026-10-12T20:37:20.9589759-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e37902e0-a834-4ec3-a711-df3030f9b2d7">
+      <Output>
+        <StdOut>ATP-LEADING-003; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0add3a0f-0e2e-42e1-ae37-945e6f49a187" testId="b29ddc3a-ecda-ed23-b9d5-c62a1fe98ea3" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-001&quot;, input: &quot;.EA&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000984" startTime="2026-10-12T20:37:20.9560477-04:00" endTime="2026-10-12T20:37:20.9560879-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0add3a0f-0e2e-42e1-ae37-945e6f49a187">
+      <Output>
+        <StdOut>ATP-LEADING-001; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="18f93f8d-e1b4-411b-8da3-f62050d4e3db" testId="b4e69896-bf48-af6f-e831-08c64de1a58a" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-021&quot;, input: &quot;&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001222" startTime="2026-10-12T20:37:20.9586456-04:00" endTime="2026-10-12T20:37:20.9586758-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18f93f8d-e1b4-411b-8da3-f62050d4e3db">
+      <Output>
+        <StdOut>NUM-021; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3ec2c970-c023-4108-a8c8-4a277066f548" testId="a5293c96-e65b-d439-c3d4-191022da0d37" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-005&quot;, input: &quot;-EA&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000424" startTime="2026-10-12T20:37:20.9567311-04:00" endTime="2026-10-12T20:37:20.9568487-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3ec2c970-c023-4108-a8c8-4a277066f548">
+      <Output>
+        <StdOut>ATP-LEADING-005; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="32b7ee51-20e4-4fb5-bd2b-2f1ebecfad8c" testId="4deeab9a-9a19-b1c4-e950-070d2610991e" testName="CP6.ExactValues.Tests.StableIdTests.Typed_carrier_keeps_original_bytes_separate_from_string_emission" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0022857" startTime="2026-10-12T20:37:20.9618777-04:00" endTime="2026-10-12T20:37:20.9618982-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32b7ee51-20e4-4fb5-bd2b-2f1ebecfad8c" />
+    <UnitTestResult executionId="43b66e53-9b2e-4205-8919-4436b28915df" testId="15a9b786-2748-df38-3289-7f4ff1d8fddb" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA &quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000082" startTime="2026-10-12T20:37:20.9216801-04:00" endTime="2026-10-12T20:37:20.9217148-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43b66e53-9b2e-4205-8919-4436b28915df" />
+    <UnitTestResult executionId="a156c966-a99b-41c1-bcd4-877fcef79bed" testId="9ee62f97-b138-e111-d557-c818154457a4" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;公斤&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000065" startTime="2026-10-12T20:37:20.9546190-04:00" endTime="2026-10-12T20:37:20.9546431-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a156c966-a99b-41c1-bcd4-877fcef79bed" />
+    <UnitTestResult executionId="b8691733-198f-4a0c-a259-dec51d763235" testId="e8b1be9d-6c74-8eea-9666-7debe54df5f0" testName="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 128, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000037" startTime="2026-10-12T20:37:20.9626357-04:00" endTime="2026-10-12T20:37:20.9626554-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8691733-198f-4a0c-a259-dec51d763235" />
+    <UnitTestResult executionId="348f3db9-855d-472b-9bc6-c8c35694c030" testId="d0de23f6-e4d8-f8b7-4d65-bff71aaaa45a" testName="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;null&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000215" startTime="2026-10-12T20:37:20.9615598-04:00" endTime="2026-10-12T20:37:20.9615808-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="348f3db9-855d-472b-9bc6-c8c35694c030" />
+    <UnitTestResult executionId="6f4c346a-1391-4e52-b8fe-9d195947f530" testId="abcfff8e-65e6-6217-2291-6cbe2e44af5a" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\r&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0032996" startTime="2026-10-12T20:37:20.9004544-04:00" endTime="2026-10-12T20:37:20.9104970-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f4c346a-1391-4e52-b8fe-9d195947f530" />
+    <UnitTestResult executionId="68b70489-20ac-4266-81d6-e4d388b00c40" testId="869ef966-cf97-75c0-5beb-e5e33a8475d0" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA &quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000065" startTime="2026-10-12T20:37:20.9526010-04:00" endTime="2026-10-12T20:37:20.9526329-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68b70489-20ac-4266-81d6-e4d388b00c40" />
+    <UnitTestResult executionId="7c6a6505-c8f6-48b1-9e62-6177bb795f20" testId="1714141c-9ff1-efb5-756a-d46a1f9e6ffc" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;.EA&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000071" startTime="2026-10-12T20:37:20.9217711-04:00" endTime="2026-10-12T20:37:20.9218048-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c6a6505-c8f6-48b1-9e62-6177bb795f20" />
+    <UnitTestResult executionId="cff1c190-5628-41f6-b88a-e4fc665658ba" testId="2b734c3c-f804-b2b9-bf8f-3d8921dfb943" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\0&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000187" startTime="2026-10-12T20:37:20.9212198-04:00" endTime="2026-10-12T20:37:20.9212855-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cff1c190-5628-41f6-b88a-e4fc665658ba" />
+    <UnitTestResult executionId="6548d9c9-df4b-4822-9a4a-90510182c795" testId="3c04b0d4-74ce-a2dc-8247-63345a5fbe24" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;-EA&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000101" startTime="2026-10-12T20:37:20.9215862-04:00" endTime="2026-10-12T20:37:20.9216214-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6548d9c9-df4b-4822-9a4a-90510182c795" />
+    <UnitTestResult executionId="a55a0d13-661b-485f-a9ab-cc5ccb0e035c" testId="27aa191b-de1a-5fd4-32c3-dd9b630030b0" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-001&quot;, input: &quot;EA&quot;, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0005130" startTime="2026-10-12T20:37:20.9559220-04:00" endTime="2026-10-12T20:37:20.9559884-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a55a0d13-661b-485f-a9ab-cc5ccb0e035c">
+      <Output>
+        <StdOut>ATP-R1-001; C# lexical and string JSON; accepted=True</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7f71294c-92c1-41aa-9745-0611650ada74" testId="84885c66-54c4-c289-b080-7855cb1dc100" testName="CP6.ExactValues.Tests.StableIdTests.String_roundtrip_preserves_case_punctuation_and_full_length" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0011169" startTime="2026-10-12T20:37:20.9627574-04:00" endTime="2026-10-12T20:37:20.9627774-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f71294c-92c1-41aa-9745-0611650ada74" />
+    <UnitTestResult executionId="854c54cf-bfb8-4786-840f-dd0db5ef7e86" testId="980329f3-755b-33e4-b6d8-e571cf8cebca" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-023&quot;, input: &quot;公斤&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001571" startTime="2026-10-12T20:37:20.9588532-04:00" endTime="2026-10-12T20:37:20.9588914-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="854c54cf-bfb8-4786-840f-dd0db5ef7e86">
+      <Output>
+        <StdOut>NUM-023; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2da1d7db-a5bf-419f-9591-ccf23b9b4732" testId="0c57fca3-2d17-fa8f-25cb-a657f64ceead" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: null)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003813" startTime="2026-10-12T20:37:20.9213826-04:00" endTime="2026-10-12T20:37:20.9214218-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2da1d7db-a5bf-419f-9591-ccf23b9b4732" />
+    <UnitTestResult executionId="fe0948e7-66bf-4933-a923-02c3625835ec" testId="385567fd-b21b-56c2-a964-07dd007a1638" testName="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;true&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002433" startTime="2026-10-12T20:37:20.9606285-04:00" endTime="2026-10-12T20:37:20.9606593-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe0948e7-66bf-4933-a923-02c3625835ec" />
+    <UnitTestResult executionId="bc12960c-9b31-4009-a90d-78c19ba87d64" testId="0ab2ed6c-b80d-c6b3-8e52-a501cb9adea2" testName="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;false&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0006951" startTime="2026-10-12T20:37:20.9604846-04:00" endTime="2026-10-12T20:37:20.9605189-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc12960c-9b31-4009-a90d-78c19ba87d64" />
+    <UnitTestResult executionId="4c8221e4-525c-4ee7-b139-e029ec613cf9" testId="cf3f1fa2-2729-9012-c149-7f9a008eb86e" testName="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;:EA&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000067" startTime="2026-10-12T20:37:20.9519919-04:00" endTime="2026-10-12T20:37:20.9520779-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c8221e4-525c-4ee7-b139-e029ec613cf9" />
+    <UnitTestResult executionId="5e9a47d1-01d3-4869-aa3d-7caae156a462" testId="edfa878b-f27e-209c-8a36-4779275d077b" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-019&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000154" startTime="2026-10-12T20:37:20.9601552-04:00" endTime="2026-10-12T20:37:20.9601936-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e9a47d1-01d3-4869-aa3d-7caae156a462">
+      <Output>
+        <StdOut>NUM-019; C# lexical and string JSON; accepted=True</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9b747785-23be-469f-92be-df0202b68b08" testId="b9c23501-8058-134a-95af-d1097055ea07" testName="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-006&quot;, input: &quot;EA\r\n&quot;, accepted: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0145057" startTime="2026-10-12T20:37:20.9551353-04:00" endTime="2026-10-12T20:37:20.9555908-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b747785-23be-469f-92be-df0202b68b08">
+      <Output>
+        <StdOut>ATP-R1-006; C# lexical and string JSON; accepted=False</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;A\ud83d\ude00&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="16d4aad1-9ceb-8624-0c3c-22250b40242a">
+      <Execution id="7f7dc3f1-eece-40e4-9c16-5d52bac519ec" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-009&quot;, input: &quot;&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="dfc146c0-bfc1-a192-a616-93aa7a7c3869">
+      <Execution id="82e8c607-0144-482f-82c4-fc72cc3af464" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{\&quot;id\&quot;:\&quot;EA\&quot;,\&quot;\\u0069d\&quot;:\&quot;KG\&quot;}&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="b9187415-667c-794c-7588-f948ffdbcaff">
+      <Execution id="45b33881-5c04-4e90-a91e-224375616633" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Required_carrier_uses_production_strict_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;true&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="385567fd-b21b-56c2-a964-07dd007a1638">
+      <Execution id="fe0948e7-66bf-4933-a923-02c3625835ec" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Wrong_json_token_rejects" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-021&quot;, input: &quot;&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="b4e69896-bf48-af6f-e831-08c64de1a58a">
+      <Execution id="18f93f8d-e1b4-411b-8da3-f62050d4e3db" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-022&quot;, input: &quot;EA &quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="409ef1cc-8ae4-98c4-4183-866de9fa07fa">
+      <Execution id="ca6b2fe3-35a7-4e0b-847d-698ac8f0a7f2" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-023&quot;, input: &quot;公斤&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="980329f3-755b-33e4-b6d8-e571cf8cebca">
+      <Execution id="854c54cf-bfb8-4786-840f-dd0db5ef7e86" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;false&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="0ab2ed6c-b80d-c6b3-8e52-a501cb9adea2">
+      <Execution id="bc12960c-9b31-4009-a90d-78c19ba87d64" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Wrong_json_token_rejects" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\t&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="15f86ecd-e37a-ef08-344e-2aa893ab5e69">
+      <Execution id="f5fc5433-d103-478f-a578-7084ca52fb70" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot; EA&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="640fb410-4dce-7941-7316-651f04a8a603">
+      <Execution id="3a8f1391-052f-4d2a-8253-27e0d671c3e4" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.String_roundtrip_preserves_case_punctuation_and_full_length" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="84885c66-54c4-c289-b080-7855cb1dc100">
+      <Execution id="7f71294c-92c1-41aa-9745-0611650ada74" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="String_roundtrip_preserves_case_punctuation_and_full_length" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-005&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="f9867106-e963-4b06-3ce2-95849d13ec3d">
+      <Execution id="3592c956-3666-4b2a-ad7d-96d9231d1107" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{}&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="70ef0e99-1895-15a6-4d85-9110efcfaca1">
+      <Execution id="0026e4ff-f494-4164-a3f6-99897f2243a6" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Required_carrier_uses_production_strict_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: null)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="0c57fca3-2d17-fa8f-25cb-a657f64ceead">
+      <Execution id="2da1d7db-a5bf-419f-9591-ccf23b9b4732" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Typed_carrier_keeps_original_bytes_separate_from_string_emission" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="4deeab9a-9a19-b1c4-e950-070d2610991e">
+      <Execution id="32b7ee51-20e4-4fb5-bd2b-2f1ebecfad8c" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Typed_carrier_keeps_original_bytes_separate_from_string_emission" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-019&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="edfa878b-f27e-209c-8a36-4779275d077b">
+      <Execution id="5e9a47d1-01d3-4869-aa3d-7caae156a462" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-005&quot;, input: &quot;-EA&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="a5293c96-e65b-d439-c3d4-191022da0d37">
+      <Execution id="3ec2c970-c023-4108-a8c8-4a277066f548" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-002&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="ba4e82ae-f2cb-cd46-8c93-63b8a79de5a6">
+      <Execution id="64644fd8-2dd7-4ec3-a2d6-846340a51170" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\r&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="abcfff8e-65e6-6217-2291-6cbe2e44af5a">
+      <Execution id="6f4c346a-1391-4e52-b8fe-9d195947f530" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 17, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="90c005b4-02bc-33e5-36f2-0124cd8f4c8e">
+      <Execution id="4d153380-12b0-4bb6-8b1a-f502d36db4bf" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Explicit_length_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="47a9482e-70f5-474f-a1ff-d8fae0f25505">
+      <Execution id="ac9a8bc5-e8a7-4bf1-b709-4bd7cc221b75" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;null&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="d0de23f6-e4d8-f8b7-4d65-bff71aaaa45a">
+      <Execution id="348f3db9-855d-472b-9bc6-c8c35694c030" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Wrong_json_token_rejects" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-001&quot;, input: &quot;EA&quot;, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="27aa191b-de1a-5fd4-32c3-dd9b630030b0">
+      <Execution id="a55a0d13-661b-485f-a9ab-cc5ccb0e035c" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 128, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="e8b1be9d-6c74-8eea-9666-7debe54df5f0">
+      <Execution id="b8691733-198f-4a0c-a259-dec51d763235" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Explicit_length_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;0&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="c5986125-01ca-3159-0127-33bcce917496">
+      <Execution id="44de8e87-e572-41c4-b8d9-0102995dfa13" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Wrong_json_token_rejects" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;公斤&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="9ee62f97-b138-e111-d557-c818154457a4">
+      <Execution id="a156c966-a99b-41c1-bcd4-877fcef79bed" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-010&quot;, input: &quot;0._:/-&quot;, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="2fba8a5b-6027-2b4c-ff4c-6469de0f48b1">
+      <Execution id="3d145fc8-e7dc-4df9-bca4-3e2a29c1baba" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 1, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="f763f673-a391-9013-aec3-89ed1d1b37bc">
+      <Execution id="367a2f4f-d52a-4cb1-b6e3-22ded030b3a9" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Explicit_length_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-018&quot;, input: &quot;UUUUUUUUUUUUUUUUU&quot;, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="20001c4d-708f-b812-12e5-367ee955c5e7">
+      <Execution id="0afeaf44-c9f3-47a0-b3ac-1ea70839e9ff" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-003&quot;, input: &quot;:EA&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="6dd67373-87da-db99-9141-b44c9bf0e1db">
+      <Execution id="e37902e0-a834-4ec3-a711-df3030f9b2d7" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;é&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="68db94e6-8f0c-3c4b-c683-8e1c01e96b14">
+      <Execution id="fccfbeab-cdf5-4141-b292-79c291aa0899" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-017&quot;, input: &quot;UUUUUUUUUUUUUUUU&quot;, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="659867ad-3ddc-9cf8-6b03-d03bac7e3daa">
+      <Execution id="941c6a84-8173-4c69-91b8-104b0fb6c160" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 129, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="8cade2f7-650d-68a9-e457-78131bea9fba">
+      <Execution id="1cc3673f-3faa-4975-bb81-051305dda941" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Explicit_length_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-002&quot;, input: &quot;_EA&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="1da66bb4-57ce-bbb6-94e6-e65b144b2142">
+      <Execution id="7d25935b-4e84-41cb-af8a-c7e7597ecbf3" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;ＥＡ&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="56e9b32d-29e4-b1d6-41e2-0d034a4106e1">
+      <Execution id="8d4f92df-29e8-471b-a342-2a7ea689525e" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA &quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="efc9db84-8f0f-9b26-7a29-d788be1cbfc8">
+      <Execution id="eb7b1ac5-ee1a-4713-9b23-b5867c9083a4" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\0&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="2b734c3c-f804-b2b9-bf8f-3d8921dfb943">
+      <Execution id="cff1c190-5628-41f6-b88a-e4fc665658ba" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;{}&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="be765ea3-a9af-2481-0a10-4c4431d1c717">
+      <Execution id="7af035a9-3aaa-4c83-8478-d3e1ab1cc54d" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Wrong_json_token_rejects" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{\&quot;id\&quot;:\&quot;EA\&quot;,\&quot;extra\&quot;:[{\&quot;x\&quot;:0,\&quot;x\&quot;:0}]}&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="c9d5fb02-cb54-373f-fb3f-59f22e33d05e">
+      <Execution id="e5816230-9298-44ee-b646-36fc3ad2bacf" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Required_carrier_uses_production_strict_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-008&quot;, input: &quot;公斤&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="52b4064c-b3ad-a85f-01a7-07021b8da644">
+      <Execution id="d3cdd826-fcbd-43c9-938a-82cc920a484e" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\r\n&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="2b66c1d7-3345-005b-b2c6-4c92f6d41a18">
+      <Execution id="643c183e-f49d-4160-a666-ee0da351c359" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;:EA&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="cf3f1fa2-2729-9012-c149-7f9a008eb86e">
+      <Execution id="4c8221e4-525c-4ee7-b139-e029ec613cf9" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA &quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="15a9b786-2748-df38-3289-7f4ff1d8fddb">
+      <Execution id="43b66e53-9b2e-4205-8919-4436b28915df" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA\n&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="4f522040-d9ab-c1a6-215c-65016c287466">
+      <Execution id="2a31451f-47e9-4dcb-ae6e-560655a82785" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-004&quot;, input: &quot;EA\n&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="a63ecaa2-13af-20ac-0588-099568f39b8c">
+      <Execution id="097498ad-f632-43f5-91e6-a6226514d7fd" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;EA &quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="869ef966-cf97-75c0-5beb-e5e33a8475d0">
+      <Execution id="68b70489-20ac-4266-81d6-e4d388b00c40" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;.EA&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="1714141c-9ff1-efb5-756a-d46a1f9e6ffc">
+      <Execution id="7c6a6505-c8f6-48b1-9e62-6177bb795f20" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;[]&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="962ba691-1be8-d432-c476-b6ec680c7be1">
+      <Execution id="22880c78-d92e-4cb1-babb-8be2d9b0b8f4" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Wrong_json_token_rejects" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: &quot;{\&quot;id\&quot;:null}&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="b77339f6-c1c0-dbef-626f-65ccaac410ee">
+      <Execution id="97827bbb-6ca2-4583-ab57-ff97e6004dd8" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Required_carrier_uses_production_strict_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-001&quot;, input: &quot;.EA&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="b29ddc3a-ecda-ed23-b9d5-c62a1fe98ea3">
+      <Execution id="0add3a0f-0e2e-42e1-ae37-945e6f49a187" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: &quot;1.5&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="84d88b4c-9a13-c309-96a8-1389e610a701">
+      <Execution id="72dcbcc9-30da-4642-85eb-039336d28c1d" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Wrong_json_token_rejects" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-LEADING-004&quot;, input: &quot;/EA&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="7ba1f203-4bbc-b6c7-6b38-a5edd50e78a1">
+      <Execution id="e254e9fd-4133-41ca-b8e3-99eae7e8b0d1" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;NUM-020&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="27330f86-1761-6c63-3725-a23c58e11e8f">
+      <Execution id="1e0b2213-b104-40c3-a3ce-7ae52c170580" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;/EA&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="f7f1a34f-50f4-b79c-0f8d-48d2f7ee8ad0">
+      <Execution id="64c5d218-c27a-459e-ae9c-31f477324309" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-003&quot;, input: &quot;UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU&quot;···, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="71cc7096-b83f-fccf-d9f6-6f6a93c71bdc">
+      <Execution id="83236f54-8269-4f07-9455-3f33fa0150e4" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;-EA&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="3c04b0d4-74ce-a2dc-8247-63345a5fbe24">
+      <Execution id="6548d9c9-df4b-4822-9a4a-90510182c795" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 16, accepted: True)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="1f934356-f191-ff95-5ecc-ad18e58c186c">
+      <Execution id="cd2bfaae-27cd-4f74-a2c0-6255c7f4cfd3" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Explicit_length_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-006&quot;, input: &quot;EA\r\n&quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="b9c23501-8058-134a-95af-d1097055ea07">
+      <Execution id="9b747785-23be-469f-92be-df0202b68b08" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: &quot;ATP-R1-007&quot;, input: &quot;EA &quot;, accepted: False)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="ea40bec4-0e2f-8ac2-e2e0-914cf25c62c3">
+      <Execution id="84e2157e-2797-4f5b-afc4-1aebec03dc38" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Fixed_vector" />
+    </UnitTest>
+    <UnitTest name="CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: &quot;_EA&quot;)" storage="d:\cp6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\debug\net8.0\cp6.exactvalues.tests.dll" id="b3ee39f7-a8b5-a179-e951-8515b8e654cf">
+      <Execution id="833980af-197a-4b62-a0b0-6ebabf0b1476" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.Tests.StableIdTests" name="Invalid_lexical_value_is_not_normalized" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="47a9482e-70f5-474f-a1ff-d8fae0f25505" executionId="ac9a8bc5-e8a7-4bf1-b709-4bd7cc221b75" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56e9b32d-29e4-b1d6-41e2-0d034a4106e1" executionId="8d4f92df-29e8-471b-a342-2a7ea689525e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27330f86-1761-6c63-3725-a23c58e11e8f" executionId="1e0b2213-b104-40c3-a3ce-7ae52c170580" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be765ea3-a9af-2481-0a10-4c4431d1c717" executionId="7af035a9-3aaa-4c83-8478-d3e1ab1cc54d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16d4aad1-9ceb-8624-0c3c-22250b40242a" executionId="7f7dc3f1-eece-40e4-9c16-5d52bac519ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9d5fb02-cb54-373f-fb3f-59f22e33d05e" executionId="e5816230-9298-44ee-b646-36fc3ad2bacf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c5986125-01ca-3159-0127-33bcce917496" executionId="44de8e87-e572-41c4-b8d9-0102995dfa13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9867106-e963-4b06-3ce2-95849d13ec3d" executionId="3592c956-3666-4b2a-ad7d-96d9231d1107" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f934356-f191-ff95-5ecc-ad18e58c186c" executionId="cd2bfaae-27cd-4f74-a2c0-6255c7f4cfd3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dfc146c0-bfc1-a192-a616-93aa7a7c3869" executionId="82e8c607-0144-482f-82c4-fc72cc3af464" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70ef0e99-1895-15a6-4d85-9110efcfaca1" executionId="0026e4ff-f494-4164-a3f6-99897f2243a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9187415-667c-794c-7588-f948ffdbcaff" executionId="45b33881-5c04-4e90-a91e-224375616633" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea40bec4-0e2f-8ac2-e2e0-914cf25c62c3" executionId="84e2157e-2797-4f5b-afc4-1aebec03dc38" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="409ef1cc-8ae4-98c4-4183-866de9fa07fa" executionId="ca6b2fe3-35a7-4e0b-847d-698ac8f0a7f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba4e82ae-f2cb-cd46-8c93-63b8a79de5a6" executionId="64644fd8-2dd7-4ec3-a2d6-846340a51170" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ba1f203-4bbc-b6c7-6b38-a5edd50e78a1" executionId="e254e9fd-4133-41ca-b8e3-99eae7e8b0d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b77339f6-c1c0-dbef-626f-65ccaac410ee" executionId="97827bbb-6ca2-4583-ab57-ff97e6004dd8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="efc9db84-8f0f-9b26-7a29-d788be1cbfc8" executionId="eb7b1ac5-ee1a-4713-9b23-b5867c9083a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1da66bb4-57ce-bbb6-94e6-e65b144b2142" executionId="7d25935b-4e84-41cb-af8a-c7e7597ecbf3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20001c4d-708f-b812-12e5-367ee955c5e7" executionId="0afeaf44-c9f3-47a0-b3ac-1ea70839e9ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15f86ecd-e37a-ef08-344e-2aa893ab5e69" executionId="f5fc5433-d103-478f-a578-7084ca52fb70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b66c1d7-3345-005b-b2c6-4c92f6d41a18" executionId="643c183e-f49d-4160-a666-ee0da351c359" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90c005b4-02bc-33e5-36f2-0124cd8f4c8e" executionId="4d153380-12b0-4bb6-8b1a-f502d36db4bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="962ba691-1be8-d432-c476-b6ec680c7be1" executionId="22880c78-d92e-4cb1-babb-8be2d9b0b8f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4f522040-d9ab-c1a6-215c-65016c287466" executionId="2a31451f-47e9-4dcb-ae6e-560655a82785" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b3ee39f7-a8b5-a179-e951-8515b8e654cf" executionId="833980af-197a-4b62-a0b0-6ebabf0b1476" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71cc7096-b83f-fccf-d9f6-6f6a93c71bdc" executionId="83236f54-8269-4f07-9455-3f33fa0150e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a63ecaa2-13af-20ac-0588-099568f39b8c" executionId="097498ad-f632-43f5-91e6-a6226514d7fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="659867ad-3ddc-9cf8-6b03-d03bac7e3daa" executionId="941c6a84-8173-4c69-91b8-104b0fb6c160" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52b4064c-b3ad-a85f-01a7-07021b8da644" executionId="d3cdd826-fcbd-43c9-938a-82cc920a484e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f763f673-a391-9013-aec3-89ed1d1b37bc" executionId="367a2f4f-d52a-4cb1-b6e3-22ded030b3a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84d88b4c-9a13-c309-96a8-1389e610a701" executionId="72dcbcc9-30da-4642-85eb-039336d28c1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="68db94e6-8f0c-3c4b-c683-8e1c01e96b14" executionId="fccfbeab-cdf5-4141-b292-79c291aa0899" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8cade2f7-650d-68a9-e457-78131bea9fba" executionId="1cc3673f-3faa-4975-bb81-051305dda941" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7f1a34f-50f4-b79c-0f8d-48d2f7ee8ad0" executionId="64c5d218-c27a-459e-ae9c-31f477324309" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fba8a5b-6027-2b4c-ff4c-6469de0f48b1" executionId="3d145fc8-e7dc-4df9-bca4-3e2a29c1baba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="640fb410-4dce-7941-7316-651f04a8a603" executionId="3a8f1391-052f-4d2a-8253-27e0d671c3e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6dd67373-87da-db99-9141-b44c9bf0e1db" executionId="e37902e0-a834-4ec3-a711-df3030f9b2d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b29ddc3a-ecda-ed23-b9d5-c62a1fe98ea3" executionId="0add3a0f-0e2e-42e1-ae37-945e6f49a187" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4e69896-bf48-af6f-e831-08c64de1a58a" executionId="18f93f8d-e1b4-411b-8da3-f62050d4e3db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5293c96-e65b-d439-c3d4-191022da0d37" executionId="3ec2c970-c023-4108-a8c8-4a277066f548" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4deeab9a-9a19-b1c4-e950-070d2610991e" executionId="32b7ee51-20e4-4fb5-bd2b-2f1ebecfad8c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15a9b786-2748-df38-3289-7f4ff1d8fddb" executionId="43b66e53-9b2e-4205-8919-4436b28915df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9ee62f97-b138-e111-d557-c818154457a4" executionId="a156c966-a99b-41c1-bcd4-877fcef79bed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8b1be9d-6c74-8eea-9666-7debe54df5f0" executionId="b8691733-198f-4a0c-a259-dec51d763235" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0de23f6-e4d8-f8b7-4d65-bff71aaaa45a" executionId="348f3db9-855d-472b-9bc6-c8c35694c030" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="abcfff8e-65e6-6217-2291-6cbe2e44af5a" executionId="6f4c346a-1391-4e52-b8fe-9d195947f530" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="869ef966-cf97-75c0-5beb-e5e33a8475d0" executionId="68b70489-20ac-4266-81d6-e4d388b00c40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1714141c-9ff1-efb5-756a-d46a1f9e6ffc" executionId="7c6a6505-c8f6-48b1-9e62-6177bb795f20" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b734c3c-f804-b2b9-bf8f-3d8921dfb943" executionId="cff1c190-5628-41f6-b88a-e4fc665658ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c04b0d4-74ce-a2dc-8247-63345a5fbe24" executionId="6548d9c9-df4b-4822-9a4a-90510182c795" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27aa191b-de1a-5fd4-32c3-dd9b630030b0" executionId="a55a0d13-661b-485f-a9ab-cc5ccb0e035c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84885c66-54c4-c289-b080-7855cb1dc100" executionId="7f71294c-92c1-41aa-9745-0611650ada74" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="980329f3-755b-33e4-b6d8-e571cf8cebca" executionId="854c54cf-bfb8-4786-840f-dd0db5ef7e86" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c57fca3-2d17-fa8f-25cb-a657f64ceead" executionId="2da1d7db-a5bf-419f-9591-ccf23b9b4732" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="385567fd-b21b-56c2-a964-07dd007a1638" executionId="fe0948e7-66bf-4933-a923-02c3625835ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0ab2ed6c-b80d-c6b3-8e52-a501cb9adea2" executionId="bc12960c-9b31-4009-a90d-78c19ba87d64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf3f1fa2-2729-9012-c149-7f9a008eb86e" executionId="4c8221e4-525c-4ee7-b139-e029ec613cf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="edfa878b-f27e-209c-8a36-4779275d077b" executionId="5e9a47d1-01d3-4869-aa3d-7caae156a462" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9c23501-8058-134a-95af-d1097055ea07" executionId="9b747785-23be-469f-92be-df0202b68b08" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="60" executed="60" passed="60" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.30)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: CP6.ExactValues.Tests&#xD;
+[xUnit.net 00:00:00.31]   Discovered:  CP6.ExactValues.Tests&#xD;
+[xUnit.net 00:00:00.35]   Starting:    CP6.ExactValues.Tests&#xD;
+[xUnit.net 00:00:00.43]   Finished:    CP6.ExactValues.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

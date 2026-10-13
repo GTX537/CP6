@@ -1,0 +1,895 @@
+  CP6.Entity -> D:\CP6-worktrees\s01-06-20261012\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.ExactValues.Tests -> D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll
+Test run for D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\bin\Debug\net8.0\CP6.ExactValues.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.11.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.56]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\r") [FAIL]
+[xUnit.net 00:00:00.57]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "é") [FAIL]
+[xUnit.net 00:00:00.57]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\0") [FAIL]
+[xUnit.net 00:00:00.57]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: null) [FAIL]
+[xUnit.net 00:00:00.58]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "ＥＡ") [FAIL]
+[xUnit.net 00:00:00.58]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "-EA") [FAIL]
+[xUnit.net 00:00:00.58]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA ") [FAIL]
+[xUnit.net 00:00:00.58]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: ".EA") [FAIL]
+[xUnit.net 00:00:00.58]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: " EA") [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\r") [3 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "é") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\0") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: null) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "ＥＡ") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "-EA") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA ") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: ".EA") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: " EA") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: ":EA") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\t") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA ") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "_EA") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "/EA") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\n") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA ") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\r\n") [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: ":EA") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\t") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA ") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "_EA") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "/EA") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "A😀") [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\n") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA ") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "EA\r\n") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "公斤") [FAIL]
+[xUnit.net 00:00:00.60]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-006", input: "EA\r\n", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-003", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-001", input: "EA", accepted: True) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-001", input: ".EA", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-004", input: "/EA", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-010", input: "0._:/-", accepted: True) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-005", input: "-EA", accepted: False) [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "A😀") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(input: "公斤") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Invalid_lexical_value_is_not_normalized(String input) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+   at InvokeStub_StableIdTests.Invalid_lexical_value_is_not_normalized(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass6_0.<Invalid_lexical_value_is_not_normalized>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 91
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-006", input: "EA\r\n", accepted: False) [12 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-R1-006; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-003", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-R1-003; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-001", input: "EA", accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 48
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ ATP-R1-001; C# lexical and string JSON; accepted=True
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-001", input: ".EA", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-LEADING-001; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-004", input: "/EA", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-LEADING-004; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-010", input: "0._:/-", accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 48
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ ATP-R1-010; C# lexical and string JSON; accepted=True
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-005", input: "-EA", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-LEADING-005; C# lexical and string JSON; accepted=False
+
+
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-009", input: "", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-002", input: "_EA", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-008", input: "公斤", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-004", input: "EA\n", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-021", input: "", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-020", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-007", input: "EA ", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-023", input: "公斤", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-003", input: ":EA", accepted: False) [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-009", input: "", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-R1-009; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-002", input: "_EA", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-LEADING-002; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-008", input: "公斤", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-R1-008; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-004", input: "EA\n", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-R1-004; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-021", input: "", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ NUM-021; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-020", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ NUM-020; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-007", input: "EA ", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-R1-007; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-023", input: "公斤", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ NUM-023; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-LEADING-003", input: ":EA", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-LEADING-003; C# lexical and string JSON; accepted=False
+
+
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-002", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: True) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-022", input: "EA ", accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-017", input: "UUUUUUUUUUUUUUUU", accepted: True) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-019", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: True) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-018", input: "UUUUUUUUUUUUUUUUU", accepted: True) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-005", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: False) [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "false") [FAIL]
+[xUnit.net 00:00:00.61]     CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "true") [FAIL]
+[xUnit.net 00:00:00.62]     CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "0") [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-002", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 48
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ ATP-R1-002; C# lexical and string JSON; accepted=True
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-022", input: "EA ", accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ NUM-022; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-017", input: "UUUUUUUUUUUUUUUU", accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 48
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ NUM-017; C# lexical and string JSON; accepted=True
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-019", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 48
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ NUM-019; C# lexical and string JSON; accepted=True
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "NUM-018", input: "UUUUUUUUUUUUUUUUU", accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 48
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ NUM-018; C# lexical and string JSON; accepted=True
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Fixed_vector(id: "ATP-R1-005", input: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···, accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Fixed_vector(String id, String input, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+   at InvokeStub_StableIdTests.Fixed_vector(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass4_0.<Fixed_vector>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 44
+  Standard Output Messages:
+ ATP-R1-005; C# lexical and string JSON; accepted=False
+
+
+  Failed CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "false") [1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass7_0.<Wrong_json_token_rejects>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+  Failed CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "true") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+   at InvokeStub_StableIdTests.Wrong_json_token_rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass7_0.<Wrong_json_token_rejects>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+  Failed CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "0") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+   at InvokeStub_StableIdTests.Wrong_json_token_rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass7_0.<Wrong_json_token_rejects>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+[xUnit.net 00:00:00.62]     CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "{}") [FAIL]
+[xUnit.net 00:00:00.62]     CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "[]") [FAIL]
+[xUnit.net 00:00:00.62]     CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "1.5") [FAIL]
+[xUnit.net 00:00:00.62]     CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "null") [FAIL]
+[xUnit.net 00:00:00.62]     CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: "{\"id\":null}") [FAIL]
+[xUnit.net 00:00:00.62]     CP6.ExactValues.Tests.StableIdTests.Typed_carrier_keeps_original_bytes_separate_from_string_emission [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "{}") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+   at InvokeStub_StableIdTests.Wrong_json_token_rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass7_0.<Wrong_json_token_rejects>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+  Failed CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "[]") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+   at InvokeStub_StableIdTests.Wrong_json_token_rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass7_0.<Wrong_json_token_rejects>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+  Failed CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "1.5") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+   at InvokeStub_StableIdTests.Wrong_json_token_rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass7_0.<Wrong_json_token_rejects>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+  Failed CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(json: "null") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Wrong_json_token_rejects(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+   at InvokeStub_StableIdTests.Wrong_json_token_rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass7_0.<Wrong_json_token_rejects>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 102
+  Failed CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(json: "{\"id\":null}") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.Text.Json.JsonException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Required_carrier_uses_production_strict_boundary(String json) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 121
+   at InvokeStub_StableIdTests.Required_carrier_uses_production_strict_boundary(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.Entity.Contracts.Wire.StrictJson.Deserialize[T](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 32
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass9_0.<Required_carrier_uses_production_strict_boundary>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 121
+  Failed CP6.ExactValues.Tests.StableIdTests.Typed_carrier_keeps_original_bytes_separate_from_string_emission [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableIdJsonConverter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 19
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](ReadOnlySpan`1 utf8Json, JsonSerializerOptions options)
+   at CP6.Entity.Contracts.Wire.StrictJsonDocument.Deserialize[T](JsonSerializerOptions options) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\Wire\StrictJson.cs:line 130
+   at CP6.ExactValues.Tests.StableIdTests.Typed_carrier_keeps_original_bytes_separate_from_string_emission() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 128
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.63]     CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 129, accepted: False) [FAIL]
+[xUnit.net 00:00:00.63]     CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 17, accepted: True) [FAIL]
+[xUnit.net 00:00:00.63]     CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 16, accepted: True) [FAIL]
+[xUnit.net 00:00:00.63]     CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 128, accepted: True) [FAIL]
+[xUnit.net 00:00:00.63]     CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 1, accepted: True) [FAIL]
+[xUnit.net 00:00:00.63]     CP6.ExactValues.Tests.StableIdTests.String_roundtrip_preserves_case_punctuation_and_full_length [FAIL]
+  Failed CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 129, accepted: False) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(Int32 length, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 66
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.<>c__DisplayClass5_0.<Explicit_length_boundary>b__0() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 66
+  Failed CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 17, accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(Int32 length, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 65
+   at InvokeStub_StableIdTests.Explicit_length_boundary(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 16, accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(Int32 length, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 65
+   at InvokeStub_StableIdTests.Explicit_length_boundary(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 128, accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(Int32 length, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 65
+   at InvokeStub_StableIdTests.Explicit_length_boundary(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(length: 1, accepted: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.Explicit_length_boundary(Int32 length, Boolean accepted) in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 65
+   at InvokeStub_StableIdTests.Explicit_length_boundary(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.ExactValues.Tests.StableIdTests.String_roundtrip_preserves_case_punctuation_and_full_length [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Entity.Contracts.PlanAtp.StableId.Parse(String value) in D:\CP6-worktrees\s01-06-20261012\CP6.Entity\Contracts\PlanAtp\StableId.cs:line 12
+   at CP6.ExactValues.Tests.StableIdTests.String_roundtrip_preserves_case_punctuation_and_full_length() in D:\CP6-worktrees\s01-06-20261012\eng\contracts\exact-values-tests\StableIdTests.cs:line 109
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: D:\CP6-worktrees\s01-06-20261012\docs\development\evidence\S01-06\red-csharp.trx
+
+Failed!  - Failed:    57, Passed:     3, Skipped:     0, Total:    60, Duration: 87 ms - CP6.ExactValues.Tests.dll (net8.0)

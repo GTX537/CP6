@@ -1,0 +1,142 @@
+{
+  "stage": "red",
+  "snapshot_utc_after_run": "2026-10-13T00:36:21.720152+00:00",
+  "git_head_baseline": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+  "source_basis": "Working-tree file bytes, including uncommitted task changes; HEAD alone is not the executed source identity.",
+  "environment": {
+    "dotnet_sdk": "8.0.424",
+    "target_framework": "net8.0",
+    "node": "20.19.0",
+    "npm": "10.8.2",
+    "database": "NOT_RUN"
+  },
+  "files": [
+    {
+      "path": "CP6.Entity/Contracts/PlanAtp/StableId.cs",
+      "bytes": 895,
+      "sha256": "e81e800e460fb53c7b5501ce71c6edecbf2a2e94e7bfb00379a8d6510d3dad00"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/StableIdTests.cs",
+      "bytes": 5596,
+      "sha256": "51bd4ef6f07b3a35b408f7323cec0a0ad638e5b0d2eb9a1ad8c2499310c66d1b"
+    },
+    {
+      "path": "cp6.web/src/contracts/plan-atp/stableId.ts",
+      "bytes": 227,
+      "sha256": "a5f19ac64cc226c37b4e271a3015ac6b2dac570e0a792f0f4ffb9647ab2d4c4c"
+    },
+    {
+      "path": "cp6.web/src/contracts/plan-atp/stableId.test.ts",
+      "bytes": 4381,
+      "sha256": "0a84aef7908f98621d039e2721b213d0d934cac57a650cfb624d3052052b9462"
+    },
+    {
+      "path": "eng/contracts/s01/atp-stable-id.schema.json",
+      "bytes": 540,
+      "sha256": "db14cb345c5adaf9bac3bd435f6545800c8ba26ad96c4c5202991168d4691469"
+    },
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "bytes": 113230,
+      "sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "bytes": 132820,
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+    },
+    {
+      "path": "docs/development/dispatch/20261012-wave3/dispatch.json",
+      "bytes": 68420,
+      "sha256": "b3eef8a4dce7c802e6ebe213de8542529123c6d26563b9acee5540e0a5320b2b"
+    },
+    {
+      "path": "CP6.Entity/Contracts/Wire/StrictJson.cs",
+      "bytes": 5821,
+      "sha256": "9a2a22e31c32f24235ad4b2ac8cb93f625ab1c75e9e358251b9dd54e001ab80d"
+    },
+    {
+      "path": "CP6.Entity/CP6.Entity.csproj",
+      "bytes": 334,
+      "sha256": "20724537f8dfa54de7b3e4998da971e3ada31dc0300caf229012a5fa851b671a"
+    },
+    {
+      "path": "CP6.Entity/packages.lock.json",
+      "bytes": 4045,
+      "sha256": "bf6ccea1eb09e82768edb2c2c1162171e006cd25632ed91f99af498dfa94d88f"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "bytes": 1019,
+      "sha256": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e"
+    },
+    {
+      "path": "Directory.Build.props",
+      "bytes": 483,
+      "sha256": "dd3c34588874b90b6e2d42aa2b51b4e7deedaf22ee34b6bc182160e3d148b739"
+    },
+    {
+      "path": "cp6.web/package.json",
+      "bytes": 2330,
+      "sha256": "0bc9e00d33b8aacdae711d77ff1927abe4c1e70312d4da9b8778dc35569e8da3"
+    },
+    {
+      "path": "cp6.web/package-lock.json",
+      "bytes": 233302,
+      "sha256": "abc239f2460634d4e9417193c500db55959c0022337275be12daa61f8d92dbf7"
+    },
+    {
+      "path": "cp6.web/tsconfig.app.json",
+      "bytes": 612,
+      "sha256": "75d8a9e8a7b917cedfcbfc8a2525177784c9786cee1eefde26fb92285808c337"
+    },
+    {
+      "path": "cp6.web/vitest.config.ts",
+      "bytes": 380,
+      "sha256": "d00b50a4a8c422ef24e6e63f420a332767a899db97a9f1d87c8e736ee802181f"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.dll",
+      "bytes": 28672,
+      "sha256": "c19a93aaf4f4e055fc44a74d0fb710da47e218e624084280156dd402259e41bb"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.Entity.dll",
+      "bytes": 980992,
+      "sha256": "7f50bb4076d8a98d87eed52cabcc5f23fb57c1a818a4cbfb55b9920141b05c3d"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.deps.json",
+      "bytes": 26908,
+      "sha256": "0e8b842202ce5e3db39efeb9a1206e0790fa85eda4e449c5a441f22e0356fdd0"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/obj/project.assets.json",
+      "bytes": 74735,
+      "sha256": "ddc8aed548d37c6be163fb6016d38ba074755919afd1d906cca4375d1b338db9"
+    }
+  ],
+  "run_artifacts": [
+    {
+      "path": "docs/development/evidence/S01-06/red-csharp.log",
+      "bytes": 83746,
+      "sha256": "08058b0d839a6101d98da2c3b4fa24d377c506106d2230415c0d84f281f1832e"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-csharp.trx",
+      "bytes": 269956,
+      "sha256": "17f8a54d5fc917db0dd192afac0c7a65d1916e7a7798db383a48838fb8d2d018"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-ts.json",
+      "bytes": 66376,
+      "sha256": "7ea92b00c16a06974246cb01ca076ef8169d58deeb0ffc9afe441c14ba4ae3ab"
+    },
+    {
+      "path": "docs/development/evidence/S01-06/red-ts.log",
+      "bytes": 20613,
+      "sha256": "5a3bba31143df07207bfc8ecaada25daf587eefb834c115d90ee7951bf197adb"
+    }
+  ]
+}

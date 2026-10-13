@@ -1,0 +1,51 @@
+{
+  "red": {
+    "csharp": {
+      "total": 60,
+      "passed": 3,
+      "failed": 57,
+      "skipped": 0,
+      "report": "red-csharp.trx",
+      "command_exit_code": 1
+    },
+    "typescript_and_schema": {
+      "total": 81,
+      "passed": 40,
+      "failed": 41,
+      "skipped": 0,
+      "report": "red-ts.json",
+      "command_exit_code": 1
+    }
+  },
+  "green": {
+    "csharp": {
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0,
+      "report": "green-csharp.trx",
+      "command_exit_code": 0
+    },
+    "typescript_and_schema": {
+      "total": 81,
+      "passed": 81,
+      "failed": 0,
+      "skipped": 0,
+      "report": "green-ts.json",
+      "command_exit_code": 0
+    }
+  },
+  "fixed_cases": 22,
+  "fixed_assertions_per_endpoint": {
+    "csharp": 22,
+    "typescript": 22,
+    "schema_fragment": 22
+  },
+  "type_check": {
+    "command": "npm --prefix cp6.web run type-check",
+    "exit_code": 0,
+    "evidence": "green-type-check.log",
+    "observation_basis": "Actual local command exit recorded by execution tool; not inferred from an empty log."
+  },
+  "scope": "CONTRACT_UNIT scalar tests only. No SQL, migration, Owner adoption, remote Actions, full ATP wire/business acceptance, or production release."
+}
