@@ -28,19 +28,19 @@
 | [S01-09 Platform 准确合同路由与原字节](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Platform | 已交付 | S01-01 | CODE / M | C / S01-09（沿用原WP05-01对话） |
 | [S01-10 PostgreSQL 精确存储适配](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-03, S01-04, S01-06 | CODE / L | B / S01-10（沿用原S01-04对话） |
 | [S01-11 ERP-CREDIT 原生金额与冻结重放](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-02 | CODE / M | A / S01-11（沿用原S01-03对话） |
-| [S01-12 采用证据与消费者交接](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 待安排 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07, S01-08, S01-09, S01-10, S01-11 | DESIGN / M | 未领取 |
+| [S01-12 采用证据与消费者交接](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 可开工 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07, S01-08, S01-09, S01-10, S01-11 | DESIGN / M | A / S01-12（沿用原S01-11对话） |
 | [S02-00 PostgreSQL 多租户存储与事务布局设计](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | B / S02-00 |
 | [WP02-01 Platform可信请求、消息与后台租户上下文](../../docs/development/task-plans/WP02.md#wp02-01) | Platform | 已交付 | S01-02 | CODE / M | C / WP02-01（沿用原S01-06对话） |
-| [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 待安排 | S02-00, WP02-01 | CODE / M | 未领取 |
+| [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 受阻 | S02-00, WP02-01 | CODE / M | 未领取 |
 | [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | 未领取 |
 | [WP02-04 租户创建、暂停恢复与管理审计](../../docs/development/task-plans/WP02.md#wp02-04) | Main | 待安排 | WP02-03 | CODE / M | 未领取 |
 | [WP02-05 Main身份权威快照及完整目录发布](../../docs/development/task-plans/WP02.md#wp02-05) | Main | 待安排 | S01-09, WP02-03, WP02-04 | CODE / M | 未领取 |
 | [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 待安排 | WP02-05, WP02-07 | CODE / M | 未领取 |
-| [WP02-07 Platform调用方同事务Inbox与原结果槽](../../docs/development/task-plans/WP02.md#wp02-07) | Platform | 待安排 | S01-09, WP02-01 | CODE / M | 未领取 |
+| [WP02-07 Platform调用方同事务Inbox与原结果槽](../../docs/development/task-plans/WP02.md#wp02-07) | Platform | 可开工 | S01-09, WP02-01 | CODE / M | C / WP02-07（沿用原WP02-01对话） |
 | [WP02-08 Platform Outbox领取、发送与Unknown恢复](../../docs/development/task-plans/WP02.md#wp02-08) | Platform | 待安排 | WP02-07 | CODE / M | 未领取 |
 | [WP02-09 CRM首个Owner真实共同事务与授权门](../../docs/development/task-plans/WP02.md#wp02-09) | CRM | 待安排 | S01-08, WP02-06, WP02-07 | CODE / M | 未领取 |
 | [WP02-10 Main Owner共同事务、原结果与授权参与](../../docs/development/task-plans/WP02.md#wp02-10) | Main | 待安排 | WP02-02, WP02-03, WP02-07 | CODE / M | 未领取 |
-| [WP02-11 Platform HTTP错误、安全重试和截止时间](../../docs/development/task-plans/WP02.md#wp02-11) | Platform | 待安排 | WP02-01 | CODE / M | 未领取 |
+| [WP02-11 Platform HTTP错误、安全重试和截止时间](../../docs/development/task-plans/WP02.md#wp02-11) | Platform | 可开工 | WP02-01 | CODE / M | D / WP02-11（沿用原S01-07对话） |
 | [WP02-12 消息producer资格、Kafka/Dapr传输与死信原体](../../docs/development/task-plans/WP02.md#wp02-12) | Platform | 待安排 | S01-09, WP02-01, WP02-08 | CODE / M | 未领取 |
 | [WP02-13 审计写入、授权查询和保留清理](../../docs/development/task-plans/WP02.md#wp02-13) | Main | 待安排 | WP02-10 | CODE / M | 未领取 |
 | [WP02-14 文件不可变版本、扫描和Owner授权绑定](../../docs/development/task-plans/WP02.md#wp02-14) | Main | 待安排 | WP02-10 | CODE / M | 未领取 |
@@ -56,7 +56,7 @@
 | [WP02-24 INT-OPS CRM身份与商业原结果消费者接入](../../docs/development/task-plans/WP02.md#wp02-24) | CRM | 待安排 | WP02-06, WP02-23, WP03-07, WP03-24, WP03-25 | CODE / M | 未领取 |
 | [WP02-25 运行身份、健康与遥测脱敏](../../docs/development/task-plans/WP02.md#wp02-25) | Platform | 待安排 | WP02-01 | CODE / M | 未领取 |
 | [WP02-26 SLO封存、故障注入与精确断言辅助](../../docs/development/task-plans/WP02.md#wp02-26) | Platform | 待安排 | S01-03, S01-04, WP02-25 | CODE / M | 未领取 |
-| [WP02-27 Platform包能力矩阵与不可变信任验证](../../docs/development/task-plans/WP02.md#wp02-27) | Platform | 待安排 | S01-09, WP02-01 | CODE / M | 未领取 |
+| [WP02-27 Platform包能力矩阵与不可变信任验证](../../docs/development/task-plans/WP02.md#wp02-27) | Platform | 可开工 | S01-09, WP02-01 | CODE / M | B / WP02-27（沿用原S01-10对话） |
 | [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 待安排 | WP02-25, WP02-27 | CODE / M | 未领取 |
 | [WP02-29 CRM宿主平台合同与观测包采用](../../docs/development/task-plans/WP02.md#wp02-29) | CRM | 待安排 | WP02-09, WP02-11, WP02-12, WP02-25, WP02-27 | CODE / M | 未领取 |
 

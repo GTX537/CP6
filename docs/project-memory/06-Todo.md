@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-13：第五轮四任务准入与租户采用制品门
+
+第五轮沿用四对话分配S01-12采用证据、WP02-27包能力与信任、WP02-07同事务Inbox、WP02-11 HTTP安全重试，均READY/CONFIRMED，未收到START。WP02-02因Main可消费的可信ctx-binding制品缺口登记BLOCKED；WP02-27本地验证不自动解除发布/采用门。16/375 DONE、S01 11/12、业务0/125及247 NOT_RUN保持。C仅预约隔离PG测试资源，本次未建库、触发/取消Actions、更改触发器、迁库或部署。 [执行包](../development/dispatch/20261013-wave5/README.md)及[准入证据](../development/evidence/wave5-dispatch-20261013/README.md)。下文保留历史时点。
+
 ## 2026-10-13：第四轮四项基础任务已交付
 
 S01-11 ERP授信合同、S01-10 PostgreSQL精确存储、WP02-01可信上下文、S01-07质量合同均经正常PR合并与远端main核对，登记DONE。累计16/375，S01为11/12；业务目标仍0/125。

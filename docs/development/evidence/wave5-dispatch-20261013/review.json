@@ -1,0 +1,465 @@
+{
+  "schema": "CP6-WAVE5-DISPATCH-REVIEW/1",
+  "reviewed_at_utc": "2026-10-13T11:47:48.496683+00:00",
+  "reviewer": "independent wave5_dispatch_review agent",
+  "mode": "READ_ONLY_TASK_LEVEL_DOCUMENT_REVIEW",
+  "worktree": "D:\\CP6-worktrees\\fw-s02-1012",
+  "branch": "codex/wave5-dispatch-20261013",
+  "base_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+  "head_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+  "local_main_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+  "local_origin_main_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+  "scope": "All 30 staged documentation files; complete staged diff and added JSON evidence. No business implementation approval.",
+  "diff_identity": {
+    "command": "git -c core.longpaths=true diff --cached",
+    "sha256": "43d25eed1a990a595fdfa1784a49cc354f78be7d4a70964ded28580f1722ab57",
+    "bytes": 321949,
+    "staged_files": 30,
+    "comparison": "HEAD equals supplied base; index vs HEAD is the complete task diff"
+  },
+  "index_git_blobs": [
+    {
+      "path": "docs/development/07-detailed-tasks.md",
+      "index_git_blob": "12b3476a35229756c75217f52f51d614417d3461",
+      "sha256_git_blob_bytes": "c4c458a48f90729e31915e7d20e26bcd086119f6bd28c9bc95d774a0942a3a28",
+      "bytes": 80081
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave5/README.md",
+      "index_git_blob": "20d9d80d7082d52dfddd3286983b6c1c4f186998",
+      "sha256_git_blob_bytes": "b081ec738ab40f6425d548e76d6c6c880ac8946316731b9a6759629cac7e916d",
+      "bytes": 2436
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave5/S01-12.md",
+      "index_git_blob": "cd57dca49bbaa62a1f265680a0df6a4a174b7c1b",
+      "sha256_git_blob_bytes": "bee6d6d5beecd3b5cf83a5821d3fd1a311d52f4a6b2703be1cfd64169ecf8144",
+      "bytes": 5755
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave5/WP02-07.md",
+      "index_git_blob": "e5b3c744f5bdeaea2e95f2916ce3fcfabb8d42ce",
+      "sha256_git_blob_bytes": "3ed2c50ee83367d5cd2bcbe046b4830c669df3dabcb558e2e665bbc02bf7331f",
+      "bytes": 6703
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave5/WP02-11.md",
+      "index_git_blob": "a04723a622f2fb62ac35750824fc6b55254f0eaa",
+      "sha256_git_blob_bytes": "0e17deaa22dcea6ec1038a4db9b374c41a2c21cba957603c00a2d89ddd5bb51a",
+      "bytes": 6163
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave5/WP02-27.md",
+      "index_git_blob": "4faec1038bd5206e08570433060593204eac1032",
+      "sha256_git_blob_bytes": "4d33af620acd6a4dde3dd7aad9c69b2351ba922254cfdc2e566cfb21ee569729",
+      "bytes": 7329
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave5/dispatch.json",
+      "index_git_blob": "514c0719f9cf435f253d58587d07dc99114dfd04",
+      "sha256_git_blob_bytes": "d72288d4eb390850b24b2746dd6c0621d4de901c94651ac6ea5efea92edb86f6",
+      "bytes": 32346
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/.gitattributes",
+      "index_git_blob": "e11c72b55f06e648f9ab243b05b210f5bdc3a420",
+      "sha256_git_blob_bytes": "308a40fa1d89ae5ea4390b4c9b46a0108b09f171f07898f25d451fa0c69c4e9f",
+      "bytes": 72
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/README.md",
+      "index_git_blob": "72e4c1093029bbb12115bb4eab34f613f3d5a8aa",
+      "sha256_git_blob_bytes": "b5d51833a42afaf7e4a52cb53a22f6c4181e1b67258d194c784e278371898692",
+      "bytes": 987
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/S01-12-admission.json",
+      "index_git_blob": "7b5e8b2e09372c50d33d039e26895bcc928b11de",
+      "sha256_git_blob_bytes": "bbb73d48de294492d93aa9a0a047c65dc1483d0e54eb49c5cf52e8d2720b6891",
+      "bytes": 52125
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/S01-12-admission.md",
+      "index_git_blob": "7ae258a6ae0b4996b0527fec451d8fe7e5cacdac",
+      "sha256_git_blob_bytes": "8df005e30f4cc82b8578393e3b73553de7e27881f0ee822d43e3b250bb056f49",
+      "bytes": 12486
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-package.json",
+      "index_git_blob": "85aa57f382ee692ab2585a33e5ba05a9208b222b",
+      "sha256_git_blob_bytes": "fdb4a2f63b922cad2569993070b404b0fa0b408b8f71876a38dbde14a82135b8",
+      "bytes": 9881
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-package.md",
+      "index_git_blob": "2b31acef0918669e2950d6ef2bbbfe6f72f52564",
+      "sha256_git_blob_bytes": "60e6b23953da3c13d74c8c0128e306c472bd9e4f7f9db99666b4a46184fe150d",
+      "bytes": 14309
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.json",
+      "index_git_blob": "2fd1dd41adc39161101cfa9f009e8bd6a7900fe4",
+      "sha256_git_blob_bytes": "051d719fca3efa40ede09aa29ed89b97046e98e7e4c7fe7a38434e44e2ed0578",
+      "bytes": 14749
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.md",
+      "index_git_blob": "6226c87d5604f723a75ef565a5157dd98896c2ff",
+      "sha256_git_blob_bytes": "8c9f2c67e3c96677c15dbf7ecd82c8048cd09ba4ab08948ec58785995d8bbd45",
+      "bytes": 9933
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.json",
+      "index_git_blob": "ac374984250c2141a7e6ed7c5c7ee246642ee888",
+      "sha256_git_blob_bytes": "490b497a92a805967f24a9de29cb2a547b69844110a7bf88a5e366fbe6ee1e31",
+      "bytes": 17659
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.md",
+      "index_git_blob": "4401ba117fd552e2c07050f3a324299e757a24f4",
+      "sha256_git_blob_bytes": "f1de6612255caf602211bde5d25e4d903278fc65d94f46bc6a38c4cca99f842a",
+      "bytes": 14667
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
+      "index_git_blob": "97bc22e909cb2b45f7a5a81b968537e4d8895d36",
+      "sha256_git_blob_bytes": "146fad3fbdcc6d7ded4ee3b0bdd830baef194677efb6bbb4b212650e39a5d65b",
+      "bytes": 5410
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/dispatch-check.json",
+      "index_git_blob": "08dd64d1961fd0869fefe216d07fce31051c7b10",
+      "sha256_git_blob_bytes": "22a851499fa62160ba011c82914220f491014fc4d5c321af23d26e10ed2407d0",
+      "bytes": 43262
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/intake-main.json",
+      "index_git_blob": "ce165e2d234e1ce98c866d08271d2aa42796461c",
+      "sha256_git_blob_bytes": "f197f42828b8cda10cd084a3a237184cab3ea0d634e6c747a8bb753802c070ba",
+      "bytes": 14654
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/intake-platform.json",
+      "index_git_blob": "59e784935fd67eaeb2752c27049b37eca7b17dc1",
+      "sha256_git_blob_bytes": "b4236a603d15230eec46bc749bd261505ace9e9d5b9ed662e2d63460897576b9",
+      "bytes": 9803
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/intake.json",
+      "index_git_blob": "3c100ecd08ac1da646712831084b12fa805fda36",
+      "sha256_git_blob_bytes": "c3fdc0a9991e203277cf327ae86f00e32a08f8c4401bd566b2d16acf69817554",
+      "bytes": 4648
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/ledger-check.json",
+      "index_git_blob": "ec05ad3f748c561e384676299be3b31663ecf9ad",
+      "sha256_git_blob_bytes": "e8b9a3eb2bcfa4647b525e2cc4f3ce241370e0decd53873e6606c121a3d17778",
+      "bytes": 394
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/pg-resource-probe.json",
+      "index_git_blob": "cec9ee1754d3ee8677679cf8091df4b26a2dc6b0",
+      "sha256_git_blob_bytes": "ab8dfef2a7852e07a3fa63dd0e0c0dc1c75861045edfe501e495ef8ed9b8223e",
+      "bytes": 629
+    },
+    {
+      "path": "docs/development/evidence/wave5-dispatch-20261013/setup.json",
+      "index_git_blob": "464b5cdbb097b84bbc7938f0aab2151592ec2605",
+      "sha256_git_blob_bytes": "c3c5f24f772eb785fc303754afac7d69c2a426725da9ef69ef470c854a2ac085",
+      "bytes": 2749
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "index_git_blob": "98f576a62f9603d27d5ad723ea15be4890be71a8",
+      "sha256_git_blob_bytes": "aa9f0cb053cd375df21cf510bf3f3dd9270515491e893ed14c7740db39a49801",
+      "bytes": 6664901
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "index_git_blob": "dec811a8b50eae6bdc9574c707b5e0b771c52038",
+      "sha256_git_blob_bytes": "00566496c727d5a6a7d79759c7645e4fb4257827dbbf6fcb9cb0ad155d34f799",
+      "bytes": 288498
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "index_git_blob": "1a0c6de1eb8a39e08090e26904f5500bfb8c2f3a",
+      "sha256_git_blob_bytes": "c6a1bca865207374a300a55c486e96f6ab286e7f6b271fcbd96c756f354d3f01",
+      "bytes": 152235
+    },
+    {
+      "path": "docs/project-memory/CHANGELOG-AI.md",
+      "index_git_blob": "ca992586d0310c4265ed35ef3c844c93ab0b0c36",
+      "sha256_git_blob_bytes": "d41df8068fca83ce033947285333707f7a6328459c73d1a412ba535e8211e578",
+      "bytes": 269141
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "index_git_blob": "da31092bc901a7966a26a7e4a17d56b44e5dcb3f",
+      "sha256_git_blob_bytes": "be4917fe49313fac3ffb611110ecb51e426995198eb7ba72058d71bd917013ca",
+      "bytes": 442659
+    }
+  ],
+  "ready_for_document_delivery": true,
+  "findings": [],
+  "verified": [
+    {
+      "check": "task states and dependencies",
+      "result": "PASS",
+      "detail": "A S01-12, B WP02-27, C WP02-07, D WP02-11 READY/CONFIRMED with null worker acknowledgement. Every direct dependency source commit is an ancestor of its pinned repository main; task cards preserve their original scopes."
+    },
+    {
+      "check": "source evidence identity",
+      "result": "PASS",
+      "source_pins_independently_verified": 122,
+      "detail": "Each recorded committed blob and SHA256 matched its exact repository/commit/path. Copied admission report hashes match staged raw bytes; .gitattributes preserves their hash representation."
+    },
+    {
+      "check": "original acceptance and package bytes",
+      "result": "PASS",
+      "archived_original_hashes": 3,
+      "original_ac_ids": 134,
+      "breakdown": {
+        "PLT-DEL-01": 60,
+        "PLT-HTTP-01": 42,
+        "PLT-RELEASE-01": 32
+      },
+      "existing_packages_rehashed": 7,
+      "detail": "All original IDs unique per list and original archive hashes match; package hashes match recorded 0.10.2 archives. This is not current signature verification."
+    },
+    {
+      "check": "source versus published capability",
+      "result": "PASS",
+      "detail": "Existing Main [0.10.2] pins and published producer fbcd21528078a04e5b53c42c5fdfebe6ffa9655f remain distinct from S01-09/WP02-01 source main. WP02-02 BLOCKED with all 17 PGT cases retained. WP02-27 local output cannot publish, occupy a stable version or independently unblock Main."
+    },
+    {
+      "check": "feasible disjoint write windows",
+      "result": "PASS",
+      "detail": "Platform Release/CapabilitiesV1, EF/InboxV1 and AspNetCore/HttpV2 windows do not overlap. Necessary narrow existing extension/project registration seams are allowed; new task-local PG project has explicit dependency window. Additional shared edits require exact COORD allocation. S01-12 compare-only output and COORD shared-state responsibilities match its original task."
+    },
+    {
+      "check": "risk and resource boundaries",
+      "result": "PASS",
+      "detail": "Only C reserves fresh PG 127.0.0.1:55427 and an owner-scoped task directory. Same physical transaction, precheckpoint on repeat paths, loss of commit confirmation, tenant mismatch, safe errors, bounded retry and unproven-write disablement are explicit future gates. No provisioning or runtime proof is claimed."
+    },
+    {
+      "check": "append-only history and unchanged ledger",
+      "result": "PASS",
+      "detail": "Only five task entries change, with original dependency/acceptance/validation fields unchanged; change_log appends one record; four project pages prepend without rewriting history. DONE remains 16/375; business0/125,247 NOT_RUN,41 REFERENCE_ONLY preserved."
+    },
+    {
+      "check": "markdown links and workflow trigger safety",
+      "result": "PASS",
+      "new_relative_links_checked": 57,
+      "workflows_inspected": 21,
+      "detail": "Candidate Main index workflows are byte-identical to pinned protected baseline; 13 Main workflows are manual except tag-only R2 candidate. Eight Platform workflows are manual except RFC3161 PR exact paths, both excluded by all three Platform write windows. Four Azure YAML dependency files retain trigger/pr none. No workflow/dependency edits."
+    },
+    {
+      "check": "existing documentation gate evidence",
+      "result": "REUSED_PASS",
+      "source": "docs/development/evidence/wave5-dispatch-20261013/ledger-check.json",
+      "detail": "Parent coordinator completed ledger/generated-view structural check. Review independently checked index state diff and history preservation; did not rerun the unchanged ledger command or business suites."
+    }
+  ],
+  "workflow_blobs": [
+    {
+      "repository": "main",
+      "path": ".github/workflows/client-contract.yml",
+      "blob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "blob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "blob": "7826de728d692846184dc7113848109a6a56a92e",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "blob": "be9a37138cb903c45c4638c65929610d24362730",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "blob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "blob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "blob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "blob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/r2-candidate.yml",
+      "blob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "events": [
+        "push"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/r2-deploy.yml",
+      "blob": "d259013345adf115865007cc5f05c70939a902bf",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/r2-freeze.yml",
+      "blob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "blob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "main",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "blob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/p10-formal-packages-recovery.yml",
+      "blob": "5db2d96df0d1042ed147bc1fdb79017366a96685",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/p10-formal-signer-revalidation.yml",
+      "blob": "f9ddb27b9cb2a0fe888f6bb9d99b9169e13842a1",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d",
+      "events": [
+        "workflow_dispatch",
+        "pull_request"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/p10-test-candidate.yml",
+      "blob": "1c0ade934712c245435d373fb4c4141f6f6ffb68",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/platform-validation.yml",
+      "blob": "9580b725dd6a3d2598a2f80223d232d62e04af08",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/publish-alpha.yml",
+      "blob": "29cb5f55c116bae624420961daa73e580944a5da",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "repository": "platform",
+      "path": ".github/workflows/publish-p09.yml",
+      "blob": "f60e2bc5288f0954b71300629c8aa54e73fea141",
+      "events": [
+        "workflow_dispatch"
+      ]
+    }
+  ],
+  "nonblocking_observations": [
+    "Copied admission reports preserve proposal-time PLANNED recommendations. Evidence README explicitly assigns authority to formal execution cards/admission decision and roadmap; WP02-02 is unambiguously BLOCKED in those authoritative surfaces.",
+    "Worktree setup/clean fields are time-scoped snapshots and are not worker START evidence; no current worker branch contents were used to infer actual implementation start.",
+    "Initial Git invocation without core.longpaths produced two false unstaged-deletion observations. Rechecked with core.longpaths=true and absolute extended paths: both files exist and the worktree has only the 30 expected staged changes."
+  ],
+  "limitations": [
+    "No builds, tests, database operations, signature/revocation validation, package creation, Actions, pushes, PRs, remote writes or deployments performed by this reviewer.",
+    "Remote main and queue freshness derive from committed coordinator intake evidence; this reviewer independently checked local pinned refs, ancestry, source bytes and workflow definitions. Coordinator must repeat the existing pre-push/PR checks against then-current protected refs and queues.",
+    "READY is document admission only. All future task behavior and real Owner/host/business adoption remain unexecuted; existing successful runtime evidence is reused only under its original source/input/environment scope."
+  ],
+  "operations": {
+    "repository_edits": 0,
+    "builds": 0,
+    "business_tests": 0,
+    "database_operations": 0,
+    "signature_checks": 0,
+    "network_writes": 0,
+    "actions_triggered": 0,
+    "actions_cancelled": 0,
+    "workflow_changes": 0
+  },
+  "longpath_file_existence": [
+    {
+      "path": "docs/audits/database-compatibility/wp6-native/wms-final/formal/wp6-sql-formal-matrix-wms-local-transaction-fix/entries/oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication/scanned-logs/process/stdout.log",
+      "exists": true
+    },
+    {
+      "path": "docs/audits/database-compatibility/wp6-native/wms-final/formal/wp6-sql-formal-matrix-wms-local-transaction-fix/entries/oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication/scanned-logs/trx/results.trx",
+      "exists": true
+    }
+  ]
+}

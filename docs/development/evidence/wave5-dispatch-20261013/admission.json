@@ -1,0 +1,133 @@
+{
+  "result": "PASS_FOR_FOUR_ASSIGNED_TASKS",
+  "scope": "Read-only dependency/source/write-window/worktree and resource admission; future implementation not run.",
+  "observed_at": "2026-10-13T11:35:46.819214+00:00",
+  "clock_basis": "coordinator host UTC",
+  "baselines": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "queued_or_running": []
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "queued_or_running": []
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": []
+    }
+  },
+  "tasks": [
+    {
+      "id": "S01-12",
+      "entry_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/S01-12-admission.md",
+          "sha256": "8df005e30f4cc82b8578393e3b73553de7e27881f0ee822d43e3b250bb056f49",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/S01-12-admission.json",
+          "sha256": "bbb73d48de294492d93aa9a0a047c65dc1483d0e54eb49c5cf52e8d2720b6891",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/s01-12-adoption-20261013",
+      "baseline": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "worktree": "D:/CP6-worktrees/s01-12-20261013",
+      "clean": true
+    },
+    {
+      "id": "WP02-27",
+      "entry_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-package.md",
+          "sha256": "60e6b23953da3c13d74c8c0128e306c472bd9e4f7f9db99666b4a46184fe150d",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-package.json",
+          "sha256": "fdb4a2f63b922cad2569993070b404b0fa0b408b8f71876a38dbde14a82135b8",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.md",
+          "sha256": "8c9f2c67e3c96677c15dbf7ecd82c8048cd09ba4ab08948ec58785995d8bbd45",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.json",
+          "sha256": "051d719fca3efa40ede09aa29ed89b97046e98e7e4c7fe7a38434e44e2ed0578",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/wp02-27-package-capabilities-20261013",
+      "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-27-20261013",
+      "clean": true
+    },
+    {
+      "id": "WP02-07",
+      "entry_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.md",
+          "sha256": "f1de6612255caf602211bde5d25e4d903278fc65d94f46bc6a38c4cca99f842a",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.json",
+          "sha256": "490b497a92a805967f24a9de29cb2a547b69844110a7bf88a5e366fbe6ee1e31",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/wp02-07-caller-inbox-20261013",
+      "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-07-20261013",
+      "clean": true
+    },
+    {
+      "id": "WP02-11",
+      "entry_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.md",
+          "sha256": "f1de6612255caf602211bde5d25e4d903278fc65d94f46bc6a38c4cca99f842a",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.json",
+          "sha256": "490b497a92a805967f24a9de29cb2a547b69844110a7bf88a5e366fbe6ee1e31",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/wp02-11-http-resilience-20261013",
+      "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-11-20261013",
+      "clean": true
+    }
+  ],
+  "write_windows_pairwise_disjoint": true,
+  "held_task": {
+    "id": "WP02-02",
+    "state": "BLOCKED",
+    "reason": [
+      "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
+    ]
+  },
+  "done_before": 16,
+  "done_after": 16,
+  "business_done": 0,
+  "business_total": 125,
+  "runtime_revision_scenarios": "247 NOT_RUN",
+  "historical_scenarios": "41 REFERENCE_ONLY"
+}

@@ -1,0 +1,1392 @@
+{
+  "schema": "cp6.wave5.s01-12.admission/1",
+  "task_id": "S01-12",
+  "generated_at_utc": "2026-10-13T11:34:27.980826+00:00",
+  "mode": "READ_ONLY_ADMISSION_NOT_S01_12_EXECUTION",
+  "admission_recommendation": "READY_FOR_COORD_REGISTRATION",
+  "hard_blockers": [],
+  "ledger_at_pin": {
+    "state": "PLANNED",
+    "entry_gate": "NOT_CHECKED",
+    "assignment": null,
+    "dependencies": [
+      "S01-02",
+      "S01-03",
+      "S01-04",
+      "S01-05",
+      "S01-06",
+      "S01-07",
+      "S01-08",
+      "S01-09",
+      "S01-10",
+      "S01-11"
+    ],
+    "exclusive_resources": [
+      "Main:s01-12"
+    ]
+  },
+  "registration": "COORD must assign one conversation and independent new branch/worktree from latest confirmed Main, register narrowed write window. This report does not assign/mark READY itself.",
+  "source_repositories": {
+    "Main": {
+      "root": "D:/CP6",
+      "sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "observed_local_origin_main": "a1824fec3d4824d45e27693f2e715b311ee5f665"
+    },
+    "CRM": {
+      "root": "D:/CP6.CRM-worktrees/s01-08-coord-20261012",
+      "sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "observed_local_origin_main": "1e4eea61c31d7547c3b3495d392eefbed99b7339"
+    },
+    "Platform": {
+      "root": "D:/CP6/CP6.Platform",
+      "sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "observed_local_origin_main": "9259a45d39bae7e98ca804a74778a588c1ad4619"
+    }
+  },
+  "remote_scope": "Parent confirmed remote pins; this audit only read local origin/main, original remote receipts and checked candidate ancestry. No fetch/API/network write.",
+  "dependency_deliveries": [
+    {
+      "task": "S01-02",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "3890b4fdbda47c3762b9f51ea75b8c156540c69f",
+      "historical_remote_main": "fb99e35a38fbf14e86005aecbc8a9cf94c63cb17",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/184",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-02/remote-main.json",
+        "git_blob": "7135910708c40558d338530f93301555ebdd009a",
+        "sha256_git_blob_bytes": "9a3266e19be89a2d024d0b50f38caac37b282aef4b294123ea90af372fc130db",
+        "bytes": 7586
+      },
+      "existing_result_to_reuse_only": "C#77;21fixed",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-02/original-validation.json",
+        "git_blob": "ccf13df634ef051a5eed676bea13b5c496b83b20",
+        "sha256_git_blob_bytes": "278f84fe197ff4566df0ec7a88da3a934ec8e839b44f6afd3f99a048c732b319",
+        "bytes": 7884
+      }
+    },
+    {
+      "task": "S01-03",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "b24f76445ffdc9b4df0de77eb394a6aa47726a0c",
+      "historical_remote_main": "08bf7c923fa0b21af39d5e1f1fd550ed635246ed",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/188",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave3-integration-20261012/S01-03/remote-main.json",
+        "git_blob": "a223c15716f62acd933b2fa1d50d943045a6d193",
+        "sha256_git_blob_bytes": "3bfc0734c58a3d55949c831d7f9e78351ae223e93b0289cc7b4cd91f420f99dd",
+        "bytes": 8766
+      },
+      "existing_result_to_reuse_only": "C#205;25fixed",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave3-integration-20261012/S01-03/original-validation.json",
+        "git_blob": "385bd5df56531d6cf4ab33088f609dd92fcd10ed",
+        "sha256_git_blob_bytes": "a1f97be5fcb7ece942406911e94f500649eae8bcf4e96686b9f52caa928d6eea",
+        "bytes": 21926
+      }
+    },
+    {
+      "task": "S01-04",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+      "historical_remote_main": "688383439311a3babf00bae98ee426122ce60cd1",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/190",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave3-integration-20261012/S01-04/remote-main.json",
+        "git_blob": "3a0525907ef5f6ea398e638c104fcb7183de1148",
+        "sha256_git_blob_bytes": "c6dc3e2f5b062e7ba9718a8a9e7ecefddc670170b04f4c4f5789f896ad626a7f",
+        "bytes": 2985
+      },
+      "existing_result_to_reuse_only": "C#132;9fixed",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave3-integration-20261012/S01-04/original-validation.json",
+        "git_blob": "104e6dcc466c0ff61516a83301d03bdf9a3a9d5a",
+        "sha256_git_blob_bytes": "35cb86f2036d1fb244a0afdce73ec35a55197b152efc6a829cbb547c804247b0",
+        "bytes": 24236
+      }
+    },
+    {
+      "task": "S01-05",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "b1f5206d3a0ca1af6513c4984700823c81dea210",
+      "historical_remote_main": "8b55fb3b6dd4f99909897926ecc83d5c0d1efcd2",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/185",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-05/remote-main.json",
+        "git_blob": "1f07f138bc52aa3ab888d63856db8499c4cd2d55",
+        "sha256_git_blob_bytes": "75f48f8b34862d5719b9c1635a110ca4fe31fed75a3da73a0f2653447c39f51b",
+        "bytes": 3432
+      },
+      "existing_result_to_reuse_only": "TS202;34fixed;typecheck",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-05/original-validation.json",
+        "git_blob": "0e32bfaaf145b0ffcf6e7b4c79ee0bdb31a24b5c",
+        "sha256_git_blob_bytes": "4fd685d8b5f45948a8ee96a8150fdd733052fb4dec25445abbb6a3106dda240a",
+        "bytes": 21273
+      }
+    },
+    {
+      "task": "S01-06",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "f406e4e515a7ce82d77db5307e467e7bcdbc25e4",
+      "historical_remote_main": "bd25558ea4c0981b0cff1e4fa77ab8f61277211c",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/191",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave3-integration-20261012/S01-06/remote-main.json",
+        "git_blob": "6862664d33034c96697b8c72204a2e813d3f4952",
+        "sha256_git_blob_bytes": "b20259d583421e9e0d6eacb85f46518085cc6e7bd10c5117e1f77ee8505e76e7",
+        "bytes": 5686
+      },
+      "existing_result_to_reuse_only": "C#60;TS81;22fixed;typecheck",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave3-integration-20261012/S01-06/original-validation.json",
+        "git_blob": "4ce114a6c842593e126354c28fd484449c0d2f85",
+        "sha256_git_blob_bytes": "80f0ae03a843d934add7ad22545c83642b55c768fd04d3689ab80aab304a1148",
+        "bytes": 25745
+      }
+    },
+    {
+      "task": "S01-07",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "d0a3ae93e23aeb48128b0519dbf585e64c508ccf",
+      "historical_remote_main": "d9d6ced01291f9f07487e6f40d4925908926923e",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/197",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-07/remote-main.json",
+        "git_blob": "63691f33cfb74d0872b5da9def110834008b96e2",
+        "sha256_git_blob_bytes": "03f4c8907f934f0a1ef5e23d99eaa50ceac6f9f123b7da4da13f0eebb0b10d39",
+        "bytes": 17027
+      },
+      "existing_result_to_reuse_only": "C#657;TS130;20NCR+6IPQC fixed;typecheck;ORIGINAL_DLL_SHA256_MISSING",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-07/original-validation.json",
+        "git_blob": "0fe8c19a4b089cfacc45a417345ff444260d62a5",
+        "sha256_git_blob_bytes": "0e4d02da952444f4afa5d112897b71838b340a06ab493a50da5f206f8ab2ac3b",
+        "bytes": 46416
+      }
+    },
+    {
+      "task": "S01-08",
+      "repository": "CRM",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+      "historical_remote_main": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "current_main_pin": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6.CRM/pull/90",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave3-integration-20261012/S01-08/remote-main.json",
+        "git_blob": "8228ed21f174dd05eba1846890bc2eeb1f73ffac",
+        "sha256_git_blob_bytes": "54f43c12093fca3c10cbbdc1e89b7a2910cc7bcdd6d4a3b80563552d1956cff8",
+        "bytes": 22806
+      },
+      "existing_result_to_reuse_only": "corrected C#186;Web142(82task+60existing);importer6;typecheck;30fixed+49UI",
+      "existing_evidence": {
+        "repository": "CRM",
+        "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+        "path": "docs/evidence/s01-08/terminal-r1/executed-source.json",
+        "git_blob": "0acd04c60f8aabb4838af00302c018acbe6a9ca1",
+        "sha256_git_blob_bytes": "39354883919647ad75b872aa7f329f0b0657ea8965e14675e4b4bd0631347f8a",
+        "bytes": 87281
+      }
+    },
+    {
+      "task": "S01-09",
+      "repository": "Platform",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+      "historical_remote_main": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "current_main_pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6.Platform/pull/58",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json",
+        "git_blob": "6a85e2994808887c58adbdf9a197a1e7ab96e650",
+        "sha256_git_blob_bytes": "43eaaaa5fca7cb227cc6ed39b733ee698cabc7f570ded98d9f7b16e8f2270bcd",
+        "bytes": 8723
+      },
+      "existing_result_to_reuse_only": "C#110;35fixed;no NuGet published",
+      "existing_evidence": {
+        "repository": "Platform",
+        "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "path": "docs/development/evidence/S01-09/validation.json",
+        "git_blob": "7cd24cbea6d32009ecc6304b09d9840a95c9a597",
+        "sha256_git_blob_bytes": "5e9679136c5477481286a13221809e4c9712f09109da721bd420b64d3dee6754",
+        "bytes": 29087
+      }
+    },
+    {
+      "task": "S01-10",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "a304f9e728775109cfada83312dbeb23b2da4a98",
+      "historical_remote_main": "8e48ee78fd70a2b53ebb39efe7ba7deb351b6840",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/198",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-10/remote-main.json",
+        "git_blob": "c73492151fefc8c75221cf0b6f251f7470ca51c9",
+        "sha256_git_blob_bytes": "969573ae0cbcd30ae2d78abdccaa14ed1d1d164966ee18ca27c8e5ee4627c5ee",
+        "bytes": 11217
+      },
+      "existing_result_to_reuse_only": "PG210;overlapping57;lifecycle1;56fixed;PG18.6/Npgsql8.0.8",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-10/original-validation.json",
+        "git_blob": "6d5afd79f28a482c825a36c00d2eb1dc57e8a35a",
+        "sha256_git_blob_bytes": "8d22c516298b836761f4ccf91864a806b0623bc1246b79f0315edccdb22db098",
+        "bytes": 61427
+      }
+    },
+    {
+      "task": "S01-11",
+      "repository": "Main",
+      "state_at_main_pin": "DONE",
+      "candidate_sha": "6dbc1a00cec1349c2ff7fdc2fe633d64ce2cf82d",
+      "historical_remote_main": "b7d8da0182530aec3d33d3d5d9e4bc3a86b0f0e9",
+      "current_main_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "candidate_ancestor_of_current_pin": true,
+      "pr_url": "https://github.com/GTX537/CP6/pull/199",
+      "receipt": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-11/remote-main.json",
+        "git_blob": "a3bc424dcea3d377719c271dcaca88c171c02a8b",
+        "sha256_git_blob_bytes": "bec5ed9b6ae222bd1896156f1b594a3cda8a0e06ff05b7a2202e25cf028f34b0",
+        "bytes": 19934
+      },
+      "existing_result_to_reuse_only": "corrected TS428;typecheck;reuse C#417+design5;10fixed",
+      "existing_evidence": {
+        "repository": "Main",
+        "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "path": "docs/development/evidence/wave4-integration-20261013/S01-11/fix-validation.json",
+        "git_blob": "02bf08278d83781d7296d002818e00f4f041cf42",
+        "sha256_git_blob_bytes": "4a98fb656271e6aef13337a7458ce41b0ba00e087b4b48473e6c65150f14a74a",
+        "bytes": 14528
+      }
+    }
+  ],
+  "write_allowlist": [
+    "docs/development/evidence/s01-adoption/**",
+    "eng/contracts/s01-12/** (compare-only helpers;bounded test harness only if needed)"
+  ],
+  "readonly": [
+    "all production sources in Main/CRM/Platform",
+    "existing contract input/vector/schema/expected/generator/tests/evidence/PG mapping",
+    "shared project/dependency/model/migration/writer resources"
+  ],
+  "coordinator_only": [
+    "docs/development/roadmap.json",
+    "generated task/progress views",
+    "docs/project-memory/PROJECT_STATE.md",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "CHANGELOG-AI.md"
+  ],
+  "input_package": {
+    "version": "CP6-S01-CONTRACT-INPUTS/1.0.0",
+    "sources": 33,
+    "profiles": 16,
+    "vectors": 122,
+    "source_execution_flag": "NOT_RUN stays immutable",
+    "profiles_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+    "vectors_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+  },
+  "required_vector_comparison_spec": [
+    {
+      "profile_id": "fin-credit-signed",
+      "vector_count": 14,
+      "vector_ids": [
+        "NUM-001",
+        "NUM-002",
+        "NUM-003",
+        "NUM-004",
+        "NUM-005",
+        "NUM-006",
+        "NUM-007",
+        "NUM-008",
+        "NUM-010",
+        "CREDIT-005",
+        "CREDIT-006",
+        "CREDIT-JS-001",
+        "CREDIT-JS-002",
+        "CREDIT-JS-003"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-0",
+          "variant": "original"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-03",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Main:PostgreSQL S01-10 evidence"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "fin-credit-nonnegative",
+      "vector_count": 6,
+      "vector_ids": [
+        "NUM-011",
+        "CREDIT-001",
+        "CREDIT-002",
+        "CREDIT-007",
+        "CREDIT-009",
+        "CREDIT-011"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-0",
+          "variant": "original"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-03",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Main:PostgreSQL S01-10 evidence"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "fin-credit-positive",
+      "vector_count": 5,
+      "vector_ids": [
+        "NUM-009",
+        "CREDIT-003",
+        "CREDIT-004",
+        "CREDIT-008",
+        "CREDIT-010"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-0",
+          "variant": "original"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-03",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Main:PostgreSQL S01-10 evidence"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "fin-inv-decimal18",
+      "vector_count": 4,
+      "vector_ids": [
+        "NUM-012",
+        "NUM-015",
+        "INV-003",
+        "INV-004"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-1",
+          "variant": "original"
+        },
+        {
+          "source_id": "numeric-2",
+          "variant": "original"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-04",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Main:PostgreSQL S01-10 evidence"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "fin-inv-qty12",
+      "vector_count": 5,
+      "vector_ids": [
+        "NUM-013",
+        "NUM-014",
+        "NUM-016",
+        "INV-001",
+        "INV-002"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "numeric-1",
+          "variant": "original"
+        },
+        {
+          "source_id": "numeric-2",
+          "variant": "original"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-04",
+        "Main:S01-05",
+        "Main:S01-10"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Main:PostgreSQL S01-10 evidence"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "atp-stableid-r1",
+      "vector_count": 22,
+      "vector_ids": [
+        "NUM-017",
+        "NUM-018",
+        "NUM-019",
+        "NUM-020",
+        "NUM-021",
+        "NUM-022",
+        "NUM-023",
+        "ATP-R1-001",
+        "ATP-R1-002",
+        "ATP-R1-003",
+        "ATP-R1-004",
+        "ATP-R1-005",
+        "ATP-R1-006",
+        "ATP-R1-007",
+        "ATP-R1-008",
+        "ATP-R1-009",
+        "ATP-R1-010",
+        "ATP-LEADING-001",
+        "ATP-LEADING-002",
+        "ATP-LEADING-003",
+        "ATP-LEADING-004",
+        "ATP-LEADING-005"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-13",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-14",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-24",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-25",
+          "variant": "composed"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-06",
+        "Main:S01-10"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Main:bounded scalar Schema",
+        "Main:PostgreSQL S01-10 evidence"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "strict-json",
+      "vector_count": 7,
+      "vector_ids": [
+        "JSON-001",
+        "JSON-002",
+        "JSON-003",
+        "JSON-004",
+        "JSON-005",
+        "JSON-006",
+        "JSON-007"
+      ],
+      "selected_sources": [],
+      "target_consumers": [
+        "Main:S01-02",
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "CRM:C#",
+        "CRM:TypeScript",
+        "Platform:C#"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "null-only",
+      "vector_count": 7,
+      "vector_ids": [
+        "NULL-001",
+        "NULL-002",
+        "NULL-003",
+        "NULL-004",
+        "NULL-005",
+        "NULL-006",
+        "NULL-007"
+      ],
+      "selected_sources": [],
+      "target_consumers": [
+        "Main:S01-02",
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "CRM:C#",
+        "CRM:TypeScript",
+        "Platform:C#"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "json-semantic-equality",
+      "vector_count": 7,
+      "vector_ids": [
+        "EQUAL-001",
+        "EQUAL-002",
+        "EQUAL-003",
+        "EQUAL-004",
+        "EQUAL-005",
+        "EQUAL-006",
+        "EQUAL-007"
+      ],
+      "selected_sources": [],
+      "target_consumers": [
+        "Main:S01-02",
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "CRM:C#",
+        "CRM:TypeScript",
+        "Platform:C#"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "ncr-main-r6",
+      "vector_count": 8,
+      "vector_ids": [
+        "NCR-NULL-001",
+        "NCR-NULL-002",
+        "NCR-NULL-003",
+        "NCR-NULL-004",
+        "NCR-NULL-005",
+        "NCR-NULL-006",
+        "NCR-NULL-007",
+        "NCR-NULL-008"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-15",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-17",
+          "variant": "composed"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "surfaces_to_compare": [
+        "Main:C# FIELD_SUBASSERTION_ONLY"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "ncr-cp4",
+      "vector_count": 12,
+      "vector_ids": [
+        "NCR-NULL-009",
+        "NCR-NULL-010",
+        "NCR-NULL-011",
+        "NCR-NULL-012",
+        "NCR-NULL-013",
+        "NCR-NULL-014",
+        "NCR-NULL-015",
+        "NCR-NULL-016",
+        "NCR-NULL-017",
+        "NCR-NULL-018",
+        "NCR-NULL-019",
+        "NCR-NULL-020"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-16",
+          "variant": "composed"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "surfaces_to_compare": [
+        "Main:C# FIELD_SUBASSERTION_ONLY"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "ipqc-r4",
+      "vector_count": 6,
+      "vector_ids": [
+        "IPQC-TYPE-001",
+        "IPQC-TYPE-002",
+        "IPQC-TYPE-003",
+        "IPQC-TYPE-004",
+        "IPQC-TYPE-005",
+        "IPQC-TYPE-006"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-19",
+          "variant": "composed"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-07"
+      ],
+      "surfaces_to_compare": [
+        "Main:TypeScript TYPE_BINDING_ONLY"
+      ],
+      "verification_levels": [
+        "CONTRACT_ROUTING"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "crm-inq-r3-v15",
+      "vector_count": 4,
+      "vector_ids": [
+        "INQ-VERSION-001",
+        "INQ-VERSION-002",
+        "INQ-VERSION-003",
+        "INQ-VERSION-004"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-20",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-21",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-22",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-23",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-26",
+          "variant": "composed"
+        }
+      ],
+      "target_consumers": [
+        "CRM:S01-08",
+        "Platform:S01-09"
+      ],
+      "surfaces_to_compare": [
+        "CRM:C# native locator only",
+        "CRM:TypeScript native locator only",
+        "Platform:C# native locator only"
+      ],
+      "verification_levels": [
+        "CONTRACT_ROUTING"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "crm-lead-cp20",
+      "vector_count": 5,
+      "vector_ids": [
+        "LEAD-OWNER-001",
+        "LEAD-OWNER-002",
+        "LEAD-OWNER-003",
+        "LEAD-OWNER-004",
+        "LEAD-OWNER-005"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-18",
+          "variant": "composed"
+        },
+        {
+          "source_id": "lead-query-schema",
+          "variant": "original"
+        }
+      ],
+      "target_consumers": [
+        "CRM:S01-08"
+      ],
+      "surfaces_to_compare": [
+        "CRM:C# required field projection",
+        "CRM:TypeScript required field projection"
+      ],
+      "verification_levels": [
+        "CONTRACT_UNIT"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "erp-credit-current-v1",
+      "vector_count": 5,
+      "vector_ids": [
+        "VERSION-001",
+        "VERSION-002",
+        "VERSION-003",
+        "VERSION-004",
+        "VERSION-005"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-00",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-01",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-02",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-03",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-04",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-05",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-06",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-07",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-08",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-09",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-10",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-11",
+          "variant": "composed"
+        },
+        {
+          "source_id": "composed-12",
+          "variant": "composed"
+        },
+        {
+          "source_id": "erp-registry-current",
+          "variant": "composed"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-11",
+        "Platform:S01-09"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Platform:C# routing/retention only"
+      ],
+      "verification_levels": [
+        "CONTRACT_ROUTING"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    },
+    {
+      "profile_id": "erp-credit-frozen-r8",
+      "vector_count": 5,
+      "vector_ids": [
+        "VERSION-006",
+        "VERSION-007",
+        "VERSION-008",
+        "BYTES-001",
+        "BYTES-002"
+      ],
+      "selected_sources": [
+        {
+          "source_id": "composed-10",
+          "variant": "original"
+        },
+        {
+          "source_id": "composed-11",
+          "variant": "original"
+        },
+        {
+          "source_id": "composed-12",
+          "variant": "original"
+        },
+        {
+          "source_id": "erp-registry-frozen",
+          "variant": "original"
+        }
+      ],
+      "target_consumers": [
+        "Main:S01-11",
+        "Platform:S01-09"
+      ],
+      "surfaces_to_compare": [
+        "Main:C#",
+        "Main:TypeScript",
+        "Platform:C# routing/retention only"
+      ],
+      "verification_levels": [
+        "CONTRACT_ROUTING"
+      ],
+      "requirement": "Join actual evidence by ID/profile/operation/input/expected/source/scope. Non-applicable surface is not PASS; missing applicable evidence is NOT_RUN/EVIDENCE_GAP."
+    }
+  ],
+  "revision_case_ids_to_map": [
+    "DR-COM-CREDIT-CURRENT-BODY-MONEY-FIELD::AC-W5-COM-07-R",
+    "DR-COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION::AC-W5-COM-06-R",
+    "DR-COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING::AC-W5-COM-08-R",
+    "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
+    "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+    "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-NEG",
+    "DR-COM-LEAD-GENERATED-CS-NULLABLE::COM-LEAD-GENERATED-CS-NULLABLE-POS",
+    "DR-NCR-FIELD-01::NCR-FIELD-01-NEG",
+    "DR-NCR-FIELD-01::NCR-FIELD-01-POS",
+    "DR-NCR-TYPE-01::NCR-TYPE-01-NEG",
+    "DR-NCR-TYPE-01::NCR-TYPE-01-POS",
+    "DR-OPS-IF-002::OPS-IF-002-NEG",
+    "DR-OPS-IF-002::OPS-IF-002-POS",
+    "DR-OPS-IF-015::OPS-IF-015-NEG",
+    "DR-OPS-IF-015::OPS-IF-015-POS",
+    "DR-OPS-IF-030::OPS-IF-030-NEG",
+    "DR-OPS-IF-030::OPS-IF-030-POS",
+    "DR-PLAN-IF-004::PLAN-IF-004-NEG",
+    "DR-PLAN-IF-004::PLAN-IF-004-POS"
+  ],
+  "execution_requirements": [
+    {
+      "deliverable": "manifest.json + README.md",
+      "requirement": "Three repo/source/commit/evidence/produced artifact and runtime identities, raw-vs-Git-byte distinction, exact input/profiles and complete patch chains, missing fields explicit."
+    },
+    {
+      "deliverable": "vectors.json",
+      "requirement": "122 individual frozen IDs, applicable surface matrix;56 lexical rows compare C#/TS/old PG assertions;normalized value versus original/persisted coefficient-scale-wire separate;input/expected immutable;do not use implementation-generated expectations."
+    },
+    {
+      "deliverable": "profiles-and-consumers.json + consumers.md",
+      "requirement": "Actual decoder/route versus unwired Owner/HTTP/UI/DB surface;current source pins;usable capability/exact version/remaining Owner gates for S02/S03/S05/S07/S08/S09."
+    },
+    {
+      "deliverable": "acceptance-coverage.json + evidence-gaps.md",
+      "requirement": "19 unique revision references plus relevant original AC pointers;partial vs complete assertions;whole cases stay NOT_RUN;historical original DLL hash missing preserved."
+    },
+    {
+      "deliverable": "validation.json + review.md + DELIVERY.md",
+      "requirement": "New compare-only structure/pin/link/coverage checks;single task diff review;reuse existing runs after input/config/dependency equivalence;only necessary smallest task-local harness/probe if actual comparison is unobservable;fresh artifact identity never backfills historic run."
+    }
+  ],
+  "formal_pg_identity": {
+    "result": "PASS",
+    "observed_at": "2026-10-13T10:43:59.133097+00:00",
+    "formal_sha256": "96ef3c9f22919e790f750773c2a4bdc675b7df5f145f7b9bfffeda6d19c1ec16",
+    "proposal_sha256": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+    "formal_mapping_version": "CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0",
+    "formal_adoption": "ADOPTED_BY_COORD",
+    "comparison": "Only adoption, scale_change.approval and coordinator_decision differ; every tested semantic value unchanged",
+    "canonical_semantic_sha256": "7bb24e1e36610996a46d13cace0a58e8032a3eb369e4dda235af5ec3c58e8752",
+    "canonical_serialization": "json.dumps ensure_ascii=False sort_keys=True separators=(',',':')",
+    "inventory_rows": 66,
+    "inventory_tables": 13,
+    "nullable": 15,
+    "expanded_fields": [
+      "LayerConsumption.FinalAmount",
+      "LayerConsumption.ResidueApplied",
+      "LayerConsumption.RoundedBeforeResidue",
+      "ProvisionalValueFact.MaxAmount",
+      "ReconciliationLine.ApValue",
+      "ReconciliationLine.CogsValue",
+      "ReconciliationLine.Difference",
+      "ReconciliationLine.FgValue",
+      "ReconciliationLine.GlValue",
+      "ReconciliationLine.GrniValue",
+      "ReconciliationLine.InTransitValue",
+      "ReconciliationLine.InventoryValue",
+      "ReconciliationLine.WipValue",
+      "RoundingTrace.FinalTotal",
+      "RoundingTrace.LineRoundedTotalBeforeResidue",
+      "RoundingTrace.Residue",
+      "RoundingTrace.TargetTotal",
+      "ValueLine.FinalAmount",
+      "ValueLine.ResidueApplied",
+      "ValueLine.RoundedBeforeResidue"
+    ],
+    "assigned_vectors": 56,
+    "mapping_path_selection": "Formal file selected by existing TestInputs.MappingPath; adapter version matches",
+    "validation_reuse": "Original PG210 and overlapping57, lifecycle1 against proposal; NOT newly executed at formal identity",
+    "database_operations": 0,
+    "production_owner_acceptance": "NOT_RUN"
+  },
+  "crm_composite_identity_source_record": {
+    "profile_id": "CRM-INQ-TERMINAL-PROJECTION/20261013-R1",
+    "identity_contract": "Native source locator alone does not select this revision. Verify all three identity components before decoding; reject unknown or mismatched identity without fallback.",
+    "base_native_schema_locator": {
+      "source_id": "composed-20",
+      "variant": "composed",
+      "openapi": "3.1.0",
+      "title": "CRM-INQ-01 RECOVERY-R3 V15",
+      "version": "1.0-recovery-r3",
+      "schema_root": "/components/schemas",
+      "schema_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349"
+    },
+    "patch": {
+      "path": "overlay.json",
+      "sha256": "bce20c5a3bc93826993be6c2ba7c9a440fffd467f746245e5665707d8eedf549",
+      "hash_basis": "RAW_FILE_BYTES"
+    },
+    "effective_schema": {
+      "generated_name": "crm-inq.terminal.openapi.json",
+      "sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d",
+      "hash_basis": "GENERATED_UTF8_BYTES"
+    },
+    "payload_version_field": null,
+    "frozen_vector_scope": "CP6-S01-CONTRACT-INPUTS/1.0.0 remains unchanged. Its four INQ-VERSION cases assert the native source locator only; all 30 frozen expectations are retained. They do not alone establish this composite profile.",
+    "required_adoption_checks": [
+      "Root PrivacyExportView and all five PrivacyExportUiState embedded export alternatives use the same effective profile.",
+      "Status 99 accepts public null expiry/artifact/proof; rejects public expiry strings and missing required fields; requestedAtUtc <= completedAtUtc remains enforced recursively.",
+      "Status 90 public null fields remain unchanged; status 30 retains completed/expiry/artifact/proof and requested <= completed < expires download rules.",
+      "Retain historical expiry on internal original records; public terminal values never grant download authorization.",
+      "Verify independent mismatch rejection for base locator, patch SHA, effective Schema SHA and profile ID; do not add fields to closed payloads."
+    ],
+    "adoption_state": "ADOPTION_PENDING",
+    "business_execution": "NOT_RUN"
+  },
+  "specific_gaps": [
+    {
+      "id": "S01-07-original-dll",
+      "detail": "Original C# logs/TRX/source/dependencies are bound but original DLL hash missing. Keep null/ORIGINAL_DLL_SHA256_MISSING;any rebuild is new evidence.",
+      "blocks_admission": false
+    },
+    {
+      "id": "asymmetric122",
+      "detail": "No universal122-in-every-language/PG assertion. NCR20 field projections C#;IPQC6 type bindings TS.",
+      "blocks_admission": false
+    },
+    {
+      "id": "unexecuted-full-runtime",
+      "detail": "Individual task results do not establish combined current-main run or real Owner/HTTP/UI/tenant/production acceptance.",
+      "blocks_admission": false
+    },
+    {
+      "id": "ERP-future-consumer",
+      "detail": "F09 absent;3generic C06 roots unsupported;O(n^2)range overlap capacity not fully tested;BYTES native RV invalid and only retention-tested.",
+      "blocks_admission": false
+    },
+    {
+      "id": "historic-metadata",
+      "detail": "CRM original profile ADOPTION_PENDING source bytes unchanged;adoption from corrected delivery. Original PG PROPOSED execution remains original;formal ADOPTED semantics equality authorizes reuse,not retest claim.",
+      "blocks_admission": false
+    }
+  ],
+  "consumer_handoff_slices": [
+    "S02",
+    "S03",
+    "S05",
+    "S07",
+    "S08",
+    "S09"
+  ],
+  "consumer_handoff_details": "S01-12-admission.md 下游交接 table;implement precise Owner-specific table with current-source pins.",
+  "preserved_state": {
+    "business_delivered": "0/125",
+    "full_runtime": "247 NOT_RUN",
+    "historical_static": "41 REFERENCE_ONLY",
+    "original_inventory": "123/125;ITER/REL irrecoverable gaps",
+    "wp05": "PROPOSED",
+    "s01_task_count_before": "11/12",
+    "s01_12_success": "12/12 is task slice only,not full business acceptance"
+  },
+  "source_pins": [
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
+      "git_blob": "f328bd68a4fde7a61a88f159022a2c9538650784",
+      "sha256_git_blob_bytes": "2e4279a28110887ca3f1ff0418811b52f9010115545783d22b8c4123050738d8",
+      "bytes": 24101
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "git_blob": "40ccbc25727e0815dcb139f8ed01cb419d194920",
+      "sha256_git_blob_bytes": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "bytes": 113230
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "eng/contracts/s01/vectors.json",
+      "git_blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2",
+      "sha256_git_blob_bytes": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "bytes": 132820
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "eng/contracts/s01/postgresql-mappings.json",
+      "git_blob": "c8aa98beced3262e461c22b4a37636bc188eac33",
+      "sha256_git_blob_bytes": "96ef3c9f22919e790f750773c2a4bdc675b7df5f145f7b9bfffeda6d19c1ec16",
+      "bytes": 126908
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-10/coord-adoption/verification.json",
+      "git_blob": "9bcbb1dbc471aa9561b41a9337a16b3588727a61",
+      "sha256_git_blob_bytes": "f9194ead7c35beeabee33b7f80329d3a7951dc164a9b9d88da66e9d0fa5c7d6b",
+      "bytes": 1886
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-10/COORD-ADOPTION.md",
+      "git_blob": "6b0a8751b3ce36a61d16253a61f5a0d2447791c5",
+      "sha256_git_blob_bytes": "1636eade4f25bf29faff51938b2e998f24fc5c4fba888769c68e8ccd8d01cb2b",
+      "bytes": 2140
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-10/OWNER-ADOPTION.md",
+      "git_blob": "ac73046f6aa4895d6c74843b78e6b85b5af92bb9",
+      "sha256_git_blob_bytes": "d3820777bb81ea8e5d6ce02055f02cbabfb353ec15a6839570e949dba8bbe116",
+      "bytes": 6845
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-07/fixed-vectors.json",
+      "git_blob": "938fda7330248178701f1536611bc0277d745ff8",
+      "sha256_git_blob_bytes": "1a3cc7085f16df870376661be5ec1190665a1470cc651570878dbc42f3a32b4c",
+      "bytes": 18223
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-07/csharp/verification.json",
+      "git_blob": "20d04f838bbc9254da477692ca37d7cf302eb1c5",
+      "sha256_git_blob_bytes": "3e9981f726e4e1bb78b6e194a0755893a4f6659fc6f08d145d98d2ff1a2e5daf",
+      "bytes": 10799
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-07/OWNER-CONSUMERS.md",
+      "git_blob": "1324415f82e857cfe04e3e3c198bc7656f0d5f13",
+      "sha256_git_blob_bytes": "e9029b4200861a23201762deccd71a7e80f26b6f7b5811c7ad28d51b9847fa38",
+      "bytes": 4004
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-07/owner-consumers.json",
+      "git_blob": "1ba61e164308e232bd424f1377d1f40d7ae4b201",
+      "sha256_git_blob_bytes": "7653c59a37758b1b7a04109112471caa15d49249f08944ff9eef461dfc7a2a1c",
+      "bytes": 5505
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-11/coord-fix-196/validation.json",
+      "git_blob": "02bf08278d83781d7296d002818e00f4f041cf42",
+      "sha256_git_blob_bytes": "4a98fb656271e6aef13337a7458ce41b0ba00e087b4b48473e6c65150f14a74a",
+      "bytes": 14528
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/S01-11/owner-boundary.json",
+      "git_blob": "dfcc05d1ef390bab6794019e45b92803e4f4d380",
+      "sha256_git_blob_bytes": "c1e3a94d5f81ff732ea8e0323576c866d5370f631bd326851e42f200123a73dd",
+      "bytes": 1706
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "eng/contracts/s01-11/provenance.json",
+      "git_blob": "0efba01ad1badd2e9e4ae2077b814c5d92862a21",
+      "sha256_git_blob_bytes": "e64134a693525d9c75bed4021d5d839ceb956f04bef88979726d2790c05d7baf",
+      "bytes": 17254
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "eng/contracts/s01-11/surface.json",
+      "git_blob": "c0658c457dac97fb424cc23e5b97f55cf2c7b1c7",
+      "sha256_git_blob_bytes": "c9416ed470b200d503eba5add2faa459f04d632363ce569146f8f3fd6bc6ebe3",
+      "bytes": 17226
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "docs/development/evidence/wave4-integration-20261013/README.md",
+      "git_blob": "06a01cbd721bf52823d1884a98d97616a00f2a16",
+      "sha256_git_blob_bytes": "ba6a7162fa954484a34068ecc81a1b45e3a6537016fa1e9a9a978e2867c276d3",
+      "bytes": 4669
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Fin/CreditControlService.cs",
+      "git_blob": "2be83c3a6dca2c9ad411ce3958b6e2d377e9ee81",
+      "sha256_git_blob_bytes": "a3354f05d9234a4ebbcc6405f41d0f8ea8e70cb6a05aae43cf557d303bb4d779",
+      "bytes": 1732
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Fin/StockFinBridge.cs",
+      "git_blob": "7b2cf1aa4bafa5a76b21271cd60f61877765cec4",
+      "sha256_git_blob_bytes": "e152f2887f098423dadcea56d8669228f9fd8edae7628daf7efb438e57e1b5c9",
+      "bytes": 7631
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Plan/ISupplyService.cs",
+      "git_blob": "b00f7bfaf31d4222e50db4dc5524fef3e4209745",
+      "sha256_git_blob_bytes": "de5ce185cb033e48e8d9d6eec2e0e915a74e7c1235e298e2aa2c371f7603714d",
+      "bytes": 918
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Erp/CreditNoteService.cs",
+      "git_blob": "5d8b01a0204d15a2b4295fc8cfe1713f0121a137",
+      "sha256_git_blob_bytes": "ef51c5091b88b53a803c035d41cb46c8db4a8779e0297456d564656fb54f6c17",
+      "bytes": 3609
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Mes/QualityInspectionService.cs",
+      "git_blob": "a74200e72e6e2c3d616bad65a72113fd7bdc218c",
+      "sha256_git_blob_bytes": "6cc2eb34faa63d55567128b9db8e65c5f9dc2cdb255aee37822a4adf79e89f15",
+      "bytes": 17584
+    },
+    {
+      "repository": "Main",
+      "commit": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "path": "CP6.Core/Services/Mes/DefectRecordService.cs",
+      "git_blob": "633a70b1ea7ebb6453b8ad3f3c5d18546a568328",
+      "sha256_git_blob_bytes": "5a77c6f936fd1c514c7508ec2b554bf42d58aad0c0fd99338e11dd2f7c5d1578",
+      "bytes": 9371
+    },
+    {
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "contracts/s01/revisions/CRM-INQ-TERMINAL-20261013-R1/profile.json",
+      "git_blob": "06a8c1b339e35b8664aceb192dd7a663791e9f2c",
+      "sha256_git_blob_bytes": "c354974c918dbc39d1ecf9352db79ab5b2b8a61e901f2db6ea328d6112993645",
+      "bytes": 2070
+    },
+    {
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "docs/evidence/s01-08/terminal-r1/README.md",
+      "git_blob": "da4344abbfc96a091541446d8a3233836b5216b7",
+      "sha256_git_blob_bytes": "7bb31f0bae9eddca25b8a2a2c81060cac07618f5e1dc8129e19ef894feabc701",
+      "bytes": 10842
+    },
+    {
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "src/CP6.CRM.Application/Contracts/Inquiry/NativeInquirySchema.cs",
+      "git_blob": "5054c907ad0fddd5432d3082d889ac4d629f3b6d",
+      "sha256_git_blob_bytes": "9298e5499e49b8ba85fe4baeb0fecefed87598b2a3dc191f508c2a52665c9dce",
+      "bytes": 5484
+    },
+    {
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Intake.cs",
+      "git_blob": "24e73d6f6065bf61389926e9c826f0d164e058af",
+      "sha256_git_blob_bytes": "b2e5b8d0590ccbe164a1b93f64ba6a991eb098919e1889999f1388f3a7da6aae",
+      "bytes": 28702
+    },
+    {
+      "repository": "CRM",
+      "commit": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "path": "apps/web/src/leads/PublicInquiry.tsx",
+      "git_blob": "df4d3625da394622d6c33935d2b03701f536c793",
+      "sha256_git_blob_bytes": "0de54ae86f4d85d1079f867853df8869cacf4bce3f77687a42b9af56fda3b529",
+      "bytes": 8017
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "docs/development/evidence/S01-09/input-provenance.json",
+      "git_blob": "ac21bbc067bca052c7e101d646d9b177e902de76",
+      "sha256_git_blob_bytes": "5062eb3815af0b08070140adae8216db6d163d855c73e6710939dcf0325f723d",
+      "bytes": 3763
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+      "git_blob": "0436729bb3f3dd8131dd35fab38d0005f7d8f968",
+      "sha256_git_blob_bytes": "850a5c99bde76851353c6d2b51e58326c5894c8c36306e183c4c45cd255cf958",
+      "bytes": 3837
+    },
+    {
+      "repository": "Platform",
+      "commit": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+      "git_blob": "b52fcc9fd98294896a09c2c70763d95c19e7fabb",
+      "sha256_git_blob_bytes": "4a10ba1324500e9686a0c851a69214e2c32003ae087cc3cb61f5932c1a4dec36",
+      "bytes": 942
+    }
+  ],
+  "audit_operations": {
+    "tests": 0,
+    "db_operations": 0,
+    "git_mutations": 0,
+    "network_writes": 0,
+    "repository_file_writes": 0,
+    "actions_started": 0,
+    "actions_cancelled": 0,
+    "trigger_changes": 0,
+    "output": "only external planning MD/JSON"
+  },
+  "definition_of_done": "Evidence joins/limitations,version pins and six consumer handoffs complete;local bounded checks pass;material review findings closed;COORD state sync/protected merge/remote-main receipt. No mandatory new DB or full business suite.",
+  "coordinator_prepared_assignment": {
+    "chat_label": "A / S01-12",
+    "branch": "codex/s01-12-adoption-20261013",
+    "worktree": "D:/CP6-worktrees/s01-12-20261013",
+    "baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+    "status_basis": "Parent COORD message during read-only admission;ledger at pinned source remains PLANNED/NOT_CHECKED and registration belongs to COORD.",
+    "write_window": [
+      "docs/development/evidence/s01-adoption/**",
+      "eng/contracts/s01-12/** (evidence comparator/read-only harness only)"
+    ],
+    "no_new_db_window": true
+  }
+}

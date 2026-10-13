@@ -1,0 +1,114 @@
+{
+  "observed_at": "2026-10-13T11:21:23.655907+00:00",
+  "clock_basis": "coordinator host UTC",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "queued_or_running": []
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "queued_or_running": []
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": []
+    }
+  },
+  "handoff_heads": {
+    "S01-11": "be92a53da203041a11ee78dfdfd3b893b67393d9",
+    "S01-10": "6eb296740e0ca8d4233c69c406af6fa0d7107af4",
+    "WP02-01": "e73c63677b7e8dc36e379a8c3a8302a29206d088",
+    "S01-07": "d57b63961401db12b157d32b65c804e8ad68be69",
+    "S01-12": null,
+    "WP02-27": null,
+    "WP02-07": null,
+    "WP02-11": null
+  },
+  "messages": [
+    {
+      "task": "S01-11",
+      "branch": "codex/dev-handoff-s01-11",
+      "sha": "be92a53da203041a11ee78dfdfd3b893b67393d9",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-11/messages/20261013T050804Z-start/MESSAGE.md",
+      "sha256": "e80637625965bab446b6123dc2f4876634244d04f372c16d65379a0936e00c1f",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "S01-11",
+      "branch": "codex/dev-handoff-s01-11",
+      "sha": "be92a53da203041a11ee78dfdfd3b893b67393d9",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-11/messages/20261013T063306Z-delivery/MESSAGE.md",
+      "sha256": "38b99ae9cba44360a42deff7c882ba0c73e75e7056f3ede9c4d5c2cff1aded76",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "S01-10",
+      "branch": "codex/dev-handoff-s01-10",
+      "sha": "6eb296740e0ca8d4233c69c406af6fa0d7107af4",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-10/messages/20261013T050459Z-start/MESSAGE.md",
+      "sha256": "287d8ce7fcdeff792174601bdd7a56ada5e5e32b85ec80ea3110d5dd26bd6848",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "S01-10",
+      "branch": "codex/dev-handoff-s01-10",
+      "sha": "6eb296740e0ca8d4233c69c406af6fa0d7107af4",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-10/messages/20261013T051000Z-scale-window/MESSAGE.md",
+      "sha256": "3b1f230849f295e455df51b1a3de6d8acb6e36c20700cedb9933b4e00a5ce540",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "S01-10",
+      "branch": "codex/dev-handoff-s01-10",
+      "sha": "6eb296740e0ca8d4233c69c406af6fa0d7107af4",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-10/messages/20261013T054851Z-mapping-review/MESSAGE.md",
+      "sha256": "cb86e3b43e07c50a4e9e722230913a6402415f88a04d00ba87ec885a38a91eea",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "S01-10",
+      "branch": "codex/dev-handoff-s01-10",
+      "sha": "6eb296740e0ca8d4233c69c406af6fa0d7107af4",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-10/messages/20261013T061934Z-candidate-delivery/MESSAGE.md",
+      "sha256": "ec0bb94cff08936bb42834277f92ad493d90036dd1aad4874a926e3d4dfd80c0",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "WP02-01",
+      "branch": "codex/dev-handoff-wp02-01",
+      "sha": "e73c63677b7e8dc36e379a8c3a8302a29206d088",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-01/messages/20261013T051903Z-c-start/MESSAGE.md",
+      "sha256": "c1d474e7132ae9da34d75a491d5607ea8dda643d3887089f8122e70de6ad4ed9",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "WP02-01",
+      "branch": "codex/dev-handoff-wp02-01",
+      "sha": "e73c63677b7e8dc36e379a8c3a8302a29206d088",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-01/messages/20261013T061716Z-c-delivery/MESSAGE.md",
+      "sha256": "bc7790849f7207813459f4f52afc939fe4ea303d9a1316a92a69cf6ee2d80100",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "S01-07",
+      "branch": "codex/dev-handoff-s01-07",
+      "sha": "d57b63961401db12b157d32b65c804e8ad68be69",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-07/messages/20261013T051538Z-start/MESSAGE.md",
+      "sha256": "4d032e910752995388fa496fc10456e4933a2fc124aab2e578f68774f73cebec",
+      "already_read_in_wave4": true
+    },
+    {
+      "task": "S01-07",
+      "branch": "codex/dev-handoff-s01-07",
+      "sha": "d57b63961401db12b157d32b65c804e8ad68be69",
+      "path": "handoffs/CP6-DEV-20261012/tasks/S01-07/messages/20261013T055657Z-delivery/MESSAGE.md",
+      "sha256": "ab8c60c82a5deab18364491297862a5f5052a376b61118edcd10e02241dc3afd",
+      "already_read_in_wave4": true
+    }
+  ],
+  "new_messages": []
+}

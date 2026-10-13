@@ -1,0 +1,189 @@
+{
+  "task_id": "WP02-27",
+  "decision": "READY_FOR_COORD_CONFIRMATION_LOCAL_ONLY",
+  "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "branch": "codex/wp02-27-package-capabilities-20261013",
+  "worktree": "D:\\CP6.Platform-worktrees\\wp02-27-20261013",
+  "baseline_clean": true,
+  "dependencies": {
+    "S01-09": "DONE Platform delivery dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+    "WP02-01": "DONE Platform delivery 9259a45d39bae7e98ca804a74778a588c1ad4619"
+  },
+  "scope": "Package capability/compatibility identity and local immutable/trust validator; no formal publication/version occupation/Actions/deployment/Main adoption",
+  "source_anchors": [
+    {
+      "path": "docs/P10-RELEASE-GOVERNANCE.md",
+      "git_blob": "c0ddec9125d52bfc2814a70508646b0b90cc22a1",
+      "committed_bytes_sha256": "f3ee88fcec49892ed5750cd079d04060ccb62bc5298a21ef9a0265de84e30ff2"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+      "git_blob": "b8639c708f4b37ce061c0e521c0324b6a2d0acb5",
+      "committed_bytes_sha256": "f1e4ac737793e57a7eb08f52b10f1250b002b90f4b791f870e4519455bd2b2ae"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6PinnedNuGetTrustPolicy.cs",
+      "git_blob": "4fabe39357bd94b8792e636f3be4efb918283299",
+      "committed_bytes_sha256": "b7dd494849de5c350cc63af3b59d6ae11777c61b0989e018fda95b88f9a76225"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ReleaseContractIds.cs",
+      "git_blob": "f60bf2397a960ad090e02327493e620c12092950",
+      "committed_bytes_sha256": "39ac32b74fdfe871bdad851c8b883a0923bebcd1e9321886b0ec54795e27ff1c"
+    },
+    {
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "git_blob": "3004db6adbf1d6dfa0a53746fcca76ed7c598e11",
+      "committed_bytes_sha256": "a711243f18ed49874cc0032fc11f31938b4febdcb9e9425f63bfe9b57a5eeeb1"
+    },
+    {
+      "path": "tools/CP6.Platform.ReleaseTool/FormalPackageVerifier.cs",
+      "git_blob": "3903c09e99643857416bbe4884355344adc5cf38",
+      "committed_bytes_sha256": "30b755f0cdd10a9be9b6ac03ca562e8694eace957b6d97b9b45b70358517143e"
+    },
+    {
+      "path": "tools/CP6.Platform.ReleaseTool/Program.cs",
+      "git_blob": "ccdb4e51278ba0c58a3556222f45cabc364c2bc3",
+      "committed_bytes_sha256": "be18fefd2f114052ef59c116e183f257418b26022b95b5641f331b90da0e7d31"
+    },
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/P10PackageTestHarness.cs",
+      "git_blob": "fb171982c1b53e7d2a505f4a4d00d95a8358457c",
+      "committed_bytes_sha256": "9278a2ce519a736fb7c477e93bbc74f5414a9c4248db75fee31947a361380e4d"
+    },
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/P10PackageTests.cs",
+      "git_blob": "39830ca98a9c4a50293b9e24d1c11e2f03e453e6",
+      "committed_bytes_sha256": "05ac4a6d942f4fc003fb8e3c0fa3cf40eda65608dc1dcb4c33111ccc77491ad0"
+    },
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/ReleaseSchemaAssetTests.cs",
+      "git_blob": "3999a198cfcb31224b2fd61c9e92e640bf23ef5f",
+      "committed_bytes_sha256": "a3aaf6a92afcf47ad8363f3910038f37f535801af1648334dc417a8365fa2e09"
+    },
+    {
+      "path": "eng/p10/Pack-P10TestPackages.ps1",
+      "git_blob": "a9d93b40c5918f340f577bb2b1e42901df3c8302",
+      "committed_bytes_sha256": "c080700c775b3c21d41f3bdebf8fcb73b483c06f610a9f48998f969614fba826"
+    },
+    {
+      "path": "eng/p10/trust/p10-formal-nuget-trust-store.v1.json",
+      "git_blob": "92872f95ee22244ea824b6a9fd4acd2cc0c953cc",
+      "committed_bytes_sha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/README.md",
+      "git_blob": "05dff70323d99312e6515976dd2af689d1cf6738",
+      "committed_bytes_sha256": "5ecd4e7f0aa101d4e23b40343238606b8814952280cebc199e5fe715a04f243a"
+    },
+    {
+      "path": "docs/WP02-01-TRUSTED-CONTEXT.md",
+      "git_blob": "7a7c5f50092349e10f6f7683def23a3695037fa5",
+      "committed_bytes_sha256": "14d6c611c3853fd9b230c6b09d50a8484ce4cc7efc82a7348cf19073e1a2a52e"
+    },
+    {
+      "path": "docs/evidence/c01/0.10.2/formal-package-publication.v1.json",
+      "git_blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829",
+      "committed_bytes_sha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181"
+    }
+  ],
+  "existing_cached_artifacts": [
+    {
+      "package_id": "CP6.Platform.Abstractions",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.abstractions\\0.10.2\\cp6.platform.abstractions.0.10.2.nupkg",
+      "sha256": "e838ba9c9c6e434f8c8a2bf41e9da7d931a962400435aabb2189f40628c17103",
+      "matches_publication_record": true,
+      "signature_verified_in_this_admission": false
+    },
+    {
+      "package_id": "CP6.Platform.AspNetCore",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.aspnetcore\\0.10.2\\cp6.platform.aspnetcore.0.10.2.nupkg",
+      "sha256": "5dc9cee4335e69f463361afc89d36587650b896059472570753ef485787fec73",
+      "matches_publication_record": true,
+      "signature_verified_in_this_admission": false
+    },
+    {
+      "package_id": "CP6.Platform.Contracts",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.contracts\\0.10.2\\cp6.platform.contracts.0.10.2.nupkg",
+      "sha256": "84b62cad23d0ce09a4af545ac5ae73cd625fce33eb77d022740350dac0364570",
+      "matches_publication_record": true,
+      "signature_verified_in_this_admission": false
+    },
+    {
+      "package_id": "CP6.Platform.Deployment",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.deployment\\0.10.2\\cp6.platform.deployment.0.10.2.nupkg",
+      "sha256": "231a7cb3e18fd8ba9a7d60bbe01195ca7676c33b55b542a294c4a76c0fff066b",
+      "matches_publication_record": true,
+      "signature_verified_in_this_admission": false
+    },
+    {
+      "package_id": "CP6.Platform.EntityFramework",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.entityframework\\0.10.2\\cp6.platform.entityframework.0.10.2.nupkg",
+      "sha256": "cc780ce1b454c62f96caa990eb2e0462563b1917e8c505b11100a4555d5b4544",
+      "matches_publication_record": true,
+      "signature_verified_in_this_admission": false
+    },
+    {
+      "package_id": "CP6.Platform.Messaging",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.messaging\\0.10.2\\cp6.platform.messaging.0.10.2.nupkg",
+      "sha256": "878994735a171194b8944c58fa919508380fa7d0707aa09176427295d0aab235",
+      "matches_publication_record": true,
+      "signature_verified_in_this_admission": false
+    },
+    {
+      "package_id": "CP6.Platform.Release",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.release\\0.10.2\\cp6.platform.release.0.10.2.nupkg",
+      "sha256": "0b8fd3b332c837e6f1c0cbe9c312e87a671c4f119d2128768f7284d4fa26a8f1",
+      "matches_publication_record": true,
+      "signature_verified_in_this_admission": false
+    }
+  ],
+  "artifact_hash_check_only": true,
+  "runtime_tests": "NOT_RUN",
+  "formal_package_gate_for_WP02_02": "UNRESOLVED; local WP02-27 completion does not produce authorized published ctx-binding-v1 bytes",
+  "observed_at": "2026-10-13T11:25:56.346736+00:00",
+  "allowed_write_paths": [
+    "src/CP6.Platform.Release/CapabilitiesV1/",
+    "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+    "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+    "contracts/release/capabilities/v1/",
+    "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/",
+    "eng/wp02-27/",
+    "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+    "docs/development/evidence/WP02-27/"
+  ],
+  "file_restrictions": {
+    "src/CP6.Platform.Release/CP6.Platform.Release.csproj": "new capability asset inclusion only; no dependency/formal stable version change",
+    "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs": "additive compatible entry only; preserve existing formal semantic/version/trust gates"
+  },
+  "read_only_paths": [
+    "eng/p10/",
+    ".github/workflows/",
+    "NuGet.config",
+    "Directory.Build.props",
+    "Directory.Packages.props",
+    "contracts/release/v1/",
+    "tools/CP6.Platform.ReleaseTool/",
+    "src/CP6.Platform.Release/Cp6ReleaseContractIds.cs",
+    "src/CP6.Platform.Release/Cp6ReleaseMediaTypes.cs",
+    "tests/CP6.Platform.ReleaseTests/P10PackageTestHarness.cs",
+    "tests/CP6.Platform.ReleaseTests/PackageBuildCollection.cs",
+    "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+    "all historical release artifacts/evidence",
+    "Main/CRM product/project/configuration/state files"
+  ],
+  "exclusive_resources": [
+    "Platform:package-trust",
+    "Platform:release-capabilities-v1",
+    "file:Platform:src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+    "file:Platform:src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs"
+  ],
+  "commands": [
+    "dotnet test tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj -c Release --filter \"FullyQualifiedName~CapabilitiesV1|FullyQualifiedName~FormalPackagePublicationTests|FullyQualifiedName~PinnedNuGetTrustPolicyTests|FullyQualifiedName~FormalPackageVerifierTests\" --logger \"trx;LogFileName=wp02-27-release.trx\" --results-directory artifacts/wp02-27/test-results",
+    "dotnet test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj -c Release --logger \"trx;LogFileName=wp02-27-architecture.trx\" --results-directory artifacts/wp02-27/test-results",
+    "Existing ReleaseTool verify-formal-package for each exact cached 0.10.2 archive with unchanged pinned policy, actual UTC and Current mode",
+    "Local changed Release pack with unique test prerelease/actual source SHA; inspect included capability assets and hash output",
+    "git diff --check; full task diff review once"
+  ],
+  "tests_executed": false
+}
