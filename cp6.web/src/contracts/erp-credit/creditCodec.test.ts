@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { Buffer } from 'node:buffer'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { createCurrentCreditCodec, createFrozenR8CreditCodec, acceptsRegistry, captureOriginalBytes, assessAdaptation, sha256, WMS_SCHEMA, FIN_AR_SCHEMA, REGISTRY_FILE, type CreditCodecSet } from './creditCodec'
@@ -18,6 +19,74 @@ const set = (profile: string) => profile === 'current' ? createCurrentCreditCode
 const objectBytes = (root: string) => bytes(JSON.stringify(fixtures[root]))
 type Case = { id: string, profile: string, root: string, raw: string, accepted: boolean }
 
+describe('Buffer ownership regression #196', () => {
+  for (const profile of ['current', 'frozen']) {
+    for (const timing of ['during', 'after']) {
+      it(`${profile} decode isolates Buffer changes ${timing} validation and returned bytes`, async () => {
+        const codec = await set(profile), input = Buffer.from(objectBytes('PostInput'))
+        const original = new Uint8Array(input), pending = codec.finArPostInput.parse(input)
+        if (timing === 'during') input[0] = 0
+        const parsed = await pending
+        if (timing === 'after') input[0] = 0
+        expect([...parsed.originalUtf8()]).toEqual([...original])
+        expect(parsed.sha256).toBe(await sha256(original))
+        parsed.originalUtf8()[1] = 0
+        expect([...parsed.originalUtf8()]).toEqual([...original])
+        expect(await sha256(parsed.originalUtf8())).toBe(parsed.sha256)
+      })
+    }
+    it(`${profile} schema pin and parsed schema use the same Buffer snapshot`, async () => {
+      const files = Object.fromEntries(Object.entries(bundle(profile)).map(([name, raw]) => [name, Buffer.from(raw)]))
+      const factory = profile === 'current' ? createCurrentCreditCodec : createFrozenR8CreditCodec
+      const pending = factory(files)
+      const schema = files[WMS_SCHEMA]!, offset = schema.indexOf('{0,29}')
+      expect(offset).toBeGreaterThan(-1)
+      schema.write('{0,99}', offset)
+      const codec = await pending
+      await expect(codec.parseWmsMoney(bytes(JSON.stringify({ value: '1', currency: 'USD' })))).resolves.toBeDefined()
+      await expect(codec.parseWmsMoney(bytes(JSON.stringify({ value: '1'.repeat(90), currency: 'USD' })))).rejects.toThrow()
+      await expect(codec.finArPostInput.parse(objectBytes('PostInput'))).resolves.toBeDefined()
+    })
+  }
+  for (const timing of ['during', 'after']) {
+    it(`captureOriginalBytes isolates Buffer changes ${timing} validation and returned bytes`, async () => {
+      const codec = await set('frozen'), input = Buffer.from('{"original":1}\r\n')
+      const original = new Uint8Array(input), hash = await sha256(original)
+      const pending = captureOriginalBytes(codec.identityFor('PostInput'), input, hash)
+      if (timing === 'during') input[0] = 0
+      const captured = await pending
+      if (timing === 'after') input[0] = 0
+      expect([...captured.originalUtf8()]).toEqual([...original])
+      captured.originalUtf8()[1] = 0
+      expect([...captured.originalUtf8()]).toEqual([...original])
+      expect(await sha256(captured.originalUtf8())).toBe(hash)
+      expect(captured.nativeSchemaValidated).toBe(false)
+    })
+  }
+  for (const operation of ['C01', 'C02']) {
+    for (const timing of ['during', 'after']) {
+      it(`${operation} isolates request and response Buffers ${timing} capture and on return`, async () => {
+        const codec = await set('frozen'), request = Buffer.from('{ "commandId": "old" }\r\n')
+        const response = Buffer.from(' ' + JSON.stringify(fixtures[`EC_${operation}_COMMITTED_CommercialDraftView`]) + '\r\n')
+        const originalRequest = new Uint8Array(request), originalResponse = new Uint8Array(response)
+        const requestHash = await sha256(originalRequest), responseHash = await sha256(originalResponse)
+        const pending = codec.captureReplay(operation, 'scope/command', request, requestHash, 201, response, responseHash)
+        if (timing === 'during') { request[request.indexOf('old')] = 110; response[0] = 0 }
+        const captured = await pending
+        if (timing === 'after') { request[request.indexOf('old')] = 110; response[0] = 0 }
+        const replay = await captured.replay('scope/command', originalRequest)
+        expect(replay.statusCode).toBe(200)
+        expect([...replay.bodyUtf8()]).toEqual([...originalResponse])
+        expect([...captured.originalRequestUtf8()]).toEqual([...originalRequest])
+        replay.bodyUtf8()[0] = 0; captured.originalRequestUtf8()[0] = 0
+        expect([...(await captured.replay('scope/command', originalRequest)).bodyUtf8()]).toEqual([...originalResponse])
+        expect([...captured.originalRequestUtf8()]).toEqual([...originalRequest])
+        await expect(captured.replay('scope/command', request)).rejects.toThrow('COMMAND_PAYLOAD_CONFLICT')
+      })
+    }
+  }
+})
+
 describe('ERP-CREDIT native codecs', () => {
   for (const c of json(resolve(task, 'fixtures/cases.json')).cases as Case[]) {
     it(c.id, async () => {
@@ -26,7 +95,8 @@ describe('ERP-CREDIT native codecs', () => {
       if (!c.accepted) await expect(decode()).rejects.toThrow()
       else {
         const parsed = await decode()
-        expect(parsed.originalUtf8()).toEqual(bytes(c.raw))
+        // Compare bytes across Node TextEncoder and jsdom realms, not their prototypes.
+        expect([...parsed.originalUtf8()]).toEqual([...bytes(c.raw)])
         expect(parsed.sha256).toBe(await sha256(bytes(c.raw)))
         expect(parsed.identity.root).toBe(c.root)
         expect(parsed.identity.codecNamespace).toBe(codec.codecNamespace)
@@ -57,9 +127,9 @@ describe('ERP-CREDIT native codecs', () => {
       const pending = codec.finArPostInput.parse(input)
       input[0] = 0
       const parsed = await pending
-      expect(parsed.originalUtf8()).toEqual(original)
+      expect([...parsed.originalUtf8()]).toEqual([...original])
       const copy = parsed.originalUtf8(); copy[0] = 0
-      expect(parsed.originalUtf8()).toEqual(original)
+      expect([...parsed.originalUtf8()]).toEqual([...original])
       expect(Object.isFrozen(parsed.value)).toBe(true)
       for (const change of [{ codecNamespace: 'unknown' }, { schemaSha256: '0'.repeat(64) }, { root: 'WholeC06PublicRequest' }, { root: 'EC_C06_200_StoredTerminal' }, { root: 'EC_C06_202_StoredAdmission' }]) {
         await expect(codec.decode({ ...identity, ...change }, original)).rejects.toThrow()
@@ -82,10 +152,10 @@ describe('ERP-CREDIT native codecs', () => {
       const pending = codec.captureReplay(operation, 'scope/command', request, requestHash, 201, body, bodyHash)
       body[0] = 0
       const saved = await pending, replay = await saved.replay('scope/command', request)
-      expect(replay.statusCode).toBe(200); expect(replay.bodyUtf8()).toEqual(original)
+      expect(replay.statusCode).toBe(200); expect([...replay.bodyUtf8()]).toEqual([...original])
       expect((replay.value as Record<string, unknown>).resultKind).toBe('COMMITTED')
       const copy = replay.bodyUtf8(); copy[0] = 0
-      expect((await saved.replay('scope/command', request)).bodyUtf8()).toEqual(original)
+      expect([...(await saved.replay('scope/command', request)).bodyUtf8()]).toEqual([...original])
       await expect(saved.replay('scope/other', request)).rejects.toThrow()
       await expect(saved.replay('scope/command', bytes('{}'))).rejects.toThrow()
       const renamed = bytes(new TextDecoder().decode(original).replaceAll('COMMITTED', 'COMMITTED_REPLAY'))

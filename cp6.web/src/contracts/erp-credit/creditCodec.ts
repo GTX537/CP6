@@ -14,7 +14,9 @@ export type NativeCreditCodec = Readonly<{ identity: CreditWireIdentity, parse(r
 export class CreditWireError extends Error { constructor(readonly code: string) { super(code) } }
 function requireValue(ok: unknown, code: string): asserts ok { if (!ok) throw new CreditWireError(code) }
 const own = (value: object, key: string) => Object.prototype.hasOwnProperty.call(value, key)
-export const sha256 = async (raw: Uint8Array): Promise<string> => [...new Uint8Array(await crypto.subtle.digest('SHA-256', raw.slice()))].map(v => v.toString(16).padStart(2, '0')).join('')
+// Buffer is a Uint8Array subclass whose slice() aliases its input. Own bytes at every boundary.
+const copyBytes = (raw: Uint8Array): Uint8Array<ArrayBuffer> => new Uint8Array(raw)
+export const sha256 = async (raw: Uint8Array): Promise<string> => [...new Uint8Array(await crypto.subtle.digest('SHA-256', copyBytes(raw)))].map(v => v.toString(16).padStart(2, '0')).join('')
 export const acceptsRegistry = (profile: string, ns: string, file: string, hash: string): boolean => file === REGISTRY_FILE && ((profile === CURRENT_PROFILE && ns === CURRENT_NS && hash === CURRENT_HASH) || (profile === FROZEN_PROFILE && ns === FROZEN_NS && hash === FROZEN_HASH))
 const roots = Object.freeze({
   wmsCreditOwnerRequest: 'CreditOwnerRequest', wmsCreditOwnerQueryRequest: 'CreditOwnerQueryRequest',
@@ -267,9 +269,9 @@ export class CreditCodecSet {
   identityFor(root: string): CreditWireIdentity { return identityFor(this.#current, root) }
   async decode(identity: CreditWireIdentity, raw: Uint8Array): Promise<NativeCreditDocument> { requireIdentity(identity, this.#current); return this.decodeCore(identity, raw) }
   private async decodeCore(identity: CreditWireIdentity, raw: Uint8Array): Promise<NativeCreditDocument> {
-    const stable = raw.slice(), snapshotIdentity = Object.freeze({ ...identity }), parsed = parseStrict(stable)
+    const stable = copyBytes(raw), snapshotIdentity = Object.freeze({ ...identity }), parsed = parseStrict(stable)
     await this.#validator.root(snapshotIdentity.schemaFile, snapshotIdentity.root, parsed)
-    return Object.freeze({ identity: snapshotIdentity, sha256: await sha256(stable), value: materialize(parsed), originalUtf8: () => stable.slice() })
+    return Object.freeze({ identity: snapshotIdentity, sha256: await sha256(stable), value: materialize(parsed), originalUtf8: () => copyBytes(stable) })
   }
   private codec(root: string): NativeCreditCodec { return Object.freeze({ identity: this.identityFor(root), parse: (raw: Uint8Array) => this.decode(this.identityFor(root), raw) }) }
   get publishedCodecs(): Readonly<Record<keyof typeof roots, NativeCreditCodec>> { return Object.freeze(Object.fromEntries(Object.entries(roots).map(([name, root]) => [name, this.codec(root)]))) as Readonly<Record<keyof typeof roots, NativeCreditCodec>> }
@@ -279,7 +281,7 @@ export class CreditCodecSet {
   /** Full saved response guard; separate from the 14 public native factories. */
   async captureReplay(operation: string, commandKey: string, request: Uint8Array, requestHash: string, status: number, response: Uint8Array, responseHash: string): Promise<FrozenHttpReplay> {
     requireValue(!this.#current && ['C01', 'C02'].includes(operation) && status === 201 && commandKey.length > 0, 'FROZEN_REPLAY_IDENTITY')
-    const requestCopy = request.slice(), responseCopy = response.slice()
+    const requestCopy = copyBytes(request), responseCopy = copyBytes(response)
     requireValue(await sha256(requestCopy) === requestHash && await sha256(responseCopy) === responseHash, 'FROZEN_REPLAY_DIGEST')
     parseStrict(requestCopy)
     const saved = await this.decodeCore(identityFor(false, `EC_${operation}_COMMITTED_CommercialDraftView`, true), responseCopy)
@@ -290,7 +292,7 @@ export type FrozenR8CreditCodec = CreditCodecSet
 async function load(current: boolean, files: Readonly<Record<string, Uint8Array>>): Promise<CreditCodecSet> {
   const expected: Record<string, string> = { [WMS_SCHEMA]: WMS_HASH, [FIN_AR_SCHEMA]: FIN_AR_HASH, [REGISTRY_FILE]: current ? CURRENT_HASH : FROZEN_HASH }
   requireValue(Object.keys(files).length === 3 && Object.keys(files).every(k => own(expected, k)), 'SCHEMA_BUNDLE')
-  const stable = Object.fromEntries(Object.keys(expected).map(k => [k, files[k]!.slice()]))
+  const stable = Object.fromEntries(Object.keys(expected).map(k => [k, copyBytes(files[k]!)]))
   const docs: Record<string, Schema> = Object.create(null)
   for (const file of Object.keys(expected)) { const raw = stable[file]!; requireValue(await sha256(raw) === expected[file], 'SCHEMA_IDENTITY'); docs[file] = schemaPlain(parseStrict(raw)) }
   const result = new CreditCodecSet(constructionKey, current, docs)
@@ -300,22 +302,22 @@ async function load(current: boolean, files: Readonly<Record<string, Uint8Array>
 export const createCurrentCreditCodec = (files: Readonly<Record<string, Uint8Array>>) => load(true, files)
 export const createFrozenR8CreditCodec = (files: Readonly<Record<string, Uint8Array>>) => load(false, files)
 export async function captureOriginalBytes(identity: CreditWireIdentity, raw: Uint8Array, expectedSha256: string) {
-  requireIdentity(identity, false); const stable = raw.slice(), snapshotIdentity = Object.freeze({ ...identity })
+  requireIdentity(identity, false); const stable = copyBytes(raw), snapshotIdentity = Object.freeze({ ...identity })
   const digest = await sha256(stable); requireValue(digest === expectedSha256, 'ORIGINAL_BYTES_DIGEST'); parseStrict(stable)
-  return Object.freeze({ identity: snapshotIdentity, sha256: digest, nativeSchemaValidated: false as const, originalUtf8: () => stable.slice() })
+  return Object.freeze({ identity: snapshotIdentity, sha256: digest, nativeSchemaValidated: false as const, originalUtf8: () => copyBytes(stable) })
 }
 export class FrozenHttpReplay {
   readonly #request: Uint8Array
   readonly #response: NativeCreditDocument
   readonly #key: string
   readonly responseIdentity: CreditWireIdentity
-  constructor(capability: symbol, commandKey: string, request: Uint8Array, response: NativeCreditDocument) { requireValue(capability === constructionKey, 'VERIFIED_FACTORY_REQUIRED'); this.#key = commandKey; this.#request = request.slice(); this.#response = response; this.responseIdentity = response.identity; Object.freeze(this) }
+  constructor(capability: symbol, commandKey: string, request: Uint8Array, response: NativeCreditDocument) { requireValue(capability === constructionKey, 'VERIFIED_FACTORY_REQUIRED'); this.#key = commandKey; this.#request = copyBytes(request); this.#response = response; this.responseIdentity = response.identity; Object.freeze(this) }
   async replay(commandKey: string, originalRequest: Uint8Array) {
-    const stable = originalRequest.slice()
+    const stable = copyBytes(originalRequest)
     requireValue(commandKey === this.#key && stable.length === this.#request.length && stable.every((v, i) => v === this.#request[i]), 'COMMAND_PAYLOAD_CONFLICT')
     return Object.freeze({ statusCode: 200 as const, value: this.#response.value, bodyUtf8: () => this.#response.originalUtf8() })
   }
-  originalRequestUtf8(): Uint8Array { return this.#request.slice() }
+  originalRequestUtf8(): Uint8Array { return copyBytes(this.#request) }
 }
 /** No trusted Owner/issuer/Store producer ports exist in this bounded adoption. Self-asserted proof cannot change the fence. */
 export const assessAdaptation = (original: NativeCreditDocument) => Object.freeze({ status: 'READ_ONLY_UNPROVEN' as const, nextAction: 'MANUAL_RECONCILIATION' as const, effectKnowledge: 'UNKNOWN' as const, canRelease: false as const, canDispatch: false as const, establishesFound: false as const, original })

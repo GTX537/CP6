@@ -1,0 +1,117 @@
+{
+  "issue": "https://github.com/GTX537/CP6/issues/196",
+  "original_candidate": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+  "result": "PASS",
+  "runs": [
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103604Z-ts-bug196-red-complete-f6cf63b1/metadata.json",
+      "sha256": "ea78f7f5a77f02f74d9e492fbe9fb37f1519265de2970c149d143bfd6eb848f7",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/erp-credit/creditCodec.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T103604Z-ts-bug196-red-complete-f6cf63b1\\vitest.json"
+      ],
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "started_utc": "2026-10-13T10:36:04.152369+00:00",
+      "ended_utc": "2026-10-13T10:36:19.104840+00:00",
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "dotnet": ".NET SDK:\r\n Version:           10.0.302\r\n Commit:            35b593bebf\r\n Workload version:  10.0.300-manifests.714b12c0\r\n MSBuild version:   18.6.11+35b593beb\r\n\r\nRuntime Environment:\r\n OS Name:     Windows\r\n OS Version:  10.0.26200\r\n OS Platform: Windows\r\n RID:         win-x64\r\n Base Path:   C:\\Program Files\\dotnet\\sdk\\10.0.302\\\r\n\r\n.NET workloads installed:\r\n [maui-windows]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    10.0.20/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maui\\10.0.20\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [maccatalyst]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    26.5.10284/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maccatalyst\\26.5.10284\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [ios]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    26.5.10284/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.ios\\26.5.10284\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [android]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    36.1.43/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.android\\36.1.43\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\nConfigured to use workload sets when installing new manifests.\r\nNo workload sets are installed. Run \"dotnet workload restore\" to install a workload set.\r\n\r\nHost:\r\n  Version:      10.0.10\r\n  Architecture: x64\r\n  Commit:       f7d90799ce\r\n\r\n.NET SDKs installed:\r\n  10.0.302 [C:\\Program Files\\dotnet\\sdk]\r\n\r\n.NET runtimes installed:\r\n  Microsoft.AspNetCore.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.NETCore.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.WindowsDesktop.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n\r\nOther architectures found:\r\n  x86   [C:\\Program Files (x86)\\dotnet]\r\n    registered at [HKLM\\SOFTWARE\\dotnet\\Setup\\InstalledVersions\\x86\\InstallLocation]\r\n\r\nEnvironment variables:\r\n  Not set\r\n\r\nglobal.json file:\r\n  Not found\r\n\r\nLearn more:\r\n  https://aka.ms/dotnet/info\r\n\r\nDownload .NET:\r\n  https://aka.ms/dotnet/download\r\n",
+        "node": "v20.19.0\r\n",
+        "npm": "10.8.2\n"
+      },
+      "counts": {
+        "numTotalTests": 428,
+        "numPassedTests": 416,
+        "numFailedTests": 12,
+        "numPendingTests": 0
+      },
+      "exit_code": 1
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103957Z-ts-bug196-final-3c3e1efc/metadata.json",
+      "sha256": "24117fa0c87abd8889885243d9bd078461df40558845c22788698c991820796f",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/erp-credit/creditCodec.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T103957Z-ts-bug196-final-3c3e1efc\\vitest.json"
+      ],
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "started_utc": "2026-10-13T10:39:57.374625+00:00",
+      "ended_utc": "2026-10-13T10:40:13.475298+00:00",
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "dotnet": ".NET SDK:\r\n Version:           10.0.302\r\n Commit:            35b593bebf\r\n Workload version:  10.0.300-manifests.714b12c0\r\n MSBuild version:   18.6.11+35b593beb\r\n\r\nRuntime Environment:\r\n OS Name:     Windows\r\n OS Version:  10.0.26200\r\n OS Platform: Windows\r\n RID:         win-x64\r\n Base Path:   C:\\Program Files\\dotnet\\sdk\\10.0.302\\\r\n\r\n.NET workloads installed:\r\n [maui-windows]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    10.0.20/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maui\\10.0.20\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [maccatalyst]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    26.5.10284/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maccatalyst\\26.5.10284\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [ios]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    26.5.10284/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.ios\\26.5.10284\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [android]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    36.1.43/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.android\\36.1.43\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\nConfigured to use workload sets when installing new manifests.\r\nNo workload sets are installed. Run \"dotnet workload restore\" to install a workload set.\r\n\r\nHost:\r\n  Version:      10.0.10\r\n  Architecture: x64\r\n  Commit:       f7d90799ce\r\n\r\n.NET SDKs installed:\r\n  10.0.302 [C:\\Program Files\\dotnet\\sdk]\r\n\r\n.NET runtimes installed:\r\n  Microsoft.AspNetCore.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.NETCore.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.WindowsDesktop.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n\r\nOther architectures found:\r\n  x86   [C:\\Program Files (x86)\\dotnet]\r\n    registered at [HKLM\\SOFTWARE\\dotnet\\Setup\\InstalledVersions\\x86\\InstallLocation]\r\n\r\nEnvironment variables:\r\n  Not set\r\n\r\nglobal.json file:\r\n  Not found\r\n\r\nLearn more:\r\n  https://aka.ms/dotnet/info\r\n\r\nDownload .NET:\r\n  https://aka.ms/dotnet/download\r\n",
+        "node": "v20.19.0\r\n",
+        "npm": "10.8.2\n"
+      },
+      "counts": {
+        "numTotalTests": 428,
+        "numPassedTests": 428,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "exit_code": 0
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T103957Z-typecheck-edf96295/metadata.json",
+      "sha256": "a7c0f7d9a8a483d61c9559321ebf03d870cbcb0489d2ac096989f0d4f1d06248",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "run",
+        "type-check"
+      ],
+      "source_baseline": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+      "execution_identity": "uncommitted raw source hashes; baseline is not the tested source tree identity",
+      "started_utc": "2026-10-13T10:39:57.687598+00:00",
+      "ended_utc": "2026-10-13T10:40:54.099682+00:00",
+      "environment": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "dotnet": ".NET SDK:\r\n Version:           10.0.302\r\n Commit:            35b593bebf\r\n Workload version:  10.0.300-manifests.714b12c0\r\n MSBuild version:   18.6.11+35b593beb\r\n\r\nRuntime Environment:\r\n OS Name:     Windows\r\n OS Version:  10.0.26200\r\n OS Platform: Windows\r\n RID:         win-x64\r\n Base Path:   C:\\Program Files\\dotnet\\sdk\\10.0.302\\\r\n\r\n.NET workloads installed:\r\n [maui-windows]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    10.0.20/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maui\\10.0.20\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [maccatalyst]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    26.5.10284/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maccatalyst\\26.5.10284\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [ios]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    26.5.10284/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.ios\\26.5.10284\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [android]\r\n   Installation Source: VS 18.8.12023.21\r\n   Manifest Version:    36.1.43/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.android\\36.1.43\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\nConfigured to use workload sets when installing new manifests.\r\nNo workload sets are installed. Run \"dotnet workload restore\" to install a workload set.\r\n\r\nHost:\r\n  Version:      10.0.10\r\n  Architecture: x64\r\n  Commit:       f7d90799ce\r\n\r\n.NET SDKs installed:\r\n  10.0.302 [C:\\Program Files\\dotnet\\sdk]\r\n\r\n.NET runtimes installed:\r\n  Microsoft.AspNetCore.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.NETCore.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.WindowsDesktop.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 10.0.10 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n\r\nOther architectures found:\r\n  x86   [C:\\Program Files (x86)\\dotnet]\r\n    registered at [HKLM\\SOFTWARE\\dotnet\\Setup\\InstalledVersions\\x86\\InstallLocation]\r\n\r\nEnvironment variables:\r\n  Not set\r\n\r\nglobal.json file:\r\n  Not found\r\n\r\nLearn more:\r\n  https://aka.ms/dotnet/info\r\n\r\nDownload .NET:\r\n  https://aka.ms/dotnet/download\r\n",
+        "node": "v20.19.0\r\n",
+        "npm": "10.8.2\n"
+      },
+      "counts": null,
+      "exit_code": 0
+    }
+  ],
+  "final_source_files": {
+    "cp6.web/src/contracts/erp-credit/creditCodec.ts": "f7108b4f2dd1d2e09ba8e38bda8d52dbb991b7d671ec25bccdf0aa4fa4dd36f5",
+    "cp6.web/src/contracts/erp-credit/creditCodec.test.ts": "f4b05aef2944ddae2486aca7765d16d1267b6e8b629325ba6efb4abb5fe18b49"
+  },
+  "original_reproduction": "Unchanged read-only observation scripts re-executed; independent byte retention/native bounds/replay conflict now hold. See S01-11-probe-recheck.json.",
+  "reused": "Original C#417 and design audit5 retain original execution identity; their relevant product, test, schema, fixture, project/dependency inputs unchanged. TS416 is historical and superseded by new428.",
+  "intermediate_failures": "First regression attempt had10 failed/418 passed because2 schema tests used wrong field; corrected to native value/currency before implementation and then all12 new tests failed. First corrected-product run had12 new regressions pass and149 old byte-equality assertions fail from Node/jsdom realm prototype comparison; exact byte array comparison corrected5 assertion sites. All logs retained.",
+  "business_acceptance": "NOT_RUN",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0
+}

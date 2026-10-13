@@ -1,0 +1,1698 @@
+{
+  "task": "S01-11",
+  "candidate_sha": "b27fbe5422bbe487efce2aa4de1bf14713bd396a",
+  "base_sha": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "reviewed_at_utc": "2026-10-13T07:29:54.271796+00:00",
+  "review_result": "BLOCKED",
+  "scope": "Single coordination admission review of all 93 changed paths, all task product code/tests, pinned data/generation/provenance and local evidence. No full-suite rerun; no Git mutation, network publishing, business database or Actions.",
+  "findings": [
+    {
+      "id": "S01-11-R1",
+      "priority": "P1",
+      "blocking": true,
+      "title": "Buffer slice aliases break exact schema pin and frozen original-byte retention",
+      "file": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "lines": [
+        17,
+        270,
+        272,
+        282,
+        293,
+        295,
+        303,
+        305,
+        312,
+        314,
+        318
+      ],
+      "root_cause": "Buffer is assignable to the public Uint8Array inputs, but Buffer.slice returns a shared view. Both input capture and defensive getters invoke overridable slice(), so validated bytes and pinned schema bytes remain caller-mutable.",
+      "impacts": [
+        "After decode, caller Buffer or returned originalUtf8 Buffer mutation changes retained bytes while sha256 and value remain old.",
+        "During createCurrentCreditCodec, mutate WMS {0,29} to {0,99} after first await: the hash checks original bytes and the parser uses mutated bytes; 90-digit Money is accepted under the original WMS pin.",
+        "After frozen captureReplay, mutating caller Buffer changes stored request and response; changed request is accepted and HTTP200 returns altered non-JSON body."
+      ],
+      "fix": "Create intrinsic Uint8Array copies at every input ownership transfer and defensive getter; do not dispatch slice on caller subclasses. Add Buffer/subclass regressions for load, decode, captureOriginalBytes and C01/C02 capture/replay, including mutation during async awaits. Preserve all existing Uint8Array and original-byte semantics.",
+      "existing_test_gap": "Final TS tests construct Uint8Array/TextEncoder data, so mutation tests do not cover Buffer inputs.",
+      "issue": "https://github.com/GTX537/CP6/issues/196",
+      "issue_note": "Assigned by root coordinator; network publication not performed by this reviewer."
+    }
+  ],
+  "retained_nonblocking_risks": [
+    {
+      "id": "Q-NB-01",
+      "description": "Exact interval overlap check is O(n^2); schema allows 200,000 ranges. Existing TS 1k/2k/4k probe retained; maximum and C# capacity not measured. No current HTTP/Owner wiring or capacity SLA. Requires exact sorted scan/capacity gate before consumer integration.",
+      "evidence": "docs/development/evidence/S01-11/review/20261013-quality-capacity-probe.json"
+    }
+  ],
+  "original_validation": [
+    {
+      "kind": "csharp",
+      "run": "20261013T060354Z-dotnet-final-407086e6",
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6",
+      "command": [
+        "dotnet",
+        "test",
+        "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+        "--filter",
+        "FullyQualifiedName~ErpCreditCodecTests",
+        "--logger",
+        "trx;LogFileName=results.trx",
+        "--results-directory",
+        "D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T060354Z-dotnet-final-407086e6"
+      ],
+      "cwd": "D:\\CP6-worktrees\\s01-11-20261012",
+      "started_utc": "2026-10-13T06:03:54.422320+00:00",
+      "ended_utc": "2026-10-13T06:04:04.940491+00:00",
+      "exit_code": 0,
+      "counts": {
+        "total": "417",
+        "executed": "417",
+        "passed": "417",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "reused": true,
+      "executed_in_this_review": false,
+      "relevant_inputs_checked": 303,
+      "before_after_equal": true,
+      "current_raw_matches": true,
+      "evidence_files": [
+        {
+          "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/output.log",
+          "sha256": "aaaed14af0009b802d5e05801ea318343bbe4cab01fd770b2993cfaa94b2b5b6"
+        },
+        {
+          "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/results.trx",
+          "sha256": "9663e805935ce90e12e09206e0c8d4c43d64062ae09128b1fb7d0dd292c07922"
+        }
+      ],
+      "metadata": {
+        "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/metadata.json",
+        "sha256": "7845ca34d26932f4b159871c5c024512230ae23fd3a59e77510effaa69df9e1e"
+      }
+    },
+    {
+      "kind": "typescript",
+      "run": "20261013T060526Z-ts-final-5254b7ee",
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "test",
+        "--",
+        "src/contracts/erp-credit/creditCodec.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T060526Z-ts-final-5254b7ee\\vitest.json"
+      ],
+      "cwd": "D:\\CP6-worktrees\\s01-11-20261012",
+      "started_utc": "2026-10-13T06:05:26.360494+00:00",
+      "ended_utc": "2026-10-13T06:05:36.861758+00:00",
+      "exit_code": 0,
+      "counts": {
+        "numTotalTests": 416,
+        "numPassedTests": 416,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "reused": true,
+      "executed_in_this_review": false,
+      "relevant_inputs_checked": 30,
+      "before_after_equal": true,
+      "current_raw_matches": true,
+      "evidence_files": [
+        {
+          "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/output.log",
+          "sha256": "3aad1cd597122308335dd706c56a3b8b08658338c9f11af2f32cbce60f4bbc16"
+        },
+        {
+          "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/vitest.json",
+          "sha256": "bc9cee23176f8975404a52d0802582dd54a756d1dc245a4fd099c9759e884f78"
+        }
+      ],
+      "metadata": {
+        "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/metadata.json",
+        "sha256": "e9cb9f1aeba90f1a7ed440b6522d3c9f0dd1390a487c78b43de9f52ada1915c6"
+      }
+    },
+    {
+      "kind": "typecheck",
+      "run": "20261013T060619Z-typecheck-83ec4cb2",
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060619Z-typecheck-83ec4cb2",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "--prefix",
+        "cp6.web",
+        "run",
+        "type-check"
+      ],
+      "cwd": "D:\\CP6-worktrees\\s01-11-20261012",
+      "started_utc": "2026-10-13T06:06:19.814093+00:00",
+      "ended_utc": "2026-10-13T06:07:15.301403+00:00",
+      "exit_code": 0,
+      "counts": null,
+      "reused": true,
+      "executed_in_this_review": false,
+      "relevant_inputs_checked": 12,
+      "before_after_equal": true,
+      "current_raw_matches": true,
+      "evidence_files": [
+        {
+          "path": "docs/development/evidence/S01-11/implementation/20261013T060619Z-typecheck-83ec4cb2/output.log",
+          "sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8"
+        }
+      ],
+      "metadata": {
+        "path": "docs/development/evidence/S01-11/implementation/20261013T060619Z-typecheck-83ec4cb2/metadata.json",
+        "sha256": "23d0570ce241ba78a52c4704f699e96b2e2e96d600d3d46c11a97196f828cd0a"
+      }
+    },
+    {
+      "kind": "design",
+      "run": "20261013T060706Z-design-f299e68e",
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e",
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "-X",
+        "utf8",
+        "eng/contracts/s01-11/verify_design.py",
+        "D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\20261013T060706Z-design-f299e68e\\design.json"
+      ],
+      "cwd": "D:\\CP6-worktrees\\s01-11-20261012",
+      "started_utc": "2026-10-13T06:07:06.087514+00:00",
+      "ended_utc": "2026-10-13T06:07:07.857923+00:00",
+      "exit_code": 0,
+      "counts": {
+        "verification_level": "SELECTED_DESIGN_FIXTURE_SUBASSERTIONS",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "projected_records": 343,
+        "tamper_rejections": 60,
+        "native_money_locations": 18,
+        "runtime_Owner_Store_acceptance": "NOT_RUN",
+        "actual_adoption": "UNPROVEN_FENCED",
+        "whole_C06_decode": "NOT_EXPOSED"
+      },
+      "reused": true,
+      "executed_in_this_review": false,
+      "relevant_inputs_checked": 13,
+      "before_after_equal": true,
+      "current_raw_matches": true,
+      "evidence_files": [
+        {
+          "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/design.json",
+          "sha256": "7b0be6431e95fcf514a8948dc66408de102ab8b1337e7d3ed3d9bcafd35e40c5"
+        },
+        {
+          "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/output.log",
+          "sha256": "778c08876be2cf867a58891c455eee26fcaac96eda025d378482d9098b6a0cac"
+        }
+      ],
+      "metadata": {
+        "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/metadata.json",
+        "sha256": "d240f8f267f39bfb222bc76d5c87d867e5e5f990fdfaac43ce499726004a2e6b"
+      }
+    }
+  ],
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "dotnet_sdk": "10.0.302",
+    "target_framework": "net8.0",
+    "actual_test_runtime": [
+      "Environment.Version=8.0.29; .NET 8.0.29"
+    ],
+    "node": "v20.19.0",
+    "npm": "10.8.2",
+    "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+    "review_node_path": "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+    "review_typescript": "6.0.2"
+  },
+  "counts": {
+    "csharp": {
+      "total": 417,
+      "executed": 417,
+      "passed": 417,
+      "failed": 0,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "typescript": {
+      "numTotalTests": 416,
+      "numPassedTests": 416,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "private_cases_per_language": 400,
+    "fixed_vectors_per_language": 10,
+    "constructed_cases_per_language": 362,
+    "design_projection_cases_per_language": 38,
+    "csharp_full_fixture_objects_recovered_and_equal": 410,
+    "typescript_unique_ids_verified": 410,
+    "csharp_guard_tests": 7,
+    "typescript_guard_tests": 6,
+    "skipped": 0
+  },
+  "source_binding": {
+    "previous_receipt": {
+      "path": "docs/development/evidence/S01-11/source-receipt.json",
+      "sha256": "5537809025ecff49d836d388ebecdcf169495b154b3feb285eb9fc187e5554de"
+    },
+    "executed_raw_source_binding_commit": "b1a93ec932af89fa5de7db03f35eadb0eb00f9fe",
+    "candidate_tracked_input_blobs_match": true,
+    "candidate_tracked_input_count": 313,
+    "generated_input_count": 3,
+    "generated_inputs": [
+      {
+        "path": "CP6.Entity/obj/project.assets.json",
+        "sha256_file_bytes": "ad3a83987d115f72f13caf18e539daebb553e7283812d3fd37cff94456320fdb"
+      },
+      {
+        "path": "NuGet.Config",
+        "sha256_file_bytes": "14045923bce7cfcdd9f6400c25850c8f964c24b47122dfed45bbdd3d8c33152b"
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/obj/project.assets.json",
+        "sha256_file_bytes": "8f102779a41eeed6b11e0a68b091a14103b557e7d56bd04372a21e44ec4c8ab5"
+      }
+    ],
+    "candidate_worktree_all_changed_bytes_match": true,
+    "all_bound_input_raw_hashes_match": true,
+    "post_binding_candidate_delta": [
+      "docs/development/evidence/S01-11/DELIVERY.md",
+      "docs/development/evidence/S01-11/source-receipt.json"
+    ],
+    "project_and_dependency_changes": [],
+    "artifact_binding": "Hash comparison of current compiled artifacts to original final .NET metadata; not a new build",
+    "artifacts": [
+      {
+        "path": "CP6.Entity/bin/Debug/net8.0/CP6.Entity.dll",
+        "sha256": "d64980b53885aa21aea67529c6f2511104a6f00d2ba46d6bd22d1c811c917126",
+        "current_match": true
+      },
+      {
+        "path": "CP6.Entity/bin/Debug/net8.0/CP6.Entity.deps.json",
+        "sha256": "b0b71fcecc008e464efc2bf5c9b5f5ef2293cb58159d208cbe56b10af6791007",
+        "current_match": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.Entity.dll",
+        "sha256": "d64980b53885aa21aea67529c6f2511104a6f00d2ba46d6bd22d1c811c917126",
+        "current_match": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.dll",
+        "sha256": "c9fedb8375a289c72dd3185417711c11eb160a691210b5d3ecde2fc5fe02e798",
+        "current_match": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.deps.json",
+        "sha256": "42d31f816489f3ffa5879e5587ea01cb8a11ee4dd409873ad081a905d51d5b7c",
+        "current_match": true
+      },
+      {
+        "path": "eng/contracts/exact-values-tests/bin/Debug/net8.0/CP6.ExactValues.Tests.runtimeconfig.json",
+        "sha256": "b9f6ae58ba9393a4833a54c1088ceeb2b6328e311b1be47945c55cfc4de3bc89",
+        "current_match": true
+      }
+    ],
+    "input_snapshot_limit": "Original type-check snapshot records task TS/config/lock input; broader frontend files remain unchanged in candidate and clean worktree. No claim to reconstruct unrecorded historic machine state."
+  },
+  "source_provenance": {
+    "source_checks": [
+      {
+        "source_id": "composed-00",
+        "variant": "composed",
+        "sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+        "byte_length": 21356,
+        "matches": true
+      },
+      {
+        "source_id": "composed-01",
+        "variant": "composed",
+        "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+        "byte_length": 7350,
+        "matches": true
+      },
+      {
+        "source_id": "composed-02",
+        "variant": "composed",
+        "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+        "byte_length": 9046,
+        "matches": true
+      },
+      {
+        "source_id": "composed-03",
+        "variant": "composed",
+        "sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+        "byte_length": 9249,
+        "matches": true
+      },
+      {
+        "source_id": "composed-04",
+        "variant": "composed",
+        "sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+        "byte_length": 3304,
+        "matches": true
+      },
+      {
+        "source_id": "composed-05",
+        "variant": "composed",
+        "sha256": "1f1e7846abfda9b23a334462393400939b26f32c021302f765e989c4c59d423d",
+        "byte_length": 615672,
+        "matches": true
+      },
+      {
+        "source_id": "composed-06",
+        "variant": "composed",
+        "sha256": "f62431c873c950f7ee7a24bfc8e4a677ad4b06ff81dea1a09868e6cd2c86d7e5",
+        "byte_length": 82325,
+        "matches": true
+      },
+      {
+        "source_id": "composed-07",
+        "variant": "composed",
+        "sha256": "bbdb87830d31661d3df9b36671e397164d758ae9cfc5eaa90972252e0edf8f4e",
+        "byte_length": 32065,
+        "matches": true
+      },
+      {
+        "source_id": "composed-08",
+        "variant": "composed",
+        "sha256": "cfd89dc7cd7fe191192e175e8e222975539a414b2ad918f9a05b3d8f203a883c",
+        "byte_length": 1505761,
+        "matches": true
+      },
+      {
+        "source_id": "composed-09",
+        "variant": "composed",
+        "sha256": "14617160cf7d914d2d2f29d1c56686c3e8f64a63bf5366d4017b49926d8de3fe",
+        "byte_length": 36549,
+        "matches": true
+      },
+      {
+        "source_id": "composed-10",
+        "variant": "composed",
+        "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+        "byte_length": 92180,
+        "matches": true
+      },
+      {
+        "source_id": "composed-10",
+        "variant": "original",
+        "sha256": "c5a95450610038cf329fd08961eb5d6f37194b19f30dadf88fd42fe4ee378cdc",
+        "byte_length": 94217,
+        "matches": true
+      },
+      {
+        "source_id": "composed-11",
+        "variant": "composed",
+        "sha256": "9fe0b5d24233359490a3405739d394118561f77061af0df884889ccfaad720b2",
+        "byte_length": 53881,
+        "matches": true
+      },
+      {
+        "source_id": "composed-11",
+        "variant": "original",
+        "sha256": "319e5002c3312b27c89fe17c042b7e73ae87451c40d4baffb425f9c68d2cfe97",
+        "byte_length": 53785,
+        "matches": true
+      },
+      {
+        "source_id": "composed-12",
+        "variant": "composed",
+        "sha256": "a3581e44235bf8cae1041c267c949138929679fdc1655f16ede3b3d0ff71986d",
+        "byte_length": 46854,
+        "matches": true
+      },
+      {
+        "source_id": "composed-12",
+        "variant": "original",
+        "sha256": "533967724512459f157c2218b437b58945b0cb1004073ae52904d80c5bfa6228",
+        "byte_length": 46697,
+        "matches": true
+      },
+      {
+        "source_id": "erp-registry-current",
+        "variant": "composed",
+        "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+        "byte_length": 542116,
+        "matches": true
+      },
+      {
+        "source_id": "erp-registry-frozen",
+        "variant": "original",
+        "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+        "byte_length": 232887,
+        "matches": true
+      },
+      {
+        "source_id": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+        "variant": "native",
+        "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+        "byte_length": 24947,
+        "matches": true
+      },
+      {
+        "source_id": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+        "variant": "native",
+        "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+        "byte_length": 32481,
+        "matches": true
+      }
+    ],
+    "range_checks": [
+      {
+        "source_id": "composed-11",
+        "variant": "original",
+        "first_line": 65,
+        "last_line": 131,
+        "sha256": "dfcaf8beb9fe6351a0f58b5d5ac3f013f2f1f8c6f300ee3340cc9072a3c297e5"
+      },
+      {
+        "source_id": "composed-11",
+        "variant": "original",
+        "first_line": 132,
+        "last_line": 183,
+        "sha256": "b1d41449dd2b61b1418df81841300374ca60892d3c5903b4a943e355ea0a61dd"
+      },
+      {
+        "source_id": "composed-11",
+        "variant": "original",
+        "first_line": 207,
+        "last_line": 228,
+        "sha256": "f43bad08907862e0290696fcac83b8c809f4879a26235cb3460a968efb40f21b"
+      },
+      {
+        "source_id": "composed-11",
+        "variant": "composed",
+        "first_line": 65,
+        "last_line": 131,
+        "sha256": "94e1c4e323cc3f2d4cfdb42f17e4eb4c747abfeaf13fad2eb0e0f3fd2958c072"
+      },
+      {
+        "source_id": "composed-11",
+        "variant": "composed",
+        "first_line": 132,
+        "last_line": 183,
+        "sha256": "b1d41449dd2b61b1418df81841300374ca60892d3c5903b4a943e355ea0a61dd"
+      },
+      {
+        "source_id": "composed-11",
+        "variant": "composed",
+        "first_line": 207,
+        "last_line": 228,
+        "sha256": "f43bad08907862e0290696fcac83b8c809f4879a26235cb3460a968efb40f21b"
+      },
+      {
+        "source_id": "composed-12",
+        "variant": "original",
+        "first_line": 1,
+        "last_line": 83,
+        "sha256": "ee993838e9775b628fd032d8417dde5d8b4cd211194273bad114491a16138f7c"
+      },
+      {
+        "source_id": "composed-12",
+        "variant": "original",
+        "first_line": 88,
+        "last_line": 206,
+        "sha256": "2025e8297c9eabcbf5de8fafb55ae313d067b47a0286a9797ff1eb94cadbf432"
+      },
+      {
+        "source_id": "composed-12",
+        "variant": "composed",
+        "first_line": 1,
+        "last_line": 83,
+        "sha256": "72510743af7d2718dc1ebad0cf3df4b52ed3d6e6a6117b3ef52cb7311d454e1b"
+      },
+      {
+        "source_id": "composed-12",
+        "variant": "composed",
+        "first_line": 88,
+        "last_line": 206,
+        "sha256": "564b8a605631250fb192f225c35f7dfd677d708526ef39b55393fc2ca34baac9"
+      }
+    ],
+    "adopted_assets": [
+      {
+        "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+        "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+        "byte_length": 24947
+      },
+      {
+        "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+        "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+        "byte_length": 32481
+      },
+      {
+        "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+        "byte_length": 542116
+      },
+      {
+        "path": "eng/contracts/s01-11/assets/frozen/ERP-CREDIT-01_TYPE-REGISTRY.json",
+        "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+        "byte_length": 232887
+      },
+      {
+        "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_OPENAPI.json",
+        "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+        "byte_length": 92180
+      }
+    ],
+    "body_files_byte_equal": 5,
+    "current_chain_exact_source_projection_count": 343,
+    "schema_closures": [
+      {
+        "profile": "current",
+        "definition_count": 63,
+        "matches_surface": true,
+        "schema_files": [
+          "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+          "ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json"
+        ],
+        "validation_keywords": [
+          "$ref",
+          "additionalProperties",
+          "allOf",
+          "const",
+          "contains",
+          "contentEncoding",
+          "enum",
+          "format",
+          "if",
+          "items",
+          "maxItems",
+          "maxLength",
+          "maximum",
+          "minItems",
+          "minLength",
+          "minimum",
+          "oneOf",
+          "pattern",
+          "properties",
+          "required",
+          "then",
+          "type",
+          "uniqueItems"
+        ],
+        "integer_domains": [
+          {
+            "file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+            "pointer": "/$defs/CreditOwnerQueryResult/oneOf/3/properties/retryAfterSeconds/oneOf/0",
+            "minimum": 1,
+            "maximum": 86400
+          },
+          {
+            "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+            "pointer": "/$defs/CreditSelectionsQuery/properties/limit",
+            "minimum": 1,
+            "maximum": 200
+          },
+          {
+            "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+            "pointer": "/$defs/SafeOperationDetail/properties/expectedMemberCount",
+            "minimum": 0,
+            "maximum": 256
+          }
+        ],
+        "f09_required_by_published_roots": false
+      },
+      {
+        "profile": "frozen",
+        "definition_count": 63,
+        "matches_surface": true,
+        "schema_files": [
+          "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+          "ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json"
+        ],
+        "validation_keywords": [
+          "$ref",
+          "additionalProperties",
+          "allOf",
+          "const",
+          "contains",
+          "contentEncoding",
+          "enum",
+          "format",
+          "if",
+          "items",
+          "maxItems",
+          "maxLength",
+          "maximum",
+          "minItems",
+          "minLength",
+          "minimum",
+          "oneOf",
+          "pattern",
+          "properties",
+          "required",
+          "then",
+          "type",
+          "uniqueItems"
+        ],
+        "integer_domains": [
+          {
+            "file": "ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+            "pointer": "/$defs/CreditOwnerQueryResult/oneOf/3/properties/retryAfterSeconds/oneOf/0",
+            "minimum": 1,
+            "maximum": 86400
+          },
+          {
+            "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+            "pointer": "/$defs/CreditSelectionsQuery/properties/limit",
+            "minimum": 1,
+            "maximum": 200
+          },
+          {
+            "file": "ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+            "pointer": "/$defs/SafeOperationDetail/properties/expectedMemberCount",
+            "minimum": 0,
+            "maximum": 256
+          }
+        ],
+        "f09_required_by_published_roots": false
+      }
+    ],
+    "reference_file_checks": [
+      {
+        "path": "docs/development/assessments/20261011/original-acceptance-catalog.json",
+        "sha256_git_blob": "2aed7d279d5bf5962d83bd93a7c2771605638ff67199f367ddb8b2e6ff304048"
+      },
+      {
+        "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "sha256_git_blob": "2f8d95a0d4e659fe151f09a548ec7b29e06524a4bbfcfe98e8a341ddd131b2f3"
+      },
+      {
+        "path": "docs/design-handbook/indexes/required-inputs.json",
+        "sha256_git_blob": "f67cdc22cc08d918677b343b6e4022260b77561fb8d47208faaf64d811e70996"
+      },
+      {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/derivation-manifest.json",
+        "sha256_git_blob": "7c0c97bce1498895fccdb11830f3d896f037dc49234419f856ca3be6385bfd75"
+      },
+      {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/current-v1-adoption.md",
+        "sha256_git_blob": "f2d7741601ea6f8d04520d1063a16da732e322f6a08120d1e47b6ab4aa12a138"
+      },
+      {
+        "path": "docs/design-handbook/remediation/assets/commercial-fixtures/bounded-patches.json",
+        "sha256_git_blob": "d2018786bb220a1189e979fda695d7e5cbfd209498b5c87fe1bf5e5342615030"
+      },
+      {
+        "path": "docs/design-handbook/remediation/assets/fixtures/bounded-patches.json",
+        "sha256_git_blob": "d9aa79c4efad0ba5ef58da632d65f1f598da3b03f6919eeb1a67617aa1284d94"
+      },
+      {
+        "path": "docs/design-handbook/remediation/08-acceptance-catalog.json",
+        "sha256_git_blob": "872df26741fb47a3c4ac7b400da9efc94eb09dd389975f77eae3b9c9efd4337f"
+      }
+    ],
+    "generator_not_rerun": true,
+    "fixture_reproduction_evidence": {
+      "path": "docs/development/evidence/S01-11/implementation/fixture-reproduction.json",
+      "sha256": "bbd1ecc4975fcba23327e0b703a048c6b4bfc9e4cebf02a7bce63569a3b110b0"
+    }
+  },
+  "independent_review": {
+    "spec": {
+      "path": "docs/development/evidence/S01-11/review/20261013-spec-review.md",
+      "sha256": "7388636297260a8633de6eaf51c5be95d77789297fb298ec6ad62c1e7e880aea"
+    },
+    "spec_audit": {
+      "path": "docs/development/evidence/S01-11/review/20261013-spec-audit.json",
+      "sha256": "273ce9d566992927cba509e5bced13b77958e0eb0cbeb2e89000190b2b0f4a16"
+    },
+    "quality": {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-review.md",
+      "sha256": "7b6722a379e1e6dff0e7d63e8ab62969665190c1b0a753006c439b8af6f30626"
+    },
+    "quality_audit": {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-review.json",
+      "sha256": "f42bc2495e7a9a5402972e472696f862113d007809cb3cd81c51c60a3f586661"
+    },
+    "original_product_test_hashes_match_candidate": true,
+    "scope": "Original SPEC PASS and QUALITY PASS reviewed complete implementation before final delivery documents. This coordinator review detects R1; their unchanged success records remain historic, not overridden or counted as clearance of R1."
+  },
+  "historical_runs": [
+    {
+      "run": "20261013T051443Z-restore-ts-92d7c10d",
+      "exit_code": 0,
+      "counts": null,
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T052402Z-dotnet-red-243e73f1",
+      "exit_code": 1,
+      "counts": {
+        "total": "208",
+        "executed": "208",
+        "passed": "63",
+        "failed": "145",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T052518Z-ts-red-c29b488e",
+      "exit_code": 1,
+      "counts": {
+        "numTotalTests": 208,
+        "numPassedTests": 63,
+        "numFailedTests": 145,
+        "numPendingTests": 0
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T053350Z-dotnet-green-first-fff49bb7",
+      "exit_code": 0,
+      "counts": {
+        "total": "208",
+        "executed": "208",
+        "passed": "208",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T053709Z-ts-green-first-74bffa13",
+      "exit_code": 0,
+      "counts": {
+        "numTotalTests": 208,
+        "numPassedTests": 208,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T053800Z-typecheck-83b6779d",
+      "exit_code": 2,
+      "counts": null,
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T054253Z-design-f7bb0650",
+      "exit_code": 0,
+      "counts": {
+        "verification_level": "SELECTED_DESIGN_FIXTURE_SUBASSERTIONS",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "projected_records": 343,
+        "tamper_rejections": 60,
+        "native_money_locations": 18,
+        "runtime_Owner_Store_acceptance": "NOT_RUN",
+        "actual_adoption": "UNPROVEN_FENCED",
+        "whole_C06_decode": "NOT_EXPOSED"
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T054426Z-dotnet-expanded-1d54865d",
+      "exit_code": 0,
+      "counts": {
+        "total": "341",
+        "executed": "341",
+        "passed": "341",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T054532Z-ts-expanded-fe680e72",
+      "exit_code": 0,
+      "counts": {
+        "numTotalTests": 340,
+        "numPassedTests": 340,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": false
+    },
+    {
+      "run": "20261013T060354Z-dotnet-final-407086e6",
+      "exit_code": 0,
+      "counts": {
+        "total": "417",
+        "executed": "417",
+        "passed": "417",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": true
+    },
+    {
+      "run": "20261013T060526Z-ts-final-5254b7ee",
+      "exit_code": 0,
+      "counts": {
+        "numTotalTests": 416,
+        "numPassedTests": 416,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": true
+    },
+    {
+      "run": "20261013T060619Z-typecheck-83ec4cb2",
+      "exit_code": 0,
+      "counts": null,
+      "evidence_hashes_match": true,
+      "reused_as_final_result": true
+    },
+    {
+      "run": "20261013T060706Z-design-f299e68e",
+      "exit_code": 0,
+      "counts": {
+        "verification_level": "SELECTED_DESIGN_FIXTURE_SUBASSERTIONS",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "projected_records": 343,
+        "tamper_rejections": 60,
+        "native_money_locations": 18,
+        "runtime_Owner_Store_acceptance": "NOT_RUN",
+        "actual_adoption": "UNPROVEN_FENCED",
+        "whole_C06_decode": "NOT_EXPOSED"
+      },
+      "evidence_hashes_match": true,
+      "reused_as_final_result": true
+    }
+  ],
+  "git_diff": {
+    "changed_path_count": 93,
+    "sha256_binary_diff": "58776a26c9d8340d2e6ac8f4dddbb60e69a8207e31bacabedc7b0037cdf039b2",
+    "byte_length": 7457956,
+    "diff_check_exit_code": 0,
+    "worktree_status": "",
+    "longpaths_note": "Initial default status emitted pre-existing long-path inaccessible-file deletions; rerun with core.longpaths=true was clean. No deletion occurred."
+  },
+  "reviewed_changed_paths": [
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/.gitattributes",
+      "git_blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f",
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+      "byte_length": 14,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/CreditCodecSet.cs",
+      "git_blob": "d5ca23abd2106bb8c35d1b49b5488bd52900194d",
+      "sha256": "8273d66e1ebb8a8e1f24aaa5cb94090a68f6c51e04e8c069434ec2af37ecb849",
+      "byte_length": 10817,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/CurrentCreditCodec.cs",
+      "git_blob": "17b25ca706ff9e3078ea18a359594bcfe77a32d5",
+      "sha256": "e9b09dbb0002c97ee82290ccd40049d9921fe41875150b82fb780a97928534fe",
+      "byte_length": 737,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/FrozenR8CreditCodec.cs",
+      "git_blob": "a778536f609dfca3f92b101cafd621065926655a",
+      "sha256": "fa0342cb09c8f0a47af0354470b2ac6f77e95aa98dda7d82890eb0c5d759053c",
+      "byte_length": 1264,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/NativeCreditSemantics.cs",
+      "git_blob": "980379c30a3387a894df4b8971b9352923eef606",
+      "sha256": "f548619e2a3b0e17915eff3fa4ab7a83e673c28c7c0729c1ca5bef613dca1c71",
+      "byte_length": 8681,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/NativeSchemaValidator.cs",
+      "git_blob": "b6d182e0f75af03c199f758c1236842341c73576",
+      "sha256": "b30f357af494b6c3b5a034772074054f20a119097361a5b8264f4755aeb5bb49",
+      "byte_length": 9564,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "CP6.Entity/Contracts/ErpCredit/README.md",
+      "git_blob": "875ad15b758c4b9450c0625486787e3eecda3edd",
+      "sha256": "81dd807ddbc0893a10ba61463ef1ca51565e5396da0dd2e3c9e61701ab6d1561",
+      "byte_length": 4325,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/.gitattributes",
+      "git_blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f",
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+      "byte_length": 14,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.test.ts",
+      "git_blob": "82d5c1757e75483a000a29f83849f8f656606b72",
+      "sha256": "093a360a0f266ee22c1ab63d38407fb87175c6bce9e642b16816d9883a581b43",
+      "byte_length": 7269,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "cp6.web/src/contracts/erp-credit/creditCodec.ts",
+      "git_blob": "ed72a08d2067fc3905410aeba343d089103984c6",
+      "sha256": "13d65b491d18e1fea1486f7a662cbc8dc409df8776be2f4ddd395e6079b2b6b2",
+      "byte_length": 26163,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/.gitattributes",
+      "git_blob": "11f6e389341c3c8b9860fb8001fa998c1baa706e",
+      "sha256": "0bc1eca72ea9959f2d65956b5e6668f7003805f49dfe07a8a523b8de4bc723a2",
+      "byte_length": 170,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/DELIVERY.md",
+      "git_blob": "6b30d78ecde44d9399824b007320a88914b0a09e",
+      "sha256": "c98a7c1a29a03c37f1dd4fcfb20b27052666daaaddcc149bc086e9050f944107",
+      "byte_length": 4813,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/PLAN.md",
+      "git_blob": "00fe2a328088177f7b3f15cbac7e34e5f4f096d1",
+      "sha256": "c476c3fb04e69948c251249ab743adaf3edba3b6524318f85a18c129f0e70aa4",
+      "byte_length": 2808,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/README.md",
+      "git_blob": "4ab005954e42d19f0bed378911ddcaf526eff939",
+      "sha256": "6de74a97d4698e7bd0477795d7a6467549a0f235fb513ad6c4ee98b28dfaa72f",
+      "byte_length": 4035,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/check-evidence.py",
+      "git_blob": "354486d47de8e146d54107788212d15a091b1983",
+      "sha256": "41dfdd0e45c40f65ae8f1b26e33092e99a2f475395350938fb091a1b912d80de",
+      "byte_length": 11332,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/check-publication.py",
+      "git_blob": "d8bb86bed19b867181809b121a670a288aaf8364",
+      "sha256": "047570493b675632b1e0493e6ae789ae8c9d79e96c32bfa0161c1fab0b5892a4",
+      "byte_length": 3601,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/design-references.json",
+      "git_blob": "aac56f8e79f630345b4cd53e7f1b0f7897b6bfc4",
+      "sha256": "ad6b68b9e4c414a0d08bd59fb1772d94bea746587d37e002f5886299c8f8778c",
+      "byte_length": 2321,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/entry.json",
+      "git_blob": "9463c8861672f285c1856f4b9b2880ff52abe299",
+      "sha256": "704b1586959f885ff2dea5adc456373f600b15f37e867bbf1fd237e924e0fb91",
+      "byte_length": 11652,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/.gitattributes",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46",
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "byte_length": 8,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T051443Z-restore-ts-92d7c10d/metadata.json",
+      "git_blob": "d0c1613cd9faee9fde1d1d16fe44ec3c750d8192",
+      "sha256": "5eafb50963f45829c9a1187e3c8cecf5545438f7ba0141020816afcedcc623ce",
+      "byte_length": 74550,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T051443Z-restore-ts-92d7c10d/output.log",
+      "git_blob": "8e41ef7a2104c0cbdbadd3faf3d88c80e2df2ff4",
+      "sha256": "6721ae824d70e2153e5c28fb3ee275576b14caf13e2e2af5d617a55535d3c202",
+      "byte_length": 304,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052402Z-dotnet-red-243e73f1/metadata.json",
+      "git_blob": "08c7bcb319476004e30925f6ce62360e6705f87c",
+      "sha256": "7e4ddfc7cdaf1577849b3df105abc77eb145edde96e093b81d5936f97ce685d8",
+      "byte_length": 78029,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052402Z-dotnet-red-243e73f1/output.log",
+      "git_blob": "30e524386c388b25d643ec3f3b5865729276a91d",
+      "sha256": "92794d3772e19cd485032d24899a30ae5833b3f9a5cd7d87501c659eed2616bf",
+      "byte_length": 376654,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052402Z-dotnet-red-243e73f1/results.trx",
+      "git_blob": "5008c5c09b8e4cc0a9be3e8d941d7fd7f2d5d7ed",
+      "sha256": "f8d771c3f5fdd0821077f3ec8f2d728a4ac65757c0a4ef28cdba97ae5e43068e",
+      "byte_length": 812689,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052518Z-ts-red-c29b488e/metadata.json",
+      "git_blob": "2d2abe0a08a3fa5b17ffac44bed3f96f50b623b0",
+      "sha256": "39cccf3515ac55c6b85d0dd238016f9972e5c020029428e4fe83ab8026fee121",
+      "byte_length": 79335,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052518Z-ts-red-c29b488e/output.log",
+      "git_blob": "da8ef44181c45c928f6c96d9cd91d85e11b048f0",
+      "sha256": "fa7e0163fb6e4362d6d4209e7b6ad516598aa820bf350158980025d27e0ed712",
+      "byte_length": 301904,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T052518Z-ts-red-c29b488e/vitest.json",
+      "git_blob": "d8cb0d25add8bdd6af624091b4b1067cc3cc4464",
+      "sha256": "2de1faf65a7112b0cb92ca80b10ef868ca8b7112d4db3b6cb61faca9a38969f2",
+      "byte_length": 138119,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053350Z-dotnet-green-first-fff49bb7/metadata.json",
+      "git_blob": "26d16de45fcbb0758833c4efe56cfbebb76fbd15",
+      "sha256": "b12f2d7620d63194adf3f9d2df2cee8413368912f44775eee4b30583036930c2",
+      "byte_length": 80127,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053350Z-dotnet-green-first-fff49bb7/output.log",
+      "git_blob": "a61097e346452128ff3b238e8daff088d4a87c0b",
+      "sha256": "195fa19ab20a42f99b65b55a12cc4433852a6f437d090b199ba2075e3967ac4d",
+      "byte_length": 1228,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053350Z-dotnet-green-first-fff49bb7/results.trx",
+      "git_blob": "fa4d88fbfa842a3d26f0802b969c274d4be83a4f",
+      "sha256": "3519264080bf0ccddeeccf531602eb28ed7ce7aecea5c48f1e110427a8bdd5ef",
+      "byte_length": 432210,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053709Z-ts-green-first-74bffa13/metadata.json",
+      "git_blob": "a9c69f998f937e533303dce4b3d7f329288c4230",
+      "sha256": "58a9211642d9cd5922340e87fb9b4294941ff1bec745ef40a116c85695a6c82f",
+      "byte_length": 79866,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053709Z-ts-green-first-74bffa13/output.log",
+      "git_blob": "a746dd6ee07a9b7798a1820b46473831ab71fc50",
+      "sha256": "97b0447f25fea26dfa21cf9ac8668e6860c61453b1d5ce603dd4b26daa712e31",
+      "byte_length": 719,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053709Z-ts-green-first-74bffa13/vitest.json",
+      "git_blob": "c622fe75cccda9b0ef744efa78d1fc70476bb113",
+      "sha256": "da828dd1cf4999909be44d3f6346514ae7ebcde7e589cd0e1c58191a5b13ab2e",
+      "byte_length": 51399,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053800Z-typecheck-83b6779d/metadata.json",
+      "git_blob": "8f5d0009fa511f08b9f74a13ece64df8aceb7fd4",
+      "sha256": "c08e00e492a2f84f1d6f8f463413b54bcd51156921a37063510e81911cba46fb",
+      "byte_length": 79400,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T053800Z-typecheck-83b6779d/output.log",
+      "git_blob": "f77d43b82e9242ae9523e79b5a4f58523b21bcb4",
+      "sha256": "00ead90947386e870c7478dfd25158af06ae7f36f97b73119afc9994960c9d74",
+      "byte_length": 802,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054253Z-design-f7bb0650/design.json",
+      "git_blob": "52499503fdc44a01fb05bd389837628d0bc5c432",
+      "sha256": "7b0be6431e95fcf514a8948dc66408de102ab8b1337e7d3ed3d9bcafd35e40c5",
+      "byte_length": 352,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054253Z-design-f7bb0650/metadata.json",
+      "git_blob": "811d0e7952fc8c190857d0f2926bcc82545219e8",
+      "sha256": "2ffc450676ba5136043f3532a221d7f57e5252d75e13446569c8d9bf04d550b7",
+      "byte_length": 83005,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054253Z-design-f7bb0650/output.log",
+      "git_blob": "ebcc374a63d1eb8d6f8db0f56a0b3cc247281bd7",
+      "sha256": "8184cb28ae28bc13d2b9d34306fad1532414e5d5aba35917f6b04f1e2d622ce8",
+      "byte_length": 1171,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054426Z-dotnet-expanded-1d54865d/metadata.json",
+      "git_blob": "dc0b76c175c5f9110c1ebddfb78db3a23958bab3",
+      "sha256": "ce63d7ec4a6b373aa06f280028f724d5c8bcedc3d945e10c7b8173da9dc7fa4f",
+      "byte_length": 83070,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054426Z-dotnet-expanded-1d54865d/output.log",
+      "git_blob": "d072137f3ccd36c8136af73f51847d93d6996b57",
+      "sha256": "fa26fb674c451bbb5e1603be3557039c636dcddcf3c6f699c131ff8f432b9dcd",
+      "byte_length": 793,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054426Z-dotnet-expanded-1d54865d/results.trx",
+      "git_blob": "df99d75c33328ac23178b61f69555e9cc586f67d",
+      "sha256": "05ebeda8c4fdfe1d5c7cf64d5747d5ca17304dde5d08a917d63b7fa1ff2951a5",
+      "byte_length": 707332,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054532Z-ts-expanded-fe680e72/metadata.json",
+      "git_blob": "7d8eb3fa2147a3fc9cd9b136f455fb205abecd7b",
+      "sha256": "4f53446e297b5903f42b83b647c90950db6204d3902f7453f3827d29532de8f0",
+      "byte_length": 82809,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054532Z-ts-expanded-fe680e72/output.log",
+      "git_blob": "f326854b7949d96c3dad4f301e2cd5779449dee8",
+      "sha256": "4b879368f89cac180757dc637e62429c11ff91299659e60605a094483e9aa5a1",
+      "byte_length": 716,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T054532Z-ts-expanded-fe680e72/vitest.json",
+      "git_blob": "d5c850825dfaa69ed31ca8e162ddafbb5cb825f7",
+      "sha256": "a2a7809b83b91150999100a91a8721c9e6d367999366125b40325f752adf4980",
+      "byte_length": 88306,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/metadata.json",
+      "git_blob": "bd42844d3986ba8a503530755c52e150306ffbd1",
+      "sha256": "7845ca34d26932f4b159871c5c024512230ae23fd3a59e77510effaa69df9e1e",
+      "byte_length": 83279,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/output.log",
+      "git_blob": "80a994b438b4e24593853e4a9605a6f6bc498749",
+      "sha256": "aaaed14af0009b802d5e05801ea318343bbe4cab01fd770b2993cfaa94b2b5b6",
+      "byte_length": 790,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060354Z-dotnet-final-407086e6/results.trx",
+      "git_blob": "a6c48b1af5ebfb3630324aeae9541f84d4166307",
+      "sha256": "9663e805935ce90e12e09206e0c8d4c43d64062ae09128b1fb7d0dd292c07922",
+      "byte_length": 928884,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/metadata.json",
+      "git_blob": "bcd91acc8e4a42770499afe450aa267e5c449d60",
+      "sha256": "e9cb9f1aeba90f1a7ed440b6522d3c9f0dd1390a487c78b43de9f52ada1915c6",
+      "byte_length": 83018,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/output.log",
+      "git_blob": "33caf3f150515746359aafb36c3eb87b43277b53",
+      "sha256": "3aad1cd597122308335dd706c56a3b8b08658338c9f11af2f32cbce60f4bbc16",
+      "byte_length": 707,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060526Z-ts-final-5254b7ee/vitest.json",
+      "git_blob": "4e3ffed044cbb9f918d5396504bb2f863602d72f",
+      "sha256": "bc9cee23176f8975404a52d0802582dd54a756d1dc245a4fd099c9759e884f78",
+      "byte_length": 107359,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060619Z-typecheck-83ec4cb2/metadata.json",
+      "git_blob": "0abb5a24865c6b1dfb53e9a16b22fa7dae3993a2",
+      "sha256": "23d0570ce241ba78a52c4704f699e96b2e2e96d600d3d46c11a97196f828cd0a",
+      "byte_length": 82558,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060619Z-typecheck-83ec4cb2/output.log",
+      "git_blob": "908099fa9f439d0b95c5f081798ed23891d318cc",
+      "sha256": "fd228343509ab77ef7c7acc44844328ab6c4e4929ad9e355cb75b265541ea7f8",
+      "byte_length": 47,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/design.json",
+      "git_blob": "52499503fdc44a01fb05bd389837628d0bc5c432",
+      "sha256": "7b0be6431e95fcf514a8948dc66408de102ab8b1337e7d3ed3d9bcafd35e40c5",
+      "byte_length": 352,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/metadata.json",
+      "git_blob": "4440a301590c9588b43ea626f2147b4fab693aba",
+      "sha256": "d240f8f267f39bfb222bc76d5c87d867e5e5f990fdfaac43ce499726004a2e6b",
+      "byte_length": 83217,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/20261013T060706Z-design-f299e68e/output.log",
+      "git_blob": "8a03c38e7aa75d6a146fdbf25dd73e279e156e7a",
+      "sha256": "778c08876be2cf867a58891c455eee26fcaac96eda025d378482d9098b6a0cac",
+      "byte_length": 1171,
+      "review_mode": "Raw log/result parse, counts and evidence/source/artifact binding"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/IMPLEMENTATION-REPORT.md",
+      "git_blob": "822f6ca1df3a15147424f91c344357f68d69698a",
+      "sha256": "97eac53de15464ef67d9dc837c944fcb919f32d3802ca4c700c27c6ae24bb7b4",
+      "byte_length": 5441,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/fixture-reproduction.json",
+      "git_blob": "d0ec2e0583d39c2cbe0676c664a14bca18cbadcb",
+      "sha256": "bbd1ecc4975fcba23327e0b703a048c6b4bfc9e4cebf02a7bce63569a3b110b0",
+      "byte_length": 967,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/CreditCodecSet.cs.txt",
+      "git_blob": "17c5c9094f51f7325526e3fd1b9574b09bbd5432",
+      "sha256": "ce207527140de5d922ee576053eddebf332a3696d801c0876d7d6c14e4d13392",
+      "byte_length": 4704,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/CurrentCreditCodec.cs.txt",
+      "git_blob": "6cde1a90c30327a714f473a327dbceb97af36280",
+      "sha256": "36845e52ce267bcfadb141f6d9c25bd8d1e102c300e4f353fa36de328a73e751",
+      "byte_length": 382,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/FrozenR8CreditCodec.cs.txt",
+      "git_blob": "e4b7b6eda046969d41978ccf488476c3bfc1c503",
+      "sha256": "5010f122b9b2d3e2cbb97a78dbc5060277a2cc0dfe6198493eb8ec8b3c5a9c67",
+      "byte_length": 469,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/implementation/red-scaffold/creditCodec.ts.txt",
+      "git_blob": "2170b61200d139eb767aef0475a43d92e48d995b",
+      "sha256": "8e0671faf714ffc876e23911e4dd92b80abc5f6ecba2d5a4e3b4b995fcd35a55",
+      "byte_length": 2928,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/owner-boundary.json",
+      "git_blob": "dfcc05d1ef390bab6794019e45b92803e4f4d380",
+      "sha256": "c1e3a94d5f81ff732ea8e0323576c866d5370f631bd326851e42f200123a73dd",
+      "byte_length": 1706,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-capacity-probe.json",
+      "git_blob": "132d57cf614c2ddd98e482cfb93285f35618bfc2",
+      "sha256": "9dc7798eb35372a15151dd4c6447ca2281aa5f341c742b0207702b73f53779ca",
+      "byte_length": 1419,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-review.json",
+      "git_blob": "0ec4cb3c87c3e331472aa3f3ab89485fc6f9cbc1",
+      "sha256": "f42bc2495e7a9a5402972e472696f862113d007809cb3cd81c51c60a3f586661",
+      "byte_length": 13021,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-quality-review.md",
+      "git_blob": "8dd48a94aad09561ca324d445fd4cabe13bc3ff8",
+      "sha256": "7b6722a379e1e6dff0e7d63e8ab62969665190c1b0a753006c439b8af6f30626",
+      "byte_length": 4674,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-spec-audit.json",
+      "git_blob": "fbe41e7c6ce323f626cc946a4ba7f5d8ce509ae1",
+      "sha256": "273ce9d566992927cba509e5bced13b77958e0eb0cbeb2e89000190b2b0f4a16",
+      "byte_length": 14795,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/review/20261013-spec-review.md",
+      "git_blob": "3ce91487f2577d27e1a9603803aa255c57c10562",
+      "sha256": "7388636297260a8633de6eaf51c5be95d77789297fb298ec6ad62c1e7e880aea",
+      "byte_length": 7730,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/source-receipt.json",
+      "git_blob": "995a39043b252403025ff6ecc31351e9be133bcc",
+      "sha256": "5537809025ecff49d836d388ebecdcf169495b154b3feb285eb9fc187e5554de",
+      "byte_length": 303861,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/start-local.json",
+      "git_blob": "0162605a0290b6c30130322abede9bdb7c8a172b",
+      "sha256": "7637c491e05e1d2c12b527adcc92107c56b41eda4b7c8e0d3e9253df66651808",
+      "byte_length": 228,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/start-receipt.json",
+      "git_blob": "7c664a8a7aff01ecdda4f7da5e6ea471ca2e8ec1",
+      "sha256": "0df78895aff6e83ecdc1afd1f15fecda52a162bbd52ecb508190f6ac573f5f57",
+      "byte_length": 618,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "docs/development/evidence/S01-11/validation.json",
+      "git_blob": "c82f2ec0de361794ca6ae67dab0798b7827eb67d",
+      "sha256": "0caf329a367101544a79daced165206f883d4e44a03d77220588351a39868202",
+      "byte_length": 227843,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "eng/contracts/exact-values-tests/ErpCreditCodecTests.cs",
+      "git_blob": "3df091271d0be21cb921d5eb131bbf7b41235301",
+      "sha256": "0c3e726a9916f97b2277deaec3708479741ae40ff262b0c0e53d9b90c9647128",
+      "byte_length": 10298,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "eng/contracts/s01-11/.gitattributes",
+      "git_blob": "1a13503bebe93215a1f9e00fe80f6b34626a4b35",
+      "sha256": "a6ef30b3b0c7f351f99df1c064ee829f7b38da6e0965d03cbbd22cbcc91c24e0",
+      "byte_length": 91,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "eng/contracts/s01-11/README.md",
+      "git_blob": "e85913a7db2f9c412e7bbdff46384c8e83431af8",
+      "sha256": "5b1be31c64474526e377356b6c13a6a3e217bd724a99e73720c2a17c25577fbc",
+      "byte_length": 4040,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "eng/contracts/s01-11/adopt_design_fixtures.py",
+      "git_blob": "d468072d252f9eff65c4423f9c49ccbf0fd81818",
+      "sha256": "234954dd57f465eaab96e2cfab50dd05dc27f18cb7e5cdf0a38234028bc2d468",
+      "byte_length": 6828,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_OPENAPI.json",
+      "git_blob": "961618e42077635a229f84b1cbd206560a0269da",
+      "sha256": "64e7bdda097765041f464eede58a09b242c9e9e3971128d407816597f3a89309",
+      "byte_length": 92180,
+      "review_mode": "Exact original/composed hash readback and applicable schema closure/OpenAPI review"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/current/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "git_blob": "94d2dd2ab20cfd19c4b3d5d80c7b8795aae48a26",
+      "sha256": "564706ce0247d84dc8056002d540f17eccdcab7c5b5e4b123c09121ad407fbda",
+      "byte_length": 542116,
+      "review_mode": "Exact original/composed hash readback and applicable schema closure/OpenAPI review"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/frozen/ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "git_blob": "b49913873d47520f7eb22fa45232b0f1e38fc8c9",
+      "sha256": "62effa1e0542784a5fa936d11961465db4da522ed4d28fc9c9bb5351cf40b6f1",
+      "byte_length": 232887,
+      "review_mode": "Exact original/composed hash readback and applicable schema closure/OpenAPI review"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+      "git_blob": "2cd224d47a71e52b74976f9d31563e156d3baf21",
+      "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+      "byte_length": 32481,
+      "review_mode": "Exact original/composed hash readback and applicable schema closure/OpenAPI review"
+    },
+    {
+      "path": "eng/contracts/s01-11/assets/native/ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+      "git_blob": "879e61f6292de40f691bd186fff5059ea2857f87",
+      "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+      "byte_length": 24947,
+      "review_mode": "Exact original/composed hash readback and applicable schema closure/OpenAPI review"
+    },
+    {
+      "path": "eng/contracts/s01-11/build_fixtures.py",
+      "git_blob": "a1d6b69d28201bed2dbaa5995bd96252959aa565",
+      "sha256": "f4deac8cb48a5127cdc68e0ca9790d6ecb9ba6bd090944be1a44f2fcd9a6ad69",
+      "byte_length": 19497,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/cases.json",
+      "git_blob": "9f53797c01b1f0bdfed3d0fd375abaf9bf9e376c",
+      "sha256": "225dd505a68be4b9bdfda6b6bcac524e47e398f8e0fec37f55c631336c850d74",
+      "byte_length": 382862,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/multi_mixed_complete_public_q14.json",
+      "git_blob": "f4b1f5d78328c939f1d23d2186b1aefb10960350",
+      "sha256": "ae952991bc09bff71e975f6c73806f66bb55a2b7ecd9913cec232963c3408eb4",
+      "byte_length": 21356,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/multi_public_native_lookup_binding.json",
+      "git_blob": "2cd4fc2cfb4db99d789c5265dcefe5ded6c0a52f",
+      "sha256": "f861a57b4c6f68737fac44718e95185865ee610947bddb4ff523f177b683655f",
+      "byte_length": 3304,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/wn11_c06_exact_saved_200.json",
+      "git_blob": "7264331585b31c0dccfeb4bbe400faac06690522",
+      "sha256": "a7c7df954442b6a885031c66fb949e1d474cfe50d111d6a8c2b09ad96cf71138",
+      "byte_length": 7350,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/wn11_complete_current_q14.json",
+      "git_blob": "81a236de5e5a42595976ccb2c2b05381d4b7c534",
+      "sha256": "880b6b33137a1db94acd53ead49cd4acd69e7a755fe842863ec539cffe6d8365",
+      "byte_length": 9046,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-bodies/wn11_existing_target_c06_saved_200.json",
+      "git_blob": "bad210d3f6e34e1cb3f00fdd8f46be2c4f9bafa1",
+      "sha256": "def871d7c0ef2383d7c439d8964ee88341b4249c8a2fedaf340373dfc8fc8d07",
+      "byte_length": 9249,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/current-chain.json",
+      "git_blob": "67dae24267e4719ab7fcaedebff7d3d7ef73dd90",
+      "sha256": "190e648f5b2298a1ea84fd186961981f4b3b8cffacd1438741f707c30a6cbcb6",
+      "byte_length": 171526,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/fixtures/native-objects.json",
+      "git_blob": "b1acea5695ad9376ff25ef281d26787f363f2acf",
+      "sha256": "ec5f660824a9bd718459ba4658240e77d22301f4a482cb3c5c4d5e67b9762643",
+      "byte_length": 21675,
+      "review_mode": "Structured fixture/data origin, identity, complete executed input and projection review"
+    },
+    {
+      "path": "eng/contracts/s01-11/provenance.json",
+      "git_blob": "0efba01ad1badd2e9e4ae2077b814c5d92862a21",
+      "sha256": "e64134a693525d9c75bed4021d5d839ceb956f04bef88979726d2790c05d7baf",
+      "byte_length": 17254,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "eng/contracts/s01-11/run_evidence.py",
+      "git_blob": "faf97594296beef0f5011491dcbb23b941043824",
+      "sha256": "0c273b782fd3f40458e5aefb792173936124fb30015fbb025dbf906aa71b5022",
+      "byte_length": 4890,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    },
+    {
+      "path": "eng/contracts/s01-11/surface.json",
+      "git_blob": "c0658c457dac97fb424cc23e5b97f55cf2c7b1c7",
+      "sha256": "c9416ed470b200d503eba5add2faa459f04d632363ce569146f8f3fd6bc6ebe3",
+      "byte_length": 17226,
+      "review_mode": "Complete document/receipt/attributes content or structured provenance review"
+    },
+    {
+      "path": "eng/contracts/s01-11/verify_design.py",
+      "git_blob": "c9116d5d32ab9896e51619c8898c0fd8969c1db1",
+      "sha256": "daab943f75642567d302b00b0f0aec1210d5339e890231a19498e86c236366f5",
+      "byte_length": 7524,
+      "review_mode": "Complete source read and requirement/edge-case review"
+    }
+  ],
+  "not_covered": [
+    "No complete business/Owner/Store/issuer/current AR/GL/member/finite/authorization/tenant acceptance.",
+    "No PostgreSQL, migrations, transaction recovery, real HTTP host or business writers; no production deployment.",
+    "C06/F09 three extra roots are not exposed by the accepted 14-factory surface; no whole-C06 acceptance claimed.",
+    "247 business runtime cases remain NOT_RUN; 41 historical cases REFERENCE_ONLY; ITER/REL originals missing and WP05 PROPOSED remain.",
+    "No full gate reruns in this review. Original tests prove only their executed input set; Buffer alias regressions are absent and now fail targeted probes.",
+    "No GitHub PR195/protected-main/live Actions check by this subagent; root owns network and merge/state verification.",
+    "Maximum legal range capacity and C# capacity remain unmeasured."
+  ],
+  "review_command_policy": {
+    "git_writes": false,
+    "worker_file_writes": false,
+    "database_calls": false,
+    "network_publication": false,
+    "actions_triggered": false,
+    "actions_cancelled": [],
+    "trigger_changes": [],
+    "new_builds_or_full_test_runs": 0,
+    "new_probe_scope": "In-memory TypeScript transpilation using existing locked TypeScript and Node20.19.0; no emitted files. Three Buffer alias scenarios exercised.",
+    "audit_tool_failure": "First read-only closure enumerator used str.removeprefix under default older Python and exited 1 before any writes; corrected enumerator passed. This was not a product test failure.",
+    "new_probe_executions": 2
+  },
+  "evidence_paths": [
+    "D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\source-receipt.json",
+    "D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\validation.json",
+    "D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\implementation\\IMPLEMENTATION-REPORT.md",
+    "D:\\CP6-worktrees\\s01-11-20261012\\docs\\development\\evidence\\S01-11\\DELIVERY.md"
+  ],
+  "probes": [
+    {
+      "name": "buffer_byte_retention",
+      "command": [
+        "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+        "-"
+      ],
+      "invoked_via": "PowerShell here-string | node -; Get-Command node resolved the explicit path",
+      "cwd": "D:/CP6-worktrees/s01-11-20261012",
+      "stdin": "const fs = require('node:fs');\nconst ts = require('./cp6.web/node_modules/typescript');\nconst source = fs.readFileSync('cp6.web/src/contracts/erp-credit/creditCodec.ts', 'utf8');\nconst compiled = ts.transpileModule(source, {compilerOptions:{target:ts.ScriptTarget.ES2022, module:ts.ModuleKind.CommonJS}}).outputText;\nconst mod = {exports:{}}; new Function('exports','require','module',compiled)(mod.exports,require,mod);\nconst c=mod.exports;\nconst path='eng/contracts/s01-11';\nconst fixture=JSON.parse(fs.readFileSync(path+'/fixtures/native-objects.json','utf8')).objects.PostInput;\nconst files={};\nfor(const n of [c.WMS_SCHEMA,c.FIN_AR_SCHEMA]) files[n]=new Uint8Array(fs.readFileSync(path+'/assets/native/'+n));\nfiles[c.REGISTRY_FILE]=new Uint8Array(fs.readFileSync(path+'/assets/current/'+c.REGISTRY_FILE));\n(async()=>{\n const codec=await c.createCurrentCreditCodec(files);\n const input=Buffer.from(JSON.stringify(fixture),'utf8');\n const document=await codec.decode(codec.identityFor('PostInput'),input);\n const before = Array.from(document.originalUtf8());\n const recordedHash = document.sha256;\n input[0]=0;\n const afterInputMutation=Array.from(document.originalUtf8());\n const returned=document.originalUtf8(); returned[1]=0;\n const afterReturnedMutation=Array.from(document.originalUtf8());\n console.log(JSON.stringify({probe:'Buffer aliasing in retained original UTF8',node:process.version, validInput:true, beforeFirstBytes:before.slice(0,3),afterInputMutation:afterInputMutation.slice(0,3),afterReturnedMutation:afterReturnedMutation.slice(0,3),byteGetterReturnsBuffer:Buffer.isBuffer(returned),recordedHash,afterHash:await c.sha256(document.originalUtf8()),valueReason:document.value.reason,input_mutated_retained_bytes:before[0]!==afterInputMutation[0],getter_mutated_retained_bytes:afterInputMutation[1]!==afterReturnedMutation[1]}));\n})().catch(e=>{ console.error(e);process.exitCode=1;});\n",
+      "stdin_sha256": "223b43e61681588eb44454f4feee5a1d977f33331348fe681f5c7fdb48f7873f",
+      "stdout": "{\"probe\":\"Buffer aliasing in retained original UTF8\",\"node\":\"v20.19.0\",\"validInput\":true,\"beforeFirstBytes\":[123,34,99],\"afterInputMutation\":[0,34,99],\"afterReturnedMutation\":[0,0,99],\"byteGetterReturnsBuffer\":true,\"recordedHash\":\"823712373eada580305d7b160fb8e493d100ab486551142e348377a44712aa07\",\"afterHash\":\"3711378416e9ea5b5b7e275e05c5785a6b02058934a2c6a500963dcc85471d11\",\"valueReason\":\"fixture\",\"input_mutated_retained_bytes\":true,\"getter_mutated_retained_bytes\":true}\n",
+      "exit_code": 0,
+      "execution": "Executed during this review using candidate source in memory; no files emitted",
+      "assertion_outcome": "BUG_REPRODUCED; probe exit 0 means successful observation, not passing product behavior",
+      "source_sha256": "13d65b491d18e1fea1486f7a662cbc8dc409df8776be2f4ddd395e6079b2b6b2",
+      "typescript_version": "6.0.2"
+    },
+    {
+      "name": "buffer_schema_pin_and_frozen_replay",
+      "command": [
+        "C:/Users/tt/AppData/Local/nvm/v20.19.0/node.exe",
+        "-"
+      ],
+      "invoked_via": "PowerShell here-string | node -; Get-Command node resolved the explicit path",
+      "cwd": "D:/CP6-worktrees/s01-11-20261012",
+      "stdin": "const fs=require('node:fs'),ts=require('./cp6.web/node_modules/typescript');\nconst source=fs.readFileSync('cp6.web/src/contracts/erp-credit/creditCodec.ts','utf8');\nconst mod={exports:{}};new Function('exports','require','module',ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS}}).outputText)(mod.exports,require,mod);\nconst c=mod.exports,path='eng/contracts/s01-11';\nconst bundle=profile=>Object.fromEntries([c.WMS_SCHEMA,c.FIN_AR_SCHEMA,c.REGISTRY_FILE].map(n=>[n,fs.readFileSync(path+'/assets/'+(n===c.REGISTRY_FILE?profile:'native')+'/'+n)]));\n(async()=>{\n const files=bundle('current'),raw=files[c.WMS_SCHEMA];\n const offset=raw.indexOf(Buffer.from('{0,29}'));if(offset<0)throw Error('pattern missing');\n const pinnedHashBefore=await c.sha256(raw);\n const pending=c.createCurrentCreditCodec(files);\n raw[offset+3]='9'.charCodeAt(0);\n const codec=await pending;\n let accepted=false,error=null;\n try{await codec.parseWmsMoney(new TextEncoder().encode(JSON.stringify({value:'9'.repeat(90),currency:'USD'})));accepted=true}catch(e){error=e.message}\n console.log(JSON.stringify({probe:'Buffer schema hash/parse time-of-check alias',node:process.version,pinnedHashBefore,mutatedHash:await c.sha256(raw),factoryAccepted:true,nativeMoney90DigitsAccepted:accepted,error}));\n const frozen=await c.createFrozenR8CreditCodec(bundle('frozen'));\n const objects=JSON.parse(fs.readFileSync(path+'/fixtures/native-objects.json','utf8')).objects;\n const request=Buffer.from('{\"commandId\":\"old\"}'),response=Buffer.from(JSON.stringify(objects.EC_C01_COMMITTED_CommercialDraftView));\n const saved=await frozen.captureReplay('C01','scope/command',request,await c.sha256(request),201,response,await c.sha256(response));\n request[request.indexOf('old')]='n'.charCodeAt(0); response[0]=0;\n const replay=await saved.replay('scope/command',request);\n console.log(JSON.stringify({probe:'Buffer frozen replay alias',changedRequestAccepted:true,responseFirstByte:replay.bodyUtf8()[0],originalResponseFirstByte:123,statusCode:replay.statusCode}));\n})().catch(e=>{console.error(e);process.exitCode=1});\n",
+      "stdin_sha256": "57263918f47c0ce95bac3779c6d3f53c4a9c0e7941fcb174f747fcddb12badbf",
+      "stdout": "{\"probe\":\"Buffer schema hash/parse time-of-check alias\",\"node\":\"v20.19.0\",\"pinnedHashBefore\":\"b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a\",\"mutatedHash\":\"6992b21a73b5450c0907b341a8f729d3b04fb048e8071a4550795e4ff3c50278\",\"factoryAccepted\":true,\"nativeMoney90DigitsAccepted\":true,\"error\":null}\n{\"probe\":\"Buffer frozen replay alias\",\"changedRequestAccepted\":true,\"responseFirstByte\":0,\"originalResponseFirstByte\":123,\"statusCode\":200}\n",
+      "exit_code": 0,
+      "execution": "Executed during this review using candidate source in memory; no files emitted",
+      "assertion_outcome": "BUG_REPRODUCED; probe exit 0 means successful observation, not passing product behavior",
+      "source_sha256": "13d65b491d18e1fea1486f7a662cbc8dc409df8776be2f4ddd395e6079b2b6b2",
+      "typescript_version": "6.0.2"
+    }
+  ]
+}
