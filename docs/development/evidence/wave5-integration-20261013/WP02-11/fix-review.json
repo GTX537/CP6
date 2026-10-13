@@ -1,0 +1,166 @@
+{
+  "task": "WP02-11",
+  "review_type": "TARGETED_INDEPENDENT_FIX_RECHECK",
+  "reviewed_utc": "2026-10-13T13:56:45.202142+00:00",
+  "reviewer": "wave5_review_release",
+  "verdict": "ACCEPT",
+  "blocking_findings": [],
+  "new_findings": [],
+  "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+  "tested_source_sha": "58e35c36e1987105c144a6dcc1955a524db8ca35",
+  "baseline": "817a2926b0799f70cc87f384967e0883c1943ec5",
+  "original_candidate_sha": "0f7c69f13a26b36895cd40aca3fc17299e866b70",
+  "original_baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "worktree": "D:\\CP6.Platform-worktrees\\wp02-11-20261013",
+  "branch": "codex/wp02-11-coord-fix-20261013",
+  "worktree_clean": true,
+  "scope": {
+    "original_full_review": "WP02-11-review.md/json retained, not reopened",
+    "reviewed_production_test_delta": [
+      "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Handler.cs",
+      "tests/CP6.Platform.AspNetCoreTests/HttpV2/AuthorityFaultRegressionTests.cs",
+      "tests/CP6.Platform.AspNetCoreTests/HttpV2/RejectedBodyRegressionTests.cs"
+    ],
+    "all_task_paths_against_current_baseline": 115,
+    "post_test_changes": [
+      "docs/development/evidence/WP02-11/COORD-FIXES.md",
+      "docs/development/evidence/WP02-11/DELIVERY.md",
+      "docs/development/evidence/WP02-11/coord-final-evidence-check.json",
+      "docs/development/evidence/WP02-11/implementation/coord-final-after-fingerprints.json",
+      "docs/development/evidence/WP02-11/implementation/coord-final-before-fingerprints.json",
+      "docs/development/evidence/WP02-11/implementation/coord-final-http-v2.log",
+      "docs/development/evidence/WP02-11/implementation/coord-final-http-v2.trx"
+    ],
+    "post_test_evidence_only": true
+  },
+  "resolved_findings": [
+    {
+      "id": "WP02-11-R1",
+      "issue": 62,
+      "status": "RESOLVED",
+      "lines": [
+        126,
+        163,
+        194,
+        195,
+        205,
+        227
+      ],
+      "reason": "Observed status is captured before body buffering. A known non-transient HTTP rejection vetoes the entire transient retry expression even if body failure is HttpRequestException or AttemptTimeout. Verified uncertain writes still query the same original operation; NotAppliedProven cannot authorize a replay when transient is false. Terminal body failure keeps Unknown and Transport/AttemptTimeout, original identity, attempts and request outcome. No Applied/Rejected business result is fabricated from the incomplete response. 200/503 controls retain eligible bounded retry.",
+      "tests": "24 cases: 401/403/409/422 x read/write x body IO/attempt timeout =16 target cases; 200/503 controls=8. Assertions include send/query/authorize count, safe typed outcome/identity and disposal. RED16 fail/8 pass, GREEN24/24."
+    },
+    {
+      "id": "WP02-11-R2",
+      "issue": 63,
+      "status": "RESOLVED",
+      "lines": [
+        61,
+        65,
+        68,
+        110,
+        227,
+        259,
+        263
+      ],
+      "reason": "Both VerifyBindingAsync and AuthorizeReplayAsync use CheckAuthorityAsync. The delegate invocation is inside the try, so synchronous faults and faulted ValueTasks both normalize. Genuine caller/ancestor cancellation and total expiry are checked first; unrelated cancellation follows unchanged source-aware outer handling. Ordinary faults map to RecoveryUnavailable and unowned Polly timeout to UnknownTimeoutSource. Failure() sets the request outcome with captured original identity, state and attempts. Verify fails NotSent/0; replay authority fails Unknown/1 after original-result query; no extra send occurs. pendingResponse is disposed in existing finally.",
+      "tests": "24 cases: 16 stage x synchronous/faulted-task x transport/IO/unidentified timeout/other faults;6 caller/ancestor/total race cases;2 unrelated cancellation controls. RED22 fail/2 pass, GREEN24/24."
+    }
+  ],
+  "evidence": {
+    "final_manifest_sha256": "6f99832ec575b7507ae444bde0c958fbd4155c93ea5aff75ac929c5486861a6b",
+    "source_hashes_verified": 249,
+    "dependency_hashes_verified": 8,
+    "compiled_artifact_hashes_verified": 25,
+    "source_before_after_equal": true,
+    "dependencies_before_after_equal": true,
+    "compiled_artifacts_before_after_equal": false,
+    "compiled_artifact_scope": "After-build values match current disk; before/after binaries legitimately differ. Historical ArchitectureTests output is listed but not a fresh architecture test.",
+    "runs": [
+      {
+        "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-red.trx",
+        "trx_sha256": "bc8eacdf41af1f42e83a420ee25c98cdc0fbcb9be5bcc669e12ccaeddc94ffe6",
+        "log_sha256": "faceb26752031a540aa7cee98ef6d46fd2aab67792fefe64fc4ed5a80ee754fd",
+        "total": 24,
+        "passed": 8,
+        "failed": 16,
+        "skipped": 0,
+        "actual_result_count": 24
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-green.trx",
+        "trx_sha256": "73b4a4a85e1aa512196205d1201873bf43269b88b080537d71a9b8402b0976c6",
+        "log_sha256": "ef2a83ce8b158220f098bffa5bb3a130a67912bc9203efb0ef5b8bcbd4b8441e",
+        "total": 24,
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0,
+        "actual_result_count": 24
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-red.trx",
+        "trx_sha256": "b483d33d73bbcb1449d1e74e409ef0b9680a16423e57b4c805e1000115340802",
+        "log_sha256": "197da33841e3a16257c481c243f1fe5d2f6289a7f5eb8f91f61abe0c8c9fe56e",
+        "total": 24,
+        "passed": 2,
+        "failed": 22,
+        "skipped": 0,
+        "actual_result_count": 24
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-green.trx",
+        "trx_sha256": "1bac1cd42fe9c89f929d6cf4fcaf7168af9bc381e73b762945a6f059520776a1",
+        "log_sha256": "a6f019d45e42f0d8e2756d275afb449dbd1e37a863890565b808b8c87fdb4050",
+        "total": 24,
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0,
+        "actual_result_count": 24
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/implementation/coord-final-http-v2.trx",
+        "trx_sha256": "379d8e823e746b64466ee9a33e93730c8e907d8b8d83a6ed661c2a2d282551cd",
+        "log_sha256": "49db8bb48ef073d31b051cbc79c9521a460689c38473e73503b1040e6ff29ba2",
+        "total": 198,
+        "passed": 198,
+        "failed": 0,
+        "skipped": 0,
+        "actual_result_count": 198
+      }
+    ],
+    "red_green_source_binding": "For both issues the only source hash changed between before-RED and before-GREEN is handler; test bytes match the retained issue branch. RED handler matches original candidate, GREEN handler matches own issue branch under declared Git LF/CRLF checkout normalization. GREEN source/dependencies remain unchanged across execution.",
+    "independent_reexecution": false
+  },
+  "issue_branches": [
+    {
+      "issue": 62,
+      "url": "https://github.com/GTX537/CP6.Platform/issues/62",
+      "status": "Open",
+      "branch": "codex/bug-62-http-rejected-body-20261013",
+      "branch_head": "a52f416b7681a7d67d2852ad19aa689da26daa05",
+      "fix_commit": "a09762b60dc974c66bd270504553ab8552658706",
+      "baseline": "817a2926b0799f70cc87f384967e0883c1943ec5"
+    },
+    {
+      "issue": 63,
+      "url": "https://github.com/GTX537/CP6.Platform/issues/63",
+      "status": "Open",
+      "branch": "codex/bug-63-http-authority-outcome-20261013",
+      "branch_head": "8395e7506728ff7b2f53e4d5be6da288beeaba75",
+      "fix_commit": "8395e7506728ff7b2f53e4d5be6da288beeaba75",
+      "baseline": "817a2926b0799f70cc87f384967e0883c1943ec5"
+    }
+  ],
+  "branch_verification": "Both branches contain baseline817a2926 and original candidate; each only adds its own HTTP fix/private regression compared with original; both are ancestors of final candidate. Issue Open state is recorded by producer metadata, not re-queried remotely.",
+  "reused_validation": {
+    "legacy": "Original final-legacy-http-gateway-auth.trx 98/98, zero skipped, historical after-final-fingerprints. Legacy HTTP/gateway/auth files, signatures, projects/dependencies unchanged by these corrections. Not an execution of final binaries.",
+    "architecture": "Original final-architecture.trx98/98 remains historical and reusable only for unchanged WP02-11 architecture boundaries. Added WP02-07 base has its own coordinator-owned acceptance; do not treat old98 as a combined-source execution. Root still owns final combined-main smoke."
+  },
+  "limits": [
+    "No tests/builds/probes rerun in this targeted review",
+    "No source/Git/network/DB/Actions/package/deployment writes; only external review report files written",
+    "No complete original-task rereview",
+    "No production Owner/Host binding, authority or durable deduplication/receipt proof",
+    "Original42 business AC stay NOT_RUN",
+    "No remote main containment or Issue closure claim"
+  ]
+}

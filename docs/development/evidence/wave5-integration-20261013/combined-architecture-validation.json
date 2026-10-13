@@ -1,0 +1,1335 @@
+{
+  "result": "PASS",
+  "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "worktree": "D:\\CP6.Platform-worktrees\\wave5-integration-20261013",
+  "command": [
+    "C:/Users/tt/.dotnet/dotnet.exe",
+    "test",
+    "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+    "-c",
+    "Release",
+    "--logger",
+    "trx;LogFileName=architecture.trx",
+    "--results-directory",
+    "C:\\Users\\tt\\CP6-planning-reports\\20261013-wave5-integration\\combined-architecture"
+  ],
+  "started_at": "2026-10-13T14:10:27.539686+00:00",
+  "finished_at": "2026-10-13T14:10:51.479120+00:00",
+  "sdk": "8.0.424",
+  "counts": {
+    "total": "98",
+    "executed": "98",
+    "passed": "98",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "trx_times": {
+    "creation": "2026-10-13T10:10:37.1880798-04:00",
+    "queuing": "2026-10-13T10:10:37.1880802-04:00",
+    "start": "2026-10-13T10:10:34.8898101-04:00",
+    "finish": "2026-10-13T10:10:37.4519063-04:00"
+  },
+  "trx_sha256": "dfd009f0efbe78ebfd71e0b6cc614420ac11026181554cbe55b0de88065caa91",
+  "output_sha256": "5b719d1bf5927334e0bca8fcc9501318018ea1adb8aa9820a5aaa6ea9f8792d7",
+  "source_inputs": [
+    {
+      "path": "Directory.Build.props",
+      "sha256_working": "be5ae2820e4d7c1a554336a50b06e5eef5d0f4dea9469f31d1b8c84e52c32d83",
+      "blob": "42131cd740450f08305e95b08b855cfb981c022a"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "sha256_working": "e27010697c96f9ae86af011e6a7fd0f7b19dca60b71d49f393aaa4d6fc5f78b5",
+      "blob": "768d4ae02403f682963025d762ff7ed022a9c18d"
+    },
+    {
+      "path": "NuGet.config",
+      "sha256_working": "4f4e0db54145bc7bb5429295242e0b96b88ee984cb1581fe7ca926ad1463060e",
+      "blob": "7f55add0ec73ef552270b2fb024d410239c04f71"
+    },
+    {
+      "path": "contracts/contract-bundle.v1.json",
+      "sha256_working": "5a83e10f9454363d8e8c7f30fec7d84e1abd91347a7a1de3a6b5509790532344",
+      "blob": "02925e1d392c0403969e45b7b52454e3d5b61f20"
+    },
+    {
+      "path": "contracts/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "sha256_working": "3ac54ecf5cd47a8112ab336fd430192f3185490949780f51be2b4a7831f49587",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "contracts/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "sha256_working": "d1f2614d1f7960d72ce27b391b04c3a13975fde97c59b15fb638e3c1c2a52a1c",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "contracts/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "sha256_working": "f02bb9b296e32258ee920e846d5d2ee4725ac5e12913ea1d8bd26872be6c644e",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "contracts/events/platform/contract-example-changed/v1/examples/valid.json",
+      "sha256_working": "8374408416c217e68a3a0defc71700ce3492cef1d2f96bf87d57b4406904a880",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "contracts/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "sha256_working": "f88878492dc25da8d1bfb3eacf1ea443a61c8bb3e72184694712099f267d789c",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "contracts/events/platform/contract-example-changed/v1/schema.json",
+      "sha256_working": "889e3774a6dcfba8735e719dd207d2772372ccece6fefb01f9efe8f921489f76",
+      "blob": "e3d5105a48d4bf4fe04905c19a40484d832d3403"
+    },
+    {
+      "path": "contracts/observability/slo-evidence/v1/assets.v1.json",
+      "sha256_working": "2453e96bd7bb40c0460c52a02c40edfd7bd86dfad7d4e2b934917ae1354e2111",
+      "blob": "46ef68ece6ad60ca4f2110d602fdcc1a3b33e741"
+    },
+    {
+      "path": "contracts/observability/slo-evidence/v1/examples/non-candidate-indeterminate.json",
+      "sha256_working": "1c9ede47cc017c632873c9e458766c21010ef6767c37eb88168d87db119435b0",
+      "blob": "843817da35dd878b8a0651bb34acb3d8197a582c"
+    },
+    {
+      "path": "contracts/observability/slo-evidence/v1/examples/partial-indeterminate.json",
+      "sha256_working": "a5a407fb4ba6453ae609434ac091f84c67234fd6bd893395c8b983c88fba8c9a",
+      "blob": "b1928fe64896b0afb4c8ace9a4b9f7101640e21b"
+    },
+    {
+      "path": "contracts/observability/slo-evidence/v1/examples/pii-negative.json",
+      "sha256_working": "011c5dfa8b1bc10a59cce2a734a3f69b365c7b52cbdc7d06c8f2eff7d53176d2",
+      "blob": "6c5996f80bca4b97d06234da31f0f8bf69df3949"
+    },
+    {
+      "path": "contracts/observability/slo-evidence/v1/examples/valid-pass.json",
+      "sha256_working": "089d08442f54942bbcc696865e4556a2ed2bcaf699bae69cdb334d1316bf0695",
+      "blob": "183040a3c68970e17a5d2c2c26ca79bdd4491dda"
+    },
+    {
+      "path": "contracts/observability/slo-evidence/v1/schema.json",
+      "sha256_working": "d07a9963c26277e09561d5afec2668bb6aa25b9c53124709c786d53af82262cb",
+      "blob": "c630e46fdc3ce42f01db2c1db0e8e206d84d9ec7"
+    },
+    {
+      "path": "contracts/p09/examples/non-production-runtime-profile.crm-topic.invalid.json",
+      "sha256_working": "62f371741da20f2143c405f3103528273021b333fae0acbcfb0f71f282e26226",
+      "blob": "c326be6257d5a7834e67e5c76b6d399f65f6789a"
+    },
+    {
+      "path": "contracts/p09/examples/non-production-runtime-profile.plaintext-secret.invalid.json",
+      "sha256_working": "b560f95c6aafce43e72f20e0e885c10a0dad78693b231eca443da7f26868d2d5",
+      "blob": "1b1b52d24d3da37b2f90d705379e2325234ca43b"
+    },
+    {
+      "path": "contracts/p09/examples/non-production-runtime-profile.production.invalid.json",
+      "sha256_working": "45e19fa4405f1a306c25318e02dd44b12eeeb68272756cf29e8647827fe35259",
+      "blob": "725a58b91fee1e707f4176890cf59bfef71d7e88"
+    },
+    {
+      "path": "contracts/p09/examples/non-production-runtime-profile.valid.json",
+      "sha256_working": "961f242ea780172090e5d450dcb8893b42e0cc4cf65066be8f17203604d5dee0",
+      "blob": "2c6c2294fa6c4c08183af6383ff1401dd4125017"
+    },
+    {
+      "path": "contracts/p09/examples/rehearsal-evidence.secret.invalid.json",
+      "sha256_working": "bfd2b4e426612a38725bda4e69a1a1ad272a2b9db61406d28b258e2e56fd03c2",
+      "blob": "3938a8cbd1e533969c19109a8e0047827e481db1"
+    },
+    {
+      "path": "contracts/p09/examples/rehearsal-evidence.valid.json",
+      "sha256_working": "0426bc9167de62e7eab5d2c2519ec8d01e3d75c6ca57d095a1e90dc333cd6795",
+      "blob": "257c3391461a1967a0fbd430ed6e43bed19e6651"
+    },
+    {
+      "path": "contracts/p09/non-production-runtime-profile.v1.schema.json",
+      "sha256_working": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc",
+      "blob": "1c2af5c8c6ceab9b138e98b06a3f6360bb245aea"
+    },
+    {
+      "path": "contracts/p09/rehearsal-evidence.v1.schema.json",
+      "sha256_working": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c",
+      "blob": "591cc53fdea6e272cae14e6495fbd8f1d5b8cbf1"
+    },
+    {
+      "path": "contracts/release/capabilities/v1/README.md",
+      "sha256_working": "6a5506eb636848aa1f1db05dff82cf7d6cd3094ad0169c07a8c9056785140540",
+      "blob": "2b2d335a2a886bbfda737b64d6cab21da881e547"
+    },
+    {
+      "path": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "sha256_working": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+      "blob": "6eeb4ac489924716af7078114490162b0fcbb0e8"
+    },
+    {
+      "path": "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+      "sha256_working": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa",
+      "blob": "0528d9b78955d9c6e4815b612200ff56ae936ea1"
+    },
+    {
+      "path": "contracts/release/v1/assets.v1.json",
+      "sha256_working": "9b7326701033f26352ee7f942a6d1bc837ec45171b51d1d7994e8d21d702cf7f",
+      "blob": "0f7a90e85874ed04530eba9b35218e7a67ed36af"
+    },
+    {
+      "path": "contracts/release/v1/build-invocation-provenance.v1.schema.json",
+      "sha256_working": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b",
+      "blob": "a9138ae4f4ff4c769f89e1f429b25cf75fdd771e"
+    },
+    {
+      "path": "contracts/release/v1/candidate-locator.v1.schema.json",
+      "sha256_working": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263",
+      "blob": "e8f83c2b04a0a8ed94f7b1012b24da0f0b979670"
+    },
+    {
+      "path": "contracts/release/v1/candidate-result.v2.schema.json",
+      "sha256_working": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64",
+      "blob": "4db8f58fccffa63a2cc6f0690b9d7130ba4b9a2f"
+    },
+    {
+      "path": "contracts/release/v1/evidence-record.v1.schema.json",
+      "sha256_working": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922",
+      "blob": "9c5842f7a31609ed2f704e75d822305c0d393c2b"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/deterministic/simple.canonical.json",
+      "sha256_working": "c70d0dc4eaf50a576944851115bb0e81a935fc39c7893a992a6dd00092eafdb1",
+      "blob": "7814bf1a492c5c5262f29b8939c99c5b61ad8cd3"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/deterministic/simple.input.json",
+      "sha256_working": "1aede7b610006db56c0b616aab5fcd742d8480a67daf331acea151c5eb39dbca",
+      "blob": "d0cbdcf13a375dd2ace1cbddfcd43e334991b916"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/candidate-locator-platform.valid.json",
+      "sha256_working": "bde21726f445c39bc1f6094df1ae1487ce782339eb16c5c972f0095f8f41194a",
+      "blob": "c48e6c979466758afe11279d5a858286dbe57b28"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/candidate-locator-system.valid.json",
+      "sha256_working": "ee58798e85ac26ad04440cf5aa8ce6d72a2c015a679495d50e3d8858b0ef127a",
+      "blob": "f6064e5ff2a1ed4615c80cd0fcc8ed6b3d7a3400"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/candidate-result.valid.json",
+      "sha256_working": "47856239e6da3bbc5e41d0211af62cbb40b97e528ba79832ecc7262ba42b0525",
+      "blob": "daf83eaedc208d564d2a81b3363e29b023994078"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/candidate-locator-missing.invalid.json",
+      "sha256_working": "25e5b38793c68e2b15c7e7f18e40b78e9f1f88627d22541961ec273d1babe9cf",
+      "blob": "5b7711d5c459f04724c3cb2b58908aa792b16c36"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/candidate-locator-unknown.invalid.json",
+      "sha256_working": "0d8f30357defd4993b4538feb28568acddab430f51154acbc12193aecbeef6ac",
+      "blob": "ceb4d9f80e80ec7db27c47a875f7f120d4343023"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/candidate-locator-wrong-kind.invalid.json",
+      "sha256_working": "9f7374e399a13fd35d64baeffc0f1666c6677a06de14d76c5d52cc070e6ec6a5",
+      "blob": "48b7462511ef45f33ff152a5c072fb3bd4b07bb8"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/candidate-result-missing.invalid.json",
+      "sha256_working": "ffd7b76a09dafa9c64ee309e3570e26f89dc948d4d66756ac8e64fad95c7c18f",
+      "blob": "618b4116dbe5b4e03ebdb0ca23c4519a008c9bb6"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/candidate-result-unknown.invalid.json",
+      "sha256_working": "930992479dcffaec5b1b769e20648558809092d72cf3375e49877ca0ed97fe8f",
+      "blob": "284f9f24ed41f1d2430dedca32838e1975671c50"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/candidate-result-wrong-kind.invalid.json",
+      "sha256_working": "d949edebef697f39ec1668cb0f4904ed36a68072367451eb0c65e47f8e85a7bb",
+      "blob": "21ffa7b43d6806e53c80feba19eb9a3bc98414b9"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/platform-missing.invalid.json",
+      "sha256_working": "204474ebdc1b5855b8f2760a8a107cae071698b3705631624db528689c2f6131",
+      "blob": "76bd4e4fa95583300403c110f9c0c2ff839c46af"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/platform-unknown.invalid.json",
+      "sha256_working": "64bdb6ea3c9916cd7443bb3e8b540754cde1ca2ef08dc7c2f846f59083792652",
+      "blob": "2fa5a7156fe1fd3b59ee4322c3f15cb5112e0a30"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/platform-wrong-kind.invalid.json",
+      "sha256_working": "84dd00228381e8f5dda4a455b16b6f0e6a5bceffd887f9743adad6716f77ebb4",
+      "blob": "cc822f85e19782f8e013e273305a79c299ef0b5c"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/system-missing.invalid.json",
+      "sha256_working": "3fae3b3e7d8c7ea1df14ef3526c45796a1d09bd069aae3b33fffa505ffb1973f",
+      "blob": "889e498ab42838595d6c3a02dd7b6c8f163db3c9"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/system-unknown.invalid.json",
+      "sha256_working": "a22a3a3880c87fcc8033f85991057da82615f5d311352ff1d1121097027d8eef",
+      "blob": "6383e75d9d68602252864463e7dedcc2560e8395"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/mutations/system-wrong-kind.invalid.json",
+      "sha256_working": "b53fe66a91a188c35ef01290cbade48f4936952d0efb866ec3af9ace596ec12a",
+      "blob": "2ececa44dad8579660776895f449f50a846a39cd"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/platform-as-system.invalid.json",
+      "sha256_working": "a5a8c4335e148132863447649c53507eb8ccf167771c78558f985f02330702d9",
+      "blob": "174c2c5f66b179759a7732326c90e3900b47d000"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/platform-mixed-package-version.invalid.json",
+      "sha256_working": "d7527429a3e42694f04c0424ca70ca61458a95ad0a2261f4f3463a1138043d6b",
+      "blob": "da31cb304a2f66566e4b8f8d6967715c6c8edc3e"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/platform.valid.json",
+      "sha256_working": "52e9acc1617addd3e272d9bd8fc7ac2af7fb21d2949570bde2372fca45c78a7c",
+      "blob": "3d4d4e1e7df06343428ac7765ad44f7e8e524e5f"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/system-missing-portal.invalid.json",
+      "sha256_working": "98ef571aacddc627c7bb5dd0ceb4877fa61dad89bf9b39c6918622fdc64fa5b1",
+      "blob": "559436dad62cf8f061a1f3efe8d231558d3a28e5"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/primary/system.valid.json",
+      "sha256_working": "ea8f8b4677428d3e3fb59603a399a404c231ea7bacc7eafd26b2a1c1c3ceea18",
+      "blob": "477728a6247959b92ba4305d154dd446cbd66cff"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/build-provenance-missing.invalid.json",
+      "sha256_working": "7fadc12cc55d37eea9a953a83c68163e4530be3bd3d72b8d5174df334ce5b63c",
+      "blob": "30c958693fd7bb0b7a6575b8772e5ce437a29f8b"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/build-provenance-mixed-invocation.invalid.json",
+      "sha256_working": "60f72659ce93579242eac8ac6331a36eea3c07b4ec68d1594b8675d96066a384",
+      "blob": "96de7a0563a4cb01cf3f6caefdaf729bacecea9d"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/build-provenance-unknown.invalid.json",
+      "sha256_working": "575d721e71bf70b990de3fd79d4bf4324df214093436fae3d0be16bba20788ad",
+      "blob": "2288fe152956d8076d4c9e53624153116738c444"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/build-provenance-wrong-kind.invalid.json",
+      "sha256_working": "ba609c611ff399eab2937fa9f344133de16d0d3ec0c91fe5cd1293c462e2be56",
+      "blob": "8d40d490f9c5febcd63e47f916696220cde5aa89"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/build-provenance.valid.json",
+      "sha256_working": "a9ea1fc96d3197c4f8e97539ba108123744ce4faf7d748728f9bec37de24b5a2",
+      "blob": "5f8101902841fc80421c52ca3b628f0d1cd4cde4"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/candidate-locator-time.invalid.json",
+      "sha256_working": "bf6b1adcf7fc03f0b00c86510cd1b42c041f0e3a6720e2b7d2fe8bc58b4cc8c0",
+      "blob": "e8c9878c111cfd9ea85094893f550bca68f6212f"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/evidence-authority.invalid.json",
+      "sha256_working": "c4d59b7fff5988696770c3c00ea8198323f1787aad9afb1b4622484cd7003b4b",
+      "blob": "40ab82791b70f7bebdb470b4eb7a693ed87733e5"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/evidence-missing.invalid.json",
+      "sha256_working": "724f23ceb6d33b4fdde3cbb057fa98eb769efa3a9e0a29a9977fc808570249c7",
+      "blob": "287ff7ccd26a04625a38e5575ebaeb07f06c734e"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/evidence-unbound.invalid.json",
+      "sha256_working": "52f6f198d534e05a6d24b6491d5b0dbaea6bde6541d0f7c9660ceff477e68227",
+      "blob": "cfa156aa7179d3b1e7fee5367f4a771c00bffd69"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/evidence-unknown.invalid.json",
+      "sha256_working": "3890d60a333e76ccdf49549defd0256617c62f02910faafe5ed9d484a7fadef6",
+      "blob": "f3a1b87fc97ba169c2eab896dcb290cdda2a9c00"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/evidence-wrong-kind.invalid.json",
+      "sha256_working": "f872ef938092d1587d29fc01f066948315e1844a3cb00410b1e27217c7a9d685",
+      "blob": "35510753cc1db3cce1df54b7a7bed9fca92ccdf1"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/evidence.valid.json",
+      "sha256_working": "957ae88fc15b489daac7cf7815bee51c588cc14ac8ca8f132480f7430f853bfe",
+      "blob": "10b30971ab016a460eb12f40ecd47f53f8666891"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/formal-package-publication-changed-published-bytes.invalid.json",
+      "sha256_working": "2c2daef17f15b9bea99e1caa7ff79ac3f99c1a7c58f844243bab25875cc9800e",
+      "blob": "9ff32d3fc3f8a8ba7f9c9264e058b9ed17f0456d"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/formal-package-publication-missing-package.invalid.json",
+      "sha256_working": "3aec5f48fb51765be2dc71eedd39ffef349f23bd1a871db1fa2135c0eb37d725",
+      "blob": "124fb8ac261c3a4d9662358743c0e1318fd72272"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/formal-package-publication-mixed-version.invalid.json",
+      "sha256_working": "ecccd4706277315c9d54e4ec90902b122785be734674670d2345b141f48df2bc",
+      "blob": "def561bccace3703f82b20f68cae741efb185e3b"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/formal-package-publication-test-timestamp-policy.invalid.json",
+      "sha256_working": "ab5b06578079e7013bc23bd6a6072256f8f071744d8c6ecbc4c261e58f1f5719",
+      "blob": "50f1d886537d963b059247d2d71618a9dc16a6ab"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/formal-package-publication.valid.json",
+      "sha256_working": "9999c4f1cbbe9c601496bafbd54b402525a165b0870ba0ac62e9c99eed1b7315",
+      "blob": "3875a260ea025fee28304f1c62c308f38c0de20a"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/lineage-bootstrap-missing.invalid.json",
+      "sha256_working": "e07613b621bf9bf0b314de8847f6ae9930ed69df15368ece25d8bf7fbec17ccd",
+      "blob": "1975a0e19eb2f678e13cddc8e5543e83caf4568c"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/lineage-bootstrap-unknown.invalid.json",
+      "sha256_working": "c58b19f3b6e8beaa01fa8bc26f85e090c0bc1bb92d351a969c16c72f40b9c359",
+      "blob": "98302b0ccfc3fdfa53700e24a30ea277164dbd3e"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/lineage-bootstrap-unsigned.invalid.json",
+      "sha256_working": "5d8d12784568d9f8e1e2de3a5cf88f6a5e25e8ec6850ddd1608e8a20e38fe4d2",
+      "blob": "35c2b219b9e9e266873d9239d107eb0db4a067f6"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/lineage-bootstrap-wrong-kind.invalid.json",
+      "sha256_working": "8ec660afe537fb4d4f9dafbc9506fbfb9e3202ece9ac77198019df26f05dcfb0",
+      "blob": "5d04e2c7fa24d463b03e964108c9418f5feb9938"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/lineage-bootstrap.valid.json",
+      "sha256_working": "a0b864e739a20160af4a87a0a9ea3e9cd8b2b20217471d1d9a2c4f9370a58cb4",
+      "blob": "c38efcc172c7c8cc63968123fb69b2ff80ecdf58"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/pinned-nuget-trust-bad-fingerprint.invalid.json",
+      "sha256_working": "d6ba2a6ac498bf9eeb29acc0d29cd3d12d601fc080089d53d35552f44ff79231",
+      "blob": "0a62d5bf3bd9652613fce03b69f9d4f82a6c9c59"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/pinned-nuget-trust-bad-status-fields.invalid.json",
+      "sha256_working": "7cdb1ce441f1040fd0bbfd6fc389a3f6f07970e4c519ace084cd1fa4b5aaf41b",
+      "blob": "73a47eaec32c59225411394934534ee00fd9264d"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/pinned-nuget-trust-noncanonical.invalid.json",
+      "sha256_working": "2614872963047455e30179f62d2e99cdc53e796e53ee93fad81a36b919ae6255",
+      "blob": "69798019221a01be823f572a6114e9a6738231c0"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/pinned-nuget-trust-public-ca.invalid.json",
+      "sha256_working": "006091bbc03697a89146e71339c06b01462fb292d34bd3a2aef7cc0e1323301c",
+      "blob": "266c6aeb37c769f52b9ab766124812c36d48572f"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/pinned-nuget-trust-two-current.invalid.json",
+      "sha256_working": "84f5f6326535b70c5924a3d11d15d0c3bf155176a28674834f22d3aa8d7e0306",
+      "blob": "570eff4c13598c7053fffb1f8054b7a01151d28e"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/pinned-nuget-trust-wrong-package-set.invalid.json",
+      "sha256_working": "ee4a1c1d199cf9d07773c0654eb4bc72e3235a5799dc898536b59131b012615d",
+      "blob": "705f9af071ccce3ca260d45176ec64c040213833"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/pinned-nuget-trust.valid.json",
+      "sha256_working": "352975344b7187e168788d02e741de3ef06b224496a55737d08aee6a2ab952ae",
+      "blob": "d3971fac7a08ff7644f2b41a20c57f36913eda85"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/release-gate-missing.invalid.json",
+      "sha256_working": "4201d7da8b16149df55d8e099931f4c422252a745c5bd4d2d4d4a3cd827e4c30",
+      "blob": "1420642d648d4026d9a62b01407cb9e81bc384a4"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/release-gate-unbound.invalid.json",
+      "sha256_working": "d45970b6161ef551c3498c208338492298a38060324940a7c9dcf18a113bf158",
+      "blob": "4ad8ed975bdf03314ac03056d6e0d75127b9e1cd"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/release-gate-unknown.invalid.json",
+      "sha256_working": "9dab1f3d495c1c746d313a2ca18f9919e8537976a830d3672d77b3bcb5eb9527",
+      "blob": "f0acb09c6340044d9bc74ae905b1e6462b8c473c"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/release-gate-wrong-kind.invalid.json",
+      "sha256_working": "20015bedcf0ba0802465ec472d38148b39d1ad167f3e6941048c209b45bfb6b2",
+      "blob": "f6ebb3ddd46110d82fce57a6b1f8ed9fd2af5910"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/release-gate.valid.json",
+      "sha256_working": "bc1d3120844343fdfdf701d9137806d293a56ef4ff6185a33ba1dc3052f3ffc9",
+      "blob": "38cd3e405623d42923443b341b05d3b1843b8f37"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/system-successor.valid.json",
+      "sha256_working": "cf3a3e2c4187b4c1b083ff9c91847343ec55816cefd5a43d8a2696ec147532c3",
+      "blob": "c7efa10a4ca17f76a5c5e7614f13adad4f6bead3"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/transport-expired.invalid.json",
+      "sha256_working": "8c6a38ca8b575b055cf309ecd1668ce89d03b77050c302c91e8ea5d2bc44a01c",
+      "blob": "b8d63f0f9c0dc1f340bd25bcd6887066df450439"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/transport-missing.invalid.json",
+      "sha256_working": "3272e9ecdbc0b6ffbc63e7bd86db007e989e086d21b522b936ba9ae1be0d9d5f",
+      "blob": "07c55ce62f128844a6c5bbd4d0344d3b4f72d961"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/transport-unknown.invalid.json",
+      "sha256_working": "4d22ed49087d12b7a89f1fe83e64d134502e0dce7e77b367efd4825206314669",
+      "blob": "d244a09f718bb7c939c093fa5032b507484fb42b"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/transport-wrong-kind.invalid.json",
+      "sha256_working": "d3fb15c9bf893c0df09951a5c9c7652e09ce7279fc178f6d1d1f093e73e708b6",
+      "blob": "8b3050b87ea9252da0819c7c0363aa6461cc349b"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/transport.valid.json",
+      "sha256_working": "713537e404e45035e2a1114a4cc2ebe03c607682edb67e90f67a4a400c134429",
+      "blob": "d2a7a421aad0f158395fccd59dfcfd204d091aca"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/trust-authority.invalid.json",
+      "sha256_working": "e607894e8df72f13ce96bb7bfec4e88a79c1f3ae1af70ece6a574894b081b78d",
+      "blob": "d843f3b27ac0cd3cc4b0f837e0c39f350ba9bb5e"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/trust-downgrade.invalid.json",
+      "sha256_working": "a2d6a6d1b2f54adff21098a1db6cff948ed778f7aece9c1a15a7b99cb07f1cde",
+      "blob": "4a8adb46dcfb2a46eaead78b1b339d526e238476"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/trust-missing.invalid.json",
+      "sha256_working": "2ae18ce5e29f87df13b06ff4c9b0c10c89a3acb916c2f05c0d59bfc020d8f545",
+      "blob": "fd705744a1fdab8a979a09d34be163aa4d08c9c8"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/trust-unknown.invalid.json",
+      "sha256_working": "24f5394f0ce0953488bd87dec8b6aa99e9411fa9080c999dc1a34dd49db27eff",
+      "blob": "5666b067f78fad63578add42a5dffe64666369bc"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/trust-wrong-kind.invalid.json",
+      "sha256_working": "66b0fd64760e1dcd807fa4e298a52a9bc5f9b5ac2adaf9376eac3b58a6573bb7",
+      "blob": "7a3d8c442aa568dc2487f951ef334b8eef623d7c"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/trust.revoked.valid.json",
+      "sha256_working": "27d89c62905a00d9bdda5d2703413b99c3d45fa5eb8ba7524dd73ca5adc58599",
+      "blob": "a055147d092ba853d0d5ff6185c73b374bd56792"
+    },
+    {
+      "path": "contracts/release/v1/fixtures/supporting/trust.valid.json",
+      "sha256_working": "40cb641cdea708c3674bf8fbfac32ddc26358f48188f0619694063545ae23cf9",
+      "blob": "c551eeb66e842105132d3f1db3f42a128968c9b5"
+    },
+    {
+      "path": "contracts/release/v1/formal-package-publication.v1.schema.json",
+      "sha256_working": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "blob": "7c951b1ea788bd007b4593c029b7f84515e9f4e1"
+    },
+    {
+      "path": "contracts/release/v1/pinned-nuget-trust-store.v1.schema.json",
+      "sha256_working": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d",
+      "blob": "7d22b1e1e006fd5e35df1417f17866b3cbc5e54c"
+    },
+    {
+      "path": "contracts/release/v1/pinned-trust-store.v1.schema.json",
+      "sha256_working": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55",
+      "blob": "84f876a5bc173510231380f0ccad09b9b26e74dc"
+    },
+    {
+      "path": "contracts/release/v1/platform-release-candidate.v1.schema.json",
+      "sha256_working": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d",
+      "blob": "930c033c763be19413956bb24cfb7a260417b805"
+    },
+    {
+      "path": "contracts/release/v1/release-common.v1.schema.json",
+      "sha256_working": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d",
+      "blob": "3f8a7543bb6f7484b409d4dac0967cae83bd32dd"
+    },
+    {
+      "path": "contracts/release/v1/release-gate-result.v1.schema.json",
+      "sha256_working": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0",
+      "blob": "5a8f453e6461a7745401ece79355422a110cb7f8"
+    },
+    {
+      "path": "contracts/release/v1/system-lineage-bootstrap-evidence.v1.schema.json",
+      "sha256_working": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf",
+      "blob": "a18d3a6a95a657c16b566b9810b34be6bd95030d"
+    },
+    {
+      "path": "contracts/release/v1/system-release-manifest.v1.schema.json",
+      "sha256_working": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e",
+      "blob": "20fbbe1b2e4f7e660805a097ba6697c79fe4177b"
+    },
+    {
+      "path": "contracts/release/v1/test-package-transport.v1.schema.json",
+      "sha256_working": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb",
+      "blob": "a1f965728f19c858fc0ec99de438cac1f2877daf"
+    },
+    {
+      "path": "global.json",
+      "sha256_working": "12977d3e63d38bc51c22c4708ccbc351af024a310de7f25ac974468b731677b3",
+      "blob": "4c4c3ae5ed709aa83aa03569d2c1f6792c553165"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/CP6.Platform.Abstractions.csproj",
+      "sha256_working": "0330506d22b02a69d8e841e446632c09e3d6bd13847013601c3540fc9f163a9a",
+      "blob": "33b1a90713ef06f20b60bed1590bdb90b7601614"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/BackgroundContextExecutorV1.cs",
+      "sha256_working": "4cccf59c073893524c682397ca1abf8d23b7c4f335c0d9ead6e2152c926bd03f",
+      "blob": "00b2d113c47f243549ad345df1464255a0fa931b"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/ContextBindingValidatorV1.cs",
+      "sha256_working": "4463b3f5fe8aaae23307e23450368859a6cc1e857fbfc6cce87e94e45fe0a82c",
+      "blob": "20d0d50bfafabdb2c5288cb4e0b09717b7d95e5f"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/ContextBoundariesV1.cs",
+      "sha256_working": "d2402fab0e6518ac95ced1dd00446753013702421757882ae22b704f9fb220ca",
+      "blob": "6170302e84e5dcf43ea67dbb96f46b45a115fb4d"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/ContextScopeAccessorV1.cs",
+      "sha256_working": "954a300185592f6e1e9ea3d0b342baa3e0fd52951e18cef5b9f91774c10d8e6c",
+      "blob": "534ffeb5705a4d3cdadc6e7021f4796e17315fbe"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/TrustedContextExecutorV1.cs",
+      "sha256_working": "31903b51f6b5b46b89f16331c25b337ea5d896d37927cdb77d46b95848089993",
+      "blob": "94840cf64832d30af6455e833625a74d000deda8"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Cp6TelemetryConventions.cs",
+      "sha256_working": "b0c3a8a93b73e8ec875808494bea9504b540b40a0750ee2e0e44ababb2dec281",
+      "blob": "62f978b5e127ae9b638f1874f35f8fcd564e291d"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/ICp6ReleaseIdentityAccessor.cs",
+      "sha256_working": "4b9b8179a6cb7f0a2402556a0e07a249f2045f1521a34fc06f558f20a2ff91be",
+      "blob": "4dbe8d9577e8a1edec486ffa04cecbb43e8fc0dd"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/IRequestContext.cs",
+      "sha256_working": "36c69005e469b28d553c3c4a469cb2148d6d4b5ff83b4f143b31ed6fc8eb2d9b",
+      "blob": "70f93074560ea45c76d01ab1d98a85a2be8e47cf"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/IRequestContextAccessor.cs",
+      "sha256_working": "0cbbb91ddd3db7d8875fd01423ca3344c4f7dcf2ba7de9cac15dc165a0ed916e",
+      "blob": "97b178a4f0ee3fc2c55fdba19b6736908e2f51bb"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/RequestContext.cs",
+      "sha256_working": "050a71b08f624e4da8769ba1c7929ab6e47ac1dc86b5b31a15da0166dc9f9f32",
+      "blob": "d24138b2770232013e1edb09001d35dc443d9eb9"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "sha256_working": "7c2d830254c06aad4f4284f7e58c4926147f151703ddbd4eef40ffa3d94f472c",
+      "blob": "3b66a813bbab6ccf723ee7e12c9492389062040c"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+      "sha256_working": "cf0ae29902db8c37ff23e5bafca01bc4a6b31dbaa10ba253a377dd36df0c379a",
+      "blob": "aafabad8ae1c1c9ca7a4a193dd2807f975bbd100"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextMiddlewareV1.cs",
+      "sha256_working": "82f5d37cabb58e1249a3c27222313f8b199be7c26a9637bdd704aa9c9845471a",
+      "blob": "88f27f9dd56aaca8ff42225986b179fae0bf6222"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6CorrelationId.cs",
+      "sha256_working": "ad428e0fa5272f2794b375ee390c6539d10f854b1857e32f7d6bf77abc6b4d82",
+      "blob": "ed1daf3e0183f1915bd291dd1448ddb1ba9ca7da"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6CorrelationMiddleware.cs",
+      "sha256_working": "04ee6cd8ed16ea194b87e3ec6db72fce87b825257f72c66626b7e69ee0cb165f",
+      "blob": "e76fcdda92998e4ecf085714d704276900875b54"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6GatewayExtensions.cs",
+      "sha256_working": "d5279439627e8a0b206e72e225d47a9c4fe587f7b40400f6b62e0acf7ba2b9bd",
+      "blob": "0c5152addd12280e4ab9e1df6e4f83a8149a78b8"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6GatewayHeaders.cs",
+      "sha256_working": "8cda8ab26bbd948f75967029ba3958862da9802ca7af8ae05d6af3f5b9352167",
+      "blob": "9177761c186e781124d11a94bc8b45fc6c59a80d"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6GatewayProfile.cs",
+      "sha256_working": "89ee088edb69ecaaeb77b0684f381f9b88e42137a7c9e7733ca0e810ee0b0e23",
+      "blob": "d66c5c220a939802b0c96c11baabf8a13b042bd5"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpFailureCategory.cs",
+      "sha256_working": "95dbdf39d0377fa9db2e72297f647d344aa24a8690ec3e5fd5ac4c3e27503a17",
+      "blob": "ece492312eb7989c664921469b686d4f1086a886"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpOperationKind.cs",
+      "sha256_working": "a31557f72002e3d001b6267d320e41cbebeda2d1d6504b22861d09aed7e4bfd2",
+      "blob": "f1ba18d8425781e2ed83bfc62322066948949667"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpResilienceException.cs",
+      "sha256_working": "2f7ac461974590b394d0078571f83d123ad683072836af379d2a42f2995e0024",
+      "blob": "a43c3f9a4a426c72665eb0aa4fcf91cfabb5a30c"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpResilienceProfile.cs",
+      "sha256_working": "eccd9e93122018651aff6baf46615e551c961673a67122b964d13545533602c5",
+      "blob": "73ab6f7c5aee2980b5d9e8f7b3cfa90b10e8eb8a"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpResilienceServiceCollectionExtensions.cs",
+      "sha256_working": "6d5cb95e53a15803cc95fbdb55c5042dcecf9be7369a584c83b0c8f94b85e45d",
+      "blob": "6700da329bf5974f6b72ecd238b8c4b0d35c2fde"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6JwtBearerExtensions.cs",
+      "sha256_working": "86d8dd694bcba4f8afe144502c30f23e1a738e18e025ce7ef56fb7e8152e5e1d",
+      "blob": "0a0a70c79b631e68fdb6f0877328373419982a54"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6JwtBearerProfile.cs",
+      "sha256_working": "bdb3fe136d3e294bc7c2b4dc56478ad3facdd30b03e4aec5fe7a78b595a6f0be",
+      "blob": "61f5681f979fce6bdc82efd58b470e712e0e4ce9"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6JwtClaimsValidator.cs",
+      "sha256_working": "b34a7e589bae712eb865ef4e31453ebce8da20704f5a8e80179af22093520a15",
+      "blob": "9335e3be72d896d53611af075e329837c3dc7178"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6JwtConfigurationManager.cs",
+      "sha256_working": "7c41df8c6551295ea43e2c711d1b18678911148433c15e12c80ae963fbb4fb5c",
+      "blob": "ee2baaa9dfc714eb95a842a45c044044bd83f54e"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6ObservabilityProfile.cs",
+      "sha256_working": "f371a8489f2f099f61369c6b1eacac2542ae3b9f2001113fcd661b310454c1bf",
+      "blob": "2c254df083f538afaaa82e4b16d19c3d7ab173af"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6ObservabilityServiceCollectionExtensions.cs",
+      "sha256_working": "1a0e077b4e24c208ec44c54ae5066009a2f84ff214f5111d1f1bbb67c8c483f2",
+      "blob": "f272165bcfd916ab1f64adae8150362a219eb1ae"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointProfile.cs",
+      "sha256_working": "a5a3f7cf1fa7c8e0e5c80c8d7f1c663383fce1866fecee3b1f256c7aae482181",
+      "blob": "8a40171b24772090cf2ecd9f208e73790f67f00b"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointRouteBuilderExtensions.cs",
+      "sha256_working": "181fc638fe54f1342cd668b724b34e040c407d41edade7d5201c603e1d0e56ce",
+      "blob": "9c0ed1c129c15016b379f486054c96be0512de46"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6OutboundCorrelationHandler.cs",
+      "sha256_working": "2a4d32baff3e9e1401e8a931c53b9273aebadfd3107c97d6ea5c1eb575e70946",
+      "blob": "b67e2c42616c13a15c59b6f6172e51e5968bd321"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+      "sha256_working": "e90e7b2c62bd5b80079f27dec02f45b4140710f058b49f8d0961ea81371f02bc",
+      "blob": "917652346ac660570b91eb0f1863f08d017ccdc5"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6ReleaseIdentityAccessor.cs",
+      "sha256_working": "e9d03c96da65a849a833b2a4ae85af365c162f7b428e58e097ac189a0c5be6be",
+      "blob": "02d0950d435cc0893ea1d75aa7f18f2c256cf97c"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6SafeHealthResponseWriter.cs",
+      "sha256_working": "7d9d70614da59c2a93419d9643b2bdf3221575e200c22e190fed2842b3fc3e09",
+      "blob": "92f70fb5c8018ea5aafa2258bc27de703c3675df"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6TraceContextDistributedPropagator.cs",
+      "sha256_working": "669b7043dc7463099b5a30e3c942901bd295b6fdfae29dbfb1927131c555547f",
+      "blob": "6a2eadb767e276e3dd329a28678db8571a9f3627"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpDeadline.cs",
+      "sha256_working": "31a04faea8df87f139d999c45a40080d3e2c2020b7d00521fc4ff99f5566bce0",
+      "blob": "6a8a1a1ac686f7732ebe7e9ff84d8ca0da16db63"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpOperationBinding.cs",
+      "sha256_working": "4dd8426bbf1409f79ea3f9fa4cbd23b75e7df0a5e962fef6d99c873314aa02b2",
+      "blob": "3dc528354db7c82a3fd1890c62bcec79f14627c6"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Handler.cs",
+      "sha256_working": "0efe04799f477f969512c5abde916cb65a874e279964107ae528b8ef9c444526",
+      "blob": "4878e18b56c99c0f38b682dce94a5775c9769aa2"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Outcome.cs",
+      "sha256_working": "e9f70cf87414e265adea2daa389f86b0aa76764460f7aed61fe0e63a1229b833",
+      "blob": "5931b71d88940f302ba9213b2ab034f2ca43323c"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Profile.cs",
+      "sha256_working": "9e9d65b45534f7f5352bf2ebe3b77332a1861bacb1f771de0cf3d35f0f96f81d",
+      "blob": "1ba369e617eea179f85c8933ddc96ea81ad06563"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Registration.cs",
+      "sha256_working": "f49894511de671068ea05a3af742547747a674bde1f187520d1dc36b1b34b142",
+      "blob": "b61d17e23aee15ca6e896e3be397e8a7ea488315"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6RetryAfter.cs",
+      "sha256_working": "1fe6217898878db2cd2b07ef39d858553c397eee675ecaa2d62ac8596a22478c",
+      "blob": "49d2809f218f536bc4e6594648ddb68961fcbc8a"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6RetryDecision.cs",
+      "sha256_working": "a41446e4b6738633431ef1d5401bce57b69500788be2be4f2c5f8a9b3ba62971",
+      "blob": "4cd9306cca0cce596fd4a3a14249e746a16d86bf"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6SafeProblemPolicy.cs",
+      "sha256_working": "08f5dd1875bbd9ec13302eeb52e28a8c218b659b7b7034137842b46ede861201",
+      "blob": "33e3e0d14009b2d3ca9cd8d7518ee48c4d12f2b6"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6SafeProblemWriter.cs",
+      "sha256_working": "7f81b464e36500f15e1918b4ee407db9b8463eba138a32afdd121c9fca43e406",
+      "blob": "8992ec45cc160b71ee3561522c2e354d488aa691"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/IRequestContextResolver.cs",
+      "sha256_working": "79dd0d9f0fb5bc2711854e0952aaf553ac5390004f8e342bebb8fc910aadb729",
+      "blob": "db5278fddcb5bdc8d124f7ef0c24467a9cb8ff32"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/RequestContextAccessor.cs",
+      "sha256_working": "8409c464b10bef5cb8c0a4e20209a1c645459f144ae9a04af9c458e26a53b6b5",
+      "blob": "7af3466100101f218ce0fb888be62f27008c8e23"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/RequestContextExtensions.cs",
+      "sha256_working": "b107caaa53071b6941872eb7397753b8d1d67e3a7b875df695647e9577e88651",
+      "blob": "de71430519928fb305826223ec5a46ad63f51bbb"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/RequestContextMiddleware.cs",
+      "sha256_working": "4098aac92acdb77f09bcfb950a5310b8046415f600f24f1c658b24741e040f12",
+      "blob": "efcf240e6ead009566b647b5c69b82d2b2e578f0"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+      "sha256_working": "3c71927da98b44f52abb45e29f1da302b7bbfcab28077c365ad09bdfac8dd55c",
+      "blob": "9ce69da3bb822a9adf040e13638d6e7e705755cf"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/Context/ContextContractsV1.cs",
+      "sha256_working": "f9d8c18d7cab2bf7399039b108b54df5792d9b20c113fb99913a3a0bb2b25786",
+      "blob": "b0d306b08c10780b1928a5273af902c96d41a09c"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/Cp6ProblemDefinition.cs",
+      "sha256_working": "b30a0dea1c2b634ce2b1c69d9268a7edc1c018b867d5e4fb70badb06fa898bd0",
+      "blob": "fdd17003e978a024c4ed0c2d197e4abd3de9c3b9"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/Cp6Problems.cs",
+      "sha256_working": "8204ca012c039a1513a71cc6d0e57783e20d3303f783dcd834f65be242f883b6",
+      "blob": "6ed4b309d10c995407b60e009ecfbf600b53534e"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/Cp6ReleaseIdentity.cs",
+      "sha256_working": "c5c31863d44e1f07dabfe2be7dd7fdc4b13834c03309c7a642793f7e40b5c2ec",
+      "blob": "6e2f4451d835fa2958b373d2ad1047a199f71e8f"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/Cp6SloEvidenceDocument.cs",
+      "sha256_working": "a469783aaf986461422729306f6490912f40f8b88d47fe7bc4a04198f29b7953",
+      "blob": "a6e9df9aeab112ff4b94578be6247cf066bacadb"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs",
+      "sha256_working": "a8cb9e07f68f65c357c3b9bbae218b6a37f3874cd1b4ab88f1528e063a6abf2e",
+      "blob": "90667b6dd48d94986509bcadefd027e77e4ea815"
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/RequestContextSnapshot.cs",
+      "sha256_working": "713fc11b45bbd4e85487277a0f88fb2fb22619634ffb51b98f53007a330e150a",
+      "blob": "82f216485550e233bca4b2641cf17905df2c059a"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/CP6.Platform.Deployment.csproj",
+      "sha256_working": "0e6a3c90d2fb7123fe06c86b3702b658924bbdee61f306e4c9847ae8e12335b5",
+      "blob": "be65bb123e74c37c4d858e59b29402e9f1369fc6"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09ContractException.cs",
+      "sha256_working": "5aec3379fec3b95600055790f444fb8391a20c3db4518223af06c3e45c89ee4d",
+      "blob": "e1518d8434d904d6678b602bc97cd93373133d7e"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09Json.cs",
+      "sha256_working": "61bef9962d7f1726f0a35dff912036709299c7bbdb7e108df51c0560292287ce",
+      "blob": "639baeea815cf83d5a794b96f1cab0a42c74e6e8"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09KubernetesValidator.cs",
+      "sha256_working": "961842dec5d803cbbe75d0bcc81e1eb111a3664059e392971b55c4f6325e297d",
+      "blob": "c6bec056b4c100efa922537abe1920d98a8f68e7"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09RehearsalEvidence.Safety.cs",
+      "sha256_working": "24c5add00779b2af16e71103a17a7978b1c4d8c9217615d263d38a51e38ae5ff",
+      "blob": "2d63aeb4cd7e37bad1fd4be42a0b3c59723d6cab"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09RehearsalEvidence.Validator.cs",
+      "sha256_working": "831a39a6afadb07faf992249227a68b4e4788c389520dad413e4310711bbd972",
+      "blob": "4f269fd96da4098932a42f29701d45570d597992"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09RehearsalEvidence.cs",
+      "sha256_working": "aab4cd878a3f6f86bab76652180c5710a0d0d83839aff7b07cdfbe5b0750fa46",
+      "blob": "dcdaa9ba42d9bbdda75e333113372806b1a7133c"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09RuntimeProfile.cs",
+      "sha256_working": "851584086c288678b45eefa1dcdb686a1cd6bb97f8d4a4cb4f5bfc15fe123639",
+      "blob": "d9253d76f38b7c15ad9cdcfb1e32d6a91c7ef07b"
+    },
+    {
+      "path": "src/CP6.Platform.Deployment/Cp6P09RuntimeProfileValidator.cs",
+      "sha256_working": "3893c153899f37a9cd6786eb8343a6faf0e834fd7448fedeef2b5bfefb9bb673",
+      "blob": "9acd79dbbdb36b7e680cd6d9718bdc8081cd9c6b"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "sha256_working": "78da574887a1a1ad1d421cf948572c589832472d48adbb3d90090771510645c7",
+      "blob": "30b7857046279e978db3e12d443d65bdecc242fb"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6EntityFrameworkTelemetry.cs",
+      "sha256_working": "05c18180ec76d3f2608946e66fc2cddb3236c8be5fa3c576ffc7a1c05ac8ca53",
+      "blob": "fb18dce0809563bc366e9b8baa90f0acff5a5c89"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+      "sha256_working": "9a9ae94a2dd2e192a4a727107dda6c34921fd6404ad921a34a3f6735f9830911",
+      "blob": "de4b9aa3d8366aa70dded6ebfa498380e4908410"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+      "sha256_working": "ded90a6e47cf0f35d1e447c3ef12c35c0dc3eaf89a87a1376d1e86050e25d79a",
+      "blob": "c682d6c5d599710c32bb20c84d2bc3a16c5b35df"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxDispatcher.cs",
+      "sha256_working": "68e4bb3dd72ac2430fc396a4bcf0d89f4c06343565eaabdff474aa6ddb4ce04b",
+      "blob": "d74a85939bfafe8c7c0cc9d440c76d7a78b51b6e"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "sha256_working": "0f5c9ae3753408245ab0441d938a0f7ba3040a5aa5d27642125f4c4f5b325d3b",
+      "blob": "c2d10c851bb2567da7dd7cafd8645864d49023f2"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingEntities.cs",
+      "sha256_working": "5ad6bc52594a434b16134a77ea3232c2d8da77e7183efa4d05f9e1e851ed7561",
+      "blob": "98f2018c17ecb39e9e990fa3feff6bf9ea881a67"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs",
+      "sha256_working": "36688b990311da00fffd196adf0e1662afc7cca8269e3b031f8f0682065cd373",
+      "blob": "5459f5f3896a8bf9346466659b7124aabdde9662"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingTypes.cs",
+      "sha256_working": "de89f6e51f0c304fc564b712ede0502c34ad55eeec54785a48a59c261e956259",
+      "blob": "f9160b6ca6e86774b609d3b2142dc0894d882c0a"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/CallerTransactionInboxV1.cs",
+      "sha256_working": "a2cfad3bad83dcf6f4bb5ae1b4255f20325c2890089374c0b0cbd59ecc2bfbdb",
+      "blob": "f0a22e4de8cecdd7985a857b89a90feb5049da84"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxContractsV1.cs",
+      "sha256_working": "88769491504c8d2946316684d646b6ae8883fe47a623d5303d137cd635945485",
+      "blob": "ef70330786e729c09128d1c2bf8712e06f53a42f"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxModelV1.cs",
+      "sha256_working": "e57e3b64f94e70f1e881b86c3203abe64ff58db409b79002d9f692f22fcb304b",
+      "blob": "aed8024a4333e4926665cc3842df3ada6fb5adf9"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxTransactionV1.cs",
+      "sha256_working": "ce472e4e88dac5baea304c80df180ab63c73680ff2667ee73abcddd0fe8d699b",
+      "blob": "2f8cb604fef3aae87c36bac07f309d4cda1f2776"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "sha256_working": "6fde2bbeb23b1286ef4bd221d8981493d745520504221311097cd5f04ffda3b7",
+      "blob": "0a735078a1562db562d72998172bd63cf6ab8934"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Context/MessageContextExecutorV1.cs",
+      "sha256_working": "4a97e377c01b5682c191d7bbe15063900450c8e2a66f76580efc3b6b82962657",
+      "blob": "0e14ef0cd8145ac2d98684fa45979bb85a8c6fae"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6CloudEventAttributes.cs",
+      "sha256_working": "427efdc2fb48560f85316327be23bfdcfec3a194dc1b6f18dda6018c2e984be0",
+      "blob": "5fba25d9839569e6a2dc0a0723624ad11a0663fa"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6CloudEventCodec.cs",
+      "sha256_working": "20b19e1e68da4a6ef5caaf2cc02597f1308559cb7c6673f2d0cc7d9b9ee0e82e",
+      "blob": "96173bddcbab9c1bc8acf28ba7fcf701d93370a3"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6CloudEventDescriptor.cs",
+      "sha256_working": "b534e70e9182c2f3b14783a6895601cbd410da831b0be978c4a914d719e7424c",
+      "blob": "66535c45a4e1180ec7624e608c73be3eca76bf27"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+      "sha256_working": "068e384ec9209a599f282f5710c122908a01b08123da3f90ba9aa0fd5a1fa93d",
+      "blob": "dabd5a07740227d94f2c9f3541e1a0326b851ccc"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+      "sha256_working": "de0475e5ecc35da365e946cbb0e6f90c999275ada14353d78e4f768e5fe0b725",
+      "blob": "e40fa37cc7081102e453644c7e40df53bb6853db"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6DaprDeliveryValidator.cs",
+      "sha256_working": "f608d49e095b37b03c4551e196532f602f8245608e85756dfb7bb59a858f2074",
+      "blob": "d0dcfcc10bd6fd8d38d39dcd095fc6fb4185cd01"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6DaprEventPublisher.cs",
+      "sha256_working": "73dc529f2e2491926448110d6cfb0bbe2a0e1f75a6645b6889a42d5fefb025a6",
+      "blob": "096eb7dba54bf118e46a618e614bf6213927cc70"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6DaprKafkaConventions.cs",
+      "sha256_working": "7273f0a3e9efbaddf92a788934d27d9bde791ded2ca064cd91f7724d224af369",
+      "blob": "b7923d2b307e1e527d375cb438e278198bd08276"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6DaprServiceInvoker.cs",
+      "sha256_working": "de30d7156ee6d910e75fb865a4bc0c4ac83dd63c79cd46f0ccf21d2b2bfe6a41",
+      "blob": "5e2ae20a3de6bb1b958ff83889c0e5994a0a7f9f"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6DaprTransport.cs",
+      "sha256_working": "dcba1f0ca029008ae2967ab90a7f3fdfea45134feb9fc7a492ad7e26c2fbe979",
+      "blob": "95b1fe4c722af54eb9399cb0b936e08de33d0039"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6EventContractIdentity.cs",
+      "sha256_working": "3e3e935fc9ebbe6d6289582a7470f1477e2913c2d14ef1d5510b60d570ce667b",
+      "blob": "58787dfbd8a821c07c682a509f1af6e75acab8c9"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6EventValidationResult.cs",
+      "sha256_working": "309b3e4b69b4a44116d4271aa588e3d173d0d27c183987766361192d97c27c5e",
+      "blob": "6d444617be10e44e5e0c09c80be6e1c84d1cc483"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6MessagingTelemetry.cs",
+      "sha256_working": "acac0f7735ab198f148ea868c4ccfd8dd48b1c6bd64d8c905ec9ef72ad921392",
+      "blob": "56c90d45093f7ee3ef18c94c20b1affef7074f8f"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6SchemaCompatibility.cs",
+      "sha256_working": "3620a02a148c33b2c462609edf861ef3d6290d9a8b5d6dce5d213df61acedc4c",
+      "blob": "580e456dff89177e97b70c663207d13a4490c4c7"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6TraceContextCodec.cs",
+      "sha256_working": "dbfe37c02a30a989d675da4d59b78e8350de82a4e4eace208f8dfcb05d9b2c9a",
+      "blob": "09b98835b20bd430579662eae320e2293c40fd63"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/ICp6DaprTransport.cs",
+      "sha256_working": "dcd1db21340781f5df6e3efe894cd7ba4f4a31e523aeb0ca34d4815f8221ea05",
+      "blob": "0f120b3dd7b365c6f17b0552a7b53e7cc830bcd7"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+      "sha256_working": "165f6adc0ddb9bf4b2850a482d9e4b23a3550d87334cd824296536ee376203a5",
+      "blob": "0436729bb3f3dd8131dd35fab38d0005f7d8f968"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeJson.cs",
+      "sha256_working": "fd63eed2ffb5c1e373de9c68ecfd7680f952390addbe23763c8ba32b28a16b27",
+      "blob": "54517ba4810e61c99a80563abc1fa273d20f513f"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+      "sha256_working": "d3545e5b96008bdc580ee1e9b475478ff01ce4602b3169199d9914f0388d232b",
+      "blob": "b52fcc9fd98294896a09c2c70763d95c19e7fabb"
+    },
+    {
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "sha256_working": "da851661b9f172616304f7863c23a0536d0babfd7e4315888d5515dfd641f5ff",
+      "blob": "5431acc9ace1b6cfccd28ab78dd911d619d1dc2f"
+    },
+    {
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityContracts.cs",
+      "sha256_working": "1a9afad32601d838d93fc1624f209da0e3c5825fdf84ea1a266344fe84fe090e",
+      "blob": "9831c6fe24de35f24c873895bcbb41ae0c6a4b69"
+    },
+    {
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+      "sha256_working": "c9f61b01091d5aea5f67ed9588e04020342a9bdd1304bc7c9163ef3e4d89bc72",
+      "blob": "8460b68baea84370d73c2cbd4412767916c202be"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6CandidateLocatorKeys.cs",
+      "sha256_working": "fb24f355f9b8f6d53849571e0aab362df46f737ad421d109b0a52be384f463d1",
+      "blob": "10722d585f6fbaca2e7d65ebb61370d43e58595b"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6DeterministicJson.cs",
+      "sha256_working": "df68f5bab7a538472cc50fba008f97c5d06b6323ebc9791b14a04fb7490d5c01",
+      "blob": "147b5901af6ad6ee95d460119cf0ea45efd92b3e"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+      "sha256_working": "2442f28094bdc626b4e217a899d840151e4f3f948245658cbcf9a569a4752472",
+      "blob": "b8639c708f4b37ce061c0e521c0324b6a2d0acb5"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6NuGetCertificateProfile.cs",
+      "sha256_working": "bc0afed2edd3e3d33581b65db80a97a5a366dfac7460071d822434fc1c56fac5",
+      "blob": "a4376ca0142e15c86a02b81d54f3f31c2113affd"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6PinnedNuGetTrustPolicy.cs",
+      "sha256_working": "fb8f37e5273acbe9684aa210f5977cff21f8f04f09668c1d9596be56521bcb64",
+      "blob": "4fabe39357bd94b8792e636f3be4efb918283299"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6PinnedTrustPolicy.cs",
+      "sha256_working": "203bf97697f4c37b72c0e9d27306de38cc13d49d30c905c6107de6e789f534da",
+      "blob": "f36073de9f505029d7486bd7ac226ca8b43fcd94"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ReleaseContractException.cs",
+      "sha256_working": "7cea3d16d835e9a41751b4a3f5436ffaeaa30a18e7268a154230cf0d8b611ed1",
+      "blob": "7162062e293d7848dfe8a0af797fa0970af80861"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ReleaseContractIds.cs",
+      "sha256_working": "4b26bee5ef08f9626d56330df85c1a82ca6b9032efd08f662248f7c16f8c2752",
+      "blob": "f60bf2397a960ad090e02327493e620c12092950"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ReleaseJsonRules.cs",
+      "sha256_working": "5791a71e22a86b2b621a75e6589b34eb71fc61f3fea2c0f7d6d32ab3225cd713",
+      "blob": "b0fc3dd30b3d1560a56ef411c23f65f267369c57"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ReleaseMediaTypes.cs",
+      "sha256_working": "17210158c834c4475c3fcca03a75bf5a7bed4a14c02e8f1b2e04898595d8e579",
+      "blob": "db41c18a5ed6cf2eb547adc115e80828ed59a7f6"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ReleaseValidationMode.cs",
+      "sha256_working": "896b0ae50c93a313c5214483ab83bcd2fbd48195ffed7e94888d844296be3595",
+      "blob": "4a925e07a9937c1d0a060a43c2953f46c885eb8e"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ReleaseValidator.cs",
+      "sha256_working": "a30f7e7617f7d982f6b4289d7f13a12c3a677cb3c63d4317694211ba5576cb15",
+      "blob": "a23b65d3d7898023c0ea340eb10ab20cb03cb517"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6SupportingContractValidator.cs",
+      "sha256_working": "065ff3f09d83d0220ca113e15b523a93089ee7cb4c7fc85c48bd7912e4808bbf",
+      "blob": "d5a47911618a78e0ea84eb752027e51e62cebcd4"
+    },
+    {
+      "path": "src/CP6.Platform.Release/Cp6ValidatedReleaseDocument.cs",
+      "sha256_working": "1d444c9bc781970ff79dc1526ed3ad7a836876c586e815b39e047adaa324d185",
+      "blob": "884b81e76a7f36d25abdca271d92b9e91f6c5489"
+    },
+    {
+      "path": "src/CP6.Platform.Testing/CP6.Platform.Testing.csproj",
+      "sha256_working": "dfc8d21583474e7ebed6d2d7c83e8b5010fde2663a24f385ace9b73e90c46044",
+      "blob": "83b047c3e4095c6c58ac85008bc72a8c61f37938"
+    },
+    {
+      "path": "src/CP6.Platform.Testing/Cp6FaultInjectionServiceCollectionExtensions.cs",
+      "sha256_working": "88a422790691b44d3884e3159d37122ad7dff59d67e13d615c0a92c196183057",
+      "blob": "a11bdc32cc1088bfea82606a66371b5defb78798"
+    },
+    {
+      "path": "src/CP6.Platform.Testing/Cp6HttpFaultHandler.cs",
+      "sha256_working": "11b8b26d7987b9aad1c7de4e642d326e52fa47561b956a71dc44714f5e9683fc",
+      "blob": "61e1f82d6f750140a16d211f1cfee2c409eeb4ac"
+    },
+    {
+      "path": "src/CP6.Platform.Testing/Cp6HttpFaultScript.cs",
+      "sha256_working": "a9ea7ec30ca6c680d2e926e12e40a120e937b39c4ce8ee10c6976895cb1e983a",
+      "blob": "9003b28a329295c039cea1eb1c0ae3f8ffc8b8b1"
+    },
+    {
+      "path": "src/CP6.Platform.Testing/Cp6RecordedMetric.cs",
+      "sha256_working": "4bf62f2a3ec5fe405c3677c18e66fba8dc2472a9097e5ca9c0247443922f8a2c",
+      "blob": "e11b728ad77f8523cbf34d6b145680d440e834a3"
+    },
+    {
+      "path": "src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+      "sha256_working": "7132e3a0c0ab51532531f5eea7aeabe85e3962c46e20cac82af7c8dce4a52b62",
+      "blob": "87e73b822b99ef284e2cb0334b1c695cf787c48d"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+      "sha256_working": "0802eefe7ed179059344dc7414a846b30994fd6975d4a5e5b227fa479380667d",
+      "blob": "263557f0901f3571c2cfe1ea52bdbc223398a319"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "sha256_working": "732986fe1270e4909a22fb8cab04710f6ff157b847337b983b642e4d3365176f",
+      "blob": "71ca27cac7d021cd13990bf6e68abe37209dd49d"
+    }
+  ],
+  "source_unchanged": true,
+  "artifacts": [
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/CP6.Platform.ArchitectureTests.deps.json",
+      "sha256": "6a07a1649389be38cb221a10491681ea1528afc809d5b3fe6aef299b6a1cfd75"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/CP6.Platform.ArchitectureTests.dll",
+      "sha256": "edd1f91b8a78091d6c370391f3ca1cbbafcf062bae2d48398cbd0fe9da3c1ace"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/CP6.Platform.ArchitectureTests.pdb",
+      "sha256": "e37a9d8a75295af775c0fbab0db417d218e0f6b3f8c4e5e74d20b97efc95f4eb"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/CP6.Platform.ArchitectureTests.runtimeconfig.json",
+      "sha256": "7b7401577f185805bf9f44124cdbb0b919047ad4cde5b4ac4e9f0b37468f68ca"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.TestPlatform.CommunicationUtilities.dll",
+      "sha256": "e38a359aa502bb1867d6092dca9aba5c130dd6f9111decea8156aa746b2c69e6"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.TestPlatform.CoreUtilities.dll",
+      "sha256": "f6e2495c44640d8915b2aefc938f391c970300266da014350ff35512a448ee84"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.TestPlatform.CrossPlatEngine.dll",
+      "sha256": "d55399bc66dc5b451d60ad82662452ca4a5f735918135dfc91ca9b5e3e38a6ab"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.TestPlatform.PlatformAbstractions.dll",
+      "sha256": "7b919ce4429c3b7b8fa2c36fd641b70b2f459a30ecb7c65fd80f437673cec930"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.TestPlatform.Utilities.dll",
+      "sha256": "01ffd64d25a4bd905aef9594d2aa700e020273a90a77a8720af6bec8b4fd5444"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+      "sha256": "a753bc15f23a957f4f91a059376e4472c6bacd1503622de4b9b2b079ad8ea289"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.VisualStudio.TestPlatform.Common.dll",
+      "sha256": "059aa2f335c3f7b14ac3fb7caa1625bc2767581b9548e9ff53a246c7f2f94d6a"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll",
+      "sha256": "f83e38ee9020baa42e284e2299e233070ffa86ce4b10213583f9b7c8a521bcd0"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/Newtonsoft.Json.dll",
+      "sha256": "22c649f75fce5be7c7ccda8880473b634ef69ecf33f5d1ab8ad892caf47d5a07"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/testhost.dll",
+      "sha256": "92cbdf52db5249112f9f53f1fcdaf9f9aa3fce467141c688a31a7fe095e4d304"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/xunit.abstractions.dll",
+      "sha256": "3166dc70323fb30ccf1cedb0fe86f2ad122c46d254542342d90386efc4c9285c"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/xunit.assert.dll",
+      "sha256": "bcd9711b22d227ac8cd4c1568e72433a0f576d2ec8aae64ac508081892015b1d"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/xunit.core.dll",
+      "sha256": "2f7feeec8c6dec7df684c25fb80aadb292b963d09723460f03d53c5ad2088acc"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/xunit.execution.dotnet.dll",
+      "sha256": "e70febe547c15f8155db3e2d95c3ba4445a59cbc21a3e7541ab22ed49d3dcf7b"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/xunit.runner.visualstudio.testadapter.dll",
+      "sha256": "98a7395cd6abd03d0ac8eeb82d720c24db00602f047ca49bd6e88e77fc6d1153"
+    }
+  ],
+  "dependency_sha256": "523a53f40421d4e2474919cdea34aa41a05f6575c5523c7061d8f30d9ee807d9",
+  "merged_tasks": [
+    {
+      "task": "WP02-07",
+      "source_sha": "872acec044eb09bc96660f696844c86127b508bd",
+      "paths": 72
+    },
+    {
+      "task": "WP02-27",
+      "source_sha": "c105036f166928b7c165f182f99f3147ffbb0d58",
+      "paths": 244
+    },
+    {
+      "task": "WP02-11",
+      "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+      "paths": 115
+    }
+  ],
+  "scope": "New local architecture-only check of actual combined remote main after three candidate merges; all candidate file blobs match. Required because this integration changes package assets and shared exact enumeration. No product suites, PG, formal package publishing, Actions or deployment. Original task-local tests retain their own source/binary identities; no combined business run claimed."
+}

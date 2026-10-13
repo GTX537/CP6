@@ -1,0 +1,62 @@
+{
+  "recorded_at": "2026-10-13T13:58:04.066023+00:00",
+  "scope": "Evidence assessment and bounded task validation, not actual original business acceptance",
+  "tasks": {
+    "S01-12": {
+      "command": "python -X utf8 eng/contracts/s01-12/verify_adoption.py --main-repo . --crm-repo <fixed CRM checkout> --platform-repo <fixed Platform checkout> --output <coordinator comparison.json>",
+      "environment": "Windows; CPython3.13; read-only fixed Git blobs from Main47c9/CRM1e4/Platform9259",
+      "scope": "New compare-only PASS:828 source references,122 vectors,16profiles,56 three-surface lexical rows;352 historical assertions and502 N/A cells. Original30 comparator checks on pre-fix code plus two targeted fixed-field regressions reused separately.19 revision cases remain18 PARTIAL/1 NOT_COVERED; all business NOT_RUN.51 consumer pins,56 future task responsibilities,six handoff slices.",
+      "display": "828引用比较通过；122向量、19修订、六组消费者；原30+2比较器检查分别复用",
+      "handoff": "采用证据收口完成：新只读比較828引用通过，122固定向量/16profile/56词法组三端范围保持；原30项比较器与后续2项五字段回归分别复用，未重跑产品或PG。19修订仍18 PARTIAL、1 NOT_COVERED，全部完整业务NOT_RUN；六组消费者/56后续任务责任保留，S07原DLL hash和S05逐项reporter缺口不伪补。",
+      "report": "docs/development/evidence/s01-adoption/DELIVERY.md",
+      "repository": "GTX537/CP6",
+      "candidate": "95ac1c60ebeeb58b43c02693ae7ca5a7ef626bc8",
+      "report_sha256": "4361dfe083fb28bc66bac00b625bc5edfaa68ae0d750e38337845606f891525e",
+      "report_url": "https://github.com/GTX537/CP6/blob/95ac1c60ebeeb58b43c02693ae7ca5a7ef626bc8/docs/development/evidence/s01-adoption/DELIVERY.md"
+    },
+    "WP02-07": {
+      "command": "Original dotnet unit18/PostgreSQL20/Architecture98; targeted unit4 and PG helper2; coordinator source/Git/PDB/TRX/dependency/artifact reconciliation only",
+      "environment": "Original Windows, .NET SDK8.0.424/runtime8.0.30, EF8.0.30, Npgsql8.0.8/provider8.0.11, owned PostgreSQL18.6 at55427",
+      "scope": "136 distinct cases reused:18unit+20 real isolatedPG+98architecture;4+2 targeted repeated cases do not increase total.36fixed inputs,255source/9dependency/153artifact hashes and portablePDB sources verified.14TRX outcomes/failures preserved,60AC allbusinessNOT_RUN; allthree ownedclusters smart-stopped, no coordinatorPG operation.",
+      "display": "原136独立用例与4+2定向重复证据复用；同事务Inbox/原结果库能力",
+      "handoff": "原18unit+20真实隔离PG+98架构=136独立用例，4+2为定向重复；36固定输入、255源码、9依赖、153产物、PDB与全部14TRX核对后准确复用。三组专属资源已安全停止，COORD未重开PG。caller事务、七锁准入、冲突与原结果只读恢复作为库能力交付；60原业务AC/真实Owner采用仍NOT_RUN/UNPROVEN。",
+      "report": "docs/development/evidence/WP02-07/REPORT.md",
+      "repository": "GTX537/CP6.Platform",
+      "candidate": "872acec044eb09bc96660f696844c86127b508bd",
+      "report_sha256": "72de7d2ac6beb2a2afdf1ffc31ced53173d88f8403ec5fba45e1c1978d16f1d1",
+      "report_url": "https://github.com/GTX537/CP6.Platform/blob/872acec044eb09bc96660f696844c86127b508bd/docs/development/evidence/WP02-07/REPORT.md"
+    },
+    "WP02-27": {
+      "command": "dotnet test ReleaseTests with original required filter plus path regressions; dotnet test ArchitectureTests; local seven-package pack and actual archive inspection",
+      "environment": "Windows; .NET SDK8.0.424/runtime8.0.30; local archives remain unpublished and not formally trusted",
+      "scope": "Issue60 effectiveRED13pass/1fail then Release/Schema127/127 (14new) and Architecture98/98. Two exact asset arrays updated under explicit COORD window; all other gates retained. Seven fresh local archives built from7c59256e freeze and exact packaged-schema bytes checked. Original signed seven-package Current verification reused at2026-10-13T12:46:51.582Z; no new signature run. New archive identities never inherit original formal trust. WP02-02 remainsBLOCKED.",
+      "display": "新Release/Schema127、架构98、七个本地包检查通过；原验签7包按旧时点复用",
+      "handoff": "architecture-window问题答复：仅批准两处精确资产预期数组增加capabilities/v1，全部既有约束保留；原96/2失败保留，新98/98通过。独立发现Schema/API合法单字符路径差异Issue60，真实RED13/1后修正，新Release/Schema127/127；新七包实际构建和Schema字节检查7/7通过，NOT_PUBLISHED/NOT_FORMALLY_TRUSTED。原七包验签只按2026-10-13T12:46:51.582Z复用，非新Current运行。Issue60远端核对后关闭。WP02-02保持BLOCKED。",
+      "report": "docs/development/evidence/WP02-27/COORD-FIX.md",
+      "repository": "GTX537/CP6.Platform",
+      "candidate": "c105036f166928b7c165f182f99f3147ffbb0d58",
+      "report_sha256": "c47440a8bfce290d82771d649b769554a76a9dd57bd4643797828ee9cd1c1e2a",
+      "report_url": "https://github.com/GTX537/CP6.Platform/blob/c105036f166928b7c165f182f99f3147ffbb0d58/docs/development/evidence/WP02-27/COORD-FIX.md"
+    },
+    "WP02-11": {
+      "command": "dotnet test AspNetCoreTests --filter FullyQualifiedName~RejectedBodyRegressionTests; ~AuthorityFaultRegressionTests; final ~HttpV2",
+      "environment": "Windows; .NET SDK8.0.424/runtime8.0.30; Release; actual handler with bounded local transport/authority fixtures; no DB",
+      "scope": "Issue62 RED16fail/8pass then24/24; Issue63 RED22fail/2pass then24/24; final combinedHttpV2198/198zero skips.249source/8dependencies/25artifacts match final tested bytes at58e35c, successor34cf docs-only. Two separate issue branches merged normally; oldlegacy98/architecture98 reused only unchanged assertions, not claimed as current combined run. All42businessACNOT_RUN, real host/Owner adoption unproven.",
+      "display": "修复两个HTTP边界；新HttpV2198/198通过，原98+98按未变范围复用",
+      "handoff": "原候选150结果保留；协调初审发现两项P2并分别建Issue62/63与独立修复分支。拒绝状态正文IO/超时保持不可重试；verify/replay回调异常保留typed NotSent/Unknown、原身份、attempts、RequestOption以及取消/截止时间优先。两组24例均真实RED→GREEN，合并后HttpV2198/198；旧legacy98/architecture98明确按原范围复用。两Issue在远端包含后关闭。42原业务AC/真实Host/Owner仍NOT_RUN。",
+      "report": "docs/development/evidence/WP02-11/COORD-FIXES.md",
+      "repository": "GTX537/CP6.Platform",
+      "candidate": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+      "report_sha256": "84d6cee06a591500f848432fbf6c3b589576320317838c81af399ca9450036c9",
+      "report_url": "https://github.com/GTX537/CP6.Platform/blob/34cf7ab144a02e412de121eee2d9c5083f5a96a8/docs/development/evidence/WP02-11/COORD-FIXES.md"
+    }
+  },
+  "combined_gate": "combined-architecture-validation.json; actual merged Platform main,98architecture only",
+  "business": "0/125;247runtime NOT_RUN;41historicalREFERENCE_ONLY;123/125originalinventory;ITER/RELirrecoverable;WP05PROPOSED",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "database_operations_by_coordinator": 0,
+  "formal_package_publication": "NOT_RUN",
+  "deployment": "NOT_RUN"
+}

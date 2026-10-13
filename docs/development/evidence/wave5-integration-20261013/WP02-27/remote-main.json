@@ -1,0 +1,996 @@
+{
+  "result": "PASS",
+  "task": "WP02-27",
+  "repository": "GTX537/CP6.Platform",
+  "source_sha": "c105036f166928b7c165f182f99f3147ffbb0d58",
+  "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "remote_main_sha": "51706965ec1e2363a8f4db8c730983b1313fdbfd",
+  "pr_url": "https://github.com/GTX537/CP6.Platform/pull/64",
+  "merged_at": "2026-10-13T14:06:37Z",
+  "candidate_files_match": [
+    {
+      "path": "contracts/release/capabilities/v1/README.md",
+      "blob": "2b2d335a2a886bbfda737b64d6cab21da881e547"
+    },
+    {
+      "path": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "blob": "6eeb4ac489924716af7078114490162b0fcbb0e8"
+    },
+    {
+      "path": "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+      "blob": "0528d9b78955d9c6e4815b612200ff56ae936ea1"
+    },
+    {
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "blob": "c1272a44e443cdc103ec84eb73c58289e5d114ee"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/.gitattributes",
+      "blob": "c6cd4fb7e052fd2c936a6623e1f75e905ad82cfd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/.gitignore",
+      "blob": "2e6285340c7d410d868324329c88a5ca53c1e861"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/ACCEPTANCE.md",
+      "blob": "fd177f292ec252ec014ccbfec888e5c31156976d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/COORD-FIX.md",
+      "blob": "151b8e3c5837d12ad3be46a2e00b4ef13f9356d8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/COORD-artifact-inventory.json",
+      "blob": "c598e8e7010b3172c5401a264f03cbcaccd7c504"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/DELIVERY.md",
+      "blob": "ea24123e6abd7985b1fd304dc1cf6f4b6ea72836"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/PLAN.md",
+      "blob": "18b78f46cc549bc9205a4edb55cda38c7363025a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/REVIEW.md",
+      "blob": "cfea4a9046ff6c50123c17ca425d8c2efa731e50"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/architecture-window-proposal.patch",
+      "blob": "40083361277a02dc2b8009db462b63c6490f407c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/artifact-inventory.json",
+      "blob": "2db1a7a4b1b89c2c925a65341affa29f79d55434"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/inputs.json",
+      "blob": "1968876459ef02156d3e2019cba0efff04929f0c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture.log",
+      "blob": "33327b6ebd650dcf68e828b4b495cb4e047db999"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture.trx",
+      "blob": "31a81ee2cd4847a70fe8fcb1f5719ae5c284e0be"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release.log",
+      "blob": "4ab556d2ee138974b8d7918dbca8873be545d72a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release.trx",
+      "blob": "995105d3f647b7b5356a460acc8be54fb2d0b459"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/run.json",
+      "blob": "2d51b562944c99fcd7131e75fa4ea56cec43ffbe"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Abstractions-pack.log",
+      "blob": "cb5351ea49f533d90732ccd619659a6ed396deec"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Abstractions-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/AspNetCore-pack.log",
+      "blob": "90e12713f70feb7aa1b871aeb497fee909a1fc9a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/AspNetCore-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Contracts-pack.log",
+      "blob": "c5ae05934218be2a8dd55fc9e6e8646a97371a20"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Contracts-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Deployment-pack.log",
+      "blob": "7c1c418f503b80a7bcf0796a293ef92aeb5fe209"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Deployment-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/EntityFramework-pack.log",
+      "blob": "8ba1720b4350be22964fc5e7ed813e194fa0c7dd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/EntityFramework-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Messaging-pack.log",
+      "blob": "9b5792d3edebd40eb53cbe0e05b388a97dd55020"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Messaging-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Release-pack.log",
+      "blob": "cbe61f7fe7056308c3c59133e6ad8266b9b53527"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Release-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/approval-provenance.json",
+      "blob": "50d4a7bb672781b2a43a5ed78ee3f84bb03683da"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/archive-inspection.json",
+      "blob": "c93cf92793cfffdb30f3af66275aabf372272cb8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/archive-paths.json",
+      "blob": "0fbc9517afc6dd58c6459a520d15a08dcca98f0d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+      "blob": "df5db6cdd44abf5c07fd04d86457af3552e07bb8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1.bin",
+      "blob": "6eeb4ac489924716af7078114490162b0fcbb0e8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb.bin",
+      "blob": "c93cf92793cfffdb30f3af66275aabf372272cb8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa.bin",
+      "blob": "0528d9b78955d9c6e4815b612200ff56ae936ea1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/matrix.json",
+      "blob": "5310fcafb197438ee2f79a7f333cd3dd7adc2006"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/state.json",
+      "blob": "01b8157b529b92d4677a10616f579779964b2724"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspector-build.log",
+      "blob": "f5c690d2ffea9453037cae4069e2facdf3244f53"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/local-inspection.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/run.json",
+      "blob": "20c1735d05e0789c8cfa8e3ff0bd1ed8234974b8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/run.json",
+      "blob": "6b9052a69acf891d96d1c3c3396699999bded29d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path.log",
+      "blob": "af1ad7a38f214eb795775a61181ee2e81390d68f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path.trx",
+      "blob": "814ddb5e6ee4d478e77157fc113fb8d54d4843ff"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red/run.json",
+      "blob": "8c58e056ed27209db6e1bcd2c00e538d23b65b32"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path.log",
+      "blob": "d80ec87fea9d559b85beb4ac72392ad8fe61eef8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path.trx",
+      "blob": "1ddfb43882612b46882e689d3952352843dea59f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-green-initial/green.trx",
+      "blob": "e52ee88e5ea9659cf9e4d49d4fd45feb27f60af2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-green-initial/output.txt",
+      "blob": "5ecaba24e6d2220bf45476dba8b9934b6675d9b6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-green-source-version/green.trx",
+      "blob": "e64b3710e603a6bab240ae8e41909c523dad1370"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-green-source-version/output.txt",
+      "blob": "216088298a511d0e535fa892305a1d75d013a052"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-green/green.trx",
+      "blob": "03de73627f45b4fd5fd9a201e8e575c657ef1369"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-green/output.txt",
+      "blob": "bad38c65daf178f01767fa5fca26225578e598c8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-boundaries/output.txt",
+      "blob": "edf7e05331a67e5f390bd490fe99fef47a0fdb8c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-boundaries/red.trx",
+      "blob": "430a688f6d899172b16f7ab5ea180e373db1f029"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-fixed/output.txt",
+      "blob": "6712ce02a71dda207d6ed18469d43527bb17c48f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-fixed/red.trx",
+      "blob": "9eafc0ba119ea2fdc437ac5dcb5f313cfd71abab"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-source-version/output.txt",
+      "blob": "8a2bc1c46e41c1bc43d1d0588de3952ee8c2e33e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-source-version/red.trx",
+      "blob": "3c96041e7d7cb0e6e5fe6458c343547efadfa988"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-trust/output.txt",
+      "blob": "dcfa782b12ecf3f8336a6a2f876bf813bd347b80"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red-trust/red.trx",
+      "blob": "ff24941ef2973f5fd35044c420a1f2d7028a726d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/core-red/output.txt",
+      "blob": "30634aec9c8c47c0c322f4fdebd28c3c9cfcd062"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/approval-provenance.json",
+      "blob": "4b9aad117fd876ec6942245286d7ad9c9e8dac3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/consumer-lock.json",
+      "blob": "4cf3d9baac044c5ab25a4d0be9522fe0de74e265"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Abstractions.call.json",
+      "blob": "8d3058d0723368f4c4d381a25eaf40814282eaf4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Abstractions.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Abstractions.stdout.txt",
+      "blob": "f30d7d74f3010a085bc40db7add0feefaba3e356"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.AspNetCore.call.json",
+      "blob": "1066994a13b42f605428580835df5904d2c4c6ec"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.AspNetCore.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.AspNetCore.stdout.txt",
+      "blob": "3211c79c4312cfd865a68e03db0a4956cfb22d81"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Contracts.call.json",
+      "blob": "9aa106c672f16079b5fcb607e210ea96c790a4d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Contracts.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Contracts.stdout.txt",
+      "blob": "3fd6ccfed3aff9dc0c4c6a2749ae39570daf12df"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Deployment.call.json",
+      "blob": "951023718044fae6da220b125252921658fa4ce8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Deployment.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Deployment.stdout.txt",
+      "blob": "2fb3245d77d331f83e5127732c453b5dc9a91d0a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.EntityFramework.call.json",
+      "blob": "0e26db0745f93412fda2b0922934082bd1c58d72"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.EntityFramework.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.EntityFramework.stdout.txt",
+      "blob": "d73254ca011b88a6d9e341f62a76de7b6ac14423"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Messaging.call.json",
+      "blob": "a9a985faa4f57b26fa26e600b8d31597ccae8b74"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Messaging.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Messaging.stdout.txt",
+      "blob": "170f6326993733372d94b5a78c6043f39727ebcb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Release.call.json",
+      "blob": "210f0ddd70fdf3449ac2ebf7e408b2923ddd992a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Release.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/CP6.Platform.Release.stdout.txt",
+      "blob": "43193c5c2f5d6c81e511ba51b648dd63ee207406"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/policy.json",
+      "blob": "92872f95ee22244ea824b6a9fd4acd2cc0c953cc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/current-verification/publication.json",
+      "blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/evidence/17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181.bin",
+      "blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/evidence/aa4203a385eb0563679a20e9620cbbc0a7ac88156fba5ed4901ded361c57cd89.bin",
+      "blob": "1968876459ef02156d3e2019cba0efff04929f0c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/matrix.json",
+      "blob": "c836d64a6855b4cefc8cbea15010db9f160f3809"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-1/state.json",
+      "blob": "8e82ce359dd5a87440c6c35b603e811f50b271fe"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/formal-current.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/approval-provenance.json",
+      "blob": "60403b6fc48ee5d8d224288855375d4cc0fc11d2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/consumer-lock.json",
+      "blob": "4cf3d9baac044c5ab25a4d0be9522fe0de74e265"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Abstractions.call.json",
+      "blob": "05d511e3427c8f00f9f20a28932be55e577206cc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Abstractions.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Abstractions.stdout.txt",
+      "blob": "f30d7d74f3010a085bc40db7add0feefaba3e356"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.AspNetCore.call.json",
+      "blob": "7b88943c3ef7a3956e17fc8dbb6244549ed8364c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.AspNetCore.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.AspNetCore.stdout.txt",
+      "blob": "3211c79c4312cfd865a68e03db0a4956cfb22d81"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Contracts.call.json",
+      "blob": "5d881f68066d84d8e1b58a9bb2206f9345bbd749"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Contracts.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Contracts.stdout.txt",
+      "blob": "3fd6ccfed3aff9dc0c4c6a2749ae39570daf12df"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Deployment.call.json",
+      "blob": "b09fa8022434a1a07e2ca5c50be4fc6f5aefaff2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Deployment.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Deployment.stdout.txt",
+      "blob": "2fb3245d77d331f83e5127732c453b5dc9a91d0a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.EntityFramework.call.json",
+      "blob": "ce6258d0b9019376b834425d994da3c842a8e763"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.EntityFramework.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.EntityFramework.stdout.txt",
+      "blob": "d73254ca011b88a6d9e341f62a76de7b6ac14423"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Messaging.call.json",
+      "blob": "fb7365ca5014c397cb6f20c3721a23987efa91ac"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Messaging.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Messaging.stdout.txt",
+      "blob": "170f6326993733372d94b5a78c6043f39727ebcb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Release.call.json",
+      "blob": "97fc9fbde440e25936b0cef87f2e80391995356f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Release.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/CP6.Platform.Release.stdout.txt",
+      "blob": "43193c5c2f5d6c81e511ba51b648dd63ee207406"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/policy.json",
+      "blob": "92872f95ee22244ea824b6a9fd4acd2cc0c953cc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/current-verification/publication.json",
+      "blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/evidence/17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181.bin",
+      "blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/evidence/aa4203a385eb0563679a20e9620cbbc0a7ac88156fba5ed4901ded361c57cd89.bin",
+      "blob": "1968876459ef02156d3e2019cba0efff04929f0c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/matrix.json",
+      "blob": "c836d64a6855b4cefc8cbea15010db9f160f3809"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspection/state.json",
+      "blob": "8e82ce359dd5a87440c6c35b603e811f50b271fe"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/inspector-build.log",
+      "blob": "29457be0242546341a51bf6a09e74a7eda5f0bb5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/formal-current-2/run.json",
+      "blob": "7a5ea77835af4a21e90f5cef890934ff8ad56489"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/green-publication-evidence/capabilities-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/green-publication-evidence/capabilities.log",
+      "blob": "90b69517c9dbfad2de4d8e206e743c3da692992c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/green-publication-evidence/capabilities.trx",
+      "blob": "694b110f11eab829fee773b269de2eec30afebed"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/green-publication-evidence/run.json",
+      "blob": "1dbb9fc7095b9b7896ab755ff4abb077d0294d88"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-build-final/output.txt",
+      "blob": "93393db2aa5bbccac7d82bf722d82acf72c52a06"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-build-fixed/output.txt",
+      "blob": "db22f59878f4b5aa6d9c81d0be5a9334624aa4b6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-build/output.txt",
+      "blob": "4c1e2d23028eb64665ef57a199432e0092cdd0fa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Current/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Current/policy.json",
+      "blob": "92872f95ee22244ea824b6a9fd4acd2cc0c953cc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Historical/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Historical/certificates/39586664feb087c319bd07652b7d159876198ac036e367b244cf01345b7294dd.cer",
+      "blob": "df54b6d021bfad64fb36b4f57fbc332e27487949"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Historical/policy.json",
+      "blob": "4057bf5806a843181e14adec6ab6d9030b20d163"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Revoked/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Revoked/certificates/39586664feb087c319bd07652b7d159876198ac036e367b244cf01345b7294dd.cer",
+      "blob": "df54b6d021bfad64fb36b4f57fbc332e27487949"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/Revoked/policy.json",
+      "blob": "c78b45ccc6ce81c875e7a7b3387d499b98781372"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/UnknownSigner/certificates/39586664feb087c319bd07652b7d159876198ac036e367b244cf01345b7294dd.cer",
+      "blob": "df54b6d021bfad64fb36b4f57fbc332e27487949"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/UnknownSigner/policy.json",
+      "blob": "985ad1fe485ddbdc911e1b30c07090abe25556c7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/inspector-fixtures-smoke/fixtures.json",
+      "blob": "e77510562cfdb470d1d8c5bc5800d279101705ba"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Abstractions-pack.log",
+      "blob": "420c7455fb749aa96f74420e4412f51cc6e41fb1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Abstractions-restore.log",
+      "blob": "a4bce0084f2645e560376429dbd1720061ea96f2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/AspNetCore-pack.log",
+      "blob": "b00a07f6ed567f0abed7fcbe369ace2ec459e20f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/AspNetCore-restore.log",
+      "blob": "e453020f1ab0df608c96ceefebf5fce95f1c3137"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Contracts-pack.log",
+      "blob": "595fbcbd30f465cef494fa564d285744a07bf645"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Contracts-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Deployment-pack.log",
+      "blob": "57c42ed6f63d0f31917a5735c5ce4f62fac12842"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Deployment-restore.log",
+      "blob": "f32142e11c62fdcfb218403f8c1a0b9d210bbbc2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/EntityFramework-pack.log",
+      "blob": "4f60305a20e486e7b0fc8d92d588ab3a9f8f0d25"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/EntityFramework-restore.log",
+      "blob": "87eeaf1e473c8612a78c22fae19903e129554aa9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Messaging-pack.log",
+      "blob": "19945844223a0c3b86d99ecbdc23a38a5ddac2f0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Messaging-restore.log",
+      "blob": "f047da61077a080ebb7e59dd19296849819e59d5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Release-pack.log",
+      "blob": "e15e0097a56b40151406a735d5da486d87db60c6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/Release-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/approval-provenance.json",
+      "blob": "10b703e24596e71f806e129f10b68d0afa42f4d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/archive-inspection.json",
+      "blob": "ba3f7f59458382d8df233a31f1370581cef53068"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/archive-paths.json",
+      "blob": "827aa1a7c566a493690f07c2f4fe0b4cbc9d814e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/consumer-lock.json",
+      "blob": "27341837cd4be2eff6fdc0493eef776f8c48112f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/evidence/21d39a780ba4875a97643cb0d61ee5592a6024a6a36dd2d34874a521050ea352.bin",
+      "blob": "ba3f7f59458382d8df233a31f1370581cef53068"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/evidence/89020635abf2e954b294c93a9056b869192e07ec8c613f68201018645ad46bc6.bin",
+      "blob": "03dce4f62788de3c45cb11440fb383b128b846c0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/evidence/e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa.bin",
+      "blob": "0528d9b78955d9c6e4815b612200ff56ae936ea1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/matrix.json",
+      "blob": "b2849a2c7d15e603c138816994ff828adc76f2f3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspection/state.json",
+      "blob": "01b8157b529b92d4677a10616f579779964b2724"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/inspector-build.log",
+      "blob": "4020c5aca610ab99b5a5855cbe88ff952150c8bf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/local-inspection.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/local-pack-1/run.json",
+      "blob": "cdb939ec39b3b36f5a85e620b1fbaf92e5024d4a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/red-publication-evidence-py314/capabilities-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/red-publication-evidence-py314/capabilities.log",
+      "blob": "b0079004d23d14f23fd5463f217c324841bb26c6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/red-publication-evidence-py314/capabilities.trx",
+      "blob": "045d95e2612e60f097e81f3e309e508a369c6f24"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/red-publication-evidence-py314/run.json",
+      "blob": "f4926a09d6f3fd0d521a494dc8dd7a946ad27082"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/red-publication-evidence/capabilities-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/red-publication-evidence/capabilities.log",
+      "blob": "b213b35ac3704f99ac7e776f56f54a9bfe24599a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/red-publication-evidence/capabilities.trx",
+      "blob": "625acd8942ed0a92dd5acf7c58d63291df6c1929"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-architecture-1/architecture-restore.log",
+      "blob": "103d3955a9b77228e974e63e5b1c777a5b914ff0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-architecture-1/architecture.log",
+      "blob": "287526fc1c943557ffb34df8b9bb7024099ff7b2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-architecture-1/architecture.trx",
+      "blob": "f35f806c9faab98fddc38b51ba2f01bdb3dcbed8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-architecture-1/release-restore.log",
+      "blob": "86a8c363fee76abe137fc90bc150b16e4b1fe64c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-architecture-1/release.log",
+      "blob": "d3a2e7ad50b3c3b275e7b927eb3c1c437331b4e6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-architecture-1/release.trx",
+      "blob": "e9e624ad853d60ebede57f583b81283324235a64"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-architecture-1/run.json",
+      "blob": "a263ea58ad2db741b56da15092fa143204eb74ef"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-publication-fix-2/release-restore.log",
+      "blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-publication-fix-2/release.log",
+      "blob": "b2be133992f3a43dd0f3415c0ee861b8a9fb44d2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-publication-fix-2/release.trx",
+      "blob": "2ee37fb2b740bdddd6605da6b14371a43902279e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/release-publication-fix-2/run.json",
+      "blob": "8daf5b0566ac75af20f424135b731e82de96cf6a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/bad-timestamp.log",
+      "blob": "d4c2abd596ca00875f442f76724a08b574a9979e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Current/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Current/policy.json",
+      "blob": "92872f95ee22244ea824b6a9fd4acd2cc0c953cc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Historical/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Historical/certificates/5a45dfec788bf6bab98807f81e5c454c1bc6b08ccf7ea8bf5310af28fe490386.cer",
+      "blob": "ed996b00b2f3658746c5d35964000418af06e232"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Historical/policy.json",
+      "blob": "72d95d13de85212f3484df8f4293a36305127aaf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Revoked/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Revoked/certificates/5a45dfec788bf6bab98807f81e5c454c1bc6b08ccf7ea8bf5310af28fe490386.cer",
+      "blob": "ed996b00b2f3658746c5d35964000418af06e232"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/Revoked/policy.json",
+      "blob": "019386ee546f8307bfbae719b960aec771c4df1d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/UnknownSigner/certificates/5a45dfec788bf6bab98807f81e5c454c1bc6b08ccf7ea8bf5310af28fe490386.cer",
+      "blob": "ed996b00b2f3658746c5d35964000418af06e232"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/UnknownSigner/policy.json",
+      "blob": "80b0a8a4d732a962f492f694eab92efe0a9c64d8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/fixtures/fixtures.json",
+      "blob": "641005536d051a24734bb33787d457f7eacbe926"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/historical-audit.log",
+      "blob": "f30d7d74f3010a085bc40db7add0feefaba3e356"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/historical-current.log",
+      "blob": "83adb78d6f6a9327bd5bd24c59b94d13c453611b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/missing-timestamp.log",
+      "blob": "35002548bf1a27c2586b138179166cff21169508"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/revoked-current.log",
+      "blob": "c23d4431bdb6fa7f9d10e6359a4bf3cf3d5b40cd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/run.json",
+      "blob": "f6c698e750f3e451333638a73b41ac997f6f41fc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/tampered.log",
+      "blob": "d4c2abd596ca00875f442f76724a08b574a9979e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-negatives-1/unknown-signer.log",
+      "blob": "a66a13e58003cc904bc0cb0049b9ab6668fc8472"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Current/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Current/policy.json",
+      "blob": "92872f95ee22244ea824b6a9fd4acd2cc0c953cc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Historical/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Historical/certificates/4dbdcbb1fcf058de9494122a5ff9a25a7b5cd6697363d5cebe50ef19223b45f2.cer",
+      "blob": "becd2f76828ab7a6111ab4c0624ded8d3ef2418a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Historical/policy.json",
+      "blob": "1426f3770f5b58616927ee9265cb86d0c33b8f68"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Revoked/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer",
+      "blob": "d1f575c8a12cc5f1309a84d0844a158db14e764d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Revoked/certificates/4dbdcbb1fcf058de9494122a5ff9a25a7b5cd6697363d5cebe50ef19223b45f2.cer",
+      "blob": "becd2f76828ab7a6111ab4c0624ded8d3ef2418a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/Revoked/policy.json",
+      "blob": "a0be42ed84b78b3d55481728714420aa80cdba91"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/UnknownSigner/certificates/4dbdcbb1fcf058de9494122a5ff9a25a7b5cd6697363d5cebe50ef19223b45f2.cer",
+      "blob": "becd2f76828ab7a6111ab4c0624ded8d3ef2418a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/UnknownSigner/policy.json",
+      "blob": "72786a8a378c73a1fbea8bdcb77e78f8024340fa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/fixtures/fixtures.json",
+      "blob": "e31d75b3e979cb184193c18adbdffe0772eba399"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/run.json",
+      "blob": "03fc9b7a5d6d02ae8b129ef8b7aee614f8217a12"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/runs/trust-tampered-2/tampered.log",
+      "blob": "d4c2abd596ca00875f442f76724a08b574a9979e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-27/workflow-preflight.json",
+      "blob": "8f3718e7510a44c1fcd87c84db73c734d97188e4"
+    },
+    {
+      "path": "eng/wp02-27/.gitignore",
+      "blob": "c18dd8d83ceed1806b50b0aaa46beb7e335fff13"
+    },
+    {
+      "path": "eng/wp02-27/Inspector/Inspector.csproj",
+      "blob": "57cb7865454f5825f3146e76ede1cb431191b297"
+    },
+    {
+      "path": "eng/wp02-27/Inspector/Program.cs",
+      "blob": "560b4d10352766a84c69035bef896eda3e9c616e"
+    },
+    {
+      "path": "eng/wp02-27/Inspector/README.md",
+      "blob": "325cd641c670363365456bda103502afe2b6896f"
+    },
+    {
+      "path": "eng/wp02-27/capture_inputs.py",
+      "blob": "0b7cd54564c4e1ad7aa4b52b687eec687651991f"
+    },
+    {
+      "path": "eng/wp02-27/check_trust_negatives.py",
+      "blob": "45080d40fead8180bce16a85004794b89ba5632f"
+    },
+    {
+      "path": "eng/wp02-27/run_checks.py",
+      "blob": "174f5ebe67aa858f5a914615b6440f19a3050fa9"
+    },
+    {
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "blob": "5431acc9ace1b6cfccd28ab78dd911d619d1dc2f"
+    },
+    {
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityContracts.cs",
+      "blob": "9831c6fe24de35f24c873895bcbb41ae0c6a4b69"
+    },
+    {
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+      "blob": "8460b68baea84370d73c2cbd4412767916c202be"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "blob": "71ca27cac7d021cd13990bf6e68abe37209dd49d"
+    },
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityTrustTests.cs",
+      "blob": "4def5174a1e8c40026fb611a334b4a300d9386a9"
+    },
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
+      "blob": "4b2bbde08d0584014fb2910b6574e603ac4c7902"
+    }
+  ],
+  "observed_at": "2026-10-13T14:07:03.792889+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "original_candidate_sha": "0057261a9b3506484afcc981f513381b9268da81"
+}

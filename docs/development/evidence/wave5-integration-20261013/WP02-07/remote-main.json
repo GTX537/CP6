@@ -1,0 +1,307 @@
+{
+  "result": "PASS",
+  "task": "WP02-07",
+  "repository": "GTX537/CP6.Platform",
+  "source_sha": "872acec044eb09bc96660f696844c86127b508bd",
+  "baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "remote_main_sha": "817a2926b0799f70cc87f384967e0883c1943ec5",
+  "pr_url": "https://github.com/GTX537/CP6.Platform/pull/61",
+  "merged_at": "2026-10-13T13:40:59Z",
+  "candidate_files_match": [
+    {
+      "path": "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+      "blob": "9290657b715bf43a02cfec0ff275541b949f8ffa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/.gitattributes",
+      "blob": "020d03e68187f7c5567e6aca81d0434a78b41710"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/PLAN.md",
+      "blob": "f85b528ce1aa807d2b855e2d0cdd29e5eac70526"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/REPORT.md",
+      "blob": "689b05470a84f0fc68dc5f142a5c00e0f8483055"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/REVIEW.md",
+      "blob": "c9a0eef892216c3b0e49bfb4fbd2dfb03b0aca16"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/acceptance-map.json",
+      "blob": "daedee61cfd2e4b2edc834c9ff7ce043d36930ca"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/architecture.log",
+      "blob": "f53c79c43a11532c350d3ba4b3a29ad4e631e5f5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/collect_evidence.py",
+      "blob": "46fd259af56deeeac63d94ed47ed302794eb5d63"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/operation-binding-red.log",
+      "blob": "f4b32d035db808394e78a8c711b5a607fb33bb9f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/original-key-red.log",
+      "blob": "7f523492dfd436edf83cb287cb2ddc07d1a72c37"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/pg-first.log",
+      "blob": "1e7561fa329f97e51d113dcf158d6e9bc93be046"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/pg-second.log",
+      "blob": "aa8e2659f8c12a0be0934328958cc70b53897658"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/postgresql-final.log",
+      "blob": "aea1e51bbb1e239299b4430c7f18d6a1395bbbf6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/postgresql-reviewed.log",
+      "blob": "0bbcc8e8721180a8f94c913224a0889480cba422"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/postgresql.log",
+      "blob": "ba2c6982864112850ee639071413e1e24aaa1687"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/prepublication-workflows.json",
+      "blob": "3550936123a6aeea25c21e52282e133ef8029814"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resource-reproduction.log",
+      "blob": "a9868453e0e1c7457c57a8c8fb09c141d72586b0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-init.log",
+      "blob": "9262515bc71a85c1570883e0f7fb3e9e5e42e206"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-launcher.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-ownership.json",
+      "blob": "8137403b240156863989f6076098bed585e77841"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-server.log",
+      "blob": "7e2a60dad685095d6d91e8cc8fc6a976c2c94894"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-start.stderr.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-start.stdout.log",
+      "blob": "7c5d27ae61fe985df7fe92a6122558e0c50c555c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-stopped.json",
+      "blob": "4e4a051951864623a3cd08feb9a0617a445c6158"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-init.log",
+      "blob": "2fb6c55dcbb6895dbf77c4e45f611357c1e560df"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-ownership.json",
+      "blob": "846998b4d68ebd49ac60dbd457e8aaa259553235"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-server.log",
+      "blob": "336b02bbb1da15f4e611768a125a499ffccc1dd1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-start.stderr.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-start.stdout.log",
+      "blob": "7c5d27ae61fe985df7fe92a6122558e0c50c555c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-stopped.json",
+      "blob": "f23116d2880d441ea9ac122f2808b88448374534"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-init.log",
+      "blob": "411925f2ef0d37059bbab1c09724dbe4571d1f87"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-ownership.json",
+      "blob": "4922d52f9808c83952671206f0b5a33b0ee6e365"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-server.log",
+      "blob": "d8da4f58247695400180fbbd466a70046b3048eb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-start.stderr.log",
+      "blob": "40e280d032e92d3f870bd377591f30be12a524b9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-start.stdout.log",
+      "blob": "7c5d27ae61fe985df7fe92a6122558e0c50c555c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-stopped.json",
+      "blob": "f8cdd41ae6fb1ab82c0d3192ae39259230be3c74"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/resources.json",
+      "blob": "cd1fb604dab2449a721c889a443b81e21ca97284"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/review-regression.log",
+      "blob": "1677ef86bddb2af2b9c0bdad5db95817f1068d67"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/source-inputs.json",
+      "blob": "78dc119a0c70834e2c448bdfc28e60a76a597a25"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/start-transport.json",
+      "blob": "87bc455b017595ec554ae4e489b6f94b90528781"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-architecture.trx",
+      "blob": "fa979846ec73c287f8aa93630d74ca341ba44566"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-first-green.trx",
+      "blob": "1becb8509e68fd038029fd4b5a55070bc3a57527"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-operation-binding-red.trx",
+      "blob": "9500e8b8381ba4c9d99901c66e99c4ec0d8a224c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-original-key-red.trx",
+      "blob": "d3f6d5bf16df75308ba62121eab0787bbc8192cf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-pg-first.trx",
+      "blob": "6ecd5ce2bda91e6e4095825a0d4d8d1f8990afb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-pg-second.trx",
+      "blob": "0c3e7e710dd32b16abbf56268a3226bb5b281874"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-postgresql-final.trx",
+      "blob": "83013eb538f00da2c137765660b594c7c74f5b8e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-postgresql-reviewed.trx",
+      "blob": "f15049c3042a8113f8234aef0399bbdffc0f34e3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-postgresql.trx",
+      "blob": "9b9ad71f9c6966de50cabd8f6cda8677365b3f73"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-red.trx",
+      "blob": "0d2d75bdfcaf0df98f6eb1dd4456e72ab8993cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-resource-reproduction.trx",
+      "blob": "07f9d628d72a8d1c07344ef84e6e73b9ad2925d4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-review-regression.trx",
+      "blob": "cc5f04eb9bc993cbc92bf5cc059ce74ae9d9163c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-unit-final.trx",
+      "blob": "12d353c6d198020695f49815e883533e4535dcad"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-unit.trx",
+      "blob": "40e77b3bd3734793a36c12121736d23ba7b5a2b3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-runs.json",
+      "blob": "d8990dd59a923de0145d04982cf30f19e2391fff"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit-final.log",
+      "blob": "38fed370beae8be60b828aa32cdd85d9c4806ea7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit-first-green.log",
+      "blob": "2037d62aa0269e1b9544f0d7aa334aaa8e2108d0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit-red.log",
+      "blob": "ddf4baafc3669acd9d3ebac6d57402e0356458e6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit.log",
+      "blob": "2f84311227f8b3a399ec271c055004e661ed1ce6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/validation-inputs-before-review-fix.json",
+      "blob": "051dd656206c72ac2ff62f23c29ae64df8380474"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/validation-inputs.json",
+      "blob": "8838adf22accc43d7e6bcf75ed1dc44806f9a979"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/CallerTransactionInboxV1.cs",
+      "blob": "f0a22e4de8cecdd7985a857b89a90feb5049da84"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxContractsV1.cs",
+      "blob": "ef70330786e729c09128d1c2bf8712e06f53a42f"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxModelV1.cs",
+      "blob": "aed8024a4333e4926665cc3842df3ada6fb5adf9"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxTransactionV1.cs",
+      "blob": "2f8cb604fef3aae87c36bac07f309d4cda1f2776"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/InboxV1/InboxContractTests.cs",
+      "blob": "b52277e9e2a716a70d102fdb3cd1ceceeb5d8bca"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/AtomicInboxTests.cs",
+      "blob": "e1eedaa3fdb5c6cdbdca7f80585f636868f9dcfb"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+      "blob": "bb657b86972c7d1d835c32c0e1c8a8d762860584"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/Directory.Packages.props",
+      "blob": "af849691d05081de51fde82108a8f6b879e0f9c8"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/FixtureOwner.cs",
+      "blob": "4def53f9235464acf1547ea2834edeaa858a5163"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/PgFixture.cs",
+      "blob": "3ce4f1b0dc1feeec5bc0faca43f89cb5dbad3cfb"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/pg_resource.py",
+      "blob": "0402dfb4697fddaadc6fa2639d96761a61f7e318"
+    }
+  ],
+  "observed_at": "2026-10-13T13:41:01.227933+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

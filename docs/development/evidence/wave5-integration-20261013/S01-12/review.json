@@ -1,0 +1,122 @@
+{
+  "result": "ACCEPT",
+  "task": "S01-12",
+  "candidate": "95ac1c60ebeeb58b43c02693ae7ca5a7ef626bc8",
+  "baseline": "47c9b12c796620effe41c62d16992ccd629ee949",
+  "observed_at": "2026-10-13T13:37:08.013622+00:00",
+  "changed_paths": [
+    "docs/development/evidence/s01-adoption/.gitattributes",
+    "docs/development/evidence/s01-adoption/DELIVERY.md",
+    "docs/development/evidence/s01-adoption/PLAN.md",
+    "docs/development/evidence/s01-adoption/README.md",
+    "docs/development/evidence/s01-adoption/check-publication.py",
+    "docs/development/evidence/s01-adoption/consumers.json",
+    "docs/development/evidence/s01-adoption/entry.json",
+    "docs/development/evidence/s01-adoption/final-diff.json",
+    "docs/development/evidence/s01-adoption/implementation/IMPLEMENTATION.md",
+    "docs/development/evidence/s01-adoption/implementation/SPEC-FIELD-FIX.md",
+    "docs/development/evidence/s01-adoption/implementation/comparator-tests.json",
+    "docs/development/evidence/s01-adoption/implementation/final-verification.json",
+    "docs/development/evidence/s01-adoption/implementation/first-attempt-stopped.json",
+    "docs/development/evidence/s01-adoption/implementation/fourth-attempt.json",
+    "docs/development/evidence/s01-adoption/implementation/second-attempt.json",
+    "docs/development/evidence/s01-adoption/implementation/spec-field-diff-check.json",
+    "docs/development/evidence/s01-adoption/implementation/spec-field-green.json",
+    "docs/development/evidence/s01-adoption/implementation/spec-field-pre-fix.json",
+    "docs/development/evidence/s01-adoption/implementation/spec-field-red.json",
+    "docs/development/evidence/s01-adoption/implementation/spec-field-targeted-tests.json",
+    "docs/development/evidence/s01-adoption/implementation/spec-field-verification.json",
+    "docs/development/evidence/s01-adoption/implementation/third-attempt.json",
+    "docs/development/evidence/s01-adoption/manifest.json",
+    "docs/development/evidence/s01-adoption/review.md",
+    "docs/development/evidence/s01-adoption/revision-coverage.json",
+    "docs/development/evidence/s01-adoption/roadmap-check.json",
+    "docs/development/evidence/s01-adoption/staged-audit.json",
+    "docs/development/evidence/s01-adoption/start-receipt.json",
+    "docs/development/evidence/s01-adoption/validation-pre-spec-fix.json",
+    "docs/development/evidence/s01-adoption/validation.json",
+    "docs/development/evidence/s01-adoption/vectors.json",
+    "eng/contracts/s01-12/.gitattributes",
+    "eng/contracts/s01-12/.gitignore",
+    "eng/contracts/s01-12/test_verify_adoption.py",
+    "eng/contracts/s01-12/verify_adoption.py"
+  ],
+  "hash_checks": [
+    {
+      "path": "eng/contracts/s01-12/test_verify_adoption.py",
+      "sha256": "54c904364ee4575e3b125d0515d590eee062f794ef9f418bfd4ed0cd3a95c32c"
+    },
+    {
+      "path": "eng/contracts/s01-12/verify_adoption.py",
+      "sha256": "0d53315b8f8f6e938570fa40beebc047cd4c9b01006379d74b69d9941239fede"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/manifest.json",
+      "sha256": "96210c30090f97da137d1a57e675b8f77aae1f4efe5d8c7d1b0ae591932ba0cb"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/vectors.json",
+      "sha256": "ea4a8685b08e0d4bd8d48610583fd7b765f133466b4f3a6f11e05aea1002dc5f"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/revision-coverage.json",
+      "sha256": "8e397235add80ddee823a9107bbd941875a5a9d0095211353e81fd64763935a2"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/consumers.json",
+      "sha256": "6450d6f9e2851af0cdc3f764dc5c30a3491f99f5fcf08ef80039f7808ffdf96d"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/final-verification.json",
+      "sha256": "55cfc1a847d06ae8457e27da65a1b32dd1e8abc7595ab067161ac097b23bc339"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/comparator-tests.json",
+      "sha256": "9a738da6c3cdb264ec790876045e9b75d33d4d7ebb0fad9754c4ecaf1d9b0dad"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/first-attempt-stopped.json",
+      "sha256": "b30e0a340e3d87dcdb3ccb3f4b936ffb901b23e640e6dcc88d11c0dc2fd89c63"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/IMPLEMENTATION.md",
+      "sha256": "c2fef3b5843963966080d9c6871c92cdfedd5abd94d604b1f5aa5f360b7ca92b"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/roadmap-check.json",
+      "sha256": "9ac994b54d42cca1b96dc393dae1db2f66b812971f7ba204c24ed2e91b3b1c2d"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/validation-pre-spec-fix.json",
+      "sha256": "2e2682d90ce19fede2deea41ec7faf0da02680f4e03c6a46de7f92652b228363"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-red.json",
+      "sha256": "767af28219e0c8f42dee5de80a1321764a085a24a286639246a1f7be83d49217"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-green.json",
+      "sha256": "915d7be334bc0537f4de60fbcb68f6fa3fd01074857e2666c78ba280780b8a15"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-targeted-tests.json",
+      "sha256": "7cae5de763c49d8d1c8e59b2c97838f7448b89f6f4852f05c4c15df9cca4f0cb"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-verification.json",
+      "sha256": "66dfef0810184c59468c3fecc84a0d5eabc4156b170693b2586f82bc88346602"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-diff-check.json",
+      "sha256": "d060abf4865c9777cb5ed56d27398a6603fb9fea5a57479535129fa6d4e7b4ab"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/SPEC-FIELD-FIX.md",
+      "sha256": "4cc48a50678963fff0403ef4229ed57376adbb8d0c4841a8ebcbd60469e54389"
+    }
+  ],
+  "new_validation": "Read-only compare-only execution: 828 references, 122 vectors, 16 profiles, 56 lexical triples; no old product execution.",
+  "reused": "Original30 comparator checks on pre-fix source plus two targeted post-fix checks; not one32-test run. Original SPEC and QUALITY reviews inspected and identity checked.",
+  "business": "NOT_RUN",
+  "findings": []
+}

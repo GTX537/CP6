@@ -1,0 +1,159 @@
+{
+  "result": "PASS",
+  "task": "S01-12",
+  "repository": "GTX537/CP6",
+  "source_sha": "95ac1c60ebeeb58b43c02693ae7ca5a7ef626bc8",
+  "baseline": "47c9b12c796620effe41c62d16992ccd629ee949",
+  "remote_main_sha": "08ba0a011f54ff39f4bb44c567128f56c6f4411c",
+  "pr_url": "https://github.com/GTX537/CP6/pull/202",
+  "merged_at": "2026-10-13T13:38:37Z",
+  "candidate_files_match": [
+    {
+      "path": "docs/development/evidence/s01-adoption/.gitattributes",
+      "blob": "efe177ad582e3e8d3549111749c84f03baf485ef"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/DELIVERY.md",
+      "blob": "896da95f65732d8056fc324db148aa681d244931"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/PLAN.md",
+      "blob": "be8ba50a298943d869f9e0cdd913403f30655e76"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/README.md",
+      "blob": "fb4e26f991f6a6381bb1cbc2e4c2b09486b0d8cb"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/check-publication.py",
+      "blob": "19c2fd0791e4f867c163e4c9ea560c070983f8bb"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/consumers.json",
+      "blob": "15c6481d33ead871772311f28d059f6a3370269e"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/entry.json",
+      "blob": "3837a81c3caa3fe54cc1b138bb21a774ef74c145"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/final-diff.json",
+      "blob": "1e6f4cc5874bc7a5e8254dd22fe21c09e8352aa5"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/IMPLEMENTATION.md",
+      "blob": "b9e7dcc8b8302a90ed075585d32ebf634705549f"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/SPEC-FIELD-FIX.md",
+      "blob": "95d6f998bdb05409db09b5a948b58dec5e00e337"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/comparator-tests.json",
+      "blob": "686d95676f936e09ab0866049c5b68f217080a68"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/final-verification.json",
+      "blob": "650743ba214f471f42989321c3076099b07d70d9"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/first-attempt-stopped.json",
+      "blob": "a167116041fe2170d68f12c3ba97a032e8a7b9b4"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/fourth-attempt.json",
+      "blob": "f17b4405c509a88a0db3f8fcc6c27f2260a15512"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/second-attempt.json",
+      "blob": "a6f02bb8d1891f51eac28df4a1b1555dc0eee1c4"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-diff-check.json",
+      "blob": "2a583261746e5724851afa80aeff03ed9d49ed6e"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-green.json",
+      "blob": "4084dc3a1a7487b6c57db8cd2d66555ec4530c2d"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-pre-fix.json",
+      "blob": "43511091fcf63ec4b4520d58906f65d5a23c8ea7"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-red.json",
+      "blob": "048bea462bb17c406f8cf3e4f8c4de44397fc37f"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-targeted-tests.json",
+      "blob": "4e5c1d3f32f1b35c52a296434a6faa32779950be"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/spec-field-verification.json",
+      "blob": "c9575e50acb0eebec37b0ff590a258b82c76a9aa"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/implementation/third-attempt.json",
+      "blob": "2828200b6f6effdd9f10dad22cc978f67154849a"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/manifest.json",
+      "blob": "8ab6778944948cfb94f2da02c95c28dc48d49467"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/review.md",
+      "blob": "742bccd882cd612504f5370b29aab89fb0d9cecd"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/revision-coverage.json",
+      "blob": "526fc8be0fef081ef84b0c82564a619dc24c1227"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/roadmap-check.json",
+      "blob": "3909d633cd351cc3ca32b82cdad0429b0e36cc04"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/staged-audit.json",
+      "blob": "d780e02526e21503313430d7bb596ab170870507"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/start-receipt.json",
+      "blob": "91f236eb0d4de508d17afaf3460251febe5e3fe8"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/validation-pre-spec-fix.json",
+      "blob": "249341ae7cb9e7084ee59b0f3e99c55a24ba4177"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/validation.json",
+      "blob": "51b413c77fd75f65ef66d02ec417b20317842ff1"
+    },
+    {
+      "path": "docs/development/evidence/s01-adoption/vectors.json",
+      "blob": "a8713e0e781fab37adc781e15f4091abdebaff06"
+    },
+    {
+      "path": "eng/contracts/s01-12/.gitattributes",
+      "blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "eng/contracts/s01-12/.gitignore",
+      "blob": "c18dd8d83ceed1806b50b0aaa46beb7e335fff13"
+    },
+    {
+      "path": "eng/contracts/s01-12/test_verify_adoption.py",
+      "blob": "6196d2d486d6ffe938a514dd97b7ca34348aa489"
+    },
+    {
+      "path": "eng/contracts/s01-12/verify_adoption.py",
+      "blob": "922ef20d360740bad72d48c852072b49bd399bb8"
+    }
+  ],
+  "observed_at": "2026-10-13T13:38:34.797802+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "CP6-S01-12-VERIFICATION/1",
+  "observed_at_utc": "2026-10-13T13:35:47.468392+00:00",
+  "result": "PASS",
+  "error": null,
+  "execution": "READ_ONLY_ORIGINAL_EVIDENCE_RECONCILIATION; not a product test execution",
+  "environment": {
+    "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "git": "git version 2.51.2.windows.1"
+  },
+  "comparator_sha256": "0d53315b8f8f6e938570fa40beebc047cd4c9b01006379d74b69d9941239fede",
+  "input_files_sha256": {
+    "manifest.json": "96210c30090f97da137d1a57e675b8f77aae1f4efe5d8c7d1b0ae591932ba0cb",
+    "vectors.json": "ea4a8685b08e0d4bd8d48610583fd7b765f133466b4f3a6f11e05aea1002dc5f",
+    "revision-coverage.json": "8e397235add80ddee823a9107bbd941875a5a9d0095211353e81fd64763935a2"
+  },
+  "git_references": {
+    "Main": {
+      "pinned_main": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "observed_local_origin_main": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "contains_pin": true,
+      "network_fetch": false
+    },
+    "CRM": {
+      "pinned_main": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "observed_local_origin_main": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "contains_pin": true,
+      "network_fetch": false
+    },
+    "Platform": {
+      "pinned_main": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "observed_local_origin_main": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "contains_pin": true,
+      "network_fetch": false
+    }
+  },
+  "reference_files_checked": 828,
+  "derived_documents_checked": 3,
+  "vectors": {
+    "vectors": 122,
+    "profiles": 16,
+    "three_surface_lexical": 56,
+    "consumer_states": {
+      "PASS_REUSED": 352,
+      "NOT_APPLICABLE": 502
+    }
+  },
+  "revision_cases": 19,
+  "product_tests_executed": 0,
+  "database_operations": 0,
+  "actions_started": 0,
+  "new_original_scalar_values": 0,
+  "combined_current_main_product_run": "NOT_RUN",
+  "failures_preserved": "Original failed runs are referenced; this result never rewrites their historical outcomes",
+  "consumer_inventory": {
+    "status": "PASS",
+    "source_pins": 51,
+    "task_snapshots": 56,
+    "handoff_slices": 6,
+    "sha256_file_bytes": "6450d6f9e2851af0cdc3f764dc5c30a3491f99f5fcf08ef80039f7808ffdf96d",
+    "scope": "Fixed source hashes, reference closure, exact pinned roadmap snapshots and task anchors; owner narrative reviewed separately"
+  }
+}
