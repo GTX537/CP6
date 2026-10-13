@@ -1,0 +1,34 @@
+{
+  "profile_id": "CRM-INQ-TERMINAL-PROJECTION/20261013-R1",
+  "identity_contract": "Native source locator alone does not select this revision. Verify all three identity components before decoding; reject unknown or mismatched identity without fallback.",
+  "base_native_schema_locator": {
+    "source_id": "composed-20",
+    "variant": "composed",
+    "openapi": "3.1.0",
+    "title": "CRM-INQ-01 RECOVERY-R3 V15",
+    "version": "1.0-recovery-r3",
+    "schema_root": "/components/schemas",
+    "schema_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349"
+  },
+  "patch": {
+    "path": "overlay.json",
+    "sha256": "bce20c5a3bc93826993be6c2ba7c9a440fffd467f746245e5665707d8eedf549",
+    "hash_basis": "RAW_FILE_BYTES"
+  },
+  "effective_schema": {
+    "generated_name": "crm-inq.terminal.openapi.json",
+    "sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d",
+    "hash_basis": "GENERATED_UTF8_BYTES"
+  },
+  "payload_version_field": null,
+  "frozen_vector_scope": "CP6-S01-CONTRACT-INPUTS/1.0.0 remains unchanged. Its four INQ-VERSION cases assert the native source locator only; all 30 frozen expectations are retained. They do not alone establish this composite profile.",
+  "required_adoption_checks": [
+    "Root PrivacyExportView and all five PrivacyExportUiState embedded export alternatives use the same effective profile.",
+    "Status 99 accepts public null expiry/artifact/proof; rejects public expiry strings and missing required fields; requestedAtUtc <= completedAtUtc remains enforced recursively.",
+    "Status 90 public null fields remain unchanged; status 30 retains completed/expiry/artifact/proof and requested <= completed < expires download rules.",
+    "Retain historical expiry on internal original records; public terminal values never grant download authorization.",
+    "Verify independent mismatch rejection for base locator, patch SHA, effective Schema SHA and profile ID; do not add fields to closed payloads."
+  ],
+  "adoption_state": "ADOPTION_PENDING",
+  "business_execution": "NOT_RUN"
+}

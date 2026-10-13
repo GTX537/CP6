@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-12：CRM 终态合同漏同步修补（Issue #189）
+
+第三轮接收发现 CRM 候选按旧 Schema 要求 99 终态公开到期时间非空，与已接受 Wire 修订冲突。新增明确版本 [CRM-INQ-TERMINAL-PROJECTION/20261013-R1](../design-handbook/remediation/addenda/CRM-INQ-TERMINAL-20261013-R1/README.md)，仅补齐两个遗漏节点；原归档、组合资产、输入包和固定向量均保留。静态检查及定向审查通过，真实消费者采用尚待完成。
+
+[Issue #189](https://github.com/GTX537/CP6/issues/189) 保持 Open，S01-08 暂不登记 DONE；需要显式版本采用、根与页面嵌套 99 时序回归及受支持 Node 22 环境验证。来源修补不代表 HTTP、授权、数据库或业务验收完成。共享台账将在本轮协调交付统一同步；无 Actions 运行、取消、触发变更、迁库或部署。下文保留历史时点。
+
 ## 2026-10-12：第三轮四项合同任务已分配
 
 沿用A/B/C/D分别分配S01-03授信金额、S01-04库存值与比例、S01-06 ATP稳定标识、S01-08 CRM原生合同。均READY/CONFIRMED，真实独立工作树已建，等待实际START；8/375 DONE与0/125业务验收不变。CRM发布前置独立完成普通工作流仅manual及严格既有批准附注兼容。未运行Actions、数据库迁移或部署。[任务包](../development/dispatch/20261012-wave3/README.md)及[证据](../development/evidence/wave3-dispatch-20261012/README.md)。

@@ -1,0 +1,88 @@
+{
+  "overlay_version": "CP6-BOUNDED-SCHEMA-OVERLAY/1",
+  "profile_id": "CRM-INQ-TERMINAL-PROJECTION/20261013-R1",
+  "purpose": "Synchronize the already accepted public terminal projection decision; preserve native source bytes and all unrelated rules.",
+  "base_native_schema_locator": {
+    "source_id": "composed-20",
+    "variant": "composed",
+    "openapi": "3.1.0",
+    "title": "CRM-INQ-01 RECOVERY-R3 V15",
+    "version": "1.0-recovery-r3",
+    "schema_root": "/components/schemas",
+    "schema_sha256": "740b840c697b60ebf51ceb0bd9a1898238814a49e36c2afe1d819c473b7df349"
+  },
+  "source_authority": [
+    {
+      "path": "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
+      "commit": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+      "hash_basis": "GIT_BLOB_BYTES",
+      "sha256": "8dabf960916e6881f6d73c4dbee17b8cbea4b3d2d2a3a664650eee03ec1192d9",
+      "lines": [
+        {
+          "number": 57,
+          "text": "4. PrivacyExportView 的 90/99 终态公开 expiresAtUtc/artifactId/downloadProof 均为 null；历史到期时刻保留在内部原记录，不能作为当前下载授权。页面内嵌对象同样执行该语义，终态样例同步。"
+        }
+      ]
+    },
+    {
+      "path": "docs/design-handbook/remediation/01-version-and-authority.md",
+      "commit": "8569b669fed56ddc7b53b7bb24666c7fb93d544a",
+      "hash_basis": "GIT_BLOB_BYTES",
+      "sha256": "495c8a2b821d3c5aed2b7d40e743351db6b3b8e4615f8d8f9bc25cd998fd1a7e",
+      "lines": [
+        {
+          "number": 7,
+          "text": "先按 `indexes/required-inputs.json` 定位目标原组合，再加载本系列中明确列出的修订。修订只覆盖登记的合同、字段、指针、状态或样例；未覆盖内容继续遵循准确原组合。不能用文件日期、“新版”、PASS 或单份 DTO 决定全部优先级。"
+        },
+        {
+          "number": 11,
+          "text": "对于原正文和附件互相矛盾的情形，本系列给出**明确的新决定及修改范围**，不宣称某种文件形式天然优先。准确后继已解决的问题只记录后继；有意差异保留独立合同并给消费者边界。"
+        },
+        {
+          "number": 19,
+          "text": "| 新规范算例 | 按声明算法、前置状态和完整写集复算；与旧算例区分身份 | 不作为真实库、真实权限或生产验收证据 |"
+        }
+      ]
+    }
+  ],
+  "expected_operation_count": 2,
+  "operations": [
+    {
+      "op": "replace",
+      "path": "/components/schemas/PrivacyExportView/allOf/3/then/properties/expiresAtUtc",
+      "expected_old": {
+        "type": "string",
+        "format": "date-time",
+        "pattern": "^(?:[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,7})?Z)$"
+      },
+      "value": {
+        "type": "null"
+      },
+      "expected_application_count": 1
+    },
+    {
+      "op": "replace",
+      "path": "/components/schemas/PrivacyExportView/allOf/3/then/x-semantic",
+      "expected_old": "requestedAtUtc <= completedAtUtc < expiresAtUtc; expiry tombstones artifact and proof but preserves clocks",
+      "value": "requestedAtUtc <= completedAtUtc; public expiresAtUtc, artifactId and downloadProof are null; retain the historical expiry clock in the internal original record only, never as current download authorization",
+      "expected_application_count": 1
+    }
+  ],
+  "effective_schema_serialization": "UTF-8 without BOM; Python json.dumps(ensure_ascii=False, indent=2), original insertion order, LF line endings, one final LF",
+  "effective_schema_sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d",
+  "invariants": {
+    "definitions": 38,
+    "references": 257,
+    "privacy_export_view_references": 7,
+    "unchanged_status_branches": [
+      20,
+      30,
+      90
+    ],
+    "unchanged_required_fields": true,
+    "no_payload_fields_added": true,
+    "historical_internal_expiry_retained": true
+  },
+  "adoption_state": "ADOPTION_PENDING",
+  "business_execution": "NOT_RUN"
+}

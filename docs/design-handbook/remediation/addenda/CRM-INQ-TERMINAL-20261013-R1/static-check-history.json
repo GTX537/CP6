@@ -1,0 +1,25 @@
+{
+  "scope": "Static verifier execution only; no consumer/business tests",
+  "python_version": "3.8.6 (tags/v3.8.6:db45529, Sep 23 2020, 15:52:53) [MSC v.1927 64 bit (AMD64)]",
+  "observed_utc": "2026-10-13T02:56:23.488887+00:00",
+  "runs": [
+    {
+      "sequence": 1,
+      "exit_code": 1,
+      "result": "FAILED",
+      "error": "AttributeError: 'str' object has no attribute 'removeprefix'",
+      "location": "verify_overlay.py pointer()",
+      "cause": "Initial verifier used Python 3.9 removeprefix; local Python is 3.8",
+      "correction": "Check absolute pointer then use path[1:]",
+      "schema_or_patch_changed": false
+    },
+    {
+      "sequence": 2,
+      "exit_code": 0,
+      "result": "PASS",
+      "report": "static-check.json",
+      "report_sha256": "659bac22385095f74d328137bdc345895be80710bfb4ecb3a8a34a8f482af704",
+      "verifier_sha256": "48d84de422b3a46d9c596e8b7c440bef9e7f0ded8d27209fac23cf1ed36c2d12"
+    }
+  ]
+}
