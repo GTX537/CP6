@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-13T14:22:32.820219+00:00",
+  "scope": "Coordinator documentation/ledger; product reviews and actual local/reused validation retain separate scope",
+  "review": "closeout-review.md",
+  "reviewed_file_count": 40,
+  "reviewed_raw_hash_aggregate": "204c8d64df290cd37e6810b81185a3122573c2483e7656d6a2785055720a96be",
+  "ledger": "ledger-check.json",
+  "links": "links.json",
+  "format_check": "git -c core.whitespace=cr-at-eol diff --cached --check; exact CRLF evidence preserved",
+  "business_tests_executed": false,
+  "changes_after_review": "Only accepted review/link receipts and this final metadata; reviewed content unchanged."
+}

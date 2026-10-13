@@ -1,0 +1,2702 @@
+{
+  "task": "WP02-07",
+  "reviewer": "/root/wave5_review_inbox",
+  "reviewed_utc": "2026-10-13T13:38:35.552022+00:00",
+  "source_sha": "872acec044eb09bc96660f696844c86127b508bd",
+  "base_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "implementation_sha": "ed6ee2972d16ea747e706be3dce258dc299cd1b8",
+  "worktree": "D:\\CP6.Platform-worktrees\\wp02-07-20261013",
+  "merge_base_verified": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "worktree_clean": true,
+  "changed_file_count": 72,
+  "full_changed_paths": [
+    "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+    "docs/development/evidence/WP02-07/.gitattributes",
+    "docs/development/evidence/WP02-07/PLAN.md",
+    "docs/development/evidence/WP02-07/REPORT.md",
+    "docs/development/evidence/WP02-07/REVIEW.md",
+    "docs/development/evidence/WP02-07/acceptance-map.json",
+    "docs/development/evidence/WP02-07/architecture.log",
+    "docs/development/evidence/WP02-07/collect_evidence.py",
+    "docs/development/evidence/WP02-07/operation-binding-red.log",
+    "docs/development/evidence/WP02-07/original-key-red.log",
+    "docs/development/evidence/WP02-07/pg-first.log",
+    "docs/development/evidence/WP02-07/pg-second.log",
+    "docs/development/evidence/WP02-07/postgresql-final.log",
+    "docs/development/evidence/WP02-07/postgresql-reviewed.log",
+    "docs/development/evidence/WP02-07/postgresql.log",
+    "docs/development/evidence/WP02-07/prepublication-workflows.json",
+    "docs/development/evidence/WP02-07/resource-reproduction.log",
+    "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-init.log",
+    "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-launcher.log",
+    "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-ownership.json",
+    "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-server.log",
+    "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-start.stderr.log",
+    "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-start.stdout.log",
+    "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-stopped.json",
+    "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-init.log",
+    "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-ownership.json",
+    "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-server.log",
+    "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-start.stderr.log",
+    "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-start.stdout.log",
+    "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-stopped.json",
+    "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-init.log",
+    "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-ownership.json",
+    "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-server.log",
+    "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-start.stderr.log",
+    "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-start.stdout.log",
+    "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-stopped.json",
+    "docs/development/evidence/WP02-07/resources/resources.json",
+    "docs/development/evidence/WP02-07/review-regression.log",
+    "docs/development/evidence/WP02-07/source-inputs.json",
+    "docs/development/evidence/WP02-07/start-transport.json",
+    "docs/development/evidence/WP02-07/test-results/inbox-architecture.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-first-green.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-operation-binding-red.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-original-key-red.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-pg-first.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-pg-second.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-postgresql-final.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-postgresql-reviewed.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-postgresql.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-red.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-resource-reproduction.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-review-regression.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-unit-final.trx",
+    "docs/development/evidence/WP02-07/test-results/inbox-unit.trx",
+    "docs/development/evidence/WP02-07/test-runs.json",
+    "docs/development/evidence/WP02-07/unit-final.log",
+    "docs/development/evidence/WP02-07/unit-first-green.log",
+    "docs/development/evidence/WP02-07/unit-red.log",
+    "docs/development/evidence/WP02-07/unit.log",
+    "docs/development/evidence/WP02-07/validation-inputs-before-review-fix.json",
+    "docs/development/evidence/WP02-07/validation-inputs.json",
+    "src/CP6.Platform.EntityFramework/InboxV1/CallerTransactionInboxV1.cs",
+    "src/CP6.Platform.EntityFramework/InboxV1/InboxContractsV1.cs",
+    "src/CP6.Platform.EntityFramework/InboxV1/InboxModelV1.cs",
+    "src/CP6.Platform.EntityFramework/InboxV1/InboxTransactionV1.cs",
+    "tests/CP6.Platform.UnitTests/InboxV1/InboxContractTests.cs",
+    "tests/CP6.Platform.WP0207.PostgreSqlTests/AtomicInboxTests.cs",
+    "tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+    "tests/CP6.Platform.WP0207.PostgreSqlTests/Directory.Packages.props",
+    "tests/CP6.Platform.WP0207.PostgreSqlTests/FixtureOwner.cs",
+    "tests/CP6.Platform.WP0207.PostgreSqlTests/PgFixture.cs",
+    "tests/CP6.Platform.WP0207.PostgreSqlTests/pg_resource.py"
+  ],
+  "changed_files": [
+    {
+      "path": "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+      "git_blob": "9290657b715bf43a02cfec0ff275541b949f8ffa",
+      "git_bytes_sha256": "3b7d35337689233f1fe942027387b9f37795dbf16c9d8a5f3669f0f48a01f6a4",
+      "working_sha256": "3b7d35337689233f1fe942027387b9f37795dbf16c9d8a5f3669f0f48a01f6a4",
+      "bytes": 8274,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/.gitattributes",
+      "git_blob": "020d03e68187f7c5567e6aca81d0434a78b41710",
+      "git_bytes_sha256": "29b0f6c26fe45a107d8bf05e722b0c9891feb4a7284684412d4bab6e8d83d716",
+      "working_sha256": "29b0f6c26fe45a107d8bf05e722b0c9891feb4a7284684412d4bab6e8d83d716",
+      "bytes": 120,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/PLAN.md",
+      "git_blob": "f85b528ce1aa807d2b855e2d0cdd29e5eac70526",
+      "git_bytes_sha256": "9fae1eab3ed9338e2b21b37ebb6a3334b0d97471752633c5c0d252118ca93e7f",
+      "working_sha256": "9fae1eab3ed9338e2b21b37ebb6a3334b0d97471752633c5c0d252118ca93e7f",
+      "bytes": 11833,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/REPORT.md",
+      "git_blob": "689b05470a84f0fc68dc5f142a5c00e0f8483055",
+      "git_bytes_sha256": "72de7d2ac6beb2a2afdf1ffc31ced53173d88f8403ec5fba45e1c1978d16f1d1",
+      "working_sha256": "72de7d2ac6beb2a2afdf1ffc31ced53173d88f8403ec5fba45e1c1978d16f1d1",
+      "bytes": 9985,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/REVIEW.md",
+      "git_blob": "c9a0eef892216c3b0e49bfb4fbd2dfb03b0aca16",
+      "git_bytes_sha256": "fbd0b7a70f73af8adbc560f4efdf76f45af34f665735d69459b8890efd041bb2",
+      "working_sha256": "fbd0b7a70f73af8adbc560f4efdf76f45af34f665735d69459b8890efd041bb2",
+      "bytes": 1749,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/acceptance-map.json",
+      "git_blob": "daedee61cfd2e4b2edc834c9ff7ce043d36930ca",
+      "git_bytes_sha256": "ceeb7545ba09a8fa406e52b32072771b62a4a12d7e94097fba97cabb4939bbe1",
+      "working_sha256": "ceeb7545ba09a8fa406e52b32072771b62a4a12d7e94097fba97cabb4939bbe1",
+      "bytes": 57220,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/architecture.log",
+      "git_blob": "f53c79c43a11532c350d3ba4b3a29ad4e631e5f5",
+      "git_bytes_sha256": "982fb062004a5a07fbf5aef6eebe42da96eedeb66d28492854bd86f5670c94a6",
+      "working_sha256": "982fb062004a5a07fbf5aef6eebe42da96eedeb66d28492854bd86f5670c94a6",
+      "bytes": 917,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/collect_evidence.py",
+      "git_blob": "46fd259af56deeeac63d94ed47ed302794eb5d63",
+      "git_bytes_sha256": "e687d110332dad1d13c77c1e01e4c2f285a68c428f2301234eee24ea9e6e9f52",
+      "working_sha256": "e687d110332dad1d13c77c1e01e4c2f285a68c428f2301234eee24ea9e6e9f52",
+      "bytes": 12274,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/operation-binding-red.log",
+      "git_blob": "f4b32d035db808394e78a8c711b5a607fb33bb9f",
+      "git_bytes_sha256": "7d5f6ae29de5f64260e625e2555e27448aea315bfe880942a739398ff6d8048f",
+      "working_sha256": "7d5f6ae29de5f64260e625e2555e27448aea315bfe880942a739398ff6d8048f",
+      "bytes": 2456,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/original-key-red.log",
+      "git_blob": "7f523492dfd436edf83cb287cb2ddc07d1a72c37",
+      "git_bytes_sha256": "cea97fd608bddfb2ac42e9d4424813dae97442c64668185409f970981a4f768b",
+      "working_sha256": "cea97fd608bddfb2ac42e9d4424813dae97442c64668185409f970981a4f768b",
+      "bytes": 2384,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/pg-first.log",
+      "git_blob": "1e7561fa329f97e51d113dcf158d6e9bc93be046",
+      "git_bytes_sha256": "bd93e201efe47d0500c974d87307bd22417c19d6eab9e66378513d0f7fcea0e5",
+      "working_sha256": "bd93e201efe47d0500c974d87307bd22417c19d6eab9e66378513d0f7fcea0e5",
+      "bytes": 22367,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/pg-second.log",
+      "git_blob": "aa8e2659f8c12a0be0934328958cc70b53897658",
+      "git_bytes_sha256": "01165eb6244aa88cd398a95f01c48783c9509f22ab89470513458cba16de739f",
+      "working_sha256": "01165eb6244aa88cd398a95f01c48783c9509f22ab89470513458cba16de739f",
+      "bytes": 2249,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/postgresql-final.log",
+      "git_blob": "aea1e51bbb1e239299b4430c7f18d6a1395bbbf6",
+      "git_bytes_sha256": "312f7a86dad6ad90b1b63ca0c4739a5c848776ddbf818e0da8aeed9c28450086",
+      "working_sha256": "312f7a86dad6ad90b1b63ca0c4739a5c848776ddbf818e0da8aeed9c28450086",
+      "bytes": 1223,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/postgresql-reviewed.log",
+      "git_blob": "0bbcc8e8721180a8f94c913224a0889480cba422",
+      "git_bytes_sha256": "899e45381b2d75bb9ec90505c84adf61616b0e8241fe92a14d43147fbf7aef71",
+      "working_sha256": "899e45381b2d75bb9ec90505c84adf61616b0e8241fe92a14d43147fbf7aef71",
+      "bytes": 1226,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/postgresql.log",
+      "git_blob": "ba2c6982864112850ee639071413e1e24aaa1687",
+      "git_bytes_sha256": "62b6e79b053df99daff496fb26c88c7f16d1bd90ca8c7b2e34a841a528627694",
+      "working_sha256": "62b6e79b053df99daff496fb26c88c7f16d1bd90ca8c7b2e34a841a528627694",
+      "bytes": 1217,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/prepublication-workflows.json",
+      "git_blob": "3550936123a6aeea25c21e52282e133ef8029814",
+      "git_bytes_sha256": "fb8840ed2ac8251c04dbd2cbbb57dc3aaff366a934906b7d8199a0645fff9349",
+      "working_sha256": "fb8840ed2ac8251c04dbd2cbbb57dc3aaff366a934906b7d8199a0645fff9349",
+      "bytes": 9488,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resource-reproduction.log",
+      "git_blob": "a9868453e0e1c7457c57a8c8fb09c141d72586b0",
+      "git_bytes_sha256": "608286565f4c4dc113d927a9ad5018587298690a5802db70b1e76aafcaa97d10",
+      "working_sha256": "608286565f4c4dc113d927a9ad5018587298690a5802db70b1e76aafcaa97d10",
+      "bytes": 588,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-init.log",
+      "git_blob": "9262515bc71a85c1570883e0f7fb3e9e5e42e206",
+      "git_bytes_sha256": "a786cdd6d01b70c9c3086b08bbaa5d4455eb5f57296d772f04dc6f2fa449e54b",
+      "working_sha256": "a786cdd6d01b70c9c3086b08bbaa5d4455eb5f57296d772f04dc6f2fa449e54b",
+      "bytes": 966,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-launcher.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "working_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-ownership.json",
+      "git_blob": "8137403b240156863989f6076098bed585e77841",
+      "git_bytes_sha256": "c558b25628fbf2f3d6a4356ea25b36d50c67b67bfbec18610b729ea3deb32e73",
+      "working_sha256": "c558b25628fbf2f3d6a4356ea25b36d50c67b67bfbec18610b729ea3deb32e73",
+      "bytes": 503,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-server.log",
+      "git_blob": "7e2a60dad685095d6d91e8cc8fc6a976c2c94894",
+      "git_bytes_sha256": "83766a22c5658b07eb6e912d7136c11c63dbd58a248ba8f2dec7c4ddff097b84",
+      "working_sha256": "83766a22c5658b07eb6e912d7136c11c63dbd58a248ba8f2dec7c4ddff097b84",
+      "bytes": 1139,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-start.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "working_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-start.stdout.log",
+      "git_blob": "7c5d27ae61fe985df7fe92a6122558e0c50c555c",
+      "git_bytes_sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818",
+      "working_sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818",
+      "bytes": 54,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/7b2e37eff86b2d6c6400dd000951d3e5-stopped.json",
+      "git_blob": "4e4a051951864623a3cd08feb9a0617a445c6158",
+      "git_bytes_sha256": "40ce3061529c19225922f62f5a5dacc6b5d84da5f32d0a64d9402eaee628db72",
+      "working_sha256": "40ce3061529c19225922f62f5a5dacc6b5d84da5f32d0a64d9402eaee628db72",
+      "bytes": 306,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-init.log",
+      "git_blob": "2fb6c55dcbb6895dbf77c4e45f611357c1e560df",
+      "git_bytes_sha256": "bf20e8fc140ac08b589c087c3c51f71216f72bd35b0823334f9a63745994d477",
+      "working_sha256": "bf20e8fc140ac08b589c087c3c51f71216f72bd35b0823334f9a63745994d477",
+      "bytes": 966,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-ownership.json",
+      "git_blob": "846998b4d68ebd49ac60dbd457e8aaa259553235",
+      "git_bytes_sha256": "b19410d21d1b195c4d3e3667737a3740af94ad5bb2bf068ded0871312689e51d",
+      "working_sha256": "b19410d21d1b195c4d3e3667737a3740af94ad5bb2bf068ded0871312689e51d",
+      "bytes": 503,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-server.log",
+      "git_blob": "336b02bbb1da15f4e611768a125a499ffccc1dd1",
+      "git_bytes_sha256": "ef9102adb48fc18992108d20a48d9b2b06085b1fcfea1e7751902423663b4507",
+      "working_sha256": "ef9102adb48fc18992108d20a48d9b2b06085b1fcfea1e7751902423663b4507",
+      "bytes": 1139,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-start.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "working_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-start.stdout.log",
+      "git_blob": "7c5d27ae61fe985df7fe92a6122558e0c50c555c",
+      "git_bytes_sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818",
+      "working_sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818",
+      "bytes": 54,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/96a5576f1545a120a8e9c07ad86cc42a-stopped.json",
+      "git_blob": "f23116d2880d441ea9ac122f2808b88448374534",
+      "git_bytes_sha256": "7dcd758cbf5f2e05f21999575293359b0d7772f25a7d9a5673c83edd31cdd183",
+      "working_sha256": "7dcd758cbf5f2e05f21999575293359b0d7772f25a7d9a5673c83edd31cdd183",
+      "bytes": 306,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-init.log",
+      "git_blob": "411925f2ef0d37059bbab1c09724dbe4571d1f87",
+      "git_bytes_sha256": "f205806602bf30e96ab821c5458414b06fa4d2dd84bfe47f2e6b8bf102d7579d",
+      "working_sha256": "f205806602bf30e96ab821c5458414b06fa4d2dd84bfe47f2e6b8bf102d7579d",
+      "bytes": 966,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-ownership.json",
+      "git_blob": "4922d52f9808c83952671206f0b5a33b0ee6e365",
+      "git_bytes_sha256": "333abf15497e82704d9065a899117273e59549411280f1a94b9e115e70ce2085",
+      "working_sha256": "333abf15497e82704d9065a899117273e59549411280f1a94b9e115e70ce2085",
+      "bytes": 503,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-server.log",
+      "git_blob": "d8da4f58247695400180fbbd466a70046b3048eb",
+      "git_bytes_sha256": "aa960835c12871e12e987fae4e62184ce010457518f49296b6eef0c051d31e3f",
+      "working_sha256": "aa960835c12871e12e987fae4e62184ce010457518f49296b6eef0c051d31e3f",
+      "bytes": 7215,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-start.stderr.log",
+      "git_blob": "40e280d032e92d3f870bd377591f30be12a524b9",
+      "git_bytes_sha256": "aea019a160b266dc59e5772b3a4f0b6cf5e1fb91b2f00d59a64c9c9a02dd9a41",
+      "working_sha256": "aea019a160b266dc59e5772b3a4f0b6cf5e1fb91b2f00d59a64c9c9a02dd9a41",
+      "bytes": 72,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-start.stdout.log",
+      "git_blob": "7c5d27ae61fe985df7fe92a6122558e0c50c555c",
+      "git_bytes_sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818",
+      "working_sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818",
+      "bytes": 54,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/e8b467c96024233c0cf94af6e3654fd2-stopped.json",
+      "git_blob": "f8cdd41ae6fb1ab82c0d3192ae39259230be3c74",
+      "git_bytes_sha256": "b6bba2bae33e0fdebea577551e3ca0e17c02d951b9b685e136fc6b90ec8ff566",
+      "working_sha256": "b6bba2bae33e0fdebea577551e3ca0e17c02d951b9b685e136fc6b90ec8ff566",
+      "bytes": 306,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/resources/resources.json",
+      "git_blob": "cd1fb604dab2449a721c889a443b81e21ca97284",
+      "git_bytes_sha256": "2f9c4ccdb5959d5d298a7234ce14fa96e97843a38d1f1287dd2516e191b77a0f",
+      "working_sha256": "2f9c4ccdb5959d5d298a7234ce14fa96e97843a38d1f1287dd2516e191b77a0f",
+      "bytes": 4621,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/review-regression.log",
+      "git_blob": "1677ef86bddb2af2b9c0bdad5db95817f1068d67",
+      "git_bytes_sha256": "c4c17fceeeef2a99e35b394fe2c19e731436a67056335e8e1768394023989191",
+      "working_sha256": "c4c17fceeeef2a99e35b394fe2c19e731436a67056335e8e1768394023989191",
+      "bytes": 1575,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/source-inputs.json",
+      "git_blob": "78dc119a0c70834e2c448bdfc28e60a76a597a25",
+      "git_bytes_sha256": "db122c8681541d6157d2554821c4f4576d1e6d914c26894bc26b04a2a470ad55",
+      "working_sha256": "db122c8681541d6157d2554821c4f4576d1e6d914c26894bc26b04a2a470ad55",
+      "bytes": 11593,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/start-transport.json",
+      "git_blob": "87bc455b017595ec554ae4e489b6f94b90528781",
+      "git_bytes_sha256": "ab3b4a781a064fe188840012b24059048c9d04bcff49d4659ab6c933deb3d89e",
+      "working_sha256": "ab3b4a781a064fe188840012b24059048c9d04bcff49d4659ab6c933deb3d89e",
+      "bytes": 304,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-architecture.trx",
+      "git_blob": "fa979846ec73c287f8aa93630d74ca341ba44566",
+      "git_bytes_sha256": "1f1a6e9c423f5eb48c3c3ef6060b3ab7868aa0b8abda3725c5b8c753da9b2af7",
+      "working_sha256": "1f1a6e9c423f5eb48c3c3ef6060b3ab7868aa0b8abda3725c5b8c753da9b2af7",
+      "bytes": 155502,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-first-green.trx",
+      "git_blob": "1becb8509e68fd038029fd4b5a55070bc3a57527",
+      "git_bytes_sha256": "994b10f777a0527d33d14cb2f0264717e58d6a73884559416f7285a4e82235af",
+      "working_sha256": "994b10f777a0527d33d14cb2f0264717e58d6a73884559416f7285a4e82235af",
+      "bytes": 3080,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-operation-binding-red.trx",
+      "git_blob": "9500e8b8381ba4c9d99901c66e99c4ec0d8a224c",
+      "git_bytes_sha256": "7140ee9fe1f2c07ce564eafe39e1ab22ddc76eb1c5cbb689f455051f89d31f89",
+      "working_sha256": "7140ee9fe1f2c07ce564eafe39e1ab22ddc76eb1c5cbb689f455051f89d31f89",
+      "bytes": 4962,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-original-key-red.trx",
+      "git_blob": "d3f6d5bf16df75308ba62121eab0787bbc8192cf",
+      "git_bytes_sha256": "f6ed92d88f84e774dde18798c18b2d2ab50cf177347f76fab0b4b49b09be547e",
+      "working_sha256": "f6ed92d88f84e774dde18798c18b2d2ab50cf177347f76fab0b4b49b09be547e",
+      "bytes": 4756,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-pg-first.trx",
+      "git_blob": "6ecd5ce2bda91e6e4095825a0d4d8d1f8990afb7",
+      "git_bytes_sha256": "2bd2b04a9bf9df8685251ad7cda0de35e452fa02744ffb5ca993d12b6c610119",
+      "working_sha256": "2bd2b04a9bf9df8685251ad7cda0de35e452fa02744ffb5ca993d12b6c610119",
+      "bytes": 64004,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-pg-second.trx",
+      "git_blob": "0c3e7e710dd32b16abbf56268a3226bb5b281874",
+      "git_bytes_sha256": "1bfc2393c3602e831aca50d1a5658a7d86a9847ec6d355a2a22626ff1d102732",
+      "working_sha256": "1bfc2393c3602e831aca50d1a5658a7d86a9847ec6d355a2a22626ff1d102732",
+      "bytes": 26849,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-postgresql-final.trx",
+      "git_blob": "83013eb538f00da2c137765660b594c7c74f5b8e",
+      "git_bytes_sha256": "b8d51cc600384a625852cf9a07bbf78cbd0462f39929f3571f4a324fb98edada",
+      "working_sha256": "b8d51cc600384a625852cf9a07bbf78cbd0462f39929f3571f4a324fb98edada",
+      "bytes": 34104,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-postgresql-reviewed.trx",
+      "git_blob": "f15049c3042a8113f8234aef0399bbdffc0f34e3",
+      "git_bytes_sha256": "ded4b853f9e0d38a222694ebe9615cc9f93d3f7bc3d34cf5712ff22d1381d072",
+      "working_sha256": "ded4b853f9e0d38a222694ebe9615cc9f93d3f7bc3d34cf5712ff22d1381d072",
+      "bytes": 37452,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-postgresql.trx",
+      "git_blob": "9b9ad71f9c6966de50cabd8f6cda8677365b3f73",
+      "git_bytes_sha256": "bcb66968ef97e43005a4cf3d9a7c655334cec9707fa8444b5fcc4d5470eaca89",
+      "working_sha256": "bcb66968ef97e43005a4cf3d9a7c655334cec9707fa8444b5fcc4d5470eaca89",
+      "bytes": 30259,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-red.trx",
+      "git_blob": "0d2d75bdfcaf0df98f6eb1dd4456e72ab8993cb4",
+      "git_bytes_sha256": "9ee3a3416b9ff1004b37ebaceb20d2dc04bb64d4a84a2ef42cd79737dbec2870",
+      "working_sha256": "9ee3a3416b9ff1004b37ebaceb20d2dc04bb64d4a84a2ef42cd79737dbec2870",
+      "bytes": 4730,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-resource-reproduction.trx",
+      "git_blob": "07f9d628d72a8d1c07344ef84e6e73b9ad2925d4",
+      "git_bytes_sha256": "798fb07db88372c1796cce0bc4de8fc2fa89a873fd72c778b965ae613471a5d8",
+      "working_sha256": "798fb07db88372c1796cce0bc4de8fc2fa89a873fd72c778b965ae613471a5d8",
+      "bytes": 5011,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-review-regression.trx",
+      "git_blob": "cc5f04eb9bc993cbc92bf5cc059ce74ae9d9163c",
+      "git_bytes_sha256": "e38518e8bd0bd3c9cb32c2be8c017b318888a4f556cd8de35725751fc8d1d86b",
+      "working_sha256": "e38518e8bd0bd3c9cb32c2be8c017b318888a4f556cd8de35725751fc8d1d86b",
+      "bytes": 7944,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-unit-final.trx",
+      "git_blob": "12d353c6d198020695f49815e883533e4535dcad",
+      "git_bytes_sha256": "7e7a1637e6ec7de0a21404df3b29a002271c0528ef77c4b841a5783b9a4c0ac6",
+      "working_sha256": "7e7a1637e6ec7de0a21404df3b29a002271c0528ef77c4b841a5783b9a4c0ac6",
+      "bytes": 28964,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-results/inbox-unit.trx",
+      "git_blob": "40e77b3bd3734793a36c12121736d23ba7b5a2b3",
+      "git_bytes_sha256": "ee6fcda2685edfe7c2998af92fb3cdb8e836be38b7494f64b9baa35c5546990c",
+      "working_sha256": "ee6fcda2685edfe7c2998af92fb3cdb8e836be38b7494f64b9baa35c5546990c",
+      "bytes": 26040,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/test-runs.json",
+      "git_blob": "d8990dd59a923de0145d04982cf30f19e2391fff",
+      "git_bytes_sha256": "67715dc71de2771705c021cba8d424a6d50c7d9c2d0b79498274e8991732d37c",
+      "working_sha256": "67715dc71de2771705c021cba8d424a6d50c7d9c2d0b79498274e8991732d37c",
+      "bytes": 57291,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit-final.log",
+      "git_blob": "38fed370beae8be60b828aa32cdd85d9c4806ea7",
+      "git_bytes_sha256": "7bd869d9e0a620526a5b0a6455197b2075c6d4cb12f6f8f029f6271677870e81",
+      "working_sha256": "7bd869d9e0a620526a5b0a6455197b2075c6d4cb12f6f8f029f6271677870e81",
+      "bytes": 1568,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit-first-green.log",
+      "git_blob": "2037d62aa0269e1b9544f0d7aa334aaa8e2108d0",
+      "git_bytes_sha256": "92205f8898b72382a75e7c5cd313f5a6257c4988c0eb7837f92e214b93e6325c",
+      "working_sha256": "92205f8898b72382a75e7c5cd313f5a6257c4988c0eb7837f92e214b93e6325c",
+      "bytes": 1569,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit-red.log",
+      "git_blob": "ddf4baafc3669acd9d3ebac6d57402e0356458e6",
+      "git_bytes_sha256": "a2bec00d7ba8ca3b524a8d95e63004dcb77eb466fa31c673ab1454481ee584b8",
+      "working_sha256": "a2bec00d7ba8ca3b524a8d95e63004dcb77eb466fa31c673ab1454481ee584b8",
+      "bytes": 3291,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/unit.log",
+      "git_blob": "2f84311227f8b3a399ec271c055004e661ed1ce6",
+      "git_bytes_sha256": "4aae42ca849666bf94aa045bde6321bc3c3a53d0e0a289db86866a2b3339a2b5",
+      "working_sha256": "4aae42ca849666bf94aa045bde6321bc3c3a53d0e0a289db86866a2b3339a2b5",
+      "bytes": 1561,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/validation-inputs-before-review-fix.json",
+      "git_blob": "051dd656206c72ac2ff62f23c29ae64df8380474",
+      "git_bytes_sha256": "26d0391923fe6c37ea92d88ad46eaedb80ac6313caedb76290242767bf634829",
+      "working_sha256": "26d0391923fe6c37ea92d88ad46eaedb80ac6313caedb76290242767bf634829",
+      "bytes": 146016,
+      "change": "A"
+    },
+    {
+      "path": "docs/development/evidence/WP02-07/validation-inputs.json",
+      "git_blob": "8838adf22accc43d7e6bcf75ed1dc44806f9a979",
+      "git_bytes_sha256": "ce79f13225ab1d8196a668023661d315c7c74ad1189b9dcdfcbcedea689b8b08",
+      "working_sha256": "ce79f13225ab1d8196a668023661d315c7c74ad1189b9dcdfcbcedea689b8b08",
+      "bytes": 146017,
+      "change": "A"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/CallerTransactionInboxV1.cs",
+      "git_blob": "f0a22e4de8cecdd7985a857b89a90feb5049da84",
+      "git_bytes_sha256": "60917e2582c92a1e302199540252f03db69b17973b569c656a119d953104de1b",
+      "working_sha256": "60917e2582c92a1e302199540252f03db69b17973b569c656a119d953104de1b",
+      "bytes": 12240,
+      "change": "A"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxContractsV1.cs",
+      "git_blob": "ef70330786e729c09128d1c2bf8712e06f53a42f",
+      "git_bytes_sha256": "b84a4f41e191ea1a1a35ac7988124edf218ebd23d650b622ea8c2cfe38bc69e7",
+      "working_sha256": "b84a4f41e191ea1a1a35ac7988124edf218ebd23d650b622ea8c2cfe38bc69e7",
+      "bytes": 10459,
+      "change": "A"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxModelV1.cs",
+      "git_blob": "aed8024a4333e4926665cc3842df3ada6fb5adf9",
+      "git_bytes_sha256": "109fad016ac38e9bbbca2433ce3513395931602059acc7a521d88346306215d2",
+      "working_sha256": "109fad016ac38e9bbbca2433ce3513395931602059acc7a521d88346306215d2",
+      "bytes": 6989,
+      "change": "A"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxTransactionV1.cs",
+      "git_blob": "2f8cb604fef3aae87c36bac07f309d4cda1f2776",
+      "git_bytes_sha256": "137a0c34019ad084fc361c4d2779bf30f7effbe7e430ac71d827f55b1188ee1a",
+      "working_sha256": "137a0c34019ad084fc361c4d2779bf30f7effbe7e430ac71d827f55b1188ee1a",
+      "bytes": 5893,
+      "change": "A"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/InboxV1/InboxContractTests.cs",
+      "git_blob": "b52277e9e2a716a70d102fdb3cd1ceceeb5d8bca",
+      "git_bytes_sha256": "c9867a38b666488a52213c59ac4926e27aa4192d9adcff2ba2082447f1e5cfeb",
+      "working_sha256": "c9867a38b666488a52213c59ac4926e27aa4192d9adcff2ba2082447f1e5cfeb",
+      "bytes": 6749,
+      "change": "A"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/AtomicInboxTests.cs",
+      "git_blob": "e1eedaa3fdb5c6cdbdca7f80585f636868f9dcfb",
+      "git_bytes_sha256": "d9015bcd7da7f6317732a4f3f116e35b35bdec9c5b2a5a3e95118e2d8928d224",
+      "working_sha256": "d9015bcd7da7f6317732a4f3f116e35b35bdec9c5b2a5a3e95118e2d8928d224",
+      "bytes": 27400,
+      "change": "A"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+      "git_blob": "bb657b86972c7d1d835c32c0e1c8a8d762860584",
+      "git_bytes_sha256": "4662f202793a8185e088c793387b04c384c37ceb791dfd631da5f781cf8d1dc6",
+      "working_sha256": "4662f202793a8185e088c793387b04c384c37ceb791dfd631da5f781cf8d1dc6",
+      "bytes": 642,
+      "change": "A"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/Directory.Packages.props",
+      "git_blob": "af849691d05081de51fde82108a8f6b879e0f9c8",
+      "git_bytes_sha256": "c5d73cd73f28635ed28e6b3aa3b4268ddd72a1ddb61357a952beca62f1585a39",
+      "working_sha256": "c5d73cd73f28635ed28e6b3aa3b4268ddd72a1ddb61357a952beca62f1585a39",
+      "bytes": 248,
+      "change": "A"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/FixtureOwner.cs",
+      "git_blob": "4def53f9235464acf1547ea2834edeaa858a5163",
+      "git_bytes_sha256": "e99e593ebf5f5499e56bed37ae799dc883d1c58dbb44bfc503e5affe59ef6fce",
+      "working_sha256": "e99e593ebf5f5499e56bed37ae799dc883d1c58dbb44bfc503e5affe59ef6fce",
+      "bytes": 7999,
+      "change": "A"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/PgFixture.cs",
+      "git_blob": "3ce4f1b0dc1feeec5bc0faca43f89cb5dbad3cfb",
+      "git_bytes_sha256": "a955a31dbf69ca6ab6210c8bdf1496261a7f630fd301ddc749f5fa6c21b5e80c",
+      "working_sha256": "a955a31dbf69ca6ab6210c8bdf1496261a7f630fd301ddc749f5fa6c21b5e80c",
+      "bytes": 10703,
+      "change": "A"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/pg_resource.py",
+      "git_blob": "0402dfb4697fddaadc6fa2639d96761a61f7e318",
+      "git_bytes_sha256": "2000913ea8a0342f472ce55b403fab517be5a38e7c1f0a5d8177c8f40f746e8f",
+      "working_sha256": "2000913ea8a0342f472ce55b403fab517be5a38e7c1f0a5d8177c8f40f746e8f",
+      "bytes": 10095,
+      "change": "A"
+    }
+  ],
+  "complete_diff_sha256": "d403e77f228fd047000cbf4067e049719f928aa3b072d255aefcbb7be1bc9953",
+  "scope": "Opt-in caller-owned PostgreSQL library seam and isolated fixture only",
+  "merge_recommendation": "APPROVE_LIBRARY_MERGE_WITH_DECLARED_OWNER_BOUNDARIES",
+  "blocking_findings": [],
+  "nonblocking_findings": [],
+  "source_manifest_audits": [
+    {
+      "path": "validation-inputs-before-review-fix.json",
+      "sha256": "26d0391923fe6c37ea92d88ad46eaedb80ac6313caedb76290242767bf634829",
+      "source_commit": "ed6ee2972d16ea747e706be3dce258dc299cd1b8",
+      "sources": 255,
+      "dependencies": 9,
+      "artifacts": 153,
+      "git_mismatches": [],
+      "current_working_changes": [
+        "tests/CP6.Platform.UnitTests/InboxV1/InboxContractTests.cs",
+        "tests/CP6.Platform.WP0207.PostgreSqlTests/pg_resource.py"
+      ],
+      "dependency_mismatches": [],
+      "current_artifact_changes": [
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Abstractions.dll",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Abstractions.pdb",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.AspNetCore.dll",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.AspNetCore.pdb",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Contracts.dll",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Contracts.pdb",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.EntityFramework.dll",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.EntityFramework.pdb",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Messaging.dll",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Messaging.pdb",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Testing.dll",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.Testing.pdb",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.UnitTests.dll",
+        "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.UnitTests.pdb"
+      ]
+    },
+    {
+      "path": "validation-inputs.json",
+      "sha256": "ce79f13225ab1d8196a668023661d315c7c74ad1189b9dcdfcbcedea689b8b08",
+      "source_commit": "9bc656acdb67d844218f6788937284b897da45d7",
+      "sources": 255,
+      "dependencies": 9,
+      "artifacts": 153,
+      "git_mismatches": [],
+      "current_working_changes": [],
+      "dependency_mismatches": [],
+      "current_artifact_changes": []
+    }
+  ],
+  "source_inputs": [
+    {
+      "path": "AGENTS.md",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2"
+    },
+    {
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "path": "docs/development/08-postgresql-baseline.md",
+      "git_blob": "1956afc1e6e90719703a25e78a68e3a3a8e0877c",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "b07b25829750b6c25b22472ac6834f961a627cc80146e1750597af7654ab699c"
+    },
+    {
+      "path": "docs/development/09-parallel-development.md",
+      "git_blob": "2acb2a1935bec3283488523437d7b94764aaf9d2",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "5d5da99193c5c08df8774268a6eff59fbd9111601a0cfbf52b352c315b253c38"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-DEL-01.md",
+      "git_blob": "1315781efd898e39c76e73654f99cd2980639921",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "89a72c635c743f9f95f33c0a62a14ac32674a8b92fb6313481b1d21f85a929e9"
+    },
+    {
+      "path": "docs/design-handbook/modules/PLT-HTTP-01.md",
+      "git_blob": "a20b2b45637de71d31d5e20964f68652f567696b",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "a47f667cd3f2d3055ed009433235f77c4065807092b6eeff1505557117f3b04d"
+    },
+    {
+      "path": "docs/design-handbook/remediation/03-transactions-and-recovery.md",
+      "git_blob": "601bb530c6c3a7d9c58b3b73f887a04c93facabb",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "a294263d13b8a4710cb66bad6c2e9365200042167274281cbf5fc57b07196da1"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/finance-recovery/owner-adoption.json",
+      "git_blob": "465d522e2b47e787d0839b993827b54549b95db5",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "aa0c9f14976c7e377985d8477bdb213f93cfe364f0ecf90b09260c6f7ce7610b"
+    },
+    {
+      "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+      "git_blob": "cf5ff6cb51c583f8db8058db56764da7b8ee0773",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "29d857ebbefc0e18c10455d8b9345622e608fe258bcce5c11f83985a792ed1d1"
+    },
+    {
+      "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json",
+      "git_blob": "6a85e2994808887c58adbdf9a197a1e7ab96e650",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "repository": "Main",
+      "git_bytes_sha256": "43eaaaa5fca7cb227cc6ed39b733ee698cabc7f570ded98d9f7b16e8f2270bcd"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
+      "git_blob": "de4b9aa3d8366aa70dded6ebfa498380e4908410",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "9975e7a95d9759552c0fe88a753d2e0372177e323df369808803be986930e577"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs",
+      "git_blob": "5459f5f3896a8bf9346466659b7124aabdde9662",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "ca15dd53295f441fe11797c98368de50b02b16341b633d624f8b0941c7e97264"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "git_blob": "c2d10c851bb2567da7dd7cafd8645864d49023f2",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "6719ee9fbd678ef907b0d92052b695a2785deae5788658d52a96ac433727a1ba"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+      "git_blob": "c682d6c5d599710c32bb20c84d2bc3a16c5b35df",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "777769155fe34deb711b3b6c7eeb21d35721a7b89f23006bb85bb0b67f45163e"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpResilienceServiceCollectionExtensions.cs",
+      "git_blob": "6700da329bf5974f6b72ecd238b8c4b0d35c2fde",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "ae6ad60283ac25b5e27d3932bb1f7c1c8b78f3171379e51cc6f542171c7ee698"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6HttpResilienceProfile.cs",
+      "git_blob": "73ab6f7c5aee2980b5d9e8f7b3cfa90b10e8eb8a",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "07786251268a417db721092a880dcb4fb5c1d85abde6739deea6417b6f9e6ed7"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+      "git_blob": "b83b355653c0b382a79c97cbdeb83fc20a7492a5",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "5856a211a4625d464877ed51fb959d3eec57366a806eaa2182548804912297bc"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6NativeContractCatalog.cs",
+      "git_blob": "0436729bb3f3dd8131dd35fab38d0005f7d8f968",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "850a5c99bde76851353c6d2b51e58326c5894c8c36306e183c4c45cd255cf958"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/NativeContracts/Cp6OriginalJson.cs",
+      "git_blob": "b52fcc9fd98294896a09c2c70763d95c19e7fabb",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "4a10ba1324500e9686a0c851a69214e2c32003ae087cc3cb61f5932c1a4dec36"
+    },
+    {
+      "path": "src/CP6.Platform.Abstractions/Context/TrustedContextExecutorV1.cs",
+      "git_blob": "94840cf64832d30af6455e833625a74d000deda8",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "b7108e3c703a3d62ec5ef85836a2dec6005d96480b44dbfd6273330154bff581"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "git_blob": "768d4ae02403f682963025d762ff7ed022a9c18d",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65"
+    },
+    {
+      "path": "Directory.Build.props",
+      "git_blob": "42131cd740450f08305e95b08b855cfb981c022a",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+      "git_blob": "951337940fa5a3d4a3be6709fb0041758b69ec76",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "5c0b801ba86d4888e03216841efbe7a8c3182eccdf6ac86e27a930d162a59a02"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj",
+      "git_blob": "7f61240ebda42c85cc94d669414fe54d70e5db42",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "d2d05dccce7e78c5584c49bc3537c230708ac3591a7f04bfea6199bf04f0d1a1"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "git_blob": "37e82dfc18877052ba7a826f5ef2f67a5f371bf1",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "8514e34e52ec8b08ccba45784bcc3063ffe757c80d8994fad9254d2f4a949a96"
+    },
+    {
+      "path": "docs/WP02-01-TRUSTED-CONTEXT.md",
+      "git_blob": "7a7c5f50092349e10f6f7683def23a3695037fa5",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "14d6c611c3853fd9b230c6b09d50a8484ce4cc7efc82a7348cf19073e1a2a52e"
+    },
+    {
+      "path": "docs/development/evidence/S01-09/README.md",
+      "git_blob": "05dff70323d99312e6515976dd2af689d1cf6738",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "5ecd4e7f0aa101d4e23b40343238606b8814952280cebc199e5fe715a04f243a"
+    },
+    {
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "git_blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d",
+      "pin": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "repository": "Platform",
+      "git_bytes_sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1"
+    },
+    {
+      "repository": "Main archive (raw working original)",
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+      "raw_sha256": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84",
+      "bytes": 57043
+    },
+    {
+      "repository": "Main archive (raw working original)",
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "raw_sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+      "bytes": 122794
+    },
+    {
+      "repository": "Main",
+      "path": "docs/design-handbook/remediation/assets/finance-recovery/contracts.schema.json",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "git_blob": "54399c2a57e760fb239fa32f9e610a4bd976b619",
+      "git_bytes_sha256": "e4089ec1c8c2bdd18ae5f4099c7e65adbdeb4a7f4e61fa64a51147fc0779b9c3"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "git_blob": "e0da267b79bf24cea6df4a6abd2d1e5c2cd068d4",
+      "git_bytes_sha256": "6af601f92d8a3f3b347358313bd6d3c199581a0fd93650b3c6c7090249329417"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/development/assessments/20261011/implementation-assessment.json",
+      "pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+      "git_blob": "13b2ac31e0156861e5606d05308d6021b738aae3",
+      "git_bytes_sha256": "ebab2fbbc2ffdc02abcf58b4eb75358ea3db3d03e5529f47886dd58bce100cb8"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/development/dispatch/20261013-wave5/WP02-07.md",
+      "pin": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "git_blob": "e5b3c744f5bdeaea2e95f2916ce3fcfabb8d42ce",
+      "git_bytes_sha256": "3ed2c50ee83367d5cd2bcbe046b4830c669df3dabcb558e2e665bbc02bf7331f"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.md",
+      "pin": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "git_blob": "4401ba117fd552e2c07050f3a324299e757a24f4",
+      "git_bytes_sha256": "f1de6612255caf602211bde5d25e4d903278fc65d94f46bc6a38c4cca99f842a"
+    },
+    {
+      "repository": "Main",
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.json",
+      "pin": "47c9b12c796620effe41c62d16992ccd629ee949",
+      "git_blob": "ac374984250c2141a7e6ed7c5c7ee246642ee888",
+      "git_bytes_sha256": "490b497a92a805967f24a9de29cb2a547b69844110a7bf88a5e366fbe6ee1e31"
+    }
+  ],
+  "evidence_sha256": {
+    "source-inputs.json": "db122c8681541d6157d2554821c4f4576d1e6d914c26894bc26b04a2a470ad55",
+    "validation-inputs.json": "ce79f13225ab1d8196a668023661d315c7c74ad1189b9dcdfcbcedea689b8b08",
+    "validation-inputs-before-review-fix.json": "26d0391923fe6c37ea92d88ad46eaedb80ac6313caedb76290242767bf634829",
+    "test-runs.json": "67715dc71de2771705c021cba8d424a6d50c7d9c2d0b79498274e8991732d37c",
+    "acceptance-map.json": "ceeb7545ba09a8fa406e52b32072771b62a4a12d7e94097fba97cabb4939bbe1",
+    "REPORT.md": "72de7d2ac6beb2a2afdf1ffc31ced53173d88f8403ec5fba45e1c1978d16f1d1",
+    "PLAN.md": "9fae1eab3ed9338e2b21b37ebb6a3334b0d97471752633c5c0d252118ca93e7f",
+    "REVIEW.md": "fbd0b7a70f73af8adbc560f4efdf76f45af34f665735d69459b8890efd041bb2",
+    "prepublication-workflows.json": "fb8840ed2ac8251c04dbd2cbbb57dc3aaff366a934906b7d8199a0645fff9349",
+    "resources/resources.json": "2f9c4ccdb5959d5d298a7234ce14fa96e97843a38d1f1287dd2516e191b77a0f"
+  },
+  "pdb_document_checksums": [
+    {
+      "Pdb": "tests/CP6.Platform.WP0207.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.EntityFramework.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\src\\CP6.Platform.EntityFramework\\InboxV1\\CallerTransactionInboxV1.cs",
+      "RecordedHash": "60917e2582c92a1e302199540252f03db69b17973b569c656a119d953104de1b",
+      "WorkingHash": "60917e2582c92a1e302199540252f03db69b17973b569c656a119d953104de1b",
+      "Match": true
+    },
+    {
+      "Pdb": "tests/CP6.Platform.WP0207.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.EntityFramework.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\src\\CP6.Platform.EntityFramework\\InboxV1\\InboxContractsV1.cs",
+      "RecordedHash": "b84a4f41e191ea1a1a35ac7988124edf218ebd23d650b622ea8c2cfe38bc69e7",
+      "WorkingHash": "b84a4f41e191ea1a1a35ac7988124edf218ebd23d650b622ea8c2cfe38bc69e7",
+      "Match": true
+    },
+    {
+      "Pdb": "tests/CP6.Platform.WP0207.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.EntityFramework.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\src\\CP6.Platform.EntityFramework\\InboxV1\\InboxModelV1.cs",
+      "RecordedHash": "109fad016ac38e9bbbca2433ce3513395931602059acc7a521d88346306215d2",
+      "WorkingHash": "109fad016ac38e9bbbca2433ce3513395931602059acc7a521d88346306215d2",
+      "Match": true
+    },
+    {
+      "Pdb": "tests/CP6.Platform.WP0207.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.EntityFramework.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\src\\CP6.Platform.EntityFramework\\InboxV1\\InboxTransactionV1.cs",
+      "RecordedHash": "137a0c34019ad084fc361c4d2779bf30f7effbe7e430ac71d827f55b1188ee1a",
+      "WorkingHash": "137a0c34019ad084fc361c4d2779bf30f7effbe7e430ac71d827f55b1188ee1a",
+      "Match": true
+    },
+    {
+      "Pdb": "tests/CP6.Platform.WP0207.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.WP0207.PostgreSqlTests.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\tests\\CP6.Platform.WP0207.PostgreSqlTests\\AtomicInboxTests.cs",
+      "RecordedHash": "d9015bcd7da7f6317732a4f3f116e35b35bdec9c5b2a5a3e95118e2d8928d224",
+      "WorkingHash": "d9015bcd7da7f6317732a4f3f116e35b35bdec9c5b2a5a3e95118e2d8928d224",
+      "Match": true
+    },
+    {
+      "Pdb": "tests/CP6.Platform.WP0207.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.WP0207.PostgreSqlTests.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\tests\\CP6.Platform.WP0207.PostgreSqlTests\\FixtureOwner.cs",
+      "RecordedHash": "e99e593ebf5f5499e56bed37ae799dc883d1c58dbb44bfc503e5affe59ef6fce",
+      "WorkingHash": "e99e593ebf5f5499e56bed37ae799dc883d1c58dbb44bfc503e5affe59ef6fce",
+      "Match": true
+    },
+    {
+      "Pdb": "tests/CP6.Platform.WP0207.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.WP0207.PostgreSqlTests.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\tests\\CP6.Platform.WP0207.PostgreSqlTests\\PgFixture.cs",
+      "RecordedHash": "a955a31dbf69ca6ab6210c8bdf1496261a7f630fd301ddc749f5fa6c21b5e80c",
+      "WorkingHash": "a955a31dbf69ca6ab6210c8bdf1496261a7f630fd301ddc749f5fa6c21b5e80c",
+      "Match": true
+    },
+    {
+      "Pdb": "tests/CP6.Platform.UnitTests/bin/Debug/net8.0/CP6.Platform.UnitTests.pdb",
+      "Source": "D:\\CP6.Platform-worktrees\\wp02-07-20261013\\tests\\CP6.Platform.UnitTests\\InboxV1\\InboxContractTests.cs",
+      "RecordedHash": "c9867a38b666488a52213c59ac4926e27aa4192d9adcff2ba2082447f1e5cfeb",
+      "WorkingHash": "c9867a38b666488a52213c59ac4926e27aa4192d9adcff2ba2082447f1e5cfeb",
+      "Match": true
+    }
+  ],
+  "test_provenance": {
+    "executed_by_reviewer": 0,
+    "accepted_distinct_cases": 136,
+    "base_accepted_runs": [
+      {
+        "path": "test-results/inbox-architecture.trx",
+        "sha256": "1f1a6e9c423f5eb48c3c3ef6060b3ab7868aa0b8abda3725c5b8c753da9b2af7",
+        "times": {
+          "creation": "2026-10-13T08:33:49.4896025-04:00",
+          "queuing": "2026-10-13T08:33:49.4896030-04:00",
+          "start": "2026-10-13T08:33:47.1402599-04:00",
+          "finish": "2026-10-13T08:33:49.9256058-04:00"
+        },
+        "counters": {
+          "total": "98",
+          "executed": "98",
+          "passed": "98",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        }
+      },
+      {
+        "path": "test-results/inbox-postgresql-reviewed.trx",
+        "sha256": "ded4b853f9e0d38a222694ebe9615cc9f93d3f7bc3d34cf5712ff22d1381d072",
+        "times": {
+          "creation": "2026-10-13T08:36:46.2066528-04:00",
+          "queuing": "2026-10-13T08:36:46.2066533-04:00",
+          "start": "2026-10-13T08:36:42.7481962-04:00",
+          "finish": "2026-10-13T08:36:53.5171352-04:00"
+        },
+        "counters": {
+          "total": "20",
+          "executed": "20",
+          "passed": "20",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        }
+      },
+      {
+        "path": "test-results/inbox-unit-final.trx",
+        "sha256": "7e7a1637e6ec7de0a21404df3b29a002271c0528ef77c4b841a5783b9a4c0ac6",
+        "times": {
+          "creation": "2026-10-13T08:33:43.3326199-04:00",
+          "queuing": "2026-10-13T08:33:43.3326204-04:00",
+          "start": "2026-10-13T08:33:41.9081328-04:00",
+          "finish": "2026-10-13T08:33:43.3660555-04:00"
+        },
+        "counters": {
+          "total": "18",
+          "executed": "18",
+          "passed": "18",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        }
+      }
+    ],
+    "all_retained_runs": [
+      {
+        "path": "test-results/inbox-architecture.trx",
+        "sha256": "1f1a6e9c423f5eb48c3c3ef6060b3ab7868aa0b8abda3725c5b8c753da9b2af7",
+        "times": {
+          "creation": "2026-10-13T08:33:49.4896025-04:00",
+          "queuing": "2026-10-13T08:33:49.4896030-04:00",
+          "start": "2026-10-13T08:33:47.1402599-04:00",
+          "finish": "2026-10-13T08:33:49.9256058-04:00"
+        },
+        "counters": {
+          "total": "98",
+          "executed": "98",
+          "passed": "98",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Temposink\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo/Exporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoExporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TEMPO_ENDPOINT\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOService\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TEMPO-ENDPOINT\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo backend\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOSink\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempocollector\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoclient\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Contracts_HasNoExternalOrInternalDependencies",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo-Exporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempobackend\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempoClient\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"tempOffset\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempocollector\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo.Endpoint\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoendpoint\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporaryDirectoryRemoved\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoconfig\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Deployment_IsOnlyProjectPackingP09ContractsAndDeploymentAssets",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporaryDirectoryRemoved\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoexporteroptions\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo-client\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo_endpoint\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoExporterOptions\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_PublicationWorkflow_AlwaysPreservesCompleteEvidence",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporallyConsistent\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOSettings\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoexporteroptions\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P10_Documentation_IsCompleteAndNonDeployable",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Temposervice\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"contemporaryOperation\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporaryFileRemoved\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"UseTempo:4317\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoclient\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_PackageEvidenceAndProductionSafetyGuards_AreEncoded",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.SourceProjects_UseOnlyApprovedExternalDependenciesAndFrameworks",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temposink\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporarilyRemoved\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempoExporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProjectReferences_StayInsideSourceTree_AndGraphIsAcyclic",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOEndpoint\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"http://tempo:4317\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoexporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"OpenTelemetryTempo:4317\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoClient\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo:4317\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoService\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOBackend\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOCollector\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporallyConsistent\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoexporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsGrafanaAndPrometheusCaseInsensitively",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo_Exporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Temposettings\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo.Endpoint\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoBackend\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoExporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOExporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"OpenTelemetryTempoExporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temporaryTempoDirectory\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.NuGetConfiguration_MapsPrivatePackagesWithoutCredentials",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo backend\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProjectReferences_ExactlyMatchApprovedDependencyDirection",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoSettings\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempobackend\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"contemporaneousOperation\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoConfig\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temposettings\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo backend\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoconfig\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporalWindow\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOExporterOptions\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Release_package_is_independent_and_owns_only_release_contract_assets",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TEMPO\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P09EvidenceImplementation_SeparatesFacadeValidationAndSafetyPolicy",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.OtherSourceProjects_DoNotReferenceDeployment",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.SourceProjects_ExactlyMatchApprovedRuntimeAndTestingSet",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoEndpoint\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"addTempoExporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo/Exporter\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TempOutput\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_Documentation_IsCompleteAndSafe",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOConfig\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOClient\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoCollector\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temposervice\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporalWindow\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Deployment_HasNoExternalInternalOrFrameworkDependencies",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"tempOutput\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoSink\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoendpoint\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporaryFileRemoved\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_DependencyAndPackageBoundary_IsExact",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-first-green.trx",
+        "sha256": "994b10f777a0527d33d14cb2f0264717e58d6a73884559416f7285a4e82235af",
+        "times": {
+          "creation": "2026-10-13T08:15:28.3701488-04:00",
+          "queuing": "2026-10-13T08:15:28.3701492-04:00",
+          "start": "2026-10-13T08:15:27.4228694-04:00",
+          "finish": "2026-10-13T08:15:28.3743328-04:00"
+        },
+        "counters": {
+          "total": "1",
+          "executed": "1",
+          "passed": "1",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Caller_owned_entry_exists_separately_from_legacy_processor",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-operation-binding-red.trx",
+        "sha256": "7140ee9fe1f2c07ce564eafe39e1ab22ddc76eb1c5cbb689f455051f89d31f89",
+        "times": {
+          "creation": "2026-10-13T08:28:30.3900832-04:00",
+          "queuing": "2026-10-13T08:28:30.3900836-04:00",
+          "start": "2026-10-13T08:28:29.3525533-04:00",
+          "finish": "2026-10-13T08:28:30.3935034-04:00"
+        },
+        "counters": {
+          "total": "1",
+          "executed": "1",
+          "passed": "0",
+          "failed": "1",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Same_transport_cannot_be_rebound_to_another_original_operation",
+            "outcome": "Failed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-original-key-red.trx",
+        "sha256": "f6ed92d88f84e774dde18798c18b2d2ab50cf177347f76fab0b4b49b09be547e",
+        "times": {
+          "creation": "2026-10-13T08:30:54.1025783-04:00",
+          "queuing": "2026-10-13T08:30:54.1025789-04:00",
+          "start": "2026-10-13T08:30:53.0566329-04:00",
+          "finish": "2026-10-13T08:30:54.1072727-04:00"
+        },
+        "counters": {
+          "total": "1",
+          "executed": "1",
+          "passed": "0",
+          "failed": "1",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Original_key_only_recovery_has_no_transport_success_capability",
+            "outcome": "Failed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-pg-first.trx",
+        "sha256": "2bd2b04a9bf9df8685251ad7cda0de35e452fa02744ffb5ca993d12b6c610119",
+        "times": {
+          "creation": "2026-10-13T08:26:17.8402908-04:00",
+          "queuing": "2026-10-13T08:26:17.8402920-04:00",
+          "start": "2026-10-13T08:26:13.9482432-04:00",
+          "finish": "2026-10-13T08:26:17.9039830-04:00"
+        },
+        "counters": {
+          "total": "12",
+          "executed": "12",
+          "passed": "0",
+          "failed": "12",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: False)",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_message_different_raw_or_binding_has_priority_and_preserves_original_result",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_transaction_locks_are_held_until_caller_rollback",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Wrong_lock_order_and_preheld_late_lock_are_not_accepted_as_proof",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_xmin_token_rejects_stale_checkpoint_update",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Missing_wrong_connection_ended_transaction_and_wrong_tenant_are_rejected",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Unavailable_anchor_never_completes_duplicate_or_checkpoint",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Lost_commit_confirmation_queries_original_bytes_without_a_new_write_grant",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Duplicate_old_equal_and_known_historical_conflict_all_pass_the_content_gate",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_key_competition_recovers_whole_original_input_through_a_new_content_gate",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: True)",
+            "outcome": "Failed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-pg-second.trx",
+        "sha256": "1bfc2393c3602e831aca50d1a5658a7d86a9847ec6d355a2a22626ff1d102732",
+        "times": {
+          "creation": "2026-10-13T08:27:02.7995606-04:00",
+          "queuing": "2026-10-13T08:27:02.7995612-04:00",
+          "start": "2026-10-13T08:26:58.7257376-04:00",
+          "finish": "2026-10-13T08:27:07.7996068-04:00"
+        },
+        "counters": {
+          "total": "13",
+          "executed": "13",
+          "passed": "12",
+          "failed": "1",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Lost_commit_confirmation_queries_original_bytes_without_a_new_write_grant",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_key_competition_recovers_whole_original_input_through_a_new_content_gate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_transaction_locks_are_held_until_caller_rollback",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Wrong_lock_order_and_preheld_late_lock_are_not_accepted_as_proof",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: False)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Cross_tenant_transport_collision_never_invokes_owner_mutation_on_incoming_aggregate",
+            "outcome": "Failed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_message_different_raw_or_binding_has_priority_and_preserves_original_result",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: True)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_xmin_token_rejects_stale_checkpoint_update",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Missing_wrong_connection_ended_transaction_and_wrong_tenant_are_rejected",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Unavailable_anchor_never_completes_duplicate_or_checkpoint",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Duplicate_old_equal_and_known_historical_conflict_all_pass_the_content_gate",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-postgresql-final.trx",
+        "sha256": "b8d51cc600384a625852cf9a07bbf78cbd0462f39929f3571f4a324fb98edada",
+        "times": {
+          "creation": "2026-10-13T08:32:58.2055465-04:00",
+          "queuing": "2026-10-13T08:32:58.2055469-04:00",
+          "start": "2026-10-13T08:32:54.6970916-04:00",
+          "finish": "2026-10-13T08:33:05.1805192-04:00"
+        },
+        "counters": {
+          "total": "18",
+          "executed": "18",
+          "passed": "18",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_message_different_raw_or_binding_has_priority_and_preserves_original_result",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_key_competition_recovers_whole_original_input_through_a_new_content_gate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Wrong_lock_order_and_preheld_late_lock_are_not_accepted_as_proof",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Final_write_denial_and_cancellation_do_not_create_success_receipts",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Cross_tenant_transport_collision_never_invokes_owner_mutation_on_incoming_aggregate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: True)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_xmin_token_rejects_stale_checkpoint_update",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Conflict_write_set_rolls_back_together_with_published_health_and_original_bytes",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_transaction_locks_are_held_until_caller_rollback",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Unavailable_anchor_never_completes_duplicate_or_checkpoint",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: False)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Duplicate_old_equal_and_known_historical_conflict_all_pass_the_content_gate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Lost_entire_response_recovers_by_original_key_only_and_cannot_ack_a_delivery",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Missing_wrong_connection_ended_transaction_and_wrong_tenant_are_rejected",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Actual_serialization_failure_preserves_original_version_key_on_retry",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Lost_commit_confirmation_queries_original_bytes_without_a_new_write_grant",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Actual_unique_violation_is_rolled_back_then_original_reenters_admission",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-postgresql-reviewed.trx",
+        "sha256": "ded4b853f9e0d38a222694ebe9615cc9f93d3f7bc3d34cf5712ff22d1381d072",
+        "times": {
+          "creation": "2026-10-13T08:36:46.2066528-04:00",
+          "queuing": "2026-10-13T08:36:46.2066533-04:00",
+          "start": "2026-10-13T08:36:42.7481962-04:00",
+          "finish": "2026-10-13T08:36:53.5171352-04:00"
+        },
+        "counters": {
+          "total": "20",
+          "executed": "20",
+          "passed": "20",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_xmin_token_rejects_stale_checkpoint_update",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Final_write_denial_and_cancellation_do_not_create_success_receipts",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Lost_commit_confirmation_queries_original_bytes_without_a_new_write_grant",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: True)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Missing_wrong_connection_ended_transaction_and_wrong_tenant_are_rejected",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Read_confirmation_rejects_write_transaction_and_missing_trusted_context",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Cross_tenant_transport_collision_never_invokes_owner_mutation_on_incoming_aggregate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Duplicate_old_equal_and_known_historical_conflict_all_pass_the_content_gate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Two_contexts_can_participate_only_when_the_actual_connection_and_transaction_are_shared",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_transaction_locks_are_held_until_caller_rollback",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Actual_unique_violation_is_rolled_back_then_original_reenters_admission",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: False)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Actual_serialization_failure_preserves_original_version_key_on_retry",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_message_different_raw_or_binding_has_priority_and_preserves_original_result",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Lost_entire_response_recovers_by_original_key_only_and_cannot_ack_a_delivery",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Conflict_write_set_rolls_back_together_with_published_health_and_original_bytes",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Unavailable_anchor_never_completes_duplicate_or_checkpoint",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_key_competition_recovers_whole_original_input_through_a_new_content_gate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Wrong_lock_order_and_preheld_late_lock_are_not_accepted_as_proof",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-postgresql.trx",
+        "sha256": "bcb66968ef97e43005a4cf3d9a7c655334cec9707fa8444b5fcc4d5470eaca89",
+        "times": {
+          "creation": "2026-10-13T08:29:48.8535467-04:00",
+          "queuing": "2026-10-13T08:29:48.8535472-04:00",
+          "start": "2026-10-13T08:29:45.3279511-04:00",
+          "finish": "2026-10-13T08:29:54.7899602-04:00"
+        },
+        "counters": {
+          "total": "16",
+          "executed": "16",
+          "passed": "16",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_key_competition_recovers_whole_original_input_through_a_new_content_gate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Lost_commit_confirmation_queries_original_bytes_without_a_new_write_grant",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Cross_tenant_transport_collision_never_invokes_owner_mutation_on_incoming_aggregate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: False)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Conflict_write_set_rolls_back_together_with_published_health_and_original_bytes",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_xmin_token_rejects_stale_checkpoint_update",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Duplicate_old_equal_and_known_historical_conflict_all_pass_the_content_gate",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph(failure: True)",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Unavailable_anchor_never_completes_duplicate_or_checkpoint",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Missing_wrong_connection_ended_transaction_and_wrong_tenant_are_rejected",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Same_message_different_raw_or_binding_has_priority_and_preserves_original_result",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Real_transaction_locks_are_held_until_caller_rollback",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Final_write_denial_and_cancellation_do_not_create_success_receipts",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Actual_unique_violation_is_rolled_back_then_original_reenters_admission",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Wrong_lock_order_and_preheld_late_lock_are_not_accepted_as_proof",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-red.trx",
+        "sha256": "9ee3a3416b9ff1004b37ebaceb20d2dc04bb64d4a84a2ef42cd79737dbec2870",
+        "times": {
+          "creation": "2026-10-13T08:09:47.5615014-04:00",
+          "queuing": "2026-10-13T08:09:47.5615020-04:00",
+          "start": "2026-10-13T08:09:44.3519392-04:00",
+          "finish": "2026-10-13T08:09:47.5657826-04:00"
+        },
+        "counters": {
+          "total": "1",
+          "executed": "1",
+          "passed": "0",
+          "failed": "1",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Caller_owned_entry_exists_separately_from_legacy_processor",
+            "outcome": "Failed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-resource-reproduction.trx",
+        "sha256": "798fb07db88372c1796cce0bc4de8fc2fa89a873fd72c778b965ae613471a5d8",
+        "times": {
+          "creation": "2026-10-13T08:46:28.7643845-04:00",
+          "queuing": "2026-10-13T08:46:28.7643850-04:00",
+          "start": "2026-10-13T08:46:25.2269066-04:00",
+          "finish": "2026-10-13T08:46:28.7706010-04:00"
+        },
+        "counters": {
+          "total": "2",
+          "executed": "2",
+          "passed": "2",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Two_contexts_can_participate_only_when_the_actual_connection_and_transaction_are_shared",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.WP0207.PostgreSqlTests.AtomicInboxTests.Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-review-regression.trx",
+        "sha256": "e38518e8bd0bd3c9cb32c2be8c017b318888a4f556cd8de35725751fc8d1d86b",
+        "times": {
+          "creation": "2026-10-13T08:41:49.2041588-04:00",
+          "queuing": "2026-10-13T08:41:49.2041592-04:00",
+          "start": "2026-10-13T08:41:47.7829141-04:00",
+          "finish": "2026-10-13T08:41:49.2088934-04:00"
+        },
+        "counters": {
+          "total": "4",
+          "executed": "4",
+          "passed": "4",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \" { \\\"meta\\\": 1, \\\"data\\\" : [ 1,2.00 ] } \", data: \"[ 1,2.00 ]\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":\\\"\\\\u4f60\\\"}\", data: \"\\\"\\\\u4f60\\\"\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":null}\", data: \"null\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":{\\\"n\\\":1.00}}\", data: \"{\\\"n\\\":1.00}\")",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-unit-final.trx",
+        "sha256": "7e7a1637e6ec7de0a21404df3b29a002271c0528ef77c4b841a5783b9a4c0ac6",
+        "times": {
+          "creation": "2026-10-13T08:33:43.3326199-04:00",
+          "queuing": "2026-10-13T08:33:43.3326204-04:00",
+          "start": "2026-10-13T08:33:41.9081328-04:00",
+          "finish": "2026-10-13T08:33:43.3660555-04:00"
+        },
+        "counters": {
+          "total": "18",
+          "executed": "18",
+          "passed": "18",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":1,}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":{\\\"n\\\":1.00}}\", data: \"{\\\"n\\\":1.00}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":{\\\"a\\\":1,\\\"\\\\u0061\\\":2}}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Original_key_only_recovery_has_no_transport_success_capability",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":[{\\\"a\\\":1,\\\"a\\\":2}]}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Same_transport_cannot_be_rebound_to_another_original_operation",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Authority_wrong_tenant_or_missing_lineage_never_becomes_available_from_incoming",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":\\\"\\\\u4f60\\\"}\", data: \"\\\"\\\\u4f60\\\"\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Same_data_with_different_legitimate_transport_is_equal_and_binding_changes_conflict",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Seven_decisions_use_original_transport_then_authority_and_history",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":1}{}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":null}\", data: \"null\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":1,\\\"data\\\":2}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"[]\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Caller_owned_entry_exists_separately_from_legacy_processor",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Decisions_are_closed_and_pending_cannot_mint_committed_transport_success",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \" { \\\"meta\\\": 1, \\\"data\\\" : [ 1,2.00 ] } \", data: \"[ 1,2.00 ]\")",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      },
+      {
+        "path": "test-results/inbox-unit.trx",
+        "sha256": "ee6fcda2685edfe7c2998af92fb3cdb8e836be38b7494f64b9baa35c5546990c",
+        "times": {
+          "creation": "2026-10-13T08:18:46.5460903-04:00",
+          "queuing": "2026-10-13T08:18:46.5460908-04:00",
+          "start": "2026-10-13T08:18:45.6775704-04:00",
+          "finish": "2026-10-13T08:18:46.5741480-04:00"
+        },
+        "counters": {
+          "total": "16",
+          "executed": "16",
+          "passed": "16",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "results": [
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":1,}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Seven_decisions_use_original_transport_then_authority_and_history",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \" { \\\"meta\\\": 1, \\\"data\\\" : [ 1,2.00 ] } \", data: \"[ 1,2.00 ]\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":[{\\\"a\\\":1,\\\"a\\\":2}]}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":{\\\"a\\\":1,\\\"\\\\u0061\\\":2}}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":\\\"\\\\u4f60\\\"}\", data: \"\\\"\\\\u4f60\\\"\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Authority_wrong_tenant_or_missing_lineage_never_becomes_available_from_incoming",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":1}{}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":{\\\"n\\\":1.00}}\", data: \"{\\\"n\\\":1.00}\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Bytes_and_digest_domains_remain_exact(raw: \"{\\\"data\\\":null}\", data: \"null\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Same_data_with_different_legitimate_transport_is_equal_and_binding_changes_conflict",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Caller_owned_entry_exists_separately_from_legacy_processor",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Decisions_are_closed_and_pending_cannot_mint_committed_transport_success",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"[]\")",
+            "outcome": "Passed"
+          },
+          {
+            "testName": "CP6.Platform.UnitTests.InboxV1.InboxContractTests.Malformed_or_ambiguous_original_json_is_rejected(raw: \"{\\\"data\\\":1,\\\"data\\\":2}\")",
+            "outcome": "Passed"
+          }
+        ],
+        "review_hash_and_results_verified": true
+      }
+    ],
+    "reuse": "18 unit + 20 PG + 98 architecture at implementation working sources captured by ed6ee297; four changed byte-array theory cases at 57a94a4f source and two unchanged PG smoke cases for 9bc656ac helper. No production source changed after ed6ee297. Earlier unit outputs were replaced by targeted rebuild; historical capture retained and not relabeled as current rerun."
+  },
+  "acceptance": {
+    "original_case_count": 60,
+    "original_cases_exact": true,
+    "source_pin": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+    "catalogue_path": "docs/development/assessments/20261011/catalogs/foundation.json",
+    "business_status": "NOT_RUN",
+    "host_adoption": "UNPROVEN"
+  },
+  "risk_scenarios": [
+    {
+      "scenario": "Native caller transaction and current tenant",
+      "source": "InboxTransactionV1.cs:26-66; CallerTransactionInboxV1.cs:19-27",
+      "tests": "Missing_wrong_connection_ended_transaction_and_wrong_tenant_are_rejected; Read_confirmation_rejects_write_transaction_and_missing_trusted_context",
+      "review": "Real Npgsql handles, Serializable write / ReadCommitted READ ONLY read, backend/database/principal/xid, trusted-scope identity checked."
+    },
+    {
+      "scenario": "Seven ordered transaction locks",
+      "source": "InboxTransactionV1.cs:70-87",
+      "tests": "Wrong_lock_order_and_preheld_late_lock_are_not_accepted_as_proof; Real_transaction_locks_are_held_until_caller_rollback",
+      "review": "Actual pg_advisory_xact_lock and pg_locks proof; contender cannot acquire until caller rollback. Only fixture writer inventory is proven."
+    },
+    {
+      "scenario": "Atomic commit and full rollback",
+      "source": "CallerTransactionInboxV1.cs:56-112",
+      "tests": "Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together; Explicit_rollback_or_failure_after_owner_save_leaves_no_partial_graph",
+      "review": "Nine fixture tables observed from separate connections; caller COMMIT/ROLLBACK; no library transaction lifecycle ownership."
+    },
+    {
+      "scenario": "Content admission before duplicate/old/equal",
+      "source": "CallerTransactionInboxV1.cs:24-36; InboxContractsV1.cs:167-185",
+      "tests": "Duplicate_old_equal_and_known_historical_conflict_all_pass_the_content_gate",
+      "review": "Authority/history read and closed seven-decision classifier before all technical early exits; known historical conflict beats duplicate/old."
+    },
+    {
+      "scenario": "Exact raw/data bytes and operation identity",
+      "source": "InboxContractsV1.cs:66-114; InboxModelV1.cs:26-45",
+      "tests": "Bytes_and_digest_domains_remain_exact; Malformed_or_ambiguous_original_json_is_rejected; Same_transport_cannot_be_rebound_to_another_original_operation",
+      "review": "Defensive copies, UTF8 slice digests, escaped duplicate-name rejection, independent Owner domain/codec/digest and immutable transport-to-operation binding."
+    },
+    {
+      "scenario": "Transport conflict and foreign tenant",
+      "source": "CallerTransactionInboxV1.cs:22-24,56-60; InboxContractsV1.cs:172-180",
+      "tests": "Same_message_different_raw_or_binding_has_priority_and_preserves_original_result; Cross_tenant_transport_collision_never_invokes_owner_mutation_on_incoming_aggregate",
+      "review": "Raw/binding mismatch wins before authority unavailable. Foreign transport collision creates technical evidence only; no incoming-selected Owner mutation."
+    },
+    {
+      "scenario": "Conflict atomicity and no drift clearing",
+      "source": "CallerTransactionInboxV1.cs:64-100; FixtureOwner.cs:70-115",
+      "tests": "Conflict_write_set_rolls_back_together_with_published_health_and_original_bytes; Duplicate_old_equal_and_known_historical_conflict_all_pass_the_content_gate",
+      "review": "Fixture conflict observation, projection health, Published withdrawal and receipt rollback together. Original bytes retained; current equal event does not clear drift."
+    },
+    {
+      "scenario": "Unavailable dependency and write denial",
+      "source": "CallerTransactionInboxV1.cs:35-37,50-52",
+      "tests": "Unavailable_anchor_never_completes_duplicate_or_checkpoint; Final_write_denial_and_cancellation_do_not_create_success_receipts",
+      "review": "No success receipt/checkpoint on unavailable; trusted fixture final-write gate/cancellation tested. Actual IAM shared fence remains unproven."
+    },
+    {
+      "scenario": "Same-key concurrency and actual 23505",
+      "source": "CallerTransactionInboxV1.cs:15-112; AtomicInboxTests.cs:227-309",
+      "tests": "Same_key_competition_recovers_whole_original_input_through_a_new_content_gate; Actual_unique_violation_is_rolled_back_then_original_reenters_admission",
+      "review": "Actual competing backend blocked on native advisory lock. Provider failure propagates; fresh whole-original-input retry passes admission; one business effect/journal."
+    },
+    {
+      "scenario": "Actual 40001 serialization failure",
+      "source": "AtomicInboxTests.cs:366-398",
+      "tests": "Actual_serialization_failure_preserves_original_version_key_on_retry",
+      "review": "Real simultaneous different-version transactions, exact SQLSTATE40001, fresh transaction retry with same original version key; monotonic projection and one original journal."
+    },
+    {
+      "scenario": "Pending versus committed receipt",
+      "source": "InboxContractsV1.cs:117-165; CallerTransactionInboxV1.cs:115-158",
+      "tests": "Pending_is_invisible_until_caller_commit_and_all_nine_tables_commit_together; Decisions_are_closed_and_pending_cannot_mint_committed_transport_success",
+      "review": "Pending has no result/transport mapping. Separate read-only current-authorized receipt visibility mints final mapping; missing receipt stays unknown."
+    },
+    {
+      "scenario": "Commit confirmation and entire response loss",
+      "source": "CallerTransactionInboxV1.cs:119-158",
+      "tests": "Lost_commit_confirmation_queries_original_bytes_without_a_new_write_grant; Lost_entire_response_recovers_by_original_key_only_and_cannot_ack_a_delivery",
+      "review": "Real COMMIT followed by application-level discarded confirmation; exact receipt or original Owner-key read with current read rights, no new-write requirement. No actual network-outage injection."
+    },
+    {
+      "scenario": "Actual PG xmin and shared contexts",
+      "source": "InboxModelV1.cs:102-124",
+      "tests": "Real_xmin_token_rejects_stale_checkpoint_update; Two_contexts_can_participate_only_when_the_actual_connection_and_transaction_are_shared",
+      "review": "Generated uint xmin changes and stale update rejected; two contexts accepted only using same native connection/transaction."
+    },
+    {
+      "scenario": "Legacy compatibility and retention separation",
+      "source": "Cp6MessageRetentionService.cs:17-47; InboxModelV1.cs:102-124",
+      "tests": "Static full-diff and legacy-read audit",
+      "review": "All legacy/shared files byte-identical to base; old retention selects Cp6* types, never new InboxV1 tables. No production migration/retention execution claim."
+    }
+  ],
+  "resources": [
+    {
+      "owner": "e8b467c96024233c0cf94af6e3654fd2",
+      "scope": "all main PostgreSQL scenario runs",
+      "owned_server_stopped": true,
+      "cleanup": "smart stop after exact identity and zero-other-client-session checks; no recursive deletion",
+      "evidence": [
+        {
+          "path": "e8b467c96024233c0cf94af6e3654fd2-ownership.json",
+          "bytes": 503,
+          "sha256": "333abf15497e82704d9065a899117273e59549411280f1a94b9e115e70ce2085"
+        },
+        {
+          "path": "e8b467c96024233c0cf94af6e3654fd2-stopped.json",
+          "bytes": 306,
+          "sha256": "b6bba2bae33e0fdebea577551e3ca0e17c02d951b9b685e136fc6b90ec8ff566"
+        },
+        {
+          "path": "e8b467c96024233c0cf94af6e3654fd2-server.log",
+          "bytes": 7215,
+          "sha256": "aa960835c12871e12e987fae4e62184ce010457518f49296b6eef0c051d31e3f"
+        },
+        {
+          "path": "e8b467c96024233c0cf94af6e3654fd2-init.log",
+          "bytes": 966,
+          "sha256": "f205806602bf30e96ab821c5458414b06fa4d2dd84bfe47f2e6b8bf102d7579d"
+        },
+        {
+          "path": "e8b467c96024233c0cf94af6e3654fd2-start.stdout.log",
+          "bytes": 54,
+          "sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818"
+        },
+        {
+          "path": "e8b467c96024233c0cf94af6e3654fd2-start.stderr.log",
+          "bytes": 72,
+          "sha256": "aea019a160b266dc59e5772b3a4f0b6cf5e1fb91b2f00d59a64c9c9a02dd9a41"
+        }
+      ],
+      "review_hash_native_identity_and_smart_stop_verified": true
+    },
+    {
+      "owner": "96a5576f1545a120a8e9c07ad86cc42a",
+      "scope": "startup-pipe diagnosis and owned resume/stop; no business test run",
+      "owned_server_stopped": true,
+      "cleanup": "smart stop after exact identity and zero-other-client-session checks; no recursive deletion",
+      "evidence": [
+        {
+          "path": "96a5576f1545a120a8e9c07ad86cc42a-ownership.json",
+          "bytes": 503,
+          "sha256": "b19410d21d1b195c4d3e3667737a3740af94ad5bb2bf068ded0871312689e51d"
+        },
+        {
+          "path": "96a5576f1545a120a8e9c07ad86cc42a-stopped.json",
+          "bytes": 306,
+          "sha256": "7dcd758cbf5f2e05f21999575293359b0d7772f25a7d9a5673c83edd31cdd183"
+        },
+        {
+          "path": "96a5576f1545a120a8e9c07ad86cc42a-server.log",
+          "bytes": 1139,
+          "sha256": "ef9102adb48fc18992108d20a48d9b2b06085b1fcfea1e7751902423663b4507"
+        },
+        {
+          "path": "96a5576f1545a120a8e9c07ad86cc42a-init.log",
+          "bytes": 966,
+          "sha256": "bf20e8fc140ac08b589c087c3c51f71216f72bd35b0823334f9a63745994d477"
+        },
+        {
+          "path": "96a5576f1545a120a8e9c07ad86cc42a-start.stdout.log",
+          "bytes": 54,
+          "sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818"
+        },
+        {
+          "path": "96a5576f1545a120a8e9c07ad86cc42a-start.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "review_hash_native_identity_and_smart_stop_verified": true
+    },
+    {
+      "owner": "7b2e37eff86b2d6c6400dd000951d3e5",
+      "scope": "corrected helper fresh create + two real PostgreSQL smoke cases + smart stop",
+      "owned_server_stopped": true,
+      "cleanup": "smart stop after exact identity and zero-other-client-session checks; no recursive deletion",
+      "evidence": [
+        {
+          "path": "7b2e37eff86b2d6c6400dd000951d3e5-ownership.json",
+          "bytes": 503,
+          "sha256": "c558b25628fbf2f3d6a4356ea25b36d50c67b67bfbec18610b729ea3deb32e73"
+        },
+        {
+          "path": "7b2e37eff86b2d6c6400dd000951d3e5-stopped.json",
+          "bytes": 306,
+          "sha256": "40ce3061529c19225922f62f5a5dacc6b5d84da5f32d0a64d9402eaee628db72"
+        },
+        {
+          "path": "7b2e37eff86b2d6c6400dd000951d3e5-server.log",
+          "bytes": 1139,
+          "sha256": "83766a22c5658b07eb6e912d7136c11c63dbd58a248ba8f2dec7c4ddff097b84"
+        },
+        {
+          "path": "7b2e37eff86b2d6c6400dd000951d3e5-init.log",
+          "bytes": 966,
+          "sha256": "a786cdd6d01b70c9c3086b08bbaa5d4455eb5f57296d772f04dc6f2fa449e54b"
+        },
+        {
+          "path": "7b2e37eff86b2d6c6400dd000951d3e5-start.stdout.log",
+          "bytes": 54,
+          "sha256": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818"
+        },
+        {
+          "path": "7b2e37eff86b2d6c6400dd000951d3e5-start.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "7b2e37eff86b2d6c6400dd000951d3e5-launcher.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "review_hash_native_identity_and_smart_stop_verified": true
+    }
+  ],
+  "port_probe": {
+    "port": 55427,
+    "listener_count": 0,
+    "utc": "2026-10-13T13:35:00.6490509Z",
+    "method": "Get-NetTCPConnection -State Listen -LocalPort 55427; no connection to database"
+  },
+  "workflow_audit": {
+    "source_head": "9bc656acdb67d844218f6788937284b897da45d7",
+    "protected_main": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+    "all_8_candidate_and_base_workflow_bytes_equal": true,
+    "automatic_event": "Only RFC3161 narrow pull_request filter; both paths absent from task diff",
+    "fresh_remote_query_by_reviewer": false
+  },
+  "held_boundaries": [
+    "Main/CRM real Owner adoption, authentic contract/catalogue+registration implementation, final IAM/fence and complete receive/reconciliation/publish/revocation writer coverage remain UNPROVEN/NOT_RUN.",
+    "The concrete profile supports Owner-delegated seven transaction-scoped advisory locks with no prior advisory locks. Existing row-lock/pre-held registration protocols require separately reviewed support and must not be enabled by this result.",
+    "Fixture Owner, authentication, registration catalogue, journal/projection/Published model and simple authorization booleans are synthetic infrastructure; real PostgreSQL atomicity is proven only for that fixture and new technical tables.",
+    "Reconciliation authority selection/CAS, ERP CommandInbox adoption, full write-set audit/Outbox/requeue/lease/retention/hold/cutover, raw replay retention and current field/PII policy stay with original Owners/follow-up tasks.",
+    "Commit-confirmation loss is explicit application fault injection after actual COMMIT, not an actual network fault. No full original business AC is PASS.",
+    "No package publication, remote Actions execution, migration of an existing database, deployment, production enablement or remote-main integration is performed or certified by this review.",
+    "Current remote-main freshness, Handoff raw remote equality and active GitHub run attribution were not re-queried by this read-only subreview; COORD must retain its own exact integration/publication evidence."
+  ],
+  "review_actions": {
+    "product_edits": 0,
+    "test_executions": 0,
+    "database_operations": 0,
+    "git_mutations": 0,
+    "network_writes": 0,
+    "actions_runs": 0,
+    "packages": 0,
+    "deployments": 0,
+    "files_written": [
+      "WP02-07-review.md",
+      "WP02-07-review.json",
+      "WP02-07-pdb-audit.json"
+    ]
+  },
+  "review_verdict": "ACCEPT"
+}

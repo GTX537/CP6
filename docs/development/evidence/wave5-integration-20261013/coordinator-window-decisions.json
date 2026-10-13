@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-13T13:40:15.905809+00:00",
+  "authority": "User authorized continuing integration; Main AGENTS and wave5 COORD ownership authorize routine required defect fixes and concrete shared-file windows. No new production, package publishing or Actions permission inferred.",
+  "decisions": [
+    {
+      "task": "WP02-27",
+      "original_candidate": "0057261a9b3506484afcc981f513381b9268da81",
+      "shared_file": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "allowed_change": "Only two exact packed-asset expected arrays: add contracts/release/capabilities/v1 beside preserved contracts/release/v1. No removed dependency/boundary assertions, broadened exclusions, skips or gate suppression.",
+      "reason": "Accepted task adds separate capability contract assets; old exact enumeration cannot describe these additive assets. Independent source review confirms intended ownership unchanged. Required gate must pass after explicit update.",
+      "additional_fix": "Correct packagedSchemaPath schema/API one-character path disagreement; RED/GREEN regression and new local package-byte proof. Old original signed package verification reused only with unchanged inputs.",
+      "completion_branch": "codex/wp02-27-coord-fix-20261013"
+    },
+    {
+      "task": "WP02-11",
+      "original_candidate": "0f7c69f13a26b36895cd40aca3fc17299e866b70",
+      "allowed_change": "Only HttpV2 source/tests and task-owned evidence in the original window.",
+      "reason": "Independent review found non-retryable received statuses lost on failed body reads and authority adapter exceptions losing typed operation outcome. Fix exact cases, preserve cancellation and original-key recovery.",
+      "completion_branch": "codex/wp02-11-coord-fix-20261013"
+    }
+  ],
+  "constraints": [
+    "Preserve original candidates and failures",
+    "Actual APIs and accepted inputs/permissions remain intact",
+    "No workflow/protection edits or Actions",
+    "No database/service restart, migration, formal publication or deployment",
+    "Independent affected-change review and exact remote-main verification before DONE"
+  ]
+}

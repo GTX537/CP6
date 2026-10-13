@@ -1,0 +1,480 @@
+{
+  "result": "PASS",
+  "task": "WP02-11",
+  "repository": "GTX537/CP6.Platform",
+  "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+  "baseline": "817a2926b0799f70cc87f384967e0883c1943ec5",
+  "remote_main_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "pr_url": "https://github.com/GTX537/CP6.Platform/pull/65",
+  "merged_at": "2026-10-13T14:09:14Z",
+  "candidate_files_match": [
+    {
+      "path": "docs/WP02-11-HTTP-V2.md",
+      "blob": "8330b696eba5b81c3f585934a90a1c1d90ba305e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/.gitattributes",
+      "blob": "5f8f1e585f1f15eaa74861b22b67c12e5c4d7473"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/AC-SCOPE.md",
+      "blob": "048705dbd819f31f66cff5ed90da1bfc3aacfe2c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/COORD-FIXES.md",
+      "blob": "0f7330cd6a0af8b5beeb838508083a1217c49517"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/DELIVERY.md",
+      "blob": "6b4762ac17d4b665c0a79cc491866096ee159885"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/ISSUE-62.md",
+      "blob": "bab2043639478793e0f585f841e1a08bcb331ff7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/ISSUE-63.md",
+      "blob": "95af6263b793f16251eacb55bb3bf4c220263984"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/PLAN.md",
+      "blob": "88c75d2a17bd8ce1e742adec9d4743bb6932e105"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/REVIEW.md",
+      "blob": "e3599fde8106e95283628e5edaf6b9583cb72e06"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/ac-scope.json",
+      "blob": "511b6e95b66a887ecb822cafbb772f6f6b70c041"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/audit_workflows.py",
+      "blob": "c9048545b2c5ccf050c6150da0477c4e61324612"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/coord-final-evidence-check.json",
+      "blob": "af9570fcd8f85d71b31d27481fea36ba4239251c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/current-evidence-check.json",
+      "blob": "b2c00df5b514cc98b8d4740b4e5fb34066c7e7e4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/final-scope.json",
+      "blob": "28663a30cb25da352eba615c5ffb871614e11903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/RUNS.md",
+      "blob": "610012ff881989e7169f4a706d4d8eccbc4ea754"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/after-final-fingerprints.json",
+      "blob": "6f26270fb5b68a5b24b36e47a7d2d6585ecc5a01"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/after-parent-cancellation-fix-fingerprints.json",
+      "blob": "64f0982efa2025f5d2a68ddf81e00a1444c63257"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/after-review-fixes-fingerprints.json",
+      "blob": "e4d738cc32fa1eaa1862328f4691960ca7da4fca"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/before-final-fingerprints.json",
+      "blob": "563870a154b8fa502d5ab2b8bd3b49a7c63e6210"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/before-parent-cancellation-fix-fingerprints.json",
+      "blob": "1a07c4ff5522c5fd9d946715b937ca4a09be5b6d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/before-parent-cancellation-green-fingerprints.json",
+      "blob": "23db4048439082033f271586658b8e557d450c50"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/before-review-fixes-fingerprints.json",
+      "blob": "3217654d04e47c5816a1e945c03c073028f350e2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/capture-evidence.ps1",
+      "blob": "9c0d955a3aefb84573013265e16f86a451923cb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-final-after-fingerprints.json",
+      "blob": "11975da09cfeeeaea8b57ad4206e8ed5a2923ec9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-final-before-fingerprints.json",
+      "blob": "ed870c8dd1503f7deb0c7f2bd14a710f21f4bdc1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-final-http-v2.log",
+      "blob": "5c3d5be24ec2ae69a12176b726affcc3adec62ca"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-final-http-v2.trx",
+      "blob": "ee5c639ee9d9fd9520a8dcdcd621b038c0eddfde"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-after-green-fingerprints.json",
+      "blob": "fcf454ba672669cba7247b7423e4b6935261ff8e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-before-green-fingerprints.json",
+      "blob": "3bfa2f69e4c9939a45a9d97b612d12ee0abca0bb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-before-red-fingerprints.json",
+      "blob": "4fea441ee9bcf5f2ebe0db2864e56681a08d72fd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-green.log",
+      "blob": "66b52fd84abc7984c58b4b2ddcd50fd585fdbfd8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-green.trx",
+      "blob": "d8c9ad74390b2419398a8012d50f4724cc1da5c1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-red.log",
+      "blob": "1bd98ab06bbcd23cdf282c427524722525ea42f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue62-red.trx",
+      "blob": "a6d4e9f34b07b6e8638cd2d8d9313bd65b5b9ec4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-after-green-fingerprints.json",
+      "blob": "6c70e61e635b7ecf3b0d7940207a58ea4ed3ba71"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-before-green-fingerprints.json",
+      "blob": "6290e4bd222b6e88222fcf061d0c2496b54f42bf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-before-red-fingerprints.json",
+      "blob": "b6f7d9e328ef3174e30180a84b48e3ae3146f2ac"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-green.log",
+      "blob": "3c76f40c41159ebdcc36bae61c5998cf8c07a6f4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-green.trx",
+      "blob": "fd762b26353e6de1f14ccad11ca575b851003106"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-red.log",
+      "blob": "f171ed5e97fccccaab97342c5a2e3b788d85caaf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/coord-issue63-red.trx",
+      "blob": "cd943be9e574982aab9cffcef6ca94025a1aa4ef"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/draft-regressions.log",
+      "blob": "8182388ed410f2b35d0ed58ad743543f6714e38d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/draft-regressions.trx",
+      "blob": "b31451557a6d15bdf35d93cb01a3ea990dff732c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/final-architecture.log",
+      "blob": "141eaccb1368e74d423cad265756ee4f4b66ad32"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/final-architecture.trx",
+      "blob": "f710cdd4ea41318a9d5f77fa360b36164a9abc1a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/final-http-v2.log",
+      "blob": "75d9bee86ecbe1d819932039b7ba082df7f63360"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/final-http-v2.trx",
+      "blob": "edb3cd05c36422df3b8417aca61b9be1ac672e34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/final-legacy-http-gateway-auth.log",
+      "blob": "35e2c38188d1b88430e8346045445761e34ab6c9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/final-legacy-http-gateway-auth.trx",
+      "blob": "faa930861aea55b6c89cb65e5d898574d50d9232"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/https-fixture.log",
+      "blob": "c3eebaa98b8e59e596a3aa3a29efd93e990fb09e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/https-fixture.trx",
+      "blob": "46c36e100a6d0316ec701c10c06bd6d6ebef655e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/integrated-v2-fixed.log",
+      "blob": "85933ff085273c0d91f37e3008f4e354a817da12"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/integrated-v2-fixed.trx",
+      "blob": "ecb559803a33049aa57bad49be5966d6bd89b062"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/integrated-v2.log",
+      "blob": "ebbb331c4a06a8dcff24ed1e8e1d47b376f62b6b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/integrated-v2.trx",
+      "blob": "7144bb3a0c5eb447003f86b7cba05b5e830b8865"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/parent-cancellation-http-v2.log",
+      "blob": "d012aca4cc4aefb19fe4d6eaccf001c21f8519d5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/parent-cancellation-http-v2.trx",
+      "blob": "74e5a50d5ec0374924c81513652294e30eeb27f5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/parent-cancellation-red.log",
+      "blob": "5a92d6345b3e7ca8494cbf6ce9fee07555ee68ca"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/parent-cancellation-red.trx",
+      "blob": "3e499aad31d6b2fc978f7d9576e9a5248cd9bb18"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/parser-green.log",
+      "blob": "d384e686d7322b5d5d4810f8f716854873be8d8d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/parser-green.trx",
+      "blob": "e57b637d8ea2e9f843e4614e16f2384fbbaec096"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/protocol-parser-red.log",
+      "blob": "84153bb3ffcceace821ba51a94718cff508879a8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/protocol-parser-red.trx",
+      "blob": "42fce985eba1cda38e6c4990723544adb59d5c9b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/protocol-parser-regressions.log",
+      "blob": "8764e18a399a17842806314c0a5c9acb9ef36180"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/red-parser.log",
+      "blob": "ae8c9e847a73ba0cd19d34fb39502bef322effa2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/red-parser.trx",
+      "blob": "ebbb1b38be4f6c7b369fa56d7f300cb816172e3e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/review-fixes-http-v2.log",
+      "blob": "d773097fe4a993997ff14bd5608ffc1fea6d963f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/review-fixes-http-v2.trx",
+      "blob": "e4ad15cb3717bbec843a707d76b155d1e2d7bc2b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/review-fixes-red.log",
+      "blob": "63092c02f963a25d80210c01f61d46f94108913c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/review-fixes-red.trx",
+      "blob": "45cc5726bcf8f70c8170746efde45067e1bf5670"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/sdk.txt",
+      "blob": "640cfc57a247e548d3727f03b96957580da5c255"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/transport-boundary-green.log",
+      "blob": "9a2fe8cdb300e9a299211c28f75b5351838fa1f3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/transport-boundary-green.trx",
+      "blob": "2c66d4e2c45cf5d4309c8253bf48dabf3911cca5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/transport-boundary-red.log",
+      "blob": "7aac4b601dee8178f63cec8f648074cded051aff"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/implementation/transport-boundary-red.trx",
+      "blob": "b8766768ec57ad0f238eeb43d3905edc09f35198"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/independent-evidence-check.json",
+      "blob": "83124b19f3c7a52c42ec696d62688efa1c295690"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/inputs/ADMISSION.md",
+      "blob": "4401ba117fd552e2c07050f3a324299e757a24f4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/inputs/PLT-HTTP-01-v0.2.md",
+      "blob": "1a34ca60a5504ada91cad0a9c8f81958861fa949"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/inputs/S6-INT-ID-OPS-v0.2.md",
+      "blob": "999ef099042d157c91a21cf3b896066aa747383e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/inputs/TASK.md",
+      "blob": "a04723a622f2fb62ac35750824fc6b55254f0eaa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/inputs/foundation.json",
+      "blob": "e0da267b79bf24cea6df4a6abd2d1e5c2cd068d4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/intake-audit-shape-failure.md",
+      "blob": "b409be1b0aab020cb33a0bb701844aa7a23f7d67"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/intake-scope.json",
+      "blob": "55c8e6778c8debf007eeaa294ea8f6a32bd8c39f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/intake-workflows.json",
+      "blob": "00d23b332366f48caae2cc41422e83904c514df2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/legacy-baseline.json",
+      "blob": "72cdef3f5b65b71e1eb620147bf7aa8058e99368"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/map_acceptance.py",
+      "blob": "79abb1ae7c6a15defb6bec293328046dab67b5a0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/precommit-workflows.json",
+      "blob": "ce523edfa9976bd10192f5a9c263bacd567114ea"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/review-fix-evidence-check.json",
+      "blob": "762b2ab2d7ded9a517dc2655dc82702178972475"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/sources.json",
+      "blob": "6ce2d89ea1d099e9fb067191efb82c6b8d50645c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/staged-check.json",
+      "blob": "6a9ca051cf02ad2b9198569597553c1bc5f89dc7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/verify_execution_evidence.py",
+      "blob": "5ac622be4cb998b9457b526046dd76ee0f1aba1d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-11/verify_scope.py",
+      "blob": "780b0f791e3fe6d51a10fc0e9e4cdc90b07743ba"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+      "blob": "917652346ac660570b91eb0f1863f08d017ccdc5"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpDeadline.cs",
+      "blob": "6a8a1a1ac686f7732ebe7e9ff84d8ca0da16db63"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpOperationBinding.cs",
+      "blob": "3dc528354db7c82a3fd1890c62bcec79f14627c6"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Handler.cs",
+      "blob": "4878e18b56c99c0f38b682dce94a5775c9769aa2"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Outcome.cs",
+      "blob": "5931b71d88940f302ba9213b2ab034f2ca43323c"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Profile.cs",
+      "blob": "1ba369e617eea179f85c8933ddc96ea81ad06563"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Registration.cs",
+      "blob": "b61d17e23aee15ca6e896e3be397e8a7ea488315"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6RetryAfter.cs",
+      "blob": "49d2809f218f536bc4e6594648ddb68961fcbc8a"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6RetryDecision.cs",
+      "blob": "4cd9306cca0cce596fd4a3a14249e746a16d86bf"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6SafeProblemPolicy.cs",
+      "blob": "33e3e0d14009b2d3ca9cd8d7518ee48c4d12f2b6"
+    },
+    {
+      "path": "src/CP6.Platform.AspNetCore/HttpV2/Cp6SafeProblemWriter.cs",
+      "blob": "8992ec45cc160b71ee3561522c2e354d488aa691"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/AuthorityFaultRegressionTests.cs",
+      "blob": "8418bc538c8446abcb97e5736c33fe9c5482c8fa"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/DeadlineDecisionTests.cs",
+      "blob": "a6240435781cdd14905d4950b65364982de80cf9"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/HandlerTests.cs",
+      "blob": "3967c7210713432e158394ccafd413fee4cc1d83"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/LoopbackTests.cs",
+      "blob": "27774a85b89b7be87d9df622ff78e2228d48f487"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/OwnerProtocolFixtureTests.cs",
+      "blob": "484be39e7e2a36ae8f38c52240fb24f2533be3c9"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/ProfileRegistrationTests.cs",
+      "blob": "25be89e2a8091639f7942cac7e5712f66ea0a860"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/RecoveryBudgetTests.cs",
+      "blob": "8d81c21c36a701cdc2fd0ac102b01edef3232627"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/RejectedBodyRegressionTests.cs",
+      "blob": "796377b2e681f8c0544b8e362d93e0eafa5eb300"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/RetryAfterTests.cs",
+      "blob": "9645d069302f782b8c8763cde79f51c77ff8fa7e"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/ReviewRegressionsTests.cs",
+      "blob": "2bf312dcac6a863cc9f56655328e9c8d52fbdde5"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/SafeProblemTests.cs",
+      "blob": "783a45adfeb5bad09df087900dd3a318c4c7ea40"
+    },
+    {
+      "path": "tests/CP6.Platform.AspNetCoreTests/HttpV2/TestClock.cs",
+      "blob": "902d1f332cf7d6224356140c9610e98494dd0148"
+    }
+  ],
+  "observed_at": "2026-10-13T14:09:17.571008+00:00",
+  "clock_basis": "merged_at GitHub server time; observed_at host UTC after checks; clocks may differ",
+  "validation": "Exact-input original local results reused; bounded new validation separately recorded.",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN",
+  "original_candidate_sha": "0f7c69f13a26b36895cd40aca3fc17299e866b70"
+}

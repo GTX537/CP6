@@ -1,0 +1,2833 @@
+{
+  "task": "WP02-27",
+  "review_verdict": "ACCEPT",
+  "source_sha": "c105036f166928b7c165f182f99f3147ffbb0d58",
+  "original_candidate_sha": "0057261a9b3506484afcc981f513381b9268da81",
+  "fix_source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+  "reviewed_utc": "2026-10-13T13:57:57.305272+00:00",
+  "scope": "Independent targeted correction review; previous full review remains unchanged",
+  "blocking_findings": [],
+  "resolved": [
+    "P2 schema rejects legal one-character archive path",
+    "Two mandatory Architecture asset-array failures"
+  ],
+  "worktree": "D:\\CP6.Platform-worktrees\\wp02-27-20261013",
+  "worktree_clean": true,
+  "delta_paths": [
+    "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+    "docs/development/evidence/WP02-27/COORD-FIX.md",
+    "docs/development/evidence/WP02-27/COORD-artifact-inventory.json",
+    "docs/development/evidence/WP02-27/DELIVERY.md",
+    "docs/development/evidence/WP02-27/REVIEW.md",
+    "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture.trx",
+    "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release.trx",
+    "docs/development/evidence/WP02-27/runs/coord-schema-architecture-green/run.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Abstractions-pack.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Abstractions-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/AspNetCore-pack.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/AspNetCore-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Contracts-pack.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Contracts-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Deployment-pack.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Deployment-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/EntityFramework-pack.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/EntityFramework-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Messaging-pack.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Messaging-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Release-pack.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/Release-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/approval-provenance.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/archive-inspection.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/archive-paths.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1.bin",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb.bin",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa.bin",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/matrix.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/state.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspector-build.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/local-inspection.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/run.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/run.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path.trx",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red/run.json",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path-restore.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path.log",
+    "docs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path.trx",
+    "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+    "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs"
+  ],
+  "delta_statuses": [
+    "M\tcontracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+    "A\tdocs/development/evidence/WP02-27/COORD-FIX.md",
+    "A\tdocs/development/evidence/WP02-27/COORD-artifact-inventory.json",
+    "M\tdocs/development/evidence/WP02-27/DELIVERY.md",
+    "M\tdocs/development/evidence/WP02-27/REVIEW.md",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-architecture-green/architecture.trx",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-architecture-green/release.trx",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-architecture-green/run.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Abstractions-pack.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Abstractions-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/AspNetCore-pack.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/AspNetCore-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Contracts-pack.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Contracts-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Deployment-pack.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Deployment-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/EntityFramework-pack.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/EntityFramework-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Messaging-pack.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Messaging-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Release-pack.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/Release-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/approval-provenance.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/archive-inspection.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/archive-paths.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1.bin",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb.bin",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/evidence/e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa.bin",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/matrix.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/state.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspector-build.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/local-inspection.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-local-pack/run.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/run.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red-isolated/schema-path.trx",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red/run.json",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path-restore.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path.log",
+    "A\tdocs/development/evidence/WP02-27/runs/coord-schema-path-red/schema-path.trx",
+    "M\ttests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+    "M\ttests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs"
+  ],
+  "source_hashes": [
+    {
+      "path": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "git_blob": "6eeb4ac489924716af7078114490162b0fcbb0e8",
+      "git_bytes_sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+      "working_bytes_sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1"
+    },
+    {
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "git_blob": "71ca27cac7d021cd13990bf6e68abe37209dd49d",
+      "git_bytes_sha256": "2d3102c1604e8abb5e02ef20b1dc0a7fae3a93cd107934025329e18a015cddc6",
+      "working_bytes_sha256": "732986fe1270e4909a22fb8cab04710f6ff157b847337b983b642e4d3365176f"
+    },
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
+      "git_blob": "4b2bbde08d0584014fb2910b6574e603ac4c7902",
+      "git_bytes_sha256": "3beba66b14b044ee082c364d827931d75b321ff296775715eb932fbdf733bd34",
+      "working_bytes_sha256": "1863f669617e75313fb732eec8688eda015663fa03df30ac7b6aa6c3572515cb"
+    }
+  ],
+  "source_after_freeze_diff_empty": true,
+  "regex_fix": "Only .+[^/]$ -> .*[^/]$; all other lookaheads unchanged",
+  "architecture_fix": "Only 2 arrays add authorized capabilities/v1 Include/PackagePath alongside existing release/v1; all other assertions retained",
+  "runs": [
+    {
+      "run": "coord-schema-path-red",
+      "run_sha256": "f997a6784901a90a3bcdb24c03b4430a34adebc5655a274b35cb92baa6c4c357",
+      "source_head": "0057261a9b3506484afcc981f513381b9268da81",
+      "started_utc": "2026-10-13T13:39:56.259561+00:00",
+      "finished_utc": "2026-10-13T13:40:06.995627+00:00",
+      "snapshot_count": 262,
+      "source_before_after_equal": true,
+      "current_source_differences": [
+        "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+        "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+        "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs"
+      ],
+      "commands": [
+        {
+          "name": "schema-path-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.83,
+          "log": "schema-path-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "schema-path",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "test",
+            "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "--logger",
+            "trx;LogFileName=schema-path.trx",
+            "--results-directory",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-path-red",
+            "--filter",
+            "FullyQualifiedName~Packaged_schema_path_agrees_with_schema_and_actual_archive"
+          ],
+          "exit_code": 1,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 8.167,
+          "log": "schema-path.log",
+          "log_sha256": "e7bc12553a92aa59fb1318028146de2489cfbbd9883fa0916c3512ccfdfb5879"
+        }
+      ],
+      "tests": [
+        {
+          "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\docs\\development\\evidence\\WP02-27\\runs\\coord-schema-path-red\\schema-path.trx",
+          "sha256": "aa31667e60ede0a7f1e74c971833de7fcae6f1f1548e0b416d7163600f632f41",
+          "times": {
+            "creation": "2026-10-13T09:40:06.8564005-04:00",
+            "queuing": "2026-10-13T09:40:06.8564014-04:00",
+            "start": "2026-10-13T09:40:05.3510013-04:00",
+            "finish": "2026-10-13T09:40:06.9013565-04:00"
+          },
+          "counters": {
+            "total": "14",
+            "executed": "14",
+            "passed": "0",
+            "failed": "14",
+            "error": "0",
+            "timeout": "0",
+            "aborted": "0",
+            "inconclusive": "0",
+            "passedButRunAborted": "0",
+            "notRunnable": "0",
+            "notExecuted": "0",
+            "disconnected": "0",
+            "warning": "0",
+            "completed": "0",
+            "inProgress": "0",
+            "pending": "0"
+          },
+          "results": [
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"..\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"xy\", valid: True)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"contracts/test.schema.json\", valid: True)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x//y\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x\\\\y\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \".\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"/\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x\", valid: True)",
+              "outcome": "Failed",
+              "error": "Assert.Equal() Failure: Values differ\r\nExpected: True\r\nActual:   False"
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/../y\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"./x\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"/x\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/./y\", valid: False)",
+              "outcome": "Failed",
+              "error": "Json.Schema.JsonSchemaException : Overwriting registered schemas is not permitted."
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "artifacts/wp02-27/coord-schema-path-red/schema-path-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-path-red/schema-path.log": "e7bc12553a92aa59fb1318028146de2489cfbbd9883fa0916c3512ccfdfb5879",
+        "artifacts/wp02-27/coord-schema-path-red/schema-path.trx": "aa31667e60ede0a7f1e74c971833de7fcae6f1f1548e0b416d7163600f632f41"
+      }
+    },
+    {
+      "run": "coord-schema-path-red-isolated",
+      "run_sha256": "22b44c1762812633499485a1672b1ef1919af92a50c4647f8a3cf2cb4b7ab34c",
+      "source_head": "0057261a9b3506484afcc981f513381b9268da81",
+      "started_utc": "2026-10-13T13:40:39.345670+00:00",
+      "finished_utc": "2026-10-13T13:40:45.897395+00:00",
+      "snapshot_count": 262,
+      "source_before_after_equal": true,
+      "current_source_differences": [
+        "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+        "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs"
+      ],
+      "commands": [
+        {
+          "name": "schema-path-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.089,
+          "log": "schema-path-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "schema-path",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "test",
+            "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "--logger",
+            "trx;LogFileName=schema-path.trx",
+            "--results-directory",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-path-red-isolated",
+            "--filter",
+            "FullyQualifiedName~Packaged_schema_path_agrees_with_schema_and_actual_archive"
+          ],
+          "exit_code": 1,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 5.101,
+          "log": "schema-path.log",
+          "log_sha256": "a628a93931edf62d3cd6d3e094cee752e1a3b8d61a52087cbd1fd3ed9cfec201"
+        }
+      ],
+      "tests": [
+        {
+          "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\docs\\development\\evidence\\WP02-27\\runs\\coord-schema-path-red-isolated\\schema-path.trx",
+          "sha256": "8a8603c346ba8badc2000261e25f0c1eece453a97fdd4273c8988d4c4fbd8481",
+          "times": {
+            "creation": "2026-10-13T09:40:45.5727221-04:00",
+            "queuing": "2026-10-13T09:40:45.5727225-04:00",
+            "start": "2026-10-13T09:40:44.1570029-04:00",
+            "finish": "2026-10-13T09:40:45.8191063-04:00"
+          },
+          "counters": {
+            "total": "14",
+            "executed": "14",
+            "passed": "13",
+            "failed": "1",
+            "error": "0",
+            "timeout": "0",
+            "aborted": "0",
+            "inconclusive": "0",
+            "passedButRunAborted": "0",
+            "notRunnable": "0",
+            "notExecuted": "0",
+            "disconnected": "0",
+            "warning": "0",
+            "completed": "0",
+            "inProgress": "0",
+            "pending": "0"
+          },
+          "results": [
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"/\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"xy\", valid: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"..\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/./y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"/x\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x\\\\y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"./x\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \".\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"contracts/test.schema.json\", valid: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x//y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/../y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x\", valid: True)",
+              "outcome": "Failed",
+              "error": "Assert.Equal() Failure: Values differ\r\nExpected: True\r\nActual:   False"
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "artifacts/wp02-27/coord-schema-path-red-isolated/schema-path-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-path-red-isolated/schema-path.log": "a628a93931edf62d3cd6d3e094cee752e1a3b8d61a52087cbd1fd3ed9cfec201",
+        "artifacts/wp02-27/coord-schema-path-red-isolated/schema-path.trx": "8a8603c346ba8badc2000261e25f0c1eece453a97fdd4273c8988d4c4fbd8481"
+      }
+    },
+    {
+      "run": "coord-schema-architecture-green",
+      "run_sha256": "76531e5ccbb1b47a62080b5be442b1c20d4ce28dbd60454c55890c2729332783",
+      "source_head": "0057261a9b3506484afcc981f513381b9268da81",
+      "started_utc": "2026-10-13T13:41:08.342374+00:00",
+      "finished_utc": "2026-10-13T13:41:59.046579+00:00",
+      "snapshot_count": 262,
+      "source_before_after_equal": true,
+      "current_source_differences": [],
+      "commands": [
+        {
+          "name": "release-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.249,
+          "log": "release-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "release",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "test",
+            "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "--logger",
+            "trx;LogFileName=release.trx",
+            "--results-directory",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-architecture-green",
+            "--filter",
+            "FullyQualifiedName~CapabilitiesV1|FullyQualifiedName~FormalPackagePublicationTests|FullyQualifiedName~PinnedNuGetTrustPolicyTests|FullyQualifiedName~FormalPackageVerifierTests"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 46.043,
+          "log": "release.log",
+          "log_sha256": "296d135943d054d1c2b3b701db9d32ed5e2e5e1ae008974aa1b27c2d841e9db9"
+        },
+        {
+          "name": "architecture-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.705,
+          "log": "architecture-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "architecture",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "test",
+            "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "--logger",
+            "trx;LogFileName=architecture.trx",
+            "--results-directory",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-architecture-green"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 2.301,
+          "log": "architecture.log",
+          "log_sha256": "4d781d5150c99b1c5bb7def0c15cbda64c2aaf32b3363990d0baebde370b2246"
+        }
+      ],
+      "tests": [
+        {
+          "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\docs\\development\\evidence\\WP02-27\\runs\\coord-schema-architecture-green\\architecture.trx",
+          "sha256": "97392c7b4b3821e1120c517d7ff216015ce7422ab8ddcee5e5ae0432d73902b4",
+          "times": {
+            "creation": "2026-10-13T09:41:58.7831577-04:00",
+            "queuing": "2026-10-13T09:41:58.7831578-04:00",
+            "start": "2026-10-13T09:41:58.1186234-04:00",
+            "finish": "2026-10-13T09:41:58.9695451-04:00"
+          },
+          "counters": {
+            "total": "98",
+            "executed": "98",
+            "passed": "98",
+            "failed": "0",
+            "error": "0",
+            "timeout": "0",
+            "aborted": "0",
+            "inconclusive": "0",
+            "passedButRunAborted": "0",
+            "notRunnable": "0",
+            "notExecuted": "0",
+            "disconnected": "0",
+            "warning": "0",
+            "completed": "0",
+            "inProgress": "0",
+            "pending": "0"
+          },
+          "results": [
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo_Exporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoClient\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOEndpoint\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoendpoint\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOSink\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoExporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"contemporaneousOperation\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"OpenTelemetryTempo:4317\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporaryDirectoryRemoved\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"UseTempo:4317\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporallyConsistent\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoconfig\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo_endpoint\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempoClient\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporaryDirectoryRemoved\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOExporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Temposink\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoCollector\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoexporteroptions\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo-client\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOSettings\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoendpoint\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoConfig\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoEndpoint\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P09EvidenceImplementation_SeparatesFacadeValidationAndSafetyPolicy",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoexporteroptions\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo/Exporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempobackend\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoSink\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Deployment_IsOnlyProjectPackingP09ContractsAndDeploymentAssets",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOBackend\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_Documentation_IsCompleteAndSafe",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.SourceProjects_ExactlyMatchApprovedRuntimeAndTestingSet",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Deployment_HasNoExternalInternalOrFrameworkDependencies",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo backend\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temporaryTempoDirectory\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempocollector\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo:4317\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.NuGetConfiguration_MapsPrivatePackagesWithoutCredentials",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo/Exporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOService\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo.Endpoint\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_PackageEvidenceAndProductionSafetyGuards_AreEncoded",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoexporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temposink\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.OtherSourceProjects_DoNotReferenceDeployment",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_PublicationWorkflow_AlwaysPreservesCompleteEvidence",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"contemporaryOperation\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporarilyRemoved\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo-Exporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo.Endpoint\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.SourceProjects_UseOnlyApprovedExternalDependenciesAndFrameworks",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temposervice\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoconfig\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoclient\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporaryFileRemoved\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoSettings\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporaryFileRemoved\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempoexporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TempOutput\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProjectReferences_ExactlyMatchApprovedDependencyDirection",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P08_DependencyAndPackageBoundary_IsExact",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"tempOutput\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.P10_Documentation_IsCompleteAndNonDeployable",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempocollector\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporalWindow\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"http://tempo:4317\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Contracts_HasNoExternalOrInternalDependencies",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOClient\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"TemporalWindow\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Temposettings\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TEMPO-ENDPOINT\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoExporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"temporallyConsistent\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TEMPO_ENDPOINT\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOCollector\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Tempo backend\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"OpenTelemetryTempoExporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoService\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsGrafanaAndPrometheusCaseInsensitively",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"temposettings\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempobackend\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempo backend\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOExporterOptions\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"Temposervice\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.Release_package_is_independent_and_owns_only_release_contract_assets",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempoclient\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"tempo\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TEMPO\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProjectReferences_StayInsideSourceTree_AndGraphIsAcyclic",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoBackend\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"addTempoExporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_AllowsTemporaryAndTemporalVocabulary(value: \"tempOffset\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"AddTempoExporter\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TempoExporterOptions\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ArchitectureTests.RepositoryArchitectureTests.ProductionBackendGuard_RejectsTempoTokensAndCamelIdentifiers(value: \"TeMpOConfig\")",
+              "outcome": "Passed",
+              "error": ""
+            }
+          ]
+        },
+        {
+          "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\docs\\development\\evidence\\WP02-27\\runs\\coord-schema-architecture-green\\release.trx",
+          "sha256": "933edf7fabc51f4feb0b4711a901489b4bbc43c804e294ab3ce25b723c2fa46a",
+          "times": {
+            "creation": "2026-10-13T09:41:13.1002810-04:00",
+            "queuing": "2026-10-13T09:41:13.1002814-04:00",
+            "start": "2026-10-13T09:41:12.1146305-04:00",
+            "finish": "2026-10-13T09:41:55.9464937-04:00"
+          },
+          "counters": {
+            "total": "127",
+            "executed": "127",
+            "passed": "127",
+            "failed": "0",
+            "error": "0",
+            "timeout": "0",
+            "aborted": "0",
+            "inconclusive": "0",
+            "passedButRunAborted": "0",
+            "notRunnable": "0",
+            "notExecuted": "0",
+            "disconnected": "0",
+            "warning": "0",
+            "completed": "0",
+            "inProgress": "0",
+            "pending": "0"
+          },
+          "results": [
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.3\", packageVersion: \"0.10.3\", feedVersion: \"0.10.3\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"runtimeFramework\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Exactly_one_current_signer_is_required",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"migrationSet\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Updated_manifest_hash_cannot_hide_wrong_archive_contents(mutation: \"duplicate\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Mutable_or_wrong_identity_is_rejected(field: \"sourceGitSha\", value: \"main\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Noncurrent_or_mismatched_evidence_never_reaches_crypto_boundary(mutation: \"wrong-source\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"consumerSourceGitSha\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Duplicate_malformed_and_noncanonical_bytes_are_rejected(input: \"{\\\"x\\\":1,\\\"x\\\":2}\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Noncurrent_or_mismatched_evidence_never_reaches_crypto_boundary(mutation: \"expired\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Mutable_or_wrong_identity_is_rejected(field: \"sourceGitSha\", value: \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.2\", feedVersion: \"0.10.2\\n\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Actual_archive_bytes_and_exact_package_set_are_required",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.2\", feedVersion: \"0.10.2\", expected: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Task_local_lane_cannot_be_promoted_by_an_external_success",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Canonical_policy_and_content_addressed_certificate_define_exact_trust_claims",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.0\", packageVersion: \"0.10.0\", feedVersion: \"0.10.0\", expected: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_and_Schema_reject_a_feed_identity_for_a_different_package",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.3\", packageVersion: \"0.10.3\", feedVersion: \"0.10.3\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Source_schema_and_semantic_shape_agree_for_closed_contract_mutations",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Mutable_or_wrong_identity_is_rejected(field: \"lane\", value: \"Unknown\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackageVerifierTests.Cli_validates_pinned_cosign_and_storage_trust",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"/x\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.2\", feedVersion: \"0.10.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Approval_is_external_and_matrix_source_evidence_bytes_are_immutable",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Certificate_resolver_bytes_cannot_substitute_another_key",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Host_boundary_receives_current_policy_exact_bytes_and_evaluation_time",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Lock_matches_its_closed_schema_and_does_not_encode_a_trust_grant",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Mixed_packages_hash_aliases_wrong_feed_and_unknown_capabilities_fail_closed",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Fixed_trust_claim_mutations_are_rejected(property: \"internallyTrusted\", value: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_rejects_package_identity_source_order_and_byte_mutations_with_exact_codes",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"00.10.2\", packageVersion: \"00.10.2\", feedVersion: \"00.10.2\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Conflicting_decisions_for_one_exact_consumer_identity_are_rejected",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\\n\", packageVersion: \"0.10.2\\n\", feedVersion: \"0.10.2\\n\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Certificate_filename_hash_and_der_must_be_one_identity",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.1\", feedVersion: \"0.10.2\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"xy\", valid: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"route\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.2\", feedVersion: \"0.10.2\\n\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"os\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2+build.1\", packageVersion: \"0.10.2+build.1\", feedVersion: \"0.10.2+build.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Changed_publication_metadata_cannot_reuse_an_approved_matrix(mutation: \"workflow-run\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.1\", feedVersion: \"0.10.1\", expected: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Lock_is_deterministic_binds_exact_bytes_and_is_defensively_owned",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Changed_publication_metadata_cannot_reuse_an_approved_matrix(mutation: \"created-at\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.0\", packageVersion: \"0.10.0\", feedVersion: \"0.10.0\", expected: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.0\", packageVersion: \"0.10.0\", feedVersion: \"0.10.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Mutable_or_wrong_identity_is_rejected(field: \"repository\", value: \"https://github.com/other/repo\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_rejects_feed_trust_timestamp_gate_and_invocation_mutations_with_exact_codes",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Updated_manifest_hash_cannot_hide_wrong_archive_contents(mutation: \"nuspec\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"contracts/test.schema.json\", valid: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2-preview.1\", packageVersion: \"0.10.2-preview.1\", feedVersion: \"0.10.2-preview.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unknown_schema_set_is_not_inferred_from_major_version",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Local_bytes_and_shape_do_not_grant_trust_or_adoption",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.0\", feedVersion: \"0.10.0\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"./x\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.2\", feedVersion: \"0.10.2\", expected: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"databaseProvider\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"consumerApp\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Fixed_trust_claim_mutations_are_rejected(property: \"timestampPolicy\", value: \"TestOnlyNone\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Hash_and_source_identifiers_do_not_accept_terminal_newline",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackageVerifierTests.Cli_validates_pinned_trust_without_accepting_the_S02_identity",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Old_formal_package_cannot_claim_later_source_capabilities",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Fixed_trust_claim_mutations_are_rejected(property: \"trustModel\", value: \"PublicCa\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2-preview.1\", packageVersion: \"0.10.2-preview.1\", feedVersion: \"0.10.2-preview.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x\\\\y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Noncurrent_or_mismatched_evidence_never_reaches_crypto_boundary(mutation: \"Revoked\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"00.10.2\", packageVersion: \"00.10.2\", feedVersion: \"00.10.2\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Noncurrent_or_mismatched_evidence_never_reaches_crypto_boundary(mutation: \"unknown\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackageVerifierTests.Downloader_streams_to_a_new_file_and_never_overwrites_existing_bytes",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Formal_shape_and_success_claims_do_not_grant_crypto_trust",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"sdk\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Source_and_packaged_schema_must_preserve_original_bytes",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \".\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x\", valid: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.0\", packageVersion: \"0.10.1\", feedVersion: \"0.10.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.2\", feedVersion: \"0.10.2\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"databaseDriver\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.1\", feedVersion: \"0.10.0\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Package_set_must_be_the_exact_ordinal_seven",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Duplicate_malformed_and_noncanonical_bytes_are_rejected(input: \"{} \")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"..\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_trust_claims_must_bind_the_supplied_policy",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/./y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"messageType\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"semanticValidatorIdentity\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.1\", feedVersion: \"0.10.1\", expected: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2+build.1\", packageVersion: \"0.10.2+build.1\", feedVersion: \"0.10.2+build.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Fixed_trust_claim_mutations_are_rejected(property: \"publicCaTrusted\", value: True)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Noncurrent_or_mismatched_evidence_never_reaches_crypto_boundary(mutation: \"wrong-package\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Fixed_trust_claim_mutations_are_rejected(property: \"timestampService\", value: \"https://example.invalid\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Platform_candidates_accept_byte_preserving_only_for_equal_RFC3161_records",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Noncurrent_or_mismatched_evidence_never_reaches_crypto_boundary(mutation: \"Historical\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"architecture\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Valid_publication_returns_the_exact_seven_packages_and_subject_hashes",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.2\", feedVersion: \"0.10.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.1\", feedVersion: \"0.10.0\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Future_publication_does_not_establish_current_trust",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Duplicate_malformed_and_noncanonical_bytes_are_rejected(input: \"{\\\"x\\\":1,\\\"\\\\u0078\\\":2}\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"registrationPointRef\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.0\", packageVersion: \"0.10.0\", feedVersion: \"0.10.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\", packageVersion: \"0.10.1\", feedVersion: \"0.10.2\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Task_local_version_must_bind_full_source_and_unique_attempt",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x/../y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"sourceSchemaSha256\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Formal_publication_must_be_present_in_approved_evidence",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"host\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Build_provenance_accepts_the_S04_invocation_lane",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Duplicate_malformed_and_noncanonical_bytes_are_rejected(input: \"{\\\"x\\\":NaN}\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"/\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackageVerifierTests.Formal_verifier_accepts_one_real_RFC3161_timestamp_and_rejects_identity_and_integrity_mutations",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Changed_publication_metadata_cannot_reuse_an_approved_matrix(mutation: \"workflow-file\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityTrustTests.Noncurrent_or_mismatched_evidence_never_reaches_crypto_boundary(mutation: \"stale-policy\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.PinnedNuGetTrustPolicyTests.Noncanonical_policy_bytes_fail_before_certificate_resolution",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Mutable_or_wrong_identity_is_rejected(field: \"version\", value: \"latest\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.2\", feedVersion: \"0.10.2\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"configurationSha256\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_Schema_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.0\", packageVersion: \"0.10.1\", feedVersion: \"0.10.1\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackageVerifierTests.Formal_verifier_source_freezes_strict_timestamp_and_download_rules",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.2\\n\", packageVersion: \"0.10.2\\n\", feedVersion: \"0.10.2\\n\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Updated_manifest_hash_cannot_hide_wrong_archive_contents(mutation: \"schema\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.FormalPackagePublicationTests.Publication_API_accepts_only_coherent_approved_formal_versions(rootVersion: \"0.10.1\", packageVersion: \"0.10.0\", feedVersion: \"0.10.0\", expected: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Packaged_schema_path_agrees_with_schema_and_actual_archive(path: \"x//y\", valid: False)",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Unmeasured_exact_combination_is_unknown(property: \"packagedSchemaSha256\")",
+              "outcome": "Passed",
+              "error": ""
+            },
+            {
+              "name": "CP6.Platform.ReleaseTests.CapabilitiesV1.CapabilityValidationTests.Mutable_or_wrong_identity_is_rejected(field: \"version\", value: \"0.10.2\")",
+              "outcome": "Passed",
+              "error": ""
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "artifacts/wp02-27/coord-schema-architecture-green/architecture-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-architecture-green/architecture.log": "4d781d5150c99b1c5bb7def0c15cbda64c2aaf32b3363990d0baebde370b2246",
+        "artifacts/wp02-27/coord-schema-architecture-green/architecture.trx": "97392c7b4b3821e1120c517d7ff216015ce7422ab8ddcee5e5ae0432d73902b4",
+        "artifacts/wp02-27/coord-schema-architecture-green/release-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-architecture-green/release.log": "296d135943d054d1c2b3b701db9d32ed5e2e5e1ae008974aa1b27c2d841e9db9",
+        "artifacts/wp02-27/coord-schema-architecture-green/release.trx": "933edf7fabc51f4feb0b4711a901489b4bbc43c804e294ab3ce25b723c2fa46a"
+      }
+    },
+    {
+      "run": "coord-schema-local-pack",
+      "run_sha256": "15d4b7d2714fd3388cf46f91ae38e5a6d00e808d6326d79d599c490a69f391d2",
+      "source_head": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "started_utc": "2026-10-13T13:42:49.923984+00:00",
+      "finished_utc": "2026-10-13T13:43:11.578487+00:00",
+      "snapshot_count": 262,
+      "source_before_after_equal": true,
+      "current_source_differences": [],
+      "commands": [
+        {
+          "name": "Abstractions-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "src/CP6.Platform.Abstractions/CP6.Platform.Abstractions.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.801,
+          "log": "Abstractions-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "Abstractions-pack",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "pack",
+            "src/CP6.Platform.Abstractions/CP6.Platform.Abstractions.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "-p:PackageVersion=0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "-p:RepositoryCommit=7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "-p:ContinuousIntegrationBuild=true",
+            "-p:IncludeSymbols=false",
+            "--output",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.835,
+          "log": "Abstractions-pack.log",
+          "log_sha256": "054fbc8cd59cbbcb90e83f417debe2cd49c854f90a9e4eb0dcc1e430341e6278"
+        },
+        {
+          "name": "AspNetCore-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.994,
+          "log": "AspNetCore-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "AspNetCore-pack",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "pack",
+            "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "-p:PackageVersion=0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "-p:RepositoryCommit=7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "-p:ContinuousIntegrationBuild=true",
+            "-p:IncludeSymbols=false",
+            "--output",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 2.314,
+          "log": "AspNetCore-pack.log",
+          "log_sha256": "04970e74c8dbc1726b061ca21c9f616fc242f4472ce02706bf304bede0e18cab"
+        },
+        {
+          "name": "Contracts-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.747,
+          "log": "Contracts-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "Contracts-pack",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "pack",
+            "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "-p:PackageVersion=0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "-p:RepositoryCommit=7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "-p:ContinuousIntegrationBuild=true",
+            "-p:IncludeSymbols=false",
+            "--output",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.271,
+          "log": "Contracts-pack.log",
+          "log_sha256": "3311e7c4e6f9b0a2b72d6fa36b02e58ff8c29136ba78d1db3fc3fcfcfc3faeb2"
+        },
+        {
+          "name": "Deployment-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "src/CP6.Platform.Deployment/CP6.Platform.Deployment.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.934,
+          "log": "Deployment-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "Deployment-pack",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "pack",
+            "src/CP6.Platform.Deployment/CP6.Platform.Deployment.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "-p:PackageVersion=0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "-p:RepositoryCommit=7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "-p:ContinuousIntegrationBuild=true",
+            "-p:IncludeSymbols=false",
+            "--output",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.702,
+          "log": "Deployment-pack.log",
+          "log_sha256": "5a977be2c7fcd95fb31ed67c14d2b9367fbca0eb4cb7d9bb8242b776205f2841"
+        },
+        {
+          "name": "EntityFramework-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.99,
+          "log": "EntityFramework-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "EntityFramework-pack",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "pack",
+            "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "-p:PackageVersion=0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "-p:RepositoryCommit=7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "-p:ContinuousIntegrationBuild=true",
+            "-p:IncludeSymbols=false",
+            "--output",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.696,
+          "log": "EntityFramework-pack.log",
+          "log_sha256": "a7493aa3b761d671d3c781ef59185301c834244938bc3f1dc1b79ddcf0ed0227"
+        },
+        {
+          "name": "Messaging-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.0,
+          "log": "Messaging-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "Messaging-pack",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "pack",
+            "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "-p:PackageVersion=0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "-p:RepositoryCommit=7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "-p:ContinuousIntegrationBuild=true",
+            "-p:IncludeSymbols=false",
+            "--output",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.846,
+          "log": "Messaging-pack.log",
+          "log_sha256": "965b6d3d10180478d17f7a3f80bcd3c0a785e2d47207d07e7888436dedac7916"
+        },
+        {
+          "name": "Release-restore",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+            "--locked-mode"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.841,
+          "log": "Release-restore.log",
+          "log_sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+        },
+        {
+          "name": "Release-pack",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "pack",
+            "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+            "-c",
+            "Release",
+            "--no-restore",
+            "-p:PackageVersion=0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "-p:RepositoryCommit=7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "-p:ContinuousIntegrationBuild=true",
+            "-p:IncludeSymbols=false",
+            "--output",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 1.637,
+          "log": "Release-pack.log",
+          "log_sha256": "bdef3d5a265e49255a3d4258deafe41c951754ce303368a56d8ec2aa9e042923"
+        },
+        {
+          "name": "inspector-build",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "build",
+            "eng/wp02-27/Inspector/Inspector.csproj",
+            "-c",
+            "Release",
+            "--no-restore"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 2.045,
+          "log": "inspector-build.log",
+          "log_sha256": "450fa52b393539af9d48b5adde32967c35724c69d5806a807e151c421b6e0af8"
+        },
+        {
+          "name": "local-inspection",
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\eng\\wp02-27\\Inspector\\bin\\Release\\net8.0\\Inspector.dll",
+            "local",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages",
+            "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+            "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\inspection"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "elapsed_seconds": 0.407,
+          "log": "local-inspection.log",
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "tests": [],
+      "artifacts": {
+        "artifacts/wp02-27/coord-schema-local-pack/Abstractions-pack.log": "054fbc8cd59cbbcb90e83f417debe2cd49c854f90a9e4eb0dcc1e430341e6278",
+        "artifacts/wp02-27/coord-schema-local-pack/Abstractions-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-local-pack/AspNetCore-pack.log": "04970e74c8dbc1726b061ca21c9f616fc242f4472ce02706bf304bede0e18cab",
+        "artifacts/wp02-27/coord-schema-local-pack/AspNetCore-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-local-pack/Contracts-pack.log": "3311e7c4e6f9b0a2b72d6fa36b02e58ff8c29136ba78d1db3fc3fcfcfc3faeb2",
+        "artifacts/wp02-27/coord-schema-local-pack/Contracts-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-local-pack/Deployment-pack.log": "5a977be2c7fcd95fb31ed67c14d2b9367fbca0eb4cb7d9bb8242b776205f2841",
+        "artifacts/wp02-27/coord-schema-local-pack/Deployment-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-local-pack/EntityFramework-pack.log": "a7493aa3b761d671d3c781ef59185301c834244938bc3f1dc1b79ddcf0ed0227",
+        "artifacts/wp02-27/coord-schema-local-pack/EntityFramework-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/approval-provenance.json": "93b2cb7522b8ac26f42dfe6a7229a72a73b8cb1f601389f0b7f1f87a7460f4ce",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/archive-inspection.json": "a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/archive-paths.json": "e0b1a4c3fdd3dbd13c24b5ed53e9b08b2a08b558e6fdf9b103b4d2cd110a0884",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/consumer-lock.json": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/evidence/54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1.bin": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/evidence/a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb.bin": "a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/evidence/e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa.bin": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/matrix.json": "c018745e9c7989179a3003fc7ce5fe42a1627b2ccb160dc3ddeab5fb21ef656c",
+        "artifacts/wp02-27/coord-schema-local-pack/inspection/state.json": "14f4880686c9b040c60563c48a3894b73330071f8e99d999ec653ac6a4a3fba2",
+        "artifacts/wp02-27/coord-schema-local-pack/inspector-build.log": "450fa52b393539af9d48b5adde32967c35724c69d5806a807e151c421b6e0af8",
+        "artifacts/wp02-27/coord-schema-local-pack/local-inspection.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts/wp02-27/coord-schema-local-pack/Messaging-pack.log": "965b6d3d10180478d17f7a3f80bcd3c0a785e2d47207d07e7888436dedac7916",
+        "artifacts/wp02-27/coord-schema-local-pack/Messaging-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "artifacts/wp02-27/coord-schema-local-pack/packages/CP6.Platform.Abstractions.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+        "artifacts/wp02-27/coord-schema-local-pack/packages/CP6.Platform.AspNetCore.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+        "artifacts/wp02-27/coord-schema-local-pack/packages/CP6.Platform.Contracts.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+        "artifacts/wp02-27/coord-schema-local-pack/packages/CP6.Platform.Deployment.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg": "b769ca35159456462fa6c72af68ad17797d7123405a276caaf937cc0202a338e",
+        "artifacts/wp02-27/coord-schema-local-pack/packages/CP6.Platform.EntityFramework.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg": "12f2f029568b59d364e2e1fef2535f0e3fa313dc784d656c77dcdf5eabdc59bf",
+        "artifacts/wp02-27/coord-schema-local-pack/packages/CP6.Platform.Messaging.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+        "artifacts/wp02-27/coord-schema-local-pack/packages/CP6.Platform.Release.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg": "526eddb7a07e1b44ba3ba65077ed10cac43a905f0565fd5fcd1985d1831a56ea",
+        "artifacts/wp02-27/coord-schema-local-pack/Release-pack.log": "bdef3d5a265e49255a3d4258deafe41c951754ce303368a56d8ec2aa9e042923",
+        "artifacts/wp02-27/coord-schema-local-pack/Release-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc"
+      }
+    }
+  ],
+  "inventory": {
+    "sha256": "60c1b6474d3b47e83dcb52672d7de3001f3400620c7b35315b3a8ac0d572d0b1",
+    "retained_verified": 41,
+    "local_archives_verified": 7,
+    "files": [
+      {
+        "artifact": "coord-schema-path-red/run.json",
+        "sha256": "f997a6784901a90a3bcdb24c03b4430a34adebc5655a274b35cb92baa6c4c357",
+        "bytes": 76542,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-path-red/schema-path-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-path-red/schema-path.log",
+        "sha256": "e7bc12553a92aa59fb1318028146de2489cfbbd9883fa0916c3512ccfdfb5879",
+        "bytes": 23879,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-path-red/schema-path.trx",
+        "sha256": "aa31667e60ede0a7f1e74c971833de7fcae6f1f1548e0b416d7163600f632f41",
+        "bytes": 71943,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-path-red-isolated/run.json",
+        "sha256": "22b44c1762812633499485a1672b1ef1919af92a50c4647f8a3cf2cb4b7ab34c",
+        "bytes": 76597,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-path-red-isolated/schema-path-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-path-red-isolated/schema-path.log",
+        "sha256": "a628a93931edf62d3cd6d3e094cee752e1a3b8d61a52087cbd1fd3ed9cfec201",
+        "bytes": 2000,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-path-red-isolated/schema-path.trx",
+        "sha256": "8a8603c346ba8badc2000261e25f0c1eece453a97fdd4273c8988d4c4fbd8481",
+        "bytes": 25958,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-architecture-green/architecture-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-architecture-green/architecture.log",
+        "sha256": "4d781d5150c99b1c5bb7def0c15cbda64c2aaf32b3363990d0baebde370b2246",
+        "bytes": 737,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-architecture-green/architecture.trx",
+        "sha256": "97392c7b4b3821e1120c517d7ff216015ce7422ab8ddcee5e5ae0432d73902b4",
+        "bytes": 155894,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-architecture-green/release-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-architecture-green/release.log",
+        "sha256": "296d135943d054d1c2b3b701db9d32ed5e2e5e1ae008974aa1b27c2d841e9db9",
+        "bytes": 992,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-architecture-green/release.trx",
+        "sha256": "933edf7fabc51f4feb0b4711a901489b4bbc43c804e294ab3ce25b723c2fa46a",
+        "bytes": 204448,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-architecture-green/run.json",
+        "sha256": "76531e5ccbb1b47a62080b5be442b1c20d4ce28dbd60454c55890c2729332783",
+        "bytes": 78502,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Abstractions-pack.log",
+        "sha256": "054fbc8cd59cbbcb90e83f417debe2cd49c854f90a9e4eb0dcc1e430341e6278",
+        "bytes": 532,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Abstractions-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/AspNetCore-pack.log",
+        "sha256": "04970e74c8dbc1726b061ca21c9f616fc242f4472ce02706bf304bede0e18cab",
+        "bytes": 678,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/AspNetCore-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Contracts-pack.log",
+        "sha256": "3311e7c4e6f9b0a2b72d6fa36b02e58ff8c29136ba78d1db3fc3fcfcfc3faeb2",
+        "bytes": 375,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Contracts-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Deployment-pack.log",
+        "sha256": "5a977be2c7fcd95fb31ed67c14d2b9367fbca0eb4cb7d9bb8242b776205f2841",
+        "bytes": 379,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Deployment-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/EntityFramework-pack.log",
+        "sha256": "a7493aa3b761d671d3c781ef59185301c834244938bc3f1dc1b79ddcf0ed0227",
+        "bytes": 698,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/EntityFramework-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/approval-provenance.json",
+        "sha256": "93b2cb7522b8ac26f42dfe6a7229a72a73b8cb1f601389f0b7f1f87a7460f4ce",
+        "bytes": 347,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/archive-inspection.json",
+        "sha256": "a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb",
+        "bytes": 2760,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/archive-paths.json",
+        "sha256": "e0b1a4c3fdd3dbd13c24b5ed53e9b08b2a08b558e6fdf9b103b4d2cd110a0884",
+        "bytes": 1622,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/consumer-lock.json",
+        "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+        "bytes": 3410,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/evidence/54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1.bin",
+        "sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+        "bytes": 23074,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/evidence/a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb.bin",
+        "sha256": "a88127c4f9affc8621dc2c8328efa66445d28f70709014108e3602732cdf0bbb",
+        "bytes": 2760,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/evidence/e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa.bin",
+        "sha256": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa",
+        "bytes": 14114,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/matrix.json",
+        "sha256": "c018745e9c7989179a3003fc7ce5fe42a1627b2ccb160dc3ddeab5fb21ef656c",
+        "bytes": 3572,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspection/state.json",
+        "sha256": "14f4880686c9b040c60563c48a3894b73330071f8e99d999ec653ac6a4a3fba2",
+        "bytes": 401,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/inspector-build.log",
+        "sha256": "450fa52b393539af9d48b5adde32967c35724c69d5806a807e151c421b6e0af8",
+        "bytes": 335,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/local-inspection.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Messaging-pack.log",
+        "sha256": "965b6d3d10180478d17f7a3f80bcd3c0a785e2d47207d07e7888436dedac7916",
+        "bytes": 674,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Messaging-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/packages/CP6.Platform.Abstractions.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+        "bytes": 17102,
+        "retained": false,
+        "reason": "Local unsigned package only; preserved in original task artifacts, never published"
+      },
+      {
+        "artifact": "coord-schema-local-pack/packages/CP6.Platform.AspNetCore.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+        "bytes": 54981,
+        "retained": false,
+        "reason": "Local unsigned package only; preserved in original task artifacts, never published"
+      },
+      {
+        "artifact": "coord-schema-local-pack/packages/CP6.Platform.Contracts.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+        "bytes": 40836,
+        "retained": false,
+        "reason": "Local unsigned package only; preserved in original task artifacts, never published"
+      },
+      {
+        "artifact": "coord-schema-local-pack/packages/CP6.Platform.Deployment.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "sha256": "b769ca35159456462fa6c72af68ad17797d7123405a276caaf937cc0202a338e",
+        "bytes": 66066,
+        "retained": false,
+        "reason": "Local unsigned package only; preserved in original task artifacts, never published"
+      },
+      {
+        "artifact": "coord-schema-local-pack/packages/CP6.Platform.EntityFramework.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "sha256": "12f2f029568b59d364e2e1fef2535f0e3fa313dc784d656c77dcdf5eabdc59bf",
+        "bytes": 45856,
+        "retained": false,
+        "reason": "Local unsigned package only; preserved in original task artifacts, never published"
+      },
+      {
+        "artifact": "coord-schema-local-pack/packages/CP6.Platform.Messaging.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+        "bytes": 50893,
+        "retained": false,
+        "reason": "Local unsigned package only; preserved in original task artifacts, never published"
+      },
+      {
+        "artifact": "coord-schema-local-pack/packages/CP6.Platform.Release.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "sha256": "526eddb7a07e1b44ba3ba65077ed10cac43a905f0565fd5fcd1985d1831a56ea",
+        "bytes": 123036,
+        "retained": false,
+        "reason": "Local unsigned package only; preserved in original task artifacts, never published"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Release-pack.log",
+        "sha256": "bdef3d5a265e49255a3d4258deafe41c951754ce303368a56d8ec2aa9e042923",
+        "bytes": 367,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/Release-restore.log",
+        "sha256": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+        "bytes": 82,
+        "retained": true,
+        "reason": "Exact original bytes"
+      },
+      {
+        "artifact": "coord-schema-local-pack/run.json",
+        "sha256": "15d4b7d2714fd3388cf46f91ae38e5a6d00e808d6326d79d599c490a69f391d2",
+        "bytes": 90393,
+        "retained": true,
+        "reason": "Exact original bytes"
+      }
+    ]
+  },
+  "new_packages": [
+    {
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Abstractions/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Abstractions",
+      "sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Abstractions.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "bytes": 17102,
+      "nuspec_identity_verified": true
+    },
+    {
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.AspNetCore/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.AspNetCore",
+      "sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.AspNetCore.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "bytes": 54981,
+      "nuspec_identity_verified": true
+    },
+    {
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Contracts/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Contracts",
+      "sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Contracts.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "bytes": 40836,
+      "nuspec_identity_verified": true
+    },
+    {
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Deployment/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Deployment",
+      "sha256": "b769ca35159456462fa6c72af68ad17797d7123405a276caaf937cc0202a338e",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Deployment.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "bytes": 66066,
+      "nuspec_identity_verified": true
+    },
+    {
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.EntityFramework/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.EntityFramework",
+      "sha256": "12f2f029568b59d364e2e1fef2535f0e3fa313dc784d656c77dcdf5eabdc59bf",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.EntityFramework.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "bytes": 45856,
+      "nuspec_identity_verified": true
+    },
+    {
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Messaging/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Messaging",
+      "sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Messaging.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "bytes": 50893,
+      "nuspec_identity_verified": true
+    },
+    {
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Release/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Release",
+      "sha256": "526eddb7a07e1b44ba3ba65077ed10cac43a905f0565fd5fcd1985d1831a56ea",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Release.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "bytes": 123036,
+      "nuspec_identity_verified": true
+    }
+  ],
+  "new_schema_bytes": [
+    {
+      "entry": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+      "raw_bytes_equal": true
+    },
+    {
+      "entry": "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+      "sha256": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa",
+      "raw_bytes_equal": true
+    }
+  ],
+  "new_state": {
+    "artifactBytesVerified": "Verified",
+    "businessApplied": "Unknown",
+    "compatibility": "Unknown",
+    "configEnabled": "Unknown",
+    "consumerQualified": "Unknown",
+    "contractShapeValid": "Verified",
+    "hostRegistered": "Unknown",
+    "independentlyAccepted": "Unknown",
+    "publicationStatus": "NOT_PUBLISHED",
+    "runtimeObserved": "Unknown",
+    "sourceFrozen": "Verified",
+    "trustCurrentlyAccepted": "Unknown",
+    "trustStatus": "NOT_FORMALLY_TRUSTED"
+  },
+  "formal_reuse": {
+    "run": "formal-current-2",
+    "evaluation_utc": "2026-10-13T12:46:51.582Z",
+    "fresh_signature_or_network_run": false,
+    "packages": [
+      {
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Abstractions/0.10.2",
+        "packageId": "CP6.Platform.Abstractions",
+        "sha256": "e838ba9c9c6e434f8c8a2bf41e9da7d931a962400435aabb2189f40628c17103",
+        "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "version": "0.10.2",
+        "call": {
+          "archiveSha256": "e838ba9c9c6e434f8c8a2bf41e9da7d931a962400435aabb2189f40628c17103",
+          "arguments": [
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\tools\\CP6.Platform.ReleaseTool\\bin\\Release\\net8.0\\CP6.Platform.ReleaseTool.dll",
+            "verify-formal-package",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\CP6.Platform.Abstractions.nupkg",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\policy.json",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\certificates",
+            "CP6.Platform.Abstractions",
+            "0.10.2",
+            "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+            "2026-10-13T12:46:51.582Z",
+            "Current"
+          ],
+          "evaluationUtc": "2026-10-13T12:46:51.582Z",
+          "exitCode": 0,
+          "finishedUtc": "2026-10-13T12:46:55.457Z",
+          "identityCheckedSuccess": true,
+          "originalPublicationSha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+          "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+          "startedUtc": "2026-10-13T12:46:52.003Z",
+          "timedOut": false
+        },
+        "call_sha256": "25ec4bcb6097d87ce8c138b0ed1f68a18a0ffbde067f401ab5d3c488934166a0",
+        "archive_rehashed": true
+      },
+      {
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.AspNetCore/0.10.2",
+        "packageId": "CP6.Platform.AspNetCore",
+        "sha256": "5dc9cee4335e69f463361afc89d36587650b896059472570753ef485787fec73",
+        "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "version": "0.10.2",
+        "call": {
+          "archiveSha256": "5dc9cee4335e69f463361afc89d36587650b896059472570753ef485787fec73",
+          "arguments": [
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\tools\\CP6.Platform.ReleaseTool\\bin\\Release\\net8.0\\CP6.Platform.ReleaseTool.dll",
+            "verify-formal-package",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\CP6.Platform.AspNetCore.nupkg",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\policy.json",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\certificates",
+            "CP6.Platform.AspNetCore",
+            "0.10.2",
+            "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+            "2026-10-13T12:46:51.582Z",
+            "Current"
+          ],
+          "evaluationUtc": "2026-10-13T12:46:51.582Z",
+          "exitCode": 0,
+          "finishedUtc": "2026-10-13T12:46:58.847Z",
+          "identityCheckedSuccess": true,
+          "originalPublicationSha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+          "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+          "startedUtc": "2026-10-13T12:46:55.461Z",
+          "timedOut": false
+        },
+        "call_sha256": "4163637e483aa3e9e63f4e188b088f311acc7d9b84dcb8abc5d08a3774b07fd4",
+        "archive_rehashed": true
+      },
+      {
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Contracts/0.10.2",
+        "packageId": "CP6.Platform.Contracts",
+        "sha256": "84b62cad23d0ce09a4af545ac5ae73cd625fce33eb77d022740350dac0364570",
+        "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "version": "0.10.2",
+        "call": {
+          "archiveSha256": "84b62cad23d0ce09a4af545ac5ae73cd625fce33eb77d022740350dac0364570",
+          "arguments": [
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\tools\\CP6.Platform.ReleaseTool\\bin\\Release\\net8.0\\CP6.Platform.ReleaseTool.dll",
+            "verify-formal-package",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\CP6.Platform.Contracts.nupkg",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\policy.json",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\certificates",
+            "CP6.Platform.Contracts",
+            "0.10.2",
+            "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+            "2026-10-13T12:46:51.582Z",
+            "Current"
+          ],
+          "evaluationUtc": "2026-10-13T12:46:51.582Z",
+          "exitCode": 0,
+          "finishedUtc": "2026-10-13T12:47:02.243Z",
+          "identityCheckedSuccess": true,
+          "originalPublicationSha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+          "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+          "startedUtc": "2026-10-13T12:46:58.849Z",
+          "timedOut": false
+        },
+        "call_sha256": "6b2a31f81026e14d764acc610a23486eca64c717b4f7560cfe057bd1f4c8cc6b",
+        "archive_rehashed": true
+      },
+      {
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Deployment/0.10.2",
+        "packageId": "CP6.Platform.Deployment",
+        "sha256": "231a7cb3e18fd8ba9a7d60bbe01195ca7676c33b55b542a294c4a76c0fff066b",
+        "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "version": "0.10.2",
+        "call": {
+          "archiveSha256": "231a7cb3e18fd8ba9a7d60bbe01195ca7676c33b55b542a294c4a76c0fff066b",
+          "arguments": [
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\tools\\CP6.Platform.ReleaseTool\\bin\\Release\\net8.0\\CP6.Platform.ReleaseTool.dll",
+            "verify-formal-package",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\CP6.Platform.Deployment.nupkg",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\policy.json",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\certificates",
+            "CP6.Platform.Deployment",
+            "0.10.2",
+            "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+            "2026-10-13T12:46:51.582Z",
+            "Current"
+          ],
+          "evaluationUtc": "2026-10-13T12:46:51.582Z",
+          "exitCode": 0,
+          "finishedUtc": "2026-10-13T12:47:05.636Z",
+          "identityCheckedSuccess": true,
+          "originalPublicationSha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+          "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+          "startedUtc": "2026-10-13T12:47:02.246Z",
+          "timedOut": false
+        },
+        "call_sha256": "ba07654242517d3fe703a23a42bdce0a5fee9f2d5c0aeff4172991ccce1f9955",
+        "archive_rehashed": true
+      },
+      {
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.EntityFramework/0.10.2",
+        "packageId": "CP6.Platform.EntityFramework",
+        "sha256": "cc780ce1b454c62f96caa990eb2e0462563b1917e8c505b11100a4555d5b4544",
+        "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "version": "0.10.2",
+        "call": {
+          "archiveSha256": "cc780ce1b454c62f96caa990eb2e0462563b1917e8c505b11100a4555d5b4544",
+          "arguments": [
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\tools\\CP6.Platform.ReleaseTool\\bin\\Release\\net8.0\\CP6.Platform.ReleaseTool.dll",
+            "verify-formal-package",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\CP6.Platform.EntityFramework.nupkg",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\policy.json",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\certificates",
+            "CP6.Platform.EntityFramework",
+            "0.10.2",
+            "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+            "2026-10-13T12:46:51.582Z",
+            "Current"
+          ],
+          "evaluationUtc": "2026-10-13T12:46:51.582Z",
+          "exitCode": 0,
+          "finishedUtc": "2026-10-13T12:47:09.005Z",
+          "identityCheckedSuccess": true,
+          "originalPublicationSha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+          "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+          "startedUtc": "2026-10-13T12:47:05.638Z",
+          "timedOut": false
+        },
+        "call_sha256": "194973966f12c9137e7ea3921b39220e04c8983e59709f6a19af0db274dec053",
+        "archive_rehashed": true
+      },
+      {
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Messaging/0.10.2",
+        "packageId": "CP6.Platform.Messaging",
+        "sha256": "878994735a171194b8944c58fa919508380fa7d0707aa09176427295d0aab235",
+        "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "version": "0.10.2",
+        "call": {
+          "archiveSha256": "878994735a171194b8944c58fa919508380fa7d0707aa09176427295d0aab235",
+          "arguments": [
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\tools\\CP6.Platform.ReleaseTool\\bin\\Release\\net8.0\\CP6.Platform.ReleaseTool.dll",
+            "verify-formal-package",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\CP6.Platform.Messaging.nupkg",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\policy.json",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\certificates",
+            "CP6.Platform.Messaging",
+            "0.10.2",
+            "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+            "2026-10-13T12:46:51.582Z",
+            "Current"
+          ],
+          "evaluationUtc": "2026-10-13T12:46:51.582Z",
+          "exitCode": 0,
+          "finishedUtc": "2026-10-13T12:47:12.393Z",
+          "identityCheckedSuccess": true,
+          "originalPublicationSha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+          "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+          "startedUtc": "2026-10-13T12:47:09.007Z",
+          "timedOut": false
+        },
+        "call_sha256": "c82a032c707ced77c2c0ebdc1c592ee037876bf6ed4749548817c2221118c891",
+        "archive_rehashed": true
+      },
+      {
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Release/0.10.2",
+        "packageId": "CP6.Platform.Release",
+        "sha256": "0b8fd3b332c837e6f1c0cbe9c312e87a671c4f119d2128768f7284d4fa26a8f1",
+        "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "version": "0.10.2",
+        "call": {
+          "archiveSha256": "0b8fd3b332c837e6f1c0cbe9c312e87a671c4f119d2128768f7284d4fa26a8f1",
+          "arguments": [
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\tools\\CP6.Platform.ReleaseTool\\bin\\Release\\net8.0\\CP6.Platform.ReleaseTool.dll",
+            "verify-formal-package",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\CP6.Platform.Release.nupkg",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\policy.json",
+            "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\formal-current-2\\inspection\\current-verification\\certificates",
+            "CP6.Platform.Release",
+            "0.10.2",
+            "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+            "2026-10-13T12:46:51.582Z",
+            "Current"
+          ],
+          "evaluationUtc": "2026-10-13T12:46:51.582Z",
+          "exitCode": 0,
+          "finishedUtc": "2026-10-13T12:47:15.793Z",
+          "identityCheckedSuccess": true,
+          "originalPublicationSha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+          "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+          "startedUtc": "2026-10-13T12:47:12.395Z",
+          "timedOut": false
+        },
+        "call_sha256": "efbb85d5624ccc6f7151035e456a2ee8d60e08a1d0fa997ad5151bfce945770a",
+        "archive_rehashed": true
+      }
+    ],
+    "historical_source_differences": [
+      {
+        "path": "contracts/release/capabilities/v1/README.md",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+        "reason": "changed_in_fix"
+      },
+      {
+        "path": "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "eng/wp02-27/.gitignore",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "eng/wp02-27/Inspector/Inspector.csproj",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "eng/wp02-27/Inspector/Program.cs",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "eng/wp02-27/Inspector/README.md",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "eng/wp02-27/capture_inputs.py",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "eng/wp02-27/check_trust_negatives.py",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "eng/wp02-27/run_checks.py",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityContracts.cs",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+        "reason": "changed_in_fix"
+      },
+      {
+        "path": "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityTrustTests.cs",
+        "reason": "line_endings_only"
+      },
+      {
+        "path": "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
+        "reason": "changed_in_fix"
+      }
+    ],
+    "current_tool_binary_differences": [
+      "tools/CP6.Platform.ReleaseTool/bin/Release/net8.0/CP6.Platform.Release.dll",
+      "tools/CP6.Platform.ReleaseTool/bin/Release/net8.0/CP6.Platform.ReleaseTool.dll"
+    ],
+    "limit": "Old unchanged 0.10.2 archive/signature result only at original time. Current rebuilt Release/ReleaseTool bytes differ; never relabel reused result as fresh verification or grant trust to new local set."
+  },
+  "pdb_document_hashes": {
+    "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs": "1863f669617e75313fb732eec8688eda015663fa03df30ac7b6aa6c3572515cb",
+    "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs": "732986fe1270e4909a22fb8cab04710f6ff157b847337b983b642e4d3365176f"
+  },
+  "boundaries": [
+    "WP02-02 BLOCKED",
+    "New local packages NOT_PUBLISHED / NOT_FORMALLY_TRUSTED",
+    "Compatibility and 6 adoption stages Unknown",
+    "Native schemas/full API/runtime/Main/CRM host/driver/database/transaction/fence/business qualification unproven",
+    "Coordinator still owns combined-main integration, workflow preflight, remote-main containment, Issue60 closure"
+  ],
+  "actions": {
+    "tests_rerun": 0,
+    "package_builds": 0,
+    "signature_runs": 0,
+    "network_calls": 0,
+    "database_operations": 0,
+    "git_mutations": 0,
+    "actions_runs": 0,
+    "source_edits": 0,
+    "report_files": [
+      "WP02-27-fix-review.md",
+      "WP02-27-fix-review.json"
+    ]
+  }
+}

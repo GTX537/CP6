@@ -1,0 +1,34 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-13T14:12:38.099020+00:00",
+  "clock_basis": "GitHub closedAt and local observed_at are distinct clocks; neither rewritten",
+  "issues": [
+    {
+      "closedAt": "2026-10-13T14:12:36Z",
+      "state": "CLOSED",
+      "title": "[BUG][P2] WP02-27 capability schema rejects a valid one-character archive path",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/60",
+      "source_sha": "c105036f166928b7c165f182f99f3147ffbb0d58",
+      "remote_main_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "scope": "Bounded library bug; original business acceptance unchanged"
+    },
+    {
+      "closedAt": "2026-10-13T14:12:45Z",
+      "state": "CLOSED",
+      "title": "[BUG][P2] WP02-11 retries observed rejection statuses after body failure",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/62",
+      "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+      "remote_main_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "scope": "Bounded library bug; original business acceptance unchanged"
+    },
+    {
+      "closedAt": "2026-10-13T14:12:53Z",
+      "state": "CLOSED",
+      "title": "[BUG][P2] WP02-11 authority faults lose the typed Unknown outcome",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/63",
+      "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+      "remote_main_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "scope": "Bounded library bug; original business acceptance unchanged"
+    }
+  ]
+}

@@ -158627,6 +158627,11 @@
       "date": "2026-10-13",
       "change": "Wave5: S01-12 / WP02-27 / WP02-07 / WP02-11 READY/CONFIRMED with disjoint windows; WP02-02 BLOCKED on trusted Main-consumable ctx-binding artifact. No actual START;16/375 DONE,0/125 business,247 NOT_RUN unchanged.",
       "evidence": "docs/development/dispatch/20261013-wave5/README.md"
+    },
+    {
+      "date": "2026-10-13",
+      "change": "Wave5 S01-12/WP02-27/WP02-07/WP02-11 delivered after scoped fixes and normal remote-verified merges.20/375 tasks DONE,S01 12/12. WP02-02 remains blocked on consumable trusted package/source identity; business0/125,247 NOT_RUN and historical gaps unchanged. No next-wave dispatch.",
+      "evidence": "docs/development/evidence/wave5-integration-20261013/README.md"
     }
   ],
   "implementation_assessment": {
@@ -159591,11 +159596,30 @@
       ],
       "relative_size": "M",
       "kind": "DESIGN",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/superpowers/plans/2026-10-11-s01-task-breakdown.md",
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave5-integration-20261013/validation-summary.json",
+          "repository": "GTX537/CP6",
+          "source_sha": "95ac1c60ebeeb58b43c02693ae7ca5a7ef626bc8",
+          "command": "python -X utf8 eng/contracts/s01-12/verify_adoption.py --main-repo . --crm-repo <fixed CRM checkout> --platform-repo <fixed Platform checkout> --output <coordinator comparison.json>",
+          "environment": "Windows; CPython3.13; read-only fixed Git blobs from Main47c9/CRM1e4/Platform9259",
+          "observed_at": "2026-10-13T14:13:05.640064+00:00",
+          "scope": "COORD observation time; actual original and new execution identities remain distinct in linked task records. New compare-only PASS:828 source references,122 vectors,16profiles,56 three-surface lexical rows;352 historical assertions and502 N/A cells. Original30 comparator checks on pre-fix code plus two targeted fixed-field regressions reused separately.19 revision cases remain18 PARTIAL/1 NOT_COVERED; all business NOT_RUN.51 consumer pins,56 future task responsibilities,six handoff slices.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "95ac1c60ebeeb58b43c02693ae7ca5a7ef626bc8",
+        "remote_main_sha": "08ba0a011f54ff39f4bb44c567128f56c6f4411c",
+        "pr_url": "https://github.com/GTX537/CP6/pull/202",
+        "observed_at": "2026-10-13T13:38:34.797802+00:00",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave5-integration-20261013/S01-12/remote-main.json",
+        "scope": "Normal merge plus exact remote ancestry and candidate file blob checks. Bounded task completion only; original business acceptance is NOT_RUN."
+      },
       "package_id": "WP02",
       "coverage_role": "FOUNDATION",
       "entry_gate": "CONFIRMED",
@@ -159607,14 +159631,18 @@
         "claimed_at": "2026-10-13T11:35:46.819214+00:00",
         "baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
         "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual worker START and DELIVERY observed, reviewed, required defects fixed, normally merged and remote containment verified. No backdated coordinator ACK; original task write window closed.",
+        "worker_ack_at": "2026-10-13T12:11:47Z",
         "allowed_write_paths": [
           "docs/development/evidence/s01-adoption/",
           "eng/contracts/s01-12/"
         ],
         "handoff_branch": "codex/dev-handoff-s01-12",
-        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665"
+        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "coordinator_received_at": "2026-10-13T13:28:22.362814+00:00",
+        "handoff_receipt": "docs/development/evidence/wave5-integration-20261013/intake.json",
+        "execution_baseline_sha": "47c9b12c796620effe41c62d16992ccd629ee949",
+        "window_closed_at": "2026-10-13T14:13:05.640064+00:00"
       },
       "entry_conditions": [
         "读取本任务准确原合同、组合摘要、当前主线及既有S01计划；确认所有前置真实交付。",
@@ -159958,7 +159986,7 @@
         "file:Platform:src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-07",
       "entry_gate": "CONFIRMED",
@@ -159970,8 +159998,8 @@
         "claimed_at": "2026-10-13T11:35:46.819214+00:00",
         "baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
         "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual worker START and DELIVERY observed, reviewed, required defects fixed, normally merged and remote containment verified. No backdated coordinator ACK; original task write window closed.",
+        "worker_ack_at": "2026-10-13T12:06:16Z",
         "allowed_write_paths": [
           "src/CP6.Platform.EntityFramework/InboxV1/",
           "src/CP6.Platform.EntityFramework/Cp6InboxProcessor.cs",
@@ -159996,12 +160024,36 @@
           "identity": "Match full owner token, canonical data/run paths, endpoint, server system identity, DB OID/name/owner and runtime session_user before DDL/test/cleanup",
           "cleanup": "Only own pg_ctl cluster and resources after identity checks and zero unexpected sessions; no force termination; verify canonical containment before recursive delete and keep evidence outside removed runtime data",
           "failure": "Provisioning/identity failure fails closed and records NOT_RUN/BLOCKED, never skip as PASS",
-          "forbidden": "Existing5432 service, business databases, global credentials/config, other task resources"
-        }
+          "forbidden": "Existing5432 service, business databases, global credentials/config, other task resources",
+          "completion": "All three owned resources smart-stopped and evidence retained; port55427 idle at delivery and independent review; no coordinator database restart."
+        },
+        "coordinator_received_at": "2026-10-13T13:28:22.362814+00:00",
+        "handoff_receipt": "docs/development/evidence/wave5-integration-20261013/intake.json",
+        "execution_baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "window_closed_at": "2026-10-13T14:13:05.640064+00:00"
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave5-integration-20261013/validation-summary.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "872acec044eb09bc96660f696844c86127b508bd",
+          "command": "Original dotnet unit18/PostgreSQL20/Architecture98; targeted unit4 and PG helper2; coordinator source/Git/PDB/TRX/dependency/artifact reconciliation only",
+          "environment": "Original Windows, .NET SDK8.0.424/runtime8.0.30, EF8.0.30, Npgsql8.0.8/provider8.0.11, owned PostgreSQL18.6 at55427",
+          "observed_at": "2026-10-13T14:13:05.640064+00:00",
+          "scope": "COORD observation time; actual original and new execution identities remain distinct in linked task records. 136 distinct cases reused:18unit+20 real isolatedPG+98architecture;4+2 targeted repeated cases do not increase total.36fixed inputs,255source/9dependency/153artifact hashes and portablePDB sources verified.14TRX outcomes/failures preserved,60AC allbusinessNOT_RUN; allthree ownedclusters smart-stopped, no coordinatorPG operation.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "872acec044eb09bc96660f696844c86127b508bd",
+        "remote_main_sha": "817a2926b0799f70cc87f384967e0883c1943ec5",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/61",
+        "observed_at": "2026-10-13T13:41:01.227933+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave5-integration-20261013/WP02-07/remote-main.json",
+        "scope": "Normal merge plus exact remote ancestry and candidate file blob checks. Bounded task completion only; original business acceptance is NOT_RUN."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -160133,7 +160185,7 @@
         "Platform:http-resilience"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-11",
       "entry_gate": "CONFIRMED",
@@ -160145,8 +160197,8 @@
         "claimed_at": "2026-10-13T11:35:46.819214+00:00",
         "baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
         "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual worker START and DELIVERY observed, reviewed, required defects fixed, normally merged and remote containment verified. No backdated coordinator ACK; original task write window closed.",
+        "worker_ack_at": "2026-10-13T12:04:32Z",
         "allowed_write_paths": [
           "src/CP6.Platform.AspNetCore/HttpV2/",
           "src/CP6.Platform.AspNetCore/Cp6HttpResilienceServiceCollectionExtensions.cs",
@@ -160156,11 +160208,41 @@
           "docs/development/evidence/WP02-11/"
         ],
         "handoff_branch": "codex/dev-handoff-wp02-11",
-        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665"
+        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "coordinator_received_at": "2026-10-13T13:28:22.362814+00:00",
+        "handoff_receipt": "docs/development/evidence/wave5-integration-20261013/intake.json",
+        "execution_baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "window_closed_at": "2026-10-13T14:13:05.640064+00:00",
+        "coordinator_completion": {
+          "branch": "codex/wp02-11-coord-fix-20261013",
+          "worktree": "D:/CP6.Platform-worktrees/wp02-11-20261013",
+          "original_candidate_sha": "0f7c69f13a26b36895cd40aca3fc17299e866b70",
+          "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+          "window_decision": "docs/development/evidence/wave5-integration-20261013/coordinator-window-decisions.json"
+        }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave5-integration-20261013/validation-summary.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+          "command": "dotnet test AspNetCoreTests --filter FullyQualifiedName~RejectedBodyRegressionTests; ~AuthorityFaultRegressionTests; final ~HttpV2",
+          "environment": "Windows; .NET SDK8.0.424/runtime8.0.30; Release; actual handler with bounded local transport/authority fixtures; no DB",
+          "observed_at": "2026-10-13T14:13:05.640064+00:00",
+          "scope": "COORD observation time; actual original and new execution identities remain distinct in linked task records. Issue62 RED16fail/8pass then24/24; Issue63 RED22fail/2pass then24/24; final combinedHttpV2198/198zero skips.249source/8dependencies/25artifacts match final tested bytes at58e35c, successor34cf docs-only. Two separate issue branches merged normally; oldlegacy98/architecture98 reused only unchanged assertions, not claimed as current combined run. All42businessACNOT_RUN, real host/Owner adoption unproven.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "34cf7ab144a02e412de121eee2d9c5083f5a96a8",
+        "remote_main_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/65",
+        "observed_at": "2026-10-13T14:09:17.571008+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave5-integration-20261013/WP02-11/remote-main.json",
+        "scope": "Normal merge plus exact remote ancestry and candidate file blob checks. Bounded task completion only; original business acceptance is NOT_RUN."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -160675,7 +160757,7 @@
         "Platform:package-trust"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-27",
       "entry_gate": "CONFIRMED",
@@ -160687,8 +160769,8 @@
         "claimed_at": "2026-10-13T11:35:46.819214+00:00",
         "baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
         "entry_evidence": "docs/development/evidence/wave5-dispatch-20261013/admission.json",
-        "dispatch_scope": "COORD assigns under user continuation; READY pending actual worker START.",
-        "worker_ack_at": null,
+        "dispatch_scope": "Actual worker START and DELIVERY observed, reviewed, required defects fixed, normally merged and remote containment verified. No backdated coordinator ACK; original task write window closed.",
+        "worker_ack_at": "2026-10-13T12:13:44.333515Z",
         "allowed_write_paths": [
           "src/CP6.Platform.Release/CapabilitiesV1/",
           "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
@@ -160700,11 +160782,41 @@
           "docs/development/evidence/WP02-27/"
         ],
         "handoff_branch": "codex/dev-handoff-wp02-27",
-        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665"
+        "coordination_baseline_sha": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+        "coordinator_received_at": "2026-10-13T13:28:22.362814+00:00",
+        "handoff_receipt": "docs/development/evidence/wave5-integration-20261013/intake.json",
+        "execution_baseline_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+        "window_closed_at": "2026-10-13T14:13:05.640064+00:00",
+        "coordinator_completion": {
+          "branch": "codex/wp02-27-coord-fix-20261013",
+          "worktree": "D:/CP6.Platform-worktrees/wp02-27-20261013",
+          "original_candidate_sha": "0057261a9b3506484afcc981f513381b9268da81",
+          "source_sha": "c105036f166928b7c165f182f99f3147ffbb0d58",
+          "window_decision": "docs/development/evidence/wave5-integration-20261013/coordinator-window-decisions.json"
+        }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave5-integration-20261013/validation-summary.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "c105036f166928b7c165f182f99f3147ffbb0d58",
+          "command": "dotnet test ReleaseTests with original required filter plus path regressions; dotnet test ArchitectureTests; local seven-package pack and actual archive inspection",
+          "environment": "Windows; .NET SDK8.0.424/runtime8.0.30; local archives remain unpublished and not formally trusted",
+          "observed_at": "2026-10-13T14:13:05.640064+00:00",
+          "scope": "COORD observation time; actual original and new execution identities remain distinct in linked task records. Issue60 effectiveRED13pass/1fail then Release/Schema127/127 (14new) and Architecture98/98. Two exact asset arrays updated under explicit COORD window; all other gates retained. Seven fresh local archives built from7c59256e freeze and exact packaged-schema bytes checked. Original signed seven-package Current verification reused at2026-10-13T12:46:51.582Z; no new signature run. New archive identities never inherit original formal trust. WP02-02 remainsBLOCKED.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "c105036f166928b7c165f182f99f3147ffbb0d58",
+        "remote_main_sha": "51706965ec1e2363a8f4db8c730983b1313fdbfd",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/64",
+        "observed_at": "2026-10-13T14:07:03.792889+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave5-integration-20261013/WP02-27/remote-main.json",
+        "scope": "Normal merge plus exact remote ancestry and candidate file blob checks. Bounded task completion only; original business acceptance is NOT_RUN."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"

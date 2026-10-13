@@ -1,0 +1,677 @@
+{
+  "task": "WP02-11",
+  "reviewer": "/root/wave5_review_http",
+  "reviewed_at_utc": "2026-10-13T13:38:49.092775+00:00",
+  "candidate": "0f7c69f13a26b36895cd40aca3fc17299e866b70",
+  "base": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+  "worktree": "D:/CP6.Platform-worktrees/wp02-11-20261013",
+  "observed_head": "0f7c69f13a26b36895cd40aca3fc17299e866b70",
+  "git_status": "",
+  "recommendation": "REQUEST_CHANGES",
+  "findings": [
+    {
+      "id": "WP02-11-R1",
+      "priority": "P2",
+      "merge_blocking": true,
+      "title": "Do not retry a received rejection when its body fails",
+      "file": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Handler.cs",
+      "line": 179,
+      "supporting_lines": [
+        147,
+        148,
+        152,
+        157,
+        171,
+        180,
+        208
+      ],
+      "description": "After receiving 401/403/409/422, body IO failure is wrapped as HttpRequestException or body timeout becomes AttemptTimeout. The circuit callback never returns received, so outer response is null. The transient expression forgets the known status and admits another attempt. This violates original HTTP line101 and docs line90. Proven writes can also replay after NotAppliedProven and authorization. Keep observed status independent of completed body and veto generic retries for these rejections, while preserving original-query recovery and Unknown. Existing status tests have complete bodies; body-failure tests use 200. Add status x IO/attempt-timeout read/write regressions asserting one send.",
+      "verification": "Static control-flow finding; no tests executed in review."
+    },
+    {
+      "id": "WP02-11-R2",
+      "priority": "P2",
+      "merge_blocking": true,
+      "title": "Preserve typed operation outcome on authority faults",
+      "file": "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Handler.cs",
+      "line": 210,
+      "supporting_lines": [
+        97,
+        138,
+        188,
+        204,
+        245,
+        247,
+        252
+      ],
+      "description": "A registered authorization adapter may throw synchronously or return a faulted ValueTask after a sent write and NotAppliedProven query. VerifyBindingAsync and AuthorizeReplayAsync sit outside transport catches; outer try only catches OperationCanceledException. Ordinary faults escape raw and leave RequestOption outcome absent, losing typed Unknown/attempt count/original identity. No authority contract forbids ordinary faults. Normalize expected faults into a safe typed outcome without another send, preserve caller/deadline precedence, and retain NotSent on pre-send verification failure. Original HTTP lines73/97 and docs108 require retained operation state. Add synchronous/asynchronous exception regressions at verify/replay, including cancellation and timeout races.",
+      "verification": "Static control-flow finding; no tests executed in review."
+    }
+  ],
+  "changed_paths": [
+    "docs/WP02-11-HTTP-V2.md",
+    "docs/development/evidence/WP02-11/.gitattributes",
+    "docs/development/evidence/WP02-11/AC-SCOPE.md",
+    "docs/development/evidence/WP02-11/DELIVERY.md",
+    "docs/development/evidence/WP02-11/PLAN.md",
+    "docs/development/evidence/WP02-11/REVIEW.md",
+    "docs/development/evidence/WP02-11/ac-scope.json",
+    "docs/development/evidence/WP02-11/audit_workflows.py",
+    "docs/development/evidence/WP02-11/current-evidence-check.json",
+    "docs/development/evidence/WP02-11/final-scope.json",
+    "docs/development/evidence/WP02-11/implementation/RUNS.md",
+    "docs/development/evidence/WP02-11/implementation/after-final-fingerprints.json",
+    "docs/development/evidence/WP02-11/implementation/after-parent-cancellation-fix-fingerprints.json",
+    "docs/development/evidence/WP02-11/implementation/after-review-fixes-fingerprints.json",
+    "docs/development/evidence/WP02-11/implementation/before-final-fingerprints.json",
+    "docs/development/evidence/WP02-11/implementation/before-parent-cancellation-fix-fingerprints.json",
+    "docs/development/evidence/WP02-11/implementation/before-parent-cancellation-green-fingerprints.json",
+    "docs/development/evidence/WP02-11/implementation/before-review-fixes-fingerprints.json",
+    "docs/development/evidence/WP02-11/implementation/capture-evidence.ps1",
+    "docs/development/evidence/WP02-11/implementation/draft-regressions.log",
+    "docs/development/evidence/WP02-11/implementation/draft-regressions.trx",
+    "docs/development/evidence/WP02-11/implementation/final-architecture.log",
+    "docs/development/evidence/WP02-11/implementation/final-architecture.trx",
+    "docs/development/evidence/WP02-11/implementation/final-http-v2.log",
+    "docs/development/evidence/WP02-11/implementation/final-http-v2.trx",
+    "docs/development/evidence/WP02-11/implementation/final-legacy-http-gateway-auth.log",
+    "docs/development/evidence/WP02-11/implementation/final-legacy-http-gateway-auth.trx",
+    "docs/development/evidence/WP02-11/implementation/https-fixture.log",
+    "docs/development/evidence/WP02-11/implementation/https-fixture.trx",
+    "docs/development/evidence/WP02-11/implementation/integrated-v2-fixed.log",
+    "docs/development/evidence/WP02-11/implementation/integrated-v2-fixed.trx",
+    "docs/development/evidence/WP02-11/implementation/integrated-v2.log",
+    "docs/development/evidence/WP02-11/implementation/integrated-v2.trx",
+    "docs/development/evidence/WP02-11/implementation/parent-cancellation-http-v2.log",
+    "docs/development/evidence/WP02-11/implementation/parent-cancellation-http-v2.trx",
+    "docs/development/evidence/WP02-11/implementation/parent-cancellation-red.log",
+    "docs/development/evidence/WP02-11/implementation/parent-cancellation-red.trx",
+    "docs/development/evidence/WP02-11/implementation/parser-green.log",
+    "docs/development/evidence/WP02-11/implementation/parser-green.trx",
+    "docs/development/evidence/WP02-11/implementation/protocol-parser-red.log",
+    "docs/development/evidence/WP02-11/implementation/protocol-parser-red.trx",
+    "docs/development/evidence/WP02-11/implementation/protocol-parser-regressions.log",
+    "docs/development/evidence/WP02-11/implementation/red-parser.log",
+    "docs/development/evidence/WP02-11/implementation/red-parser.trx",
+    "docs/development/evidence/WP02-11/implementation/review-fixes-http-v2.log",
+    "docs/development/evidence/WP02-11/implementation/review-fixes-http-v2.trx",
+    "docs/development/evidence/WP02-11/implementation/review-fixes-red.log",
+    "docs/development/evidence/WP02-11/implementation/review-fixes-red.trx",
+    "docs/development/evidence/WP02-11/implementation/sdk.txt",
+    "docs/development/evidence/WP02-11/implementation/transport-boundary-green.log",
+    "docs/development/evidence/WP02-11/implementation/transport-boundary-green.trx",
+    "docs/development/evidence/WP02-11/implementation/transport-boundary-red.log",
+    "docs/development/evidence/WP02-11/implementation/transport-boundary-red.trx",
+    "docs/development/evidence/WP02-11/independent-evidence-check.json",
+    "docs/development/evidence/WP02-11/inputs/ADMISSION.md",
+    "docs/development/evidence/WP02-11/inputs/PLT-HTTP-01-v0.2.md",
+    "docs/development/evidence/WP02-11/inputs/S6-INT-ID-OPS-v0.2.md",
+    "docs/development/evidence/WP02-11/inputs/TASK.md",
+    "docs/development/evidence/WP02-11/inputs/foundation.json",
+    "docs/development/evidence/WP02-11/intake-audit-shape-failure.md",
+    "docs/development/evidence/WP02-11/intake-scope.json",
+    "docs/development/evidence/WP02-11/intake-workflows.json",
+    "docs/development/evidence/WP02-11/legacy-baseline.json",
+    "docs/development/evidence/WP02-11/map_acceptance.py",
+    "docs/development/evidence/WP02-11/precommit-workflows.json",
+    "docs/development/evidence/WP02-11/review-fix-evidence-check.json",
+    "docs/development/evidence/WP02-11/sources.json",
+    "docs/development/evidence/WP02-11/staged-check.json",
+    "docs/development/evidence/WP02-11/verify_execution_evidence.py",
+    "docs/development/evidence/WP02-11/verify_scope.py",
+    "src/CP6.Platform.AspNetCore/Cp6ProblemDetailsExtensions.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpDeadline.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpOperationBinding.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Handler.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Outcome.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Profile.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Registration.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6RetryAfter.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6RetryDecision.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6SafeProblemPolicy.cs",
+    "src/CP6.Platform.AspNetCore/HttpV2/Cp6SafeProblemWriter.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/DeadlineDecisionTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/HandlerTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/LoopbackTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/OwnerProtocolFixtureTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/ProfileRegistrationTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/RecoveryBudgetTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/RetryAfterTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/ReviewRegressionsTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/SafeProblemTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/HttpV2/TestClock.cs"
+  ],
+  "changed_path_count": 91,
+  "source_pins": {
+    "task": "WP02-11",
+    "platform_baseline": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+    "main_dispatch": "47c9b12c796620effe41c62d16992ccd629ee949",
+    "main_input_baseline": "a1824fec3d4824d45e27693f2e715b311ee5f665",
+    "assets": [
+      {
+        "path": "docs/development/evidence/WP02-11/inputs/PLT-HTTP-01-v0.2.md",
+        "sha256": "9d1416cbd7d0ea6e58a0da79de80dcb2a4e675890345dfb4558194c61048eb3f",
+        "source": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\9d\\9d1416cbd7d0ea6e__PLT-HTTP-01_完整静态设计_v0.2.md",
+        "basis": "exact original bytes"
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/inputs/S6-INT-ID-OPS-v0.2.md",
+        "sha256": "d9b57a039e18a689615cfb48e181bb248dedecf957d8bdd7dd72d85a53a6dccc",
+        "source": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\d9\\d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+        "basis": "exact original bytes"
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/inputs/TASK.md",
+        "sha256": "0e17deaa22dcea6ec1038a4db9b374c41a2c21cba957603c00a2d89ddd5bb51a",
+        "repository": "GTX537/CP6",
+        "source_commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+        "source_path": "docs/development/dispatch/20261013-wave5/WP02-11.md",
+        "basis": "Git blob bytes"
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/inputs/ADMISSION.md",
+        "sha256": "f1de6612255caf602211bde5d25e4d903278fc65d94f46bc6a38c4cca99f842a",
+        "repository": "GTX537/CP6",
+        "source_commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+        "source_path": "docs/development/evidence/wave5-dispatch-20261013/admission-platform.md",
+        "basis": "Git blob bytes"
+      },
+      {
+        "path": "docs/development/evidence/WP02-11/inputs/foundation.json",
+        "sha256": "6af601f92d8a3f3b347358313bd6d3c199581a0fd93650b3c6c7090249329417",
+        "repository": "GTX537/CP6",
+        "source_commit": "47c9b12c796620effe41c62d16992ccd629ee949",
+        "source_path": "docs/development/assessments/20261011/catalogs/foundation.json",
+        "basis": "Git blob bytes"
+      }
+    ],
+    "scope": "Library implementation sources; historical NOT_RUN/UNPROVEN unchanged. No production Owner adoption."
+  },
+  "source_pin_independent_check": "All five copied assets match actual original archive bytes or fixed Main Git blobs; verified separately.",
+  "manifest": {
+    "path": "docs/development/evidence/WP02-11/implementation/after-parent-cancellation-fix-fingerprints.json",
+    "sha256": "5147dd29f33bfbcc8f82e4de9c32b381eb3e700a7066fa4f8d8ef82f64565341",
+    "checks": {
+      "source": {
+        "count": 236,
+        "mismatches": [],
+        "changed_since_original_gates": [
+          "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpDeadline.cs",
+          "src/CP6.Platform.AspNetCore/HttpV2/Cp6HttpV2Handler.cs",
+          "tests/CP6.Platform.AspNetCoreTests/HttpV2/LoopbackTests.cs",
+          "tests/CP6.Platform.AspNetCoreTests/HttpV2/ReviewRegressionsTests.cs"
+        ],
+        "pre_green_equal": true
+      },
+      "restoredDependencies": {
+        "count": 8,
+        "mismatches": [],
+        "changed_since_original_gates": [],
+        "pre_green_equal": true
+      },
+      "compiledArtifacts": {
+        "count": 25,
+        "mismatches": []
+      }
+    }
+  },
+  "runs": [
+    {
+      "file": "draft-regressions.trx",
+      "counters": {
+        "total": "84",
+        "executed": "84",
+        "passed": "80",
+        "failed": "4",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 84,
+      "actual_outcomes": {
+        "Passed": 80,
+        "Failed": 4
+      },
+      "sha256": "5fa86d5522bb27abd418b01a2232268d9457f829271b76a79fe001b50dbb1412"
+    },
+    {
+      "file": "final-architecture.trx",
+      "counters": {
+        "total": "98",
+        "executed": "98",
+        "passed": "98",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 98,
+      "actual_outcomes": {
+        "Passed": 98
+      },
+      "sha256": "f04a591a821a31bbc92612b75da1b4c2d412764027ef5dd1f7dcaccf75dd704b"
+    },
+    {
+      "file": "final-http-v2.trx",
+      "counters": {
+        "total": "128",
+        "executed": "128",
+        "passed": "128",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 128,
+      "actual_outcomes": {
+        "Passed": 128
+      },
+      "sha256": "b0699843c75d728a3b8e84c4d8a0c9962500a7696bb88de43f19fea94df353c6"
+    },
+    {
+      "file": "final-legacy-http-gateway-auth.trx",
+      "counters": {
+        "total": "98",
+        "executed": "98",
+        "passed": "98",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 98,
+      "actual_outcomes": {
+        "Passed": 98
+      },
+      "sha256": "5835592656f414ea6156ce1511b82af6509395ae850f25c4e6a3e4021be46d47"
+    },
+    {
+      "file": "https-fixture.trx",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 1,
+      "actual_outcomes": {
+        "Passed": 1
+      },
+      "sha256": "09fa76d2cd9ceaeb75fa0305665f1d657b4c8c1866054ac0a5e1205803bc13e2"
+    },
+    {
+      "file": "integrated-v2-fixed.trx",
+      "counters": {
+        "total": "124",
+        "executed": "124",
+        "passed": "124",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 124,
+      "actual_outcomes": {
+        "Passed": 124
+      },
+      "sha256": "fb2ada32935850cdd64abf6daf7fdfb61011a5c28f445d54e9550c7610107c07"
+    },
+    {
+      "file": "integrated-v2.trx",
+      "counters": {
+        "total": "124",
+        "executed": "124",
+        "passed": "123",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 124,
+      "actual_outcomes": {
+        "Passed": 123,
+        "Failed": 1
+      },
+      "sha256": "dc5486e5db9fac3ef418f50ff9b878f883a5ac608046a9262ffe25d0e55cf77d"
+    },
+    {
+      "file": "parent-cancellation-http-v2.trx",
+      "counters": {
+        "total": "150",
+        "executed": "150",
+        "passed": "150",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 150,
+      "actual_outcomes": {
+        "Passed": 150
+      },
+      "sha256": "402b5db617ae39264b1850343a9820c02ad4d995dfdc911c66ff9941a31860eb"
+    },
+    {
+      "file": "parent-cancellation-red.trx",
+      "counters": {
+        "total": "4",
+        "executed": "4",
+        "passed": "1",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 4,
+      "actual_outcomes": {
+        "Failed": 3,
+        "Passed": 1
+      },
+      "sha256": "c5b95175201e8af75f53c23d3057b421bb58926898d881f786d18bf6084c56bc"
+    },
+    {
+      "file": "parser-green.trx",
+      "counters": {
+        "total": "15",
+        "executed": "15",
+        "passed": "15",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 15,
+      "actual_outcomes": {
+        "Passed": 15
+      },
+      "sha256": "0fa8f1faea3aa26629cf2702539fa3169ceca80c69133bbe09a87d8b8de12098"
+    },
+    {
+      "file": "protocol-parser-red.trx",
+      "counters": {
+        "total": "114",
+        "executed": "114",
+        "passed": "111",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 114,
+      "actual_outcomes": {
+        "Passed": 111,
+        "Failed": 3
+      },
+      "sha256": "e2a51b89d48c72ae707d50a8815d20325fbcde1fbcad10dbc375e8c85972ca03"
+    },
+    {
+      "file": "red-parser.trx",
+      "counters": {
+        "total": "15",
+        "executed": "15",
+        "passed": "1",
+        "failed": "14",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 15,
+      "actual_outcomes": {
+        "Failed": 14,
+        "Passed": 1
+      },
+      "sha256": "d5dee1d4f87a6fe5a06a4ef8e9ddad61ba4dd9080dd6e816b41321f5c1e0073a"
+    },
+    {
+      "file": "review-fixes-http-v2.trx",
+      "counters": {
+        "total": "146",
+        "executed": "146",
+        "passed": "146",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 146,
+      "actual_outcomes": {
+        "Passed": 146
+      },
+      "sha256": "132ff6b933d69f2a0f738af862b23a1e2ed56bea0b54c004fd50c7229c85eb67"
+    },
+    {
+      "file": "review-fixes-red.trx",
+      "counters": {
+        "total": "16",
+        "executed": "16",
+        "passed": "5",
+        "failed": "11",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 16,
+      "actual_outcomes": {
+        "Passed": 5,
+        "Failed": 11
+      },
+      "sha256": "8f267ba08f7f584cbe34375785899bc681ab660df50e1a8a3764fe71c5e5d549"
+    },
+    {
+      "file": "transport-boundary-green.trx",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "3",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 3,
+      "actual_outcomes": {
+        "Passed": 3
+      },
+      "sha256": "218766de0459bb9f5cd68833d3861a620c4ad85557d6c5c1caabe2654977f12b"
+    },
+    {
+      "file": "transport-boundary-red.trx",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "0",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "actual_result_count": 3,
+      "actual_outcomes": {
+        "Failed": 3
+      },
+      "sha256": "642c6b1766d13502d4fbed5735c31c40b6b4a96ef4671d977ca75c2c73194f76"
+    }
+  ],
+  "reuse": {
+    "legacy": "final-legacy-http-gateway-auth.trx: historical98/98",
+    "architecture": "final-architecture.trx: historical98/98",
+    "applicable": true,
+    "reason": "Since original gates only new v2 deadline/handler and private v2 tests changed; old implementation/tests, overload signatures, project/dependency inputs and architecture boundaries unchanged. Architecture source-text restrictions inspected. Not claimed to run current binaries. New findings need affected regressions only."
+  },
+  "ac_map": {
+    "original_count": 42,
+    "exact_original_objects_equal": true,
+    "library_partial_pass": 38,
+    "library_not_run": 4,
+    "all_business_not_run": true,
+    "mapped_test_references": 267,
+    "unresolved_references": 0
+  },
+  "scope": "All changed production and test C# read. Full91-path inventory checked; task docs and original HTTP clauses read; JSON/TRX and manifests structurally parsed. No literal line-by-line reading of giant frozen evidence claimed.",
+  "confirmed": [
+    "Only18 additive lines in old ProblemDetails source; legacy resilience source/defaults/auth/gateway unchanged.",
+    "Explicit opt-in Disabled default, no production binding or real authority supplied; fixture results do not prove remote Owner atomicity.",
+    "Request identity/body/header snapshot, query-before-write-authority, inherited monotonic deadline/cancellation, parser3 date forms/overflow, one jitter/max(S,L)/cap/admission, safe writer limits have substantive coverage.",
+    "No shared contract/dependency/DB/workflow/real Main/CRM adoption changes.",
+    "Original42 business AC remain NOT_RUN; real Owner final authorization/receipt/retention/production exactly-once remain unproven."
+  ],
+  "limits": [
+    "Review performed no tests/builds/repository edits/Git mutations/network/Actions/DB/package/deployment operations.",
+    "Historical RED remains genuine failed evidence, not current mandatory-gate failure.",
+    "Remote main containment, queued Actions and pre-push/PR checks remain root coordination work."
+  ],
+  "operations": {
+    "repository_writes": 0,
+    "git_mutations": 0,
+    "test_or_build_executions": 0,
+    "network_operations": 0,
+    "external_report_files": 2
+  }
+}
