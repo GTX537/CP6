@@ -8,7 +8,7 @@ C# 使用 `\A[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}\z`；TS 和 Schema 使用 `^[A-Z
 
 ## 固定输入与范围
 
-- 实际创建/执行基线：Main `8569b669fed56ddc7b53b7bb24666c7fb93d544a`；固定输入基线 `d7a210256783e45291a5e724ea068ed4fc165ecc`。二者间只有协调文档增量，无源码、输入或依赖漂移。
+- 分配时分支从当时 `origin/main@d7a210256783e45291a5e724ea068ed4fc165ecc` 创建，该提交也是固定输入基线；实际开工前在干净树快进到已确认的 Main `8569b669fed56ddc7b53b7bb24666c7fb93d544a`。二者间只有协调文档增量，无源码、输入或依赖漂移。
 - 包 `CP6-S01-CONTRACT-INPUTS/1.0.0`，profile `atp-stableid-r1`，全部 22 个分配向量。manifest SHA-256 `2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e`；vectors SHA-256 `b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01`。
 - 写入仅限分配的 PlanAtp C#/TS、`StableIdTests.cs`、局部 Schema 和本任务证据。共享 Wire、csproj、wave2 dispatch 复制配置、共同输入、包/锁、台账及四状态页保持只读；协调对话统一更新任务状态并合并。
 - [source-provenance.json](source-provenance.json) 核对 composed-13/14/24/25 的原件、派生件、索引、全部登记 patch bundle 的 Git 字节 SHA。PG 原 DDL 在内存按完整两组 patch 重组，9 个操作的结果与 composed-14 完整 SHA 相等，包含 PLAN-IF-004 及 PLAN-IF-005 的五个恢复/重放锁顺序和绑定替换。
