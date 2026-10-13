@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f144a9cd-502f-48e5-b451-8a8d5b89e0ef" name="tt@LAPTOP-3QQ44FJS 2026-10-13 01:16:11" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-13T01:16:11.0809788-04:00" queuing="2026-10-13T01:16:11.0809793-04:00" start="2026-10-13T01:16:08.4093140-04:00" finish="2026-10-13T01:16:11.0869042-04:00" />
+  <TestSettings name="default" id="a9aedfa4-79b5-4305-a2b9-cae023f013bd">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-13_01_16_11" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8d3bb13e-293e-4d40-b6f8-fd5b97d3acb1" testId="748eb618-6027-6b59-2a1c-fa46b87b6df5" testName="CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4210329" startTime="2026-10-13T01:16:10.5128143-04:00" endTime="2026-10-13T01:16:10.9579196-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d3bb13e-293e-4d40-b6f8-fd5b97d3acb1">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Persistence.PostgreSql.Contracts.ExactValueStorage.CreditParameters(Nullable`1 value, CreditAmountProfile profile, Boolean nullable) in D:\CP6-worktrees\s01-10-20261012\CP6.Persistence.PostgreSql\Contracts\ExactValueStorage.cs:line 10&#xD;
+   at CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\ExactValueStorageTests.Adapter.cs:line 16&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip" storage="d:\cp6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\bin\debug\net8.0\cp6.exactvalues.postgresqltests.dll" id="748eb618-6027-6b59-2a1c-fa46b87b6df5">
+      <Execution id="8d3bb13e-293e-4d40-b6f8-fd5b97d3acb1" />
+      <TestMethod codeBase="D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\bin\Debug\net8.0\CP6.ExactValues.PostgreSqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests" name="Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="748eb618-6027-6b59-2a1c-fa46b87b6df5" executionId="8d3bb13e-293e-4d40-b6f8-fd5b97d3acb1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.25]   Discovering: CP6.ExactValues.PostgreSqlTests&#xD;
+[xUnit.net 00:00:00.29]   Discovered:  CP6.ExactValues.PostgreSqlTests&#xD;
+[xUnit.net 00:00:00.31]   Starting:    CP6.ExactValues.PostgreSqlTests&#xD;
+[xUnit.net 00:00:00.77]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.77]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.77]         D:\CP6-worktrees\s01-10-20261012\CP6.Persistence.PostgreSql\Contracts\ExactValueStorage.cs(10,0): at CP6.Persistence.PostgreSql.Contracts.ExactValueStorage.CreditParameters(Nullable`1 value, CreditAmountProfile profile, Boolean nullable)&#xD;
+[xUnit.net 00:00:00.77]         D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\ExactValueStorageTests.Adapter.cs(16,0): at CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip()&#xD;
+[xUnit.net 00:00:00.77]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.77]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.78]   Finished:    CP6.ExactValues.PostgreSqlTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-13T01:16:10.9613307-04:00">
+        <Text>[xUnit.net 00:00:00.77]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
