@@ -1,0 +1,9 @@
+{
+  "data_directory": "D:/CP6-local-test/S01-10/8e600f17d5ab4d4795205be033c7d2b8/data",
+  "system_identifier": "7696023862413827152",
+  "port": 55410,
+  "host": "127.0.0.1/32",
+  "session_user": "s0110_bootstrap",
+  "other_sessions": 0,
+  "task_database_exists": false
+}

@@ -1,0 +1,458 @@
+{
+  "task": "S01-10",
+  "sources": [
+    {
+      "source_id": "composed-13",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+      "expected_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "actual_sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "composed-13",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f/117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75/PLAN-ATP-WIRE.types.cs",
+      "expected_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "actual_sha256": "117cd1d3e376c27b02a71d9c221b08967f18107fc8d03a02f343c7a3c012ed75",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "composed-14",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "expected_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "actual_sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004",
+        "PLAN-IF-005"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "composed-14",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f/29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0/PLAN-ATP-POSTGRESQL-DDL.sql",
+      "expected_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "actual_sha256": "29cd39f1448bf998a377497413baab6ff884d1a3939771479d0625fce31df1e0",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004",
+        "PLAN-IF-005"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "composed-24",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+      "expected_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "actual_sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "composed-24",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd/PLAN-ATP-WIRE.schema.json",
+      "expected_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "actual_sha256": "c2e657f668fb72a147754add284a5c4d5c80739189000ca2711eb88d58e6b0c5",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "composed-25",
+      "variant": "original",
+      "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+      "expected_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "actual_sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "composed-25",
+      "variant": "composed",
+      "path": "D:/CP6-archives/design-revision-20261011-checks/derived/da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7/PLAN-ATP-WIRE.types.ts",
+      "expected_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "actual_sha256": "9d8e4f934fb6b752c41ac7eabee5228537483af308270d96b9d135eb1aa313b6",
+      "matches": true,
+      "findings": [
+        "PLAN-IF-004"
+      ],
+      "verified": true
+    },
+    {
+      "source_id": "numeric-0",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f768bfcd2f485e00__FIN-CREDIT-WIRE.schema.json",
+      "expected_sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "actual_sha256": "f768bfcd2f485e00587569978d2a0763a9c0bb70059d3eeb85e0e2591164d463",
+      "matches": true,
+      "verified": true
+    },
+    {
+      "source_id": "numeric-1",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "expected_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "actual_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "matches": true,
+      "verified": true
+    },
+    {
+      "source_id": "numeric-2",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+      "expected_sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "actual_sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "matches": true,
+      "verified": true
+    }
+  ],
+  "package_pins": [
+    {
+      "path": "eng/contracts/s01/profile-inputs.json",
+      "git_blob_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+      "local_file_sha256": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e"
+    },
+    {
+      "path": "eng/contracts/s01/vectors.json",
+      "git_blob_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "local_file_sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+    },
+    {
+      "path": "docs/design-handbook/remediation/assets/core-types/numeric-storage-1.0.0.json",
+      "git_blob_sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+      "local_file_sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607"
+    }
+  ],
+  "credit_native_field_bindings_verified": [
+    {
+      "pointer": "/$defs/absorptionLink/properties/signedPolicyAmount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/representationTransfer/properties/deltaPolicyAmount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/subject/properties/exposureDeltaPolicyAmount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/moneySigned/properties/amount",
+      "native_definition": "signedDecimal",
+      "profile": "fin-credit-signed",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/moneyNonNegative/properties/amount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/arObligationAggregate/properties/openPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/absorptionLink/properties/predecessorOpenPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/absorptionLink/properties/successorOpenPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/arCut/properties/arBookedExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/orderExposureLineage/properties/committedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/representationTransfer/properties/predecessorCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/representationTransfer/properties/targetCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/reservationSet/properties/activeReservedDelta",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/arBookedExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/orderUnbilledExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/activeReservedDelta",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExposureSnapshot/properties/totalExposure",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/subject/properties/currentCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/subject/properties/targetCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditEvaluation/properties/limitPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditEvaluation/properties/requestedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditEvaluation/properties/projectedPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditReservation/properties/reservedDeltaPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/exceptionDecisionCommand/properties/maxPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/planAtpObservation/properties/promisedQuantity/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/orderCreditContext/properties/canonicalPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/creditExceptionDecision/properties/maxPolicyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/salesExposureReductionInput/properties/targetPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/finArFinalPostInput/properties/expectedCommittedPolicyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/legacyExposureAdoptionEntry/properties/policyAmount/oneOf/0",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/legacyExposureAdoptionEntry/allOf/0/then/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/postedOpenContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/partiallySettledOpenContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/effectiveCreditContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/appliedReceiptContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/unbilledOrderContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/activeReservationContribution/properties/policyAmount",
+      "native_definition": "nonNegativeDecimal",
+      "profile": "fin-credit-nonnegative",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/moneyPositive/properties/amount",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/fxEvidence/properties/rate",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/planAtpObservationInput/properties/requestedQuantity",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/finArReceiptUnapplyCorrectionSource/properties/restoredPolicyAmount",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    },
+    {
+      "pointer": "/$defs/finArCreditReversalCorrectionSource/properties/restoredPolicyAmount",
+      "native_definition": "positiveDecimal",
+      "profile": "fin-credit-positive",
+      "exact_native_schema_matches": true
+    }
+  ],
+  "inventory_dictionary_bindings_verified": 66,
+  "atp_selected_definitions": [
+    {
+      "declaration": "DOMAIN plan_atp.sha256_hex",
+      "line": 32,
+      "source_text_sha256": "453c140166063744fe7ab425018ed603b026919c429996140f62a58feb074866"
+    },
+    {
+      "declaration": "DOMAIN plan_atp.stable_id",
+      "line": 34,
+      "source_text_sha256": "beb36e148a34dc1b6d6a36da3cc15c8f2d5d528fdc090c4063da7ff998f159dc"
+    },
+    {
+      "declaration": "DOMAIN plan_atp.decimal_30_8",
+      "line": 48,
+      "source_text_sha256": "86b148d783d34535d01e455628061c6af5f9adb83bfcd34637de78a2ac682e57"
+    },
+    {
+      "declaration": "TYPE plan_atp.evaluation_state",
+      "line": 50,
+      "source_text_sha256": "013ec3e399ecd15e1f0826a03fb724546be3c17358c80b342825302116f98714"
+    },
+    {
+      "declaration": "TABLE plan_atp.evaluation",
+      "line": 117,
+      "source_text_sha256": "7eeccb6aa41869200526b7976401dd54984b732ad556c47a5051afdc36269a72"
+    },
+    {
+      "declaration": "TABLE plan_atp.segment",
+      "line": 286,
+      "source_text_sha256": "f55a2408e56fdb2d81e0516490e1729554b225ebfedeaaf22aae7dfe183aac78"
+    },
+    {
+      "declaration": "TABLE plan_atp.basis",
+      "line": 309,
+      "source_text_sha256": "1044f46e51ba22195ead59b1bfe318564827c883dc714d5b5d6f96ff7cdd6ec8"
+    },
+    {
+      "declaration": "TABLE plan_atp.reservation_ledger",
+      "line": 368,
+      "source_text_sha256": "84b5d911b0ae353c73647bb9ef8fe4b11cdfe23dba2039e743c83257dffca904"
+    },
+    {
+      "declaration": "TABLE plan_atp.replay_record",
+      "line": 197,
+      "source_text_sha256": "81392a3d167cfdd8f3ad1134eb5e272a80cb6d022e49c9ee48d6f6797f70091a"
+    }
+  ],
+  "atp_recovery_patch_indices_verified": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "atp_subset_sha256": "315784b00be3416e3fe1047748978d6556906b0149e8df96d6d8bc7574de24ab",
+  "scope": "Source verification and fixture subset only; no archived business procedure executed"
+}

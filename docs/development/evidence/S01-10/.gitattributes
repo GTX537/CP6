@@ -1,0 +1,5 @@
+# Evidence hashes identify original local bytes, including CRLF where actually emitted.
+*.json -text
+*.log -text
+*.trx -text
+red/*.txt -text

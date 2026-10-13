@@ -1,0 +1,923 @@
+{
+  "task": "S01-10",
+  "run_id": "full-storage",
+  "started_utc": "2026-10-13T05:48:41.565134+00:00",
+  "finished_utc": "2026-10-13T05:49:19.449503+00:00",
+  "source_head": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+  "source_identity": "Exact working-file hashes; uncommitted implementation is identified independently from baseline HEAD",
+  "command": [
+    "dotnet",
+    "test",
+    "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~ExactValueStorageTests",
+    "--logger",
+    "trx;LogFileName=s01-10-postgresql.trx",
+    "--results-directory",
+    "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\runs\\full-storage",
+    "--verbosity",
+    "minimal"
+  ],
+  "exit_code": 0,
+  "counters": {
+    "total": "210",
+    "executed": "210",
+    "passed": "210",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "cases": [
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"FxRateFact.RateNumerator\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.LineRoundedTotalBeforeResidue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-008\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/absorptionLink/properties/predecessorOpenPo\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortion.SourceQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionBalance.OutboundBaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/reservationSet/properties/activeReservedDel\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/activeReservationContribution/properties/po\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayerBalance.AvailableQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-009\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.BeforeQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayer.OriginalQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-012\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-006\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.AfterQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortion.RatioDenominator\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.FinalAmount\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-011\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.DiscardedRemainderDenomi\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.Difference\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-017\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-010\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.ExactAverageNumerator\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"1e2\", scale: 0, wire: \"100\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.RawTotal\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditExposureSnapshot/properties/activeRes\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/absorptionLink/properties/successorOpenPoli\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.TakeQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.RoundedBeforeResidue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionBalance.ClearedBaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-010\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"1\", scale: 19, wire: \"0.0000000000000000001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/finArCreditReversalCorrectionSource/propert\"···, profileName: \"fin-credit-positive\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditExposureSnapshot/properties/orderUnbi\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: \"-0.000\", digits: \"0\", scale: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-008\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"/EA\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.FinalTotal\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayer.OriginalUnroundedValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: \"null\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayerBalance.ReversedQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/representationTransfer/properties/targetCom\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.Quantity\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-019\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditExposureSnapshot/properties/totalExpo\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.InTransitValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionRange.FromQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/moneyPositive/properties/amount\", profileName: \"fin-credit-positive\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"公斤\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"-0\", scale: 0, wire: \"0\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.ExactAverageDenominator\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 17)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Committed_values_and_original_UTF8_survive_new_physical_connections_and_repeated_persistence",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.UnitValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/exceptionDecisionCommand/properties/maxPoli\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-014\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.GlValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditEvaluation/properties/limitPolicyAmou\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.BeforeUnroundedValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_recovery_locks_replay_in_C_order_before_evaluation_and_requires_binding",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-010\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditExposureSnapshot/properties/arBookedE\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"12\", scale: 1, wire: \"1.3\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"FxRateFact.RateDenominator\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"00\", scale: 0, wire: \"0\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.CogsValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-007\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/subject/properties/targetCommittedPolicyAmo\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \":EA\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_coefficient_beyond_PostgreSQL_numeric_capacity_remains_text",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-JS-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-009\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-009\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionBalance.OriginalBaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/representationTransfer/properties/predecess\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Owned_resource_rejects_collisions_identity_drift_sessions_and_writer_DDL",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.DisplayAverage18\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditEvaluation/properties/projectedPolicy\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"EA\\n\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.FgValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortion.BaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditEvaluation/properties/requestedPolicy\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.BeforeQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-002\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/planAtpObservationInput/properties/requeste\"···, profileName: \"fin-credit-positive\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-018\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-011\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditReservation/properties/reservedDeltaP\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-006\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/moneyNonNegative/properties/amount\", profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Mavg_preserves_unreduced_numerators_denominators_and_remainder_raw_strings",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayer.UnitValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/partiallySettledOpenContribution/properties\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.RoundedBeforeResidue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ProvisionalValueFact.MaxAmount\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-023\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionBalance.ReservedBaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-JS-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.TargetTotal\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-007\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/subject/properties/exposureDeltaPolicyAmoun\"···, profileName: \"fin-credit-signed\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-013\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.Residue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionBalance.ValuedBaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.Qty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"EA \")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionRange.ToQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-021\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/unbilledOrderContribution/properties/policy\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayerBalance.ConsumedQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortion.RatioNumerator\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.RawAmount\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Mavg_active_empty_state_constraints_and_positive_denominators_are_enforced",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValuationPoolHead.CurrentQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-015\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: \"true\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \".EA\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/postedOpenContribution/properties/policyAmo\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: \"-123.45000\", digits: \"-12345\", scale: 2)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-006\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/orderExposureLineage/properties/committedPo\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/representationTransfer/properties/deltaPoli\"···, profileName: \"fin-credit-signed\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-R1-007\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"0\", scale: 1, wire: \"-0.0\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayerBalance.ReservedQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.DeltaQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/legacyExposureAdoptionEntry/properties/poli\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.ResidueApplied\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.ApValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-JS-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_composed_relationship_and_terminal_state_checks_remain_in_force",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.DiscardedRemainderNumera\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_database_column_checks_nullability_and_typmod_limit_are_distinguished_from_raw_guard",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-003\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_replay_binding_checks_organization_actor_delegation_request_and_both_digests",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.ResidueApplied\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 1)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Constraint_failure_aborts_and_rolls_back_all_writes_on_the_same_transaction",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.RawAmount\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: \"{}\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-016\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-022\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 16)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"_EA\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"EA\\r\\n\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionBalance.ReversedBaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"+1\", scale: 0, wire: \"1\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.GrniValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.AfterQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/arObligationAggregate/properties/openPolicy\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"SourcePortionBalance.AvailableBaseQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"10\", scale: 1, wire: \"1.0\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValuationPoolHead.CurrentUnroundedValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/arCut/properties/arBookedExposure\", profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: \"1\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/finArReceiptUnapplyCorrectionSource/propert\"···, profileName: \"fin-credit-positive\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/planAtpObservation/properties/promisedQuant\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: \"1\\n\", scale: 0, wire: \"1\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ProvisionalValueFact.MaxQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_rejects_invalid_pairs_and_guards_raw_integer_input_before_numeric_rounding",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLayerBalance.OriginalQty\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.DeltaUnroundedValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.WipValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"MovingAveragePoolRevision.AfterUnroundedValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"-EA\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/moneySigned/properties/amount\", profileName: \"fin-credit-signed\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: \"[]\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/legacyExposureAdoptionEntry/allOf/0/then/pr\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"INV-004\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/salesExposureReductionInput/properties/targ\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"ATP-LEADING-001\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.InventoryValue\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: \"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\"···)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"CREDIT-005\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 128)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-008\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: \"123.45000\", digits: \"12345\", scale: 2)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/fxEvidence/properties/rate\", profileName: \"fin-credit-positive\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/absorptionLink/properties/signedPolicyAmoun\"···, profileName: \"fin-credit-signed\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/creditExceptionDecision/properties/maxPolic\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/finArFinalPostInput/properties/expectedComm\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/subject/properties/currentCommittedPolicyAm\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.FinalAmount\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: \"NUM-020\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/appliedReceiptContribution/properties/polic\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/effectiveCreditContribution/properties/poli\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: \"/$defs/orderCreditContext/properties/canonicalPoli\"···, profileName: \"fin-credit-nonnegative\")",
+      "outcome": "Passed"
+    }
+  ],
+  "source_sha256": {
+    "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs": "f0514c0253a1d3a2c22d1a5e925eeb0b51b2f2faf8017f6d17dcb481eef99859",
+    "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+    "CP6.Persistence.PostgreSql/packages.lock.json": "565334cc9393b7f9796a652007cbed6887ad67ba5f7c14052e2e32e8b383b7f8",
+    "docs/development/evidence/S01-10/postgresql-mappings.proposed.json": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+    "eng/contracts/postgresql-tests/atp-recovery-subset.sql": "55afa723281bf2b65c2aa2cae9133e6313242c1b50df758d75c766b226c8d80b",
+    "eng/contracts/postgresql-tests/atp-reviewed-subset.sql": "315784b00be3416e3fe1047748978d6556906b0149e8df96d6d8bc7574de24ab",
+    "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj": "a6616864498568d9c888b1e327cc461383f91e781e5c85517840eb3dd873885a",
+    "eng/contracts/postgresql-tests/exact-guards.sql": "edf7f473ce0ae782640ecb5da4aa0540ab6a195efa1f802a216069276e341197",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Adapter.cs": "325cd53a8170dd42a9c90b2830ec1e6dfa8c81452636e0fba58cc16b0d4ad934",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Atp.cs": "32a41367fbf83c424ef27891defb7c59fc216c494bc06cd778890798c1e89958",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Boundaries.cs": "44b88d0b4602bf94f7c39ed7cd2f230fc0d01db0575fe0a4c18ae1664730e75a",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.cs": "e5196860cb11734f04d9990903f7e8e64976fe76528172f24601519b43b2eb91",
+    "eng/contracts/postgresql-tests/ExactValueStorageTests.Inventory.cs": "c4e49d8e459e2fc0fe7f5d8bc74c7208320c662279c54474a0aafaddab7d5e61",
+    "eng/contracts/postgresql-tests/FixtureSql.cs": "745cd4ef0d8c13a862c2599c8e3a7c8ca13076090989d665305a3e6110701468",
+    "eng/contracts/postgresql-tests/OwnedPostgres.cs": "6a3fd2baaf946749dd114138517982b2838ce761931df1cc587b065312c43efd",
+    "eng/contracts/postgresql-tests/packages.lock.json": "17bb2300b71126fb34c589ea27f15d30bee42a35bf883e09b31dc82efa0ae558",
+    "eng/contracts/postgresql-tests/prepare_mapping_proposal.py": "5323500f69c8ee4c80137f030e4128636f7f79233059f9f6313b26a3bb7a517a",
+    "eng/contracts/postgresql-tests/prepare_sources.py": "6562483865fbcbca0c58bc672e0c8d488fa5a14b22dcd87d56313def39f308e4",
+    "eng/contracts/postgresql-tests/run_local.py": "cdc5a11633f0a33830499cbe856f7ef2032e6db10a8766184dd7d974a7dfd913",
+    "eng/contracts/postgresql-tests/TestInputs.cs": "33a63dd8cbfbb2532aa25418a09eed6c86f85ce8db5348d20f1397168b865c7a",
+    "eng/contracts/s01/profile-inputs.json": "2c221a04333cd5e0beba8d12a7aecbb08cbc80caa5faa74b22313045ce420e5e",
+    "eng/contracts/s01/vectors.json": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01"
+  },
+  "source_unchanged_during_run": true,
+  "artifact_sha256": {
+    "CP6.ExactValues.PostgreSqlTests.dll": "ec7556234d0fc0d05c2c2053e376eb1cef815c0cb4db67098d3e9b2497ffe869",
+    "CP6.Persistence.PostgreSql.dll": "a9f4bc41c9448c2887ac89d8e06184fdbb31eb7531100b418ab5b2ebc8f57ad9",
+    "CP6.Entity.dll": "875b13343dc80edcf283e06835097cd5fcefebbbacb46fac3dc383b909d8a072",
+    "Npgsql.dll": "2083de510463c4f708fa433d68bf3da149f10e25cd99a86f4519360e3f59b70d"
+  },
+  "lifecycle": [
+    {
+      "path": "docs/development/evidence/S01-10/lifecycle/642b372f1b6543e7872b96957539074b.json",
+      "sha256": "b174e8d18616508dfb9471e20f904af8eeb95fd48424845852b3eada088fa4bd",
+      "status": "CLEANED"
+    }
+  ],
+  "local_gate": "PASS",
+  "scope": "Owned fixture only; draft mapping remains proposed until COORD decision; no production Owner/tenant/migration acceptance"
+}

@@ -1,0 +1,1094 @@
+{
+  "task": "S01-10",
+  "candidate_sha": "d90be911bd54dc14bf9f11cdc73bf237c778d2f9",
+  "review_result": "ACCEPT_WITH_FORMAL_MAPPING_ADOPTION",
+  "mapping_version": "CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0",
+  "proposal_path": "D:\\CP6-worktrees\\s01-10-20261012\\docs\\development\\evidence\\S01-10\\postgresql-mappings.proposed.json",
+  "proposal_sha256": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+  "current_adoption": "PROPOSED_PENDING_COORD",
+  "accepted_scope": "PG精确存储表示的20项scale8→18有界补充；17项直接原生金额绑定+3项明确字典派生量；不表示生产Owner采用",
+  "source_pins": [
+    {
+      "source_id": "numeric-1",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a61c4b68b8f5c01__CLOSED-WIRE-SCHEMA_R10.json",
+      "sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "matches": true
+    },
+    {
+      "source_id": "numeric-2",
+      "variant": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d2b80a29721bd73__DATA-DICTIONARY_R10.json",
+      "sha256": "8d2b80a29721bd7381c0cb08dc3b377e5f7540ca088c2d7e9ae3be732183da1e",
+      "matches": true
+    }
+  ],
+  "source_storage_git_sha256": "b67a8fea437a1db1990c3513a09cd9bc791704aac3b3a8f3f9b80642b5d4a607",
+  "rows": [
+    {
+      "path": "ValueLine.RoundedBeforeResidue",
+      "proposal_pointer": "/inventory_mappings/35/storage_scale_range",
+      "dictionary_pointer": "/Tables/11/Columns/11",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/LayerConsumption/properties/roundedBeforeResidue",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "source_semantic_evidence": "字典派生存储量，原 ValueEffectResult.lines 没有同名 wire 属性；依据 ValueLine 的 FinalAmount=RoundedBeforeResidue+ResidueApplied、LayerConsumption 到 ValueLine 的外键及同名 Money 金额。扩展存储容量不取消按政策舍入或三字段代数关系。",
+      "policy_scale": "Money.scale / RoundingPolicy.currencyScale: 0..8, independently preserved by Owner",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.RoundedBeforeResidue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ValueLine.ResidueApplied",
+      "proposal_pointer": "/inventory_mappings/36/storage_scale_range",
+      "dictionary_pointer": "/Tables/11/Columns/12",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/LayerConsumption/properties/residueApplied",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "source_semantic_evidence": "字典派生存储量，原 ValueEffectResult.lines 没有同名 wire 属性；依据 ValueLine 的 FinalAmount=RoundedBeforeResidue+ResidueApplied、LayerConsumption 到 ValueLine 的外键及同名 Money 金额。扩展存储容量不取消按政策舍入或三字段代数关系。",
+      "policy_scale": "Money.scale / RoundingPolicy.currencyScale: 0..8, independently preserved by Owner",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.ResidueApplied\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ValueLine.FinalAmount",
+      "proposal_pointer": "/inventory_mappings/37/storage_scale_range",
+      "dictionary_pointer": "/Tables/11/Columns/13",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/LayerConsumption/properties/finalAmount",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "DERIVED_VALUE_EFFECT_LINE_DICTIONARY_FIELD",
+      "source_semantic_evidence": "字典派生存储量，原 ValueEffectResult.lines 没有同名 wire 属性；依据 ValueLine 的 FinalAmount=RoundedBeforeResidue+ResidueApplied、LayerConsumption 到 ValueLine 的外键及同名 Money 金额。扩展存储容量不取消按政策舍入或三字段代数关系。",
+      "policy_scale": "Money.scale / RoundingPolicy.currencyScale: 0..8, independently preserved by Owner",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ValueLine.FinalAmount\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "LayerConsumption.RoundedBeforeResidue",
+      "proposal_pointer": "/inventory_mappings/42/storage_scale_range",
+      "dictionary_pointer": "/Tables/12/Columns/10",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/LayerConsumption/properties/roundedBeforeResidue",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent of amount lexical scale",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.RoundedBeforeResidue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "LayerConsumption.ResidueApplied",
+      "proposal_pointer": "/inventory_mappings/43/storage_scale_range",
+      "dictionary_pointer": "/Tables/12/Columns/11",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/LayerConsumption/properties/residueApplied",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent of amount lexical scale",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.ResidueApplied\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "LayerConsumption.FinalAmount",
+      "proposal_pointer": "/inventory_mappings/44/storage_scale_range",
+      "dictionary_pointer": "/Tables/12/Columns/12",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/LayerConsumption/properties/finalAmount",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent of amount lexical scale",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"LayerConsumption.FinalAmount\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "RoundingTrace.TargetTotal",
+      "proposal_pointer": "/inventory_mappings/46/storage_scale_range",
+      "dictionary_pointer": "/Tables/13/Columns/6",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/RoundingTrace/properties/targetTotal",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.TargetTotal\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "RoundingTrace.LineRoundedTotalBeforeResidue",
+      "proposal_pointer": "/inventory_mappings/47/storage_scale_range",
+      "dictionary_pointer": "/Tables/13/Columns/7",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/RoundingTrace/properties/lineRoundedTotalBeforeResidue",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.LineRoundedTotalBeforeResidue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "RoundingTrace.Residue",
+      "proposal_pointer": "/inventory_mappings/48/storage_scale_range",
+      "dictionary_pointer": "/Tables/13/Columns/8",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/RoundingTrace/properties/residue",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.Residue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "RoundingTrace.FinalTotal",
+      "proposal_pointer": "/inventory_mappings/49/storage_scale_range",
+      "dictionary_pointer": "/Tables/13/Columns/11",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/RoundingTrace/properties/finalTotal",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "RoundingTrace.scale: integer 0..8; calculationScale=18; no storage rounding",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"RoundingTrace.FinalTotal\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.InventoryValue",
+      "proposal_pointer": "/inventory_mappings/51/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/11",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/inventoryValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.InventoryValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.InTransitValue",
+      "proposal_pointer": "/inventory_mappings/52/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/12",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/inTransitValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.InTransitValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.WipValue",
+      "proposal_pointer": "/inventory_mappings/53/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/13",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/wipValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.WipValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.FgValue",
+      "proposal_pointer": "/inventory_mappings/54/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/14",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/fgValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.FgValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.GrniValue",
+      "proposal_pointer": "/inventory_mappings/55/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/15",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/grniValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.GrniValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.ApValue",
+      "proposal_pointer": "/inventory_mappings/56/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/16",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/apValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.ApValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.CogsValue",
+      "proposal_pointer": "/inventory_mappings/57/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/17",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/cogsValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.CogsValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.GlValue",
+      "proposal_pointer": "/inventory_mappings/58/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/18",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/glValue/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.GlValue\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ReconciliationLine.Difference",
+      "proposal_pointer": "/inventory_mappings/59/storage_scale_range",
+      "dictionary_pointer": "/Tables/20/Columns/19",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": true,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ReconciliationRow/properties/difference/anyOf/0",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ReconciliationLine.Difference\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    },
+    {
+      "path": "ProvisionalValueFact.MaxAmount",
+      "proposal_pointer": "/inventory_mappings/65/storage_scale_range",
+      "dictionary_pointer": "/Tables/41/Columns/5",
+      "old": {
+        "dictionary_type": "decimal(38,8)",
+        "numeric_scale_range": [
+          0,
+          8
+        ]
+      },
+      "new": {
+        "digits_type": "text",
+        "scale_type": "smallint",
+        "numeric_scale_range": [
+          0,
+          18
+        ],
+        "wire_type": "text"
+      },
+      "nullable": false,
+      "source_id": "numeric-1",
+      "source_sha256": "3a61c4b68b8f5c01f65025a9fae5647188446569762e4315237f5f1d4fa0ba65",
+      "native_chain": [
+        {
+          "pointer": "/$defs/ProvisionalEnabled/properties/maxAmount",
+          "ref": "#/$defs/Money"
+        },
+        {
+          "pointer": "/$defs/Money/properties/amount",
+          "ref": "#/$defs/Decimal18"
+        },
+        {
+          "pointer": "/$defs/Decimal18",
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+        }
+      ],
+      "binding_kind": "NATIVE_FIELD",
+      "source_semantic_evidence": "原生金额字段（可空字段取 anyOf 的 Money 分支）经 $ref 到 Decimal18；18 位标量本来合法，旧 PG 数值 scale8 会丢失/拒绝非零第9至18位。",
+      "policy_scale": "Money.scale: integer 0..8, independent",
+      "policy_scale_unchanged": true,
+      "original_wire": "Unchanged decoded field string, independent from normalized pair; whole receipt UTF8 stored separately as bytea when required",
+      "coupling": "All three null iff logical field null; otherwise all non-null and raw wire reparses to exactly this canonical pair",
+      "pg_evidence": {
+        "run": "full-storage",
+        "case": "CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: \"ProvisionalValueFact.MaxAmount\")",
+        "outcome": "Passed",
+        "input_shape": "90 integer digits + 18 nonzero fractional digits"
+      },
+      "recommendation": "ADOPT_AS_VERSIONED_PG_STORAGE_CAPACITY_WITH_OWNER_SEMANTICS_UNCHANGED"
+    }
+  ],
+  "counts": {
+    "all_fields": 66,
+    "tables": 13,
+    "required": 51,
+    "nullable": 15,
+    "widened": 20,
+    "unchanged_scale": 46,
+    "direct_native_amount_fields": 17,
+    "dictionary_derived_fields": 3
+  },
+  "no_loss_basis": "值对为精确任意长ASCII整数text和数值scale，无舍入；原wire独立保持尾零/负零/原分子分母。两列规范化并不覆盖原串。现有合法scale≤8值为新域子集；其余46行保持原范围。",
+  "policy_invariants": {
+    "Money.scale": "integer 0..8",
+    "RoundingTrace.scale": "integer 0..8",
+    "RoundingPolicy.currencyScale": "integer 0..8",
+    "RoundingPolicy.calculationScale": 18,
+    "Owner_authorization_receipts_business_rounding": "UNCHANGED"
+  },
+  "semantic_keys": [
+    "database",
+    "source_revision",
+    "source_sha256",
+    "package_version",
+    "native_inventory_schema_sha256",
+    "credit",
+    "inventory_mappings",
+    "atp",
+    "assigned_vectors",
+    "arithmetic",
+    "owner_relations"
+  ],
+  "semantic_sha256": "7bb24e1e36610996a46d13cace0a58e8032a3eb369e4dda235af5ec3c58e8752",
+  "adoption_steps": [
+    "COORD 在本任务公共合同窗口新增 eng/contracts/s01/postgresql-mappings.json；初次正式版本沿用 CP6-POSTGRESQL-EXACT-MAPPINGS/1.0.0，记录采纳决定、候选 SHA、提案 SHA256、原件/旧存储版本和这20项有界覆盖。原固定输入和提案保留不变。",
+    "正式文件保留本提案所有66行、credit/atp/assigned_vectors及语义字段；只修改 adoption、scale_change.approval 并增加决定/证据元数据。按本报告 semantic_keys 比较 semantic_sha256，应与已测试提案相同。不是把 Money.scale 改18，也不是扩大原 wire 词法。",
+    "TestInputs.MappingPath 已优先选择正式文件；COORD 静态核对正式路径、mapping_version 与 ExactValueStorage.MappingVersion 相同且采用状态已确认，生成 fixture 所消费字段与提案相同。保持历史运行 mapping_adoption=PROPOSED，不回写为正式运行。",
+    "仅移动相同语义并补决定元数据，可复用现有210+57结果，注明原工作文件hash与CRLF/LF差异；任何profile/null/sign/scale/SQL/参数/runner语义变化才扩大到受影响回归。",
+    "同步本任务交付文档和协调状态，正常集成并核远端main包含后才能DONE；Owner真实表、全写者切换、迁移、租户/权限/池、完整对象与业务算法继续各自UNPROVEN/NOT_RUN。"
+  ],
+  "findings": [],
+  "database_execution_by_reviewer": "NONE"
+}

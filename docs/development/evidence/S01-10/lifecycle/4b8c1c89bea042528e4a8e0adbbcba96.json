@@ -1,0 +1,45 @@
+{
+  "task": "S01-10",
+  "owner": "4b8c1c89bea042528e4a8e0adbbcba96",
+  "marker": "CP6-S01-10:4b8c1c89bea042528e4a8e0adbbcba96",
+  "database": "cp6_s0110_20261013_4b8c1c89_exact",
+  "endpoint": "127.0.0.1:55410",
+  "run_root": "D:\\CP6-local-test\\S01-10\\4b8c1c89bea042528e4a8e0adbbcba96",
+  "owner_role": "s0110_owner",
+  "writer_role": "s0110_writer",
+  "npgsql_version": "8.0.8.0",
+  "status": "CLEANED",
+  "events": [
+    {
+      "utc": "2026-10-13T05:54:44.2272237Z",
+      "status": "PLANNED"
+    },
+    {
+      "utc": "2026-10-13T05:54:53.0515627Z",
+      "status": "OWNED_BEFORE_DDL"
+    },
+    {
+      "utc": "2026-10-13T05:54:53.2783376Z",
+      "status": "READY"
+    },
+    {
+      "utc": "2026-10-13T05:55:00.5064428Z",
+      "status": "DATABASE_DROPPED"
+    },
+    {
+      "utc": "2026-10-13T05:55:00.7137865Z",
+      "status": "CLEANED"
+    }
+  ],
+  "private_acl_current_user_only": true,
+  "system_identifier": "7696026848283770236",
+  "server_version": "18.6",
+  "data_directory": "D:/CP6-local-test/S01-10/4b8c1c89bea042528e4a8e0adbbcba96/data",
+  "database_oid": 16386,
+  "mapping_path": "docs/development/evidence/S01-10/postgresql-mappings.proposed.json",
+  "mapping_adoption": "PROPOSED_PENDING_COORD",
+  "mapping_sha256": "15a542e7031ff1c4b8a2e86543cde6bb2c899156819c6219b412a913b5f1cf59",
+  "fixture_sql_sha256": "67f1abc34ad46c8eb6d5799c9c7ed94b897cc44162ec3c560f82071c064c31d1",
+  "password_file_removed": true,
+  "retained_resource": "Stopped owned cluster and local logs; no recursive deletion; no business data"
+}

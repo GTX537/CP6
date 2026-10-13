@@ -1,0 +1,24 @@
+{
+  "task": "S01-10",
+  "owner": "8e600f17d5ab4d4795205be033c7d2b8",
+  "marker": "CP6-S01-10:8e600f17d5ab4d4795205be033c7d2b8",
+  "database": "cp6_s0110_20261013_8e600f17_exact",
+  "endpoint": "127.0.0.1:55410",
+  "run_root": "D:\\CP6-local-test\\S01-10\\8e600f17d5ab4d4795205be033c7d2b8",
+  "owner_role": "s0110_owner",
+  "writer_role": "s0110_writer",
+  "npgsql_version": "8.0.8.0",
+  "status": "BLOCKED",
+  "events": [
+    {
+      "utc": "2026-10-13T05:43:08.8855907Z",
+      "status": "PLANNED"
+    },
+    {
+      "utc": "2026-10-13T05:46:42.6912496Z",
+      "status": "BLOCKED"
+    }
+  ],
+  "private_acl_current_user_only": true,
+  "setup_failure": "NpgsqlException"
+}

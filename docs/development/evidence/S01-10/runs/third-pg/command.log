@@ -1,0 +1,1273 @@
+  CP6.Space.Domain -> D:\CP6-worktrees\s01-10-20261012\CP6.Space.Domain\bin\Debug\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Contracts -> D:\CP6-worktrees\s01-10-20261012\CP6.Space.Contracts\bin\Debug\net8.0\CP6.Space.Contracts.dll
+  CP6.Entity -> D:\CP6-worktrees\s01-10-20261012\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.Space.Application -> D:\CP6-worktrees\s01-10-20261012\CP6.Space.Application\bin\Debug\net8.0\CP6.Space.Application.dll
+  CP6.Core -> D:\CP6-worktrees\s01-10-20261012\CP6.Core\bin\Debug\net8.0\CP6.Core.dll
+  CP6.Space.Infrastructure -> D:\CP6-worktrees\s01-10-20261012\CP6.Space.Infrastructure\bin\Debug\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> D:\CP6-worktrees\s01-10-20261012\CP6.Persistence.PostgreSql\bin\Debug\net8.0\CP6.Persistence.PostgreSql.dll
+  CP6.ExactValues.PostgreSqlTests -> D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\bin\Debug\net8.0\CP6.ExactValues.PostgreSqlTests.dll
+Test run for D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\bin\Debug\net8.0\CP6.ExactValues.PostgreSqlTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:03:34.07]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/orderCreditContext/properties/canonicalPoli"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditReservation/properties/reservedDeltaP"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/appliedReceiptContribution/properties/polic"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/representationTransfer/properties/predecess"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/subject/properties/targetCommittedPolicyAmo"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/partiallySettledOpenContribution/properties"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/orderExposureLineage/properties/committedPo"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/totalExpo"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.08]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/moneyNonNegative/properties/amount", profileName: "fin-credit-nonnegative") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/orderCreditContext/properties/canonicalPoli"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditReservation/properties/reservedDeltaP"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/appliedReceiptContribution/properties/polic"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/representationTransfer/properties/predecess"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/subject/properties/targetCommittedPolicyAmo"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/partiallySettledOpenContribution/properties"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/orderExposureLineage/properties/committedPo"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/totalExpo"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/moneyNonNegative/properties/amount", profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/activeReservationContribution/properties/po"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/orderUnbi"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/arCut/properties/arBookedExposure", profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditEvaluation/properties/projectedPolicy"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditEvaluation/properties/requestedPolicy"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExceptionDecision/properties/maxPolic"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/absorptionLink/properties/signedPolicyAmoun"···, profileName: "fin-credit-signed") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/reservationSet/properties/activeReservedDel"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.09]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/absorptionLink/properties/successorOpenPoli"···, profileName: "fin-credit-nonnegative") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/activeReservationContribution/properties/po"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/orderUnbi"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/arCut/properties/arBookedExposure", profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditEvaluation/properties/projectedPolicy"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditEvaluation/properties/requestedPolicy"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExceptionDecision/properties/maxPolic"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/absorptionLink/properties/signedPolicyAmoun"···, profileName: "fin-credit-signed") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/reservationSet/properties/activeReservedDel"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/absorptionLink/properties/successorOpenPoli"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/arBookedE"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/arObligationAggregate/properties/openPolicy"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/subject/properties/exposureDeltaPolicyAmoun"···, profileName: "fin-credit-signed") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/finArReceiptUnapplyCorrectionSource/propert"···, profileName: "fin-credit-positive") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/planAtpObservationInput/properties/requeste"···, profileName: "fin-credit-positive") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/legacyExposureAdoptionEntry/allOf/0/then/pr"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/moneySigned/properties/amount", profileName: "fin-credit-signed") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/representationTransfer/properties/deltaPoli"···, profileName: "fin-credit-signed") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/representationTransfer/properties/targetCom"···, profileName: "fin-credit-nonnegative") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/arBookedE"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/arObligationAggregate/properties/openPolicy"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/subject/properties/exposureDeltaPolicyAmoun"···, profileName: "fin-credit-signed") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/finArReceiptUnapplyCorrectionSource/propert"···, profileName: "fin-credit-positive") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/planAtpObservationInput/properties/requeste"···, profileName: "fin-credit-positive") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/legacyExposureAdoptionEntry/allOf/0/then/pr"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/moneySigned/properties/amount", profileName: "fin-credit-signed") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/representationTransfer/properties/deltaPoli"···, profileName: "fin-credit-signed") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/representationTransfer/properties/targetCom"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/salesExposureReductionInput/properties/targ"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/moneyPositive/properties/amount", profileName: "fin-credit-positive") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/absorptionLink/properties/predecessorOpenPo"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/unbilledOrderContribution/properties/policy"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/legacyExposureAdoptionEntry/properties/poli"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/activeRes"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/finArFinalPostInput/properties/expectedComm"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.10]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditEvaluation/properties/limitPolicyAmou"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/subject/properties/currentCommittedPolicyAm"···, profileName: "fin-credit-nonnegative") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/salesExposureReductionInput/properties/targ"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/moneyPositive/properties/amount", profileName: "fin-credit-positive") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/absorptionLink/properties/predecessorOpenPo"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/unbilledOrderContribution/properties/policy"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/legacyExposureAdoptionEntry/properties/poli"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditExposureSnapshot/properties/activeRes"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/finArFinalPostInput/properties/expectedComm"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/creditEvaluation/properties/limitPolicyAmou"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/subject/properties/currentCommittedPolicyAm"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/postedOpenContribution/properties/policyAmo"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/planAtpObservation/properties/promisedQuant"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/effectiveCreditContribution/properties/poli"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/fxEvidence/properties/rate", profileName: "fin-credit-positive") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/finArCreditReversalCorrectionSource/propert"···, profileName: "fin-credit-positive") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/exceptionDecisionCommand/properties/maxPoli"···, profileName: "fin-credit-nonnegative") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.ResidueApplied") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.ExactAverageNumerator") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValuationPoolHead.CurrentQty") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/postedOpenContribution/properties/policyAmo"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/planAtpObservation/properties/promisedQuant"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/effectiveCreditContribution/properties/poli"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/fxEvidence/properties/rate", profileName: "fin-credit-positive") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/finArCreditReversalCorrectionSource/propert"···, profileName: "fin-credit-positive") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_all_42_native_fields_use_their_exact_destination_profile(pointer: "/$defs/exceptionDecisionCommand/properties/maxPoli"···, profileName: "fin-credit-nonnegative") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.ResidueApplied") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.ExactAverageNumerator") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValuationPoolHead.CurrentQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayer.OriginalQty") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DeltaUnroundedValue") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.ExactAverageDenominator") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.OriginalQty") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.BeforeUnroundedValue") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.BeforeQty") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.ConsumedQty") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ValuedBaseQty") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.BaseQty") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayer.OriginalQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DeltaUnroundedValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.ExactAverageDenominator") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.OriginalQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.BeforeUnroundedValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.BeforeQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.ConsumedQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ValuedBaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.BaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.RatioDenominator") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.GrniValue") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.TargetTotal") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.ResidueApplied") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DisplayAverage18") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "FxRateFact.RateNumerator") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.AvailableBaseQty") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.OutboundBaseQty") [FAIL]
+[xUnit.net 00:03:34.11]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DeltaQty") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.RatioDenominator") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.GrniValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.TargetTotal") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.ResidueApplied") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DisplayAverage18") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "FxRateFact.RateNumerator") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.AvailableBaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.OutboundBaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DeltaQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.LineRoundedTotalBeforeResidue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.AvailableQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.InTransitValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.AfterQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.FinalAmount") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.FinalAmount") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.InventoryValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.Residue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.RatioNumerator") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.LineRoundedTotalBeforeResidue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.AvailableQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.InTransitValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.AfterQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.FinalAmount") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.FinalAmount") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.InventoryValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.Residue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.RatioNumerator") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ReservedBaseQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.OriginalBaseQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayer.OriginalUnroundedValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.CogsValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionRange.ToQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.BeforeQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.FgValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.WipValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionRange.FromQty") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ReservedBaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.OriginalBaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayer.OriginalUnroundedValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.CogsValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionRange.ToQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.BeforeQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.FgValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.WipValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionRange.FromQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ProvisionalValueFact.MaxAmount") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ProvisionalValueFact.MaxQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.Quantity") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.RawAmount") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.FinalTotal") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DiscardedRemainderNumera"···) [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.GlValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayer.UnitValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.RawAmount") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ProvisionalValueFact.MaxAmount") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ProvisionalValueFact.MaxQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.Quantity") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.RawAmount") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.FinalTotal") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DiscardedRemainderNumera"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.GlValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayer.UnitValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.RawAmount") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.AfterQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.AfterUnroundedValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ClearedBaseQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.RoundedBeforeResidue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ReversedBaseQty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "FxRateFact.RateDenominator") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.Qty") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.UnitValue") [FAIL]
+[xUnit.net 00:03:34.12]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.TakeQty") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.AfterQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.AfterUnroundedValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ClearedBaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.RoundedBeforeResidue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortionBalance.ReversedBaseQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "FxRateFact.RateDenominator") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.Qty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.UnitValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "LayerConsumption.TakeQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.RawTotal") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.ReversedQty") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.SourceQty") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DiscardedRemainderDenomi"···) [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.ReservedQty") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.ApValue") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.Difference") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.RoundedBeforeResidue") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValuationPoolHead.CurrentUnroundedValue") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "RoundingTrace.RawTotal") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.ReversedQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "SourcePortion.SourceQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "MovingAveragePoolRevision.DiscardedRemainderDenomi"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLayerBalance.ReservedQty") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.ApValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ReconciliationLine.Difference") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValueLine.RoundedBeforeResidue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_all_66_mappings_roundtrip_full_scale_and_enforce_null_coupling(key: "ValuationPoolHead.CurrentUnroundedValue") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-009") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-005") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-005") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-018") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-JS-003") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-020") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-014") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-003") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-JS-002") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-009") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-005") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-005") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-018") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-JS-003") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-020") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-014") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-003") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-JS-002") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-009") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-006") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-019") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-JS-001") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-003") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-005") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-002") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-002") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-010") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-009") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-006") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-019") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-JS-001") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-003") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-005") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-002") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-002") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-010") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-013") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-010") [FAIL]
+[xUnit.net 00:03:34.13]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-005") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-008") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-008") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-008") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-009") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-001") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-002") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-013") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-010") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-005") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-008") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-008") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-008") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-009") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-001") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-002") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-010") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-011") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-007") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-017") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-006") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-006") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-001") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-001") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-015") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-010") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-011") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-007") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-017") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-006") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-006") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-001") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-001") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-015") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-012") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-001") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-004") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-007") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-004") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-001") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-004") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-022") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-003") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-012") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-001") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-004") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-007") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-004") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-001") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-004") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-022") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "CREDIT-003") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-011") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-003") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-004") [FAIL]
+[xUnit.net 00:03:34.14]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-002") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-021") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-016") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-023") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-002") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-007") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-011") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-003") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-004") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-002") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-021") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-016") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "NUM-023") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-002") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-R1-007") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-004") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-003") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "公斤") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···) [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "EA\r\n") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "/EA") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: ".EA") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···) [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···) [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "ATP-LEADING-004") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Fixed_vector_matches_pinned_expectation_and_real_storage(id: "INV-003") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "公斤") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "EA\r\n") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "/EA") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: ".EA") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: ":EA") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "EA ") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "_EA") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "EA\n") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "-EA") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "[]") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "true") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "1") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: ":EA") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "EA ") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "_EA") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "EA\n") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "-EA") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_reject_raw_invalid_text_before_narrowing(bad: "") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "[]") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "true") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "1") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "null") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "{}") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "+1", scale: 0, wire: "1") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "1\n", scale: 0, wire: "1") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "0", scale: 1, wire: "-0.0") [FAIL]
+[xUnit.net 00:03:34.15]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "00", scale: 0, wire: "0") [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "10", scale: 1, wire: "1.0") [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "-0", scale: 0, wire: "0") [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "1e2", scale: 0, wire: "100") [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "null") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Wrong_JSON_tokens_fail_native_contracts_before_storage_binding(json: "{}") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "+1", scale: 0, wire: "1") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "1\n", scale: 0, wire: "1") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "0", scale: 1, wire: "-0.0") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "00", scale: 0, wire: "0") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "10", scale: 1, wire: "1.0") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "-0", scale: 0, wire: "0") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "1e2", scale: 0, wire: "100") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "1", scale: 19, wire: "0.0000000000000000001") [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "12", scale: 1, wire: "1.3") [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 1) [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 128) [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 17) [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 16) [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_database_column_checks_nullability_and_typmod_limit_are_distinguished_from_raw_guard [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Owned_resource_rejects_collisions_identity_drift_sessions_and_writer_DDL [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_rejects_invalid_pairs_and_guards_raw_integer_input_before_numeric_rounding [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "1", scale: 19, wire: "0.0000000000000000001") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_rejects_noncanonical_or_mismatched_stored_pairs(digits: "12", scale: 1, wire: "1.3") [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 1) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 128) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 17) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_all_five_columns_preserve_full_accepted_lengths(length: 16) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_database_column_checks_nullability_and_typmod_limit_are_distinguished_from_raw_guard [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Owned_resource_rejects_collisions_identity_drift_sessions_and_writer_DDL [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Credit_rejects_invalid_pairs_and_guards_raw_integer_input_before_numeric_rounding [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Mavg_preserves_unreduced_numerators_denominators_and_remainder_raw_strings [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Mavg_active_empty_state_constraints_and_positive_denominators_are_enforced [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: "-123.45000", digits: "-12345", scale: 2) [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: "-0.000", digits: "0", scale: 0) [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: "123.45000", digits: "12345", scale: 2) [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Constraint_failure_aborts_and_rolls_back_all_writes_on_the_same_transaction [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_composed_relationship_and_terminal_state_checks_remain_in_force [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_coefficient_beyond_PostgreSQL_numeric_capacity_remains_text [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Committed_values_and_original_UTF8_survive_new_physical_connections_and_repeated_persistence [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Mavg_preserves_unreduced_numerators_denominators_and_remainder_raw_strings [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Mavg_active_empty_state_constraints_and_positive_denominators_are_enforced [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: "-123.45000", digits: "-12345", scale: 2) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: "-0.000", digits: "0", scale: 0) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_original_lexeme_is_independent_from_normalized_storage(wire: "123.45000", digits: "12345", scale: 2) [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Constraint_failure_aborts_and_rolls_back_all_writes_on_the_same_transaction [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_composed_relationship_and_terminal_state_checks_remain_in_force [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Inventory_coefficient_beyond_PostgreSQL_numeric_capacity_remains_text [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Committed_values_and_original_UTF8_survive_new_physical_connections_and_repeated_persistence [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_replay_binding_checks_organization_actor_delegation_request_and_both_digests [FAIL]
+[xUnit.net 00:03:34.16]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_recovery_locks_replay_in_C_order_before_evaluation_and_requires_binding [FAIL]
+[xUnit.net 00:03:34.17]     CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip [FAIL]
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_replay_binding_checks_organization_actor_delegation_request_and_both_digests [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Atp_recovery_locks_replay_in_C_order_before_evaluation_and_requires_binding [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+  Failed CP6.ExactValues.PostgreSqlTests.ExactValueStorageTests.Adapter_binds_38_digit_coefficient_as_BigInteger_without_decimal_roundtrip [1 ms]
+  Error Message:
+   System.InvalidOperationException : S01-10 PostgreSQL setup BLOCKED: NpgsqlException
+  Stack Trace:
+     at CP6.ExactValues.PostgreSqlTests.OwnedPostgres.InitializeAsync() in D:\CP6-worktrees\s01-10-20261012\eng\contracts\postgresql-tests\OwnedPostgres.cs:line 121
+Results File: D:\CP6-worktrees\s01-10-20261012\docs\development\evidence\S01-10\runs\third-pg\s01-10-postgresql.trx
+
+Failed!  - Failed:   210, Passed:     0, Skipped:     0, Total:   210, Duration: 94 ms - CP6.ExactValues.PostgreSqlTests.dll (net8.0)

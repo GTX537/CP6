@@ -1,0 +1,225 @@
+{
+  "task": "S01-10",
+  "checked_utc": "2026-10-13T06:03:50.952933+00:00",
+  "branch": "codex/s01-10-postgresql-exact-20261012",
+  "workflow_checks": [
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/client-contract.yml",
+      "sha256": "50f33cf81307824a7b6accd5eb3417968494cf2ae1aaecaccbe878e1554f00f8",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "sha256": "5024797a8d374361d394c24abccc7f45a2e2314c1113c3deea5518e44c685efc",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "sha256": "70e1a2fb2535bd82a43bdc6d199d18429768ab4e243c2523166a5863eeba85f9",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "sha256": "84bf014626442317ef4f27b6580832162aba444d7d40fc03ed331fe2e6d4bdb5",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "sha256": "a3059601bedbd49a8596852d964704305b4eff7030e8bd5a56607e4549e0911c",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "sha256": "0c3f53a82e604fd37eb33bb0a952f5a59aea720347c6a5b37721688ae85d1b95",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "sha256": "dfa0648be36c85f800c6d475ba44d27313d0f17a7bc7fca2df696b630111316f",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "sha256": "e86a052bde1eebd0cff6d23be32b3cb7f637989880bdb74e3f41c260c11cccb6",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/r2-candidate.yml",
+      "sha256": "4cc534fbe26cc22c41875376fc08e6b68137ed30f2097e55d0fc050965151e7d",
+      "event_block": "  push:\n    tags:\n      - \"v*.*.*\"\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "protected-v-semver-tags-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/r2-deploy.yml",
+      "sha256": "6dbb5f13005bbf2f0442c67cc2f5551ef3fa280eceff4706b7596497396b74ea",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/r2-freeze.yml",
+      "sha256": "a9b998fff9f6cb4e67a1ddcccc794945007c7bde4eba052fdee79afc5df5e695",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "sha256": "5bc15531e10147c6e01637a1c63e4aa7820516c4f78543ba334c84c898301013",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "b622a9664c0eff4f0d296770d8cd45f91667a5f6",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "sha256": "ca11573d8c2622f08ad4156ae0733a40c5b8cc6d41dc3b227c7b1b509d8ecc3a",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/client-contract.yml",
+      "sha256": "50f33cf81307824a7b6accd5eb3417968494cf2ae1aaecaccbe878e1554f00f8",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "sha256": "5024797a8d374361d394c24abccc7f45a2e2314c1113c3deea5518e44c685efc",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "sha256": "70e1a2fb2535bd82a43bdc6d199d18429768ab4e243c2523166a5863eeba85f9",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "sha256": "84bf014626442317ef4f27b6580832162aba444d7d40fc03ed331fe2e6d4bdb5",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "sha256": "a3059601bedbd49a8596852d964704305b4eff7030e8bd5a56607e4549e0911c",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "sha256": "0c3f53a82e604fd37eb33bb0a952f5a59aea720347c6a5b37721688ae85d1b95",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "sha256": "dfa0648be36c85f800c6d475ba44d27313d0f17a7bc7fca2df696b630111316f",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "sha256": "e86a052bde1eebd0cff6d23be32b3cb7f637989880bdb74e3f41c260c11cccb6",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-candidate.yml",
+      "sha256": "4cc534fbe26cc22c41875376fc08e6b68137ed30f2097e55d0fc050965151e7d",
+      "event_block": "  push:\n    tags:\n      - \"v*.*.*\"\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "protected-v-semver-tags-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-deploy.yml",
+      "sha256": "6dbb5f13005bbf2f0442c67cc2f5551ef3fa280eceff4706b7596497396b74ea",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/r2-freeze.yml",
+      "sha256": "a9b998fff9f6cb4e67a1ddcccc794945007c7bde4eba052fdee79afc5df5e695",
+      "event_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "sha256": "5bc15531e10147c6e01637a1c63e4aa7820516c4f78543ba334c84c898301013",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    },
+    {
+      "revision": "e20740e37e20bc0210e0b32c5670c2bce962002a",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "sha256": "ca11573d8c2622f08ad4156ae0733a40c5b8cc6d41dc3b227c7b1b509d8ecc3a",
+      "event_block": "  workflow_dispatch:\n\n",
+      "branch_push_or_PR_triggers": false,
+      "trigger": "manual-only"
+    }
+  ],
+  "azure_trigger": "none",
+  "azure_pr": "none",
+  "queued_or_active_task_runs": {
+    "queued": [],
+    "in_progress": []
+  },
+  "cancelled_runs": [],
+  "workflow_mutations": [],
+  "actions_dispatched": false,
+  "safe_operation": "push task branch only; no tag; no Actions; no deployment"
+}

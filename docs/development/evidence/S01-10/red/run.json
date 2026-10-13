@@ -1,0 +1,29 @@
+{
+  "stage": "RED",
+  "utc": "2026-10-13T05:19:26.186852+00:00",
+  "command": "dotnet test eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj --no-restore --filter FullyQualifiedName~Adapter_binds_38_digit --logger trx;LogFileName=adapter-red.trx --results-directory docs/development/evidence/S01-10/red --verbosity quiet",
+  "exit_code": 1,
+  "discovered": 1,
+  "passed": 0,
+  "failed": 1,
+  "skipped": 0,
+  "expected_failure": "NotImplementedException in the new production adapter",
+  "files": [
+    {
+      "path": "CP6.Persistence.PostgreSql/Contracts/ExactValueStorage.cs",
+      "sha256": "353a2a7139dbc0e7ac972679179dae649ae19b5b1222c7294d579459ad8b4559"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/ExactValueStorageTests.Adapter.cs",
+      "sha256": "325cd53a8170dd42a9c90b2830ec1e6dfa8c81452636e0fba58cc16b0d4ad934"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/bin/Debug/net8.0/CP6.Persistence.PostgreSql.dll",
+      "sha256": "283c72cd49a03c34c9988514eb06d6f526a48937b75632efbc65c07085f9e348"
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/bin/Debug/net8.0/CP6.ExactValues.PostgreSqlTests.dll",
+      "sha256": "f159fc7fb496f41b5314458a3ff77a2b7d83db6a33dcb411db4bcb2b9ecbeb5e"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "task": "S01-10",
+  "failed_run": "80717248d306470181697404561bb329",
+  "marker": "CP6-S01-10:80717248d306470181697404561bb329",
+  "verified_path": "D:\\CP6-local-test\\S01-10\\80717248d306470181697404561bb329",
+  "data_directory_absent": true,
+  "password_file_absent": true,
+  "port_free": true,
+  "lease_removed": true,
+  "recursive_delete": false,
+  "acl_current_user_only": true,
+  "utc": "2026-10-13T05:43:03.4710054Z"
+}

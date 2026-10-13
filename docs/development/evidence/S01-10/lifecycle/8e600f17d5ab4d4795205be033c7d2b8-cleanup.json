@@ -1,0 +1,13 @@
+{
+  "task": "S01-10",
+  "failed_run": "8e600f17d5ab4d4795205be033c7d2b8",
+  "marker": "CP6-S01-10:8e600f17d5ab4d4795205be033c7d2b8",
+  "verified_path": "D:\\CP6-local-test\\S01-10\\8e600f17d5ab4d4795205be033c7d2b8",
+  "system_identifier": "7696023862413827152",
+  "postgres_stopped": true,
+  "password_file_removed": true,
+  "port_free": true,
+  "lease_removed": true,
+  "recursive_delete": false,
+  "utc": "2026-10-13T05:47:46.5679793Z"
+}
