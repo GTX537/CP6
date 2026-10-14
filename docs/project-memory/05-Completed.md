@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-14：第六轮两项实现交付、两项准备归档
+
+WP02-08 Outbox V2、WP02-25运行身份/健康/遥测经集中审查、四项P2修复和定向回归后正常合并并核对远端main，登记DONE。累计22/375，S01为12/12；业务目标仍0/125。初审缺陷、独立Issue分支、真实RED/GREEN、旧证据复用及共同主线架构冒烟详见[第六轮协调证据](../development/evidence/wave6-integration-20261014/README.md)。
+
+WP01-01准备包与WP02-02消费准备包已合并：前者仍PLANNED/NOT_CHECKED，正式替代依据采纳及DP01–08待决；后者仍BLOCKED/NOT_CHECKED，旧正式包缺新能力、本地包未正式信任，17 PGT仍NOT_RUN。准备归档不计主任务DONE，不改变完成门、产品依赖或可信版本。247运行NOT_RUN、历史原件缺失及WP05 PROPOSED保持。
+
+Outbox仅重启核实身份的专属PG55428用于缺陷回归，收尾停止并保留证据；无业务库操作。无Actions触发/取消/配置更改、正式发包、迁库、部署或新一轮派工。下文保留历史时点。
+
 ## 2026-10-13：第六轮两项实现与两项准入准备
 
 第六轮沿用四对话：C/WP02-08 Outbox与D/WP02-25观测READY/CONFIRMED；A/WP01-01替代验收采纳准备仍PLANNED、B/WP02-02消费身份准备仍BLOCKED，两主任务NOT_CHECKED，只授予私有准备目录。未收到START，不把assignment当开工。20/375 DONE、S01 12/12、业务0/125及247 NOT_RUN不变。C仅预约新PG55428，本次未建库、触发/取消Actions、改触发器、正式发包、迁库或部署。 [执行包](../development/dispatch/20261013-wave6/README.md)及[准入证据](../development/evidence/wave6-dispatch-20261013/README.md)。下文保留历史时点。

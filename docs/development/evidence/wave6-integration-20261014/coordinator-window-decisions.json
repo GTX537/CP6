@@ -1,0 +1,69 @@
+{
+  "observed_at": "2026-10-14T07:28:32.817968+00:00",
+  "scope": "COORD authorized corrective work within existing wave6 task boundaries; no formal adoption/release authorization",
+  "main_integration_branch": "codex/wave6-integration-20261014",
+  "original_main_baseline": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+  "platform_baseline": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "issues": [
+    {
+      "key": "outbox-receipt",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/66",
+      "number": 66,
+      "candidate": "3e4c078434ff4ae066f20d83e134fb268663700c"
+    },
+    {
+      "key": "outbox-budget",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/67",
+      "number": 67,
+      "candidate": "3e4c078434ff4ae066f20d83e134fb268663700c"
+    },
+    {
+      "key": "observer-clock",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/68",
+      "number": 68,
+      "candidate": "095a66bfda8b4df2ee65e920541ce6304e8e66c1"
+    },
+    {
+      "key": "health-cache",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/69",
+      "number": 69,
+      "candidate": "095a66bfda8b4df2ee65e920541ce6304e8e66c1"
+    }
+  ],
+  "decisions": [
+    {
+      "task": "WP01-01",
+      "mode": "PREPARATION_ONLY",
+      "decision": "Reviewed preparation only; unsigned actor/time/authority/effective_at remain null. No completion-gate or formal basis adoption.",
+      "state_after": "PLANNED / NOT_CHECKED"
+    },
+    {
+      "task": "WP02-02",
+      "mode": "PREPARATION_ONLY",
+      "decision": "Reviewed consumption evidence/proposals only. Product dependencies/locks/trust/PGT admission unchanged; no release or source-adoption exception.",
+      "state_after": "BLOCKED / NOT_CHECKED"
+    },
+    {
+      "task": "WP02-08",
+      "mode": "SCOPED_CORRECTION",
+      "issues": [
+        66,
+        67
+      ],
+      "decision": "Separate bug branches from freshly verified main, original candidate explicitly merged as prerequisite; preserve original worker tree. Correct Blocked receipt and monotonic send-window accounting, actual RED/GREEN in exclusively owned PG55428. Aggregate the two fixes only for this task.",
+      "resource": "Existing task cluster only after canonical path, owner32, system identifier, database/OID/role and session checks; smart stop and retain evidence. No5432/business database/migration.",
+      "shared_contract_scope": "Existing Outbox V2 implementation and task-private tests/evidence. No unrelated Inbox or package contracts."
+    },
+    {
+      "task": "WP02-25",
+      "mode": "SCOPED_CORRECTION",
+      "issues": [
+        68,
+        69
+      ],
+      "decision": "Separate bug branches from freshly verified main, original candidate explicitly merged as prerequisite; preserve worker tree. Correct observer freshness/UTC rollback and all four endpoint no-store. SDK8 RED/GREEN plus affected identity/health/legacy HTTP tests; no DB.",
+      "shared_contract_scope": "Existing Observability V1 implementation and task-private tests/evidence only; no broad host/identity claims."
+    }
+  ],
+  "completion_rules": "Normal serial protected PR merges; remote candidate/fix ancestry and exact file blobs; affected local evidence and independent focused review; then ledger update and Issue closure. Old findings/failures remain. No Actions, force-push, protection changes, formal packages or deployment."
+}

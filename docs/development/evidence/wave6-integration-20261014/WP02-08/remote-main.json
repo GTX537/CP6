@@ -1,0 +1,395 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6.Platform",
+  "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+  "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "pr_url": "https://github.com/GTX537/CP6.Platform/pull/71",
+  "merged_at": "2026-10-14T07:50:16Z",
+  "files_match": [
+    {
+      "path": "docs/WP02-08-OUTBOX-V2.md",
+      "blob": "9c1cc625a5e68db50c60ae0b79da79f53649970c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/.gitattributes",
+      "blob": "8c114c07dad0cd2ef4d1619be9f392683fef80eb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/PLAN.md",
+      "blob": "472e734fd961c18c41e70ed81a123a4d7ec8add8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/REPORT.md",
+      "blob": "03287cf6a2e265104493b1f733caece80c139d9a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/REVIEW.md",
+      "blob": "d3dca7ef5b6b40155b539f94a984246ef5b4013f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/acceptance-map.json",
+      "blob": "007ec326f1e8201edc1439de138ee54051131c4e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/collect_validation.py",
+      "blob": "f7510a7988b343f69deb9ddf94a6e164ed277ae5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/REPORT.md",
+      "blob": "4bae25928a9876ac78bafdbf0a1a6bc68bb152fb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/integrated/resource-stop.json",
+      "blob": "58ab6ccc96ba57e018386760d24ceb066d6fe784"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/integrated/resource-stop.log",
+      "blob": "453ae700a9a9c3d5e8a30c71cf6ae5dbfd394a0d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/integrated/smoke-inputs.json",
+      "blob": "3c292898c67619c8700b930533991f1dc6395cce"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/integrated/smoke.log",
+      "blob": "225c11ce43aa87bf98da664baefd069d30fe8ae5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/integrated/smoke.trx",
+      "blob": "ac94524eb176f28a6c173d3f76012843e4c7e9b4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/REPORT.md",
+      "blob": "68bd9550ca54afeb3b2c9559b2d31b6f48cbcf43"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/green-inputs.json",
+      "blob": "d02374c80e38c12aa22de1310dbb47757981cbb9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/green.log",
+      "blob": "1f4a397cc326ddf4cb22602540dc2bf23c6327b7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/green.trx",
+      "blob": "d2f64b8b75c2e0dcd701c867d55fd562d7730113"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/red-inputs.json",
+      "blob": "b890a17dbb606073bb614f2107dcb4660218fa9b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/red.log",
+      "blob": "cb270f9110712d1ec65b1b46029abd543fbb3541"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/red.trx",
+      "blob": "33bbe12216417cbaa84d3c8ff5947ac6a050e506"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue66/resource-restart.json",
+      "blob": "1c59479add78c7c3077d7d7c7a0ed541a46023e7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/REPORT.md",
+      "blob": "c8565c2ecc85398ccd0bcd6fcf2d5f159d1124d5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/green-inputs.json",
+      "blob": "f7f23cede62cc8f4dc0c57c437cbaa9a26586413"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/green-probe-inputs.json",
+      "blob": "8f682615108d9a3f94ac764172a7ceceb8d29f45"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/green-probe.log",
+      "blob": "d931200f9f135e6b5fced1061e983a994a533376"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/green-probe.trx",
+      "blob": "a1bba87f695e0159454d337f37aac2f38fd46a73"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/green.log",
+      "blob": "21f4ccabb7f9eb1d3b7947180fa9033db28476cd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/green.trx",
+      "blob": "02a2867b77109eb087ca821a6bf424ded552d615"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/red-cancellation-inputs.json",
+      "blob": "2430d33364749aa13fab6df66a54326fc5e5d1e7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/red-cancellation.log",
+      "blob": "0cd4151dfa43d152f612b44c40f929036046ad28"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/red-cancellation.trx",
+      "blob": "b0405e6ebcfd80fa7fa65bae4dc016e091bc9b64"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/red-inputs.json",
+      "blob": "ff6986ef184ff2ca596775fdf8ecced2b897a3fe"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/red.log",
+      "blob": "62082defd55b4310d515f83100d7f72950c7000d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/issue67/red.trx",
+      "blob": "dc3b404d36690f2ccd78b39719ad4b5045055fb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/run-correction-check.py",
+      "blob": "1317c639cc74a3c56d73c1d0e4390a0920484495"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/coord-corrections/summary.json",
+      "blob": "45e7640181b3b7879649372df03fc43bdfb72af9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/prepublication-workflows.json",
+      "blob": "f19f3da1b0a72b42e4d0dea678136bb94989fc9e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/prepublication.py",
+      "blob": "084e7bb09346a291af2a6758042ca7553083a4db"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resource-preparation.md",
+      "blob": "e9b11cfc9c69ad75d093bc75a1f87e01f5d6b66b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/final-port.json",
+      "blob": "4c4273e80e32e800514cd0c563499f6427bd7c3a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/helper-verification.json",
+      "blob": "5c4dc90649de0052de16a9ef11c079c0bb8790f9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/ownership.json",
+      "blob": "596c9d5563ea7969afe694f84d78a1fa2165950d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/preparation-failures.json",
+      "blob": "acfaa41140f0e86812bd24706ce6314a6d441fc9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/prepare-evidence.py",
+      "blob": "a2b8e2a6e67b2ecfd1735d0a356c6afee64d4bed"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/stop.log",
+      "blob": "453ae700a9a9c3d5e8a30c71cf6ae5dbfd394a0d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/stopped.json",
+      "blob": "feae1526c5a86bb4e67a747506dfaf4054cb48aa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/resources/verify-resource-helper.py",
+      "blob": "89714efc781effca214ddd2588e587cfcbef6068"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/source-inputs.json",
+      "blob": "0aaa14ef852b33a502f578df46d8b15ca10a65ab"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/start-transport.json",
+      "blob": "0989fcb4cedb0e97fa63801f133edc7891e536e2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/test-runs.json",
+      "blob": "67a85f15ba4f5e3b6fa26202dcff6dc92ad06204"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/01-contract-red.log",
+      "blob": "d0bb9f52b0fc65a54944bc71bc35ed4dcd1dceb8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/01-contract-red.trx",
+      "blob": "fa7481ee7a3540485e384a7eb916c240dc29c046"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/02-build.log",
+      "blob": "abc2d4bfe7355d66f4cf76c56bbc806b51a0a1c6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/03-build.log",
+      "blob": "4458dcd12a84a746950a4256d181c4271e26e22c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/04-unit.log",
+      "blob": "adb060743d32919f9606b53884306750e79e7794"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/04-unit.trx",
+      "blob": "5c040577d6f36b792d0b475ae6c11d7c5a398d39"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/05-architecture.log",
+      "blob": "d642958febd2e02a00995a0a0d3692fa018fbcc5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/05-architecture.trx",
+      "blob": "150d36ef4f478302c8704cb496b6333b4b78a58d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/07-unit-final.log",
+      "blob": "5b8304ec0e8cc20325f42cbfada5d226405c4bb5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/07-unit-final.trx",
+      "blob": "2bed3c24940bc0dcde9022f39892acb95d4216d1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/08-expiry-final.log",
+      "blob": "9162cb45200620e20f2059121deccc0b8a603f0c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/08-expiry-final.trx",
+      "blob": "b79a2b73ed53a327894de950c054a1635f9ab8a1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/09-mapping-final.log",
+      "blob": "edd012f6233693b78349c9e7fc35b4b339cc25c5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/09-mapping-final.trx",
+      "blob": "3d3afefcaa6f57754c525df7b0471777cd019210"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-additions-03.log",
+      "blob": "30b46c038bb468834833c35b964e3b1065392115"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-additions-03/pg-agent-additions-03.trx",
+      "blob": "26c384e871e7c6a9e6c176c33c0458255daff725"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-core-01.log",
+      "blob": "91b51a59ecb08111924fe9888635708d6f58ced6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-core-02.log",
+      "blob": "7cc0f49b5340036bd887abd5da13e32cc780bf23"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-core-02/pg-agent-core-02.trx",
+      "blob": "352e7d5b79f3bcbe1b3d0ebe13b2ff4b37bf403b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-hold-05.log",
+      "blob": "4606fabbf93736619f6d4555f32a16254f341311"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-hold-05/pg-agent-hold-05.trx",
+      "blob": "ed012de1318bcb044c013e42d0655598375a1e32"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-races-04.log",
+      "blob": "be51c14358a25c6a449a493aae07d301e319cd94"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-races-04/pg-agent-races-04.trx",
+      "blob": "73cafa5f3a44af0a6e5b19be02ec6b230c0c7214"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-review-06-hashes.json",
+      "blob": "568131135805d84233f37ed24038bc5e5daf7f99"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-review-06.log",
+      "blob": "28905dd14b979ac54020da0827f0df147f40293a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/tests/pg-agent-review-06/pg-agent-review-06.trx",
+      "blob": "8528aec80c949c032f948c116152e36b3b577a40"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/validation-inputs.json",
+      "blob": "e42b8b95f30a186b4f349718e8ede662132cd165"
+    },
+    {
+      "path": "docs/development/evidence/WP02-08/validation-reuse.json",
+      "blob": "e6fdf5c2639c62d17cdc0eb56dbd2b453ed2bb4b"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+      "blob": "126b82ab0382966913e579127b4b0eef2e5e3d62"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "blob": "5d7de9eecb6e0f0f9369bcee42ef34fd36631b5c"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/CallerTransactionOutboxV2.cs",
+      "blob": "464bde84607c8abf62ab6e43dbad96c29d66d1b3"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/LegacyOutboxFenceV2.cs",
+      "blob": "2c3079e862bfb777cbbee1b88b6cce93baecdab7"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxContractsV2.cs",
+      "blob": "fd4efd60aa06dc4dc05c14369f62fe54bfc928f2"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+      "blob": "b9c8e8a66c53db2dd4ae43a5e32f133bcb79e2e0"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+      "blob": "a21a0f07b4ae8433e37877d3c617c50bf4269278"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxModelV2.cs",
+      "blob": "4a53857b9488d15e749da9cc4b3521e28978ad40"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxPostgreSqlV2.cs",
+      "blob": "634431e1a6b1fed910bddc002fe1a110dfbce266"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxTransactionV2.cs",
+      "blob": "2030d8190daf232570b941932acb861ffd8e98c6"
+    },
+    {
+      "path": "tests/CP6.Platform.UnitTests/OutboxV2/OutboxV2ContractTests.cs",
+      "blob": "f6dc3bcb926375ab6ac8a33a7d86831d02ded60a"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/CP6.Platform.WP0208.PostgreSqlTests.csproj",
+      "blob": "bb657b86972c7d1d835c32c0e1c8a8d762860584"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/Directory.Packages.props",
+      "blob": "af849691d05081de51fde82108a8f6b879e0f9c8"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/FixtureOwner.cs",
+      "blob": "fad63bca62bae4964b801fc3824d2894766ea497"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs",
+      "blob": "ae11bf71a038a55c334bbddbd9010319e2255eb9"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/PgFixture.cs",
+      "blob": "2961872d229864a414ab4b49ada104be981fed3e"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/pg_resource.py",
+      "blob": "3e5189a9fefd0b624bbfc4362aa4837d01f8efe4"
+    }
+  ],
+  "observed_at": "2026-10-14T07:50:16.667746+00:00",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

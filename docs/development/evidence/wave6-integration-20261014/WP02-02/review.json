@@ -1,0 +1,4207 @@
+{
+  "task": "WP02-02",
+  "candidate_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+  "base_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+  "scope": "SUPPLEMENTARY_CONCENTRATED_PREPARATION_ONLY_REVIEW",
+  "reviewed_at_utc": "2026-10-14T07:02:49.934768+00:00",
+  "phase": "FINAL",
+  "errors": [],
+  "audit_notes": [
+    "Initial read-only helper assumed D:/CP6.Platform, which is not a directory; no candidate checks failed. Repeated source lookup uses existing Platform worktree Git objects."
+  ],
+  "independent_review_tests_rerun": false,
+  "repository_mutations": [],
+  "remote_writes": [],
+  "actions": [],
+  "database_runs": [],
+  "all_changed_artifacts": [
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/.gitattributes",
+      "bytes": 285,
+      "sha256": "368290449c1e6ba8b5dd571158fb987b4c843c0e9735f755995f7a558ade1b1f",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/.gitignore",
+      "bytes": 14,
+      "sha256": "d0f2cd90545a6c6c4885c142bf9be96b95e3427a32c3730951e80d42e813c9e0",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/DEPENDENCY-PROPOSAL.md",
+      "bytes": 4204,
+      "sha256": "68a31bf22df71b944a2970f39c55533915e832faa3cd9b9826109eb952cec349",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/FORMAL-VERSION-PROPOSAL.md",
+      "bytes": 9879,
+      "sha256": "f1ea5d67f65aecfb542e37a44f7b1581c202f72790a7e8c409c59cb06d15ca6e",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/PGT-BOUNDARY.md",
+      "bytes": 4047,
+      "sha256": "8e93ca6460808f4b6be780f95182a0434092ad5ed691927b11cf49e5bbf50c1a",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/PROPOSED-DEPENDENCIES.patch",
+      "bytes": 1839,
+      "sha256": "61a7aa1b0bb97b82f024d98629f3b9982e31702275160c172a31e748cb2bbf29",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/README.md",
+      "bytes": 10811,
+      "sha256": "029bf15b83079c951c2209b36d3cfc803c2642e841d911d1939fe612f556a52f",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/REVIEW.md",
+      "bytes": 2027,
+      "sha256": "d6dc11a8939e4e666309db842ad6bee9e0c249b225cd8f3e98ab3e1965024658",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/feed-version-observation.json",
+      "bytes": 4699,
+      "sha256": "5acddfd02ebad9804e85438bd6b98c766a96b74eeb5ffb6c6fba71265a88bf1e",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/final-verification.json",
+      "bytes": 3148,
+      "sha256": "0463a025f10daa6ecb42626ecefd88c627930abbdf49cbfb40c7ddda2bd323e3",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/local-consumer-lock.json",
+      "bytes": 3410,
+      "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/old-seven-approval.json",
+      "bytes": 1479,
+      "sha256": "4e6da064cdc4c92dc1f29e0f40c4fd7a047434fbc7151a5097c2e308ea23ca80",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/original-publication.json",
+      "bytes": 7550,
+      "sha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inventory-final.json",
+      "bytes": 158438,
+      "sha256": "9bf161955ff9f50cacbd648034f2f846290b31d408c311218193eb582f0324cd",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inventory.json",
+      "bytes": 158458,
+      "sha256": "fd9cd8b1dd6eafc4c27184426fd1ae7116211253c942934ec96442faa69f4422",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/optimized-input-check.json",
+      "bytes": 447,
+      "sha256": "01dd3193cc865e66c9c9fe29480172c04e3cd4ed1e944dc9942908e3ad8b0046",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-formal.json",
+      "bytes": 6851,
+      "sha256": "352e0e56dd4606298b136a4e08e9c8d841ef7377942375187c0be41a0b4d1540",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-local.json",
+      "bytes": 8075,
+      "sha256": "0c7e6f553408fb396fcc21c60182e3117b2125428b542e853718620faeec1a44",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/schema-source-parity.json",
+      "bytes": 13365,
+      "sha256": "bafe057fc15f07c7555986c34a211600f70f15feb6da84550334b7089f10b867",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/retained-artifacts.json",
+      "bytes": 28414,
+      "sha256": "ae5bbb8e188ba2271c3ed83f1c73c47fec8b3fa6f48849f257f67100007d47b4",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/source-hashes.json",
+      "bytes": 667,
+      "sha256": "ff152bd3fc6d34ec2211d22201249edfa0321684f507c8cb44422040f990ef00",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/tests.log",
+      "bytes": 4129,
+      "sha256": "1f5ecfd5467d82e03b80e566dab067ef17c10fcc8d839ad117abaf196aeb6ac8",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "b21b7c125156e9b60f7c264a24712973d275e50c87a54c0c45c8015aefa559fb",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/tests.log",
+      "bytes": 5888,
+      "sha256": "7b1f2d01db4b4201288517bb4e5d5498c8bca70389811d5808097edd7f1db8aa",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "ed25b57ac9531381942a7678f54bffe4eb22778162088b38158386be1fa339c0",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/tests.log",
+      "bytes": 3051,
+      "sha256": "8e66a1154c3cc6a7cf8376fca032c7349a9038cdac24932e7436d35ea37a6f07",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal-exit.txt",
+      "bytes": 3,
+      "sha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal.log",
+      "bytes": 131,
+      "sha256": "d46b28b780222d50e3ceae48c3781584fcf8c775781a1bbde323dd6b920e049d",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal/report.json",
+      "bytes": 11645,
+      "sha256": "da31f1f5a452c13641185ee9b651ae024de4446aa2e14355f54b481efdb365c1",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local-exit.txt",
+      "bytes": 3,
+      "sha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local.log",
+      "bytes": 130,
+      "sha256": "f94b8610f3a2914b0d3fe25b6f5a312e3cd87f588e8eb59a034c204b74ecedd0",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local/report.json",
+      "bytes": 13186,
+      "sha256": "d523d61c90ab65b12917352702fb39b29ee6c8e335a0fc01e3189a2421ec7f86",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "3621af52dee1f3256c258240966d96c02021ebef71a837c6b1182eaaccecace4",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/tests.log",
+      "bytes": 4480,
+      "sha256": "a7a4b783cf7dc640664d1e0b6da125eb9c5a3f888e0e1499f1d1719752c25324",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "b066af3227d186102664b5a68d0e6ad32cde54e3b2dd4842b1e7cca0e4b7033a",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/tests.log",
+      "bytes": 2226,
+      "sha256": "b74fe4c409487810361410e4eeba368bdab68f0cccecb6c37377a0a1c678e829",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "188c6b3de3456bb57277027fd279d3a187d4961b05aaeb4c7aa34b8d80015e60",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/tests.log",
+      "bytes": 26904,
+      "sha256": "d379e4f6cb5207a781c3ac31f67e748476aa6e9696ef305591f040524fea4d81",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/archive-metadata.json",
+      "bytes": 3680,
+      "sha256": "59d42920c6a89530f39cc02fd3b16ef52fe2070986cfba003c61e59432781a39",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/archive-metadata.log",
+      "bytes": 3695,
+      "sha256": "593e8fc00dd95f8ac9ac4b9f474fa742d32e783d676ae165dc617b0032ad4dff",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/build.log",
+      "bytes": 10555,
+      "sha256": "44581bb34e24912fc24cfb37f84f69a3c18dafc6defd0a67c6bb61d4127e3dd3",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/dotnet-info.log",
+      "bytes": 2302,
+      "sha256": "14b707054e0b4ce5f648ed55b0493fb9b7a12d7ce40503151e3e7a6173888007",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.props",
+      "bytes": 410,
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.targets",
+      "bytes": 12,
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/NuGet.Config",
+      "bytes": 200,
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Probe.csproj",
+      "bytes": 1020,
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Program.cs",
+      "bytes": 6859,
+      "sha256": "1b953557ccd44ca6a7b44e61b3cb0422e4be5c73c8ef3d2b1f084d79944e760b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/SyntheticRuntime.cs",
+      "bytes": 9763,
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/report.json",
+      "bytes": 15351,
+      "sha256": "c11fd32d5bfc97a145f9ddf1746afcef1abc6627a5b8bbf15d8aa01ddf59223b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/restore.log",
+      "bytes": 175,
+      "sha256": "81a0d7be9a2126e1d0d164c237410af5edd013d9e0e7d5e88ff894ad5a239e0b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/runtime.log",
+      "bytes": 336025,
+      "sha256": "114214f002632164e4a8a713f7a1db7e973a94d071339bfea320e796568c7d4e",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/signatures-and-synthetic-runtime.json",
+      "bytes": 335155,
+      "sha256": "97fbc9ff0103bbb8ef27b17be2fcd488a8ebba8513ff12663f54dc638d1bba7a",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/archive-metadata.json",
+      "bytes": 3780,
+      "sha256": "1e30c46dee948ded538cbb705a7dc8aefbbc6d33dc7418ff0aeef43a566c0431",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/archive-metadata.log",
+      "bytes": 3795,
+      "sha256": "42788f2fec353a6727cee0f88dfaf69ea90949ddbbfca6b117eed0b185dd9221",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/build.log",
+      "bytes": 10555,
+      "sha256": "cab8b6253f46135472cfea8593979264aef21f3616d27e98f34fcc3e7965351b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/dotnet-info.log",
+      "bytes": 2302,
+      "sha256": "d18cbd82938eae7d0c6cd1d1a58a90da5afcc9b5add76f2e298544cfbb8bc70a",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.props",
+      "bytes": 410,
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.targets",
+      "bytes": 12,
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/NuGet.Config",
+      "bytes": 200,
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Probe.csproj",
+      "bytes": 1020,
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Program.cs",
+      "bytes": 9247,
+      "sha256": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/SyntheticRuntime.cs",
+      "bytes": 9763,
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/test_runner.py",
+      "bytes": 3685,
+      "sha256": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/report.json",
+      "bytes": 15546,
+      "sha256": "f7965ef76b0a1cdb7c4c99424f3e55d985fcc8058c722ac09af5d7ce443c4603",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/restore.log",
+      "bytes": 175,
+      "sha256": "989fed6c6b6f02069b87b88d21e706f741cb342173371df73bd3aa4cb113891e",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/runtime.log",
+      "bytes": 337969,
+      "sha256": "1193f256d0645c90d9fe0ff44e4abe961a96128c2eeb161df31b2efa45d16d78",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/signatures-and-synthetic-runtime.json",
+      "bytes": 337099,
+      "sha256": "8d85754cbc78e2c5618b2a7b360663b4ea19073a90175bddcdd8afe9267b1158",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/archive-metadata.json",
+      "bytes": 3780,
+      "sha256": "1e30c46dee948ded538cbb705a7dc8aefbbc6d33dc7418ff0aeef43a566c0431",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/archive-metadata.log",
+      "bytes": 3795,
+      "sha256": "42788f2fec353a6727cee0f88dfaf69ea90949ddbbfca6b117eed0b185dd9221",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/build.log",
+      "bytes": 10555,
+      "sha256": "98ea061c3ca787b0823c18b62f51bcd27fe6ae2949ec3dae59ac078e3e875a63",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/dotnet-info.log",
+      "bytes": 2302,
+      "sha256": "31b565c99af23c28178e6d6b60fc595dbc98500041c234aea95a00a0b8f38bcd",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.props",
+      "bytes": 410,
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.targets",
+      "bytes": 12,
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/NuGet.Config",
+      "bytes": 200,
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Probe.csproj",
+      "bytes": 1020,
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Program.cs",
+      "bytes": 9247,
+      "sha256": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/README.md",
+      "bytes": 3608,
+      "sha256": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/SyntheticRuntime.cs",
+      "bytes": 9763,
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/test_runner.py",
+      "bytes": 3685,
+      "sha256": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/report.json",
+      "bytes": 15984,
+      "sha256": "f11ba0311daecaee5bcd095954055cab8c98b04b028adc6874f8611be63f7800",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/restore.log",
+      "bytes": 175,
+      "sha256": "f821708448d04b32df174a108d8241a993550c9db832dfcbdc4e9cbc586b1d2b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/runtime.log",
+      "bytes": 337969,
+      "sha256": "1193f256d0645c90d9fe0ff44e4abe961a96128c2eeb161df31b2efa45d16d78",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/signatures-and-synthetic-runtime.json",
+      "bytes": 337099,
+      "sha256": "8d85754cbc78e2c5618b2a7b360663b4ea19073a90175bddcdd8afe9267b1158",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/archive-metadata.json",
+      "bytes": 1467,
+      "sha256": "390c90689333968dc871d9a3f0192eb38017bff5ec3f2c03752f7ca8b496a42f",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/archive-metadata.log",
+      "bytes": 1477,
+      "sha256": "28d567b55a620a904173ec6c6263f47b6f3ce2816727c4f1f370e6a900190dc4",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/dotnet-info.log",
+      "bytes": 2306,
+      "sha256": "864b7bcd63025f8c6b528e10e7911f883a75ef684ceb201975dcdb2f6db4d6cd",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/report.json",
+      "bytes": 6268,
+      "sha256": "bac7c4b0ec651b3be73cacd4d45fd18b0d53744dbdb1b721c8398cefd83ec1e6",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/execution.json",
+      "bytes": 3724,
+      "sha256": "949ccb5926e304211cf5aae4f3ed225557c74512146368a4d3d8d635529c04ab",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-formal.log",
+      "bytes": 162,
+      "sha256": "4702644d7cfd4bbb7e054021e69259911f8111335e520bd298117213fa7babd1",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-formal/report.json",
+      "bytes": 9163,
+      "sha256": "b431765a7b69c15dfe3ca9e04e6fd6927bda6173c0363284175cfbfaa3975f6b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-local.log",
+      "bytes": 161,
+      "sha256": "0ac5c739768b1a7f8884824a0669036dddfbfc4a75df5fdaeffa689078f550fb",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-local/report.json",
+      "bytes": 9989,
+      "sha256": "3eca1b3bacb774ff54cdd4596efe0985007a580beca87fd01d1e217c6941f8a4",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/probe-parser-tests.log",
+      "bytes": 1033,
+      "sha256": "38f31a25d4c73b4262c085062e0b9a3db8939f9cd2309fdb133f663ba9545d5b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/workflow-preflight.json",
+      "bytes": 12142,
+      "sha256": "5c2657fd9fc562a7be87aa67fdf1281c12df4ab131ab461995664a94dfd641ce",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/.gitattributes",
+      "bytes": 151,
+      "sha256": "7a78e3fdfc860a6b21529ac621a48b9666bd47e909c5fc6f8ea8eda3329f1368",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/.gitignore",
+      "bytes": 13,
+      "sha256": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/README.md",
+      "bytes": 7600,
+      "sha256": "4a7a997530da6b9337ceb98ddcf680a150ea0801bcd3e296e079dcc66b20e887",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/capture_real_inputs.py",
+      "bytes": 5282,
+      "sha256": "5aa3d68d99387d892ac9a8b1d7052f2cea796cf49afeedd124589e0dd9970a31",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/input.schema.json",
+      "bytes": 5288,
+      "sha256": "732720dc20c57beab974426fc1283f5cf7581244798e9b25c5e8bf92eb53095d",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/inventory.py",
+      "bytes": 7709,
+      "sha256": "24d998f461861eea426cb3e9c026af5f8e7f9db7f039a657d52663570b46d987",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.props",
+      "bytes": 410,
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.targets",
+      "bytes": 12,
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/NuGet.Config",
+      "bytes": 200,
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Probe.csproj",
+      "bytes": 1020,
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Program.cs",
+      "bytes": 9247,
+      "sha256": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/README.md",
+      "bytes": 3608,
+      "sha256": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/SyntheticRuntime.cs",
+      "bytes": 9763,
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/test_runner.py",
+      "bytes": 3685,
+      "sha256": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/run_probe.py",
+      "bytes": 8791,
+      "sha256": "61cd90a566de7f901a9b1ca0dfc3d7fc929c21ccfefd2e7526a8b6a04a02bf54",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/tests/test_verify.py",
+      "bytes": 15988,
+      "sha256": "b111d92e1c7dd5e52588bd1b723e12ba42e9482a82ee3659c554e191131816ee",
+      "disk_equals_git": true
+    },
+    {
+      "path": "eng/wp02-02/consumption/verify.py",
+      "bytes": 19119,
+      "sha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02",
+      "disk_equals_git": true
+    }
+  ],
+  "source_hashes_verified": {
+    "eng/wp02-02/consumption/.gitattributes": "7a78e3fdfc860a6b21529ac621a48b9666bd47e909c5fc6f8ea8eda3329f1368",
+    "eng/wp02-02/consumption/.gitignore": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+    "eng/wp02-02/consumption/capture_real_inputs.py": "5aa3d68d99387d892ac9a8b1d7052f2cea796cf49afeedd124589e0dd9970a31",
+    "eng/wp02-02/consumption/input.schema.json": "732720dc20c57beab974426fc1283f5cf7581244798e9b25c5e8bf92eb53095d",
+    "eng/wp02-02/consumption/inventory.py": "24d998f461861eea426cb3e9c026af5f8e7f9db7f039a657d52663570b46d987",
+    "eng/wp02-02/consumption/README.md": "4a7a997530da6b9337ceb98ddcf680a150ea0801bcd3e296e079dcc66b20e887",
+    "eng/wp02-02/consumption/run_probe.py": "61cd90a566de7f901a9b1ca0dfc3d7fc929c21ccfefd2e7526a8b6a04a02bf54",
+    "eng/wp02-02/consumption/verify.py": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02",
+    "eng/wp02-02/consumption/probe/Directory.Build.props": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+    "eng/wp02-02/consumption/probe/Directory.Build.targets": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+    "eng/wp02-02/consumption/probe/NuGet.Config": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+    "eng/wp02-02/consumption/probe/Probe.csproj": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+    "eng/wp02-02/consumption/probe/Program.cs": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+    "eng/wp02-02/consumption/probe/README.md": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+    "eng/wp02-02/consumption/probe/SyntheticRuntime.cs": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+    "eng/wp02-02/consumption/probe/test_runner.py": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+    "eng/wp02-02/consumption/tests/test_verify.py": "b111d92e1c7dd5e52588bd1b723e12ba42e9482a82ee3659c554e191131816ee"
+  },
+  "retained_originals_verified": [
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-edge-green-20261014\\exit-code.txt",
+      "retained": "runs/checker-edge-green-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-edge-green-20261014\\source-hashes.json",
+      "retained": "runs/checker-edge-green-20261014/source-hashes.json",
+      "bytes": 667,
+      "sha256": "ff152bd3fc6d34ec2211d22201249edfa0321684f507c8cb44422040f990ef00",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-edge-green-20261014\\tests.log",
+      "retained": "runs/checker-edge-green-20261014/tests.log",
+      "bytes": 4129,
+      "sha256": "1f5ecfd5467d82e03b80e566dab067ef17c10fcc8d839ad117abaf196aeb6ac8",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-edge-red-20261014\\exit-code.txt",
+      "retained": "runs/checker-edge-red-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-edge-red-20261014\\source-hashes.json",
+      "retained": "runs/checker-edge-red-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "b21b7c125156e9b60f7c264a24712973d275e50c87a54c0c45c8015aefa559fb",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-edge-red-20261014\\tests.log",
+      "retained": "runs/checker-edge-red-20261014/tests.log",
+      "bytes": 5888,
+      "sha256": "7b1f2d01db4b4201288517bb4e5d5498c8bca70389811d5808097edd7f1db8aa",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-green-20261014\\exit-code.txt",
+      "retained": "runs/checker-green-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-green-20261014\\source-hashes.json",
+      "retained": "runs/checker-green-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "ed25b57ac9531381942a7678f54bffe4eb22778162088b38158386be1fa339c0",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-green-20261014\\tests.log",
+      "retained": "runs/checker-green-20261014/tests.log",
+      "bytes": 3051,
+      "sha256": "8e66a1154c3cc6a7cf8376fca032c7349a9038cdac24932e7436d35ea37a6f07",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\exit-code.txt",
+      "retained": "runs/checker-namespace-green-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\old-formal-exit.txt",
+      "retained": "runs/checker-namespace-green-20261014/old-formal-exit.txt",
+      "bytes": 3,
+      "sha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\old-formal.log",
+      "retained": "runs/checker-namespace-green-20261014/old-formal.log",
+      "bytes": 131,
+      "sha256": "d46b28b780222d50e3ceae48c3781584fcf8c775781a1bbde323dd6b920e049d",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\old-local-exit.txt",
+      "retained": "runs/checker-namespace-green-20261014/old-local-exit.txt",
+      "bytes": 3,
+      "sha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\old-local.log",
+      "retained": "runs/checker-namespace-green-20261014/old-local.log",
+      "bytes": 130,
+      "sha256": "f94b8610f3a2914b0d3fe25b6f5a312e3cd87f588e8eb59a034c204b74ecedd0",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\source-hashes.json",
+      "retained": "runs/checker-namespace-green-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "3621af52dee1f3256c258240966d96c02021ebef71a837c6b1182eaaccecace4",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\tests.log",
+      "retained": "runs/checker-namespace-green-20261014/tests.log",
+      "bytes": 4480,
+      "sha256": "a7a4b783cf7dc640664d1e0b6da125eb9c5a3f888e0e1499f1d1719752c25324",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\old-formal\\report.json",
+      "retained": "runs/checker-namespace-green-20261014/old-formal/report.json",
+      "bytes": 11645,
+      "sha256": "da31f1f5a452c13641185ee9b651ae024de4446aa2e14355f54b481efdb365c1",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-green-20261014\\old-local\\report.json",
+      "retained": "runs/checker-namespace-green-20261014/old-local/report.json",
+      "bytes": 13186,
+      "sha256": "d523d61c90ab65b12917352702fb39b29ee6c8e335a0fc01e3189a2421ec7f86",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-red-20261014\\exit-code.txt",
+      "retained": "runs/checker-namespace-red-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-red-20261014\\source-hashes.json",
+      "retained": "runs/checker-namespace-red-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "b066af3227d186102664b5a68d0e6ad32cde54e3b2dd4842b1e7cca0e4b7033a",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-namespace-red-20261014\\tests.log",
+      "retained": "runs/checker-namespace-red-20261014/tests.log",
+      "bytes": 2226,
+      "sha256": "b74fe4c409487810361410e4eeba368bdab68f0cccecb6c37377a0a1c678e829",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-red-20261014\\exit-code.txt",
+      "retained": "runs/checker-red-20261014/exit-code.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-red-20261014\\source-hashes.json",
+      "retained": "runs/checker-red-20261014/source-hashes.json",
+      "bytes": 445,
+      "sha256": "188c6b3de3456bb57277027fd279d3a187d4961b05aaeb4c7aa34b8d80015e60",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\checker-red-20261014\\tests.log",
+      "retained": "runs/checker-red-20261014/tests.log",
+      "bytes": 26904,
+      "sha256": "d379e4f6cb5207a781c3ac31f67e748476aa6e9696ef305591f040524fea4d81",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\archive-metadata.json",
+      "retained": "runs/probe-20261014-a1/archive-metadata.json",
+      "bytes": 3680,
+      "sha256": "59d42920c6a89530f39cc02fd3b16ef52fe2070986cfba003c61e59432781a39",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\archive-metadata.log",
+      "retained": "runs/probe-20261014-a1/archive-metadata.log",
+      "bytes": 3695,
+      "sha256": "593e8fc00dd95f8ac9ac4b9f474fa742d32e783d676ae165dc617b0032ad4dff",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\build.log",
+      "retained": "runs/probe-20261014-a1/build.log",
+      "bytes": 10555,
+      "sha256": "44581bb34e24912fc24cfb37f84f69a3c18dafc6defd0a67c6bb61d4127e3dd3",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\dotnet-info.log",
+      "retained": "runs/probe-20261014-a1/dotnet-info.log",
+      "bytes": 2302,
+      "sha256": "14b707054e0b4ce5f648ed55b0493fb9b7a12d7ce40503151e3e7a6173888007",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\global.json",
+      "retained": "runs/probe-20261014-a1/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\report.json",
+      "retained": "runs/probe-20261014-a1/report.json",
+      "bytes": 15351,
+      "sha256": "c11fd32d5bfc97a145f9ddf1746afcef1abc6627a5b8bbf15d8aa01ddf59223b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\restore.log",
+      "retained": "runs/probe-20261014-a1/restore.log",
+      "bytes": 175,
+      "sha256": "81a0d7be9a2126e1d0d164c237410af5edd013d9e0e7d5e88ff894ad5a239e0b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\runtime.log",
+      "retained": "runs/probe-20261014-a1/runtime.log",
+      "bytes": 336025,
+      "sha256": "114214f002632164e4a8a713f7a1db7e973a94d071339bfea320e796568c7d4e",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\sdk-version.log",
+      "retained": "runs/probe-20261014-a1/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\signatures-and-synthetic-runtime.json",
+      "retained": "runs/probe-20261014-a1/signatures-and-synthetic-runtime.json",
+      "bytes": 335155,
+      "sha256": "97fbc9ff0103bbb8ef27b17be2fcd488a8ebba8513ff12663f54dc638d1bba7a",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\Directory.Build.props",
+      "retained": "runs/probe-20261014-a1/probe-source/Directory.Build.props",
+      "bytes": 410,
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\Directory.Build.targets",
+      "retained": "runs/probe-20261014-a1/probe-source/Directory.Build.targets",
+      "bytes": 12,
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\NuGet.Config",
+      "retained": "runs/probe-20261014-a1/probe-source/NuGet.Config",
+      "bytes": 200,
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\Probe.csproj",
+      "retained": "runs/probe-20261014-a1/probe-source/Probe.csproj",
+      "bytes": 1020,
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\Program.cs",
+      "retained": "runs/probe-20261014-a1/probe-source/Program.cs",
+      "bytes": 6859,
+      "sha256": "1b953557ccd44ca6a7b44e61b3cb0422e4be5c73c8ef3d2b1f084d79944e760b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\SyntheticRuntime.cs",
+      "retained": "runs/probe-20261014-a1/probe-source/SyntheticRuntime.cs",
+      "bytes": 9763,
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\archive-metadata.json",
+      "retained": "runs/probe-20261014-a2/archive-metadata.json",
+      "bytes": 3780,
+      "sha256": "1e30c46dee948ded538cbb705a7dc8aefbbc6d33dc7418ff0aeef43a566c0431",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\archive-metadata.log",
+      "retained": "runs/probe-20261014-a2/archive-metadata.log",
+      "bytes": 3795,
+      "sha256": "42788f2fec353a6727cee0f88dfaf69ea90949ddbbfca6b117eed0b185dd9221",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\build.log",
+      "retained": "runs/probe-20261014-a2/build.log",
+      "bytes": 10555,
+      "sha256": "cab8b6253f46135472cfea8593979264aef21f3616d27e98f34fcc3e7965351b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\dotnet-info.log",
+      "retained": "runs/probe-20261014-a2/dotnet-info.log",
+      "bytes": 2302,
+      "sha256": "d18cbd82938eae7d0c6cd1d1a58a90da5afcc9b5add76f2e298544cfbb8bc70a",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\global.json",
+      "retained": "runs/probe-20261014-a2/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\report.json",
+      "retained": "runs/probe-20261014-a2/report.json",
+      "bytes": 15546,
+      "sha256": "f7965ef76b0a1cdb7c4c99424f3e55d985fcc8058c722ac09af5d7ce443c4603",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\restore.log",
+      "retained": "runs/probe-20261014-a2/restore.log",
+      "bytes": 175,
+      "sha256": "989fed6c6b6f02069b87b88d21e706f741cb342173371df73bd3aa4cb113891e",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\runtime.log",
+      "retained": "runs/probe-20261014-a2/runtime.log",
+      "bytes": 337969,
+      "sha256": "1193f256d0645c90d9fe0ff44e4abe961a96128c2eeb161df31b2efa45d16d78",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\sdk-version.log",
+      "retained": "runs/probe-20261014-a2/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\signatures-and-synthetic-runtime.json",
+      "retained": "runs/probe-20261014-a2/signatures-and-synthetic-runtime.json",
+      "bytes": 337099,
+      "sha256": "8d85754cbc78e2c5618b2a7b360663b4ea19073a90175bddcdd8afe9267b1158",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\Directory.Build.props",
+      "retained": "runs/probe-20261014-a2/probe-source/Directory.Build.props",
+      "bytes": 410,
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\Directory.Build.targets",
+      "retained": "runs/probe-20261014-a2/probe-source/Directory.Build.targets",
+      "bytes": 12,
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\NuGet.Config",
+      "retained": "runs/probe-20261014-a2/probe-source/NuGet.Config",
+      "bytes": 200,
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\Probe.csproj",
+      "retained": "runs/probe-20261014-a2/probe-source/Probe.csproj",
+      "bytes": 1020,
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\Program.cs",
+      "retained": "runs/probe-20261014-a2/probe-source/Program.cs",
+      "bytes": 9247,
+      "sha256": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\SyntheticRuntime.cs",
+      "retained": "runs/probe-20261014-a2/probe-source/SyntheticRuntime.cs",
+      "bytes": 9763,
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\test_runner.py",
+      "retained": "runs/probe-20261014-a2/probe-source/test_runner.py",
+      "bytes": 3685,
+      "sha256": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-metadata.json",
+      "retained": "runs/probe-20261014-a3/archive-metadata.json",
+      "bytes": 3780,
+      "sha256": "1e30c46dee948ded538cbb705a7dc8aefbbc6d33dc7418ff0aeef43a566c0431",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-metadata.log",
+      "retained": "runs/probe-20261014-a3/archive-metadata.log",
+      "bytes": 3795,
+      "sha256": "42788f2fec353a6727cee0f88dfaf69ea90949ddbbfca6b117eed0b185dd9221",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\build.log",
+      "retained": "runs/probe-20261014-a3/build.log",
+      "bytes": 10555,
+      "sha256": "98ea061c3ca787b0823c18b62f51bcd27fe6ae2949ec3dae59ac078e3e875a63",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\dotnet-info.log",
+      "retained": "runs/probe-20261014-a3/dotnet-info.log",
+      "bytes": 2302,
+      "sha256": "31b565c99af23c28178e6d6b60fc595dbc98500041c234aea95a00a0b8f38bcd",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\global.json",
+      "retained": "runs/probe-20261014-a3/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\report.json",
+      "retained": "runs/probe-20261014-a3/report.json",
+      "bytes": 15984,
+      "sha256": "f11ba0311daecaee5bcd095954055cab8c98b04b028adc6874f8611be63f7800",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\restore.log",
+      "retained": "runs/probe-20261014-a3/restore.log",
+      "bytes": 175,
+      "sha256": "f821708448d04b32df174a108d8241a993550c9db832dfcbdc4e9cbc586b1d2b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\runtime.log",
+      "retained": "runs/probe-20261014-a3/runtime.log",
+      "bytes": 337969,
+      "sha256": "1193f256d0645c90d9fe0ff44e4abe961a96128c2eeb161df31b2efa45d16d78",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\sdk-version.log",
+      "retained": "runs/probe-20261014-a3/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\signatures-and-synthetic-runtime.json",
+      "retained": "runs/probe-20261014-a3/signatures-and-synthetic-runtime.json",
+      "bytes": 337099,
+      "sha256": "8d85754cbc78e2c5618b2a7b360663b4ea19073a90175bddcdd8afe9267b1158",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Directory.Build.props",
+      "retained": "runs/probe-20261014-a3/probe-source/Directory.Build.props",
+      "bytes": 410,
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Directory.Build.targets",
+      "retained": "runs/probe-20261014-a3/probe-source/Directory.Build.targets",
+      "bytes": 12,
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\NuGet.Config",
+      "retained": "runs/probe-20261014-a3/probe-source/NuGet.Config",
+      "bytes": 200,
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Probe.csproj",
+      "retained": "runs/probe-20261014-a3/probe-source/Probe.csproj",
+      "bytes": 1020,
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Program.cs",
+      "retained": "runs/probe-20261014-a3/probe-source/Program.cs",
+      "bytes": 9247,
+      "sha256": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\README.md",
+      "retained": "runs/probe-20261014-a3/probe-source/README.md",
+      "bytes": 3608,
+      "sha256": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\SyntheticRuntime.cs",
+      "retained": "runs/probe-20261014-a3/probe-source/SyntheticRuntime.cs",
+      "bytes": 9763,
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\test_runner.py",
+      "retained": "runs/probe-20261014-a3/probe-source/test_runner.py",
+      "bytes": 3685,
+      "sha256": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-old-20261014-a1\\archive-metadata.json",
+      "retained": "runs/probe-old-20261014-a1/archive-metadata.json",
+      "bytes": 1467,
+      "sha256": "390c90689333968dc871d9a3f0192eb38017bff5ec3f2c03752f7ca8b496a42f",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-old-20261014-a1\\archive-metadata.log",
+      "retained": "runs/probe-old-20261014-a1/archive-metadata.log",
+      "bytes": 1477,
+      "sha256": "28d567b55a620a904173ec6c6263f47b6f3ce2816727c4f1f370e6a900190dc4",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-old-20261014-a1\\dotnet-info.log",
+      "retained": "runs/probe-old-20261014-a1/dotnet-info.log",
+      "bytes": 2306,
+      "sha256": "864b7bcd63025f8c6b528e10e7911f883a75ef684ceb201975dcdb2f6db4d6cd",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-old-20261014-a1\\global.json",
+      "retained": "runs/probe-old-20261014-a1/global.json",
+      "bytes": 111,
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-old-20261014-a1\\report.json",
+      "retained": "runs/probe-old-20261014-a1/report.json",
+      "bytes": 6268,
+      "sha256": "bac7c4b0ec651b3be73cacd4d45fd18b0d53744dbdb1b721c8398cefd83ec1e6",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-old-20261014-a1\\sdk-version.log",
+      "retained": "runs/probe-old-20261014-a1/sdk-version.log",
+      "bytes": 9,
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\execution.json",
+      "retained": "runs/root-validation-20261014/execution.json",
+      "bytes": 3724,
+      "sha256": "949ccb5926e304211cf5aae4f3ed225557c74512146368a4d3d8d635529c04ab",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\old-formal.log",
+      "retained": "runs/root-validation-20261014/old-formal.log",
+      "bytes": 162,
+      "sha256": "4702644d7cfd4bbb7e054021e69259911f8111335e520bd298117213fa7babd1",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\old-local.log",
+      "retained": "runs/root-validation-20261014/old-local.log",
+      "bytes": 161,
+      "sha256": "0ac5c739768b1a7f8884824a0669036dddfbfc4a75df5fdaeffa689078f550fb",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\probe-parser-tests.log",
+      "retained": "runs/root-validation-20261014/probe-parser-tests.log",
+      "bytes": 1033,
+      "sha256": "38f31a25d4c73b4262c085062e0b9a3db8939f9cd2309fdb133f663ba9545d5b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\old-formal\\report.json",
+      "retained": "runs/root-validation-20261014/old-formal/report.json",
+      "bytes": 9163,
+      "sha256": "b431765a7b69c15dfe3ca9e04e6fd6927bda6173c0363284175cfbfaa3975f6b",
+      "original_candidate_hash_bytes_equal": true
+    },
+    {
+      "original": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\old-local\\report.json",
+      "retained": "runs/root-validation-20261014/old-local/report.json",
+      "bytes": 9989,
+      "sha256": "3eca1b3bacb774ff54cdd4596efe0985007a580beca87fd01d1e217c6941f8a4",
+      "original_candidate_hash_bytes_equal": true
+    }
+  ],
+  "inventory_git_inputs_verified": [
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "AGENTS.md",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/devops/README.md",
+      "sha256": "bf9bab9415366daa24c48e92bd5d5d88983f08b6e4e3428ff462adf6721feebf",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/client/r2/README.md",
+      "sha256": "e3927579d6786ba919c21a6a4d6914bfb1bb4addffc43aa98e6bbcfc55a08be0",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/09-parallel-development.md",
+      "sha256": "5d5da99193c5c08df8774268a6eff59fbd9111601a0cfbf52b352c315b253c38",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-plans/WP02.md",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.md",
+      "sha256": "8c9f2c67e3c96677c15dbf7ecd82c8048cd09ba4ab08948ec58785995d8bbd45",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/modules/PLT-RELEASE-01.md",
+      "sha256": "402ac4d108efb12cfbd5a902751bec5a659578bdd85d999e5025e19080cd2feb",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "NuGet.config",
+      "sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "Directory.Build.props",
+      "sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "sha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.Tests/CP6.Tests.csproj",
+      "sha256": "e4c80a21edd137140c51f49f99aaac2d8600cf6474173f89d36747bcb07a5307",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "sha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj",
+      "sha256": "57efc93fcb1faf75baa63a73ed0c9f100abb1987af3e528374f64d31b8e5b567",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Main",
+      "source": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-integration-20261013/combined-architecture-validation.json",
+      "sha256": "648eded1cfb404a99156ef059d5997e6a06317951f83152ee2aa5cd3c5a295e8",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/P10-RELEASE-GOVERNANCE.md",
+      "sha256": "f3ee88fcec49892ed5750cd079d04060ccb62bc5298a21ef9a0265de84e30ff2",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "sha256": "dd4c5023b8ffc05b5fda984f0bd8f5c9220b9a4d864382d77f32e0a19d46e031",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/COORD-FIX.md",
+      "sha256": "c47440a8bfce290d82771d649b769554a76a9dd57bd4643797828ee9cd1c1e2a",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/matrix.json",
+      "sha256": "c018745e9c7989179a3003fc7ce5fe42a1627b2ccb160dc3ddeab5fb21ef656c",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+      "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/state.json",
+      "sha256": "14f4880686c9b040c60563c48a3894b73330071f8e99d999ec653ac6a4a3fba2",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "contracts/release/capabilities/v1/README.md",
+      "sha256": "5b2568b8e03febb694ae6ef01e316fc212fe8edffce9d1d072bfa386903466b7",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "contracts/release/v1/formal-package-publication.v1.schema.json",
+      "sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+      "sha256": "f1e4ac737793e57a7eb08f52b10f1250b002b90f4b791f870e4519455bd2b2ae",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+      "sha256": "fefdf49aaf0f86afe448e3a7da1f455609d5d7f57dfc0bbc6ead592484a2a15d",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Context/ContextContractsV1.cs",
+      "sha256": "2840946a04e1b7599236f4710b904024886a3630ecb867e579efd15231153922",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Abstractions/Context/ContextBoundariesV1.cs",
+      "sha256": "ba9f3d52ec6dde335522f45702967be5eaf3e25021463777c756c0b14b92d7ef",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+      "sha256": "af5a6a520422a2e75148839c730f30bf9cc6fb7afa29612c46af22d6083e5908",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "sha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Build.props",
+      "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "global.json",
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Pack-P10FormalPackages.ps1",
+      "sha256": "36e2dad1d9edb65e868725e5946d8d5694406a9edf2eded4c8a6817fa77d353b",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/New-P10FormalPackageSet.ps1",
+      "sha256": "5348127087dd221fde45700930be907a54610daf405108b9f7190fe5a88acd4c",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Publish-P10FormalPackageSet.ps1",
+      "sha256": "cb9a6143f7bd21a12f5032c0d9badb91158775e268b083a24c48fca1f19335d6",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Test-P10FormalPrerequisites.ps1",
+      "sha256": "09524035da5c08930754caa03f301fe6bf2ab2b73e77f09bf608f968955a6526",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/New-P10FormalPublicationRecord.ps1",
+      "sha256": "cf2ae448556bf9029b3a257f7a85e24192c1de50dcc24ce340700a997bd42c1e",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Test-P10FormalPackageSet.ps1",
+      "sha256": "3fea52f2946f8c8cbc3ac7f43ff062115133fbcdbda835e9f23aed07b04f327d",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/wp02-27/run_checks.py",
+      "sha256": "d77199e914f607f82ea6acf8604888fffa4a5434e786220e80babd3a9682e55c",
+      "verified": true
+    },
+    {
+      "collection": "admission_fingerprints_verified",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/wp02-27/Inspector/README.md",
+      "sha256": "868f8a61343858621631f64921f7cfc69b55755d4f5e521819e56f7f788fa91b",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Client.Api/CP6.Client.Api.csproj",
+      "sha256": "4c5d807d4375f7badfe63abc6fabc758e0f74b656b8825b96f318607db81ea3a",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Client.Core/CP6.Client.Core.csproj",
+      "sha256": "42d1896d26d51c135280875a33f89542590c13dcc751c6ccd525c81e6110cf64",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Client.Tests/CP6.Client.Tests.csproj",
+      "sha256": "d5e5688e597357a81dc0e9e72bb0ddc9a5482ddb41f419e495672eac0f59e2e0",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Core/packages.lock.json",
+      "sha256": "af945b670a5792b9d246e0e7a72e25fa83f9f9531159707aee46dfedab990ca4",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Desktop/CP6.Desktop.csproj",
+      "sha256": "eec4dbbf0c0ca67100be478d73bd6a9062664499bdb30bc5ef7ccfd712232ce0",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Entity/CP6.Entity.csproj",
+      "sha256": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Entity/packages.lock.json",
+      "sha256": "ff90d3bb5b2ea55f88c84d3fb0a4a33afd5eae54fb2e19b4898c358b290560f3",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Mobile/CP6.Mobile.csproj",
+      "sha256": "0107c876a3a0af321b442eb1f3d9aa2d7fcf4b47777ae97fe23588f174e0ff17",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+      "sha256": "dc2ac5f7338f8c906b8608a65dcdb4429ac30b7fc25b6bdd7bb72ff8e5134613",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Oidc.IntegrationTests/packages.lock.json",
+      "sha256": "5ce62f06bd5ecc366a310c19b82b3c5325453d4ed6ce7620831138675bb8943e",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "sha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Persistence.PostgreSql/packages.lock.json",
+      "sha256": "fa7308fb66b2316e4f6b3c8ffea97586969d90c53312db5fb2b3081c32a71501",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.Application/CP6.Space.Application.csproj",
+      "sha256": "d055b6c3ce38e8ce52840c108f885280e68e9c2e6cf1565d9fb3b9f2008acd96",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.Client/CP6.Space.Client.csproj",
+      "sha256": "12985a174dc55d6f519f2205bf7b35d0123d6d7dfa7fe3fe34f2f3028ba30604",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.Contracts/CP6.Space.Contracts.csproj",
+      "sha256": "12985a174dc55d6f519f2205bf7b35d0123d6d7dfa7fe3fe34f2f3028ba30604",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.Domain/CP6.Space.Domain.csproj",
+      "sha256": "12985a174dc55d6f519f2205bf7b35d0123d6d7dfa7fe3fe34f2f3028ba30604",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj",
+      "sha256": "eb965f2e68caabbd28957842ccaffb6bcf2c3beab7da5d2be1a9018e76e1d06f",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.Infrastructure/packages.lock.json",
+      "sha256": "9e2417b3b22829454ebfdb24abb6bb7707aa1e66a677c562c73d949cf7276504",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "sha256": "2bb658ebb325ea2963a72b693f64452e77fd55aa203e7ffe16f121ee2e9f0b15",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.IntegrationTests/packages.lock.json",
+      "sha256": "632f0df04d9526036a6ff266cb6285893ba35930cf593a1fb9f3e68a4f00cab0",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Space.UnitTests/CP6.Space.UnitTests.csproj",
+      "sha256": "80e709979acd9baa9ccd071e9a580ab7840037c989831d277163ea9840f4bde8",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Tests/CP6.Tests.csproj",
+      "sha256": "e4c80a21edd137140c51f49f99aaac2d8600cf6474173f89d36747bcb07a5307",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.Tests/packages.lock.json",
+      "sha256": "6b4049ed056300bfd91331f9cf0835e8cee6a8d616cc3338bff957f01e28498e",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "CP6.WebApi/packages.lock.json",
+      "sha256": "533ad0910797142c5b547f873a3d2db5bf23791e0183ab701e4801bfb3cf5650",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "Directory.Build.props",
+      "sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "NuGet.config",
+      "sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/audits/2026-10-03-bug-150-mapping-idempotency/native/red-CP6.Space.IntegrationTests.csproj",
+      "sha256": "14d4f495d48a10fdc7de98fea027e197200a4862fbaefbc9874396fe9e9bb40b",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.csproj",
+      "sha256": "3f32f08975e25898ed7793c09dc59a2598db7d729dd67047723221ac458c4569",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/file/CPX/Msbb.Api/Msbb.Api.csproj",
+      "sha256": "0c647bb0cb03fe7cd27556becb23a1738238c98cd3da6bc1fe4eca7d29c6bbd3",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/file/CPX/Msbb.Application/Msbb.Application.csproj",
+      "sha256": "eb1eb3b784be2a4d9b4d25c6bddcec4f971d8840189940ccae668b0869d09516",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/file/CPX/Msbb.Domain/Msbb.Domain.csproj",
+      "sha256": "7e6352f0d7cc32858a49c347328a6c8c8fdd42346310107b49612db18b42f566",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/file/CPX/Msbb.Infrastructure/Msbb.Infrastructure.csproj",
+      "sha256": "2ff89c712d94f586a4655038757593846c470693fd101ba6251ba3be0b0e46d9",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/file/CPX/MsbbSolution/MsbbSolution.csproj",
+      "sha256": "fd76c47eccd10a96e3f9faf00f265d77f5f9f327099f76f196d8afe562fcea72",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "docs/superpowers/qa/sso/mock-idp/mock-idp.csproj",
+      "sha256": "e1d5697e36359a9ca00bfe25da9f10cae2081c64dc0d438a2323483adc03de27",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "sha256": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+      "sha256": "a6616864498568d9c888b1e327cc461383f91e781e5c85517840eb3dd873885a",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/contracts/postgresql-tests/packages.lock.json",
+      "sha256": "693a1940b47c2cc21dfb0fa374cb0c8aac17a342e5e493a1cd07aad186fd493e",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/browser-fixture/CP6.Oidc.BrowserFixture.csproj",
+      "sha256": "e92f932d6a2f1ad27161dfa6891efafd57126eab6bb062b878682145a803161b",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+      "sha256": "bb36e199dd2768ae6f02f9a5760651c0bf9de934d2251db13521c7aa5ad6bf23",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/erp-integration-tests/packages.lock.json",
+      "sha256": "319e3c8e46d05a673930aa6285225255aad2724eedde6160ce6a1278bd0f1ccb",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/erp-live-fixture/CP6.ErpLive.Fixture.csproj",
+      "sha256": "909adfcfae57d6c0d6782844c6265993325149a040af47b90e3230f865b24fdb",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/erp-live-fixture/packages.lock.json",
+      "sha256": "0b273f3c0f795185a2aa8ef2d962eea9554059ac516e9248ced634215b68e9b6",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj",
+      "sha256": "5b7c52fc24b1b8dc924831c2363ee175c064319b99f25ca64e19b5dd789c67e6",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/identity-events-fixture/packages.lock.json",
+      "sha256": "68064644a0b9339944daeb2e55cd6f1b838317b545f7f2ae9ba43723ae9afbc8",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/legacy-exit-tests/CP6.Crm.LegacyExit.Tests.csproj",
+      "sha256": "7c02241250dd9d42d0b70e6ad4e3b48c16134f3569d762f20f5ebaddee77e383",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/legacy-exit-tests/packages.lock.json",
+      "sha256": "aa8df1477b1c4b7e887ebf438b31db1bd1c005db76aff4bd880f75b138f60212",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj",
+      "sha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "eng/crm/source-fence-tests/packages.lock.json",
+      "sha256": "3b82e20d7b58a066d4817c815f8a04fa531efd8401c138a98832b3c6bfb8e533",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Crm.SourceFence/CP6.Crm.SourceFence.csproj",
+      "sha256": "0457a1d18984a4f5e07467a4be290f0fc8f970f365fa736753752935cad8570c",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Crm.SourceFence/packages.lock.json",
+      "sha256": "7603e1a9bc304391c22b591caf1d8edd74e58cac7df313f10a6fe5085c539b66",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+      "sha256": "c79d1137c3f70932066dee8c26b7dc4570aaadde94845cbb93521d4b1323703d",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/packages.lock.json",
+      "sha256": "564cdb60975168721b1414ebf7f81d2610d82de8aa23796162e0c36f216bdc26",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+      "sha256": "221ddcae5f5486d54b524cd36743bc9a74cc2056312a08b67686251fc23162ac",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.MigrationProbe/packages.lock.json",
+      "sha256": "0870ffe8de167adedac011576e7a00585d6fd0c8257f35cf897b3954853fb3a8",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "sha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/packages.lock.json",
+      "sha256": "9e079140fd76ca99dbfcd4ffcd729dc58ef386aa1bdd98454fa262c06bbdd0a9",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+      "sha256": "c71d108a5146e9dbd6d0e7c15199f9096be3f786a67634551ad3b05c26fbd038",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/packages.lock.json",
+      "sha256": "05aa9024359784270d1df572897905df322de7f62539ead18dc0b83393a24f39",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.TextProbe/CP6.DatabaseCompatibility.TextProbe.csproj",
+      "sha256": "5a263fefd434ceef41e7a0ce616e5d5e2e3a097e7d899e3d6cb6c651a509ce35",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseCompatibility.TextProbe/packages.lock.json",
+      "sha256": "a90516385b04a9ddcc81f4e88ec787e5b2cc8269262c4c6a06225a5f1e3305c5",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.DatabaseTransfer/CP6.DatabaseTransfer.csproj",
+      "sha256": "930301b119c1ebe7f091d00a1912812006dc03eb3e525431601c57d003c02bad",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Space.CadExperiment.AsposeAdapter/CP6.Space.CadExperiment.AsposeAdapter.csproj",
+      "sha256": "63b960ab6db019deeb9f73087d353c2e89c9dd71cb38a6da1b26355224b4fc9d",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Space.CadExperiment.Tests/CP6.Space.CadExperiment.Tests.csproj",
+      "sha256": "2a9b1c114839fb01875c3bae0b16b67e32b07f8d1891eba6e9f7ef45f9e2f269",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Space.CadExperiment/CP6.Space.CadExperiment.csproj",
+      "sha256": "d49d80517fbd506334abc7adab42b76986aff3692d915dd2b98a941d7ec86029",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Space.CadStartAcceptance/CP6.Space.CadStartAcceptance.csproj",
+      "sha256": "78510b33a28348a25f231b0ad7fd0a480211c5e93194eed3b59a00583e5cd6d1",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Space.CadWorker.AutoCadCandidate/CP6.Space.CadWorker.AutoCadCandidate.csproj",
+      "sha256": "597c09bc1da7b21df27edac9885586513443f9fa78a3e1d2715e1f096ef0e806",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Space.OpenApiGenerator/CP6.Space.OpenApiGenerator.csproj",
+      "sha256": "cf8fbbc1ab3cf22aaecda511a13881636984c89f8fee4f9008fbcee1ec3d67c2",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/CP6.Space.StandardWarehouseGenerator/CP6.Space.StandardWarehouseGenerator.csproj",
+      "sha256": "72950ef071b34b164f07707880f137782361edfd93764a1d8aeb1befa9303fd9",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/p10/PreflightInputs/CP6.P10.PreflightInputs.csproj",
+      "sha256": "bad71c03a8de40e1d174881b6782564b88ac9bbbf83f54f517ba8255846e79d9",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/p10/PreflightInputs/packages.lock.json",
+      "sha256": "2ba612c23e97447384101684bc8bf804dfede7949d1eedecce86b47141d58db2",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/p10/ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj",
+      "sha256": "276e6259dd304fbe7a7de020fcf8f39902ddb2982c5fb46e9e860ad319c78a8a",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/p10/ReleaseVerifier.Tests/packages.lock.json",
+      "sha256": "11cebfe6e365df104dd9a053a4970e0d1e995581f289033c75332189505fd008",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj",
+      "sha256": "57efc93fcb1faf75baa63a73ed0c9f100abb1987af3e528374f64d31b8e5b567",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Main",
+      "source": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "path": "tools/p10/ReleaseVerifier/packages.lock.json",
+      "sha256": "56f1f5d15ae6cbd833786fcd748e55c41f86768d1ed5b60d10bb93f46ab2a4f8",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Build.props",
+      "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Packages.props",
+      "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "NuGet.config",
+      "sha256": "bb4ea679b4c1d64f6220321702187bc3241f2e530d4551880f8a7aa6604ff881",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/wp02-27/Inspector/Inspector.csproj",
+      "sha256": "5f49e1d6a3d8a7dc0bc36b7ac0124a01c0a588d8f79c133f7605da5f63c0fea2",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "global.json",
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Abstractions/CP6.Platform.Abstractions.csproj",
+      "sha256": "72694b721d9ded2d68a76ddaf75541128e369fede5a11cb206264d95b0882e82",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "sha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+      "sha256": "155913bd995dfd0eb2c787268358eeeac3d24a98f4c285ecc64e92bc4650dfe2",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Deployment/CP6.Platform.Deployment.csproj",
+      "sha256": "0659da14a882462b6dc379ced5dd749de440202aeef96d8f95005f7210c13026",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "sha256": "347ab97b35caf5961b83409e28be4461e5f2077996904fc953ffc372d9ba6e19",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Testing/CP6.Platform.Testing.csproj",
+      "sha256": "80a51d405364c3d503fcd9c44bb8afc8b46fcc02dab35ff8f0b07e1a5aee77a9",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+      "sha256": "8972bcb0dfe3f395b6047f03cbd4d8f14400c95c2e5fae3734b94e1dc06ffaef",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj",
+      "sha256": "d2d05dccce7e78c5584c49bc3537c230708ac3591a7f04bfea6199bf04f0d1a1",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.DaprKafkaFixture/CP6.Platform.DaprKafkaFixture.csproj",
+      "sha256": "f41a3ece1c580cab3ba3c921379d44c547b8b20c24ed91c778a9f89239e6c402",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.DeploymentTests/CP6.Platform.DeploymentTests.csproj",
+      "sha256": "a68122059a32733a06c171c2a5bbc90737466f7721d74a94c0e1c03a6ce31176",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.DeploymentTests/P09Validator/P09Validator.csproj",
+      "sha256": "70a5091b5edc3bc77a0914dd773277a0a2d0edd1dfed451b16ff201502bd2173",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.P09Fixture/CP6.Platform.P09Fixture.csproj",
+      "sha256": "d38f3c8b8aa82d48ae3d693d79f6ca20bc27f52ca68a731df132d92179180026",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+      "sha256": "5f57a300ab6d3c36de99b83263c7f5f6fab141aeaf1985a0ad4d2d3c5ac34edd",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.SqlServerFixture/CP6.Platform.SqlServerFixture.csproj",
+      "sha256": "3c55df8a332965099a84478e633693f57e98e2e2ac2e7f58623d8dcbc7d38b3b",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+      "sha256": "5c0b801ba86d4888e03216841efbe7a8c3182eccdf6ac86e27a930d162a59a02",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+      "sha256": "4662f202793a8185e088c793387b04c384c37ceb791dfd631da5f781cf8d1dc6",
+      "verified": true
+    },
+    {
+      "collection": "source_dependency_inputs",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tools/CP6.Platform.ReleaseTool/CP6.Platform.ReleaseTool.csproj",
+      "sha256": "e46a1d34c1159dc9531149f2a3a7defd20d4a0eb0dcbf9dec28c8e2aa78b9301",
+      "verified": true
+    }
+  ],
+  "independent_producer_records": [
+    {
+      "name": "original-publication.json",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/evidence/c01/0.10.2/formal-package-publication.v1.json",
+      "sha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+      "exact_candidate_copy": true
+    },
+    {
+      "name": "local-consumer-lock.json",
+      "repository": "Platform",
+      "source": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+      "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+      "exact_candidate_copy": true
+    }
+  ],
+  "actual_archives_verified": [
+    {
+      "case": "old-formal",
+      "id": "CP6.Platform.Abstractions",
+      "source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.abstractions\\0.10.2\\cp6.platform.abstractions.0.10.2.nupkg",
+      "sha256": "e838ba9c9c6e434f8c8a2bf41e9da7d931a962400435aabb2189f40628c17103",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-formal",
+      "id": "CP6.Platform.AspNetCore",
+      "source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.aspnetcore\\0.10.2\\cp6.platform.aspnetcore.0.10.2.nupkg",
+      "sha256": "5dc9cee4335e69f463361afc89d36587650b896059472570753ef485787fec73",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-formal",
+      "id": "CP6.Platform.Contracts",
+      "source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.contracts\\0.10.2\\cp6.platform.contracts.0.10.2.nupkg",
+      "sha256": "84b62cad23d0ce09a4af545ac5ae73cd625fce33eb77d022740350dac0364570",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-formal",
+      "id": "CP6.Platform.Deployment",
+      "source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.deployment\\0.10.2\\cp6.platform.deployment.0.10.2.nupkg",
+      "sha256": "231a7cb3e18fd8ba9a7d60bbe01195ca7676c33b55b542a294c4a76c0fff066b",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-formal",
+      "id": "CP6.Platform.EntityFramework",
+      "source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.entityframework\\0.10.2\\cp6.platform.entityframework.0.10.2.nupkg",
+      "sha256": "cc780ce1b454c62f96caa990eb2e0462563b1917e8c505b11100a4555d5b4544",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-formal",
+      "id": "CP6.Platform.Messaging",
+      "source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.messaging\\0.10.2\\cp6.platform.messaging.0.10.2.nupkg",
+      "sha256": "878994735a171194b8944c58fa919508380fa7d0707aa09176427295d0aab235",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-formal",
+      "id": "CP6.Platform.Release",
+      "source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2",
+      "path": "C:\\Users\\tt\\.nuget\\packages\\cp6.platform.release\\0.10.2\\cp6.platform.release.0.10.2.nupkg",
+      "sha256": "0b8fd3b332c837e6f1c0cbe9c312e87a671c4f119d2128768f7284d4fa26a8f1",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-local",
+      "id": "CP6.Platform.Abstractions",
+      "source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Abstractions.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-local",
+      "id": "CP6.Platform.AspNetCore",
+      "source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.AspNetCore.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-local",
+      "id": "CP6.Platform.Contracts",
+      "source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Contracts.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-local",
+      "id": "CP6.Platform.Deployment",
+      "source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Deployment.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "sha256": "b769ca35159456462fa6c72af68ad17797d7123405a276caaf937cc0202a338e",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-local",
+      "id": "CP6.Platform.EntityFramework",
+      "source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.EntityFramework.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "sha256": "12f2f029568b59d364e2e1fef2535f0e3fa313dc784d656c77dcdf5eabdc59bf",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-local",
+      "id": "CP6.Platform.Messaging",
+      "source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Messaging.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+      "archive_and_independent_pin_match": true
+    },
+    {
+      "case": "old-local",
+      "id": "CP6.Platform.Release",
+      "source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "path": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Release.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "sha256": "526eddb7a07e1b44ba3ba65077ed10cac43a905f0565fd5fcd1985d1831a56ea",
+      "archive_and_independent_pin_match": true
+    }
+  ],
+  "schema_bytes_verified": [
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/non-production-runtime-profile.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc",
+      "packaged_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/rehearsal-evidence.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c",
+      "packaged_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/build-invocation-provenance.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b",
+      "packaged_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-locator.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263",
+      "packaged_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-result.v2.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64",
+      "packaged_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/evidence-record.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922",
+      "packaged_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/formal-package-publication.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "packaged_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-nuget-trust-store.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d",
+      "packaged_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-trust-store.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55",
+      "packaged_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/platform-release-candidate.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d",
+      "packaged_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-common.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d",
+      "packaged_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-gate-result.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0",
+      "packaged_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-lineage-bootstrap-evidence.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf",
+      "packaged_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-release-manifest.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e",
+      "packaged_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/test-package-transport.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb",
+      "packaged_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/non-production-runtime-profile.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc",
+      "packaged_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/rehearsal-evidence.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c",
+      "packaged_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+      "packaged_sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa",
+      "packaged_sha256": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/build-invocation-provenance.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b",
+      "packaged_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-locator.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263",
+      "packaged_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-result.v2.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64",
+      "packaged_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/evidence-record.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922",
+      "packaged_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/formal-package-publication.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "packaged_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-nuget-trust-store.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d",
+      "packaged_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-trust-store.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55",
+      "packaged_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/platform-release-candidate.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d",
+      "packaged_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-common.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d",
+      "packaged_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-gate-result.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0",
+      "packaged_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-lineage-bootstrap-evidence.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf",
+      "packaged_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-release-manifest.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e",
+      "packaged_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e",
+      "exact_bytes": true
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/test-package-transport.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb",
+      "packaged_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb",
+      "exact_bytes": true
+    }
+  ],
+  "latest_checker_source_identity": [
+    {
+      "Algorithm": "SHA256",
+      "Hash": "809481A4556AD07CFED89D8F286D33A57CF53836CEC4C0AB43AFEED3A4F6AD02",
+      "Path": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\eng\\wp02-02\\consumption\\verify.py"
+    },
+    {
+      "Algorithm": "SHA256",
+      "Hash": "B111D92E1C7DD5E52588BD1B723E12BA42E9482A82EE3659C554E191131816EE",
+      "Path": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\eng\\wp02-02\\consumption\\tests\\test_verify.py"
+    }
+  ],
+  "parser_execution_reused": {
+    "label": "probe-parser-tests",
+    "argv": [
+      "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+      "eng/wp02-02/consumption/probe/test_runner.py",
+      "-v"
+    ],
+    "startedAt": "2026-10-14T05:41:03.229193+00:00",
+    "finishedAt": "2026-10-14T05:41:03.688308+00:00",
+    "exitCode": 0,
+    "log": "probe-parser-tests.log"
+  },
+  "latest_real_rejection_reports": [
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal/report.json",
+      "sha256": "da31f1f5a452c13641185ee9b651ae024de4446aa2e14355f54b481efdb365c1",
+      "execution": {
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "inputSha256": "352e0e56dd4606298b136a4e08e9c8d841ef7377942375187c0be41a0b4d1540",
+        "checkerSha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02",
+        "exitCode": 2
+      },
+      "states": {
+        "source": "NUSPEC_METADATA_MATCHED",
+        "shape": "REJECTED",
+        "artifacts": "ARCHIVE_HASHES_MATCHED",
+        "trust": "BLOCKED",
+        "consumer": "NOT_RUN",
+        "host": "NOT_RUN",
+        "runtime": "NOT_RUN",
+        "business": "NOT_RUN"
+      },
+      "findings": [
+        {
+          "code": "MISSING_CTX_SCHEMA",
+          "detail": "Package cannot supply ctx-binding-v1 capability schema.",
+          "category": "shape"
+        },
+        {
+          "code": "COMPATIBILITY_NOT_QUALIFIED",
+          "detail": "UNKNOWN",
+          "category": null
+        },
+        {
+          "code": "FORMAL_TRUST_NOT_RUN",
+          "detail": "Signer, RFC3161 timestamp, current revocation and immutable feed readback not verified.",
+          "category": null
+        },
+        {
+          "code": "PREPARATION_ONLY",
+          "detail": "No approval/adoption/host/runtime/business success path exists in this tool.",
+          "category": null
+        }
+      ]
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local/report.json",
+      "sha256": "d523d61c90ab65b12917352702fb39b29ee6c8e335a0fc01e3189a2421ec7f86",
+      "execution": {
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "inputSha256": "0c7e6f553408fb396fcc21c60182e3117b2125428b542e853718620faeec1a44",
+        "checkerSha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02",
+        "exitCode": 2
+      },
+      "states": {
+        "source": "NUSPEC_METADATA_MATCHED",
+        "shape": "SCHEMA_BYTES_AND_CTX_DECLARATION_MATCHED",
+        "artifacts": "REJECTED",
+        "trust": "BLOCKED",
+        "consumer": "NOT_RUN",
+        "host": "NOT_RUN",
+        "runtime": "NOT_RUN",
+        "business": "NOT_RUN"
+      },
+      "findings": [
+        {
+          "code": "FEED_MISMATCH",
+          "detail": "Declared observed feed differs from independent expected feed.",
+          "category": "artifacts"
+        },
+        {
+          "code": "COMPATIBILITY_NOT_QUALIFIED",
+          "detail": "UNKNOWN",
+          "category": null
+        },
+        {
+          "code": "LOCAL_CANDIDATE_NOT_FORMAL",
+          "detail": "Local candidate is not formal signed feed admission.",
+          "category": null
+        },
+        {
+          "code": "FORMAL_TRUST_NOT_RUN",
+          "detail": "Signer, RFC3161 timestamp, current revocation and immutable feed readback not verified.",
+          "category": null
+        },
+        {
+          "code": "PREPARATION_ONLY",
+          "detail": "No approval/adoption/host/runtime/business success path exists in this tool.",
+          "category": null
+        }
+      ]
+    }
+  ],
+  "probe_artifacts_verified": [
+    {
+      "path": "archive-dlls/CP6.Platform.Abstractions.dll",
+      "sha256": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "archive-dlls/CP6.Platform.AspNetCore.dll",
+      "sha256": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "archive-dlls/CP6.Platform.Contracts.dll",
+      "sha256": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "archive-dlls/CP6.Platform.Messaging.dll",
+      "sha256": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "archive-metadata.json",
+      "sha256": "1e30c46dee948ded538cbb705a7dc8aefbbc6d33dc7418ff0aeef43a566c0431",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "archive-metadata.log",
+      "sha256": "42788f2fec353a6727cee0f88dfaf69ea90949ddbbfca6b117eed0b185dd9221",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "build.log",
+      "sha256": "98ea061c3ca787b0823c18b62f51bcd27fe6ae2949ec3dae59ac078e3e875a63",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "dotnet-info.log",
+      "sha256": "31b565c99af23c28178e6d6b60fc595dbc98500041c234aea95a00a0b8f38bcd",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "global.json",
+      "sha256": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/Directory.Build.props",
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/Directory.Build.targets",
+      "sha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/NuGet.Config",
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/Probe.csproj",
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/Program.cs",
+      "sha256": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/README.md",
+      "sha256": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/SyntheticRuntime.cs",
+      "sha256": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/CP6.Platform.Abstractions.dll",
+      "sha256": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/CP6.Platform.AspNetCore.dll",
+      "sha256": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/CP6.Platform.Contracts.dll",
+      "sha256": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/CP6.Platform.Messaging.dll",
+      "sha256": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/Probe.deps.json",
+      "sha256": "760bbc8377fbcbbd042da404d898897e7bbe9465859f2b1342f1b4e91412ee8d",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/Probe.dll",
+      "sha256": "aee8b84d597e3d3f02f66e2dd8e8b8b24182c745c806bb1fa90fc23915929764",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/Probe.exe",
+      "sha256": "9a36b7a8d04c528600dd1958756942134e87fe61bea086583475821f9082d34c",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/Probe.pdb",
+      "sha256": "72b5d9b3a8d8207f63456c409b7f0c1019d7ea4ff20d3aba2c68e2f394529b26",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/bin/Release/net8.0/Probe.runtimeconfig.json",
+      "sha256": "9fd574d18b66ff801e2934adf8397e67d2f237ef284452251177a05dd3236350",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Probe.csproj.nuget.dgspec.json",
+      "sha256": "6bb911baf6d16bb5291024d358540ddb06121461c6f036ff1fb6ade4256d8283",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Probe.csproj.nuget.g.props",
+      "sha256": "dd696733902cccf963133510965bbf23417e37a2d440821cfed54aca42026744",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Probe.csproj.nuget.g.targets",
+      "sha256": "971cc9b535384849b5c661d776cd7a80833a416265e32e8968e06c367368b8b5",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+      "sha256": "f7a5d9789c863625e139ff99e1113a503830f6b85a88f6129916df83ac76b49e",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.AssemblyInfo.cs",
+      "sha256": "dbbc79f388eaa93db549cc320c4e423ae4767946dc236d58bf13a7d604c2941e",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.AssemblyInfoInputs.cache",
+      "sha256": "6e531a648102bf16f1a5d8cb249a550537a09dd072a82ffc36721255b1d4d8b0",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.GeneratedMSBuildEditorConfig.editorconfig",
+      "sha256": "6e3c56da5b7034722de280b0283c4b73f258ca7e0e6bf8253968ea7aa25f7944",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.GlobalUsings.g.cs",
+      "sha256": "f3f134e9e825e3e7268090f58b1af2bda2de513f61a09c56f48b9b8d08612abc",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.assets.cache",
+      "sha256": "75c29c40a6d1fd927dc2e47048cd678318af740a5698030d4810efe037224348",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.csproj.AssemblyReference.cache",
+      "sha256": "86e32c28fd842a8993060e113d5054f3efd731a1201d4d7dacd9d4965168cbf3",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.csproj.CoreCompileInputs.cache",
+      "sha256": "fd0961f5aced3653d2cace24b5a08b1aab63b3c554b8173456eba97afe64e60d",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.csproj.FileListAbsolute.txt",
+      "sha256": "02311848cd5a8655e838986f0ec2374bc69f9f01617ea7855cf23f7e8603cae1",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.csproj.Up2Date",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.dll",
+      "sha256": "aee8b84d597e3d3f02f66e2dd8e8b8b24182c745c806bb1fa90fc23915929764",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.genruntimeconfig.cache",
+      "sha256": "1f4407f879c70cb9f6eb37c49bc4e4a6e3472e918d098adb30f91af53344d8e2",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.pdb",
+      "sha256": "72b5d9b3a8d8207f63456c409b7f0c1019d7ea4ff20d3aba2c68e2f394529b26",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/Probe.sourcelink.json",
+      "sha256": "7a4c96155606abe6599c4514b3da3a5b8a6f3c437f3faabf5fde0c21d8b82905",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/apphost.exe",
+      "sha256": "9a36b7a8d04c528600dd1958756942134e87fe61bea086583475821f9082d34c",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/ref/Probe.dll",
+      "sha256": "565bdce4444c65e14ce985bb4d89841867a1686ac410ceb3322a59d4f90a00d7",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/Release/net8.0/refint/Probe.dll",
+      "sha256": "565bdce4444c65e14ce985bb4d89841867a1686ac410ceb3322a59d4f90a00d7",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/project.assets.json",
+      "sha256": "9fdd741cad7b2a3fd88b878866d6e143947dff204e620b48e793432d4617a6ad",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/obj/project.nuget.cache",
+      "sha256": "2d6c616507034a7ea1aa3b4b4dcb93051a3944d89dbcb46ab1bcdba05caa48bc",
+      "verified": true,
+      "retained_in_candidate": false
+    },
+    {
+      "path": "probe-source/test_runner.py",
+      "sha256": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "restore.log",
+      "sha256": "f821708448d04b32df174a108d8241a993550c9db832dfcbdc4e9cbc586b1d2b",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "runtime.log",
+      "sha256": "1193f256d0645c90d9fe0ff44e4abe961a96128c2eeb161df31b2efa45d16d78",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "sdk-version.log",
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "verified": true,
+      "retained_in_candidate": true
+    },
+    {
+      "path": "signatures-and-synthetic-runtime.json",
+      "sha256": "8d85754cbc78e2c5618b2a7b360663b4ea19073a90175bddcdd8afe9267b1158",
+      "verified": true,
+      "retained_in_candidate": true
+    }
+  ],
+  "probe_execution_reused": {
+    "approvalPath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\docs\\development\\evidence\\WP02-02\\consumption-preparation\\inputs\\local-consumer-lock.json",
+    "approvalSha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+    "artifacts": {
+      "archive-dlls/CP6.Platform.Abstractions.dll": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02",
+      "archive-dlls/CP6.Platform.AspNetCore.dll": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66",
+      "archive-dlls/CP6.Platform.Contracts.dll": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8",
+      "archive-dlls/CP6.Platform.Messaging.dll": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c",
+      "archive-metadata.json": "1e30c46dee948ded538cbb705a7dc8aefbbc6d33dc7418ff0aeef43a566c0431",
+      "archive-metadata.log": "42788f2fec353a6727cee0f88dfaf69ea90949ddbbfca6b117eed0b185dd9221",
+      "build.log": "98ea061c3ca787b0823c18b62f51bcd27fe6ae2949ec3dae59ac078e3e875a63",
+      "dotnet-info.log": "31b565c99af23c28178e6d6b60fc595dbc98500041c234aea95a00a0b8f38bcd",
+      "global.json": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+      "probe-source/Directory.Build.props": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "probe-source/Directory.Build.targets": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "probe-source/NuGet.Config": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "probe-source/Probe.csproj": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "probe-source/Program.cs": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "probe-source/README.md": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+      "probe-source/SyntheticRuntime.cs": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "probe-source/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02",
+      "probe-source/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66",
+      "probe-source/bin/Release/net8.0/CP6.Platform.Contracts.dll": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8",
+      "probe-source/bin/Release/net8.0/CP6.Platform.Messaging.dll": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c",
+      "probe-source/bin/Release/net8.0/Probe.deps.json": "760bbc8377fbcbbd042da404d898897e7bbe9465859f2b1342f1b4e91412ee8d",
+      "probe-source/bin/Release/net8.0/Probe.dll": "aee8b84d597e3d3f02f66e2dd8e8b8b24182c745c806bb1fa90fc23915929764",
+      "probe-source/bin/Release/net8.0/Probe.exe": "9a36b7a8d04c528600dd1958756942134e87fe61bea086583475821f9082d34c",
+      "probe-source/bin/Release/net8.0/Probe.pdb": "72b5d9b3a8d8207f63456c409b7f0c1019d7ea4ff20d3aba2c68e2f394529b26",
+      "probe-source/bin/Release/net8.0/Probe.runtimeconfig.json": "9fd574d18b66ff801e2934adf8397e67d2f237ef284452251177a05dd3236350",
+      "probe-source/obj/Probe.csproj.nuget.dgspec.json": "6bb911baf6d16bb5291024d358540ddb06121461c6f036ff1fb6ade4256d8283",
+      "probe-source/obj/Probe.csproj.nuget.g.props": "dd696733902cccf963133510965bbf23417e37a2d440821cfed54aca42026744",
+      "probe-source/obj/Probe.csproj.nuget.g.targets": "971cc9b535384849b5c661d776cd7a80833a416265e32e8968e06c367368b8b5",
+      "probe-source/obj/Release/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs": "f7a5d9789c863625e139ff99e1113a503830f6b85a88f6129916df83ac76b49e",
+      "probe-source/obj/Release/net8.0/Probe.AssemblyInfo.cs": "dbbc79f388eaa93db549cc320c4e423ae4767946dc236d58bf13a7d604c2941e",
+      "probe-source/obj/Release/net8.0/Probe.AssemblyInfoInputs.cache": "6e531a648102bf16f1a5d8cb249a550537a09dd072a82ffc36721255b1d4d8b0",
+      "probe-source/obj/Release/net8.0/Probe.GeneratedMSBuildEditorConfig.editorconfig": "6e3c56da5b7034722de280b0283c4b73f258ca7e0e6bf8253968ea7aa25f7944",
+      "probe-source/obj/Release/net8.0/Probe.GlobalUsings.g.cs": "f3f134e9e825e3e7268090f58b1af2bda2de513f61a09c56f48b9b8d08612abc",
+      "probe-source/obj/Release/net8.0/Probe.assets.cache": "75c29c40a6d1fd927dc2e47048cd678318af740a5698030d4810efe037224348",
+      "probe-source/obj/Release/net8.0/Probe.csproj.AssemblyReference.cache": "86e32c28fd842a8993060e113d5054f3efd731a1201d4d7dacd9d4965168cbf3",
+      "probe-source/obj/Release/net8.0/Probe.csproj.CoreCompileInputs.cache": "fd0961f5aced3653d2cace24b5a08b1aab63b3c554b8173456eba97afe64e60d",
+      "probe-source/obj/Release/net8.0/Probe.csproj.FileListAbsolute.txt": "02311848cd5a8655e838986f0ec2374bc69f9f01617ea7855cf23f7e8603cae1",
+      "probe-source/obj/Release/net8.0/Probe.csproj.Up2Date": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "probe-source/obj/Release/net8.0/Probe.dll": "aee8b84d597e3d3f02f66e2dd8e8b8b24182c745c806bb1fa90fc23915929764",
+      "probe-source/obj/Release/net8.0/Probe.genruntimeconfig.cache": "1f4407f879c70cb9f6eb37c49bc4e4a6e3472e918d098adb30f91af53344d8e2",
+      "probe-source/obj/Release/net8.0/Probe.pdb": "72b5d9b3a8d8207f63456c409b7f0c1019d7ea4ff20d3aba2c68e2f394529b26",
+      "probe-source/obj/Release/net8.0/Probe.sourcelink.json": "7a4c96155606abe6599c4514b3da3a5b8a6f3c437f3faabf5fde0c21d8b82905",
+      "probe-source/obj/Release/net8.0/apphost.exe": "9a36b7a8d04c528600dd1958756942134e87fe61bea086583475821f9082d34c",
+      "probe-source/obj/Release/net8.0/ref/Probe.dll": "565bdce4444c65e14ce985bb4d89841867a1686ac410ceb3322a59d4f90a00d7",
+      "probe-source/obj/Release/net8.0/refint/Probe.dll": "565bdce4444c65e14ce985bb4d89841867a1686ac410ceb3322a59d4f90a00d7",
+      "probe-source/obj/project.assets.json": "9fdd741cad7b2a3fd88b878866d6e143947dff204e620b48e793432d4617a6ad",
+      "probe-source/obj/project.nuget.cache": "2d6c616507034a7ea1aa3b4b4dcb93051a3944d89dbcb46ab1bcdba05caa48bc",
+      "probe-source/test_runner.py": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+      "restore.log": "f821708448d04b32df174a108d8241a993550c9db832dfcbdc4e9cbc586b1d2b",
+      "runtime.log": "1193f256d0645c90d9fe0ff44e4abe961a96128c2eeb161df31b2efa45d16d78",
+      "sdk-version.log": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "signatures-and-synthetic-runtime.json": "8d85754cbc78e2c5618b2a7b360663b4ea19073a90175bddcdd8afe9267b1158"
+    },
+    "commands": [
+      {
+        "argv": [
+          "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+          "--version"
+        ],
+        "exitCode": 0,
+        "log": "sdk-version.log",
+        "warningCodes": []
+      },
+      {
+        "argv": [
+          "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+          "--info"
+        ],
+        "exitCode": 0,
+        "log": "dotnet-info.log",
+        "warningCodes": []
+      },
+      {
+        "argv": [
+          "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+          "restore",
+          "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Probe.csproj",
+          "--configfile",
+          "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\NuGet.Config",
+          "-p:ProbeArchiveDirectory=D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+        ],
+        "exitCode": 0,
+        "log": "restore.log",
+        "warningCodes": []
+      },
+      {
+        "argv": [
+          "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+          "build",
+          "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Probe.csproj",
+          "--no-restore",
+          "-c",
+          "Release",
+          "-p:ProbeArchiveDirectory=D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+        ],
+        "exitCode": 0,
+        "log": "build.log",
+        "warningCodes": [
+          "MSB3277"
+        ]
+      },
+      {
+        "argv": [
+          "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+          "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+          "inspect",
+          "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+        ],
+        "exitCode": 0,
+        "log": "archive-metadata.log",
+        "warningCodes": []
+      },
+      {
+        "argv": [
+          "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+          "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+          "runtime",
+          "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+        ],
+        "exitCode": 0,
+        "log": "runtime.log",
+        "warningCodes": []
+      }
+    ],
+    "formalAdmission": "BLOCKED",
+    "inspector": {
+      "path": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+      "sha256": "aee8b84d597e3d3f02f66e2dd8e8b8b24182c745c806bb1fa90fc23915929764"
+    },
+    "mainHostAdoption": "NOT_RUN",
+    "mode": "runtime",
+    "packageDependencyCompatibility": "Unknown",
+    "packages": [
+      {
+        "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Abstractions.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "dll": {
+          "member": "lib/net8.0/CP6.Platform.Abstractions.dll",
+          "sha256": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02"
+        },
+        "feedIdentity": "task-local:wp02-27#CP6.Platform.Abstractions/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+        "packageId": "CP6.Platform.Abstractions",
+        "sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+        "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+        "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+      },
+      {
+        "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.AspNetCore.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "dll": {
+          "member": "lib/net8.0/CP6.Platform.AspNetCore.dll",
+          "sha256": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66"
+        },
+        "feedIdentity": "task-local:wp02-27#CP6.Platform.AspNetCore/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+        "packageId": "CP6.Platform.AspNetCore",
+        "sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+        "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+        "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+      },
+      {
+        "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Contracts.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "dll": {
+          "member": "lib/net8.0/CP6.Platform.Contracts.dll",
+          "sha256": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8"
+        },
+        "feedIdentity": "task-local:wp02-27#CP6.Platform.Contracts/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+        "packageId": "CP6.Platform.Contracts",
+        "sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+        "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+        "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+      },
+      {
+        "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Deployment.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "dll": null,
+        "feedIdentity": "task-local:wp02-27#CP6.Platform.Deployment/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+        "packageId": "CP6.Platform.Deployment",
+        "sha256": "b769ca35159456462fa6c72af68ad17797d7123405a276caaf937cc0202a338e",
+        "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+        "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+      },
+      {
+        "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.EntityFramework.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "dll": null,
+        "feedIdentity": "task-local:wp02-27#CP6.Platform.EntityFramework/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+        "packageId": "CP6.Platform.EntityFramework",
+        "sha256": "12f2f029568b59d364e2e1fef2535f0e3fa313dc784d656c77dcdf5eabdc59bf",
+        "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+        "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+      },
+      {
+        "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Messaging.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "dll": {
+          "member": "lib/net8.0/CP6.Platform.Messaging.dll",
+          "sha256": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c"
+        },
+        "feedIdentity": "task-local:wp02-27#CP6.Platform.Messaging/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+        "packageId": "CP6.Platform.Messaging",
+        "sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+        "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+        "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+      },
+      {
+        "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Release.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+        "dll": null,
+        "feedIdentity": "task-local:wp02-27#CP6.Platform.Release/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+        "packageId": "CP6.Platform.Release",
+        "sha256": "526eddb7a07e1b44ba3ba65077ed10cac43a905f0565fd5fcd1985d1831a56ea",
+        "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+        "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+      }
+    ],
+    "probeSourceSha256": {
+      "Directory.Build.props": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "Directory.Build.targets": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "NuGet.Config": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "Probe.csproj": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "Program.cs": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+      "README.md": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+      "SyntheticRuntime.cs": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+      "test_runner.py": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4"
+    },
+    "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+    "pythonExecutable": "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "result": "PASS",
+    "runnerSha256": "61cd90a566de7f901a9b1ca0dfc3d7fc929c21ccfefd2e7526a8b6a04a02bf54",
+    "runtimeBusinessAcceptance": "NOT_RUN",
+    "scope": "PREPARATION_ONLY"
+  },
+  "synthetic_cases": [
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "trusted-type-has-no-public-constructor-or-setters",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "DI-middleware-success-verifier-and-authority-masked-finally-clears-captured-context",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "legacy-snapshot-does-not-mint-trusted-context",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "tenant-mismatch-denies-or-clears",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "missing-source-denies-or-clears",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "authority-unavailable-denies-or-clears",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "cancel-before-denies-or-clears",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "cancel-after-authority-denies-or-clears",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "handler-throws-denies-or-clears",
+      "outcome": "PASS"
+    },
+    {
+      "kind": "SYNTHETIC_FIXTURE",
+      "name": "message-generic-executor-compiles-runs-clears",
+      "outcome": "PASS"
+    }
+  ],
+  "synthetic_environment": {
+    "scope": "SYNTHETIC_TASK_PRIVATE_ONLY",
+    "mainHostAdoption": "NOT_RUN",
+    "formalAdmission": "BLOCKED",
+    "businessAcceptance": "NOT_RUN",
+    "framework": ".NET 8.0.30",
+    "processArchitecture": "X64"
+  },
+  "pgt_original_cases_unchanged": [
+    "PGT-001",
+    "PGT-002",
+    "PGT-003",
+    "PGT-005",
+    "PGT-006",
+    "PGT-007",
+    "PGT-008",
+    "PGT-009",
+    "PGT-010",
+    "PGT-012",
+    "PGT-018",
+    "PGT-019",
+    "PGT-021",
+    "PGT-022",
+    "PGT-023",
+    "PGT-024",
+    "PGT-027"
+  ],
+  "task_state": "BLOCKED",
+  "entry_gate": "NOT_CHECKED",
+  "diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "test_counts": {
+    "checker": 44,
+    "parser": 8,
+    "synthetic": 10,
+    "pgt_not_run": 17
+  },
+  "archive_loaded_dll_identity_verified": [
+    {
+      "package_id": "CP6.Platform.Abstractions",
+      "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "archive_sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+      "member": "lib/net8.0/CP6.Platform.Abstractions.dll",
+      "dll_sha256": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02"
+    },
+    {
+      "package_id": "CP6.Platform.AspNetCore",
+      "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "archive_sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+      "member": "lib/net8.0/CP6.Platform.AspNetCore.dll",
+      "dll_sha256": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66"
+    },
+    {
+      "package_id": "CP6.Platform.Contracts",
+      "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "archive_sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+      "member": "lib/net8.0/CP6.Platform.Contracts.dll",
+      "dll_sha256": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8"
+    },
+    {
+      "package_id": "CP6.Platform.Messaging",
+      "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "archive_sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+      "member": "lib/net8.0/CP6.Platform.Messaging.dll",
+      "dll_sha256": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c"
+    }
+  ],
+  "public_context_signature_records": 20,
+  "old_package_missing_required_types": [
+    "CP6.Platform.Contracts.Context.ContextActorV1",
+    "CP6.Platform.Contracts.Context.ContextActorKindV1",
+    "CP6.Platform.Contracts.Context.ContextEntryKindV1",
+    "CP6.Platform.Contracts.Context.ContextOperationV1",
+    "CP6.Platform.Contracts.Context.AuthenticatedContextSourceV1",
+    "CP6.Platform.Contracts.Context.ContextResolutionInputV1",
+    "CP6.Platform.Contracts.Context.ContextBindingRegistrationV1",
+    "CP6.Platform.Contracts.Context.ContextResolutionEvidenceV1",
+    "CP6.Platform.Abstractions.Context.IContextSourceVerifierV1`1",
+    "CP6.Platform.Abstractions.Context.IContextBindingAuthorityV1",
+    "CP6.Platform.Abstractions.Context.ITrustedContextAccessorV1",
+    "CP6.Platform.Abstractions.Context.TrustedRequestContextV1",
+    "CP6.Platform.Abstractions.Context.ContextResolutionFailureV1",
+    "CP6.Platform.Abstractions.Context.ContextResolutionExceptionV1",
+    "CP6.Platform.Abstractions.Context.ContextBindingValidatorV1",
+    "CP6.Platform.Abstractions.Context.TrustedContextExecutorV1",
+    "CP6.Platform.Abstractions.Context.ContextScopeAccessorV1",
+    "CP6.Platform.AspNetCore.Context.TrustedRequestContextExtensionsV1",
+    "CP6.Platform.AspNetCore.Context.TrustedRequestContextMiddlewareV1",
+    "CP6.Platform.Messaging.Context.MessageContextExecutorV1`1"
+  ],
+  "dependency_scope": {
+    "projects": 51,
+    "locks": 19,
+    "affected_locks": 16,
+    "historical_tool_locks": 3,
+    "runtime_package_closure": [
+      "CP6.Platform.Abstractions",
+      "CP6.Platform.AspNetCore",
+      "CP6.Platform.Contracts",
+      "CP6.Platform.EntityFramework",
+      "CP6.Platform.Messaging"
+    ],
+    "closure_limit": "Static declared ProjectReference graph, not MSBuild condition evaluation; actual existing lock entries retained per TFM. No restore or host execution.",
+    "proposed_formal_version": {
+      "value": "0.10.3",
+      "status": "PROPOSAL_ONLY",
+      "producer_source": null,
+      "publication": "NOT_RUN",
+      "archive_hashes": null
+    }
+  },
+  "evidence_reuse": [
+    {
+      "name": "checker-namespace-green-20261014",
+      "record": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/tests.log",
+      "result": "PASS",
+      "tests": 44,
+      "exit_code": 0,
+      "log": {
+        "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/tests.log",
+        "sha256": "a7a4b783cf7dc640664d1e0b6da125eb9c5a3f888e0e1499f1d1719752c25324"
+      },
+      "source_identities": [
+        {
+          "path": "eng/wp02-02/consumption/verify.py",
+          "sha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02"
+        },
+        {
+          "path": "eng/wp02-02/consumption/tests/test_verify.py",
+          "sha256": "b111d92e1c7dd5e52588bd1b723e12ba42e9482a82ee3659c554e191131816ee"
+        }
+      ],
+      "command_documented": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "eng/wp02-02/consumption/tests",
+        "-v"
+      ],
+      "original_execution_timestamp": "Not captured in source-hashes/log; dated attempt retained, no invented time.",
+      "original_environment": "Python 3.13.13 as recorded in contemporaneous execution receipts; current script/test exact hashes verified.",
+      "scope": "Synthetic checker plumbing and malformed inputs only; always BLOCKED.",
+      "reused_not_rerun": true
+    },
+    {
+      "name": "probe-parser-tests",
+      "record": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/execution.json",
+      "command_receipt": {
+        "label": "probe-parser-tests",
+        "argv": [
+          "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+          "eng/wp02-02/consumption/probe/test_runner.py",
+          "-v"
+        ],
+        "startedAt": "2026-10-14T05:41:03.229193+00:00",
+        "finishedAt": "2026-10-14T05:41:03.688308+00:00",
+        "exitCode": 0,
+        "log": "probe-parser-tests.log"
+      },
+      "result": "PASS",
+      "tests": 8,
+      "log": {
+        "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/probe-parser-tests.log",
+        "sha256": "38f31a25d4c73b4262c085062e0b9a3db8939f9cd2309fdb133f663ba9545d5b"
+      },
+      "source_identities": [
+        {
+          "path": "eng/wp02-02/consumption/run_probe.py",
+          "sha256": "61cd90a566de7f901a9b1ca0dfc3d7fc929c21ccfefd2e7526a8b6a04a02bf54"
+        },
+        {
+          "path": "eng/wp02-02/consumption/probe/test_runner.py",
+          "sha256": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4"
+        }
+      ],
+      "scope": "Synthetic ZIP approval/hash/source/set rejection and four-DLL extraction only; not real publication.",
+      "reused_not_rerun": true
+    },
+    {
+      "name": "probe-20261014-a3",
+      "record": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/report.json",
+      "result": "PASS",
+      "tests": 10,
+      "probe_source_sha256": {
+        "Directory.Build.props": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+        "Directory.Build.targets": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+        "NuGet.Config": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+        "Probe.csproj": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+        "Program.cs": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+        "README.md": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+        "SyntheticRuntime.cs": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+        "test_runner.py": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4"
+      },
+      "runner_sha256": "61cd90a566de7f901a9b1ca0dfc3d7fc929c21ccfefd2e7526a8b6a04a02bf54",
+      "command_receipts": [
+        {
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "--version"
+          ],
+          "exitCode": 0,
+          "log": "sdk-version.log",
+          "warningCodes": []
+        },
+        {
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "--info"
+          ],
+          "exitCode": 0,
+          "log": "dotnet-info.log",
+          "warningCodes": []
+        },
+        {
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "restore",
+            "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Probe.csproj",
+            "--configfile",
+            "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\NuGet.Config",
+            "-p:ProbeArchiveDirectory=D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+          ],
+          "exitCode": 0,
+          "log": "restore.log",
+          "warningCodes": []
+        },
+        {
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "build",
+            "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\Probe.csproj",
+            "--no-restore",
+            "-c",
+            "Release",
+            "-p:ProbeArchiveDirectory=D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+          ],
+          "exitCode": 0,
+          "log": "build.log",
+          "warningCodes": [
+            "MSB3277"
+          ]
+        },
+        {
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+            "inspect",
+            "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+          ],
+          "exitCode": 0,
+          "log": "archive-metadata.log",
+          "warningCodes": []
+        },
+        {
+          "argv": [
+            "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+            "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+            "runtime",
+            "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a3\\archive-dlls"
+          ],
+          "exitCode": 0,
+          "log": "runtime.log",
+          "warningCodes": []
+        }
+      ],
+      "source_identity": {
+        "path": "eng/wp02-02/consumption/run_probe.py",
+        "sha256": "61cd90a566de7f901a9b1ca0dfc3d7fc929c21ccfefd2e7526a8b6a04a02bf54"
+      },
+      "package_identity_records": [
+        {
+          "package_id": "CP6.Platform.Abstractions",
+          "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "archive_sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+          "member": "lib/net8.0/CP6.Platform.Abstractions.dll",
+          "dll_sha256": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02"
+        },
+        {
+          "package_id": "CP6.Platform.AspNetCore",
+          "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "archive_sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+          "member": "lib/net8.0/CP6.Platform.AspNetCore.dll",
+          "dll_sha256": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66"
+        },
+        {
+          "package_id": "CP6.Platform.Contracts",
+          "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "archive_sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+          "member": "lib/net8.0/CP6.Platform.Contracts.dll",
+          "dll_sha256": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8"
+        },
+        {
+          "package_id": "CP6.Platform.Messaging",
+          "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "archive_sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+          "member": "lib/net8.0/CP6.Platform.Messaging.dll",
+          "dll_sha256": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c"
+        }
+      ],
+      "environment": {
+        "scope": "SYNTHETIC_TASK_PRIVATE_ONLY",
+        "mainHostAdoption": "NOT_RUN",
+        "formalAdmission": "BLOCKED",
+        "businessAcceptance": "NOT_RUN",
+        "framework": ".NET 8.0.30",
+        "processArchitecture": "X64"
+      },
+      "scope": "Actual packaged four context DLLs in task-private synthetic verifier/authority only; formal/host/business NOT_RUN/BLOCKED, dependency compatibility Unknown, MSB3277 retained.",
+      "reused_not_rerun": true
+    },
+    {
+      "name": "actual-old-formal-and-local-rejection",
+      "records": [
+        {
+          "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal/report.json",
+          "sha256": "da31f1f5a452c13641185ee9b651ae024de4446aa2e14355f54b481efdb365c1",
+          "execution": {
+            "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+            "inputSha256": "352e0e56dd4606298b136a4e08e9c8d841ef7377942375187c0be41a0b4d1540",
+            "checkerSha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02",
+            "exitCode": 2
+          },
+          "states": {
+            "source": "NUSPEC_METADATA_MATCHED",
+            "shape": "REJECTED",
+            "artifacts": "ARCHIVE_HASHES_MATCHED",
+            "trust": "BLOCKED",
+            "consumer": "NOT_RUN",
+            "host": "NOT_RUN",
+            "runtime": "NOT_RUN",
+            "business": "NOT_RUN"
+          },
+          "findings": [
+            {
+              "code": "MISSING_CTX_SCHEMA",
+              "detail": "Package cannot supply ctx-binding-v1 capability schema.",
+              "category": "shape"
+            },
+            {
+              "code": "COMPATIBILITY_NOT_QUALIFIED",
+              "detail": "UNKNOWN",
+              "category": null
+            },
+            {
+              "code": "FORMAL_TRUST_NOT_RUN",
+              "detail": "Signer, RFC3161 timestamp, current revocation and immutable feed readback not verified.",
+              "category": null
+            },
+            {
+              "code": "PREPARATION_ONLY",
+              "detail": "No approval/adoption/host/runtime/business success path exists in this tool.",
+              "category": null
+            }
+          ]
+        },
+        {
+          "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local/report.json",
+          "sha256": "d523d61c90ab65b12917352702fb39b29ee6c8e335a0fc01e3189a2421ec7f86",
+          "execution": {
+            "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+            "inputSha256": "0c7e6f553408fb396fcc21c60182e3117b2125428b542e853718620faeec1a44",
+            "checkerSha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02",
+            "exitCode": 2
+          },
+          "states": {
+            "source": "NUSPEC_METADATA_MATCHED",
+            "shape": "SCHEMA_BYTES_AND_CTX_DECLARATION_MATCHED",
+            "artifacts": "REJECTED",
+            "trust": "BLOCKED",
+            "consumer": "NOT_RUN",
+            "host": "NOT_RUN",
+            "runtime": "NOT_RUN",
+            "business": "NOT_RUN"
+          },
+          "findings": [
+            {
+              "code": "FEED_MISMATCH",
+              "detail": "Declared observed feed differs from independent expected feed.",
+              "category": "artifacts"
+            },
+            {
+              "code": "COMPATIBILITY_NOT_QUALIFIED",
+              "detail": "UNKNOWN",
+              "category": null
+            },
+            {
+              "code": "LOCAL_CANDIDATE_NOT_FORMAL",
+              "detail": "Local candidate is not formal signed feed admission.",
+              "category": null
+            },
+            {
+              "code": "FORMAL_TRUST_NOT_RUN",
+              "detail": "Signer, RFC3161 timestamp, current revocation and immutable feed readback not verified.",
+              "category": null
+            },
+            {
+              "code": "PREPARATION_ONLY",
+              "detail": "No approval/adoption/host/runtime/business success path exists in this tool.",
+              "category": null
+            }
+          ]
+        }
+      ],
+      "result": "EXPECTED_BLOCKED",
+      "exit_code": 2,
+      "source_identity": {
+        "path": "eng/wp02-02/consumption/verify.py",
+        "sha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02"
+      },
+      "inputs": [
+        {
+          "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-formal.json",
+          "sha256": "352e0e56dd4606298b136a4e08e9c8d841ef7377942375187c0be41a0b4d1540"
+        },
+        {
+          "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-local.json",
+          "sha256": "0c7e6f553408fb396fcc21c60182e3117b2125428b542e853718620faeec1a44"
+        }
+      ],
+      "scope": "14 archives from independent fixed publication/consumer-lock; no fresh feed/trust verification.",
+      "reused_not_rerun": true
+    },
+    {
+      "name": "optimized-input-check",
+      "record": "docs/development/evidence/WP02-02/consumption-preparation/optimized-input-check.json",
+      "receipt": {
+        "observedAt": "2026-10-14T05:45:56.052608+00:00",
+        "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+        "optimize": 1,
+        "result": "PASS",
+        "case": "Optimized interpreter still rejects independent pinned record mismatch before reading archives",
+        "exception": "Independent committed publication/lock hash mismatch",
+        "sourceSha256": "5aa3d68d99387d892ac9a8b1d7052f2cea796cf49afeedd124589e0dd9970a31"
+      },
+      "source_identity": {
+        "path": "eng/wp02-02/consumption/capture_real_inputs.py",
+        "sha256": "5aa3d68d99387d892ac9a8b1d7052f2cea796cf49afeedd124589e0dd9970a31"
+      },
+      "scope": "Original python -O targeted reject after explicit ValueError fix; not a new successful acquisition or package acceptance.",
+      "reused_not_rerun": true
+    }
+  ],
+  "secret_pattern_scan": {
+    "scope": "All 125 additions, common private key/PAT/AWS access-key patterns",
+    "matches": [],
+    "limitation": "Pattern scan only, not a production security certification."
+  },
+  "review_scope": [
+    "Supplementary independent review to COORD full verify.py/run_probe.py/capture_real_inputs.py/inventory.py/Program.cs and prose review. Independently read these sources plus SyntheticRuntime.cs, both test modules, schema, private build isolation, original PGT and proposal boundaries.",
+    "Complete 125-file manifest/scope read; all JSON parsed and every changed file Git/disk bytes matched. 17 current sourceHashes and 87 original-retained byte/length/hash records independently verified.",
+    "45 admission fingerprints including blob IDs plus 100 Main/Platform dependency inputs re-read from exact Git objects; two independent producer records matched exact original bytes.",
+    "14 actual nupkg byte hashes and raw SHA512 checked; all 32 packaged-schema vs producer Git byte comparisons checked. No package code executed by reviewer.",
+    "52 a3 local artifact hashes and four packaged/loaded DLL identities checked; 20 public context signature records and 10 explicit synthetic cases kept within task-private scope.",
+    "No tests, builds, captures, full verifier runs or remote operations repeated by this reviewer."
+  ],
+  "limitations": [
+    "This report does not constitute independent Current crypto verification, fresh remote feed readback, publication authorization or source-adoption exception.",
+    "The helper inventory/capture scripts changed from assert to explicit ValueError after their earlier successful acquisition; identical correct input/output bytes are independently rechecked here, optimized wrong-hash evidence retained, not relabeled as new captures.",
+    "Root-validation old package reports intentionally preserve historical false rejections before namespace correction; only checker-namespace-green reports use the final checker.",
+    "Initial inventory lock classification remains historical; inventory-final alone is the current proposal scope.",
+    "No real Main host/auth authority/Owner, database/PostgreSQL/EF/migration/concurrency/restore, 17 PGT, WP02-28 or business acceptance.",
+    "Original checker attempt logs do not record exact clock times; no new times invented for reused tests.",
+    "Remote main/PR/Actions freshness and coordinated project state synchronization are COORD final integration responsibilities."
+  ],
+  "next_blockers": [
+    "COORD serial preparation-only integration and authoritative state synchronization; normal merge then remote-main containment verification. WP02-02 remains BLOCKED/NOT_CHECKED and does not increase completed-task count.",
+    "Separate Platform package-trust registration window for a final exact producer commit and proposed 0.10.3 API/schema/Capabilities/writer/readers/tests parity. The version is proposed, not reserved/published/approved.",
+    "New explicit approval for concrete formal release run/source/version/signature/feed-write/runner budget; preserve one-build, protected approval, RFC3161, current revocation and immutable byte-preserving readback. No current pipeline authorization.",
+    "Independent Main consumer/source/feed/package/schema/compatibility identity approval; regenerate actual 16 locks under existing policies, retain independent three 0.10.1 P10 tool locks.",
+    "Resolve applicable DiagnosticSource 8/10 compatibility in the complete Main dependency closure; the ten successful synthetic paths do not prove that closure.",
+    "Implement/adopt real Main verifier/authority/host/worker/storage paths and execute all 17 unchanged PGT cases under separately assigned PostgreSQL resources; original Owner, TenantId, permissions and atomicity preserved."
+  ],
+  "result": "PASS_BOUNDED_PREPARATION",
+  "findings": [],
+  "p1_count": 0,
+  "p2_count": 0,
+  "safe_to_merge_bounded_preparation": true,
+  "full_wp02_02_completed": false,
+  "formal_adoption": false,
+  "production_changed": false,
+  "final_worker_status": {
+    "head": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+    "porcelain": "",
+    "clean": true
+  },
+  "completed_at_utc": "2026-10-14T07:06:07.806367+00:00"
+}

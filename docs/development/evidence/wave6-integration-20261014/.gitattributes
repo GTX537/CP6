@@ -1,0 +1,3 @@
+* -text
+# Preserve the received review report byte-for-byte, including its terminal blank line.
+WP02-08/fix-review.md whitespace=-blank-at-eof,cr-at-eol

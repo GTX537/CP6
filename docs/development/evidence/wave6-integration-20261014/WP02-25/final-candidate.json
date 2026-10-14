@@ -1,0 +1,14 @@
+{
+  "branch": "codex/wp02-25-corrected-20261014",
+  "worktree": "D:\\CP6.Platform-worktrees\\wp02-25-corrected-20261014",
+  "original_candidate_sha": "095a66bfda8b4df2ee65e920541ce6304e8e66c1",
+  "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+  "tested_source_sha": "ae4b56abf88aa40f1ba3bf82f1ef4c83a878b378",
+  "issue_fix_commits": {
+    "68": "db728d17d95147be89ab4afd7bbbab9ebe15cbcb",
+    "69": "621f0abab99db5708ccbe46fc592f33333ca08b1"
+  },
+  "report": "docs/development/evidence/WP02-25/20261014T052841Z/coord-corrections/aggregate/DELIVERY.md",
+  "verification": "docs/development/evidence/WP02-25/20261014T052841Z/coord-corrections/aggregate/verification.json",
+  "observed_at": "2026-10-14T07:36:29.690806+00:00"
+}

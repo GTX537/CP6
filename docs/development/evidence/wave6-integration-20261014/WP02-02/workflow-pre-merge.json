@@ -1,0 +1,430 @@
+{
+  "observed_at": "2026-10-14T07:24:51.904371+00:00",
+  "head": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+  "protected_main": "99e61d897e5f166c5817c0aaec196041e1941324",
+  "workflows": [
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/client-contract.yml",
+      "blob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "blob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "blob": "7826de728d692846184dc7113848109a6a56a92e",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "blob": "be9a37138cb903c45c4638c65929610d24362730",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "blob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "blob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "blob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "blob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/r2-candidate.yml",
+      "blob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "on_block": "  push:\n    tags:\n      - \"v*.*.*\"\n\n",
+      "events": [
+        "push"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/r2-deploy.yml",
+      "blob": "d259013345adf115865007cc5f05c70939a902bf",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/r2-freeze.yml",
+      "blob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "blob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "blob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/client-contract.yml",
+      "blob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "blob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "blob": "7826de728d692846184dc7113848109a6a56a92e",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "blob": "be9a37138cb903c45c4638c65929610d24362730",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      candidate_sha:\n        description: Exact candidate commit to validate as data with protected-main rules\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "blob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main source of this read-only verifier\n        required: true\n        type: string\n      release_tag:\n        description: Existing Platform candidate whose publication has completed\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "blob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact main commit used by the completed validation\n        required: true\n        type: string\n      release_tag:\n        description: New Platform candidate identity, not a Git tag or production release\n        required: true\n        type: string\n      validation_run_id:\n        description: Successful completed P10 validation run\n        required: true\n        type: string\n      validation_attempt:\n        description: Exact completed validation attempt\n        required: true\n        type: string\n      validation_artifact_id:\n        description: Immutable validation artifact ID\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "blob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "blob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_sha:\n        description: Exact current main commit to validate\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/r2-candidate.yml",
+      "blob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "on_block": "  push:\n    tags:\n      - \"v*.*.*\"\n\n",
+      "events": [
+        "push"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/r2-deploy.yml",
+      "blob": "d259013345adf115865007cc5f05c70939a902bf",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        type: string\n      environment:\n        description: Protected GitHub Environment\n        required: true\n        type: environment\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/r2-freeze.yml",
+      "blob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      version:\n        description: Semantic release version without v prefix\n        required: true\n        default: 1.0.0\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "blob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": ".github/workflows/wms-production-sql.yml",
+      "blob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    }
+  ],
+  "pipeline_dependencies": [
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": "azure-pipelines.yml",
+      "blob": "9c3217891b2519753d7b83e43a1caddb7932689a",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": "azure-pipelines-dev.yml",
+      "blob": "b0f6d4afab9f9fa7af5d893e9584b5672c4fa4f7",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": "azure-pipelines-deploy-agent-readiness.yml",
+      "blob": "3e5ad534e70326cf2ba72d19b5936c66a24de869",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "path": "azure-pipelines-release-shadow.yml",
+      "blob": "dec2f58657d5e0a313457cf708a579df192c5cce",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": "azure-pipelines.yml",
+      "blob": "9c3217891b2519753d7b83e43a1caddb7932689a",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": "azure-pipelines-dev.yml",
+      "blob": "b0f6d4afab9f9fa7af5d893e9584b5672c4fa4f7",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": "azure-pipelines-deploy-agent-readiness.yml",
+      "blob": "3e5ad534e70326cf2ba72d19b5936c66a24de869",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    },
+    {
+      "ref": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "path": "azure-pipelines-release-shadow.yml",
+      "blob": "dec2f58657d5e0a313457cf708a579df192c5cce",
+      "git_push_and_pr_triggers": "none",
+      "note": "DEV completion resource depends on bridge GTX537.CP6; this operation starts neither bridge nor GitHub artifact workflow"
+    }
+  ],
+  "changed_paths": [
+    "docs/development/evidence/WP02-02/consumption-preparation/.gitattributes",
+    "docs/development/evidence/WP02-02/consumption-preparation/.gitignore",
+    "docs/development/evidence/WP02-02/consumption-preparation/DEPENDENCY-PROPOSAL.md",
+    "docs/development/evidence/WP02-02/consumption-preparation/FORMAL-VERSION-PROPOSAL.md",
+    "docs/development/evidence/WP02-02/consumption-preparation/PGT-BOUNDARY.md",
+    "docs/development/evidence/WP02-02/consumption-preparation/PROPOSED-DEPENDENCIES.patch",
+    "docs/development/evidence/WP02-02/consumption-preparation/README.md",
+    "docs/development/evidence/WP02-02/consumption-preparation/REVIEW.md",
+    "docs/development/evidence/WP02-02/consumption-preparation/feed-version-observation.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/final-verification.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/inputs/local-consumer-lock.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/inputs/old-seven-approval.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/inputs/original-publication.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/inventory-final.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/inventory.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/optimized-input-check.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-formal.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-local.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/schema-source-parity.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/retained-artifacts.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/exit-code.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/source-hashes.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/tests.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/exit-code.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/source-hashes.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/tests.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/exit-code.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/source-hashes.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/tests.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/exit-code.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal-exit.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local-exit.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/source-hashes.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/tests.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/exit-code.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/source-hashes.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/tests.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/exit-code.txt",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/source-hashes.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/tests.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/archive-metadata.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/archive-metadata.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/build.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/dotnet-info.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/global.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.props",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.targets",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/NuGet.Config",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Probe.csproj",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Program.cs",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/SyntheticRuntime.cs",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/restore.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/runtime.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/sdk-version.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/signatures-and-synthetic-runtime.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/archive-metadata.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/archive-metadata.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/build.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/dotnet-info.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/global.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.props",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.targets",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/NuGet.Config",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Probe.csproj",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Program.cs",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/SyntheticRuntime.cs",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/test_runner.py",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/restore.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/runtime.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/sdk-version.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/signatures-and-synthetic-runtime.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/archive-metadata.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/archive-metadata.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/build.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/dotnet-info.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/global.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.props",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.targets",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/NuGet.Config",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Probe.csproj",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Program.cs",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/README.md",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/SyntheticRuntime.cs",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/test_runner.py",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/restore.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/runtime.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/sdk-version.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/signatures-and-synthetic-runtime.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/archive-metadata.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/archive-metadata.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/dotnet-info.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/global.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/sdk-version.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/execution.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-formal.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-formal/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-local.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-local/report.json",
+    "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/probe-parser-tests.log",
+    "docs/development/evidence/WP02-02/consumption-preparation/workflow-preflight.json",
+    "eng/wp02-02/consumption/.gitattributes",
+    "eng/wp02-02/consumption/.gitignore",
+    "eng/wp02-02/consumption/README.md",
+    "eng/wp02-02/consumption/capture_real_inputs.py",
+    "eng/wp02-02/consumption/input.schema.json",
+    "eng/wp02-02/consumption/inventory.py",
+    "eng/wp02-02/consumption/probe/Directory.Build.props",
+    "eng/wp02-02/consumption/probe/Directory.Build.targets",
+    "eng/wp02-02/consumption/probe/NuGet.Config",
+    "eng/wp02-02/consumption/probe/Probe.csproj",
+    "eng/wp02-02/consumption/probe/Program.cs",
+    "eng/wp02-02/consumption/probe/README.md",
+    "eng/wp02-02/consumption/probe/SyntheticRuntime.cs",
+    "eng/wp02-02/consumption/probe/test_runner.py",
+    "eng/wp02-02/consumption/run_probe.py",
+    "eng/wp02-02/consumption/tests/test_verify.py",
+    "eng/wp02-02/consumption/verify.py"
+  ],
+  "workflow_or_dependency_changes": [],
+  "queued_or_running": [],
+  "result": "SAFE_FOR_BRANCH_PUSH_PR_AND_MAIN_MERGE",
+  "scope": "Main dispatch/tag-only events; Azure git triggers none and bridge is not run; Platform RFC3161 PR path filters exclude entire candidate; no tag push, dispatch, workflow or dependency changes. Both exact refs inspected. No remote test invoked or cancelled."
+}

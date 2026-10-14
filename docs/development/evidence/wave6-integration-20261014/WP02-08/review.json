@@ -1,0 +1,133 @@
+{
+  "task": "WP02-08",
+  "reviewed_utc": "2026-10-14T06:39:01.836159+00:00",
+  "reviewer": "COORD independent concentrated Outbox reviewer",
+  "decision": "REQUEST_CHANGES",
+  "merge_ready": false,
+  "candidate": "3e4c078434ff4ae066f20d83e134fb268663700c",
+  "base": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "source_commit": "495a41f7a238e6af5d19e4daa1e3880c3ff33f4c",
+  "worktree": "D:/CP6.Platform-worktrees/wp02-08-20261013",
+  "clean_head_verified": true,
+  "changed_files": 66,
+  "findings": [
+    {
+      "id": "WP0208-R1",
+      "priority": "P2",
+      "title": "Persist the Blocked epoch transition under its original mutation ID",
+      "file": "D:/CP6.Platform-worktrees/wp02-08-20261013/src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+      "line_start": 48,
+      "line_end": 51,
+      "confidence": "high",
+      "blocking": true,
+      "problem": "The unresolved/missing handover branch changes RouteControl.Phase to Blocked and inserts EpochBlocked audit, then returns PendingCommit without inserting OutboxLeaseMutationReceiptV2 for mutationId. A committed state change therefore has no original mutation result. Repeating the identical input reaches the changed root xmin check at line 37 and returns Conflict instead of the prior result; an original-key receipt lookup remains absent/Unknown.",
+      "reproduction": [
+        "Seed a Pending row; BeginDrainV2 with switchId S and commit. Read the resulting control token V.",
+        "Make the trusted fixture Owner return UnknownTransactionsAuthoritativelyResolved=false. Call AdvanceEpochV2(M,S,epoch=1,V), observe PendingCommit/Blocked, actually commit, and suppress the application acknowledgement.",
+        "In a new transaction repeat exactly AdvanceEpochV2(M,S,1,V). SwitchReplay finds no receipt for M and the control-token gate returns Conflict. The root/audit committed, but the original mutation receipt does not exist."
+      ],
+      "minimal_fix": "Record the Blocked result, exact tuple and mutationId through the same atomic immutable switch-receipt path used by successful epoch advance. Preserve the original Blocked output on exact replay without additional audit/state writes; changed input under the same ID must conflict. A later new advance uses a separate new mutation after the blocked result is resolved.",
+      "targeted_validation": "Extend Unknown_handover_blocks_epoch_and_caller_rollback_restores_root_and_history with the committed/suppressed-ack branch, exact-key replay, changed-tuple conflict and unchanged complete snapshot after replay. Existing test lines 302-320 only rolls back the Blocked branch before successful advance.",
+      "validation_performed": "Read-only source trace and existing-test inspection. New regression NOT_RUN; no PostgreSQL resource restart."
+    },
+    {
+      "id": "WP0208-R2",
+      "priority": "P2",
+      "title": "Do not restart a full publish budget after a delayed send-intent commit",
+      "file": "D:/CP6.Platform-worktrees/wp02-08-20261013/src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+      "line_start": 59,
+      "line_end": 70,
+      "confidence": "high",
+      "blocking": true,
+      "problem": "The DB-clock lease-budget check runs inside PrepareSendV2 (CallerTransactionOutboxV2.cs 204-221), but Write then awaits CommitAsync and transaction/context disposal. DispatchClaimV2 starts a new full PublishBudget only after that await and unconditionally invokes the publisher. A slow successful commit acknowledgement can consume the remaining lease, so this worker starts a new network send after expiry or after another worker has reclaimed the row. The later Complete CAS refuses the write, but cannot undo the newly initiated delivery.",
+      "reproduction": [
+        "Use a committed claim with a 2-second lease and a publish budget smaller than the lease.",
+        "Configure a test-only EF transaction interceptor on the dispatcher factory to delay successful completion of the first send-intent COMMIT until more than 2 seconds after the DB budget check; do not throw or change the database outcome.",
+        "At publisher entry compare PostgreSQL clock_timestamp() with the original ticket expiry. Current code still calls the publisher (Calls=1) when the lease is already expired. Completion later returns Expired/uncertainty. A second worker can also reclaim during the delayed acknowledgement."
+      ],
+      "minimal_fix": "Carry a conservative send deadline derived from the authoritative DB-clock lease check and account for elapsed monotonic time across commit/disposal. Before invoking publisher, reject when the required budget is no longer available and bound cancellation by the remaining authorized window; retain the original send-intent/mutation identity. Do not substitute worker wall-clock time for DB authority or publish while holding locks.",
+      "targeted_validation": "Add real-PG delayed-successful-COMMIT regression asserting publisher Calls=0 after the deadline, plus a delayed-but-still-valid case with the reduced remaining budget and existing zero-lock publisher checks. Existing dispatcher tests cover transport exceptions/write revocation, not this pre-send delay.",
+      "validation_performed": "Read-only source trace and deterministic timing schedule. New regression NOT_RUN; no PostgreSQL resource restart."
+    }
+  ],
+  "verification": {
+    "executed_by_reviewer": [
+      "Verified clean candidate HEAD and complete 66-file scope/diff, git diff --check.",
+      "Compared all 278 current working/Git source hashes, 9 dependency graphs and 153 on-disk compiled artifact hashes with validation-inputs.json; no mismatches.",
+      "Rehashed and parsed all 11 retained TRX; every hash and stated count matched. Selected final/reused successful test names total exactly 153 distinct cases.",
+      "Verified 34 fixed source Git blobs and original PLT-DEL raw SHA; 2 archive source entries explicitly use non-Git provenance.",
+      "Compared all 60 acceptance case IDs/assertion/source coordinates/hashes with the original foundation catalogue; exact match, all original-business states NOT_RUN.",
+      "Inspected recorded PG resource identity/stop evidence and confirmed no listener currently on 55428; no cluster started.",
+      "Verified 8 workflow files byte-identical between base and candidate; no changed RFC3161 trigger-filter paths. No remote operation was performed."
+    ],
+    "reused_worker_runs": [
+      {
+        "path": "tests/07-unit-final.trx",
+        "passed": 15,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "path": "tests/05-architecture.trx",
+        "passed": 98,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "path": "tests/pg-agent-review-06/pg-agent-review-06.trx",
+        "passed": 38,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "path": "tests/09-mapping-final.trx",
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "note": "Only 2 new PG cases; 3 repeat existing cases."
+      },
+      {
+        "path": "tests/08-expiry-final.trx",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "note": "Repeat expiry regression, not another distinct case."
+      }
+    ],
+    "distinct_successes": {
+      "unit_related": 15,
+      "postgresql": 40,
+      "architecture": 98,
+      "total": 153
+    },
+    "reuse_scope": "Uses worker results at their recorded inputs; not new execution at candidate SHA. Full PG source/artifact snapshot plus validation-reuse.json identifies later helper/property-presence/test deltas. Final files/artifacts match current manifest. Architecture results predate later method-body changes; reused for unchanged structural/dependency scope only.",
+    "compiled_artifact_identity": {
+      "pg_test_dll_sha256": "00029e4f394cb63af0ec26f57837e01e3fffbd13e1148c503714985af283818f",
+      "pg_loaded_ef_dll_sha256": "ee481a168b633e0db49eae351038174145153c714454bde1b8302744a254ec34",
+      "note": "Builds occurred before source commit; baseline+dirty informational identity is preserved and not relabeled as a rebuild."
+    },
+    "failure_evidence": "Initial protocol-red 1 failure, pg-additions03 unsupported-provider 1 failure, pg-races04 wrapped-40001 1 failure, EF1002 build failure and resource-preparation failures remain retained. Final relevant runs pass; new review findings are outside those tests.",
+    "review_tool_failure": "Reviewer metadata script initially used Windows default GBK to decode UTF-8 acceptance-map.json; it failed after completing hash/TRX checks. Explicit UTF-8 follow-up verified all 60 cases successfully. No product test failure or source mutation resulted.",
+    "new_tests_run": 0,
+    "new_pg_runs": 0
+  },
+  "resource": {
+    "owner": "dcdfb04dda48edc0d52d638b5e7bd2f0",
+    "system_identifier": "7696392773160066692",
+    "database": "cp6_wp0208_20261014_dcdfb04d",
+    "database_oid": 16385,
+    "port": 55428,
+    "recorded_stop": "smart-stopped; data/logs retained",
+    "current_listener_count": 0,
+    "runtime_role": "wp0208_runtime_dcdfb04d",
+    "runtime_privileges": "recorded superuser/createdb/createrole/inherit/bypassrls/schema-create all false"
+  },
+  "nonblocking_evidence_note": "REPORT.md line 33 mentions retained unavailable-project-assets failure; no corresponding raw failure log was located in the 66-file candidate evidence. Retain that original log or narrow the wording in the correction delivery; existing successful source/artifact/TRX identities remain verified.",
+  "scope_boundaries": [
+    "Main/CRM actual Owner adapters, complete authority/writer inventory, migration/cutover and trusted host/package adoption remain UNPROVEN/NOT_RUN.",
+    "Original 60 business AC and actual broker/network end-to-end remain NOT_RUN.",
+    "No production, existing DB, schema-per-tenant rollout, SQL Server extension, formal package/release/deployment or network exactly-once claim.",
+    "No source edits, Git mutations, remote writes, Actions starts/cancellations or database restart by reviewer."
+  ],
+  "next_step": "Fix the two P2 defects in the authorized task window, preserve evidence and run only the targeted new regressions/affected checks under COORD resource ownership. Targeted rereview of those deltas is sufficient unless their scope expands."
+}

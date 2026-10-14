@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-10-13",
+  "as_of": "2026-10-14",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -158637,6 +158637,11 @@
       "date": "2026-10-13",
       "change": "Wave6: WP02-08/25 READY; WP01-01 PLANNED and WP02-02 BLOCKED retain NOT_CHECKED with PREPARATION_ONLY assignments. No actual START;20/375 DONE, S01 12/12,0/125 business,247 NOT_RUN unchanged.",
       "evidence": "docs/development/dispatch/20261013-wave6/README.md"
+    },
+    {
+      "date": "2026-10-14",
+      "change": "Wave6: WP02-08/25 library implementations merged after four defect corrections; WP01-01/WP02-02 preparation merged without formal admission.22/375 tasks DONE,S01 12/12. WP01-01 remains PLANNED/NOT_CHECKED and WP02-02 BLOCKED/NOT_CHECKED. Business0/125,247 NOT_RUN and historical gaps unchanged. No next-wave dispatch.",
+      "evidence": "docs/development/evidence/wave6-integration-20261014/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158689,14 +158694,18 @@
         "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
         "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
         "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION",
-        "worker_ack_at": null,
+        "phase": "PREPARATION_INTEGRATED",
+        "worker_ack_at": "2026-10-14T05:29:48Z",
         "allowed_write_paths": [
           "docs/development/evidence/WP01-01/preparation/",
           "eng/wp01-01/preparation/"
         ],
         "handoff_branch": "codex/dev-handoff-wp01-01",
-        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
+        "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
+        "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+        "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158705,7 +158714,34 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "PLM-ITER/REL替代验收设计已审查采纳",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "preparation_delivery": {
+        "state": "MERGED",
+        "delivery_evidence": {
+          "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+          "remote_main_sha": "99e61d897e5f166c5817c0aaec196041e1941324",
+          "pr_url": "https://github.com/GTX537/CP6/pull/205",
+          "observed_at": "2026-10-14T06:57:39.243553+00:00",
+          "repository": "GTX537/CP6",
+          "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/remote-main.json",
+          "scope": "Normal merge and exact remote ancestry/file-blob check. Preparation only; no formal adoption or task completion."
+        },
+        "validation_evidence": [
+          {
+            "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+            "repository": "GTX537/CP6",
+            "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+            "command": "Original preparation3509 checks, comparator23+bundle10 tests; COORD source/hash/scope/diff review only",
+            "environment": "Original Python3.13 task-private document tooling; no product build or DB",
+            "observed_at": "2026-10-14T07:55:32.880255+00:00",
+            "scope": "COORD observation time; actual execution and reused identities retained separately. 39 additions,33 core artifacts,58 pinned input occurrences/39 sources,577 navigation rows verified.3509 static and33 tests reused; original failure/correction records retained. Unsigned preparation never becomes actual adoption/completion; 123 other targets unchanged. DP01–08 and cross-provider closure pending.",
+            "result": "PASS"
+          }
+        ],
+        "review": "docs/development/evidence/wave6-integration-20261014/WP01-01/review.md",
+        "formal_adoption": false,
+        "full_task_completed": false
+      }
     },
     {
       "id": "WP01-02",
@@ -159850,14 +159886,18 @@
         "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
         "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
         "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION",
-        "worker_ack_at": null,
+        "phase": "PREPARATION_INTEGRATED",
+        "worker_ack_at": "2026-10-14T05:30:00Z",
         "allowed_write_paths": [
           "eng/wp02-02/consumption/",
           "docs/development/evidence/WP02-02/consumption-preparation/"
         ],
         "handoff_branch": "codex/dev-handoff-wp02-02",
-        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
+        "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
+        "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+        "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
       },
       "blockers": [
         "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
@@ -159867,7 +159907,34 @@
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "preparation_delivery": {
+        "state": "MERGED",
+        "delivery_evidence": {
+          "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+          "remote_main_sha": "b526e6b2194c232fae224cad7e72aef1c9b85c9e",
+          "pr_url": "https://github.com/GTX537/CP6/pull/206",
+          "observed_at": "2026-10-14T07:25:30.088191+00:00",
+          "repository": "GTX537/CP6",
+          "path": "docs/development/evidence/wave6-integration-20261014/WP02-02/remote-main.json",
+          "scope": "Normal merge and exact remote ancestry/file-blob check. Preparation only; no formal adoption or task completion."
+        },
+        "validation_evidence": [
+          {
+            "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+            "repository": "GTX537/CP6",
+            "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+            "command": "Original checker44, parser8, synthetic probe10; independent87 raw/17source/45fingerprint/100dependency/14archive/32schema/52artifact checks",
+            "environment": "Original Python3.13/SDK8.0.424/runtime8.0.30 private probe; no Main host or PostgreSQL",
+            "observed_at": "2026-10-14T07:55:32.880255+00:00",
+            "scope": "COORD observation time; actual execution and reused identities retained separately. 44 final checker and8 parser results reused at exact source hashes;10 actual package DLL synthetic paths only. 87 raw original files,14 archives and32 producer-schema byte identities checked. MSB3277 DiagnosticSource8/10 retained; full dependency compatibility Unknown. Old formal.2 lacks20 context types; localWP0227 is unpublished/untrusted;17PGT unchanged NOT_RUN. No new Current verification/feed readback/release authorization.",
+            "result": "PASS"
+          }
+        ],
+        "review": "docs/development/evidence/wave6-integration-20261014/WP02-02/review.md",
+        "formal_adoption": false,
+        "full_task_completed": false
+      }
     },
     {
       "id": "WP02-03",
@@ -160119,7 +160186,7 @@
         "file:Platform:src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-08",
       "entry_gate": "CONFIRMED",
@@ -160131,9 +160198,9 @@
         "claimed_at": "2026-10-14T03:14:11.400961+00:00",
         "baseline_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
         "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
-        "dispatch_scope": "IMPLEMENTATION",
+        "dispatch_scope": "Actual START/DELIVERY read; concentrated review and separately tracked bug fixes, local regression and focused independent review passed; normal remote-verified merge. Original task window closed; no backdated ACK or business adoption.",
         "phase": "IMPLEMENTATION",
-        "worker_ack_at": null,
+        "worker_ack_at": "2026-10-14T05:30:47Z",
         "allowed_write_paths": [
           "src/CP6.Platform.EntityFramework/OutboxV2/",
           "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
@@ -160153,15 +160220,48 @@
           "marker": "CP6-WP02-08:<owner32>",
           "database": "cp6_wp0208_<UTCyyyyMMdd>_<owner8>",
           "settings_env": "CP6_WP0208_SETTINGS",
-          "provisioned": false,
+          "provisioned": true,
           "authentication": "Fresh task-only SCRAM credentials in protected private settings/pwfile; never print/copy into repository.",
           "roles": "Bootstrap setup only; runtime NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS with minimum DML.",
-          "identity_checks": "Before setup/test/stop verify full owner token, canonical contained paths, endpoint, system identifier, database OID/name/owner, session_user and zero unexpected sessions. Stop only own cluster smart; retain logs/data; never terminate unknown sessions or reset existing5432."
+          "identity_checks": "Before setup/test/stop verify full owner token, canonical contained paths, endpoint, system identifier, database OID/name/owner, session_user and zero unexpected sessions. Stop only own cluster smart; retain logs/data; never terminate unknown sessions or reset existing5432.",
+          "completion": "Original owned PG55428 was identity-verified and restarted only for defect regressions, then smart-stopped with zero unexpected sessions and idle-port evidence. Data/logs retained; no5432/business database or migration.",
+          "runtime_state": "STOPPED_DATA_AND_LOGS_RETAINED",
+          "shutdown_evidence": "https://github.com/GTX537/CP6.Platform/blob/2e659e382e95988ee06799cd2feb0d580dcd8323/docs/development/evidence/WP02-08/coord-corrections/integrated/resource-stop.json"
+        },
+        "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
+        "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
+        "execution_baseline_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "window_closed_at": "2026-10-14T07:55:32.880255+00:00",
+        "coordinator_completion": {
+          "branch": "codex/wp02-08-corrected-20261014",
+          "worktree": "D:\\CP6.Platform-worktrees\\wp02-08-corrected-20261014",
+          "original_candidate_sha": "3e4c078434ff4ae066f20d83e134fb268663700c",
+          "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+          "window_decision": "docs/development/evidence/wave6-integration-20261014/coordinator-window-decisions.json"
         }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+          "command": "SDK8 real PostgreSQL issue66 RED1 thenGREEN5; issue67 RED2/1 pluscancelRED1 thenGREEN7; strengthenedprobe1 andcombinedsmoke3",
+          "environment": "Windows,SDK8.0.424/runtime8.0.30,ownedPG18.6 at55428; same verified owner/system/db identity,smart stopped",
+          "observed_at": "2026-10-14T07:55:32.880255+00:00",
+          "scope": "COORD observation time; actual execution and reused identities retained separately. Initial153 distinct=15unit+40PG+98architecture preserved. Two separate issue fixes;12 distinct affected successful cases,5new;1+3 repeats not added. Seven correction TRX/raw manifests retained; combined source17886458022bcbbb49d63890e52eccd897ac7256,142 source/4dependency/39artifacts checked; evidence-only final2e659e3. Real commit delay, bounded actual timeout, no-held-lock and cancelled-send boundaries covered. Initial review defects retained; original60businessAC NOT_RUN; realOwner/broker/migration/cutover unproven.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+        "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/71",
+        "observed_at": "2026-10-14T07:50:16.667746+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave6-integration-20261014/WP02-08/remote-main.json",
+        "scope": "Normal merge and exact remote ancestry/file-blob check. Bounded library task completion; original business acceptance remains NOT_RUN."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -160765,7 +160865,7 @@
         "file:Platform:src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-25",
       "entry_gate": "CONFIRMED",
@@ -160777,9 +160877,9 @@
         "claimed_at": "2026-10-14T03:14:11.400961+00:00",
         "baseline_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
         "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
-        "dispatch_scope": "IMPLEMENTATION",
+        "dispatch_scope": "Actual START/DELIVERY read; concentrated review and separately tracked bug fixes, local regression and focused independent review passed; normal remote-verified merge. Original task window closed; no backdated ACK or business adoption.",
         "phase": "IMPLEMENTATION",
-        "worker_ack_at": null,
+        "worker_ack_at": "2026-10-14T05:28:41Z",
         "allowed_write_paths": [
           "src/CP6.Platform.Contracts/ObservabilityV1/",
           "src/CP6.Platform.Abstractions/ObservabilityV1/",
@@ -160800,11 +160900,41 @@
           "eng/wp02-25/"
         ],
         "handoff_branch": "codex/dev-handoff-wp02-25",
-        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
+        "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
+        "execution_baseline_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "window_closed_at": "2026-10-14T07:55:32.880255+00:00",
+        "coordinator_completion": {
+          "branch": "codex/wp02-25-corrected-20261014",
+          "worktree": "D:\\CP6.Platform-worktrees\\wp02-25-corrected-20261014",
+          "original_candidate_sha": "095a66bfda8b4df2ee65e920541ce6304e8e66c1",
+          "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+          "window_decision": "docs/development/evidence/wave6-integration-20261014/coordinator-window-decisions.json"
+        }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+          "command": "SDK8 identity RED7 thenGREEN7; no-store RED2fail/4control thenGREEN6; combined affected HTTP/identity/health/legacy69",
+          "environment": "Windows,SDK8.0.424/runtime8.0.30,real loopback Kestrel and controlled in-memory clocks; no systemclock or DB change",
+          "observed_at": "2026-10-14T07:55:32.880255+00:00",
+          "scope": "COORD observation time; actual execution and reused identities retained separately. Original255=57unit+100host+98architecture; final69 covers56 earlierhost+13new. Retain original57unit/98architecture/44unaffectedhost only, not binary equivalence. Final263source/7dependency/25artifacts independently matched;19 LF/CRLF source representations disclosed. Testedae4b56abf88aa40f1ba3bf82f1ef4c83a878b378,final80f43346 only evidence after test. Actualready200->503->503 while independentread stays available; all4handlers and2unhealthy outputs no-store. Original32businessACNOT_RUN; observedmodule proof not whole-host/package trust.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+        "remote_main_sha": "5e882a5e1006ee2eb27fc0fa1170755f552be089",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/70",
+        "observed_at": "2026-10-14T07:39:58.198624+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave6-integration-20261014/WP02-25/remote-main.json",
+        "scope": "Normal merge and exact remote ancestry/file-blob check. Bounded library task completion; original business acceptance remains NOT_RUN."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"

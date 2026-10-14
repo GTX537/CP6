@@ -1,0 +1,171 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6",
+  "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+  "remote_main_sha": "99e61d897e5f166c5817c0aaec196041e1941324",
+  "pr_url": "https://github.com/GTX537/CP6/pull/205",
+  "merged_at": "2026-10-14T06:57:41Z",
+  "files_match": [
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/.gitattributes",
+      "blob": "8186b81a7482370003756479b82a9d9ee3056008"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/README.md",
+      "blob": "0675c2e303ffe36902ac529661127cd06a5b07f9"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/bookkeeping-correction.json",
+      "blob": "43fc8c021a325ac6093b880cc87294687384bbb8"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stderr.txt",
+      "blob": "9cc04c8bb2b8a825683a897bd1ca46b8f4fbb6ce"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stderr.txt",
+      "blob": "6b1fc2a128cff1bf66e25e5184a6f10c58f2a5b8"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/comparator-tests.txt",
+      "blob": "10fc7e3757504bd7f6d50be3acf6c1ef5a0a06f3"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json",
+      "blob": "8a9b331872464a81b8a8da51485aeeaa44ec3505"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/delivery-draft.md",
+      "blob": "d44b2621c0d17152e4fc4cdeb26de22523f87bb3"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/delivery.md",
+      "blob": "b54edd76e80a21b78bf0c25c28038a1c8cbe7cd8"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json",
+      "blob": "2acc0e45decd8e66e28a383f22de261e3d0a9786"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/gate-proposal.md",
+      "blob": "d6cb19e834cc26fe253eae67361e8050c564baf2"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/input-lock.json",
+      "blob": "4c452627544cd24292d33ea1e31eda3a0f4eab2f"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/intake.json",
+      "blob": "5cdbc9e4b85dcfe428af5a809a882eff2420e4f7"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stdout.txt",
+      "blob": "0a11753eeb9c5ed2dee918089fdda2c0bbfdda2f"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+      "blob": "5e5a8199e4fb37b0ed2965c79c625433b0cc39dc"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.md",
+      "blob": "157b68ed1c32ca16b137ffa5a7e810ceca01d250"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/preparation-manifest.json",
+      "blob": "5854fdabf3e59725033821da489a77ffdeca5a36"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/prepare-final.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/prepare-final.stdout.txt",
+      "blob": "71f166fa725aa587b92e45ad3c7f93f4bd66456a"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/prepare-first-run.txt",
+      "blob": "19af9ae25ef769a4257c3759d6bc114f60e84225"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/review-quality-integrity.json",
+      "blob": "75e2c56214d021e32277ae6682976e0af8017332"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/review-quality.md",
+      "blob": "db3be461581dfca42f877f125c54a17ce4dd5511"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/review-spec.md",
+      "blob": "22d2afd697651895d83dcaa5988f4ab9601c9a57"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/semantic-audit.md",
+      "blob": "fe12ec4bdd0e974ee08370c04e5546566d05ef3c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/source-verification.initial.json",
+      "blob": "f8c89896b34b0e6c85dbfc94ad07849d3cb22301"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/source-verification.json",
+      "blob": "6f94ad73ed5b678777d84642807666115b01b0d1"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/tdd-malformed-red.txt",
+      "blob": "bc3c8b85d626af0333e920f254e1bad9abe115a9"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/tdd-red.txt",
+      "blob": "5cae340f316fdd0bdc590928e715c91b6e258d5c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/tdd-repository-scope-red.txt",
+      "blob": "2f59076fd368b9be38330a8ac3be46e86af41bba"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/validation.json",
+      "blob": "bad19cf661051574ac9e687cd5832749e5b9fd86"
+    },
+    {
+      "path": "eng/wp01-01/preparation/.gitattributes",
+      "blob": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "eng/wp01-01/preparation/comparator.py",
+      "blob": "56158bf659bbea13eb0b4c2596eaed127bf30228"
+    },
+    {
+      "path": "eng/wp01-01/preparation/prepare.py",
+      "blob": "1b4f20cb060fb1a58bc40b37d95eca4361e55d6c"
+    },
+    {
+      "path": "eng/wp01-01/preparation/run_checks.py",
+      "blob": "ba2f98e356697b69d65ab7c5b5d3c4cf4ee8a01a"
+    },
+    {
+      "path": "eng/wp01-01/preparation/test_bundle.py",
+      "blob": "f676520e72a209d997b6152df5f6207e0890e72b"
+    },
+    {
+      "path": "eng/wp01-01/preparation/test_comparator.py",
+      "blob": "19d317002c20621c8add22ce344d4a4cdb21d395"
+    }
+  ],
+  "observed_at": "2026-10-14T06:57:39.243553+00:00",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}
