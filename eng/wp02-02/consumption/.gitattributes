@@ -1,0 +1,5 @@
+# Evidence records these task-private source bytes; preserve them on checkout.
+* -text
+*.json -text whitespace=cr-at-eol
+probe/** -text
+tests/** -text

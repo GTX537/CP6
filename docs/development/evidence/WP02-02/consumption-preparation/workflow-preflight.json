@@ -1,0 +1,336 @@
+{
+  "observedAt": "2026-10-14T05:44:28.536277+00:00",
+  "refs": {
+    "HEAD": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+    "main": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+    "origin/main": "1ab2d031e3c501662ecb89a33839fac1cba55d33"
+  },
+  "workflows": [
+    {
+      "path": ".github/workflows/client-contract.yml",
+      "protected_main_sha256": "50f33cf81307824a7b6accd5eb3417968494cf2ae1aaecaccbe878e1554f00f8",
+      "candidate_working_sha256": "fb633108d5d43b368d9c8a75d7d0ec81f718e119630c811334fd1bd4eb5f1454",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "uses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/setup-node@v4",
+        "uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "protected_main_sha256": "5024797a8d374361d394c24abccc7f45a2e2314c1113c3deea5518e44c685efc",
+      "candidate_working_sha256": "5174f62866dd6d84c61143074809718837086787fb886a19f085c24189d5d2c9",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "uses": [
+        "- uses: actions/checkout@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "protected_main_sha256": "70e1a2fb2535bd82a43bdc6d199d18429768ab4e243c2523166a5863eeba85f9",
+      "candidate_working_sha256": "9797044712711f8bc503b5b7a3b4da5755aaf6c8874a8104d30c20842a64fe6a",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "uses": [
+        "- uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "protected_main_sha256": "84bf014626442317ef4f27b6580832162aba444d7d40fc03ed331fe2e6d4bdb5",
+      "candidate_working_sha256": "25bb5f0e9b7626a88a71aba7a35322d7b7e51e5699c1e9c4766faa994b9c131e",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      candidate_sha:",
+        "        description: Exact candidate commit to validate as data with protected-main rules",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "uses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "protected_main_sha256": "a3059601bedbd49a8596852d964704305b4eff7030e8bd5a56607e4549e0911c",
+      "candidate_working_sha256": "941ccf864b7985b1b7d2b0c3277a01845003a0e4a44a97a55481d1f8fcad1d0e",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      expected_sha:",
+        "        description: Exact main source of this read-only verifier",
+        "        required: true",
+        "        type: string",
+        "      release_tag:",
+        "        description: Existing Platform candidate whose publication has completed",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "uses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "protected_main_sha256": "0c3f53a82e604fd37eb33bb0a952f5a59aea720347c6a5b37721688ae85d1b95",
+      "candidate_working_sha256": "df5ab1ce8ba02338cf6705bf41ffd4f5647be445d83cefbb23606a7e48802db9",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      expected_sha:",
+        "        description: Exact main commit used by the completed validation",
+        "        required: true",
+        "        type: string",
+        "      release_tag:",
+        "        description: New Platform candidate identity, not a Git tag or production release",
+        "        required: true",
+        "        type: string",
+        "      validation_run_id:",
+        "        description: Successful completed P10 validation run",
+        "        required: true",
+        "        type: string",
+        "      validation_attempt:",
+        "        description: Exact completed validation attempt",
+        "        required: true",
+        "        type: string",
+        "      validation_artifact_id:",
+        "        description: Immutable validation artifact ID",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "uses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "protected_main_sha256": "dfa0648be36c85f800c6d475ba44d27313d0f17a7bc7fca2df696b630111316f",
+      "candidate_working_sha256": "8ffd7d626a3ef0566ec2caeaf1bd00e0bb5c89d3300f6403c6079cc89e4e353f",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "uses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "protected_main_sha256": "e86a052bde1eebd0cff6d23be32b3cb7f637989880bdb74e3f41c260c11cccb6",
+      "candidate_working_sha256": "169662caca8ab9d972976c17e2ca7d14a3986fcb354ca82933097f8d776fda02",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      expected_sha:",
+        "        description: Exact current main commit to validate",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "uses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3",
+        "uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/r2-candidate.yml",
+      "protected_main_sha256": "4cc534fbe26cc22c41875376fc08e6b68137ed30f2097e55d0fc050965151e7d",
+      "candidate_working_sha256": "cfea8ab19c0bb5fe3800e6ee64d06dacd5c0bcaf0446bd3c8c0c82b6cb3923f3",
+      "lf_equivalent": true,
+      "event_section": [
+        "  push:",
+        "    tags:",
+        "      - \"v*.*.*\"",
+        ""
+      ],
+      "uses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/setup-node@v4",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: docker/setup-buildx-action@v3",
+        "- uses: docker/login-action@v3",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: actions/download-artifact@v4",
+        "- uses: actions/download-artifact@v4",
+        "- uses: actions/download-artifact@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/setup-node@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/r2-deploy.yml",
+      "protected_main_sha256": "6dbb5f13005bbf2f0442c67cc2f5551ef3fa280eceff4706b7596497396b74ea",
+      "candidate_working_sha256": "37960838ab5c7d8565a69d29bd8137546946b8c2f5af696c2275971442f92b9f",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      version:",
+        "        description: Semantic release version without v prefix",
+        "        required: true",
+        "        type: string",
+        "      environment:",
+        "        description: Protected GitHub Environment",
+        "        required: true",
+        "        type: environment",
+        ""
+      ],
+      "uses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-node@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/r2-freeze.yml",
+      "protected_main_sha256": "a9b998fff9f6cb4e67a1ddcccc794945007c7bde4eba052fdee79afc5df5e695",
+      "candidate_working_sha256": "37ce4fb3de9d4c16e331c0864b245545efcef370d6efaeab2169e348bccb4a4e",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      version:",
+        "        description: Semantic release version without v prefix",
+        "        required: true",
+        "        default: 1.0.0",
+        "        type: string",
+        ""
+      ],
+      "uses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-node@v4",
+        "uses: actions/create-github-app-token@v3"
+      ]
+    },
+    {
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "protected_main_sha256": "5bc15531e10147c6e01637a1c63e4aa7820516c4f78543ba334c84c898301013",
+      "candidate_working_sha256": "4f2904f963fefa8b87f3e8281a533255c5b76895001bd2b9c7d35570974452a2",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "uses": [
+        "uses: actions/checkout@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/wms-production-sql.yml",
+      "protected_main_sha256": "ca11573d8c2622f08ad4156ae0733a40c5b8cc6d41dc3b227c7b1b509d8ecc3a",
+      "candidate_working_sha256": "f44ac479f2378d9e05468a9a9b6f24e067da6ae6d475be796ffcd7661e15ed91",
+      "lf_equivalent": true,
+      "event_section": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "uses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/upload-artifact@v4"
+      ]
+    }
+  ],
+  "azure": {
+    "sha256": "78160c3a9fcff13ac376e3dd58d9b1e80768ec4b304eb7febb9391b1fbcd5b40",
+    "trigger_lines": [
+      "trigger: none",
+      "pr: none"
+    ]
+  },
+  "actions_runs": {
+    "queued": {
+      "command": [
+        "gh",
+        "api",
+        "repos/GTX537/CP6/actions/runs",
+        "--method",
+        "GET",
+        "-f",
+        "status=queued",
+        "-f",
+        "per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "runs": []
+    },
+    "in_progress": {
+      "command": [
+        "gh",
+        "api",
+        "repos/GTX537/CP6/actions/runs",
+        "--method",
+        "GET",
+        "-f",
+        "status=in_progress",
+        "-f",
+        "per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "runs": []
+    },
+    "waiting": {
+      "command": [
+        "gh",
+        "api",
+        "repos/GTX537/CP6/actions/runs",
+        "--method",
+        "GET",
+        "-f",
+        "status=waiting",
+        "-f",
+        "per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "runs": []
+    }
+  },
+  "conclusion": "SAFE_BRANCH_PUSH_NO_TAG_NO_DISPATCH: 12 manual-only workflows, R2 candidate push is v*.*.* tag-only; candidate/protected-main workflow bytes unchanged. No workflow_run/pull_request/pull_request_target event. Azure trigger/pr none.",
+  "cancelled": [],
+  "trigger_changes": [],
+  "formal_actions": "NOT_RUN"
+}

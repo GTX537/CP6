@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Reference Include="CP6.Platform.Contracts"><HintPath>$(ProbeArchiveDirectory)/CP6.Platform.Contracts.dll</HintPath></Reference>
+    <Reference Include="CP6.Platform.Abstractions"><HintPath>$(ProbeArchiveDirectory)/CP6.Platform.Abstractions.dll</HintPath></Reference>
+    <Reference Include="CP6.Platform.AspNetCore"><HintPath>$(ProbeArchiveDirectory)/CP6.Platform.AspNetCore.dll</HintPath></Reference>
+    <Reference Include="CP6.Platform.Messaging"><HintPath>$(ProbeArchiveDirectory)/CP6.Platform.Messaging.dll</HintPath></Reference>
+  </ItemGroup>
+  <Target Name="RequireArchiveDirectory" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(ProbeArchiveDirectory)' == ''" Text="Pass the separately hash-verified archive extraction directory." />
+  </Target>
+</Project>

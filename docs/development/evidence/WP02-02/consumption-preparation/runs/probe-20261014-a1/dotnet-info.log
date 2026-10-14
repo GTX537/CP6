@@ -1,0 +1,68 @@
+.NET SDK:
+ Version:           8.0.424
+ Commit:            5cbde90d8f
+ Workload version:  8.0.400-manifests.d7d8d4b1
+ MSBuild version:   17.11.48+02bf66295
+
+Runtime Environment:
+ OS Name:     Windows
+ OS Version:  10.0.26200
+ OS Platform: Windows
+ RID:         win-x64
+ Base Path:   C:\Users\tt\.dotnet\sdk\8.0.424\
+
+.NET workloads installed:
+Configured to use loose manifests when installing new manifests.
+ [maui-windows]
+   Installation Source: VS 18.8.12023.21
+   Manifest Version:    8.0.3/8.0.100
+   Manifest Path:       C:\Users\tt\.dotnet\sdk-manifests\8.0.100\microsoft.net.sdk.maui\8.0.3\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [maccatalyst]
+   Installation Source: VS 18.8.12023.21
+   Manifest Version:    17.0.8478/8.0.100
+   Manifest Path:       C:\Users\tt\.dotnet\sdk-manifests\8.0.100\microsoft.net.sdk.maccatalyst\17.0.8478\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [ios]
+   Installation Source: VS 18.8.12023.21
+   Manifest Version:    17.0.8478/8.0.100
+   Manifest Path:       C:\Users\tt\.dotnet\sdk-manifests\8.0.100\microsoft.net.sdk.ios\17.0.8478\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [android]
+   Installation Source: VS 18.8.12023.21
+   Manifest Version:    34.0.43/8.0.100
+   Manifest Path:       C:\Users\tt\.dotnet\sdk-manifests\8.0.100\microsoft.net.sdk.android\34.0.43\WorkloadManifest.json
+   Install Type:        FileBased
+
+
+Host:
+  Version:      8.0.30
+  Architecture: x64
+  Commit:       a83db3e0eb
+
+.NET SDKs installed:
+  8.0.424 [C:\Users\tt\.dotnet\sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 8.0.30 [C:\Users\tt\.dotnet\shared\Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 8.0.30 [C:\Users\tt\.dotnet\shared\Microsoft.NETCore.App]
+  Microsoft.WindowsDesktop.App 8.0.30 [C:\Users\tt\.dotnet\shared\Microsoft.WindowsDesktop.App]
+
+Other architectures found:
+  x86   [C:\Program Files (x86)\dotnet]
+    registered at [HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x86\InstallLocation]
+
+Environment variables:
+  Not set
+
+global.json file:
+  D:\CP6-worktrees\wp02-02-prep-20261013\artifacts\wp02-02\consumption\probe-20261014-a1\global.json
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download

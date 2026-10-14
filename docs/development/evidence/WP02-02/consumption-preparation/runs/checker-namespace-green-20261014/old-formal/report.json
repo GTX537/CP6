@@ -1,0 +1,324 @@
+{
+  "task": "WP02-02",
+  "mode": "PREPARATION_ONLY",
+  "admission": "BLOCKED",
+  "entryGate": "NOT_CHECKED",
+  "identityChecks": "REJECTED",
+  "states": {
+    "source": "NUSPEC_METADATA_MATCHED",
+    "shape": "REJECTED",
+    "artifacts": "ARCHIVE_HASHES_MATCHED",
+    "trust": "BLOCKED",
+    "consumer": "NOT_RUN",
+    "host": "NOT_RUN",
+    "runtime": "NOT_RUN",
+    "business": "NOT_RUN"
+  },
+  "findings": [
+    {
+      "code": "MISSING_CTX_SCHEMA",
+      "detail": "Package cannot supply ctx-binding-v1 capability schema.",
+      "category": "shape"
+    },
+    {
+      "code": "COMPATIBILITY_NOT_QUALIFIED",
+      "detail": "UNKNOWN",
+      "category": null
+    },
+    {
+      "code": "FORMAL_TRUST_NOT_RUN",
+      "detail": "Signer, RFC3161 timestamp, current revocation and immutable feed readback not verified.",
+      "category": null
+    },
+    {
+      "code": "PREPARATION_ONLY",
+      "detail": "No approval/adoption/host/runtime/business success path exists in this tool.",
+      "category": null
+    }
+  ],
+  "packages": [
+    {
+      "id": "CP6.Platform.Abstractions",
+      "sha256": "e838ba9c9c6e434f8c8a2bf41e9da7d931a962400435aabb2189f40628c17103",
+      "sha512Archive": "Cxw/Miz9sJZFeQoJqc9NWWZQgz+9ifwpGwEktW5Jl1uGWY8Y4GqbtfTiDgEkQg9lh1KffulL6Uj6+DXR7xbj2A==",
+      "schemas": [],
+      "nuspec": {
+        "id": "CP6.Platform.Abstractions",
+        "version": "0.10.2",
+        "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "repository": "https://github.com/GTX537/CP6.Platform",
+        "dependencies": [
+          {
+            "id": "CP6.Platform.Contracts",
+            "version": "0.10.2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CP6.Platform.AspNetCore",
+      "sha256": "5dc9cee4335e69f463361afc89d36587650b896059472570753ef485787fec73",
+      "sha512Archive": "azGh1vFjeAKkP0S9bBlD4TYPI8jrZ20a44Bzvf0MVAOJ78HYQEjO5zdmQzzeYKVUlD9Z/h8mBe2ZwiBhcAKPxg==",
+      "schemas": [],
+      "nuspec": {
+        "id": "CP6.Platform.AspNetCore",
+        "version": "0.10.2",
+        "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "repository": "https://github.com/GTX537/CP6.Platform",
+        "dependencies": [
+          {
+            "id": "CP6.Platform.Abstractions",
+            "version": "0.10.2"
+          },
+          {
+            "id": "CP6.Platform.Contracts",
+            "version": "0.10.2"
+          },
+          {
+            "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+            "version": "8.0.30"
+          },
+          {
+            "id": "Microsoft.Extensions.Http.Resilience",
+            "version": "10.9.0"
+          },
+          {
+            "id": "OpenTelemetry.Extensions.Hosting",
+            "version": "1.18.0"
+          },
+          {
+            "id": "OpenTelemetry.Instrumentation.AspNetCore",
+            "version": "1.18.0"
+          },
+          {
+            "id": "OpenTelemetry.Instrumentation.Http",
+            "version": "1.18.0"
+          },
+          {
+            "id": "Yarp.ReverseProxy",
+            "version": "2.3.0"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CP6.Platform.Contracts",
+      "sha256": "84b62cad23d0ce09a4af545ac5ae73cd625fce33eb77d022740350dac0364570",
+      "sha512Archive": "zjF9GtoYwygws4rhV9RcCtGfq6UADZwwlEAeSWBkJ1yV9n0JbXgGXDA6DzzLc5GwGdx9RmtFkL+heVXU4Fousw==",
+      "schemas": [],
+      "nuspec": {
+        "id": "CP6.Platform.Contracts",
+        "version": "0.10.2",
+        "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "repository": "https://github.com/GTX537/CP6.Platform",
+        "dependencies": []
+      }
+    },
+    {
+      "id": "CP6.Platform.Deployment",
+      "sha256": "231a7cb3e18fd8ba9a7d60bbe01195ca7676c33b55b542a294c4a76c0fff066b",
+      "sha512Archive": "arTrQ8m/VnoFDgmLv+lYnlZTzh+G4FQZCs7YkmBFOkqhd2wlC5am12YajVITZmsrDmhv4xss8FFvSd7NbeJ1xA==",
+      "schemas": [
+        {
+          "entry": "contracts/p09/non-production-runtime-profile.v1.schema.json",
+          "sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc"
+        },
+        {
+          "entry": "contracts/p09/rehearsal-evidence.v1.schema.json",
+          "sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c"
+        }
+      ],
+      "nuspec": {
+        "id": "CP6.Platform.Deployment",
+        "version": "0.10.2",
+        "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "repository": "https://github.com/GTX537/CP6.Platform",
+        "dependencies": []
+      }
+    },
+    {
+      "id": "CP6.Platform.EntityFramework",
+      "sha256": "cc780ce1b454c62f96caa990eb2e0462563b1917e8c505b11100a4555d5b4544",
+      "sha512Archive": "1YG/vaZ29N8CK6UE5GuLoAg7fIm85Vv4D9WOEh/E17/ToqiXq/TEF6MLTsmKc0KmZ0onidsEpbBdshPe7Pp5AQ==",
+      "schemas": [],
+      "nuspec": {
+        "id": "CP6.Platform.EntityFramework",
+        "version": "0.10.2",
+        "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "repository": "https://github.com/GTX537/CP6.Platform",
+        "dependencies": [
+          {
+            "id": "CP6.Platform.Abstractions",
+            "version": "0.10.2"
+          },
+          {
+            "id": "CP6.Platform.Contracts",
+            "version": "0.10.2"
+          },
+          {
+            "id": "Microsoft.EntityFrameworkCore",
+            "version": "8.0.30"
+          },
+          {
+            "id": "Microsoft.EntityFrameworkCore.Relational",
+            "version": "8.0.30"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CP6.Platform.Messaging",
+      "sha256": "878994735a171194b8944c58fa919508380fa7d0707aa09176427295d0aab235",
+      "sha512Archive": "IkzAJqjIDT3dyvs+LsY3enQnNbWy1aFqKyYHcOJYQQT3dVJgZNma5+nNwa4RhT/tSRH5taudmnX138gDg3kIAA==",
+      "schemas": [],
+      "nuspec": {
+        "id": "CP6.Platform.Messaging",
+        "version": "0.10.2",
+        "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "repository": "https://github.com/GTX537/CP6.Platform",
+        "dependencies": [
+          {
+            "id": "CP6.Platform.Abstractions",
+            "version": "0.10.2"
+          },
+          {
+            "id": "CP6.Platform.Contracts",
+            "version": "0.10.2"
+          },
+          {
+            "id": "CloudNative.CloudEvents",
+            "version": "2.9.0"
+          },
+          {
+            "id": "CloudNative.CloudEvents.SystemTextJson",
+            "version": "2.9.0"
+          },
+          {
+            "id": "Dapr.Client",
+            "version": "1.18.5"
+          },
+          {
+            "id": "JsonSchema.Net",
+            "version": "9.4.0"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CP6.Platform.Release",
+      "sha256": "0b8fd3b332c837e6f1c0cbe9c312e87a671c4f119d2128768f7284d4fa26a8f1",
+      "sha512Archive": "2gPuF25pZXEvMXXJ15kb4WkoibCpUVUd0CUO2G2MFONTDXTjBFFMb8f17va0tGq5H7j+7nxkYtzD99rdkj+fbA==",
+      "schemas": [
+        {
+          "entry": "contracts/release/v1/build-invocation-provenance.v1.schema.json",
+          "sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b"
+        },
+        {
+          "entry": "contracts/release/v1/candidate-locator.v1.schema.json",
+          "sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263"
+        },
+        {
+          "entry": "contracts/release/v1/candidate-result.v2.schema.json",
+          "sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64"
+        },
+        {
+          "entry": "contracts/release/v1/evidence-record.v1.schema.json",
+          "sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922"
+        },
+        {
+          "entry": "contracts/release/v1/formal-package-publication.v1.schema.json",
+          "sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853"
+        },
+        {
+          "entry": "contracts/release/v1/pinned-nuget-trust-store.v1.schema.json",
+          "sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d"
+        },
+        {
+          "entry": "contracts/release/v1/pinned-trust-store.v1.schema.json",
+          "sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55"
+        },
+        {
+          "entry": "contracts/release/v1/platform-release-candidate.v1.schema.json",
+          "sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d"
+        },
+        {
+          "entry": "contracts/release/v1/release-common.v1.schema.json",
+          "sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d"
+        },
+        {
+          "entry": "contracts/release/v1/release-gate-result.v1.schema.json",
+          "sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0"
+        },
+        {
+          "entry": "contracts/release/v1/system-lineage-bootstrap-evidence.v1.schema.json",
+          "sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf"
+        },
+        {
+          "entry": "contracts/release/v1/system-release-manifest.v1.schema.json",
+          "sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e"
+        },
+        {
+          "entry": "contracts/release/v1/test-package-transport.v1.schema.json",
+          "sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb"
+        }
+      ],
+      "nuspec": {
+        "id": "CP6.Platform.Release",
+        "version": "0.10.2",
+        "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+        "repository": "https://github.com/GTX537/CP6.Platform",
+        "dependencies": []
+      }
+    }
+  ],
+  "limits": [
+    "No signature/feed authentication or independent approval authentication.",
+    "Nuspec source metadata comparison is not clean source/reproducible build verification.",
+    "Schema shape is not DLL API, Main host, database, or business qualification.",
+    "Raw archive SHA-512 is not asserted equivalent to signed NuGet lock contentHash."
+  ],
+  "approvalDeclaration": {
+    "reference": "Preparation identity only; independent Platform e5c63a28c94bae4cc66ec50fbe6079553c03d0d0 record hash 17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+    "mainRepository": "https://github.com/GTX537/CP6",
+    "mainSourceSha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+    "platformRepository": "https://github.com/GTX537/CP6.Platform",
+    "platformSourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+    "packageVersion": "0.10.2",
+    "feedUrl": "https://nuget.pkg.github.com/GTX537/index.json",
+    "compatibility": "UNKNOWN",
+    "requiredCapabilities": [
+      "ctx-binding-v1"
+    ],
+    "runtimePackageIds": [
+      "CP6.Platform.Abstractions",
+      "CP6.Platform.AspNetCore",
+      "CP6.Platform.Contracts",
+      "CP6.Platform.EntityFramework",
+      "CP6.Platform.Messaging"
+    ]
+  },
+  "publicationObservation": "UNVERIFIED",
+  "compatibilityDeclaration": "UNKNOWN",
+  "producerPackageIds": [
+    "CP6.Platform.Abstractions",
+    "CP6.Platform.AspNetCore",
+    "CP6.Platform.Contracts",
+    "CP6.Platform.Deployment",
+    "CP6.Platform.EntityFramework",
+    "CP6.Platform.Messaging",
+    "CP6.Platform.Release"
+  ],
+  "runtimePackageIds": [
+    "CP6.Platform.Abstractions",
+    "CP6.Platform.AspNetCore",
+    "CP6.Platform.Contracts",
+    "CP6.Platform.EntityFramework",
+    "CP6.Platform.Messaging"
+  ],
+  "execution": {
+    "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+    "inputSha256": "352e0e56dd4606298b136a4e08e9c8d841ef7377942375187c0be41a0b4d1540",
+    "checkerSha256": "809481a4556ad07cfed89d8f286d33a57cf53836cec4c0ab43afeed3a4f6ad02",
+    "exitCode": 2
+  }
+}

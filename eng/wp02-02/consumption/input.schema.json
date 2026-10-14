@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.cp6.dev/preparation/wp02-02/input-v1",
+  "title": "WP02-02 preparation-only independent identity declarations",
+  "description": "No formal admission success path. Python validator additionally checks exact unique ID sets, canonical hashes, path safety and cross-field identities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "mode",
+    "approval",
+    "observation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "mode": {
+      "const": "PREPARATION_ONLY"
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "mainRepository",
+        "mainSourceSha",
+        "platformRepository",
+        "platformSourceSha",
+        "packageVersion",
+        "feedUrl",
+        "compatibility",
+        "requiredCapabilities",
+        "runtimePackageIds"
+      ],
+      "properties": {
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "mainRepository": {
+          "const": "https://github.com/GTX537/CP6"
+        },
+        "mainSourceSha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "platformRepository": {
+          "const": "https://github.com/GTX537/CP6.Platform"
+        },
+        "platformSourceSha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "packageVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+        },
+        "feedUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "compatibility": {
+          "enum": [
+            "UNKNOWN",
+            "COMPATIBLE",
+            "INCOMPATIBLE"
+          ]
+        },
+        "requiredCapabilities": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ctx-binding-v1"
+            ]
+          }
+        },
+        "runtimePackageIds": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "CP6.Platform.Abstractions",
+              "CP6.Platform.AspNetCore",
+              "CP6.Platform.Contracts",
+              "CP6.Platform.EntityFramework",
+              "CP6.Platform.Messaging"
+            ]
+          }
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feedUrl",
+        "publication",
+        "packages"
+      ],
+      "properties": {
+        "feedUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "publication": {
+          "enum": [
+            "LOCAL_ONLY",
+            "UNVERIFIED"
+          ]
+        },
+        "packages": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "path",
+              "sha256",
+              "sha512Archive",
+              "schemas"
+            ],
+            "properties": {
+              "id": {
+                "enum": [
+                  "CP6.Platform.Abstractions",
+                  "CP6.Platform.AspNetCore",
+                  "CP6.Platform.Contracts",
+                  "CP6.Platform.Deployment",
+                  "CP6.Platform.EntityFramework",
+                  "CP6.Platform.Messaging",
+                  "CP6.Platform.Release"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "sha512Archive": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9+/]{86}==$"
+              },
+              "schemas": {
+                "type": "array",
+                "maxItems": 4096,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "entry",
+                    "sha256"
+                  ],
+                  "properties": {
+                    "entry": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512,
+                      "pattern": "\\.schema\\.json$"
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

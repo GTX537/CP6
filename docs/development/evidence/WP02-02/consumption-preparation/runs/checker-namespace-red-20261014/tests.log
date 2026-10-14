@@ -1,0 +1,33 @@
+test_mixed_nuspec_namespace_cannot_hide_dependency (test_verify.CheckerTests.test_mixed_nuspec_namespace_cannot_hide_dependency) ... FAIL
+test_supported_nuspec_namespaces (test_verify.CheckerTests.test_supported_nuspec_namespaces) ... 
+  test_supported_nuspec_namespaces (test_verify.CheckerTests.test_supported_nuspec_namespaces) (namespace='http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd') ... FAIL
+test_unknown_nuspec_namespace_rejected (test_verify.CheckerTests.test_unknown_nuspec_namespace_rejected) ... ok
+
+======================================================================
+FAIL: test_mixed_nuspec_namespace_cannot_hide_dependency (test_verify.CheckerTests.test_mixed_nuspec_namespace_cannot_hide_dependency)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 239, in test_mixed_nuspec_namespace_cannot_hide_dependency
+    self.reject('NUSPEC_INVALID')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 93, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'NUSPEC_INVALID' not found in ['FORMAL_TRUST_NOT_RUN', 'PREPARATION_ONLY']
+
+======================================================================
+FAIL: test_supported_nuspec_namespaces (test_verify.CheckerTests.test_supported_nuspec_namespaces) (namespace='http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 227, in test_supported_nuspec_namespaces
+    self.assertEqual('MATCHED', self.result()['identityChecks'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MATCHED' != 'REJECTED'
+- MATCHED
++ REJECTED
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.211s
+
+FAILED (failures=2)
