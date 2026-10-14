@@ -1,0 +1,12 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "8B5D6E9195782DC4FA51A8CDA858D34C0E62DA2D14646BF984EBA5A9E48918EF",
+    "Path": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\eng\\wp02-02\\consumption\\verify.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "0EB5952FE773BEBB8CFBC47FDD4148F90F06B24E0A73388A55DEF3FB65C65A76",
+    "Path": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\eng\\wp02-02\\consumption\\tests\\test_verify.py"
+  }
+]

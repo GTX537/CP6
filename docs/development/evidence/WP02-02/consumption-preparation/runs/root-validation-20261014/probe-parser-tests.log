@@ -1,0 +1,13 @@
+test_archive_hash_mismatch_rejected (__main__.ApprovalTests.test_archive_hash_mismatch_rejected) ... ok
+test_independent_document_hash_mismatch_rejected (__main__.ApprovalTests.test_independent_document_hash_mismatch_rejected) ... ok
+test_missing_seventh_archive_approval_rejected (__main__.ApprovalTests.test_missing_seventh_archive_approval_rejected) ... ok
+test_mixed_source_rejected (__main__.ApprovalTests.test_mixed_source_rejected) ... ok
+test_mixed_version_rejected (__main__.ApprovalTests.test_mixed_version_rejected) ... ok
+test_nuspec_source_mismatch_rejected_even_with_consistent_approval (__main__.ApprovalTests.test_nuspec_source_mismatch_rejected_even_with_consistent_approval) ... ok
+test_repository_mismatch_rejected (__main__.ApprovalTests.test_repository_mismatch_rejected) ... ok
+test_synthetic_shape_extracts_only_four_dlls (__main__.ApprovalTests.test_synthetic_shape_extracts_only_four_dlls) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.277s
+
+OK

@@ -1,0 +1,263 @@
+{
+  "checks": [
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/non-production-runtime-profile.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc",
+      "packaged_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/rehearsal-evidence.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c",
+      "packaged_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/build-invocation-provenance.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b",
+      "packaged_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-locator.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263",
+      "packaged_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-result.v2.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64",
+      "packaged_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/evidence-record.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922",
+      "packaged_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/formal-package-publication.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "packaged_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-nuget-trust-store.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d",
+      "packaged_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-trust-store.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55",
+      "packaged_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/platform-release-candidate.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d",
+      "packaged_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-common.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d",
+      "packaged_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-gate-result.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0",
+      "packaged_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-lineage-bootstrap-evidence.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf",
+      "packaged_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-release-manifest.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e",
+      "packaged_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e"
+    },
+    {
+      "case": "old-formal",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/test-package-transport.v1.schema.json",
+      "sourceSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "source_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb",
+      "packaged_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/non-production-runtime-profile.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc",
+      "packaged_sha256": "f2ceef03b24185044b60bf41ea8c2c2fe1382e049e1bf2558a36ebca87b9ecdc"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Deployment",
+      "entry": "contracts/p09/rehearsal-evidence.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c",
+      "packaged_sha256": "78c698cb17147aeb2ba17b7017f24e60f801ff3451d87e7380f0ab26465fd20c"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+      "packaged_sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa",
+      "packaged_sha256": "e8868ed248000d2ec253d91819af61a175faa65a172011f45f39fbf0fe3c70fa"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/build-invocation-provenance.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b",
+      "packaged_sha256": "4cec4bb534820a89bf3b1df644ce907782cb64b69507d7122eab16daa2d16a8b"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-locator.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263",
+      "packaged_sha256": "cc531053e10eb769e37bdda5689d15fa194d0f175ddf98d5a424eda24ff5c263"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/candidate-result.v2.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64",
+      "packaged_sha256": "4b078c2ce741c12f5949b9a376abebe3abdf9ad41521b2899c08f40ec5588a64"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/evidence-record.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922",
+      "packaged_sha256": "8c742af3be9a69f920270c7a84b72ce2f0cf0bc03086c1e5f83300e887048922"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/formal-package-publication.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+      "packaged_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-nuget-trust-store.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d",
+      "packaged_sha256": "60680268aa24afbce2f43f0ae781438ca8af9f185a521c07dbd91b3c5a4f837d"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/pinned-trust-store.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55",
+      "packaged_sha256": "c09f7cef3ef8f7824ca197ad5768d7f061db5a81c2dc98f213cc0d9d5b9a2e55"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/platform-release-candidate.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d",
+      "packaged_sha256": "ae2dc7f7ad1404e24a42e5a555c03e4dbf67dc4faffddfe7c469e0db900a993d"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-common.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d",
+      "packaged_sha256": "debb7779f1469d2266e3818f2cae72950efdbcb76d5be1d106c344308066ec4d"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/release-gate-result.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0",
+      "packaged_sha256": "d7d5fe65525172fcad28f1c7be9426ca9bb57595739a8f089eb5c217562b30c0"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-lineage-bootstrap-evidence.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf",
+      "packaged_sha256": "5b66546444ba13eefaeea931e2fa5f28e9d99a24d48925a0c83b6572fa2760bf"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/system-release-manifest.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e",
+      "packaged_sha256": "447429a43b54cc988c25042e5d7d8b0d654a3ba7da3dd1dd42d30ba34cd97f9e"
+    },
+    {
+      "case": "old-local",
+      "packageId": "CP6.Platform.Release",
+      "entry": "contracts/release/v1/test-package-transport.v1.schema.json",
+      "sourceSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "source_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb",
+      "packaged_sha256": "83ae5a6b0a1f54f8606235fde0b8cdd8e16db991d90fd078eb22ea67dd57bfcb"
+    }
+  ],
+  "approval_scope": "Preparation byte inspection only, no independent Main qualification or current trust",
+  "sha512_scope": "Raw archive SHA512 after independently pinned SHA256 matched; never NuGet contentHash",
+  "feed_scope": "Old feed URL from pinned publication only; local candidate observed in local directory; no fresh feed readback"
+}

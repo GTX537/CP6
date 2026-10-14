@@ -1,0 +1,217 @@
+{
+  "approvalPath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\inspection\\consumer-lock.json",
+  "approvalSha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+  "artifacts": {
+    "archive-dlls/CP6.Platform.Abstractions.dll": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02",
+    "archive-dlls/CP6.Platform.AspNetCore.dll": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66",
+    "archive-dlls/CP6.Platform.Contracts.dll": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8",
+    "archive-dlls/CP6.Platform.Messaging.dll": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c",
+    "archive-metadata.json": "59d42920c6a89530f39cc02fd3b16ef52fe2070986cfba003c61e59432781a39",
+    "archive-metadata.log": "593e8fc00dd95f8ac9ac4b9f474fa742d32e783d676ae165dc617b0032ad4dff",
+    "build.log": "44581bb34e24912fc24cfb37f84f69a3c18dafc6defd0a67c6bb61d4127e3dd3",
+    "dotnet-info.log": "14b707054e0b4ce5f648ed55b0493fb9b7a12d7ce40503151e3e7a6173888007",
+    "global.json": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+    "probe-source/Directory.Build.props": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+    "probe-source/Directory.Build.targets": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+    "probe-source/NuGet.Config": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+    "probe-source/Probe.csproj": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+    "probe-source/Program.cs": "1b953557ccd44ca6a7b44e61b3cb0422e4be5c73c8ef3d2b1f084d79944e760b",
+    "probe-source/SyntheticRuntime.cs": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+    "probe-source/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02",
+    "probe-source/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66",
+    "probe-source/bin/Release/net8.0/CP6.Platform.Contracts.dll": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8",
+    "probe-source/bin/Release/net8.0/CP6.Platform.Messaging.dll": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c",
+    "probe-source/bin/Release/net8.0/Probe.deps.json": "760bbc8377fbcbbd042da404d898897e7bbe9465859f2b1342f1b4e91412ee8d",
+    "probe-source/bin/Release/net8.0/Probe.dll": "ddffd5bc4dde570cdf7d2cf4706e3eaa22cb894792445454c7dc888dc38c92bb",
+    "probe-source/bin/Release/net8.0/Probe.exe": "9a36b7a8d04c528600dd1958756942134e87fe61bea086583475821f9082d34c",
+    "probe-source/bin/Release/net8.0/Probe.pdb": "c64aecd3e0176d9035fa8c938d2c3dde2cb5fc715932e89630c00118c684ca1f",
+    "probe-source/bin/Release/net8.0/Probe.runtimeconfig.json": "9fd574d18b66ff801e2934adf8397e67d2f237ef284452251177a05dd3236350",
+    "probe-source/obj/Probe.csproj.nuget.dgspec.json": "89cb0d9c2cf3bf8dd12ed94a9b8cc4cd1e853dce9e2b8a5f0a51399331477a60",
+    "probe-source/obj/Probe.csproj.nuget.g.props": "dd696733902cccf963133510965bbf23417e37a2d440821cfed54aca42026744",
+    "probe-source/obj/Probe.csproj.nuget.g.targets": "971cc9b535384849b5c661d776cd7a80833a416265e32e8968e06c367368b8b5",
+    "probe-source/obj/Release/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs": "f7a5d9789c863625e139ff99e1113a503830f6b85a88f6129916df83ac76b49e",
+    "probe-source/obj/Release/net8.0/Probe.AssemblyInfo.cs": "dbbc79f388eaa93db549cc320c4e423ae4767946dc236d58bf13a7d604c2941e",
+    "probe-source/obj/Release/net8.0/Probe.AssemblyInfoInputs.cache": "6e531a648102bf16f1a5d8cb249a550537a09dd072a82ffc36721255b1d4d8b0",
+    "probe-source/obj/Release/net8.0/Probe.GeneratedMSBuildEditorConfig.editorconfig": "5650aaa106fa0adfb663819aaa093659de8537bc91da68312afc1764d06c7100",
+    "probe-source/obj/Release/net8.0/Probe.GlobalUsings.g.cs": "f3f134e9e825e3e7268090f58b1af2bda2de513f61a09c56f48b9b8d08612abc",
+    "probe-source/obj/Release/net8.0/Probe.assets.cache": "1efd73d60b6b476b816dcdc2a861c1d072323e72a806a6931d47538e9b78d737",
+    "probe-source/obj/Release/net8.0/Probe.csproj.AssemblyReference.cache": "0b24d8c09ea8ea40e3709d1f1a5553bc354ce92a0535ba77d4f815ce97dbe837",
+    "probe-source/obj/Release/net8.0/Probe.csproj.CoreCompileInputs.cache": "ccc2fc2d6945dc61dea918cc9fea42e1032661de5fcb6f0d9ce9dfd09e53c683",
+    "probe-source/obj/Release/net8.0/Probe.csproj.FileListAbsolute.txt": "04a48c89fd08cf29253ef654c567479532b59efdacdeaf3e8172ed1988ced483",
+    "probe-source/obj/Release/net8.0/Probe.csproj.Up2Date": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "probe-source/obj/Release/net8.0/Probe.dll": "ddffd5bc4dde570cdf7d2cf4706e3eaa22cb894792445454c7dc888dc38c92bb",
+    "probe-source/obj/Release/net8.0/Probe.genruntimeconfig.cache": "283c694908a428fa848818b283779a6f8cc4c9c67406d9f6ee798b433b2099c8",
+    "probe-source/obj/Release/net8.0/Probe.pdb": "c64aecd3e0176d9035fa8c938d2c3dde2cb5fc715932e89630c00118c684ca1f",
+    "probe-source/obj/Release/net8.0/Probe.sourcelink.json": "7a4c96155606abe6599c4514b3da3a5b8a6f3c437f3faabf5fde0c21d8b82905",
+    "probe-source/obj/Release/net8.0/apphost.exe": "9a36b7a8d04c528600dd1958756942134e87fe61bea086583475821f9082d34c",
+    "probe-source/obj/Release/net8.0/ref/Probe.dll": "4884063369c85d977b9d3905d3d74388342c45ac4e979954ac1b477b7142d841",
+    "probe-source/obj/Release/net8.0/refint/Probe.dll": "4884063369c85d977b9d3905d3d74388342c45ac4e979954ac1b477b7142d841",
+    "probe-source/obj/project.assets.json": "60fc33a3117473662f700ac9886286e207b461c85c0df77c5d7738739ab931b8",
+    "probe-source/obj/project.nuget.cache": "99ac48707467d8c59837791659f63bf5823b1033d2eaf45e6dccf169d8faefc9",
+    "restore.log": "81a0d7be9a2126e1d0d164c237410af5edd013d9e0e7d5e88ff894ad5a239e0b",
+    "runtime.log": "114214f002632164e4a8a713f7a1db7e973a94d071339bfea320e796568c7d4e",
+    "sdk-version.log": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+    "signatures-and-synthetic-runtime.json": "97fbc9ff0103bbb8ef27b17be2fcd488a8ebba8513ff12663f54dc638d1bba7a"
+  },
+  "commands": [
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "--version"
+      ],
+      "exitCode": 0,
+      "log": "sdk-version.log"
+    },
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "--info"
+      ],
+      "exitCode": 0,
+      "log": "dotnet-info.log"
+    },
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "restore",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\Probe.csproj",
+        "--configfile",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\NuGet.Config",
+        "-p:ProbeArchiveDirectory=D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\archive-dlls"
+      ],
+      "exitCode": 0,
+      "log": "restore.log"
+    },
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "build",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\Probe.csproj",
+        "--no-restore",
+        "-c",
+        "Release",
+        "-p:ProbeArchiveDirectory=D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\archive-dlls"
+      ],
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+        "inspect",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\archive-dlls"
+      ],
+      "exitCode": 0,
+      "log": "archive-metadata.log"
+    },
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+        "runtime",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\archive-dlls"
+      ],
+      "exitCode": 0,
+      "log": "runtime.log"
+    }
+  ],
+  "formalAdmission": "BLOCKED",
+  "inspector": {
+    "path": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a1\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+    "sha256": "ddffd5bc4dde570cdf7d2cf4706e3eaa22cb894792445454c7dc888dc38c92bb"
+  },
+  "mainHostAdoption": "NOT_RUN",
+  "mode": "runtime",
+  "packages": [
+    {
+      "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Abstractions.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.Abstractions.dll",
+        "sha256": "13e8a5bbf1c71b7cec441a2d49527cb4a40fa5d3fcb134717360597cf6c7bb02"
+      },
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Abstractions/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Abstractions",
+      "sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+    },
+    {
+      "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.AspNetCore.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.AspNetCore.dll",
+        "sha256": "c13389a7e657ab55ea063f65e41d9f7e7142ae4428a7ea4d6aabc77fa2c8af66"
+      },
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.AspNetCore/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.AspNetCore",
+      "sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+    },
+    {
+      "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Contracts.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.Contracts.dll",
+        "sha256": "5010aa920e3af6bb3cf50cb1ac2267414420a7042bcb18162e4a95bf65a604b8"
+      },
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Contracts/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Contracts",
+      "sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+    },
+    {
+      "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Deployment.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "dll": null,
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Deployment/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Deployment",
+      "sha256": "b769ca35159456462fa6c72af68ad17797d7123405a276caaf937cc0202a338e",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+    },
+    {
+      "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.EntityFramework.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "dll": null,
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.EntityFramework/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.EntityFramework",
+      "sha256": "12f2f029568b59d364e2e1fef2535f0e3fa313dc784d656c77dcdf5eabdc59bf",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+    },
+    {
+      "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Messaging.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.Messaging.dll",
+        "sha256": "d7e13f217a244598391eabea2dbab30f0f40b006d66b415df2cbae9fcaf73a9c"
+      },
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Messaging/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Messaging",
+      "sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+    },
+    {
+      "archivePath": "D:\\CP6.Platform-worktrees\\wp02-27-20261013\\artifacts\\wp02-27\\coord-schema-local-pack\\packages\\CP6.Platform.Release.0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250.nupkg",
+      "dll": null,
+      "feedIdentity": "task-local:wp02-27#CP6.Platform.Release/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+      "packageId": "CP6.Platform.Release",
+      "sha256": "526eddb7a07e1b44ba3ba65077ed10cac43a905f0565fd5fcd1985d1831a56ea",
+      "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+    }
+  ],
+  "probeSourceSha256": {
+    "Directory.Build.props": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+    "Directory.Build.targets": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+    "NuGet.Config": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+    "Probe.csproj": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+    "Program.cs": "1b953557ccd44ca6a7b44e61b3cb0422e4be5c73c8ef3d2b1f084d79944e760b",
+    "SyntheticRuntime.cs": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073"
+  },
+  "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+  "pythonExecutable": "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+  "result": "PASS",
+  "runnerSha256": "0d0c5f1f0199e9b5991dfeebd5166af0e4ff578588bf29fb6fbd07df6e9aa1a7",
+  "runtimeBusinessAcceptance": "NOT_RUN",
+  "scope": "PREPARATION_ONLY"
+}

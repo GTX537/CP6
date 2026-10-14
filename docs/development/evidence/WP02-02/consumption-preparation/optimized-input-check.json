@@ -1,0 +1,9 @@
+{
+  "observedAt": "2026-10-14T05:45:56.052608+00:00",
+  "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+  "optimize": 1,
+  "result": "PASS",
+  "case": "Optimized interpreter still rejects independent pinned record mismatch before reading archives",
+  "exception": "Independent committed publication/lock hash mismatch",
+  "sourceSha256": "5aa3d68d99387d892ac9a8b1d7052f2cea796cf49afeedd124589e0dd9970a31"
+}

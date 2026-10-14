@@ -1,0 +1,27 @@
+{
+  "contextSurface": "MISSING_REQUIRED_TYPES",
+  "contextTypes": [],
+  "missingRequiredTypes": [
+    "CP6.Platform.Contracts.Context.ContextActorV1",
+    "CP6.Platform.Contracts.Context.ContextActorKindV1",
+    "CP6.Platform.Contracts.Context.ContextEntryKindV1",
+    "CP6.Platform.Contracts.Context.ContextOperationV1",
+    "CP6.Platform.Contracts.Context.AuthenticatedContextSourceV1",
+    "CP6.Platform.Contracts.Context.ContextResolutionInputV1",
+    "CP6.Platform.Contracts.Context.ContextBindingRegistrationV1",
+    "CP6.Platform.Contracts.Context.ContextResolutionEvidenceV1",
+    "CP6.Platform.Abstractions.Context.IContextSourceVerifierV1`1",
+    "CP6.Platform.Abstractions.Context.IContextBindingAuthorityV1",
+    "CP6.Platform.Abstractions.Context.ITrustedContextAccessorV1",
+    "CP6.Platform.Abstractions.Context.TrustedRequestContextV1",
+    "CP6.Platform.Abstractions.Context.ContextResolutionFailureV1",
+    "CP6.Platform.Abstractions.Context.ContextResolutionExceptionV1",
+    "CP6.Platform.Abstractions.Context.ContextBindingValidatorV1",
+    "CP6.Platform.Abstractions.Context.TrustedContextExecutorV1",
+    "CP6.Platform.Abstractions.Context.ContextScopeAccessorV1",
+    "CP6.Platform.AspNetCore.Context.TrustedRequestContextExtensionsV1",
+    "CP6.Platform.AspNetCore.Context.TrustedRequestContextMiddlewareV1",
+    "CP6.Platform.Messaging.Context.MessageContextExecutorV1`1"
+  ],
+  "scope": "ARCHIVE_METADATA_ONLY"
+}

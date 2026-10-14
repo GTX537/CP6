@@ -1,0 +1,405 @@
+test_archive_entry_case_collision (test_verify.CheckerTests.test_archive_entry_case_collision) ... FAIL
+test_boolean_schema_version_rejected (test_verify.CheckerTests.test_boolean_schema_version_rejected) ... FAIL
+test_capability_substring_in_description_is_not_contract (test_verify.CheckerTests.test_capability_substring_in_description_is_not_contract) ... FAIL
+test_cli_duplicate_json_rejected_and_existing_output_not_overwritten (test_verify.CheckerTests.test_cli_duplicate_json_rejected_and_existing_output_not_overwritten) ... FAIL
+test_dependency_range_not_exact_pin (test_verify.CheckerTests.test_dependency_range_not_exact_pin) ... FAIL
+test_duplicate_package (test_verify.CheckerTests.test_duplicate_package) ... FAIL
+test_duplicate_schema_json_keys (test_verify.CheckerTests.test_duplicate_schema_json_keys) ... FAIL
+test_duplicate_xml_identity (test_verify.CheckerTests.test_duplicate_xml_identity) ... FAIL
+test_exact_dependency_range (test_verify.CheckerTests.test_exact_dependency_range) ... FAIL
+test_exact_seven_producer_set (test_verify.CheckerTests.test_exact_seven_producer_set) ... FAIL
+test_feed_mismatch (test_verify.CheckerTests.test_feed_mismatch) ... FAIL
+test_hash_mismatch (test_verify.CheckerTests.test_hash_mismatch) ... FAIL
+test_local_candidate_rejected (test_verify.CheckerTests.test_local_candidate_rejected) ... FAIL
+test_missing_ctx_schema (test_verify.CheckerTests.test_missing_ctx_schema) ... FAIL
+test_missing_file (test_verify.CheckerTests.test_missing_file) ... FAIL
+test_mixed_dependency_version (test_verify.CheckerTests.test_mixed_dependency_version) ... FAIL
+test_mixed_versions (test_verify.CheckerTests.test_mixed_versions) ... FAIL
+test_no_formal_publication_self_assertion (test_verify.CheckerTests.test_no_formal_publication_self_assertion) ... FAIL
+test_package_id_mismatch (test_verify.CheckerTests.test_package_id_mismatch) ... FAIL
+test_path_traversal_archive (test_verify.CheckerTests.test_path_traversal_archive) ... FAIL
+test_raw_sha512_mismatch (test_verify.CheckerTests.test_raw_sha512_mismatch) ... FAIL
+test_repository_mismatch (test_verify.CheckerTests.test_repository_mismatch) ... FAIL
+test_runtime_is_five_not_seven (test_verify.CheckerTests.test_runtime_is_five_not_seven) ... FAIL
+test_schema_hash_mismatch (test_verify.CheckerTests.test_schema_hash_mismatch) ... FAIL
+test_source_mismatch (test_verify.CheckerTests.test_source_mismatch) ... FAIL
+test_synthetic_identity_match_never_admits (test_verify.CheckerTests.test_synthetic_identity_match_never_admits) ... FAIL
+test_unknown_compatibility (test_verify.CheckerTests.test_unknown_compatibility) ... FAIL
+test_unknown_compatibility_token (test_verify.CheckerTests.test_unknown_compatibility_token) ... FAIL
+test_unknown_field (test_verify.CheckerTests.test_unknown_field) ... FAIL
+test_unpinned_schema_rejected (test_verify.CheckerTests.test_unpinned_schema_rejected) ... FAIL
+test_xml_dtd_rejected (test_verify.CheckerTests.test_xml_dtd_rejected) ... FAIL
+
+======================================================================
+FAIL: test_archive_entry_case_collision (test_verify.CheckerTests.test_archive_entry_case_collision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 207, in test_archive_entry_case_collision
+    self.reject('ARCHIVE_INVALID')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ARCHIVE_INVALID' not found in []
+
+======================================================================
+FAIL: test_boolean_schema_version_rejected (test_verify.CheckerTests.test_boolean_schema_version_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 195, in test_boolean_schema_version_rejected
+    self.reject('INVALID_INPUT')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INVALID_INPUT' not found in []
+
+======================================================================
+FAIL: test_capability_substring_in_description_is_not_contract (test_verify.CheckerTests.test_capability_substring_in_description_is_not_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 159, in test_capability_substring_in_description_is_not_contract
+    self.reject('CTX_SCHEMA_SHAPE_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'CTX_SCHEMA_SHAPE_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_cli_duplicate_json_rejected_and_existing_output_not_overwritten (test_verify.CheckerTests.test_cli_duplicate_json_rejected_and_existing_output_not_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 230, in test_cli_duplicate_json_rejected_and_existing_output_not_overwritten
+    self.assertEqual(2, first.returncode)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_dependency_range_not_exact_pin (test_verify.CheckerTests.test_dependency_range_not_exact_pin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 135, in test_dependency_range_not_exact_pin
+    self.reject('DEPENDENCY_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'DEPENDENCY_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_duplicate_package (test_verify.CheckerTests.test_duplicate_package)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 183, in test_duplicate_package
+    self.reject('INVALID_INPUT')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INVALID_INPUT' not found in []
+
+======================================================================
+FAIL: test_duplicate_schema_json_keys (test_verify.CheckerTests.test_duplicate_schema_json_keys)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 222, in test_duplicate_schema_json_keys
+    self.reject('SCHEMA_INVALID')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SCHEMA_INVALID' not found in []
+
+======================================================================
+FAIL: test_duplicate_xml_identity (test_verify.CheckerTests.test_duplicate_xml_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 216, in test_duplicate_xml_identity
+    self.reject('NUSPEC_INVALID')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'NUSPEC_INVALID' not found in []
+
+======================================================================
+FAIL: test_exact_dependency_range (test_verify.CheckerTests.test_exact_dependency_range)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 139, in test_exact_dependency_range
+    self.assertEqual('MATCHED', self.result()['identityChecks'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MATCHED' != 'NOT_RUN'
+- MATCHED
++ NOT_RUN
+
+
+======================================================================
+FAIL: test_exact_seven_producer_set (test_verify.CheckerTests.test_exact_seven_producer_set)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 179, in test_exact_seven_producer_set
+    self.reject('INVALID_INPUT')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INVALID_INPUT' not found in []
+
+======================================================================
+FAIL: test_feed_mismatch (test_verify.CheckerTests.test_feed_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 119, in test_feed_mismatch
+    self.reject('FEED_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'FEED_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_hash_mismatch (test_verify.CheckerTests.test_hash_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 103, in test_hash_mismatch
+    self.reject('HASH_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'HASH_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_local_candidate_rejected (test_verify.CheckerTests.test_local_candidate_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 171, in test_local_candidate_rejected
+    self.reject('LOCAL_CANDIDATE_NOT_FORMAL')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'LOCAL_CANDIDATE_NOT_FORMAL' not found in []
+
+======================================================================
+FAIL: test_missing_ctx_schema (test_verify.CheckerTests.test_missing_ctx_schema)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 152, in test_missing_ctx_schema
+    self.reject('MISSING_CTX_SCHEMA')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MISSING_CTX_SCHEMA' not found in []
+
+======================================================================
+FAIL: test_missing_file (test_verify.CheckerTests.test_missing_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 199, in test_missing_file
+    self.reject('ARCHIVE_INVALID')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ARCHIVE_INVALID' not found in []
+
+======================================================================
+FAIL: test_mixed_dependency_version (test_verify.CheckerTests.test_mixed_dependency_version)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 131, in test_mixed_dependency_version
+    self.reject('DEPENDENCY_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'DEPENDENCY_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_mixed_versions (test_verify.CheckerTests.test_mixed_versions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 127, in test_mixed_versions
+    self.reject('VERSION_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'VERSION_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_no_formal_publication_self_assertion (test_verify.CheckerTests.test_no_formal_publication_self_assertion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 175, in test_no_formal_publication_self_assertion
+    self.reject('INVALID_INPUT')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INVALID_INPUT' not found in []
+
+======================================================================
+FAIL: test_package_id_mismatch (test_verify.CheckerTests.test_package_id_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 123, in test_package_id_mismatch
+    self.reject('PACKAGE_ID_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PACKAGE_ID_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_path_traversal_archive (test_verify.CheckerTests.test_path_traversal_archive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 203, in test_path_traversal_archive
+    self.reject('ARCHIVE_INVALID')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ARCHIVE_INVALID' not found in []
+
+======================================================================
+FAIL: test_raw_sha512_mismatch (test_verify.CheckerTests.test_raw_sha512_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 107, in test_raw_sha512_mismatch
+    self.reject('HASH_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'HASH_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_repository_mismatch (test_verify.CheckerTests.test_repository_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 115, in test_repository_mismatch
+    self.reject('REPOSITORY_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'REPOSITORY_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_runtime_is_five_not_seven (test_verify.CheckerTests.test_runtime_is_five_not_seven)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 187, in test_runtime_is_five_not_seven
+    self.reject('INVALID_INPUT')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INVALID_INPUT' not found in []
+
+======================================================================
+FAIL: test_schema_hash_mismatch (test_verify.CheckerTests.test_schema_hash_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 143, in test_schema_hash_mismatch
+    self.reject('SCHEMA_HASH_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SCHEMA_HASH_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_source_mismatch (test_verify.CheckerTests.test_source_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 111, in test_source_mismatch
+    self.reject('SOURCE_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SOURCE_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_synthetic_identity_match_never_admits (test_verify.CheckerTests.test_synthetic_identity_match_never_admits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 95, in test_synthetic_identity_match_never_admits
+    self.assertEqual('MATCHED', result['identityChecks'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MATCHED' != 'NOT_RUN'
+- MATCHED
++ NOT_RUN
+
+
+======================================================================
+FAIL: test_unknown_compatibility (test_verify.CheckerTests.test_unknown_compatibility)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 163, in test_unknown_compatibility
+    self.reject('COMPATIBILITY_NOT_QUALIFIED')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'COMPATIBILITY_NOT_QUALIFIED' not found in []
+
+======================================================================
+FAIL: test_unknown_compatibility_token (test_verify.CheckerTests.test_unknown_compatibility_token)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 167, in test_unknown_compatibility_token
+    self.reject('INVALID_INPUT')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INVALID_INPUT' not found in []
+
+======================================================================
+FAIL: test_unknown_field (test_verify.CheckerTests.test_unknown_field)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 191, in test_unknown_field
+    self.reject('INVALID_INPUT')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INVALID_INPUT' not found in []
+
+======================================================================
+FAIL: test_unpinned_schema_rejected (test_verify.CheckerTests.test_unpinned_schema_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 147, in test_unpinned_schema_rejected
+    self.reject('SCHEMA_SET_MISMATCH')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SCHEMA_SET_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_xml_dtd_rejected (test_verify.CheckerTests.test_xml_dtd_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 211, in test_xml_dtd_rejected
+    self.reject('NUSPEC_INVALID')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-prep-20261013\eng\wp02-02\consumption\tests\test_verify.py", line 91, in reject
+    self.assertIn(code, [f['code'] for f in result['findings']])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'NUSPEC_INVALID' not found in []
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.864s
+
+FAILED (failures=31)

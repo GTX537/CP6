@@ -1,0 +1,126 @@
+{
+  "approvalPath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\docs\\development\\evidence\\WP02-02\\consumption-preparation\\inputs\\old-seven-approval.json",
+  "approvalSha256": "4e6da064cdc4c92dc1f29e0f40c4fd7a047434fbc7151a5097c2e308ea23ca80",
+  "artifacts": {
+    "archive-dlls/CP6.Platform.Abstractions.dll": "e72ba501dbf4bae31806d750199275de23334d82f60df9a7bf2a03f2dfdd58cd",
+    "archive-dlls/CP6.Platform.AspNetCore.dll": "b4d0fb90e153961a65ad65a8d096cedeb76c61eae488469b836064e70ef31dd8",
+    "archive-dlls/CP6.Platform.Contracts.dll": "24f6d4999ed9f77363c455f525626e5947470894b9334618ca18845f8fcfaa8a",
+    "archive-dlls/CP6.Platform.Messaging.dll": "f0c2467965fa5a2e2ca7a146c9d152adeb9a00a6b1f9331596fab6f540ffbbbb",
+    "archive-metadata.json": "390c90689333968dc871d9a3f0192eb38017bff5ec3f2c03752f7ca8b496a42f",
+    "archive-metadata.log": "28d567b55a620a904173ec6c6263f47b6f3ce2816727c4f1f370e6a900190dc4",
+    "dotnet-info.log": "864b7bcd63025f8c6b528e10e7911f883a75ef684ceb201975dcdb2f6db4d6cd",
+    "global.json": "45389b34dfdbf4380d5bb631da2906f4fb631ee70611e9a852980bb321f5da70",
+    "sdk-version.log": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339"
+  },
+  "commands": [
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "--version"
+      ],
+      "exitCode": 0,
+      "log": "sdk-version.log"
+    },
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "--info"
+      ],
+      "exitCode": 0,
+      "log": "dotnet-info.log"
+    },
+    {
+      "argv": [
+        "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+        "inspect",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-old-20261014-a1\\archive-dlls"
+      ],
+      "exitCode": 0,
+      "log": "archive-metadata.log"
+    }
+  ],
+  "formalAdmission": "BLOCKED",
+  "inspector": {
+    "path": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\probe-20261014-a2\\probe-source\\bin\\Release\\net8.0\\Probe.dll",
+    "sha256": "0440c58e7d43babe8cd4b88d26078fd77e3a4aaaaafb910094b810e7d2e0da1d"
+  },
+  "mainHostAdoption": "NOT_RUN",
+  "mode": "inspect",
+  "packages": [
+    {
+      "archivePath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\original-seven\\CP6.Platform.Abstractions.0.10.2.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.Abstractions.dll",
+        "sha256": "e72ba501dbf4bae31806d750199275de23334d82f60df9a7bf2a03f2dfdd58cd"
+      },
+      "packageId": "CP6.Platform.Abstractions",
+      "sha256": "e838ba9c9c6e434f8c8a2bf41e9da7d931a962400435aabb2189f40628c17103",
+      "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2"
+    },
+    {
+      "archivePath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\original-seven\\CP6.Platform.AspNetCore.0.10.2.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.AspNetCore.dll",
+        "sha256": "b4d0fb90e153961a65ad65a8d096cedeb76c61eae488469b836064e70ef31dd8"
+      },
+      "packageId": "CP6.Platform.AspNetCore",
+      "sha256": "5dc9cee4335e69f463361afc89d36587650b896059472570753ef485787fec73",
+      "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2"
+    },
+    {
+      "archivePath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\original-seven\\CP6.Platform.Contracts.0.10.2.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.Contracts.dll",
+        "sha256": "24f6d4999ed9f77363c455f525626e5947470894b9334618ca18845f8fcfaa8a"
+      },
+      "packageId": "CP6.Platform.Contracts",
+      "sha256": "84b62cad23d0ce09a4af545ac5ae73cd625fce33eb77d022740350dac0364570",
+      "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2"
+    },
+    {
+      "archivePath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\original-seven\\CP6.Platform.Deployment.0.10.2.nupkg",
+      "dll": null,
+      "packageId": "CP6.Platform.Deployment",
+      "sha256": "231a7cb3e18fd8ba9a7d60bbe01195ca7676c33b55b542a294c4a76c0fff066b",
+      "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2"
+    },
+    {
+      "archivePath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\original-seven\\CP6.Platform.EntityFramework.0.10.2.nupkg",
+      "dll": null,
+      "packageId": "CP6.Platform.EntityFramework",
+      "sha256": "cc780ce1b454c62f96caa990eb2e0462563b1917e8c505b11100a4555d5b4544",
+      "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2"
+    },
+    {
+      "archivePath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\original-seven\\CP6.Platform.Messaging.0.10.2.nupkg",
+      "dll": {
+        "member": "lib/net8.0/CP6.Platform.Messaging.dll",
+        "sha256": "f0c2467965fa5a2e2ca7a146c9d152adeb9a00a6b1f9331596fab6f540ffbbbb"
+      },
+      "packageId": "CP6.Platform.Messaging",
+      "sha256": "878994735a171194b8944c58fa919508380fa7d0707aa09176427295d0aab235",
+      "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2"
+    },
+    {
+      "archivePath": "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\original-seven\\CP6.Platform.Release.0.10.2.nupkg",
+      "dll": null,
+      "packageId": "CP6.Platform.Release",
+      "sha256": "0b8fd3b332c837e6f1c0cbe9c312e87a671c4f119d2128768f7284d4fa26a8f1",
+      "sourceGitSha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "version": "0.10.2"
+    }
+  ],
+  "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
+  "pythonExecutable": "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+  "result": "PASS",
+  "runnerSha256": "145ed33a220d9bec7d719153e700f5407b1950bb384be154ede19206ee8f4816",
+  "runtimeBusinessAcceptance": "NOT_RUN",
+  "scope": "PREPARATION_ONLY"
+}

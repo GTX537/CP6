@@ -1,0 +1,112 @@
+{
+  "scope": "ARCHIVE_METADATA_ONLY",
+  "contextTypes": [
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.BackgroundContextExecutorV1\u00601",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.ContextBindingValidatorV1",
+      "visibility": "NotPublic"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.IContextSourceVerifierV1\u00601",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.IContextBindingAuthorityV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.ITrustedContextAccessorV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.TrustedRequestContextV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.ContextResolutionFailureV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.ContextResolutionExceptionV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.ContextScopeAccessorV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Abstractions.dll",
+      "name": "CP6.Platform.Abstractions.Context.TrustedContextExecutorV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.AspNetCore.dll",
+      "name": "CP6.Platform.AspNetCore.Context.TrustedRequestContextExtensionsV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.AspNetCore.dll",
+      "name": "CP6.Platform.AspNetCore.Context.TrustedRequestContextMiddlewareV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.ContextEntryKindV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.ContextActorKindV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.ContextActorV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.ContextOperationV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.AuthenticatedContextSourceV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.ContextResolutionInputV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.ContextBindingRegistrationV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Contracts.dll",
+      "name": "CP6.Platform.Contracts.Context.ContextResolutionEvidenceV1",
+      "visibility": "Public"
+    },
+    {
+      "assembly": "CP6.Platform.Messaging.dll",
+      "name": "CP6.Platform.Messaging.Context.MessageContextExecutorV1\u00601",
+      "visibility": "Public"
+    }
+  ],
+  "missingRequiredTypes": [],
+  "contextSurface": "PRESENT_REQUIRES_SIGNATURE_AND_RUNTIME_CHECK"
+}

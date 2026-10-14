@@ -1,0 +1,64 @@
+{
+  "commands": [
+    {
+      "label": "old-formal",
+      "argv": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "eng/wp02-02/consumption/verify.py",
+        "--input",
+        "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-formal.json",
+        "--output",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\old-formal"
+      ],
+      "startedAt": "2026-10-14T05:41:02.401265+00:00",
+      "finishedAt": "2026-10-14T05:41:02.821693+00:00",
+      "exitCode": 2,
+      "log": "old-formal.log"
+    },
+    {
+      "label": "old-local",
+      "argv": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "eng/wp02-02/consumption/verify.py",
+        "--input",
+        "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-local.json",
+        "--output",
+        "D:\\CP6-worktrees\\wp02-02-prep-20261013\\artifacts\\wp02-02\\consumption\\root-validation-20261014\\old-local"
+      ],
+      "startedAt": "2026-10-14T05:41:02.832198+00:00",
+      "finishedAt": "2026-10-14T05:41:03.221161+00:00",
+      "exitCode": 2,
+      "log": "old-local.log"
+    },
+    {
+      "label": "probe-parser-tests",
+      "argv": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "eng/wp02-02/consumption/probe/test_runner.py",
+        "-v"
+      ],
+      "startedAt": "2026-10-14T05:41:03.229193+00:00",
+      "finishedAt": "2026-10-14T05:41:03.688308+00:00",
+      "exitCode": 0,
+      "log": "probe-parser-tests.log"
+    }
+  ],
+  "sourceHashes": {
+    "eng\\wp02-02\\consumption\\.gitignore": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+    "eng\\wp02-02\\consumption\\capture_real_inputs.py": "fd9d979b89a9f6dcb307a80a82fc0546b18b2ec89bae0520727f1db2756a5213",
+    "eng\\wp02-02\\consumption\\input.schema.json": "732720dc20c57beab974426fc1283f5cf7581244798e9b25c5e8bf92eb53095d",
+    "eng\\wp02-02\\consumption\\inventory.py": "07c9c565c92acf766691cb5c4f6f0ede76c393cc1bfac4ba503cd4ad77e591f2",
+    "eng\\wp02-02\\consumption\\README.md": "629a24e178b862f7e1902785723af78b083cd5126356ba674a5ea6882e7d1de5",
+    "eng\\wp02-02\\consumption\\run_probe.py": "61cd90a566de7f901a9b1ca0dfc3d7fc929c21ccfefd2e7526a8b6a04a02bf54",
+    "eng\\wp02-02\\consumption\\verify.py": "3a2c471cea0733d9e6c88873a4e6d046ba56f8ddc06cb834cc515ccf6717df0b",
+    "eng\\wp02-02\\consumption\\probe\\Directory.Build.props": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+    "eng\\wp02-02\\consumption\\probe\\Directory.Build.targets": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+    "eng\\wp02-02\\consumption\\probe\\NuGet.Config": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+    "eng\\wp02-02\\consumption\\probe\\Probe.csproj": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+    "eng\\wp02-02\\consumption\\probe\\Program.cs": "ccb5c79a5bcee09b8ba2ef58dfe9bdf32ceff304ef3a8988862f7348d8f3c3f0",
+    "eng\\wp02-02\\consumption\\probe\\README.md": "5f7452eb8b5166b1329c332e04ca8020b9c07b68457ef3104c7862c4b16eb30f",
+    "eng\\wp02-02\\consumption\\probe\\SyntheticRuntime.cs": "a5610f45affd9ea2d8ed80396dbc21a4e446cd64489e606fe66b1dcadaa77073",
+    "eng\\wp02-02\\consumption\\probe\\test_runner.py": "dd12b80044d4c5ede6b08c395b24116c8216a038157cbd1c167fe466dbed23c4",
+    "eng\\wp02-02\\consumption\\tests\\test_verify.py": "6b3cc08a5ae283f193d6e9ac62c88fe6004b3fa01060bca30b248f1fcbfb292c"
+  }
+}

@@ -1,0 +1,5 @@
+# Original reports and input hashes must retain their exact bytes.
+*.json -text whitespace=cr-at-eol
+# Unified diffs deliberately contain a single-space blank context line.
+*.patch -text whitespace=cr-at-eol,-blank-at-eol
+runs/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
