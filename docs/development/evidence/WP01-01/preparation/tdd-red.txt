@@ -1,0 +1,356 @@
+test_duplicate_obligation_does_not_fill_gap (__main__.ProposalTests.test_duplicate_obligation_does_not_fill_gap) ... FAIL
+test_incomplete_runtime_record (__main__.ProposalTests.test_incomplete_runtime_record) ... FAIL
+test_missing_cross_repo (__main__.ProposalTests.test_missing_cross_repo) ... FAIL
+test_missing_obligation (__main__.ProposalTests.test_missing_obligation) ... FAIL
+test_missing_original_label_preserved (__main__.ProposalTests.test_missing_original_label_preserved) ... FAIL
+test_missing_r1 (__main__.ProposalTests.test_missing_r1) ... FAIL
+test_missing_required_task (__main__.ProposalTests.test_missing_required_task) ... FAIL
+test_no_adoption (__main__.ProposalTests.test_no_adoption) ... FAIL
+test_no_mutation (__main__.ProposalTests.test_no_mutation) ... ok
+test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) ... 
+  test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='FAIL') ... FAIL
+  test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='BLOCKED') ... FAIL
+  test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='NOT_RUN') ... FAIL
+  test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='REFERENCE_ONLY') ... FAIL
+test_other_target_bypass (__main__.ProposalTests.test_other_target_bypass) ... FAIL
+test_static_pass_not_business (__main__.ProposalTests.test_static_pass_not_business) ... FAIL
+test_synthetic_positive_never_authorizes_actual_completion (__main__.ProposalTests.test_synthetic_positive_never_authorizes_actual_completion) ... FAIL
+test_synthetic_runtime_not_business (__main__.ProposalTests.test_synthetic_runtime_not_business) ... FAIL
+test_unresolved_dp (__main__.ProposalTests.test_unresolved_dp) ... FAIL
+test_unsigned_actor_cannot_be_implied_from_assignment (__main__.ProposalTests.test_unsigned_actor_cannot_be_implied_from_assignment) ... FAIL
+test_wrong_adoption_hash (__main__.ProposalTests.test_wrong_adoption_hash) ... FAIL
+test_wrong_evidence_owner_target (__main__.ProposalTests.test_wrong_evidence_owner_target) ... FAIL
+test_wrong_hash (__main__.ProposalTests.test_wrong_hash) ... FAIL
+test_wrong_target (__main__.ProposalTests.test_wrong_target) ... FAIL
+
+======================================================================
+FAIL: test_duplicate_obligation_does_not_fill_gap (__main__.ProposalTests.test_duplicate_obligation_does_not_fill_gap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 74, in test_duplicate_obligation_does_not_fill_gap
+    self.rejected("OBLIGATION_SET_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_incomplete_runtime_record (__main__.ProposalTests.test_incomplete_runtime_record)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 111, in test_incomplete_runtime_record
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_missing_cross_repo (__main__.ProposalTests.test_missing_cross_repo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 103, in test_missing_cross_repo
+    self.rejected("REPOSITORY_SET_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_missing_obligation (__main__.ProposalTests.test_missing_obligation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 70, in test_missing_obligation
+    self.rejected("OBLIGATION_SET_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_missing_original_label_preserved (__main__.ProposalTests.test_missing_original_label_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 86, in test_missing_original_label_preserved
+    self.rejected("HISTORICAL_GAP_CHANGED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_missing_r1 (__main__.ProposalTests.test_missing_r1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 99, in test_missing_r1
+    self.rejected("R1_SET_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_missing_required_task (__main__.ProposalTests.test_missing_required_task)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 95, in test_missing_required_task
+    self.rejected("TASK_SET_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_no_adoption (__main__.ProposalTests.test_no_adoption)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 50, in test_no_adoption
+    self.rejected("ADOPTION_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='FAIL')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 121, in test_nonpass_runtime
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='BLOCKED')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 121, in test_nonpass_runtime
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='NOT_RUN')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 121, in test_nonpass_runtime
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_nonpass_runtime (__main__.ProposalTests.test_nonpass_runtime) (state='REFERENCE_ONLY')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 121, in test_nonpass_runtime
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_other_target_bypass (__main__.ProposalTests.test_other_target_bypass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 91, in test_other_target_bypass
+    self.rejected("TARGET_NOT_WHITELISTED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_static_pass_not_business (__main__.ProposalTests.test_static_pass_not_business)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 78, in test_static_pass_not_business
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_synthetic_positive_never_authorizes_actual_completion (__main__.ProposalTests.test_synthetic_positive_never_authorizes_actual_completion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 43, in test_synthetic_positive_never_authorizes_actual_completion
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_synthetic_runtime_not_business (__main__.ProposalTests.test_synthetic_runtime_not_business)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 82, in test_synthetic_runtime_not_business
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_unresolved_dp (__main__.ProposalTests.test_unresolved_dp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 107, in test_unresolved_dp
+    self.rejected("EXACT_SUCCESSOR_DECISION_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_unsigned_actor_cannot_be_implied_from_assignment (__main__.ProposalTests.test_unsigned_actor_cannot_be_implied_from_assignment)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 54, in test_unsigned_actor_cannot_be_implied_from_assignment
+    self.rejected("ADOPTION_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_wrong_adoption_hash (__main__.ProposalTests.test_wrong_adoption_hash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 62, in test_wrong_adoption_hash
+    self.rejected("ADOPTION_BINDING_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_wrong_evidence_owner_target (__main__.ProposalTests.test_wrong_evidence_owner_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 115, in test_wrong_evidence_owner_target
+    self.rejected("OBLIGATION_RUNTIME_EVIDENCE_REQUIRED")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_wrong_hash (__main__.ProposalTests.test_wrong_hash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 58, in test_wrong_hash
+    self.rejected("PIN_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+======================================================================
+FAIL: test_wrong_target (__main__.ProposalTests.test_wrong_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 66, in test_wrong_target
+    self.rejected("ADOPTION_BINDING_MISMATCH")
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-prep-20261013\eng\wp01-01\preparation\test_comparator.py", line 35, in rejected
+    self.assertEqual("PREPARATION", result["scope"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREPARATION' != 'UNIMPLEMENTED'
+- PREPARATION
++ UNIMPLEMENTED
+
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.011s
+
+FAILED (failures=22)
