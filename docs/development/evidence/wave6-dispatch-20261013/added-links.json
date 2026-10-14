@@ -1,0 +1,279 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-14T03:16:11.294636+00:00",
+  "scope": "Added Markdown relative file links in staged diff; historical unchanged lines and web availability not checked",
+  "checked": 54,
+  "errors": [],
+  "links": [
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP01.md#wp01-01",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-02",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-08",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-25",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/README.md",
+      "link": "WP01-01.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/README.md",
+      "link": "WP02-02.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/README.md",
+      "link": "WP02-08.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/README.md",
+      "link": "WP02-25.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/README.md",
+      "link": "../../roadmap.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/README.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/README.md",
+      "link": "../../evidence/wave6-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP01-01.md",
+      "link": "../../task-plans/WP01.md#wp01-01",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP01-01.md",
+      "link": "../../09-parallel-development.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP01-01.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP01-01.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP01-01.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-plm.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP01-01.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-plm.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-02.md",
+      "link": "../../task-plans/WP02.md#wp02-02",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-02.md",
+      "link": "../../09-parallel-development.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-02.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-02.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-02.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-consumption.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-02.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-consumption.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-08.md",
+      "link": "../../task-plans/WP02.md#wp02-08",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-08.md",
+      "link": "../../09-parallel-development.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-08.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-08.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-08.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-outbox.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-08.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-outbox.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-25.md",
+      "link": "../../task-plans/WP02.md#wp02-25",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-25.md",
+      "link": "../../09-parallel-development.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-25.md",
+      "link": "../../08-postgresql-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-25.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-25.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-observability.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261013-wave6/WP02-25.md",
+      "link": "../../evidence/wave6-dispatch-20261013/admission-observability.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "intake.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "setup.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "pg-resource-probe.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "../../dispatch/20261013-wave6/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "admission-plm.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "admission-consumption.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "admission-outbox.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "admission-observability.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "intake-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "link": "intake-platform.json",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/dispatch/20261013-wave6/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/evidence/wave6-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/dispatch/20261013-wave6/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/evidence/wave6-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/dispatch/20261013-wave6/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/evidence/wave6-dispatch-20261013/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/dispatch/20261013-wave6/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/evidence/wave6-dispatch-20261013/README.md",
+      "exists": true
+    }
+  ]
+}

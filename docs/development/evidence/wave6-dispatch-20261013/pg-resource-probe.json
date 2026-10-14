@@ -1,0 +1,10 @@
+{
+  "observed_at": "2026-10-14T03:04:36.551413+00:00",
+  "endpoint": "127.0.0.1:55428",
+  "listeners": [],
+  "root": "D:\\CP6-local-test\\WP02-08",
+  "root_exists": false,
+  "postgres_version": "18.6",
+  "status": "AVAILABLE_AT_PROBE_ONLY_RECHECK_BEFORE_PROVISION",
+  "provisioned": false
+}

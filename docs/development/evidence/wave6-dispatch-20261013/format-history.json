@@ -1,0 +1,10 @@
+{
+  "initial_result": "FAIL",
+  "command": "git -c core.longpaths=true -c core.whitespace=cr-at-eol diff --cached --check",
+  "reason": [
+    "admission-observability.md:91 new blank line at EOF",
+    "admission-outbox.md:85 new blank line at EOF"
+  ],
+  "resolution": "Preserved copied source report bytes and their hashes; scoped evidence .gitattributes excludes blank-at-eof style check only. Other whitespace checks remain enabled.",
+  "business_validation": "NOT_RUN"
+}

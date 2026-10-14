@@ -1,0 +1,159 @@
+{
+  "observed_at": "2026-10-14T03:02:22.644616+00:00",
+  "head": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "protected_main": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "workflows": [
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-packages-recovery.yml",
+      "blob": "5db2d96df0d1042ed147bc1fdb79017366a96685",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      publication_run_id:\n        description: Failed formal publication run whose Windows publication job succeeded\n        required: true\n        type: string\n      publication_run_attempt:\n        description: Exact attempt of the failed formal publication run\n        required: true\n        type: string\n      publication_commit:\n        description: Exact package source commit used by the formal publication run\n        required: true\n        type: string\n      version:\n        description: Immutable published formal package version; must be exactly 0.10.0\n        required: true\n        type: string\n      windows_artifact_id:\n        description: Exact immutable Windows read-back artifact ID from the publication run\n        required: true\n        type: string\n      windows_artifact_digest:\n        description: Exact sha256 digest reported by GitHub for the Windows read-back artifact\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for formal package publication\n        required: true\n        type: string\n      version:\n        description: Immutable formal patch version; must be exactly 0.10.2\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-signer-revalidation.yml",
+      "blob": "f9ddb27b9cb2a0fe888f6bb9d99b9169e13842a1",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit whose protected signer identity must be revalidated\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d",
+      "on_block": "  workflow_dispatch:\n  pull_request:\n    paths:\n      - \".github/workflows/p10-rfc3161-preflight.yml\"\n      - \"tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs\"\n\n",
+      "events": [
+        "workflow_dispatch",
+        "pull_request"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-test-candidate.yml",
+      "blob": "1c0ade934712c245435d373fb4c4141f6f6ffb68",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for the P10 test candidate\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/platform-validation.yml",
+      "blob": "9580b725dd6a3d2598a2f80223d232d62e04af08",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/publish-alpha.yml",
+      "blob": "29cb5f55c116bae624420961daa73e580944a5da",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable publication\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/publish-p09.yml",
+      "blob": "f60e2bc5288f0954b71300629c8aa54e73fea141",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable P09 publication\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-packages-recovery.yml",
+      "blob": "5db2d96df0d1042ed147bc1fdb79017366a96685",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      publication_run_id:\n        description: Failed formal publication run whose Windows publication job succeeded\n        required: true\n        type: string\n      publication_run_attempt:\n        description: Exact attempt of the failed formal publication run\n        required: true\n        type: string\n      publication_commit:\n        description: Exact package source commit used by the formal publication run\n        required: true\n        type: string\n      version:\n        description: Immutable published formal package version; must be exactly 0.10.0\n        required: true\n        type: string\n      windows_artifact_id:\n        description: Exact immutable Windows read-back artifact ID from the publication run\n        required: true\n        type: string\n      windows_artifact_digest:\n        description: Exact sha256 digest reported by GitHub for the Windows read-back artifact\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for formal package publication\n        required: true\n        type: string\n      version:\n        description: Immutable formal patch version; must be exactly 0.10.2\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-signer-revalidation.yml",
+      "blob": "f9ddb27b9cb2a0fe888f6bb9d99b9169e13842a1",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit whose protected signer identity must be revalidated\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d",
+      "on_block": "  workflow_dispatch:\n  pull_request:\n    paths:\n      - \".github/workflows/p10-rfc3161-preflight.yml\"\n      - \"tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs\"\n\n",
+      "events": [
+        "workflow_dispatch",
+        "pull_request"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-test-candidate.yml",
+      "blob": "1c0ade934712c245435d373fb4c4141f6f6ffb68",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for the P10 test candidate\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/platform-validation.yml",
+      "blob": "9580b725dd6a3d2598a2f80223d232d62e04af08",
+      "on_block": "  workflow_dispatch:\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/publish-alpha.yml",
+      "blob": "29cb5f55c116bae624420961daa73e580944a5da",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable publication\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    },
+    {
+      "ref": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/publish-p09.yml",
+      "blob": "f60e2bc5288f0954b71300629c8aa54e73fea141",
+      "on_block": "  workflow_dispatch:\n    inputs:\n      expected_commit:\n        description: Exact CP6.Platform main commit approved for immutable P09 publication\n        required: true\n        type: string\n\n",
+      "events": [
+        "workflow_dispatch"
+      ]
+    }
+  ],
+  "pipeline_dependencies": [],
+  "changed_paths": [],
+  "workflow_or_dependency_changes": [],
+  "queued_or_running": [],
+  "result": "SAFE_FOR_BRANCH_PUSH_PR_AND_MAIN_MERGE",
+  "scope": "Main dispatch/tag-only events; Azure git triggers none and bridge is not run; Platform RFC3161 PR path filters exclude entire candidate; no tag push, dispatch, workflow or dependency changes. Both exact refs inspected. No remote test invoked or cancelled."
+}

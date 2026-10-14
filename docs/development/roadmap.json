@@ -158632,6 +158632,11 @@
       "date": "2026-10-13",
       "change": "Wave5 S01-12/WP02-27/WP02-07/WP02-11 delivered after scoped fixes and normal remote-verified merges.20/375 tasks DONE,S01 12/12. WP02-02 remains blocked on consumable trusted package/source identity; business0/125,247 NOT_RUN and historical gaps unchanged. No next-wave dispatch.",
       "evidence": "docs/development/evidence/wave5-integration-20261013/README.md"
+    },
+    {
+      "date": "2026-10-13",
+      "change": "Wave6: WP02-08/25 READY; WP01-01 PLANNED and WP02-02 BLOCKED retain NOT_CHECKED with PREPARATION_ONLY assignments. No actual START;20/375 DONE, S01 12/12,0/125 business,247 NOT_RUN unchanged.",
+      "evidence": "docs/development/dispatch/20261013-wave6/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158675,7 +158680,24 @@
       "plan_path": "docs/development/task-plans/WP01.md",
       "card_anchor": "wp01-01",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "A / WP01-01 准备（沿用原S01-12对话）",
+        "repository": "Main",
+        "branch": "codex/wp01-01-admission-prep-20261013",
+        "worktree": "D:/CP6-worktrees/wp01-01-prep-20261013",
+        "claimed_at": "2026-10-14T03:14:11.400961+00:00",
+        "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "dispatch_scope": "PREPARATION_ONLY",
+        "phase": "PREPARATION",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "docs/development/evidence/WP01-01/preparation/",
+          "eng/wp01-01/preparation/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp01-01",
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -159819,7 +159841,24 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-02",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "B / WP02-02 准备（沿用原WP02-27对话）",
+        "repository": "Main",
+        "branch": "codex/wp02-02-consumption-prep-20261013",
+        "worktree": "D:/CP6-worktrees/wp02-02-prep-20261013",
+        "claimed_at": "2026-10-14T03:14:11.400961+00:00",
+        "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "dispatch_scope": "PREPARATION_ONLY",
+        "phase": "PREPARATION",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "eng/wp02-02/consumption/",
+          "docs/development/evidence/WP02-02/consumption-preparation/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-02",
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+      },
       "blockers": [
         "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
       ],
@@ -160080,11 +160119,46 @@
         "file:Platform:src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-08",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / WP02-08（沿用原WP02-07对话）",
+        "repository": "Platform",
+        "branch": "codex/wp02-08-outbox-20261013",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-08-20261013",
+        "claimed_at": "2026-10-14T03:14:11.400961+00:00",
+        "baseline_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "dispatch_scope": "IMPLEMENTATION",
+        "phase": "IMPLEMENTATION",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.EntityFramework/OutboxV2/",
+          "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+          "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+          "src/CP6.Platform.EntityFramework/Cp6OutboxDispatcher.cs",
+          "tests/CP6.Platform.UnitTests/OutboxV2/",
+          "tests/CP6.Platform.WP0208.PostgreSqlTests/",
+          "docs/WP02-08-OUTBOX-V2.md",
+          "docs/development/evidence/WP02-08/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-08",
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "reserved_local_resource": {
+          "endpoint": "127.0.0.1:55428",
+          "root": "D:/CP6-local-test/WP02-08/",
+          "run_directory": "D:/CP6-local-test/WP02-08/<owner32>/",
+          "marker": "CP6-WP02-08:<owner32>",
+          "database": "cp6_wp0208_<UTCyyyyMMdd>_<owner8>",
+          "settings_env": "CP6_WP0208_SETTINGS",
+          "provisioned": false,
+          "authentication": "Fresh task-only SCRAM credentials in protected private settings/pwfile; never print/copy into repository.",
+          "roles": "Bootstrap setup only; runtime NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS with minimum DML.",
+          "identity_checks": "Before setup/test/stop verify full owner token, canonical contained paths, endpoint, system identifier, database OID/name/owner, session_user and zero unexpected sessions. Stop only own cluster smart; retain logs/data; never terminate unknown sessions or reset existing5432."
+        }
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -160691,11 +160765,43 @@
         "file:Platform:src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-25",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "D / WP02-25（沿用原WP02-11对话）",
+        "repository": "Platform",
+        "branch": "codex/wp02-25-observability-20261013",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-25-20261013",
+        "claimed_at": "2026-10-14T03:14:11.400961+00:00",
+        "baseline_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "dispatch_scope": "IMPLEMENTATION",
+        "phase": "IMPLEMENTATION",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.Contracts/ObservabilityV1/",
+          "src/CP6.Platform.Abstractions/ObservabilityV1/",
+          "src/CP6.Platform.AspNetCore/ObservabilityV1/",
+          "src/CP6.Platform.AspNetCore/Cp6ObservabilityServiceCollectionExtensions.cs",
+          "src/CP6.Platform.AspNetCore/Cp6ObservabilityProfile.cs",
+          "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointRouteBuilderExtensions.cs",
+          "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointProfile.cs",
+          "src/CP6.Platform.AspNetCore/Cp6SafeHealthResponseWriter.cs",
+          "tests/CP6.Platform.UnitTests/ObservabilityV1/",
+          "tests/CP6.Platform.AspNetCoreTests/ObservabilityV1/",
+          "tests/CP6.Platform.AspNetCoreTests/OperationalEndpointTests.cs",
+          "tests/CP6.Platform.AspNetCoreTests/ObservabilityRegistrationTests.cs",
+          "tests/CP6.Platform.AspNetCoreTests/ObservabilityEndToEndTests.cs",
+          "tests/CP6.Platform.AspNetCoreTests/TwoServiceObservabilityFixture.cs",
+          "docs/WP02-25-OBSERVABILITY-V1.md",
+          "docs/development/evidence/WP02-25/",
+          "eng/wp02-25/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-25",
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,

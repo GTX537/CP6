@@ -1,0 +1,62 @@
+{
+  "id": "WP01-01",
+  "title": "PLM替代验收采纳准备",
+  "mode": "PREPARATION_ONLY",
+  "admitted": false,
+  "preparation_admitted": true,
+  "reason": "WP05 1.1.0-proposed尚无具名采纳决定，任务卡要求采纳后方可修改完成门。普通继续只授权准备，不能补造最终采纳。",
+  "write_paths": [
+    "docs/development/evidence/WP01-01/preparation/",
+    "eng/wp01-01/preparation/"
+  ],
+  "write_notes": "只新增审查说明、来源/覆盖比对及无副作用准备工具、测试；原WP05及补充所有制品、adoption.json、总台账、manage_roadmap.py及目标关闭逻辑全部只读。不修改原归档，不将新清单冒充旧30/48。",
+  "checks": [
+    "固定1.1.0-proposed组合manifest和1.0.0原六制品准确Git字节，核221可恢复场景、295正文定位、43补充映射及全部输入引用，不把不同计数相加。",
+    "复核已接受正文、工作簿、CP22、R1的各项可知义务，形成逐ID对象/操作/观察/Owner/来源矩阵；保留未定DP01–08、不能覆盖义务与无等价证明边界。",
+    "交付便于用户审核的采纳说明、尚未签署的决定模板与本版完整hash；actor/time/authority/effective_at保持空，不以本轮分配作采纳。明确以当前可知义务建立新标准，无法证明旧30/48逐项等价。",
+    "给出后续仅ITER/REL白名单的完成门差异提案和正反场景；原路径及其他123目标原门不变；替代路径仍需每条真实业务证据、全部主体任务、R1与跨仓交付。只提案，不修改生产管理工具或台账门。",
+    "准备比较器如有代码须有无采纳/错误hash/错误目标/缺失义务/静态PASS冒充业务/原件缺失标签变更/其他目标绕门的拒绝用例，输出明确PREPARATION，不生成真实采纳或目标完成。"
+  ],
+  "boundary": "本轮仅WP01-01准入准备，主任务保持PLANNED/NOT_CHECKED，不能宣称READY、IN_PROGRESS或DONE；工作者可回报START_PREPARATION。本轮无产品代码、数据库或发布权限。准备包交COORD审查，具名正式采纳是后续步骤。",
+  "commands": [
+    "python docs/development/tools/manage_roadmap.py",
+    "任务私有比较器与测试按实际入口记录；旧成功检查只按同字节来源复用。"
+  ],
+  "sources": [
+    {
+      "path": "docs/development/task-plans/WP01.md",
+      "sha256": "69425198186f221fe177146c40358d4cb8a5b7d90043fee0916d7e2e4f2e6be6",
+      "representation": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/README.md",
+      "sha256": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+      "representation": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/adoption.json",
+      "sha256": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+      "representation": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+      "representation": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+      "representation": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json",
+      "sha256": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+      "representation": "GIT_BLOB_BYTES"
+    },
+    {
+      "path": "docs/development/tools/manage_roadmap.py",
+      "sha256": "e1a86a1c26cb2fc928d4eb2a5baf1261e46cd60ab9735846fdfc476a03db2e4a",
+      "representation": "GIT_BLOB_BYTES"
+    }
+  ]
+}
