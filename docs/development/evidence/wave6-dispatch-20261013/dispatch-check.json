@@ -1,0 +1,884 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-14T03:15:41.527107+00:00",
+  "scope": "Static dependencies/source/worktree/ledger checks; no product runtime",
+  "implementation_tasks": 2,
+  "preparation_tasks": 2,
+  "source_pins": [
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-plans/WP01.md",
+      "git_blob": "c2c16732309a78dc88b3ddc7358c2e46f96ea955",
+      "sha256": "69425198186f221fe177146c40358d4cb8a5b7d90043fee0916d7e2e4f2e6be6"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-deliveries/WP05-01/README.md",
+      "git_blob": "0877cd30a5e36f5a90e049a5c2f1d10beb72a11e",
+      "sha256": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-deliveries/WP05-01/adoption.json",
+      "git_blob": "54b493eab2eb23a2af7261e93c967f7b116adfa2",
+      "sha256": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "git_blob": "4488b04dc838a41ef6197089471098f71e01af7f",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "git_blob": "f089db7b989f061ca4f7bf7c2938879c80a172d7",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json",
+      "git_blob": "397c34837275040ff23e1535a16f865b9ca6b672",
+      "sha256": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/tools/manage_roadmap.py",
+      "git_blob": "eda3913047d71498326ae8b0a2ce430be25e01f5",
+      "sha256": "e1a86a1c26cb2fc928d4eb2a5baf1261e46cd60ab9735846fdfc476a03db2e4a"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "AGENTS.md",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/devops/README.md",
+      "git_blob": "333545dd150a11819f68a9807a5cd8251257ca29",
+      "sha256": "bf9bab9415366daa24c48e92bd5d5d88983f08b6e4e3428ff462adf6721feebf"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/client/r2/README.md",
+      "git_blob": "c548db49b8cd96d9d6124dc41b065465b4e752e0",
+      "sha256": "e3927579d6786ba919c21a6a4d6914bfb1bb4addffc43aa98e6bbcfc55a08be0"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/09-parallel-development.md",
+      "git_blob": "2acb2a1935bec3283488523437d7b94764aaf9d2",
+      "sha256": "5d5da99193c5c08df8774268a6eff59fbd9111601a0cfbf52b352c315b253c38"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "d1c486a70332da55db1d9e0cd8e1fa0a30309cd0",
+      "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.md",
+      "git_blob": "6226c87d5604f723a75ef565a5157dd98896c2ff",
+      "sha256": "8c9f2c67e3c96677c15dbf7ecd82c8048cd09ba4ab08948ec58785995d8bbd45"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/modules/PLT-RELEASE-01.md",
+      "git_blob": "cf4a6828dde1f35f6c8309159d33daf9ca4bdc58",
+      "sha256": "402ac4d108efb12cfbd5a902751bec5a659578bdd85d999e5025e19080cd2feb"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "NuGet.config",
+      "git_blob": "21a9499d52988046bec0d8b253867ba0fc506778",
+      "sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "Directory.Build.props",
+      "git_blob": "6f73fc306d1c382d18a9673787202c275d5e51d0",
+      "sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "git_blob": "a5ca89c3572b6f64a1db409a5b7faada899b5ae9",
+      "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "git_blob": "7012e57b353864125e6f220fe29ba821fd1cb572",
+      "sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "git_blob": "10e4572f66dc9d61f79aeedccdee3610aa78556d",
+      "sha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "CP6.Tests/CP6.Tests.csproj",
+      "git_blob": "d274ca3a5779a810127d85b9b28aa237bea58c87",
+      "sha256": "e4c80a21edd137140c51f49f99aaac2d8600cf6474173f89d36747bcb07a5307"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "git_blob": "098be5b195c09fab99a31fdf682e1c3cd70f37c0",
+      "sha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj",
+      "git_blob": "39142ad1fa51d151ec5c148fb82a8cc5ae831bb4",
+      "sha256": "57efc93fcb1faf75baa63a73ed0c9f100abb1987af3e528374f64d31b8e5b567"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-integration-20261013/combined-architecture-validation.json",
+      "git_blob": "baca97d5f1c58d6ad5f83eb4242f7e1a93ffc1bd",
+      "sha256": "648eded1cfb404a99156ef059d5997e6a06317951f83152ee2aa5cd3c5a295e8"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/P10-RELEASE-GOVERNANCE.md",
+      "git_blob": "c0ddec9125d52bfc2814a70508646b0b90cc22a1",
+      "sha256": "f3ee88fcec49892ed5750cd079d04060ccb62bc5298a21ef9a0265de84e30ff2"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "git_blob": "c1272a44e443cdc103ec84eb73c58289e5d114ee",
+      "sha256": "dd4c5023b8ffc05b5fda984f0bd8f5c9220b9a4d864382d77f32e0a19d46e031"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/COORD-FIX.md",
+      "git_blob": "151b8e3c5837d12ad3be46a2e00b4ef13f9356d8",
+      "sha256": "c47440a8bfce290d82771d649b769554a76a9dd57bd4643797828ee9cd1c1e2a"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/matrix.json",
+      "git_blob": "5310fcafb197438ee2f79a7f333cd3dd7adc2006",
+      "sha256": "c018745e9c7989179a3003fc7ce5fe42a1627b2ccb160dc3ddeab5fb21ef656c"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+      "git_blob": "df5db6cdd44abf5c07fd04d86457af3552e07bb8",
+      "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/state.json",
+      "git_blob": "01b8157b529b92d4677a10616f579779964b2724",
+      "sha256": "14f4880686c9b040c60563c48a3894b73330071f8e99d999ec653ac6a4a3fba2"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "contracts/release/capabilities/v1/README.md",
+      "git_blob": "2b2d335a2a886bbfda737b64d6cab21da881e547",
+      "sha256": "5b2568b8e03febb694ae6ef01e316fc212fe8edffce9d1d072bfa386903466b7"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+      "git_blob": "6eeb4ac489924716af7078114490162b0fcbb0e8",
+      "sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "contracts/release/v1/formal-package-publication.v1.schema.json",
+      "git_blob": "7c951b1ea788bd007b4593c029b7f84515e9f4e1",
+      "sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+      "git_blob": "b8639c708f4b37ce061c0e521c0324b6a2d0acb5",
+      "sha256": "f1e4ac737793e57a7eb08f52b10f1250b002b90f4b791f870e4519455bd2b2ae"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+      "git_blob": "8460b68baea84370d73c2cbd4412767916c202be",
+      "sha256": "fefdf49aaf0f86afe448e3a7da1f455609d5d7f57dfc0bbc6ead592484a2a15d"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Context/ContextContractsV1.cs",
+      "git_blob": "b0d306b08c10780b1928a5273af902c96d41a09c",
+      "sha256": "2840946a04e1b7599236f4710b904024886a3630ecb867e579efd15231153922"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Abstractions/Context/ContextBoundariesV1.cs",
+      "git_blob": "6170302e84e5dcf43ea67dbb96f46b45a115fb4d",
+      "sha256": "ba9f3d52ec6dde335522f45702967be5eaf3e25021463777c756c0b14b92d7ef"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+      "git_blob": "aafabad8ae1c1c9ca7a4a193dd2807f975bbd100",
+      "sha256": "af5a6a520422a2e75148839c730f30bf9cc6fb7afa29612c46af22d6083e5908"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "git_blob": "3b66a813bbab6ccf723ee7e12c9492389062040c",
+      "sha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "git_blob": "0a735078a1562db562d72998172bd63cf6ab8934",
+      "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "git_blob": "30b7857046279e978db3e12d443d65bdecc242fb",
+      "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Build.props",
+      "git_blob": "42131cd740450f08305e95b08b855cfb981c022a",
+      "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "global.json",
+      "git_blob": "4c4c3ae5ed709aa83aa03569d2c1f6792c553165",
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "git_blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Pack-P10FormalPackages.ps1",
+      "git_blob": "f5030fd1fcd883b205b0598a2f79a735e6eb99a5",
+      "sha256": "36e2dad1d9edb65e868725e5946d8d5694406a9edf2eded4c8a6817fa77d353b"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/New-P10FormalPackageSet.ps1",
+      "git_blob": "b65fc19ad42e8efe3d4ed28230e045cd085eceb3",
+      "sha256": "5348127087dd221fde45700930be907a54610daf405108b9f7190fe5a88acd4c"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Publish-P10FormalPackageSet.ps1",
+      "git_blob": "2b39215d97712c738b9304d0c0b438009a8678d0",
+      "sha256": "cb9a6143f7bd21a12f5032c0d9badb91158775e268b083a24c48fca1f19335d6"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Test-P10FormalPrerequisites.ps1",
+      "git_blob": "3878f13d7853b61803ae32c4a6d6a611a5a7e540",
+      "sha256": "09524035da5c08930754caa03f301fe6bf2ab2b73e77f09bf608f968955a6526"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/New-P10FormalPublicationRecord.ps1",
+      "git_blob": "fc439551c7c549d5e08adbf090f712f42371d7cb",
+      "sha256": "cf2ae448556bf9029b3a257f7a85e24192c1de50dcc24ce340700a997bd42c1e"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/p10/Test-P10FormalPackageSet.ps1",
+      "git_blob": "36dbe3670016610f181c723e035af5911d80f8e2",
+      "sha256": "3fea52f2946f8c8cbc3ac7f43ff062115133fbcdbda835e9f23aed07b04f327d"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/wp02-27/run_checks.py",
+      "git_blob": "174f5ebe67aa858f5a914615b6440f19a3050fa9",
+      "sha256": "d77199e914f607f82ea6acf8604888fffa4a5434e786220e80babd3a9682e55c"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "eng/wp02-27/Inspector/README.md",
+      "git_blob": "325cd641c670363365456bda103502afe2b6896f",
+      "sha256": "868f8a61343858621631f64921f7cfc69b55755d4f5e521819e56f7f788fa91b"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "d1c486a70332da55db1d9e0cd8e1fa0a30309cd0",
+      "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "d1c486a70332da55db1d9e0cd8e1fa0a30309cd0",
+      "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "d1c486a70332da55db1d9e0cd8e1fa0a30309cd0",
+      "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/09-parallel-development.md",
+      "git_blob": "2acb2a1935bec3283488523437d7b94764aaf9d2",
+      "sha256": "5d5da99193c5c08df8774268a6eff59fbd9111601a0cfbf52b352c315b253c38"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/08-postgresql-baseline.md",
+      "git_blob": "1956afc1e6e90719703a25e78a68e3a3a8e0877c",
+      "sha256": "b07b25829750b6c25b22472ac6834f961a627cc80146e1750597af7654ab699c"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/modules/PLT-OBS-01.md",
+      "git_blob": "7893ecfda9edccdf300e3f31d410ec6f6cf18e8f",
+      "sha256": "2500ecfa284c694288aecab60c69ca589f45612c0e2608d13570f22ecdb7e77d"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/assessments/20261011/implementation-assessment.json",
+      "git_blob": "13b2ac31e0156861e5606d05308d6021b738aae3",
+      "sha256": "ebab2fbbc2ffdc02abcf58b4eb75358ea3db3d03e5529f47886dd58bce100cb8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "git_blob": "e0da267b79bf24cea6df4a6abd2d1e5c2cd068d4",
+      "sha256": "6af601f92d8a3f3b347358313bd6d3c199581a0fd93650b3c6c7090249329417"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/original-validation.json",
+      "git_blob": "a97db0d4b830e714de9c4f9c06d9cb6a417306bd",
+      "sha256": "1bbf207dd117dd67994cd37238baa8d6101535bff8727b9832bcb5af189c8d73"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-integration-20261013/validation-summary.json",
+      "git_blob": "1f0070617ce4dc60ce43bc5719ed73f2632a36df",
+      "sha256": "e8f75f4185c603becaad308a09e340e6d0c6a2540e8af847894806d56f7148ec"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Cp6ReleaseIdentity.cs",
+      "git_blob": "6e2f4451d835fa2958b373d2ad1047a199f71e8f",
+      "sha256": "df6fc44ab8d97f974f9a4aaa545aec60e1cdb376d363d2f38c1fb6edebf5a0c4"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6ObservabilityProfile.cs",
+      "git_blob": "2c254df083f538afaaa82e4b16d19c3d7ab173af",
+      "sha256": "57087bc058c2a37bcf72697646bd6faacfd39b14ca65fac569b0073f75858659"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6ObservabilityServiceCollectionExtensions.cs",
+      "git_blob": "f272165bcfd916ab1f64adae8150362a219eb1ae",
+      "sha256": "ff0e7fd09d62347ddd5615e7d297a032f8b5a092185fa8b610f9000ea3e99c20"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6SafeHealthResponseWriter.cs",
+      "git_blob": "92f70fb5c8018ea5aafa2258bc27de703c3675df",
+      "sha256": "03b46ab0bc2471c6ea8c9c6292bd33705866f72d1a29b442727a27438413ab36"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointRouteBuilderExtensions.cs",
+      "git_blob": "9c0ed1c129c15016b379f486054c96be0512de46",
+      "sha256": "ef740a37c4971b6ee90dea6f61aeace6f5815ab9926185291cabf80369e9bff4"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointProfile.cs",
+      "git_blob": "8a40171b24772090cf2ecd9f208e73790f67f00b",
+      "sha256": "dea72acc15d89c8d65f1b324872f48ea278cd9f641a37ce2b3fd424f3ba180dc"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Abstractions/Cp6TelemetryConventions.cs",
+      "git_blob": "62f978b5e127ae9b638f1874f35f8fcd564e291d",
+      "sha256": "903f94c89611165d27afe44bc0c07d6f0110508bb8045a5d478c7d1d3d2c2a27"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs",
+      "git_blob": "90667b6dd48d94986509bcadefd027e77e4ea815",
+      "sha256": "b2adb6f85729b8deded0b0e56c16a356204fcdd105cca0afb4894463d2d2aaf5"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Cp6SloEvidenceDocument.cs",
+      "git_blob": "a6e9df9aeab112ff4b94578be6247cf066bacadb",
+      "sha256": "18c0d10f947ac74d33c7973de9f21f8e0a37e788e0986dfcc8bcbc08a8831bb5"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+      "git_blob": "87e73b822b99ef284e2cb0334b1c695cf787c48d",
+      "sha256": "b25960e1be076352c6366655fefa3b5a53836f6de839ff0c04e90bce15bdd312"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityContracts.cs",
+      "git_blob": "9831c6fe24de35f24c873895bcbb41ae0c6a4b69",
+      "sha256": "ad6993713ad1490cbf17fcb9823d566fda6b1fc73aaca04bcc7f9e2e4d1d200f"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "git_blob": "c1272a44e443cdc103ec84eb73c58289e5d114ee",
+      "sha256": "dd4c5023b8ffc05b5fda984f0bd8f5c9220b9a4d864382d77f32e0a19d46e031"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+      "git_blob": "aafabad8ae1c1c9ca7a4a193dd2807f975bbd100",
+      "sha256": "af5a6a520422a2e75148839c730f30bf9cc6fb7afa29612c46af22d6083e5908"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "git_blob": "c2d10c851bb2567da7dd7cafd8645864d49023f2",
+      "sha256": "6719ee9fbd678ef907b0d92052b695a2785deae5788658d52a96ac433727a1ba"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Messaging/Cp6DaprDeliveryValidator.cs",
+      "git_blob": "d0dcfcc10bd6fd8d38d39dcd095fc6fb4185cd01",
+      "sha256": "fc9558cc8396b87d78846b1a1c80ad90430512da2804c3906bd555d38701f60c"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Messaging/Cp6DaprEventPublisher.cs",
+      "git_blob": "096eb7dba54bf118e46a618e614bf6213927cc70",
+      "sha256": "632a5669a06bcbba0b2fd382a7cd689377bb446aa87e86e546da1f8b061e94ae"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.AspNetCoreTests/OperationalEndpointTests.cs",
+      "git_blob": "200796ea758cc24e321646d50fe45082010cae3c",
+      "sha256": "beab8802b622755d88a7cfd4cd2ae31a9c64e29442019b7cb218aa06188344c3"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.AspNetCoreTests/ObservabilityRegistrationTests.cs",
+      "git_blob": "008399ca69b36b028c5a35907bc09ee305174f68",
+      "sha256": "cd3c33631d9fd109673889b706489e5981405ab32b5c56deb274760cfeabd490"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.AspNetCoreTests/ObservabilityEndToEndTests.cs",
+      "git_blob": "ded5a3fa381e6a06dfe5725cd315606006fe86c2",
+      "sha256": "06afb4cf72580700c1d10341c080071b29ba2698f3272b385cdf7433e915f1cf"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.UnitTests/TelemetryConventionTests.cs",
+      "git_blob": "04ba9cb9a38fcaf73fffae095b64959868cf4dc5",
+      "sha256": "f5a5201f38a8566fe5e0bd3c7f6ee633050b2be31573ff9b2677c642f03e97e4"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.UnitTests/ReleaseIdentityTests.cs",
+      "git_blob": "11e3a1d8524b9532f16e06b4cf5d46b3276f6673",
+      "sha256": "688f7cbd1fcb00b52cb36c1dcafef00832b7739a8c272087f891c0fc4ecabf4c"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.UnitTests/SloEvidenceContractTests.cs",
+      "git_blob": "370a237c5b793aee8e48315738d759f8a445a0fb",
+      "sha256": "f82707b269344fd70cfd01aacfe55e109d15c56ae903f84b8066f526d8788a8f"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "git_blob": "71ca27cac7d021cd13990bf6e68abe37209dd49d",
+      "sha256": "2d3102c1604e8abb5e02ef20b1dc0a7fae3a93cd107934025329e18a015cddc6"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Build.props",
+      "git_blob": "42131cd740450f08305e95b08b855cfb981c022a",
+      "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Packages.props",
+      "git_blob": "768d4ae02403f682963025d762ff7ed022a9c18d",
+      "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "AGENTS.md",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/09-parallel-development.md",
+      "git_blob": "2acb2a1935bec3283488523437d7b94764aaf9d2",
+      "sha256": "5d5da99193c5c08df8774268a6eff59fbd9111601a0cfbf52b352c315b253c38"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "d1c486a70332da55db1d9e0cd8e1fa0a30309cd0",
+      "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "d1c486a70332da55db1d9e0cd8e1fa0a30309cd0",
+      "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/08-postgresql-baseline.md",
+      "git_blob": "1956afc1e6e90719703a25e78a68e3a3a8e0877c",
+      "sha256": "b07b25829750b6c25b22472ac6834f961a627cc80146e1750597af7654ab699c"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/assessments/20261011/implementation-assessment.json",
+      "git_blob": "13b2ac31e0156861e5606d05308d6021b738aae3",
+      "sha256": "ebab2fbbc2ffdc02abcf58b4eb75358ea3db3d03e5529f47886dd58bce100cb8"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/modules/PLT-DEL-01.md",
+      "git_blob": "1315781efd898e39c76e73654f99cd2980639921",
+      "sha256": "89a72c635c743f9f95f33c0a62a14ac32674a8b92fb6313481b1d21f85a929e9"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "git_blob": "e0da267b79bf24cea6df4a6abd2d1e5c2cd068d4",
+      "sha256": "6af601f92d8a3f3b347358313bd6d3c199581a0fd93650b3c6c7090249329417"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/remediation/03-transactions-and-recovery.md",
+      "git_blob": "601bb530c6c3a7d9c58b3b73f887a04c93facabb",
+      "sha256": "a294263d13b8a4710cb66bad6c2e9365200042167274281cbf5fc57b07196da1"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/remediation/assets/finance-recovery/contracts.schema.json",
+      "git_blob": "54399c2a57e760fb239fa32f9e610a4bd976b619",
+      "sha256": "e4089ec1c8c2bdd18ae5f4099c7e65adbdeb4a7f4e61fa64a51147fc0779b9c3"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/remediation/assets/finance-recovery/owner-adoption.json",
+      "git_blob": "465d522e2b47e787d0839b993827b54549b95db5",
+      "sha256": "aa0c9f14976c7e377985d8477bdb213f93cfe364f0ecf90b09260c6f7ce7610b"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-integration-20261013/WP02-07/remote-main.json",
+      "git_blob": "ddb780c9144cb3b66866cb27773bc275ecbc77a4",
+      "sha256": "60869dcbbbd856682972c99baf3579145e6bbc0734d13368b7d0f3ea37d7ed5a"
+    },
+    {
+      "repository": "Main",
+      "commit": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-integration-20261013/WP02-07/review.md",
+      "git_blob": "f8f3cad0e64247bfa85beee339ed19030eb574df",
+      "sha256": "878b0ca250e4c793192351979895dcac110aa8f1f8a5ec88b027b40dc39e8ccd"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+      "git_blob": "9290657b715bf43a02cfec0ff275541b949f8ffa",
+      "sha256": "3b7d35337689233f1fe942027387b9f37795dbf16c9d8a5f3669f0f48a01f6a4"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxTransactionV1.cs",
+      "git_blob": "2f8cb604fef3aae87c36bac07f309d4cda1f2776",
+      "sha256": "137a0c34019ad084fc361c4d2779bf30f7effbe7e430ac71d827f55b1188ee1a"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/InboxV1/InboxModelV1.cs",
+      "git_blob": "aed8024a4333e4926665cc3842df3ada6fb5adf9",
+      "sha256": "109fad016ac38e9bbbca2433ce3513395931602059acc7a521d88346306215d2"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "git_blob": "c2d10c851bb2567da7dd7cafd8645864d49023f2",
+      "sha256": "6719ee9fbd678ef907b0d92052b695a2785deae5788658d52a96ac433727a1ba"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxDispatcher.cs",
+      "git_blob": "d74a85939bfafe8c7c0cc9d440c76d7a78b51b6e",
+      "sha256": "dd36732855b1475252d3a306e17a367078f4b8b22687d112536171b60716bd7a"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+      "git_blob": "c682d6c5d599710c32bb20c84d2bc3a16c5b35df",
+      "sha256": "777769155fe34deb711b3b6c7eeb21d35721a7b89f23006bb85bb0b67f45163e"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingEntities.cs",
+      "git_blob": "98f2018c17ecb39e9e990fa3feff6bf9ea881a67",
+      "sha256": "c32242f04a47ad0007a690896973905fa79bba04d254510f3212ddeef4d07e2d"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs",
+      "git_blob": "5459f5f3896a8bf9346466659b7124aabdde9662",
+      "sha256": "ca15dd53295f441fe11797c98368de50b02b16341b633d624f8b0941c7e97264"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingTypes.cs",
+      "git_blob": "f9160b6ca6e86774b609d3b2142dc0894d882c0a",
+      "sha256": "c15a04b3fc92245fea5aaedec18cb20389b85b161c8473453cbe286f4b930683"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+      "git_blob": "bb657b86972c7d1d835c32c0e1c8a8d762860584",
+      "sha256": "4662f202793a8185e088c793387b04c384c37ceb791dfd631da5f781cf8d1dc6"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/Directory.Packages.props",
+      "git_blob": "af849691d05081de51fde82108a8f6b879e0f9c8",
+      "sha256": "c5d73cd73f28635ed28e6b3aa3b4268ddd72a1ddb61357a952beca62f1585a39"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/PgFixture.cs",
+      "git_blob": "3ce4f1b0dc1feeec5bc0faca43f89cb5dbad3cfb",
+      "sha256": "a955a31dbf69ca6ab6210c8bdf1496261a7f630fd301ddc749f5fa6c21b5e80c"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/pg_resource.py",
+      "git_blob": "0402dfb4697fddaadc6fa2639d96761a61f7e318",
+      "sha256": "2000913ea8a0342f472ce55b403fab517be5a38e7c1f0a5d8177c8f40f746e8f"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "git_blob": "30b7857046279e978db3e12d443d65bdecc242fb",
+      "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Packages.props",
+      "git_blob": "768d4ae02403f682963025d762ff7ed022a9c18d",
+      "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "git_blob": "71ca27cac7d021cd13990bf6e68abe37209dd49d",
+      "sha256": "2d3102c1604e8abb5e02ef20b1dc0a7fae3a93cd107934025329e18a015cddc6"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "global.json",
+      "git_blob": "4c4c3ae5ed709aa83aa03569d2c1f6792c553165",
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/development/evidence/WP02-07/PLAN.md",
+      "git_blob": "f85b528ce1aa807d2b855e2d0cdd29e5eac70526",
+      "sha256": "9fae1eab3ed9338e2b21b37ebb6a3334b0d97471752633c5c0d252118ca93e7f"
+    },
+    {
+      "repository": "Platform",
+      "commit": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "git_blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d",
+      "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1"
+    }
+  ],
+  "archived_original_inputs": [
+    {
+      "target": "PLT-DEL-01",
+      "source_path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+      "sha256": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84",
+      "case_count": 60,
+      "result": "NOT_RUN"
+    },
+    {
+      "target": "PLT-OBS-01",
+      "source_path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/20c9a128b3f2bab0__PLT-OBS-01_完整静态设计_v0.1.md",
+      "sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+      "case_count": 32,
+      "result": "NOT_RUN"
+    }
+  ],
+  "unchanged_business_ledger": true,
+  "unchanged_other_tasks": true,
+  "write_windows_disjoint": true,
+  "done_tasks": 20,
+  "business_result": "NOT_RUN"
+}

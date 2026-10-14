@@ -1,0 +1,85 @@
+# WP02-08 admission — wave6 (read-only)
+
+**READY for a bounded Platform library implementation**, once COORD registers the unique assignment and exact write window. This assessment does not change the current PLANNED ledger, authorize a host rollout, or certify any runtime acceptance.
+
+Main is `9a0155dec1c3366df8a6631f3d8fdb086aa32fc8`; its local main/origin/main match and existing unrelated untracked material is untouched. The clean Platform integration worktree is `e5c63a28c94bae4cc66ec50fbe6079553c03d0d0`, also matching local main/origin/main. WP02-07 is DONE in Main; candidate `872acec044eb09bc96660f696844c86127b508bd` is an ancestor of Platform HEAD, and its InboxV1/private tests are unchanged. Prior remote containment is recorded in Main `docs/development/evidence/wave5-integration-20261013/WP02-07/remote-main.json:1–9`. No fresh remote query was made here; COORD retains that intake responsibility.
+
+## Sources and precise scope
+
+- Task contract: [WP02.md](D:/CP6/docs/development/task-plans/WP02.md:498), lines505,519–520,540–544. Sole direct predecessor is WP02-07. Required behavior is epoch/nativeRV/expiry final CAS, same-key Unknown recovery, Owner hold and receipt-reference retention closure.
+- Accepted original: [PLT-DEL v0.2.1](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md:110), SHA256 `642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84`, verified locally. Lines110–118 fix companion models and compatibility; lines140–184 fix the complete lease-v2 protocol; lines228–242 fix retention; lines246–267 preserve adoption boundaries.
+- [Foundation catalogue](D:/CP6/docs/development/assessments/20261011/catalogs/foundation.json:6116) enumerates all60 original AC. COMPLETE means enumeration, not execution. [Assessment](D:/CP6/docs/development/assessments/20261011/implementation-assessment.json:16519) records the known gaps; its historic dual-provider wording is superseded by the PostgreSQL-only baseline.
+- [R1 remediation](D:/CP6/docs/design-handbook/remediation/03-transactions-and-recovery.md:79), [Owner adoption](D:/CP6/docs/design-handbook/remediation/assets/finance-recovery/owner-adoption.json:349) and [NativeUow structural schema](D:/CP6/docs/design-handbook/remediation/assets/finance-recovery/contracts.schema.json:176) preserve actual Owner/current-authority/native-UoW evidence. A serialized proof does not establish a live transaction.
+
+## Current implementation facts
+
+1. [Cp6OutboxStore](D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs:24) Enqueue only adds to the caller context. Claim at42–114 is legacy conditional update; completion at224–236 checks only ID/Dispatching/owner/token. It has no persisted route epoch, immutable claim/mutation receipt or explicit expiry final gate. Requeue at181–218 owns its own transaction.
+2. [Cp6OutboxDispatcher](D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6OutboxDispatcher.cs:49) publishes and marks Published in one try. Generic failure at70–76 calls MarkFailed even when transport succeeded and the database completion failed.
+3. [Cp6MessageRetentionService](D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs:17) opens its own transaction and bulk-deletes native Outbox/Inbox/DLQ by age/status only. It has no Owner eligibility or reference/hold protocol.
+4. Legacy native [Outbox RowVersion](D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingEntities.cs:71) is `byte[]`; the [mapping](D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs:42) simply calls IsRowVersion. This is not a proven PostgreSQL native token implementation. WP02-07 uses a separate opt-in [uint/xmin model](D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/InboxV1/InboxModelV1.cs:122); do not silently change the legacy public type or claim it already provides V2 guarantees.
+5. [InboxV1 integration contract](D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/WP02-07-CALLER-TRANSACTION-INBOX.md:8) supplies the caller-owned transaction/confirmed-result precedent. Its [transaction capability](D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/InboxV1/InboxTransactionV1.cs:70) accepts exactly seven ordered advisory locks with no prior locks. Outbox requires a separate root protocol; inserting its root into the Inbox sequence is forbidden without a new Owner lock-order proof. Real Main/CRM adoption remains UNPROVEN.
+
+## Proposed exact write window
+
+| Path in Platform | Allowed work |
+|---|---|
+| `src/CP6.Platform.EntityFramework/OutboxV2/` | Add versioned typed EF-library contracts, native PG adapter/model, caller transaction capability, claim/renew/complete/query/drain/epoch operations, dispatcher and controlled retention seam. |
+| `src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs` | Narrow opt-in/bound-row bypass guards for legacy claim/complete/failure/requeue; preserve unbound-route API and semantics. |
+| `src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs` | Narrow guard against deletion of V2-owned native rows and dependent DLQ/reference evidence; no change to ordinary legacy defaults. |
+| `src/CP6.Platform.EntityFramework/Cp6OutboxDispatcher.cs` | Conditional narrow route-selection/fail-closed compatibility gate if required; new implementation stays in OutboxV2. No shared telemetry edits. |
+| `tests/CP6.Platform.UnitTests/OutboxV2/` | Dedicated behavior/compatibility tests. |
+| `tests/CP6.Platform.WP0208.PostgreSqlTests/` | New nonpackable project, child dependency props, real PG fixture/tests and guarded task-only resource helper. |
+| `docs/WP02-08-OUTBOX-V2.md`, `docs/development/evidence/WP02-08/` | Integration API/disabled adoption boundary, full60AC mapping, all actual local logs/TRX/fault evidence and source/artifact identities. |
+
+COORD must register this refinement: the historic card's no-new-paths list is not an implementation restriction that justifies patching unrelated shared files. Reserve `Platform:delivery-storage` plus actual file windows; remove the read-only Inbox source reservation only with a recorded coordination decision. [Parallel development rules](D:/CP6/docs/development/09-parallel-development.md:34) require this before implementation.
+
+Read-only/outside the window: `Cp6InboxProcessor.cs`, `InboxV1/`, legacy entity/type/model files, Contracts, Abstractions, Testing, Messaging, AspNetCore, shared telemetry helpers, existing shared test files, root props/global.json/solution, runtime csproj/dependencies, workflows, Release/Deployment. This avoids [WP02-25](D:/CP6/docs/development/task-plans/WP02.md:1666) Contracts/Testing/observability ownership. Any necessary shared-model/API/dependency change must first receive a serial COORD window. Main roadmap/progress/four status files remain coordinator-owned at task delivery.
+
+## Versioned implementation constraints
+
+- Implement opt-in `cp6-outbox-lease-v2`, not an enlarged legacy claim constructor. Preserve current enums, DTOs, Enqueue and DispatchBatch compatibility. Keep original native Outbox as authority; RouteControl, LeaseBinding, ClaimReceipt and LeaseMutationReceipt are same-database technical companions, not a second queue or business ledger. Preserve global MessageId uniqueness, TenantId and exact original bytes/hash domains.
+- Freeze `ClaimBatchV2 / CompleteClaimV2 / RenewClaimV2 / QueryClaimMutationV2 / BeginDrainV2 / AdvanceEpochV2` and caller-owned `DeleteEligibleInTransactionV1` in the task plan. New public library types belong in the EF versioned namespace, not shared Contracts. No public arbitrary-delivery or mutation HTTP endpoint is requested.
+- Require live caller-owned connection/transaction, trusted tenant/Owner/route/worker registration, actual same-root native locks through commit, and DB UTC at the final state-update gate. Lock order: applicable existing Owner authorization/business root → RouteControl → stable native-ID order → Binding → receipt/DLQ/audit. No network publish while holding those locks. Strict expiry is `fenceAtUtc < expiry`; equal is Expired. Do not use transaction-start/worker time as a stale completion clock.
+- Claim writes epoch/claim/token/attempt once, then reads both actual post-write native and Binding tokens, stores the complete immutable ticket/receipt, and returns Prepared only. Commit confirmation or authoritative receipt read may mint Committed; raw caller booleans must not manufacture it. PG token mapping/opaque codec must be explicit and tested; do not reinterpret legacy byte[] as an unversioned int, manufacture tokens, substitute root RV, or overwrite expected values from current rows. xmin is transaction-scoped: do not mutate native/Binding again after recording the final ticket in that transaction.
+- Same claimRequestId/mutationId + exact immutable tuple returns the original result with no new attempt/state/DLQ writes; changed tuple conflicts. Historical claim lookup does not grant send permission: revalidate current claim and lease budget. Renew and completion are serial within a claim. PendingCommit, definite pre-write rejection, and OutcomeUnknown remain distinct.
+- Separate transport from database completion. Publish success followed by local failure/unknown retains UNCERTAIN_DELIVERY and the original message/mutation tuple; never calls old MarkFailed, replaces tokens or creates a new business operation. Query absent/uncertain evidence stays Unknown. Real network exactly-once is not promised.
+- Active/Draining/Blocked/Retired are durable root states. Draining stops new claim/renew; same-epoch valid completions remain legal. Advance requires no live claim, authoritative resolution of unknown transactions, bounded complete handover of nonterminal rows, and atomic epoch/binding/history changes. Missing provider/mapping/migration/writer/cutover evidence keeps the profile disabled. A missing V2 root is never a V1 fallback.
+- Explicitly fence every old writer on a V2-bound row: claim, Published/failure, requeue and retention, including dependent DLQ records. Startup config alone cannot prove this. Prefer an additive PG native adapter/explicit opt-in model using existing relational DbCommand APIs so runtime dependencies need not change. Preserve legacy native table/PK/index contracts; any storage/token migration belongs to actual Owner adoption.
+- Retention accepts exact candidates plus versioned Owner policy, native version, terminal receipt, required-consumer set, hold/unknown/conflict and dedup/archive evidence. Recheck under the same root as hold/replay/finalization and append audit in the caller transaction. Missing closure/policy is Retained/Unknown/PolicyUnavailable. TTL alone is never permission; InboxV1 original-result/outcome references remain protected. Payload erasure cannot imply business non-execution.
+
+## Original acceptance and failure tests
+
+Retain a60-entry mapping copied by exact ID/source SHA from the catalogue, with separate library-test and original-business-execution fields. No full original AC becomes PASS merely because a fixture passes.
+
+| Original IDs | WP02-08 proof required |
+|---|---|
+| DEL03-A1–A7 (original122; catalogue6329+) | Legacy table/API compatibility; genuine PG tokens/shared transaction; missing migration/model/writer readiness closes profile; no unknown legacy data backfill; same-key uniqueness conflict; redacted diagnostics. |
+| DEL04-A1–A8 (original180,182; catalogue6406+) | Primary scope: committed ticket, original-message recovery, full final gate, split publish/commit failures, bounded attempts+atomic DLQ, exact Unknown lookup, both epoch-race orderings and old API bypass exclusion. Preserve A6's definite-zero-write versus committed-response-lost subcases. |
+| DEL06-A1–A8 (original240; catalogue6604+) | Safe technical candidate deletion/hold/reference/dedup closure and conservative missing evidence; real Owner legal policy, revocation horizon and archive restore remain unproven. |
+| DEL07-A1–A9 (original265; catalogue6692+) | Fixture caller tx/connection and complete technical graph, same-key recovery, single-root all-writer tests and retained history. Main/CRM adoption, actual migrations/cutover and final IAM/writer closure remain NOT_RUN. |
+| DEL01/DEL02/DEL05 remainder | Keep original IDs and explicit preserve/deferred/Owner scope. WP0207 reuse is narrow original-source evidence, not a new Inbox or business replay completion claim. |
+
+Required PG scenarios include: competing workers and request-ID reentry; native/binding/version/epoch/tenant/hash tampering; exact expiry boundary; stale worker after renewal/epoch switch; Draining behavior; completion-first versus advance-first barriers; token-generation timing; rollback of native+binding+receipt+DLQ+audit; publish-before/after failure and actual COMMIT followed by suppressed confirmation; identical mutation lookup after later epoch changes; actual23505/40001 rollback followed by original-key admission; hold-first versus cleanup-first and reference/consumer obligations; every legacy bypass; absent root/mapping/policy; current read grant versus new-write grant. Never treat InMemory/SQLite, mocks, skipped tests or actual-broker NOT_RUN as PostgreSQL/production success. An application fault injection after real COMMIT is useful but must retain that exact label.
+
+## Local verification and resource proposal
+
+Create `tests/CP6.Platform.WP0208.PostgreSqlTests/CP6.Platform.WP0208.PostgreSqlTests.csproj` as net8.0, nonpackable, referencing EntityFramework. Its child `Directory.Packages.props` imports root and pins Npgsql8.0.8/provider8.0.11, following [WP0207 precedent](D:/CP6.Platform-worktrees/wave5-integration-20261013/tests/CP6.Platform.WP0207.PostgreSqlTests/Directory.Packages.props:1). Inherit EF8.0.30, testSDK17.14.1, xunit2.9.3 and runner3.1.4. Do not add dependencies to root or weaken the [architecture allowlist](D:/CP6.Platform-worktrees/wave5-integration-20261013/tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs:309).
+
+Observed local environment: user-local `C:/Users/tt/.dotnet/dotnet.exe` resolves8.0.424. PATH's `C:/Program Files/dotnet/dotnet.exe` has only10.0.302 and fails the repository8.0.100/latestFeature pin. PostgreSQL executable reports18.6. Port55428 has zero listeners; `D:/CP6-local-test/WP02-08/` does not exist. Observation clock was2026-10-14T03:04:34.8821079Z (host UTC, not server time).
+
+Reserve `127.0.0.1:55428`, `D:/CP6-local-test/WP02-08/<owner32>/`, marker `CP6-WP02-08:<owner32>`, new private SCRAM credentials/database and least-privilege runtime role. Use `CP6_WP0208_SETTINGS`; never read WP0207/production credentials or modify5432. Before DDL/test/shutdown verify canonical paths, full owner marker, endpoint, system identifier, DB OID/name/owner and runtime principal. Unexpected sessions fail closed; stop only the owned cluster smart, retaining data/logs. The report proposes this resource and has not provisioned it.
+
+Future commands, after guarded setup (all NOT_RUN here):
+
+```powershell
+& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj --filter 'FullyQualifiedName~OutboxV2|FullyQualifiedName~TransactionalMessagingContractTests|FullyQualifiedName~TransactionalMessagingTelemetryTests' --logger 'trx;LogFileName=wp0208-unit.trx'
+& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.WP0208.PostgreSqlTests/CP6.Platform.WP0208.PostgreSqlTests.csproj --logger 'trx;LogFileName=wp0208-postgresql.trx'
+& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj --logger 'trx;LogFileName=wp0208-architecture.trx'
+```
+
+Build is covered by the targeted test projects. Reuse unchanged WP0207 source-bound evidence without claiming a rerun; rerun its affected tests only if final changes create an actual Inbox impact. Complete one concentrated task review including tenant/concurrency/Unknown/retention risks; preserve source SHA/blobs, actual SDK/dependency identities, compiled artifact hashes, all failures and TRX, resource identity and unused acceptance scope. Do not run the whole solution or SQL Server fixture for this PG-only task.
+
+Keep all release/package/deployment gates unchanged. Known Platform workflow `p10-rfc3161-preflight.yml:3–8` still has a PR trigger restricted to itself and its release contract test; proposed task paths do not match. COORD must recheck actual candidate and protected-base workflow bytes/filters plus run attribution immediately before every push/PR. This assessment triggered/cancelled no Actions, made no remote write, and performed no database operation or test.
+
+All exact evidence paths/line ranges, proposed commands, dependency pins and risks are in sibling `admission-outbox.json`.
+

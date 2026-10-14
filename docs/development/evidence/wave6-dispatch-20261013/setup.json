@@ -1,0 +1,76 @@
+{
+  "observed_at": "2026-10-14T03:05:45.803730+00:00",
+  "clock_basis": "coordinator host UTC",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "queued_or_running": []
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "queued_or_running": []
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": []
+    }
+  },
+  "tasks": [
+    {
+      "id": "WP01-01",
+      "lane": "A",
+      "previous_task": "S01-12",
+      "repository": "Main",
+      "repo_slug": "GTX537/CP6",
+      "branch": "codex/wp01-01-admission-prep-20261013",
+      "worktree": "D:/CP6-worktrees/wp01-01-prep-20261013",
+      "baseline": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp01-01",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/"
+    },
+    {
+      "id": "WP02-02",
+      "lane": "B",
+      "previous_task": "WP02-27",
+      "repository": "Main",
+      "repo_slug": "GTX537/CP6",
+      "branch": "codex/wp02-02-consumption-prep-20261013",
+      "worktree": "D:/CP6-worktrees/wp02-02-prep-20261013",
+      "baseline": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-02",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/"
+    },
+    {
+      "id": "WP02-08",
+      "lane": "C",
+      "previous_task": "WP02-07",
+      "repository": "Platform",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-08-outbox-20261013",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-08-20261013",
+      "baseline": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-08",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-08/messages/"
+    },
+    {
+      "id": "WP02-25",
+      "lane": "D",
+      "previous_task": "WP02-11",
+      "repository": "Platform",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-25-observability-20261013",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-25-20261013",
+      "baseline": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-25",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-25/messages/"
+    }
+  ],
+  "scope": "Created clean isolated task branches/worktrees only. No worker START, product changes, build, database or deployment."
+}

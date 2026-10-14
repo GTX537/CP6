@@ -1,0 +1,1662 @@
+{
+  "assessment": "WP02-02 trusted Platform consumption admission",
+  "created_utc": "2026-10-14T03:08:42.868094+00:00",
+  "task_id": "WP02-02",
+  "repository": "Main",
+  "assignment_mode": "PREPARATION_ONLY",
+  "recommended_state": "BLOCKED",
+  "recommended_entry_gate": "NOT_CHECKED",
+  "task_count_delta": 0,
+  "done_count_delta": 0,
+  "basis": {
+    "Main": {
+      "path": "D:\\CP6",
+      "sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "local_main": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "local_origin_main": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+    },
+    "Platform": {
+      "path": "D:\\CP6.Platform-worktrees\\wave5-integration-20261013",
+      "sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "local_main": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "local_origin_main": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0"
+    },
+    "fresh_remote_readback_performed": false,
+    "implementation_task_count": 375,
+    "current_task": {
+      "id": "WP02-02",
+      "package_id": "WP02",
+      "title": "Main PostgreSQL租户存储布局与隔离采用",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-TENANT-01",
+        "PLT-CTX-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "S02-00",
+        "WP02-01"
+      ],
+      "exclusive_resources": [
+        "Main:tenant-storage",
+        "Main:ef-model",
+        "file:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+        "file:Main:CP6.Core/Services/Platform/TenantAdminService.cs",
+        "file:Main:CP6.WebApi/Controllers/Sys/AuthController.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "BLOCKED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-02",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": null,
+      "blockers": [
+        "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
+      ],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "entry_conditions": [
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ]
+    }
+  },
+  "recommendation": "Dispatch Main task-private consumption admission, reproducible source/API inventory and formal-package preparation plan now. Preserve production package/trust/host/DB configuration. Prefer existing formal-package route; source fallback is not approved qualification.",
+  "write_paths": [
+    "eng/wp02-02/consumption/**",
+    "docs/development/evidence/WP02-02/consumption-preparation/**"
+  ],
+  "write_notes": "New task-private checker/schema/test project/fixtures and reproducible evidence only. Task-local csproj allowed; no root project/solution/props/lock edits. Fixed producer source may be inspected or built in explicitly isolated temporary output; never edit shared producer checkout or use machine-specific production ProjectReference. COORD alone updates roadmap/generated/state files. Future Platform version-registration is a separate precisely granted preparation window, not part of this Main worker write permission.",
+  "exclusive_resources": [
+    "Main:host-package-adoption",
+    "path:Main:eng/wp02-02/consumption",
+    "path:Main:docs/development/evidence/WP02-02/consumption-preparation"
+  ],
+  "checks": [
+    "Pin Main/Platform repository/full source SHA, clean source bytes, SDK/runtime and dependency inputs independently; generate Main project/lock closure and proposed adopted identity.",
+    "Reject actual 0.10.2 for missing ctx-binding-v1; reject actual wp02.27 local candidate for formal admission; reject source/feed/hash/mixed versions/schema mismatch/unknown compatibility. No fabricated successful publication fixture reported as real qualification.",
+    "Inspect required context public API signatures and packaged schema bytes; task-local compile/runtime probe may prove contract plumbing with explicitly synthetic verifier/authority only, never real Main host adoption.",
+    "Record source, shape, artifacts, trust, consumer, host, runtime and business states separately. Pending signed feed identity is BLOCKED/NOT_RUN.",
+    "Enumerate impacted existing lock files; leave P10 ReleaseVerifier 0.10.1 tool independent and do not overclaim seven-package runtime consumption.",
+    "Prepare exact next formal version registration proposal across API/schema/Capabilities/P10 writer workflow/scripts/tests; preserve old version semantics, policy/certificates, one-build, protected approval, timestamp/revocation and immutable byte-preserving readback.",
+    "Targeted task checker/tests plus single full preparation diff review; no full business suite or DB for preparation. Check candidate and protected-main workflows before later push/PR; no Actions dispatch."
+  ],
+  "boundary": "WP02-02 stays BLOCKED/NOT_CHECKED. No Core/WebApi/Space/Persistence/production csproj or lock, NuGet.config, Program/DI/EF/migrations/storage changes. No database/Actions/private keys/formal publication or production deployment. No new task/DONE count; preparation does not satisfy the original 17 PGT cases or WP02-28. Source-adoption exception remains unapproved.",
+  "commands": [
+    {
+      "kind": "existing_read_only",
+      "cwd": "D:/CP6",
+      "argv": [
+        "git",
+        "rev-parse",
+        "main",
+        "origin/main"
+      ]
+    },
+    {
+      "kind": "existing_read_only",
+      "cwd": "D:/CP6.Platform-worktrees/wave5-integration-20261013",
+      "argv": [
+        "git",
+        "rev-parse",
+        "main",
+        "origin/main"
+      ]
+    },
+    {
+      "kind": "proposed_entry_point",
+      "argv": [
+        "python",
+        "eng/wp02-02/consumption/verify.py",
+        "--input",
+        "<independently-approved-input-manifest>",
+        "--output",
+        "<new-task-owned-output-directory>"
+      ],
+      "note": "Worker implements this entry point; not currently claimed to exist. Read-only input, exclusive new output, no publisher/signing/Actions subcommands."
+    },
+    {
+      "kind": "proposed_test_entry_point",
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "eng/wp02-02/consumption/tests"
+      ],
+      "note": "For Python checker implementation; choose equivalent targeted dotnet tests only if actual implementation requires it."
+    },
+    {
+      "kind": "existing_diff_check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ]
+    }
+  ],
+  "source_pins": {
+    "old_formal_source": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+    "ctx_delivery": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+    "local_candidate_source": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+    "local_candidate_version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+    "WP02-07_delivery": "817a2926b0799f70cc87f384967e0883c1943ec5",
+    "WP02-27_delivery": "51706965ec1e2363a8f4db8c730983b1313fdbfd",
+    "WP02-11_delivery": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0"
+  },
+  "old_local_candidate_state": {
+    "artifactBytesVerified": "Verified",
+    "businessApplied": "Unknown",
+    "compatibility": "Unknown",
+    "configEnabled": "Unknown",
+    "consumerQualified": "Unknown",
+    "contractShapeValid": "Verified",
+    "hostRegistered": "Unknown",
+    "independentlyAccepted": "Unknown",
+    "publicationStatus": "NOT_PUBLISHED",
+    "runtimeObserved": "Unknown",
+    "sourceFrozen": "Verified",
+    "trustCurrentlyAccepted": "Unknown",
+    "trustStatus": "NOT_FORMALLY_TRUSTED"
+  },
+  "consumer_direct_references": [
+    {
+      "path": "CP6.Core/CP6.Core.csproj",
+      "ids": [
+        "CP6.Platform.Messaging",
+        "CP6.Platform.EntityFramework"
+      ],
+      "version": "[0.10.2]"
+    },
+    {
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "ids": [
+        "CP6.Platform.AspNetCore"
+      ],
+      "version": "[0.10.2]"
+    },
+    {
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "ids": [
+        "CP6.Platform.EntityFramework"
+      ],
+      "version": "[0.10.2]",
+      "scope": "separate probe"
+    },
+    {
+      "path": "tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj",
+      "ids": [
+        "CP6.Platform.Release"
+      ],
+      "version": "[0.10.1]",
+      "scope": "historical P10 verifier, outside runtime adoption unless separately justified"
+    }
+  ],
+  "consumer_lock_inventory": [
+    {
+      "path": "CP6.Core/packages.lock.json",
+      "sha256": "af945b670a5792b9d246e0e7a72e25fa83f9f9531159707aee46dfedab990ca4",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Direct",
+          "requested": "[0.10.2, 0.10.2]",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Direct",
+          "requested": "[0.10.2, 0.10.2]",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        }
+      ]
+    },
+    {
+      "path": "CP6.Oidc.IntegrationTests/packages.lock.json",
+      "sha256": "5ce62f06bd5ecc366a310c19b82b3c5325453d4ed6ce7620831138675bb8943e",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.AspNetCore",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "leLZYVPszaY+3Qu57gYtow4zMJHRgwgmFPvE44zeDD58s0cnR17Vek7UnJP5ZhgG1fBQQ2QYzEW/5TIsZNcx7w==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.30",
+            "Microsoft.Extensions.Http.Resilience": "10.9.0",
+            "OpenTelemetry.Extensions.Hosting": "1.18.0",
+            "OpenTelemetry.Instrumentation.AspNetCore": "1.18.0",
+            "OpenTelemetry.Instrumentation.Http": "1.18.0",
+            "Yarp.ReverseProxy": "2.3.0"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "CP6.Persistence.PostgreSql/packages.lock.json",
+      "sha256": "fa7308fb66b2316e4f6b3c8ffea97586969d90c53312db5fb2b3081c32a71501",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "CP6.Space.Infrastructure/packages.lock.json",
+      "sha256": "9e2417b3b22829454ebfdb24abb6bb7707aa1e66a677c562c73d949cf7276504",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "CP6.Space.IntegrationTests/packages.lock.json",
+      "sha256": "632f0df04d9526036a6ff266cb6285893ba35930cf593a1fb9f3e68a4f00cab0",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "CP6.Tests/packages.lock.json",
+      "sha256": "6b4049ed056300bfd91331f9cf0835e8cee6a8d616cc3338bff957f01e28498e",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.AspNetCore",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "leLZYVPszaY+3Qu57gYtow4zMJHRgwgmFPvE44zeDD58s0cnR17Vek7UnJP5ZhgG1fBQQ2QYzEW/5TIsZNcx7w==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.30",
+            "Microsoft.Extensions.Http.Resilience": "10.9.0",
+            "OpenTelemetry.Extensions.Hosting": "1.18.0",
+            "OpenTelemetry.Instrumentation.AspNetCore": "1.18.0",
+            "OpenTelemetry.Instrumentation.Http": "1.18.0",
+            "Yarp.ReverseProxy": "2.3.0"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "CP6.WebApi/packages.lock.json",
+      "sha256": "533ad0910797142c5b547f873a3d2db5bf23791e0183ab701e4801bfb3cf5650",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.AspNetCore",
+          "type": "Direct",
+          "requested": "[0.10.2, 0.10.2]",
+          "resolved": "0.10.2",
+          "contentHash": "leLZYVPszaY+3Qu57gYtow4zMJHRgwgmFPvE44zeDD58s0cnR17Vek7UnJP5ZhgG1fBQQ2QYzEW/5TIsZNcx7w==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.30",
+            "Microsoft.Extensions.Http.Resilience": "10.9.0",
+            "OpenTelemetry.Extensions.Hosting": "1.18.0",
+            "OpenTelemetry.Instrumentation.AspNetCore": "1.18.0",
+            "OpenTelemetry.Instrumentation.Http": "1.18.0",
+            "Yarp.ReverseProxy": "2.3.0"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "eng/contracts/postgresql-tests/packages.lock.json",
+      "sha256": "693a1940b47c2cc21dfb0fa374cb0c8aac17a342e5e493a1cd07aad186fd493e",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/erp-integration-tests/packages.lock.json",
+      "sha256": "319e3c8e46d05a673930aa6285225255aad2724eedde6160ce6a1278bd0f1ccb",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.AspNetCore",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "leLZYVPszaY+3Qu57gYtow4zMJHRgwgmFPvE44zeDD58s0cnR17Vek7UnJP5ZhgG1fBQQ2QYzEW/5TIsZNcx7w==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.30",
+            "Microsoft.Extensions.Http.Resilience": "10.9.0",
+            "OpenTelemetry.Extensions.Hosting": "1.18.0",
+            "OpenTelemetry.Instrumentation.AspNetCore": "1.18.0",
+            "OpenTelemetry.Instrumentation.Http": "1.18.0",
+            "Yarp.ReverseProxy": "2.3.0"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/erp-live-fixture/packages.lock.json",
+      "sha256": "0b273f3c0f795185a2aa8ef2d962eea9554059ac516e9248ced634215b68e9b6",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.AspNetCore",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "leLZYVPszaY+3Qu57gYtow4zMJHRgwgmFPvE44zeDD58s0cnR17Vek7UnJP5ZhgG1fBQQ2QYzEW/5TIsZNcx7w==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.30",
+            "Microsoft.Extensions.Http.Resilience": "10.9.0",
+            "OpenTelemetry.Extensions.Hosting": "1.18.0",
+            "OpenTelemetry.Instrumentation.AspNetCore": "1.18.0",
+            "OpenTelemetry.Instrumentation.Http": "1.18.0",
+            "Yarp.ReverseProxy": "2.3.0"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/identity-events-fixture/packages.lock.json",
+      "sha256": "68064644a0b9339944daeb2e55cd6f1b838317b545f7f2ae9ba43723ae9afbc8",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.AspNetCore",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "leLZYVPszaY+3Qu57gYtow4zMJHRgwgmFPvE44zeDD58s0cnR17Vek7UnJP5ZhgG1fBQQ2QYzEW/5TIsZNcx7w==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.30",
+            "Microsoft.Extensions.Http.Resilience": "10.9.0",
+            "OpenTelemetry.Extensions.Hosting": "1.18.0",
+            "OpenTelemetry.Instrumentation.AspNetCore": "1.18.0",
+            "OpenTelemetry.Instrumentation.Http": "1.18.0",
+            "Yarp.ReverseProxy": "2.3.0"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/legacy-exit-tests/packages.lock.json",
+      "sha256": "aa8df1477b1c4b7e887ebf438b31db1bd1c005db76aff4bd880f75b138f60212",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/packages.lock.json",
+      "sha256": "564cdb60975168721b1414ebf7f81d2610d82de8aa23796162e0c36f216bdc26",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "tools/CP6.DatabaseCompatibility.MigrationProbe/packages.lock.json",
+      "sha256": "0870ffe8de167adedac011576e7a00585d6fd0c8257f35cf897b3954853fb3a8",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "tools/CP6.DatabaseCompatibility.Probe/packages.lock.json",
+      "sha256": "9e079140fd76ca99dbfcd4ffcd729dc58ef386aa1bdd98454fa262c06bbdd0a9",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Direct",
+          "requested": "[0.10.2, 0.10.2]",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/packages.lock.json",
+      "sha256": "05aa9024359784270d1df572897905df322de7f62539ead18dc0b83393a24f39",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Abstractions",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "8EaLsqWLdpdo2xIpswXzAErAQNxFDTsGgtlL+Zpqe3rCcBV2CJf2ZW3Kb6WI4TO/gORa9EGFBsxHAB4eUqAekg==",
+          "dependencies": {
+            "CP6.Platform.Contracts": "0.10.2"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Contracts",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "FM7hIPGG1714fE+ZBoXwPHPvNMFMW0ZIPRq9FjUQWqgklHKncxsWuVoce9D2yI66pqw0haDxDq2NmDp1wYIB3A=="
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.EntityFramework",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "NiTLD0tp/qopxQZstxNmYhHd3OKOlWNB4NIZ51sRhcUdj8kB445eRtPYAt67nhXYGm94PtyFKT+4Aair5qHumA==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "Microsoft.EntityFrameworkCore": "8.0.30",
+            "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
+          }
+        },
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Messaging",
+          "type": "Transitive",
+          "resolved": "0.10.2",
+          "contentHash": "hOYLRVbfLWFTrWr6fXuhY26oDJX16siW5tDfqiBc3sqSaovtp23kYxNQqaaefVwtrMUlRlw7sAXQg9S1+7tsKQ==",
+          "dependencies": {
+            "CP6.Platform.Abstractions": "0.10.2",
+            "CP6.Platform.Contracts": "0.10.2",
+            "CloudNative.CloudEvents": "2.9.0",
+            "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
+            "Dapr.Client": "1.18.5",
+            "JsonSchema.Net": "9.4.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "tools/p10/PreflightInputs/packages.lock.json",
+      "sha256": "2ba612c23e97447384101684bc8bf804dfede7949d1eedecce86b47141d58db2",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Release",
+          "type": "Transitive",
+          "resolved": "0.10.1",
+          "contentHash": "gUv1KmK9f5BGnljXUVD1APQXX0nPI78siKTAqG6TRaDLmkEmTHfEO9MmLtEoyv5ncVPLHntD88RqzF1Frj+fBA=="
+        }
+      ]
+    },
+    {
+      "path": "tools/p10/ReleaseVerifier.Tests/packages.lock.json",
+      "sha256": "11cebfe6e365df104dd9a053a4970e0d1e995581f289033c75332189505fd008",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Release",
+          "type": "Transitive",
+          "resolved": "0.10.1",
+          "contentHash": "gUv1KmK9f5BGnljXUVD1APQXX0nPI78siKTAqG6TRaDLmkEmTHfEO9MmLtEoyv5ncVPLHntD88RqzF1Frj+fBA=="
+        }
+      ]
+    },
+    {
+      "path": "tools/p10/ReleaseVerifier/packages.lock.json",
+      "sha256": "56f1f5d15ae6cbd833786fcd748e55c41f86768d1ed5b60d10bb93f46ab2a4f8",
+      "platform_dependencies": [
+        {
+          "tfm": "net8.0",
+          "id": "CP6.Platform.Release",
+          "type": "Direct",
+          "requested": "[0.10.1, 0.10.1]",
+          "resolved": "0.10.1",
+          "contentHash": "gUv1KmK9f5BGnljXUVD1APQXX0nPI78siKTAqG6TRaDLmkEmTHfEO9MmLtEoyv5ncVPLHntD88RqzF1Frj+fBA=="
+        }
+      ]
+    }
+  ],
+  "mandatory_user_decision_now": null,
+  "future_authorization_gates": [
+    "New explicit authorization before any Actions/formal publication/signing execution; preserve protected Environment and formal validation gates.",
+    "If choosing source as formal Main qualification, accept an explicit reviewed design revision/exception reconciling actual-feed/no-source-fallback requirement; not implied by task preparation."
+  ],
+  "before_main_adoption": [
+    "New immutable formal package set at final registered source, real feed readback, independently approved source/capability/compatibility, current signer/timestamp/revocation checks.",
+    "Exact COORD Main csproj/lock/host/storage/model/migration window and actual Main package consumer compile/load checks; no source fallback.",
+    "Re-admit original 17 assigned PostgreSQL cases and separately reserve isolated PG resources; host authority and storage isolation remain unproven."
+  ],
+  "required_pgt_cases": [
+    "PGT-001",
+    "PGT-002",
+    "PGT-003",
+    "PGT-005",
+    "PGT-006",
+    "PGT-007",
+    "PGT-008",
+    "PGT-009",
+    "PGT-010",
+    "PGT-012",
+    "PGT-018",
+    "PGT-019",
+    "PGT-021",
+    "PGT-022",
+    "PGT-023",
+    "PGT-024",
+    "PGT-027"
+  ],
+  "fingerprints": {
+    "Main": [
+      {
+        "path": "AGENTS.md",
+        "absolute_path": "D:/CP6/AGENTS.md",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff",
+        "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "69cf203897e0b7a1b6eeb37895b74918db1162b14544e103ddf9361c87bbc299",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/devops/README.md",
+        "absolute_path": "D:/CP6/docs/devops/README.md",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "333545dd150a11819f68a9807a5cd8251257ca29",
+        "sha256": "bf9bab9415366daa24c48e92bd5d5d88983f08b6e4e3428ff462adf6721feebf",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "7472e32f5716f6059e2700060d3e8ad831345eecabf55c66ae58def89dec57d0",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/client/r2/README.md",
+        "absolute_path": "D:/CP6/docs/client/r2/README.md",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "c548db49b8cd96d9d6124dc41b065465b4e752e0",
+        "sha256": "e3927579d6786ba919c21a6a4d6914bfb1bb4addffc43aa98e6bbcfc55a08be0",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "622a5b4b4e90a66eff5c2a347a291dd24ef28c630386bb54a970ce210acb12be",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/09-parallel-development.md",
+        "absolute_path": "D:/CP6/docs/development/09-parallel-development.md",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "2acb2a1935bec3283488523437d7b94764aaf9d2",
+        "sha256": "5d5da99193c5c08df8774268a6eff59fbd9111601a0cfbf52b352c315b253c38",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "c20ec839a2a22971b5f720bce86b0fdef38e6e02bfc26a3ed04637efdc254c89",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/task-plans/WP02.md",
+        "absolute_path": "D:/CP6/docs/development/task-plans/WP02.md",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+        "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "c2a475589063bf7f28ebfe3860e0dd136955d7399359d5c13f0269d518de6239",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/roadmap.json",
+        "absolute_path": "D:/CP6/docs/development/roadmap.json",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "d1c486a70332da55db1d9e0cd8e1fa0a30309cd0",
+        "sha256": "384b5e4ab644e8a0d58e0a99bb5788b41e3e6f46bad17d9fc107d44fda469be8",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "eccbc8129231cc097febf83a7623b3b316c41be07e214c0e9125cc27bcd2f9e6",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/evidence/wave5-dispatch-20261013/admission-pg.md",
+        "absolute_path": "D:/CP6/docs/development/evidence/wave5-dispatch-20261013/admission-pg.md",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "6226c87d5604f723a75ef565a5157dd98896c2ff",
+        "sha256": "8c9f2c67e3c96677c15dbf7ecd82c8048cd09ba4ab08948ec58785995d8bbd45",
+        "working_bytes_equal_committed": true,
+        "working_sha256": "8c9f2c67e3c96677c15dbf7ecd82c8048cd09ba4ab08948ec58785995d8bbd45",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/design-handbook/modules/PLT-RELEASE-01.md",
+        "absolute_path": "D:/CP6/docs/design-handbook/modules/PLT-RELEASE-01.md",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "cf4a6828dde1f35f6c8309159d33daf9ca4bdc58",
+        "sha256": "402ac4d108efb12cfbd5a902751bec5a659578bdd85d999e5025e19080cd2feb",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "2f5fdf4cd61303d11f52ed6eb0c5d2b2bc41dc0d214a43e86dd0916d65466c2c",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "NuGet.config",
+        "absolute_path": "D:/CP6/NuGet.config",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "21a9499d52988046bec0d8b253867ba0fc506778",
+        "sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "14045923bce7cfcdd9f6400c25850c8f964c24b47122dfed45bbdd3d8c33152b",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "Directory.Build.props",
+        "absolute_path": "D:/CP6/Directory.Build.props",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "6f73fc306d1c382d18a9673787202c275d5e51d0",
+        "sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "dd3c34588874b90b6e2d42aa2b51b4e7deedaf22ee34b6bc182160e3d148b739",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "CP6.Core/CP6.Core.csproj",
+        "absolute_path": "D:/CP6/CP6.Core/CP6.Core.csproj",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "a5ca89c3572b6f64a1db409a5b7faada899b5ae9",
+        "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "241aa0f2737a6aa6e2dd3b89d7af9344472c20e306ebd4897db5bcc1b830b2b8",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "CP6.WebApi/CP6.WebApi.csproj",
+        "absolute_path": "D:/CP6/CP6.WebApi/CP6.WebApi.csproj",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "7012e57b353864125e6f220fe29ba821fd1cb572",
+        "sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "4d6d011f12747c8d931da4ffeb0526273cf32a7a862f8eeed1d7a0dccaac7913",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+        "absolute_path": "D:/CP6/CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "10e4572f66dc9d61f79aeedccdee3610aa78556d",
+        "sha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "CP6.Tests/CP6.Tests.csproj",
+        "absolute_path": "D:/CP6/CP6.Tests/CP6.Tests.csproj",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "d274ca3a5779a810127d85b9b28aa237bea58c87",
+        "sha256": "e4c80a21edd137140c51f49f99aaac2d8600cf6474173f89d36747bcb07a5307",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "a965279afeb64c590eb571d7042a8197c83ee2394e26fb9a2daf1449fe9944d8",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+        "absolute_path": "D:/CP6/tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "098be5b195c09fab99a31fdf682e1c3cd70f37c0",
+        "sha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "7e0a20db297877fe3fdf63ac887d49989b2d0b065e84a827381123fb8274dfaf",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj",
+        "absolute_path": "D:/CP6/tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "39142ad1fa51d151ec5c148fb82a8cc5ae831bb4",
+        "sha256": "57efc93fcb1faf75baa63a73ed0c9f100abb1987af3e528374f64d31b8e5b567",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "a8e94ef22441a6a4f4d389b40800f3405c4d966bb7793d4dcd543b02d337a3ca",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/evidence/wave5-integration-20261013/combined-architecture-validation.json",
+        "absolute_path": "D:/CP6/docs/development/evidence/wave5-integration-20261013/combined-architecture-validation.json",
+        "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "blob": "baca97d5f1c58d6ad5f83eb4242f7e1a93ffc1bd",
+        "sha256": "648eded1cfb404a99156ef059d5997e6a06317951f83152ee2aa5cd3c5a295e8",
+        "working_bytes_equal_committed": true,
+        "working_sha256": "648eded1cfb404a99156ef059d5997e6a06317951f83152ee2aa5cd3c5a295e8",
+        "working_content_equal_after_crlf_to_lf": true
+      }
+    ],
+    "Platform": [
+      {
+        "path": "docs/P10-RELEASE-GOVERNANCE.md",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/P10-RELEASE-GOVERNANCE.md",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "c0ddec9125d52bfc2814a70508646b0b90cc22a1",
+        "sha256": "f3ee88fcec49892ed5750cd079d04060ccb62bc5298a21ef9a0265de84e30ff2",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "5b082763e54c7db1cfe60d4d34937955be9d2f6183b7a312552402b28fd08b32",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/WP02-27-PACKAGE-CAPABILITIES.md",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "c1272a44e443cdc103ec84eb73c58289e5d114ee",
+        "sha256": "dd4c5023b8ffc05b5fda984f0bd8f5c9220b9a4d864382d77f32e0a19d46e031",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "a0ed5aedc1aff987785a09d7a78559f452c6f112d522e1c9b7c32b1497bb9d52",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/evidence/WP02-27/COORD-FIX.md",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/development/evidence/WP02-27/COORD-FIX.md",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "151b8e3c5837d12ad3be46a2e00b4ef13f9356d8",
+        "sha256": "c47440a8bfce290d82771d649b769554a76a9dd57bd4643797828ee9cd1c1e2a",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "e6b63d883bae304321cde0eb73d6a76a5ba76a995be6feea2af487e6d7cddd09",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/matrix.json",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/matrix.json",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "5310fcafb197438ee2f79a7f333cd3dd7adc2006",
+        "sha256": "c018745e9c7989179a3003fc7ce5fe42a1627b2ccb160dc3ddeab5fb21ef656c",
+        "working_bytes_equal_committed": true,
+        "working_sha256": "c018745e9c7989179a3003fc7ce5fe42a1627b2ccb160dc3ddeab5fb21ef656c",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/consumer-lock.json",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "df5db6cdd44abf5c07fd04d86457af3552e07bb8",
+        "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+        "working_bytes_equal_committed": true,
+        "working_sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/state.json",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/development/evidence/WP02-27/runs/coord-schema-local-pack/inspection/state.json",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "01b8157b529b92d4677a10616f579779964b2724",
+        "sha256": "14f4880686c9b040c60563c48a3894b73330071f8e99d999ec653ac6a4a3fba2",
+        "working_bytes_equal_committed": true,
+        "working_sha256": "14f4880686c9b040c60563c48a3894b73330071f8e99d999ec653ac6a4a3fba2",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "contracts/release/capabilities/v1/README.md",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/contracts/release/capabilities/v1/README.md",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "2b2d335a2a886bbfda737b64d6cab21da881e547",
+        "sha256": "5b2568b8e03febb694ae6ef01e316fc212fe8edffce9d1d072bfa386903466b7",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "6a5506eb636848aa1f1db05dff82cf7d6cd3094ad0169c07a8c9056785140540",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "6eeb4ac489924716af7078114490162b0fcbb0e8",
+        "sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+        "working_bytes_equal_committed": true,
+        "working_sha256": "54aeabc581130e2119597a44a9b72953ad5fc0db1b3ef282904e108acd9975a1",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "contracts/release/v1/formal-package-publication.v1.schema.json",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/contracts/release/v1/formal-package-publication.v1.schema.json",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "7c951b1ea788bd007b4593c029b7f84515e9f4e1",
+        "sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+        "working_bytes_equal_committed": true,
+        "working_sha256": "4367323087073639828ebd4466f9dbf0b0b700d71123dc11d0fc91334d42d853",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "b8639c708f4b37ce061c0e521c0324b6a2d0acb5",
+        "sha256": "f1e4ac737793e57a7eb08f52b10f1250b002b90f4b791f870e4519455bd2b2ae",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "2442f28094bdc626b4e217a899d840151e4f3f948245658cbcf9a569a4752472",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "8460b68baea84370d73c2cbd4412767916c202be",
+        "sha256": "fefdf49aaf0f86afe448e3a7da1f455609d5d7f57dfc0bbc6ead592484a2a15d",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "c9f61b01091d5aea5f67ed9588e04020342a9bdd1304bc7c9163ef3e4d89bc72",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.Contracts/Context/ContextContractsV1.cs",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.Contracts/Context/ContextContractsV1.cs",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "b0d306b08c10780b1928a5273af902c96d41a09c",
+        "sha256": "2840946a04e1b7599236f4710b904024886a3630ecb867e579efd15231153922",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "f9d8c18d7cab2bf7399039b108b54df5792d9b20c113fb99913a3a0bb2b25786",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.Abstractions/Context/ContextBoundariesV1.cs",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.Abstractions/Context/ContextBoundariesV1.cs",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "6170302e84e5dcf43ea67dbb96f46b45a115fb4d",
+        "sha256": "ba9f3d52ec6dde335522f45702967be5eaf3e25021463777c756c0b14b92d7ef",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "d2402fab0e6518ac95ced1dd00446753013702421757882ae22b704f9fb220ca",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "aafabad8ae1c1c9ca7a4a193dd2807f975bbd100",
+        "sha256": "af5a6a520422a2e75148839c730f30bf9cc6fb7afa29612c46af22d6083e5908",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "cf0ae29902db8c37ff23e5bafca01bc4a6b31dbaa10ba253a377dd36df0c379a",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "3b66a813bbab6ccf723ee7e12c9492389062040c",
+        "sha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "7c2d830254c06aad4f4284f7e58c4926147f151703ddbd4eef40ffa3d94f472c",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "0a735078a1562db562d72998172bd63cf6ab8934",
+        "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "6fde2bbeb23b1286ef4bd221d8981493d745520504221311097cd5f04ffda3b7",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "30b7857046279e978db3e12d443d65bdecc242fb",
+        "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "78da574887a1a1ad1d421cf948572c589832472d48adbb3d90090771510645c7",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "Directory.Build.props",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/Directory.Build.props",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "42131cd740450f08305e95b08b855cfb981c022a",
+        "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "be5ae2820e4d7c1a554336a50b06e5eef5d0f4dea9469f31d1b8c84e52c32d83",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "global.json",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/global.json",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "4c4c3ae5ed709aa83aa03569d2c1f6792c553165",
+        "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "12977d3e63d38bc51c22c4708ccbc351af024a310de7f25ac974468b731677b3",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": ".github/workflows/p10-formal-packages.yml",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/.github/workflows/p10-formal-packages.yml",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871",
+        "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "fcd6e52507fa497cd3937d7532c57aa17908518ca45e9241e1ec2fcb23729a28",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/p10/Pack-P10FormalPackages.ps1",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/p10/Pack-P10FormalPackages.ps1",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "f5030fd1fcd883b205b0598a2f79a735e6eb99a5",
+        "sha256": "36e2dad1d9edb65e868725e5946d8d5694406a9edf2eded4c8a6817fa77d353b",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "1237102dcd3d101c905c50504bcbfb0f3b228a40067958fbe789385a47f0d7f3",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/p10/New-P10FormalPackageSet.ps1",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/p10/New-P10FormalPackageSet.ps1",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "b65fc19ad42e8efe3d4ed28230e045cd085eceb3",
+        "sha256": "5348127087dd221fde45700930be907a54610daf405108b9f7190fe5a88acd4c",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "dea2e6157532568bef049a5084a73b0a3a4898c91a39039fe35f00e74f04c71c",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/p10/Publish-P10FormalPackageSet.ps1",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/p10/Publish-P10FormalPackageSet.ps1",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "2b39215d97712c738b9304d0c0b438009a8678d0",
+        "sha256": "cb9a6143f7bd21a12f5032c0d9badb91158775e268b083a24c48fca1f19335d6",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "cc417d7bec81ec1d4fca0048d30a5ef3dc3840cdd607178dd74c1cd7531e37e9",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/p10/Test-P10FormalPrerequisites.ps1",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/p10/Test-P10FormalPrerequisites.ps1",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "3878f13d7853b61803ae32c4a6d6a611a5a7e540",
+        "sha256": "09524035da5c08930754caa03f301fe6bf2ab2b73e77f09bf608f968955a6526",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "798781ec33561e9f3e94ef203a9cd2511732c1e3fbf1e7b32048d805159f8bad",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/p10/New-P10FormalPublicationRecord.ps1",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/p10/New-P10FormalPublicationRecord.ps1",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "fc439551c7c549d5e08adbf090f712f42371d7cb",
+        "sha256": "cf2ae448556bf9029b3a257f7a85e24192c1de50dcc24ce340700a997bd42c1e",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "5b0e05695b31ace5459295bc004b41b0e9dad67f5d57aa68b588b8c367889a1e",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/p10/Test-P10FormalPackageSet.ps1",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/p10/Test-P10FormalPackageSet.ps1",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "36dbe3670016610f181c723e035af5911d80f8e2",
+        "sha256": "3fea52f2946f8c8cbc3ac7f43ff062115133fbcdbda835e9f23aed07b04f327d",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "cdc189a304e930b5e80dd01bdf999e9b766d1492e9bd5905ec33547e6cb95d76",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/wp02-27/run_checks.py",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/wp02-27/run_checks.py",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "174f5ebe67aa858f5a914615b6440f19a3050fa9",
+        "sha256": "d77199e914f607f82ea6acf8604888fffa4a5434e786220e80babd3a9682e55c",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "27ce7e0fd8f4fc73d605bf49b78dafafca771639c57e6a2ff747171007c6af4f",
+        "working_content_equal_after_crlf_to_lf": true
+      },
+      {
+        "path": "eng/wp02-27/Inspector/README.md",
+        "absolute_path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/eng/wp02-27/Inspector/README.md",
+        "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+        "blob": "325cd641c670363365456bda103502afe2b6896f",
+        "sha256": "868f8a61343858621631f64921f7cfc69b55755d4f5e521819e56f7f788fa91b",
+        "working_bytes_equal_committed": false,
+        "working_sha256": "7675ac7bac2189ebf8a0a7d04da75302c99fb0269598ecfeee4ca3ffe6d867c0",
+        "working_content_equal_after_crlf_to_lf": true
+      }
+    ]
+  },
+  "assessment_operations": {
+    "repository_mutations": false,
+    "git_mutations": false,
+    "network_writes": false,
+    "builds_or_tests": false,
+    "database_operations": false,
+    "actions_runs": false,
+    "signing_or_publication": false,
+    "scratch_outputs": [
+      "admission-consumption.md",
+      "admission-consumption.json"
+    ]
+  },
+  "report_path": "C:/Users/tt/CP6-planning-reports/20261013-wave6-dispatch/admission-consumption.md",
+  "fingerprint_note": "Fingerprints sha256 refer to exact committed bytes. Windows checkout commonly changes LF to CRLF; working_sha256 and explicit normalized comparison retain that distinction without relabeling raw bytes equal.",
+  "future_platform_window": "Proposal only. No Platform repository write permission is included in the immediate Main WP02-02 PREPARATION_ONLY assignment."
+}

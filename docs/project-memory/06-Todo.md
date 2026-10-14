@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-13：第六轮两项实现与两项准入准备
+
+第六轮沿用四对话：C/WP02-08 Outbox与D/WP02-25观测READY/CONFIRMED；A/WP01-01替代验收采纳准备仍PLANNED、B/WP02-02消费身份准备仍BLOCKED，两主任务NOT_CHECKED，只授予私有准备目录。未收到START，不把assignment当开工。20/375 DONE、S01 12/12、业务0/125及247 NOT_RUN不变。C仅预约新PG55428，本次未建库、触发/取消Actions、改触发器、正式发包、迁库或部署。 [执行包](../development/dispatch/20261013-wave6/README.md)及[准入证据](../development/evidence/wave6-dispatch-20261013/README.md)。下文保留历史时点。
+
 ## 2026-10-13：第五轮四项任务已交付，S01 基础合同收口
 
 S01-12、WP02-27、WP02-07、WP02-11 已经集中审查、必要修正、正常 PR 合并及远端 main 核对，登记 DONE。累计20/375项，S01为12/12；真实业务目标仍0/125。

@@ -1,0 +1,663 @@
+{
+  "id": "WP02-08",
+  "title": "Platform Outbox领取、发送与Unknown恢复",
+  "admitted": true,
+  "decision": "READY_FOR_COORDINATOR_REGISTRATION_AND_BOUNDED_LIBRARY_IMPLEMENTATION",
+  "assessment_mode": "Read-only repository assessment; only these two scratch report files written; not assignment, implementation, runtime acceptance or release approval.",
+  "baselines": {
+    "main": {
+      "path": "D:/CP6",
+      "head": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "main_equals_origin_main": true,
+      "clean": false,
+      "dirty_scope": "Existing unrelated untracked files/directories; untouched."
+    },
+    "platform": {
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013",
+      "head": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "main_equals_origin_main": true,
+      "clean": true
+    },
+    "dependency": {
+      "id": "WP02-07",
+      "state": "DONE",
+      "candidate": "872acec044eb09bc96660f696844c86127b508bd",
+      "candidate_is_ancestor": true,
+      "inbox_source_and_private_tests_unchanged_since_candidate": true
+    },
+    "remote_freshness": "Local origin/main refs and recorded COORD remote-main evidence checked; no fresh network query in this subassessment."
+  },
+  "write_paths": [
+    "src/CP6.Platform.EntityFramework/OutboxV2/",
+    "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+    "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+    "src/CP6.Platform.EntityFramework/Cp6OutboxDispatcher.cs",
+    "tests/CP6.Platform.UnitTests/OutboxV2/",
+    "tests/CP6.Platform.WP0208.PostgreSqlTests/",
+    "docs/WP02-08-OUTBOX-V2.md",
+    "docs/development/evidence/WP02-08/"
+  ],
+  "write_notes": [
+    "Reserve Platform:delivery-storage and the listed actual paths exclusively. Cp6OutboxStore/Cp6MessageRetentionService may change only for V2 opt-in/bound-row bypass fencing; legacy unbound-route signatures, semantics, table keys and defaults remain frozen.",
+    "Cp6OutboxDispatcher.cs is a narrow conditional window for route V1/V2 selection/fail-closed guard only; put new dispatcher implementation in OutboxV2. It need not change if legacy store gate alone enforces exclusion.",
+    "New OutboxV2 folder owns versioned typed EF-library contracts, PostgreSQL model/native adapter, caller-owned transaction capability, claim/mutation/renew/epoch/read recovery, safe dispatcher, and caller-owned exact-candidate retention seam.",
+    "tests/CP6.Platform.WP0208.PostgreSqlTests/ includes its own csproj and child Directory.Packages.props importing ../../Directory.Packages.props. Do not add the project to the shared solution in this window.",
+    "Do not edit Cp6InboxProcessor.cs, InboxV1/, legacy entities/types/model builder, Contracts/, Abstractions/, Testing/, Messaging/, AspNetCore/, any *Telemetry* helper, shared test files, root props/global.json/sln, project/pack dependencies, workflows, Release/Deployment or generated/shared state.",
+    "Shared-model/public-library signature/dependency changes not described above require COORD to serialize and explicitly widen the window. Do not silently broaden the task because the historical card names a source entry.",
+    "Main roadmap/task cards/four status pages are COORD-only delivery-window changes; execution report belongs only to task-private Platform documentation."
+  ],
+  "checks": [
+    {
+      "id": "direct_dependency",
+      "status": "PASS_READ_ONLY",
+      "evidence": [
+        "ledger07",
+        "remote_delivery07",
+        "review07"
+      ],
+      "detail": "WP0207 DONE; candidate ancestry exit0; latest InboxV1/private test diff against872acec empty."
+    },
+    {
+      "id": "fixed_design",
+      "status": "PASS_READ_ONLY",
+      "evidence": [
+        "task08",
+        "original",
+        "catalog"
+      ],
+      "detail": "Original275-line v0.2.1 SHA256642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84 verified; all60 original AC inventoried."
+    },
+    {
+      "id": "scope_window",
+      "status": "READY_FOR_COORD_REGISTRATION",
+      "evidence": [
+        "task25",
+        "dispatch"
+      ],
+      "detail": "Narrow EF delivery paths do not overlap WP0225 Contracts/Testing/observability. COORD must persist assignment/entry_gate before source work."
+    },
+    {
+      "id": "pg_test_environment",
+      "status": "AVAILABLE_NOT_PROVISIONED",
+      "detail": "Explicit user-local dotnet8.0.424 and PostgreSQL18.6 available; port55428 no LISTEN; private task root absent. No connection/initdb/DDL/test performed."
+    },
+    {
+      "id": "release_gates",
+      "status": "PRESERVED_READ_ONLY",
+      "evidence": [
+        "architecture",
+        "workflow_guard"
+      ],
+      "detail": "No gate edits. Local known RFC3161 PR paths do not overlap proposed task; fresh candidate and protected-base trigger checks required before every push/PR."
+    },
+    {
+      "id": "implementation_acceptance",
+      "status": "NOT_RUN",
+      "detail": "No implementation or tests in this admission assessment; all future test commands are proposals."
+    }
+  ],
+  "boundary": {
+    "allowed": "Platform versioned library behavior plus isolated real PostgreSQL task tests and exact source/acceptance mapping.",
+    "held": [
+      "Main/CRM real host/Owner adoption and migration UNPROVEN/NOT_RUN",
+      "No schema-per-tenant rollout; keep TenantId, trusted bindings and Owner boundaries",
+      "No actual broker/network end-to-end or production SLO claim from test publisher/fault injection",
+      "No new SQL Server implementation or SQL Server verification requirement",
+      "No production/existing DB, migration/cutover, package publication, deploy, Actions or remote writes",
+      "No changes to formal release gates, shared public Contracts or WP0225 telemetry"
+    ],
+    "required_before_implementation": [
+      "COORD registers unique assignment and actual-path lock narrowing from card",
+      "Fresh confirmed Platform main branch/worktree created by authorized coordinator/worker",
+      "Freeze additive V2 API/profile and native PG adapter/token mapping in task plan before implementation"
+    ],
+    "missing_owner_adoption_is_not_library_admission_blocker": true
+  },
+  "machine": {
+    "observed_utc": "2026-10-14T03:04:34.8821079Z",
+    "clock_basis": "Local host clock; not GitHub server time",
+    "shell": "PowerShell",
+    "default_dotnet": "C:/Program Files/dotnet/dotnet.exe",
+    "default_dotnet_issue": "Only10.0.302 installed there; --version fails repository8.0.100/latestFeature resolution.",
+    "test_dotnet": "C:/Users/tt/.dotnet/dotnet.exe",
+    "test_sdk": "8.0.424",
+    "postgres_bin": "C:/Program Files/PostgreSQL/18/bin",
+    "postgres_version": "18.6",
+    "python": "C:/Program Files/python/python.exe",
+    "port55428_listen_count": 0,
+    "task_root_exists": false
+  },
+  "local_resource_proposal": {
+    "endpoint": "127.0.0.1:55428",
+    "root": "D:/CP6-local-test/WP02-08/",
+    "run_directory": "D:/CP6-local-test/WP02-08/<owner32>/",
+    "marker": "CP6-WP02-08:<owner32>",
+    "database": "cp6_wp0208_<UTCyyyyMMdd>_<owner8>",
+    "settings_env": "CP6_WP0208_SETTINGS",
+    "provisioned": false,
+    "authentication": "Fresh task-only SCRAM credentials in protected private settings/pwfile; never print/copy into repository.",
+    "roles": "Bootstrap setup only; runtime NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS with minimum DML.",
+    "identity_checks": "Before setup/test/stop verify full owner token, canonical contained paths, endpoint, system identifier, database OID/name/owner, session_user and zero unexpected sessions. Stop only own cluster smart; retain logs/data; never terminate unknown sessions or reset existing5432."
+  },
+  "test_project": {
+    "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/CP6.Platform.WP0208.PostgreSqlTests.csproj",
+    "target": "net8.0/C#12",
+    "package_versions": {
+      "Npgsql": "8.0.8",
+      "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.11",
+      "Microsoft.EntityFrameworkCore": "8.0.30",
+      "Microsoft.NET.Test.Sdk": "17.14.1",
+      "xunit": "2.9.3",
+      "xunit.runner.visualstudio": "3.1.4"
+    },
+    "project_reference": "../../src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+    "production_dependency_policy": "Use existing EF Relational/DbConnection/DbTransaction API; do not add runtime Npgsql dependency or weaken ArchitectureTests. Provider packages stay in private PG project."
+  },
+  "commands": [
+    {
+      "phase": "future_owned_resource_setup",
+      "command": "python tests/CP6.Platform.WP0208.PostgreSqlTests/pg_resource.py create",
+      "status": "PROPOSED_NOT_RUN",
+      "precondition": "Worker first implements guarded task08 helper and COORD reserves55428/private path; no borrowing WP0207 settings/resources."
+    },
+    {
+      "phase": "future_unit_regression",
+      "command": "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj --filter 'FullyQualifiedName~OutboxV2|FullyQualifiedName~TransactionalMessagingContractTests|FullyQualifiedName~TransactionalMessagingTelemetryTests' --logger 'trx;LogFileName=wp0208-unit.trx'",
+      "status": "PROPOSED_NOT_RUN"
+    },
+    {
+      "phase": "future_real_pg",
+      "command": "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.WP0208.PostgreSqlTests/CP6.Platform.WP0208.PostgreSqlTests.csproj --logger 'trx;LogFileName=wp0208-postgresql.trx'",
+      "status": "PROPOSED_NOT_RUN",
+      "precondition": "CP6_WP0208_SETTINGS points to verified task08-owned private settings; missing environment must fail with NOT_RUN, never skip/pass."
+    },
+    {
+      "phase": "future_architecture",
+      "command": "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj --logger 'trx;LogFileName=wp0208-architecture.trx'",
+      "status": "PROPOSED_NOT_RUN"
+    },
+    {
+      "phase": "future_source_review",
+      "command": "git diff --check; git diff <latest-confirmed-main>...HEAD -- <explicit-task-paths>",
+      "status": "PROPOSED_NOT_RUN",
+      "note": "One concentrated task-level diff/concurrency/tenant/retention review after local tests; recheck only affected fixes. Coordinator handles workflow/run/remote-main evidence."
+    },
+    {
+      "phase": "future_owned_shutdown",
+      "command": "python tests/CP6.Platform.WP0208.PostgreSqlTests/pg_resource.py stop <task08-private-settings-path>",
+      "status": "PROPOSED_NOT_RUN",
+      "precondition": "Own-resource identity and zero unexpected sessions; smart shutdown; retain evidence/data."
+    }
+  ],
+  "acceptance_mapping": [
+    {
+      "ids": [
+        "DEL03-A1",
+        "DEL03-A2",
+        "DEL03-A3",
+        "DEL03-A4",
+        "DEL03-A5",
+        "DEL03-A6",
+        "DEL03-A7"
+      ],
+      "scope": "Versioned PG model and legacy compatibility, actual provider/native tokens, disabled-before-migration, unique conflicts, safe diagnostics; real Owner migrations remain unproven.",
+      "source_lines": [
+        106,
+        122
+      ],
+      "catalog_line": 6329
+    },
+    {
+      "ids": [
+        "DEL04-A1",
+        "DEL04-A2",
+        "DEL04-A3",
+        "DEL04-A4",
+        "DEL04-A5",
+        "DEL04-A6",
+        "DEL04-A7",
+        "DEL04-A8"
+      ],
+      "scope": "Primary task08 acceptance: claim+post-write tokens+confirmed ticket, original-key expiration recovery, full final gate, transport/commit failure split, bounded retry+atomic DLQ, Unknown exact tuple lookup, drain/epoch race, fail-closed V1/V2 compatibility.",
+      "source_lines": [
+        180,
+        182
+      ],
+      "catalog_line": 6406
+    },
+    {
+      "ids": [
+        "DEL06-A1",
+        "DEL06-A2",
+        "DEL06-A3",
+        "DEL06-A4",
+        "DEL06-A5",
+        "DEL06-A6",
+        "DEL06-A7",
+        "DEL06-A8"
+      ],
+      "scope": "Task08 technical retention candidate executor/hold/reference closure and fail-closed diagnostics; full legal policy, revoke-origin lifetime, archive recovery and actual consumer obligations require Owner evidence.",
+      "source_lines": [
+        228,
+        242
+      ],
+      "catalog_line": 6604
+    },
+    {
+      "ids": [
+        "DEL07-A1",
+        "DEL07-A2",
+        "DEL07-A3",
+        "DEL07-A4",
+        "DEL07-A5",
+        "DEL07-A6",
+        "DEL07-A7",
+        "DEL07-A8",
+        "DEL07-A9"
+      ],
+      "scope": "Bounded fixture evidence for caller tx/connection, atomic technical graph, same-key Unknown, single-root writers; real Owner full writer, cutover and business adoption NOT_RUN.",
+      "source_lines": [
+        246,
+        265
+      ],
+      "catalog_line": 6692
+    },
+    {
+      "ids": [
+        "DEL01-A1..A8",
+        "DEL02-A1..A10",
+        "DEL05-A1..A10"
+      ],
+      "scope": "Preserve all original IDs in60AC ledger; link unchanged provider evidence where applicable. Producer/Inbox/business replay/UI/fullOwner portions are not claimed newly complete by08.",
+      "source_lines": [
+        100,
+        222,
+        275
+      ]
+    }
+  ],
+  "path_findings": [
+    {
+      "id": "path01",
+      "paths": [
+        "src/CP6.Platform.EntityFramework/OutboxV2/",
+        "tests/CP6.Platform.WP0208.PostgreSqlTests/"
+      ],
+      "finding": "New task-private additive windows proposed, although historical task card says no proposed new paths; coordinator must explicitly register accurate window before source edits."
+    },
+    {
+      "id": "path02",
+      "paths": [
+        "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+        "src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs"
+      ],
+      "finding": "Legacy writers touch the same native Outbox/DLQ rows that V2 companion protects; additive folder alone cannot prove no V1 bypass."
+    },
+    {
+      "id": "path03",
+      "paths": [
+        "src/CP6.Platform.EntityFramework/InboxV1/"
+      ],
+      "finding": "Read-only dependency; no change needed. Existing seven-key/no-prior-advisory-lock profile cannot be stretched to an Outbox root or nested unchanged."
+    },
+    {
+      "id": "path04",
+      "paths": [
+        "src/CP6.Platform.Contracts/",
+        "src/CP6.Platform.Testing/",
+        "src/CP6.Platform.EntityFramework/Cp6EntityFrameworkTelemetry.cs"
+      ],
+      "finding": "Reserved/read-only to avoid WP0225; consume stable telemetry API only, add no tags or shared metric semantics."
+    }
+  ],
+  "risk_findings": [
+    {
+      "id": "R1",
+      "severity": "high",
+      "finding": "V1 bypass of V2-bound native rows including legacy Requeue and broad DLQ retention",
+      "test": "Race/attempt each legacy Claim, MarkPublished, MarkFailed, Requeue and DeleteExpired against a V2-bound row; no protected mutation/deletion. Gate failure never falls back to V1.",
+      "sources": [
+        "original",
+        "legacy_store",
+        "legacy_retention"
+      ]
+    },
+    {
+      "id": "R2",
+      "severity": "high",
+      "finding": "Legacy byte[] IsRowVersion is not evidence of PostgreSQL native concurrency",
+      "test": "Versioned opt-in native PG adapter reads actual post-write native xmin/generated token and Binding token from database; forged/stale/pre-write tokens fail. Preserve original table keys/DTO byte semantics and freeze opaque codec.",
+      "sources": [
+        "legacy_entities",
+        "legacy_model",
+        "inbox_model"
+      ]
+    },
+    {
+      "id": "R3",
+      "severity": "high",
+      "finding": "Success transport then local failure falsely counted as publish failure",
+      "test": "Inject faults before publish, after broker acceptance, before commit and after real committed mutation response lost; no MarkFailed/newmutation/newbusiness-key on Unknown. Missing receipt remains Unknown.",
+      "sources": [
+        "legacy_dispatch",
+        "original"
+      ]
+    },
+    {
+      "id": "R4",
+      "severity": "high",
+      "finding": "Stale epoch/token/expiry or root switch can authorize old worker",
+      "test": "DB-clock gate before/equal/after expiry; forged worker/root/tenant/message/hash; stale native and Binding RV; both orderings of completion vs drain/advance; renewal vs completion; immutable replay after epoch change zero extra writes.",
+      "sources": [
+        "original"
+      ]
+    },
+    {
+      "id": "R5",
+      "severity": "high",
+      "finding": "Hold/Unknown/consumer obligations/reference closure can be destroyed by age cleanup",
+      "test": "Hold-first deletion rejected; cleanup-first later replay reports EVIDENCE_EXPIRED with original result readable. Retain absent-policy/unknown/conflict/unresolvedreceipt/dedup-needed rows; arbitrary IDs and cross-tenant candidates rejected; whole transaction rollback on audit failure.",
+      "sources": [
+        "retention",
+        "legacy_retention"
+      ]
+    },
+    {
+      "id": "R6",
+      "severity": "high",
+      "finding": "Fake transaction/registered proof/worker clock can replace actual native boundary",
+      "test": "Reject different connection/transaction, ended handle, ambient/provider mismatch and substituted trusted context; native locks held through commit; no network under locks; actual same-DB business+native+binding+receipt rollback.",
+      "sources": [
+        "inbox_tx",
+        "original",
+        "finance_schema"
+      ]
+    },
+    {
+      "id": "R7",
+      "severity": "medium",
+      "finding": "PG xmin is transaction-scoped; post-write receipt cannot legitimize subsequent same-transaction mutation",
+      "test": "Read DB-generated tokens only after final claim/renew native+binding write; enforce no later native/binding edits before commit; immutable ticket and bytes; never refresh stale ticket from latest row. Epoch and unique claim IDs remain independent guards.",
+      "sources": [
+        "original",
+        "inbox_model"
+      ]
+    },
+    {
+      "id": "R8",
+      "severity": "medium",
+      "finding": "Synthetic fixtures overclaim Original60AC, actual transport or host adoption",
+      "test": "Keep execution-kind/syntheticOwner/fault-injection labels plus source/dependency/artifact hashes, TRX/failures, exact mapping and explicit NOT_RUN Owner cells.",
+      "sources": [
+        "review07",
+        "catalog"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "main_rules",
+      "path": "D:/CP6/AGENTS.md",
+      "line_start": 5,
+      "line_end": 113,
+      "why": "PostgreSQL-only, branch/worktree, coordination, local verification and preserved release gates"
+    },
+    {
+      "id": "task08",
+      "path": "D:/CP6/docs/development/task-plans/WP02.md",
+      "line_start": 498,
+      "line_end": 564,
+      "why": "Task08 dependency/scope/acceptance/exclusive resources"
+    },
+    {
+      "id": "task25",
+      "path": "D:/CP6/docs/development/task-plans/WP02.md",
+      "line_start": 1638,
+      "line_end": 1697,
+      "why": "Observability reservation and Contracts/Testing entry points"
+    },
+    {
+      "id": "dispatch",
+      "path": "D:/CP6/docs/development/09-parallel-development.md",
+      "line_start": 32,
+      "line_end": 43,
+      "why": "COORD-only registration and actual write conflicts"
+    },
+    {
+      "id": "ledger07",
+      "path": "D:/CP6/docs/development/roadmap.json",
+      "line_start": 159968,
+      "line_end": 160062,
+      "why": "WP02-07 DONE and closed window"
+    },
+    {
+      "id": "ledger08",
+      "path": "D:/CP6/docs/development/roadmap.json",
+      "line_start": 160063,
+      "line_end": 160102,
+      "why": "WP02-08 currently PLANNED; this assessment is not assignment"
+    },
+    {
+      "id": "pg_baseline",
+      "path": "D:/CP6/docs/development/08-postgresql-baseline.md",
+      "line_start": 5,
+      "line_end": 35,
+      "why": "PG-only/new schema adoption boundaries"
+    },
+    {
+      "id": "assessment",
+      "path": "D:/CP6/docs/development/assessments/20261011/implementation-assessment.json",
+      "line_start": 16519,
+      "line_end": 16577,
+      "why": "Historical gap assessment; current source independently rechecked"
+    },
+    {
+      "id": "module",
+      "path": "D:/CP6/docs/design-handbook/modules/PLT-DEL-01.md",
+      "line_start": 19,
+      "line_end": 56,
+      "why": "Original Owner boundary, exact design source and versioned seams"
+    },
+    {
+      "id": "original",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+      "line_start": 104,
+      "line_end": 184,
+      "why": "v0.2.1 mapping and complete lease-v2 contract; verified raw SHA256"
+    },
+    {
+      "id": "retention",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+      "line_start": 226,
+      "line_end": 267,
+      "why": "Retention/reference closure and full route adoption boundaries"
+    },
+    {
+      "id": "catalog",
+      "path": "D:/CP6/docs/development/assessments/20261011/catalogs/foundation.json",
+      "line_start": 6116,
+      "line_end": 6790,
+      "why": "60 original AC; DEL03 lines6329+, DEL04 lines6406+, DEL06 lines6604+, DEL07 lines6692+"
+    },
+    {
+      "id": "remediation",
+      "path": "D:/CP6/docs/design-handbook/remediation/03-transactions-and-recovery.md",
+      "line_start": 73,
+      "line_end": 89,
+      "why": "COM-S6 current admission/fence, runtime evidence not established by static inputs"
+    },
+    {
+      "id": "finance_schema",
+      "path": "D:/CP6/docs/design-handbook/remediation/assets/finance-recovery/contracts.schema.json",
+      "line_start": 176,
+      "line_end": 214,
+      "why": "NativeUow contract is structural, not a live native-handle proof"
+    },
+    {
+      "id": "owner_adoption",
+      "path": "D:/CP6/docs/design-handbook/remediation/assets/finance-recovery/owner-adoption.json",
+      "line_start": 349,
+      "line_end": 375,
+      "why": "COM-S6 ADOPTION_PENDING; whole-file enable_rule line3 remains applicable"
+    },
+    {
+      "id": "remote_delivery07",
+      "path": "D:/CP6/docs/development/evidence/wave5-integration-20261013/WP02-07/remote-main.json",
+      "line_start": 1,
+      "line_end": 9,
+      "why": "Candidate872acec and integrated main817a2926 recorded by prior COORD"
+    },
+    {
+      "id": "review07",
+      "path": "D:/CP6/docs/development/evidence/wave5-integration-20261013/WP02-07/review.md",
+      "line_start": 68,
+      "line_end": 76,
+      "why": "Library-only limits; actual Owner adoption not proven"
+    },
+    {
+      "id": "inbox_api",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+      "line_start": 3,
+      "line_end": 42,
+      "why": "Opt-in library API, native lock limitations, no automatic retention"
+    },
+    {
+      "id": "inbox_tx",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/InboxV1/InboxTransactionV1.cs",
+      "line_start": 26,
+      "line_end": 101,
+      "why": "Exact handles + seven-stage advisory-lock profile; not an Outbox shared lock implementation"
+    },
+    {
+      "id": "inbox_model",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/InboxV1/InboxModelV1.cs",
+      "line_start": 99,
+      "line_end": 124,
+      "why": "PG uint xmin mapping and restrictive original-result FK"
+    },
+    {
+      "id": "legacy_store",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "line_start": 24,
+      "line_end": 238,
+      "why": "Enqueue Add-only; claim lacks epoch/RV receipt; completion gate Id/status/owner/token; legacy requeue"
+    },
+    {
+      "id": "legacy_dispatch",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6OutboxDispatcher.cs",
+      "line_start": 32,
+      "line_end": 98,
+      "why": "Transport publish + MarkPublished in same try; generic catch invokes MarkFailed"
+    },
+    {
+      "id": "legacy_retention",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6MessageRetentionService.cs",
+      "line_start": 17,
+      "line_end": 47,
+      "why": "Age/status-only self-owned retention; no hold/reference closure"
+    },
+    {
+      "id": "legacy_entities",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingEntities.cs",
+      "line_start": 3,
+      "line_end": 135,
+      "why": "Native outbox public RowVersion byte[] at71; frozen native state semantics"
+    },
+    {
+      "id": "legacy_model",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingModelBuilderExtensions.cs",
+      "line_start": 23,
+      "line_end": 42,
+      "why": "Original native table/indexes and byte[] IsRowVersion"
+    },
+    {
+      "id": "legacy_types",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/Cp6TransactionalMessagingTypes.cs",
+      "line_start": 5,
+      "line_end": 105,
+      "why": "Legacy status and DTO signatures must remain compatible"
+    },
+    {
+      "id": "pg_test_project",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+      "line_start": 1,
+      "line_end": 15,
+      "why": "Nonpackable task-private PG test precedent"
+    },
+    {
+      "id": "pg_test_versions",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/tests/CP6.Platform.WP0207.PostgreSqlTests/Directory.Packages.props",
+      "line_start": 1,
+      "line_end": 7,
+      "why": "Private Npgsql8.0.8/provider8.0.11 pins"
+    },
+    {
+      "id": "pg_fixture",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/tests/CP6.Platform.WP0207.PostgreSqlTests/PgFixture.cs",
+      "line_start": 21,
+      "line_end": 58,
+      "why": "Fail-closed private resource verification before fixture DDL"
+    },
+    {
+      "id": "pg_resource",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/tests/CP6.Platform.WP0207.PostgreSqlTests/pg_resource.py",
+      "line_start": 16,
+      "line_end": 17,
+      "why": "WP0207-only root/port must not be reused by08"
+    },
+    {
+      "id": "runtime_project",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "line_start": 7,
+      "line_end": 17,
+      "why": "Existing dependencies and internals visibility; no provider addition required"
+    },
+    {
+      "id": "root_versions",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/Directory.Packages.props",
+      "line_start": 11,
+      "line_end": 27,
+      "why": "EF8.0.30; testSDK17.14.1/xunit2.9.3/runner3.1.4"
+    },
+    {
+      "id": "architecture",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "line_start": 309,
+      "line_end": 314,
+      "why": "EntityFramework package allowlist must not be relaxed"
+    },
+    {
+      "id": "sdk_pin",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/global.json",
+      "line_start": 1,
+      "line_end": 7,
+      "why": "8.0.100 latestFeature requires explicit installed user-local8 SDK"
+    },
+    {
+      "id": "test_command_precedent",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/docs/development/evidence/WP02-07/PLAN.md",
+      "line_start": 88,
+      "line_end": 96,
+      "why": "Explicit .dotnet path and bounded local verification"
+    },
+    {
+      "id": "workflow_guard",
+      "path": "D:/CP6.Platform-worktrees/wave5-integration-20261013/.github/workflows/p10-rfc3161-preflight.yml",
+      "line_start": 3,
+      "line_end": 8,
+      "why": "Remaining PR trigger only two release paths; keep untouched and recheck protected base before publication"
+    }
+  ],
+  "PGwindow": {
+    "endpoint": "127.0.0.1:55428",
+    "root": "D:/CP6-local-test/WP02-08/",
+    "run_directory": "D:/CP6-local-test/WP02-08/<owner32>/",
+    "marker": "CP6-WP02-08:<owner32>",
+    "database": "cp6_wp0208_<UTCyyyyMMdd>_<owner8>",
+    "settings_env": "CP6_WP0208_SETTINGS",
+    "provisioned": false,
+    "authentication": "Fresh task-only SCRAM credentials in protected private settings/pwfile; never print/copy into repository.",
+    "roles": "Bootstrap setup only; runtime NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS with minimum DML.",
+    "identity_checks": "Before setup/test/stop verify full owner token, canonical contained paths, endpoint, system identifier, database OID/name/owner, session_user and zero unexpected sessions. Stop only own cluster smart; retain logs/data; never terminate unknown sessions or reset existing5432."
+  }
+}

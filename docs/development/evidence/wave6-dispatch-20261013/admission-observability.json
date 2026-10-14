@@ -1,0 +1,773 @@
+{
+  "id": "WP02-25",
+  "title": "运行身份、健康与遥测脱敏",
+  "admitted": true,
+  "admission_meaning": "Eligible for coordinator registration of the bounded window below; not actual START, trust, business acceptance or completed implementation.",
+  "main_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+  "platform_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "observed_local_state": {
+    "main_refs_equal": true,
+    "platform_refs_equal": true,
+    "platform_clean": true,
+    "main_untracked_user_files_preserved": true,
+    "network_reads": false,
+    "source_edits": false,
+    "tests_run": false
+  },
+  "write_paths": [
+    "src/CP6.Platform.Contracts/ObservabilityV1/",
+    "src/CP6.Platform.Abstractions/ObservabilityV1/",
+    "src/CP6.Platform.AspNetCore/ObservabilityV1/",
+    "src/CP6.Platform.AspNetCore/Cp6ObservabilityServiceCollectionExtensions.cs",
+    "src/CP6.Platform.AspNetCore/Cp6ObservabilityProfile.cs",
+    "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointRouteBuilderExtensions.cs",
+    "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointProfile.cs",
+    "src/CP6.Platform.AspNetCore/Cp6SafeHealthResponseWriter.cs",
+    "tests/CP6.Platform.UnitTests/ObservabilityV1/",
+    "tests/CP6.Platform.AspNetCoreTests/ObservabilityV1/",
+    "tests/CP6.Platform.AspNetCoreTests/OperationalEndpointTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/ObservabilityRegistrationTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/ObservabilityEndToEndTests.cs",
+    "tests/CP6.Platform.AspNetCoreTests/TwoServiceObservabilityFixture.cs",
+    "docs/WP02-25-OBSERVABILITY-V1.md",
+    "docs/development/evidence/WP02-25/",
+    "eng/wp02-25/"
+  ],
+  "write_notes": [
+    "Paths are relative to Platform task worktree created from newly reconfirmed main. No source mutation was performed in this assessment.",
+    "New versioned namespaces and task-private tests are primary implementation; five existing observability/health files may only gain additive explicitly selected registration/adapter behavior with legacy wire retained.",
+    "Public APIs must be concrete version1 DTO/validation/observer/redaction/health registrations. No DTO-only delivery; real SDK/host integration must be exercised within existing dependencies.",
+    "No solution/project/config changes are needed for additive .cs files: existing SDK compile globs and test references suffice. If this assumption fails, return exact evidence to COORD before changing shared files.",
+    "Store task evidence under one unique WP02-25 run directory; bounded local sinks only. Task owner reports actual hashes and local observations; COORD owns state synchronization."
+  ],
+  "api_requirements": [
+    "ObservabilityV1 runtime binding: declared Cp6ReleaseIdentity + environment/region + typed observed artifact kind/digest + packageSetRef/configurationDigest/schemaSetRef/deploymentRef + process-instance/epoch/start/observation time + verifier/evidence reference + Match/Mismatch/Unproven. Bounded canonical identifiers, supported versions/enums, immutable defensive copies, UTC and freshness limits; no network locator fetch. Default comparison Unproven.",
+    "Host observer must obtain evidence from the actual running process/loaded assemblies and bound byte sources, not request headers or expected declaration. Trusted expected identity is independently pinned. Metadata/source SHA and module MVID alone never prove bytes or package trust. No generic Match from two caller-filled structs; distinguish observed-by-this-adapter from independently-qualified.",
+    "HealthCheckBindingV1: component/purpose/routes/dependency/timeout/freshness/failure classification/probe policy/safe name. New registration validates required inventory, path collisions and actual check tags. Liveness constant; startup and readiness scoped to real inventory; unknown/mismatch identity prevents corresponding new capability readiness but preserves separately authorized reads. Exposes no write-permission API.",
+    "TelemetryPolicyV1: closed key/value registry, approved resource values, method/template-route/status-class/duration/safe enum only; finite record/attribute/series/cardinality/rate/queue/batch/flush bounds and drop status. Sanitize before queue/aggregation and before configured sink, including automatic spans, events, links, baggage and logs. Missing approved destination/retention/permission leaves external export disabled.",
+    "MetricDefinitionV1: preserve technical counter names and measurement points; separately define producer committed-receipt to consumer applied-receipt latency, exact unit/clock provenance/population/duplicate/retry/reset semantics and Owner references. Adapter reports observation only; no fabricated business success or invented production threshold.",
+    "Versioned safe observation envelope permanently distinguishes local fixture/non-production from qualification. Keep old ReleaseIdentity and SLO1.0.0 JSON unchanged; no global reinterpretation of /health/release200, Candidate, Evaluate Pass or ProductionSloClaimed. If shape changes, expose explicit versioned contract/profile rather than mutate legacy schema.",
+    "Concrete bounded adapter and new public registration should compile using existing Contracts/Abstractions/AspNetCore dependencies. No Release->AspNetCore dependency or reverse package-trust shortcut; host adopts Release capability lock via opaque verified references and still must supply actual runtime observation."
+  ],
+  "checks": [
+    {
+      "kind": "new",
+      "id": "runtime-identity",
+      "ac": [
+        "OBS03-A1",
+        "OBS03-A2",
+        "OBS03-A3",
+        "OBS03-A4",
+        "OBS03-A5",
+        "OBS03-A6"
+      ],
+      "requirement": "Versioned declared/observed identity API; actual running loopback host observations of loaded modules/bytes compared with separately pinned expected manifest. Missing observer, self-report, wrong source/version/service/environment/digest/domain, duplicate or incomplete package set, stale observation and observer exception/cancellation remain Unproven/Mismatch. No fabricated expected=actual success. Safe output omits file paths and verifier exceptions. Local match cannot imply trusted package/production/independent acceptance."
+    },
+    {
+      "kind": "new",
+      "id": "health-inventory",
+      "ac": [
+        "OBS04-A1",
+        "OBS04-A2",
+        "OBS04-A4",
+        "OBS04-A6",
+        "OBS04-A7",
+        "OBS04-A8"
+      ],
+      "requirement": "Real isolated Kestrel host and actual local dependency stopped/restarted: live unaffected, required startup/ready dependency missing/wrong tag/unregistered/failed/timed-out/cancelled/stale -> never healthy. Empty required inventory fails closed for new capability. Hide sensitive entries without changing aggregate. Explicit route/read/new-effect inventory; GET performs no migration, replay, cleanup or Owner mutation; bounded probe concurrency/timeout/cache freshness."
+    },
+    {
+      "kind": "new",
+      "id": "privacy-export-boundary",
+      "ac": [
+        "OBS01-A1",
+        "OBS01-A2",
+        "OBS01-A4",
+        "OBS01-A5"
+      ],
+      "requirement": "Capture actual final trace/metric/log output of new registration, including automatic inbound/outbound instrumentation. Seed full URL/query/login code, Authorization/Cookie/body/SQL parameters, tenant/user/message/operation ids, baggage, exceptions/events/links, log templates/arguments/scopes/resource and case variants. Only approved keys AND registered finite values survive; display names and routes use templates; raw paths, high-cardinality values under safe keys and unknown resources are dropped. No claim other unconfigured log/export providers are scrubbed."
+    },
+    {
+      "kind": "new",
+      "id": "bounded-export",
+      "ac": [
+        "OBS01-A6",
+        "OBS01-A7",
+        "OBS01-A8"
+      ],
+      "requirement": "Exercise queue capacity, max record/attribute size, batching, rate/cardinality/series budget, exporter throw/block, bounded flush/dispose and repeated host lifecycle. Drop counters are safe and bounded; no waiting/retry/error crosses into request/Owner result. Overflow/missing telemetry explicitly marks incompleteness; no retrospective 100% coverage. Multi-host registration drift/global propagator replacement tested and restored."
+    },
+    {
+      "kind": "new",
+      "id": "owner-measurement-definition",
+      "ac": [
+        "OBS01-A3",
+        "OBS01-A8"
+      ],
+      "requirement": "Versioned MetricDefinition fixes name/version/unit/kind/measurementPoint/BeforeCommit|AfterCommit|ObserverOnly/attempt-vs-business scope/allowed-values/reset/aggregation/owner/source. Define producer Owner committed receipt to consumer Owner applied receipt latency with UTC/clock provenance and skew/missing/duplicate/retry rules; unavailable real receipts -> not measured, not zero. Preserve existing published/consumed/enqueue semantics, no EF/Messaging edits or fake after-commit assertions."
+    },
+    {
+      "kind": "new",
+      "id": "production-claim-separation",
+      "ac": [
+        "OBS02-A6"
+      ],
+      "requirement": "New observation/health/export result never grants production SLO qualification. Fixture/fault-injection/recorder evidence explicitly non-production. Candidate Pass, ProductionSloClaimed=true, source hash, valid seven-package lock or matching DI identity alone cannot set independently qualified/runtime trusted/production accepted. Existing Evaluate remains a pure legacy comparison; do not silently redefine it."
+    },
+    {
+      "kind": "regression",
+      "id": "existing-behavior",
+      "ac": [
+        "OBS01-A1",
+        "OBS01-A4",
+        "OBS03-A1",
+        "OBS03-A3",
+        "OBS03-A5",
+        "OBS04-A1",
+        "OBS04-A4",
+        "OBS02-A1",
+        "OBS02-A2",
+        "OBS02-A5"
+      ],
+      "requirement": "Reuse existing tests as regression test code: TelemetryConventionTests, ReleaseIdentityTests, SloEvidenceContractTests, ObservabilityRegistrationTests, OperationalEndpointTests, ObservabilityEndToEndTests and TraceContextDistributedPropagatorTests. Run affected filters once on candidate. Old run evidence cannot pass changed code without exact input equivalence."
+    },
+    {
+      "kind": "gate",
+      "id": "architecture-and-evidence",
+      "requirement": "One task-level complete diff review plus local ArchitectureTests due additive public APIs/registration boundary. Preserve dependency/project/version/schema asset constraints. Record exact source commit, dirty working-byte hashes if any, dependency hashes, commands/exit/TRX/skips/environment, module/host artifact hashes, real loopback startup/HTTP and cleanup. No new GitHub Actions, DB, published package or environment adoption claim."
+    }
+  ],
+  "boundary": {
+    "scope": "Eligible for Platform library APIs + real isolated loopback host only. This recommendation is not a roadmap assignment or actual START.",
+    "prerequisites": "WP02-01 source d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6 and WP02-27 source c105036f166928b7c165f182f99f3147ffbb0d58 are ancestors of fixed Platform HEAD (exit0 observed); only WP02-01 is direct task prerequisite.",
+    "identity": "Source metadata, declared format, artifact bytes, current package trust, host registration, actual runtime observation, business application and independent acceptance remain separate states. Unsupported/missing/stale evidence is Unproven, actual conflict Mismatch; no permissive bool fallback.",
+    "shared_files": "Reserve Platform:observability and retain both task-card file locks. Cp6SloEvidenceEvaluator.cs and Cp6TelemetryRecorder.cs are READ_ONLY for WP02-25; no concurrent WP02-26. Their v1 SLO qualification, recorder precision, DAG, generic bounded-capture repair belongs to WP02-26; task-local export sink in tests covers WP02-25. Coordinator must explicitly amend window for any future change.",
+    "readonly": [
+      "src/CP6.Platform.EntityFramework/",
+      "src/CP6.Platform.Messaging/",
+      "src/CP6.Platform.Release/",
+      "src/CP6.Platform.Deployment/",
+      "src/CP6.Platform.Contracts/Context/",
+      "src/CP6.Platform.Abstractions/Context/",
+      "src/CP6.Platform.AspNetCore/Context/",
+      "src/CP6.Platform.Contracts/Cp6ReleaseIdentity.cs",
+      "src/CP6.Platform.Contracts/Cp6SloEvidenceDocument.cs",
+      "src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs",
+      "src/CP6.Platform.Testing/",
+      "src/CP6.Platform.Abstractions/Cp6TelemetryConventions.cs",
+      "contracts/observability/slo-evidence/v1/"
+    ],
+    "forbidden": [
+      "All *.csproj/*.sln/*.props and dependency lock/global.json/NuGet config files",
+      "Shared schemas/manifests/capability catalog/TypeRegistry and release version changes",
+      "All EF/Outbox/Inbox/migration/transaction writer changes",
+      "Main/CRM host/Owner source and configuration",
+      "Shared roadmap/generated progress/four project-state files (COORD only)",
+      "Workflow/release/deploy config; formal package publishing/signing; network exporters/destination activation",
+      "DB creation/query/migration/fixtures; production or DEV/UAT changes"
+    ],
+    "downstream": "WP02-26 owns SLO sealing/calculation/test utility enhancement; WP02-28 actual Main host/package adoption and WP02-29 actual CRM adoption remain separate. WP02-02 remains blocked on consumable trusted ctx-binding package. WP02-25 cannot mint a trusted replacement package.",
+    "original_acceptance": "All 32 original AC remain NOT_RUN at admission. Scope maps OBS01 A1-A7 and OBS03 A1-A5 plus OBS04 A1/A2/A4/A6/A8 to library and local host checks, A8/OBS03 A6/OBS04 A7 only bounded portions; actual Owner/deployment/fleet/rollback/CRM/probe authorization and OBS02 qualifications stay external or WP02-26. Record case-by-case scope; never mark whole PLT-OBS-01 accepted.",
+    "database": "No database required for this task window; dependency-down proof can use a real owned loopback dependency. This does not prove PostgreSQL dependency health or any Owner transaction. If DB is later essential, request a separate coordinator resource/window rather than borrow Outbox worker's database."
+  },
+  "commands": [
+    {
+      "purpose": "planned unit gates",
+      "status": "NOT_RUN",
+      "command": "dotnet test tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj -c Release --filter \"FullyQualifiedName~ObservabilityV1|FullyQualifiedName~TelemetryConventionTests|FullyQualifiedName~ReleaseIdentityTests|FullyQualifiedName~SloEvidenceContractTests\" --logger \"trx;LogFileName=wp02-25-unit.trx\" --results-directory docs/development/evidence/WP02-25/<unique-run>/unit"
+    },
+    {
+      "purpose": "planned actual loopback + regressions",
+      "status": "NOT_RUN",
+      "command": "dotnet test tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj -c Release --filter \"FullyQualifiedName~ObservabilityV1|FullyQualifiedName~OperationalEndpointTests|FullyQualifiedName~ObservabilityRegistrationTests|FullyQualifiedName~ObservabilityEndToEndTests|FullyQualifiedName~TraceContextDistributedPropagatorTests\" --logger \"trx;LogFileName=wp02-25-host.trx\" --results-directory docs/development/evidence/WP02-25/<unique-run>/host"
+    },
+    {
+      "purpose": "planned architecture gate",
+      "status": "NOT_RUN",
+      "command": "dotnet test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj -c Release --logger \"trx;LogFileName=wp02-25-architecture.trx\" --results-directory docs/development/evidence/WP02-25/<unique-run>/architecture"
+    },
+    {
+      "purpose": "planned scope/format check",
+      "status": "NOT_RUN",
+      "command": "git diff --check; git diff --name-only <latest-confirmed-main>...HEAD (run as separate commands; no blanket stage)"
+    },
+    {
+      "purpose": "admission executed",
+      "status": "READ_ONLY_COMPLETE",
+      "command": "git rev-parse HEAD/main/origin/main; git status --short; git merge-base --is-ancestor for both predecessor sources; rg/Get-Content of listed files; Get-FileHash original body. No tests/builds/network/Actions/DB or source changes."
+    }
+  ],
+  "sources": [
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/task-plans/WP02.md",
+      "line": 1638,
+      "scope": "WP02-25 scope and direct prerequisite; WP02-26/28/29 downstream scope",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/task-plans/WP02.md#L1638"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "line": 159715,
+      "scope": "WP02-01 DONE and source d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/roadmap.json#L159715"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "line": 160676,
+      "scope": "WP02-25 PLANNED/NOT_CHECKED/unassigned",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/roadmap.json#L160676"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/roadmap.json",
+      "line": 160743,
+      "scope": "WP02-27 DONE local capability validator; no new formal package trust",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/roadmap.json#L160743"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/09-parallel-development.md",
+      "line": 32,
+      "scope": "Coordinator admission/unique assignment and shared windows",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/09-parallel-development.md#L32"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/08-postgresql-baseline.md",
+      "line": 1,
+      "scope": "PostgreSQL-only development; no environment/database change",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/08-postgresql-baseline.md#L1"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/design-handbook/modules/PLT-OBS-01.md",
+      "line": 13,
+      "scope": "Owner, identity, export, health and original acceptance boundaries",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/design-handbook/modules/PLT-OBS-01.md#L13"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/assessments/20261011/implementation-assessment.json",
+      "line": 16713,
+      "scope": "PLT-OBS-01 CHANGE_REQUIRED; exact known delta; not runtime conformance",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/assessments/20261011/implementation-assessment.json#L16713"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "line": 6797,
+      "scope": "PLT-OBS-01 32 original AC, all NOT_RUN; /targets/17",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/assessments/20261011/catalogs/foundation.json#L6797"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/original-validation.json",
+      "line": 1,
+      "scope": "Original source/tests evidence: HTTP243/Unit259 (not rerun here)",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/evidence/wave4-integration-20261013/WP02-01/original-validation.json#L1"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+      "path": "docs/development/evidence/wave5-integration-20261013/validation-summary.json",
+      "line": 1,
+      "scope": "WP02-27 local artifacts remain NOT_PUBLISHED/NOT_FORMALLY_TRUSTED",
+      "url": "https://github.com/GTX537/CP6/blob/9a0155dec1c3366df8a6631f3d8fdb086aa32fc8/docs/development/evidence/wave5-integration-20261013/validation-summary.json#L1"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Cp6ReleaseIdentity.cs",
+      "line": 18,
+      "scope": "Declared identity format only",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Contracts/Cp6ReleaseIdentity.cs#L18"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6ObservabilityProfile.cs",
+      "line": 9,
+      "scope": "Service/version match and bounded environment/region",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.AspNetCore/Cp6ObservabilityProfile.cs#L9"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6ObservabilityServiceCollectionExtensions.cs",
+      "line": 17,
+      "scope": "Registration, global propagators, automatic instrumentation; no scrub/exporter",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.AspNetCore/Cp6ObservabilityServiceCollectionExtensions.cs#L17"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6SafeHealthResponseWriter.cs",
+      "line": 52,
+      "scope": "Release writer compares accessor with registration, not actual artifact",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.AspNetCore/Cp6SafeHealthResponseWriter.cs#L52"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointRouteBuilderExtensions.cs",
+      "line": 17,
+      "scope": "Distinct endpoints/tag predicates/status; no required inventory",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.AspNetCore/Cp6OperationalEndpointRouteBuilderExtensions.cs#L17"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Cp6OperationalEndpointProfile.cs",
+      "line": 12,
+      "scope": "Safe names/paths/idempotent registration",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.AspNetCore/Cp6OperationalEndpointProfile.cs#L12"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Abstractions/Cp6TelemetryConventions.cs",
+      "line": 35,
+      "scope": "Exact original names/tag-key allowlist; key alone does not bound values",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Abstractions/Cp6TelemetryConventions.cs#L35"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs",
+      "line": 8,
+      "scope": "Preserve existing fail-closed shape checks; does not verify sources/production qualification",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs#L8"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Contracts/Cp6SloEvidenceDocument.cs",
+      "line": 156,
+      "scope": "ProductionSloClaimed is a field, not independent authorization",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Contracts/Cp6SloEvidenceDocument.cs#L156"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+      "line": 14,
+      "scope": "Unbounded queues; decimal->double at50; only cp6.* names checked at109; no full log/event export evidence",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs#L14"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityContracts.cs",
+      "line": 18,
+      "scope": "Source/bytes/trust/runtime/business states distinct",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityContracts.cs#L18"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "line": 1,
+      "scope": "Exact capability scope and no current new trusted package",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/docs/WP02-27-PACKAGE-CAPABILITIES.md#L1"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs",
+      "line": 13,
+      "scope": "WP02-01 trusted context registration, read-only",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.AspNetCore/Context/TrustedRequestContextExtensionsV1.cs#L13"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs",
+      "line": 24,
+      "scope": "Enqueue technical telemetry before caller commit",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.EntityFramework/Cp6OutboxStore.cs#L24"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Messaging/Cp6DaprDeliveryValidator.cs",
+      "line": 81,
+      "scope": "Consumed counts validated delivery, not Owner commit",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Messaging/Cp6DaprDeliveryValidator.cs#L81"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "src/CP6.Platform.Messaging/Cp6DaprEventPublisher.cs",
+      "line": 51,
+      "scope": "Published counts transport result",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/src/CP6.Platform.Messaging/Cp6DaprEventPublisher.cs#L51"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.AspNetCoreTests/OperationalEndpointTests.cs",
+      "line": 21,
+      "scope": "Reusable health/release cases; real loopback Kestrel fixture at323",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/tests/CP6.Platform.AspNetCoreTests/OperationalEndpointTests.cs#L21"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.AspNetCoreTests/ObservabilityRegistrationTests.cs",
+      "line": 108,
+      "scope": "Reusable idempotency/drift, resource identity, trace-only, exporter-neutral tests",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/tests/CP6.Platform.AspNetCoreTests/ObservabilityRegistrationTests.cs#L108"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.AspNetCoreTests/ObservabilityEndToEndTests.cs",
+      "line": 14,
+      "scope": "Two hosts, invalid trace, spoofed headers, throwing exporter cases",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/tests/CP6.Platform.AspNetCoreTests/ObservabilityEndToEndTests.cs#L14"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.UnitTests/TelemetryConventionTests.cs",
+      "line": 8,
+      "scope": "Original telemetry names/tag-key contracts",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/tests/CP6.Platform.UnitTests/TelemetryConventionTests.cs#L8"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.UnitTests/ReleaseIdentityTests.cs",
+      "line": 8,
+      "scope": "Original candidate/noncandidate format rejection",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/tests/CP6.Platform.UnitTests/ReleaseIdentityTests.cs#L8"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.UnitTests/SloEvidenceContractTests.cs",
+      "line": 113,
+      "scope": "Existing Indeterminate matrix and wire compatibility",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/tests/CP6.Platform.UnitTests/SloEvidenceContractTests.cs#L113"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs",
+      "line": 330,
+      "scope": "Pinned project/dependency/version/exporter boundaries",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/tests/CP6.Platform.ArchitectureTests/RepositoryArchitectureTests.cs#L330"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Build.props",
+      "line": 1,
+      "scope": "net8, .NET12, deterministic settings and pinned version; read-only",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/Directory.Build.props#L1"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+      "path": "Directory.Packages.props",
+      "line": 1,
+      "scope": "OTel1.18.0 and current dependencies; read-only",
+      "url": "https://github.com/GTX537/CP6.Platform/blob/e5c63a28c94bae4cc66ec50fbe6079553c03d0d0/Directory.Packages.props#L1"
+    },
+    {
+      "repository": "Main archive (untracked local bytes; catalog-pinned)",
+      "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/20c9a128b3f2bab0__PLT-OBS-01_完整静态设计_v0.1.md",
+      "sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+      "read_scope": "Full 111-line body read; local SHA256 matches catalog",
+      "lines": {
+        "telemetry": 41,
+        "slo": 65,
+        "runtime_identity": 83,
+        "health": 103,
+        "required_gates": 109
+      }
+    }
+  ],
+  "risks": [
+    "Runtime accessor/metadata self-consistency must not be mistaken for observing actual loaded artifact; file SHA after load is not alone proof of loaded bytes. Record the binding method and keep unsupported deployment artifact kind Unproven.",
+    "Package archive hash, loaded assembly hash, container digest, config hash and schema digest are separate domains. No new signed seven-package artifact contains these APIs yet.",
+    "Automatic instrumentation and arbitrary ILogger providers can emit data outside CP6 tags; final export capture must include events/log formatting/resource values and prove only the configured pipeline.",
+    "Allowlisting metric keys after aggregation is too late to prevent high-cardinality memory growth. Enforce bounded value vocabularies/series budgets before aggregation.",
+    "Legacy Testing recorder is unbounded, coerces decimals to double and omits events/logs from its snapshot; cannot be sole privacy/precision evidence. Leave generic repair to WP02-26.",
+    "Missing required health checks currently default to success through standard tag filtering; new guarded profile must fail closed without breaking existing hosts or silently replacing CRM ready.",
+    "Global propagators are process-wide. Same-profile DI idempotence does not prove final runtime propagator consistency across hosts; tests must clean up and avoid parallel interference.",
+    "Contracts additions may expose a new public API through existing compile globs; dependency/version/project and packaging claims cannot be changed without a coordinator window.",
+    "Original source archive is untracked under Main but pinned SHA256 matches; include byte hash evidence, do not claim it is a Git-tracked blob.",
+    "Old full test counts are historical evidence only. New runtime/telemetry changes require affected tests; no remote fetch performed, local origin refs are not a fresh online remote assertion."
+  ],
+  "original_ac": [
+    {
+      "id": "PLT-OBS-01::OBS01-A1",
+      "source_line": 41,
+      "assertion": "原source/meter/operation及标签键值枚举",
+      "responsibility": "WP02-25 local registry tests",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS01-A2",
+      "source_line": 41,
+      "assertion": "age/attempt为数值且高基数不入metric",
+      "responsibility": "WP02-25 bounded export/series tests; existing EF emitters read-only",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS01-A3",
+      "source_line": 41,
+      "assertion": "consumed/published/enqueue时点不冒业务提交",
+      "responsibility": "WP02-25 definition and non-equivalence checks; actual Owner commit remains external",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS01-A4",
+      "source_line": 41,
+      "assertion": "trace-only传播与无baggage、非法parent处理",
+      "responsibility": "WP02-25 existing + new actual exported trace tests",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS01-A5",
+      "source_line": 41,
+      "assertion": "自动instrumentation隐私清理含URL/query/code",
+      "responsibility": "WP02-25 new SDK export-boundary tests",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS01-A6",
+      "source_line": 41,
+      "assertion": "exporter异常/满队列不改变事务且缺证可见",
+      "responsibility": "WP02-25 bounded adapter + actual HTTP result; real Owner transaction proof remains external",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS01-A7",
+      "source_line": 41,
+      "assertion": "多Host全局propagator/注册漂移准确识别",
+      "responsibility": "WP02-25 multiple loopback hosts and lifecycle drift",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS01-A8",
+      "source_line": 41,
+      "assertion": "instance重启/重复/采样口径与业务receipt分离",
+      "responsibility": "WP02-25 reset/clock/receipt definitions; actual receipt population external",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A1",
+      "source_line": 65,
+      "assertion": "原JSON字段/1MiB/depth/重复键/UTC约束",
+      "responsibility": "Legacy contract read-only regression; WP02-26 substantive work",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A2",
+      "source_line": 65,
+      "assertion": "原Evaluate精确条件及result重算",
+      "responsibility": "Legacy evaluator read-only regression; WP02-26 substantive work",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A3",
+      "source_line": 65,
+      "assertion": "源实体/查询/definition/release内容身份真实绑定",
+      "responsibility": "WP02-26 and application/evidence Owner; not delivered by telemetry match",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A4",
+      "source_line": 65,
+      "assertion": "ratio/percentile/gauge单位与计算一致",
+      "responsibility": "WP02-26 and approved business SLI Owner",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A5",
+      "source_line": 65,
+      "assertion": "真实覆盖/缺测/零样本保持Indeterminate",
+      "responsibility": "Legacy shape regressions only; real coverage qualifications WP02-26/Owner",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A6",
+      "source_line": 65,
+      "assertion": "候选与生产分离，flag不自证且无测试混入",
+      "responsibility": "WP02-25 anti-promotion guard; full production qualification WP02-26/Owner",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A7",
+      "source_line": 65,
+      "assertion": "修订/晚到/多release窗口血缘保原结果",
+      "responsibility": "WP02-26 immutable evidence workflow",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS02-A8",
+      "source_line": 65,
+      "assertion": "权限/保留/hold且SLO不冒业务验收",
+      "responsibility": "Application evidence/security Owner; WP02-25 no-promotion invariant only",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A1",
+      "source_line": 83,
+      "assertion": "Candidate/NonCandidate字段和格式准确",
+      "responsibility": "WP02-25 original format regressions plus new observation versions",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A2",
+      "source_line": 83,
+      "assertion": "self-declared身份不冒实测字节/签名/生产",
+      "responsibility": "WP02-25 fail-closed observation and qualification distinctions",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A3",
+      "source_line": 83,
+      "assertion": "service/profile一致且禁止请求注入",
+      "responsibility": "WP02-25 actual host request-injection negative",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A4",
+      "source_line": 83,
+      "assertion": "artifact/package/bundle/config身份不混域",
+      "responsibility": "WP02-25 typed identity-domain comparisons",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A5",
+      "source_line": 83,
+      "assertion": "/health/release对象一致/异常分支无敏感细节",
+      "responsibility": "WP02-25 legacy regression + versioned observed view",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A6",
+      "source_line": 83,
+      "assertion": "多instance滚动升级与Mismatch/Unproven精确关闭新能力",
+      "responsibility": "WP02-25 per-instance/route decision tests; actual fleet cutover WP02-28/29/deployment Owner",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A7",
+      "source_line": 83,
+      "assertion": "版本/部署历史不原地改写",
+      "responsibility": "WP02-25 immutable snapshots; real deployment history external",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS03-A8",
+      "source_line": 83,
+      "assertion": "回退与旧operation/schema读路径保留",
+      "responsibility": "WP02-28/29 and deployment/business Owner; no runtime rollback in this task",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A1",
+      "source_line": 103,
+      "assertion": "四路径/注册幂等/冲突准确",
+      "responsibility": "WP02-25 original + versioned registration path cases",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A2",
+      "source_line": 103,
+      "assertion": "live静态含义与真实startup/ready inventory分离",
+      "responsibility": "WP02-25 real loopback inventory including missing and stopped dependency",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A3",
+      "source_line": 103,
+      "assertion": "CRM原ready不被空检查替换、无重复路径",
+      "responsibility": "WP02-29 actual CRM adoption; WP02-25 path-conflict guard only",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A4",
+      "source_line": 103,
+      "assertion": "health输出allowlist/no-store且不泄异常",
+      "responsibility": "WP02-25 serialized HTTP health tests",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A5",
+      "source_line": 103,
+      "assertion": "显式probe/运维权限及部署层采用",
+      "responsibility": "WP02-25 exposes host policy binding/test hook only; deployment/actual host Owner qualification external",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A6",
+      "source_line": 103,
+      "assertion": "有界check/取消/stale/collector影响明确",
+      "responsibility": "WP02-25 new bounded inventory/probe tests",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A7",
+      "source_line": 103,
+      "assertion": "read与新write能力、全局摘流边界准确",
+      "responsibility": "WP02-25 route capability model, no authorization; real routing/Owner policy external",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    },
+    {
+      "id": "PLT-OBS-01::OBS04-A8",
+      "source_line": 103,
+      "assertion": "health GET零业务副作用、不冒SLO或验收",
+      "responsibility": "WP02-25 actual endpoint zero-effect checks and no acceptance promotion",
+      "state": "NOT_RUN",
+      "acceptance_evidence": []
+    }
+  ]
+}

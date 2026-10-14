@@ -1,0 +1,352 @@
+{
+  "reviewer": "wave6_consumption_admission",
+  "review_type": "Single concentrated independent complete task diff review",
+  "observed_at": "2026-10-14T03:28:14.334232+00:00",
+  "worktree": "D:\\CP6-worktrees\\fw-s02-1012",
+  "branch": "codex/wave6-dispatch-20261013",
+  "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+  "ready_for_document_delivery": true,
+  "findings": [],
+  "diff_identity": {
+    "command": "git -c core.longpaths=true diff --cached",
+    "sha256": "6fb881fed367bc32a454c15b70b4f8462bc13c1724ad6d63ec4be4094dc069e1",
+    "size_bytes": 393550
+  },
+  "index_git_blobs": [
+    {
+      "path": "docs/development/07-detailed-tasks.md",
+      "index_git_blob": "1ac640e8198b0d06e9d6818f796f7bbed1ff3565"
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave6/README.md",
+      "index_git_blob": "9eb787c830852307eba819df658bfb8fd7665117"
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave6/WP01-01.md",
+      "index_git_blob": "f03f017f7ddb755918e464048c4c4638da86fe32"
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave6/WP02-02.md",
+      "index_git_blob": "905c0b504d1201bbf3d48562643eff08d08ad8a6"
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave6/WP02-08.md",
+      "index_git_blob": "717713485ef074ca18f4be854a7eaaa486726054"
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave6/WP02-25.md",
+      "index_git_blob": "974e5495f22b485b310664621ed368c77bf27077"
+    },
+    {
+      "path": "docs/development/dispatch/20261013-wave6/dispatch.json",
+      "index_git_blob": "be5081465c8a8c243523a121af472a8b089dbb3c"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/.gitattributes",
+      "index_git_blob": "a792f7642df63bca718b4c9e668afcad5a056206"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/README.md",
+      "index_git_blob": "b7bee748f373496b6afe09894c262dfab20b675e"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/added-links.json",
+      "index_git_blob": "441a1e5d43ee05cb0089087447667d91b093d9a2"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-consumption.json",
+      "index_git_blob": "53604b496bf6eaebd047c3c58f5b35f03fb323ff"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-consumption.md",
+      "index_git_blob": "9484d5492ee67b20d147a5c95f00619ce3229b70"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-observability.json",
+      "index_git_blob": "95679cb100277ed497c98af8214cd1a9806e65d7"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-observability.md",
+      "index_git_blob": "9f7a787d6b9daf2176ee555242ce53e641e2bd26"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-outbox.json",
+      "index_git_blob": "e1508488f237106f76e05f713dd4afe983ff2437"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-outbox.md",
+      "index_git_blob": "2c427a2f9b8173ecc5a7ee1c06b6480175cb2470"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-plm.json",
+      "index_git_blob": "26474b96bd2b26e7f9fc39e840e57c42d7a5f7c2"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission-plm.md",
+      "index_git_blob": "9f77cef65aeff6333039f0927eca7e52f00579fc"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+      "index_git_blob": "842f32817153cfa9340cdc63da0e38ca1c8f236f"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/dispatch-check.json",
+      "index_git_blob": "c07f4d44a6210ba3a2f24bbb5fe663f920674a90"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/format-history.json",
+      "index_git_blob": "feecb8697c1c7736f34b898737f595078ba19a0b"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/intake-main.json",
+      "index_git_blob": "542f6c04beb6a63f8e27bc7c4016f54cd7cf9a78"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/intake-platform.json",
+      "index_git_blob": "6023075352e77254146d69b6e706b49df80cceff"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/intake.json",
+      "index_git_blob": "0c2dee87744127d2243eb41c5b5bc7431befede7"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/ledger-check.json",
+      "index_git_blob": "9a37da6ed879fa88b962242be9c32d23cacd9dd2"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/pg-resource-probe.json",
+      "index_git_blob": "34c69fa72a34f250978b03e80dc57f5651e43fca"
+    },
+    {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/setup.json",
+      "index_git_blob": "9124c7539380274d2fbb7acb63b42079a7beb91e"
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "index_git_blob": "2827240ce640e11a5b919e2e15633014155bcdc3"
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "index_git_blob": "e463e8e1ddc5e8f2f4838b1422cbac73018780ac"
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "index_git_blob": "a9fbf8e3f2683fc7dd6d87fc4f7ad3b5d16d0dbd"
+    },
+    {
+      "path": "docs/project-memory/CHANGELOG-AI.md",
+      "index_git_blob": "54904bcf1651a6709dc483d2605714024faa5a22"
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "index_git_blob": "277e560aba6bdaf288a3598b4c52fb34596641f6"
+    }
+  ],
+  "checks": {
+    "all_staged_paths_docs_only": true,
+    "json_parse_count": 16,
+    "task_ids_unchanged": true,
+    "business_and_other_top_sections_unchanged": true,
+    "changelog_append_only": true,
+    "task_changed_fields": {
+      "WP01-01": [
+        "assignment"
+      ],
+      "WP02-02": [
+        "assignment"
+      ],
+      "WP02-08": [
+        "state",
+        "entry_gate",
+        "assignment"
+      ],
+      "WP02-25": [
+        "state",
+        "entry_gate",
+        "assignment"
+      ]
+    },
+    "done_task_ids_unchanged": true,
+    "before_counts": {
+      "PLANNED": 354,
+      "DONE": 20,
+      "BLOCKED": 1
+    },
+    "after_counts": {
+      "PLANNED": 352,
+      "DONE": 20,
+      "BLOCKED": 1,
+      "READY": 2
+    },
+    "assignments_match_dispatch": true,
+    "dependencies_done": true,
+    "no_actual_start": true,
+    "raw_report_hashes": [
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-plm.md",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      },
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-plm.json",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      },
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-consumption.md",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      },
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-consumption.json",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      },
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-outbox.md",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      },
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-outbox.json",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      },
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-observability.md",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      },
+      {
+        "path": "docs/development/evidence/wave6-dispatch-20261013/admission-observability.json",
+        "manifest_hash_matches_index": true,
+        "scratch_exact_equal": true
+      }
+    ],
+    "write_window_collisions": [],
+    "source_pin_errors": [],
+    "source_pins_checked": 122,
+    "task_worktrees": [
+      {
+        "task": "WP01-01",
+        "branch_matches": true,
+        "head_matches": true,
+        "tracked_clean": true
+      },
+      {
+        "task": "WP02-02",
+        "branch_matches": true,
+        "head_matches": true,
+        "tracked_clean": true
+      },
+      {
+        "task": "WP02-08",
+        "branch_matches": true,
+        "head_matches": true,
+        "tracked_clean": true
+      },
+      {
+        "task": "WP02-25",
+        "branch_matches": true,
+        "head_matches": true,
+        "tracked_clean": true
+      }
+    ],
+    "new_link_errors": [],
+    "new_relative_links_checked": 54,
+    "source_archive_hashes": [
+      {
+        "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\64\\642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+        "expected": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84",
+        "actual": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84"
+      },
+      {
+        "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\20\\20c9a128b3f2bab0__PLT-OBS-01_完整静态设计_v0.1.md",
+        "expected": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+        "actual": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99"
+      }
+    ],
+    "format_check": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "ledger_checker_reuse": {
+      "path": "docs/development/evidence/wave6-dispatch-20261013/ledger-check.json",
+      "sha256": "6988a3f58a39335c5cf75f797496d71c6bb32d1cf906f483f10dfa8e60fc0b0b",
+      "result": {
+        "result": "PASS",
+        "scope": "ledger/source traceability, structural evidence requirements and generated view consistency only",
+        "business_tests_executed": false,
+        "metrics": {
+          "packages": 14,
+          "targets": 125,
+          "targets_assessed": 125,
+          "targets_delivered": 0,
+          "original_inventories_complete": 123,
+          "revision_runtime": 247,
+          "runtime_states": {
+            "NOT_RUN": 247
+          },
+          "historical_static": 41
+        },
+        "errors": []
+      },
+      "scope": "Exact unchanged checker plus same staged roadmap/derived views; independent structural comparison above. No product tests."
+    },
+    "reviewer_environment_failure": {
+      "command": "python docs/development/tools/manage_roadmap.py",
+      "result": "FAIL_ENVIRONMENT",
+      "reason": "PATH Python lacks pathlib.Path.is_relative_to; no ledger failure inferred; compatible Python rerun pending.",
+      "resolution": "Retained original failure; one rerun with the already-verified Python 3.13 absolute path passed."
+    },
+    "working_matches_index_after_eol_normalization": true,
+    "index_unchanged_during_review": true,
+    "ledger_checker_fresh": {
+      "command": [
+        "C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe",
+        "-X",
+        "utf8",
+        "docs/development/tools/manage_roadmap.py"
+      ],
+      "exit_code": 0,
+      "result": "PASS",
+      "scope": "ledger/source traceability, structural evidence and generated views only; no business tests",
+      "metrics": {
+        "packages": 14,
+        "targets": 125,
+        "targets_assessed": 125,
+        "targets_delivered": 0,
+        "original_inventories_complete": 123,
+        "revision_runtime": 247,
+        "runtime_states": {
+          "NOT_RUN": 247
+        },
+        "historical_static": 41
+      },
+      "errors": []
+    }
+  },
+  "read_only_scope": "No repository/Git mutations, network writes, database access, Actions, product build/test, signing or publication. Scratch review files only.",
+  "nonblocking_notes": [
+    "WP02-02 duplicated rev-parse commands omit per-repository -C, while source pin requirements remain explicit.",
+    "Copied Outbox assessment remote-writes wording is broader than intended runtime/business exclusion; final task separately authorizes Git/Handoff delivery.",
+    "Copied observability recommendation distinguishes itself from assignment; final COORD card/roadmap clearly establish READY/CONFIRMED."
+  ],
+  "reviewed_topics": [
+    "Complete staged 32-file coordinator task",
+    "Source and original design obligations for Outbox/observability plus task dependencies",
+    "Preparation versus actual adoption and task/business completion",
+    "Exact nonoverlapping write windows and future shared-file extensions",
+    "PostgreSQL resource ownership and cleanup restrictions",
+    "Immutable report/source hashes and links",
+    "Full roadmap before/after semantics and generated/project state consistency",
+    "Local verification scope and retained environment failure"
+  ],
+  "remaining_gates": [
+    "Fresh candidate/protected-main workflow preflight before push or PR",
+    "Normal protected document delivery and remote main containment",
+    "No grant of formal publication, Actions, environment deployment or business acceptance"
+  ],
+  "completed_utc": "2026-10-14T03:29:49.866275+00:00"
+}
