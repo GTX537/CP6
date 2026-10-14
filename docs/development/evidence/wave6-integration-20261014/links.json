@@ -1,0 +1,129 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-14T08:10:50.196895+00:00",
+  "scope": "Added Markdown relative file links in staged diff; historical unchanged lines and web availability not checked",
+  "checked": 24,
+  "errors": [],
+  "links": [
+    {
+      "file": "docs/development/03-progress.md",
+      "link": "07-detailed-tasks.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-08",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-25",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP01-01/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP01-01/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-02/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-02/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-08/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-08/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-25/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-25/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "validation-summary.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-08/fix-review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "WP02-25/fix-review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "issues-closed.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "validation-summary.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "combined-architecture-validation.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "coordinator-window-decisions.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "intake.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave6-integration-20261014/README.md",
+      "link": "handoff-input-verification.json",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/evidence/wave6-integration-20261014/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/evidence/wave6-integration-20261014/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/evidence/wave6-integration-20261014/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/evidence/wave6-integration-20261014/README.md",
+      "exists": true
+    }
+  ]
+}

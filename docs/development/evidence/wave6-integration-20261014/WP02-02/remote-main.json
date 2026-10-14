@@ -1,0 +1,515 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6",
+  "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+  "remote_main_sha": "b526e6b2194c232fae224cad7e72aef1c9b85c9e",
+  "pr_url": "https://github.com/GTX537/CP6/pull/206",
+  "merged_at": "2026-10-14T07:25:22Z",
+  "files_match": [
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/.gitattributes",
+      "blob": "8b41c648bb90baf441b5e9d29552ff54da6194f7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/.gitignore",
+      "blob": "c256ff4d35fead213772b264c3defc727aff1882"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/DEPENDENCY-PROPOSAL.md",
+      "blob": "365a82c6668042e9389b84d20c90efff54c75337"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/FORMAL-VERSION-PROPOSAL.md",
+      "blob": "37552831cdb97394aaeff7e08fe9269c81d531c9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/PGT-BOUNDARY.md",
+      "blob": "fca2503f906ca9b329d29d461fbc88c33125ac04"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/PROPOSED-DEPENDENCIES.patch",
+      "blob": "97481ace06827c66758d342527937d6179d7401d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/README.md",
+      "blob": "6e982b390b0e1b7f98e0ce964d84fd0d13172931"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/REVIEW.md",
+      "blob": "b62272f005c34924b84be69a6e6a43c877454921"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/feed-version-observation.json",
+      "blob": "d80f4136790ebd921c923a19cc57e57e88473fa1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/final-verification.json",
+      "blob": "81ef0016a4adca4e2cb3b93f331c842dd541a7e1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/local-consumer-lock.json",
+      "blob": "df5db6cdd44abf5c07fd04d86457af3552e07bb8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/old-seven-approval.json",
+      "blob": "8dddd381beb4ace84e81a62d9fc4f1b5275b697d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/original-publication.json",
+      "blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inventory-final.json",
+      "blob": "2dca953c8a08dd272b819fffdf04bfbb320b59d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inventory.json",
+      "blob": "2ae3e39075196760684631278c54450f29107bbb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/optimized-input-check.json",
+      "blob": "2dba576542c9367e93d117eaff15badb48097108"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-formal.json",
+      "blob": "dd1191dab2baa118ea505bf333d303c3dca38ae5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/old-local.json",
+      "blob": "6799c9af0b08d75d44b962a866c76bb47211089c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/real-inputs/schema-source-parity.json",
+      "blob": "0c7ebbddcad5d782b84e6858cf28b2b6313efbd3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/retained-artifacts.json",
+      "blob": "7bb3f4b0c8522e39acc7b247f6ab63f9425310c8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/source-hashes.json",
+      "blob": "75ad5883ecec4e6cdca00ad90ffab53750ece417"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-green-20261014/tests.log",
+      "blob": "5bd4ac0ed832e2c899991b7310bc5ac778112e1c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/source-hashes.json",
+      "blob": "1b24d60540205492d88567f1c22fb0f7492f6cfb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-edge-red-20261014/tests.log",
+      "blob": "f26558cd0089f2466b394a09489e5dd687a38503"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/source-hashes.json",
+      "blob": "3925e4700a464daa144079401e30ab6baf561a88"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-green-20261014/tests.log",
+      "blob": "fc6b4bc6ceba9089d95fd82df730f5b88823ca4d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal-exit.txt",
+      "blob": "78c6baefdd2d13b3080b53d794e90471df3c4bf2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal.log",
+      "blob": "a4cdb13b99fdae961e7fb5cafbf7addafde46dfc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-formal/report.json",
+      "blob": "ecc71527114e077c24cdc23d4b1c0d602296289b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local-exit.txt",
+      "blob": "78c6baefdd2d13b3080b53d794e90471df3c4bf2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local.log",
+      "blob": "f17083451fbff1bf8d6aaf0c4312aed20a59ff18"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/old-local/report.json",
+      "blob": "4098c05e182c97fc7ce7884844cb783bc62f5e13"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/source-hashes.json",
+      "blob": "a0a7cd98f0a01c7263b7008b1e9e0100140f6be9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-green-20261014/tests.log",
+      "blob": "c4ac416eed7da8ecdd92c71da4d2d4368388a3ad"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/source-hashes.json",
+      "blob": "b648cf5472711abfd1985aa5043176d502327a8c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-namespace-red-20261014/tests.log",
+      "blob": "8855b3223d01a85d12fda9c9a8d89c9993d7a1ef"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/source-hashes.json",
+      "blob": "0cf3eca6326f9cf54ed5e4b3290e01a0c124ae58"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/checker-red-20261014/tests.log",
+      "blob": "27f14223cf449d52fb454afc8a28f8850da2ebe1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/archive-metadata.json",
+      "blob": "5f0e7f0643840968a6682da45380d93edc47b57b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/archive-metadata.log",
+      "blob": "04ec063bb37f04d05162fe1f42afa80e2f265629"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/build.log",
+      "blob": "b85dd9a00fa0a04d7f8308405dd67de6930d9a29"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/dotnet-info.log",
+      "blob": "193b8c4a2d1389a485292a33957ba2fa61a0f5e5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/global.json",
+      "blob": "3b97c0efcd9b886e12303a888b95fbf21125b2d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.props",
+      "blob": "9a371b4acc37f6c663b5a47ca23281e8fcf5b3bf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.targets",
+      "blob": "058246e40862046ca3e0e99c26508fed3b024525"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/NuGet.Config",
+      "blob": "ba3ea93735e9089d20d62ad15aa6affb20a55cd4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Probe.csproj",
+      "blob": "f2643c232cad10f702db041c0f03130ff7d097b5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Program.cs",
+      "blob": "ee029eaed99488e1050b743b1379f6e9b6a5b993"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/SyntheticRuntime.cs",
+      "blob": "9c23291e846166274dc58dc1ca129d4b1591a34c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/report.json",
+      "blob": "edbca917930ae25285518e082f4e4554aaf16113"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/restore.log",
+      "blob": "abe7272aed51ae05d2b24a6af5dfce52d829ba90"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/runtime.log",
+      "blob": "4f0eee00cd498e024cb99a65f9885d1f7ea889d4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/sdk-version.log",
+      "blob": "99e91bfe4140c9432efde891194b8abac2298b34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/signatures-and-synthetic-runtime.json",
+      "blob": "898a325320362c8ba4a075be6e84236af4c5e3dc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/archive-metadata.json",
+      "blob": "f2fdec4f4fe4a4c121890003da19cb2732a234b0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/archive-metadata.log",
+      "blob": "7934ae25f790ee09ede1ed929e56f6e2db3b1390"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/build.log",
+      "blob": "d3928e5cbfc27009e11672e85ec3396650baa3c5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/dotnet-info.log",
+      "blob": "1807087f341d0ec506c39c481551b2279229cc06"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/global.json",
+      "blob": "3b97c0efcd9b886e12303a888b95fbf21125b2d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.props",
+      "blob": "9a371b4acc37f6c663b5a47ca23281e8fcf5b3bf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.targets",
+      "blob": "058246e40862046ca3e0e99c26508fed3b024525"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/NuGet.Config",
+      "blob": "ba3ea93735e9089d20d62ad15aa6affb20a55cd4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Probe.csproj",
+      "blob": "f2643c232cad10f702db041c0f03130ff7d097b5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Program.cs",
+      "blob": "3fbd8604bb30118dd3ba0068f1f2d4d8501d0e16"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/SyntheticRuntime.cs",
+      "blob": "9c23291e846166274dc58dc1ca129d4b1591a34c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/test_runner.py",
+      "blob": "47cab017e8ed2301ca229a4005b602eb00f7b7e6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/report.json",
+      "blob": "6eb1ad84c86a60908f48a8de620e1e7bd7334192"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/restore.log",
+      "blob": "2bfbb9d4e1c8ea7e7795f21ef970adae33b6209f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/runtime.log",
+      "blob": "33c4aa0a5709f62460de459977a300ddceb9b792"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/sdk-version.log",
+      "blob": "99e91bfe4140c9432efde891194b8abac2298b34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/signatures-and-synthetic-runtime.json",
+      "blob": "01211212dac533351566dbea65a462d3fbe8050b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/archive-metadata.json",
+      "blob": "f2fdec4f4fe4a4c121890003da19cb2732a234b0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/archive-metadata.log",
+      "blob": "7934ae25f790ee09ede1ed929e56f6e2db3b1390"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/build.log",
+      "blob": "9d3898679f3ab4962a4a99fedca6fa29b83db2f0"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/dotnet-info.log",
+      "blob": "575f7f41803c8dee3a5d97ab2bbdc24c81d2ad43"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/global.json",
+      "blob": "3b97c0efcd9b886e12303a888b95fbf21125b2d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.props",
+      "blob": "9a371b4acc37f6c663b5a47ca23281e8fcf5b3bf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.targets",
+      "blob": "058246e40862046ca3e0e99c26508fed3b024525"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/NuGet.Config",
+      "blob": "ba3ea93735e9089d20d62ad15aa6affb20a55cd4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Probe.csproj",
+      "blob": "f2643c232cad10f702db041c0f03130ff7d097b5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Program.cs",
+      "blob": "3fbd8604bb30118dd3ba0068f1f2d4d8501d0e16"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/README.md",
+      "blob": "d508680dc03cc64d81497a022406c058754474d5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/SyntheticRuntime.cs",
+      "blob": "9c23291e846166274dc58dc1ca129d4b1591a34c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/test_runner.py",
+      "blob": "47cab017e8ed2301ca229a4005b602eb00f7b7e6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/report.json",
+      "blob": "adc1b7e3dd0c1821e34613ab8d4e9d42d7ae90c3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/restore.log",
+      "blob": "d3206ec5a8c19df65e2048787efe185fa811677c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/runtime.log",
+      "blob": "33c4aa0a5709f62460de459977a300ddceb9b792"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/sdk-version.log",
+      "blob": "99e91bfe4140c9432efde891194b8abac2298b34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/signatures-and-synthetic-runtime.json",
+      "blob": "01211212dac533351566dbea65a462d3fbe8050b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/archive-metadata.json",
+      "blob": "550a89a45105c55537ee0b89006ec9b5cf1074f3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/archive-metadata.log",
+      "blob": "80bc27ed42f4993f0cbd6f7df96e75baf8cced8a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/dotnet-info.log",
+      "blob": "f7e1d556dbe78c8d3b7be60822cdf07844e2def8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/global.json",
+      "blob": "3b97c0efcd9b886e12303a888b95fbf21125b2d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/report.json",
+      "blob": "83e3ccbf3d893271a1cdcff3b76de3479765a1a5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-old-20261014-a1/sdk-version.log",
+      "blob": "99e91bfe4140c9432efde891194b8abac2298b34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/execution.json",
+      "blob": "78101465c72c7fb36ccd4a64f6d7cc88b1b2f8f7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-formal.log",
+      "blob": "f2167e4040219f131bccdd59126a5ef3da3913a2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-formal/report.json",
+      "blob": "806a1c3b9d67666f4d9490a7cbd88ff1ac1044b4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-local.log",
+      "blob": "4df6cb67980adbeb263675064efab50ee227aa26"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/old-local/report.json",
+      "blob": "b9ce7e49fc5742e768e51ad06a10dd07b46bda29"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/root-validation-20261014/probe-parser-tests.log",
+      "blob": "22d2073f4b1292d70054f2cede73ac04c50b4e90"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/workflow-preflight.json",
+      "blob": "f4660f9204402e3687eb30dafdfc0070073e0fb2"
+    },
+    {
+      "path": "eng/wp02-02/consumption/.gitattributes",
+      "blob": "542c8bd9818649089eeda13a25164834382e5c8e"
+    },
+    {
+      "path": "eng/wp02-02/consumption/.gitignore",
+      "blob": "c18dd8d83ceed1806b50b0aaa46beb7e335fff13"
+    },
+    {
+      "path": "eng/wp02-02/consumption/README.md",
+      "blob": "ab7b0dc740784841f4f5c4a2835c40d2d5a619ad"
+    },
+    {
+      "path": "eng/wp02-02/consumption/capture_real_inputs.py",
+      "blob": "d5d3b95c5196d536dd8742ae4ff84ea00bc40701"
+    },
+    {
+      "path": "eng/wp02-02/consumption/input.schema.json",
+      "blob": "daad51be22b4aef7980722785f52443697d6f232"
+    },
+    {
+      "path": "eng/wp02-02/consumption/inventory.py",
+      "blob": "fb5bcb9899bf4175c8ac3c17798d445f901c26df"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.props",
+      "blob": "9a371b4acc37f6c663b5a47ca23281e8fcf5b3bf"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.targets",
+      "blob": "058246e40862046ca3e0e99c26508fed3b024525"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/NuGet.Config",
+      "blob": "ba3ea93735e9089d20d62ad15aa6affb20a55cd4"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Probe.csproj",
+      "blob": "f2643c232cad10f702db041c0f03130ff7d097b5"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/Program.cs",
+      "blob": "3fbd8604bb30118dd3ba0068f1f2d4d8501d0e16"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/README.md",
+      "blob": "d508680dc03cc64d81497a022406c058754474d5"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/SyntheticRuntime.cs",
+      "blob": "9c23291e846166274dc58dc1ca129d4b1591a34c"
+    },
+    {
+      "path": "eng/wp02-02/consumption/probe/test_runner.py",
+      "blob": "47cab017e8ed2301ca229a4005b602eb00f7b7e6"
+    },
+    {
+      "path": "eng/wp02-02/consumption/run_probe.py",
+      "blob": "1950706a0d3d6e20783f2559f3983f9cef334954"
+    },
+    {
+      "path": "eng/wp02-02/consumption/tests/test_verify.py",
+      "blob": "ea32527f8892745bb184b889d04743d3147a139d"
+    },
+    {
+      "path": "eng/wp02-02/consumption/verify.py",
+      "blob": "a030ba847528eac6a89191cbd1094e246e7bb2d6"
+    }
+  ],
+  "observed_at": "2026-10-14T07:25:30.088191+00:00",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

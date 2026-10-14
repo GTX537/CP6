@@ -1,0 +1,42 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-14T07:53:27.847052+00:00",
+  "issues": [
+    {
+      "closedAt": "2026-10-14T07:52:41Z",
+      "state": "CLOSED",
+      "title": "[BUG] Outbox V2 committed Blocked transition loses original mutation receipt",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/66",
+      "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+      "fix_sha": "6e580bb4f77d943dcdaeeafd3450891f791aef9e",
+      "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1"
+    },
+    {
+      "closedAt": "2026-10-14T07:52:56Z",
+      "state": "CLOSED",
+      "title": "[BUG] Outbox V2 can begin publish after send-intent commit consumes lease",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/67",
+      "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+      "fix_sha": "f17b8669b9dde1826bb231358a0106d16232640b",
+      "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1"
+    },
+    {
+      "closedAt": "2026-10-14T07:53:17Z",
+      "state": "CLOSED",
+      "title": "[BUG] Runtime identity freshness revives after UTC rollback",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/68",
+      "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+      "fix_sha": "db728d17d95147be89ab4afd7bbbab9ebe15cbcb",
+      "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1"
+    },
+    {
+      "closedAt": "2026-10-14T07:53:36Z",
+      "state": "CLOSED",
+      "title": "[BUG] V1 live and identity responses omit no-store",
+      "url": "https://github.com/GTX537/CP6.Platform/issues/69",
+      "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+      "fix_sha": "621f0abab99db5708ccbe46fc592f33333ca08b1",
+      "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1"
+    }
+  ]
+}

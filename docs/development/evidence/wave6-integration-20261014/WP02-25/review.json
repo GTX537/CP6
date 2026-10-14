@@ -1,0 +1,120 @@
+{
+  "task": "WP02-25",
+  "reviewer": "/root/wave6_review_observability",
+  "reviewed_at_utc": "2026-10-14T06:37:35.343515+00:00",
+  "baseline": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "candidate": "095a66bfda8b4df2ee65e920541ce6304e8e66c1",
+  "worktree": "D:/CP6.Platform-worktrees/wp02-25-20261013",
+  "clean_head_before_and_after": true,
+  "status": "CHANGES_REQUIRED",
+  "merge_ready": false,
+  "findings": [
+    {
+      "id": "WP02-25-R1",
+      "priority": "P2",
+      "title": "UTC rollback revives expired runtime identity evidence",
+      "path": "src/CP6.Platform.AspNetCore/ObservabilityV1/OwnedModuleObserverV1.cs",
+      "start_line": 97,
+      "end_line": 99,
+      "confidence": "high",
+      "verification": "Executed targeted in-memory reproduction against hash-verified candidate net8.0 DLLs in PowerShell .NET 10.0.11; not an SDK 8 test rerun.",
+      "problem": "Freshness checks only now - observer.ObservedUtc. Expired evidence becomes Match again when UTC moves back within the original freshness window, even though monotonic elapsed time continues forward. HealthAdapterV1.cs:100-109 consumes that Match to reopen relevant NewEffect availability and potentially aggregate Healthy without a new observation.",
+      "repro": {
+        "freshness_seconds": 60,
+        "initial_utc": "t0",
+        "initial_result": "Match",
+        "advance_utc": "t0+120s",
+        "advance_monotonic_seconds": 120,
+        "expired_result": "Unproven",
+        "rollback_utc": "t0+30s",
+        "rollback_monotonic_seconds": 180,
+        "actual_result": "Match",
+        "expected_result": "Unproven"
+      },
+      "fix": "Bind byte-load freshness to a monotonic elapsed timestamp from the observer-owned clock, retain UTC validation as metadata, and never revive an expired observation due to wall-clock rollback. Add a targeted identity plus relevant route regression; do not renew proof by hashing old bytes.",
+      "missing_coverage": "RuntimeIdentityTests.FreshnessIsEvaluatedOnEveryObservation only moves UTC forward. QualityBoundaryRegressionTests.HealthCacheExpiresByMonotonicTimeEvenWhenUtcMovesBackwards protects dependency caching, not identity."
+    },
+    {
+      "id": "WP02-25-R2",
+      "priority": "P2",
+      "title": "Set no-store on the new live and identity responses",
+      "path": "src/CP6.Platform.AspNetCore/ObservabilityV1/HealthAdapterV1.cs",
+      "start_line": 32,
+      "end_line": 35,
+      "confidence": "high",
+      "verification": "Source-confirmed contract gap; no new HTTP execution for this finding.",
+      "problem": "Only startup/ready call Write(), which assigns Cache-Control:no-store at line 49. Live and identity return Results.Json directly with no equivalent header. In particular, a module identity Match response is allowed to be stored outside the adapter freshness check. The fixed OBS04-A4 health-output contract requires no-store; legacy responses already have it.",
+      "repro": "Start the authorized loopback fixture in HealthIdentityAndPermissionTests with MapCp6HealthV1; GET /ops/v1/live and /ops/v1/identity. Inspect response.Headers.CacheControl.NoStore: the candidate supplies no Cache-Control. Contrast /ops/v1/startup and /ops/v1/ready, which supply no-store. This reproduction is prescribed, not newly executed by this reviewer.",
+      "fix": "Apply no-store consistently to all four V1 operational response paths and add focused response-header assertions; preserve current authorization and wire shapes.",
+      "missing_coverage": "No task-private V1 test asserts Cache-Control. OBS04-A4 evidence maps hidden-aggregate output and a legacy endpoint test, so it does not verify these new direct-JSON routes."
+    }
+  ],
+  "scope_review": {
+    "changed_files": 142,
+    "all_additions": true,
+    "production_files": 10,
+    "task_private_test_files": 11,
+    "git_diff_check_exit": 0,
+    "legacy_production_files_changed": false,
+    "forbidden_shared_paths_changed": false
+  },
+  "reused_evidence": {
+    "run": "docs/development/evidence/WP02-25/20261014T052841Z",
+    "source_digest": "a68ad22bcaddba0deec96403fe683de35d73a81bf3e4cb037a258aaa2393284a",
+    "source_config_hashes_verified": 261,
+    "resolved_dependency_hashes_verified": 9,
+    "artifact_hashes_verified": 33,
+    "hash_mismatches": 0,
+    "gate_before_after_current_inputs_equivalent": true,
+    "gate_counts": {
+      "unit": 57,
+      "host": 100,
+      "architecture": 98
+    },
+    "total_passed": 255,
+    "failed": 0,
+    "skipped": 0,
+    "gate_exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "executed_by_reviewer": false,
+    "sdk": "8.0.424",
+    "runtime": "8.0.30",
+    "original_source_sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+    "original_ac_count": 32,
+    "all_original_business_acceptance": "NOT_RUN",
+    "mapped_local_portions": 27,
+    "acceptance_proof_rows_verified": 98,
+    "trx_hashes": {
+      "unit": "99dc2284ced5bead4999709f794d914c4bd1c4c728a1548db87df90c3a1606cf",
+      "host": "f7c0f5133319ddff39b79fd478598c24376587aad064b8a6998181488cade646",
+      "architecture": "19a5260206d5d0d5c7a85eecff71192c611c39805394186c8ad5f9417e242e91"
+    }
+  },
+  "targeted_execution": {
+    "kind": "in-memory controlled-clock API reproduction",
+    "runtime": ".NET 10.0.11 in PowerShell",
+    "source_or_binary_rebuild": false,
+    "system_clock_changed": false,
+    "exit_code": 0,
+    "loaded_artifacts": {
+      "CP6.Platform.Contracts.dll": "0d068929cfcc3613c534a7be4ad1fdaac580a6d61eade4c17aa484a4eb5010ef",
+      "CP6.Platform.AspNetCore.dll": "cd2f94dc2108e062b6d00539a56ca29beb76c0686e2829c1d57669e216dc227f"
+    },
+    "result": [
+      "Match",
+      "Unproven",
+      "Match"
+    ],
+    "preceding_harness_failure": "First in-memory Add-Type failed with CS1061 because inherited TimeProvider.System shadowed System.TimeSpan. Corrected the harness to global::System; no product source changed. This failure was not a candidate test failure."
+  },
+  "limitations": [
+    "The targeted reproduction used PowerShell .NET 10.0.11; required SDK8 regression remains with the implementer.",
+    "R2 is a source-confirmed finding; reviewer did not run its prescribed HTTP reproduction.",
+    "No claim of production/package trust, SLO qualification, actual Main/CRM adoption or real Owner receipt acceptance.",
+    "No source edits, Git mutations, remote writes, Actions, database, deployment or full test reruns.",
+    "Only the two assigned review report files were written."
+  ]
+}

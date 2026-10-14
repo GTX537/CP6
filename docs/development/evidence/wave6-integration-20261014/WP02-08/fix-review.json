@@ -1,0 +1,402 @@
+{
+  "task": "WP02-08",
+  "review_kind": "independent focused correction review",
+  "reviewed_at_utc": "2026-10-14 07:49:16 UTC",
+  "reviewer": "wave6_review_observability",
+  "result": "PASS_FOCUSED",
+  "findings": [],
+  "merge_ready_for_reviewed_scope": true,
+  "target": {
+    "worktree": "D:/CP6.Platform-worktrees/wp02-08-corrected-20261014",
+    "head": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+    "clean": true,
+    "original_candidate": "3e4c078434ff4ae066f20d83e134fb268663700c",
+    "base": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+    "tested_source": "17886458022bcbbb49d63890e52eccd897ac7256"
+  },
+  "original_review": {
+    "path": "C:/Users/tt/CP6-planning-reports/20261014-wave6-integration/review-WP02-08.md",
+    "preserved": true,
+    "original_findings_not_deleted": true
+  },
+  "resolved_original_findings": [
+    {
+      "issue": 66,
+      "original_finding": "R1 / P2",
+      "commit": "6e580bb4f77d943dcdaeeafd3450891f791aef9e",
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+      "line": 50,
+      "status": "RESOLVED_IN_REVIEWED_CANDIDATE",
+      "reason": "Blocked now saves the existing immutable switch receipt in the caller transaction. Exact input replay precedes changed-root gates, returns original result without writes; changed tuple conflicts; later handover resolution requires a new mutation.",
+      "supporting_lines": [
+        27,
+        81,
+        88
+      ],
+      "test_line": 326
+    },
+    {
+      "issue": 67,
+      "original_finding": "R2 / P2",
+      "commit": "f17b8669b9dde1826bb231358a0106d16232640b",
+      "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+      "line": 60,
+      "status": "RESOLVED_IN_REVIEWED_CANDIDATE",
+      "reason": "Monotonic time starts before send admission and is subtracted after awaited transaction commit/disposal and message decoding. Exhaustion and pre-signalled cancellation prevent publisher entry. Original send attempt/mutation and unknown recovery paths are preserved.",
+      "supporting_lines": [
+        73,
+        78,
+        79,
+        101,
+        104
+      ],
+      "test_lines": [
+        508,
+        534,
+        549,
+        564
+      ]
+    }
+  ],
+  "evidence": {
+    "directory": "D:/CP6.Platform-worktrees/wp02-08-corrected-20261014/docs/development/evidence/WP02-08/coord-corrections",
+    "executed_tests_by_this_reviewer": 0,
+    "pg_operations_by_this_reviewer": 0,
+    "remote_operations_by_this_reviewer": 0,
+    "all_7_trx_and_raw_logs_rehashed": true,
+    "distinct_successful_correction_cases": 12,
+    "new_regression_cases": 5,
+    "zero_skipped": true,
+    "original_successful_cases": 153,
+    "original_results_scope": "Original candidate/assembly identity only; unchanged architecture/unit/PG scope reused, not relabelled as new execution.",
+    "runtime": "SDK 8.0.424 / .NET 8.0.30 / EF 8.0.30 / Npgsql 8.0.8 / provider 8.0.11 / PostgreSQL 18.6 (recorded run environment)",
+    "audit": {
+      "head": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+      "status": "",
+      "tested_to_final_paths": [
+        "docs/development/evidence/WP02-08/coord-corrections/REPORT.md",
+        "docs/development/evidence/WP02-08/coord-corrections/integrated/resource-stop.json",
+        "docs/development/evidence/WP02-08/coord-corrections/integrated/resource-stop.log",
+        "docs/development/evidence/WP02-08/coord-corrections/integrated/smoke-inputs.json",
+        "docs/development/evidence/WP02-08/coord-corrections/integrated/smoke.log",
+        "docs/development/evidence/WP02-08/coord-corrections/integrated/smoke.trx",
+        "docs/development/evidence/WP02-08/coord-corrections/run-correction-check.py",
+        "docs/development/evidence/WP02-08/coord-corrections/summary.json"
+      ],
+      "manifest_counts": {
+        "sources": 142,
+        "dependencies": 4,
+        "artifacts": 39
+      },
+      "mismatches": [],
+      "runs": [
+        {
+          "manifest": "integrated/smoke-inputs.json",
+          "head": "17886458022bcbbb49d63890e52eccd897ac7256",
+          "status": "",
+          "exit_code": 0,
+          "counts": {
+            "Passed": 3
+          },
+          "trx_matches_manifest": true,
+          "trx_matches_summary": true,
+          "log_exists": true,
+          "log_matches_manifest": true,
+          "failures": [],
+          "changed_inputs": {
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": "ff952fd8bfb99c7913d1318b026eacb6d4b4b916e173820c7d53496e8ec5a468",
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": "b0e44d5a3dfae3a77e8daa49bad73f0312f10f3c0eea6f1f211604e84f88772a",
+            "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs": "e77aae42202246ffdd8dbe290c3a95be2933c1e605e506f334c89b9e4d358a78"
+          }
+        },
+        {
+          "manifest": "issue66/green-inputs.json",
+          "head": "0fb86dcb3bc3de3cb1d11ef7338bad14cbbf9bd7",
+          "status": "M docs/development/evidence/WP02-08/REPORT.md\n M src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs\n M tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs\n?? docs/development/evidence/WP02-08/coord-corrections/",
+          "exit_code": 0,
+          "counts": {
+            "Passed": 5
+          },
+          "trx_matches_manifest": true,
+          "trx_matches_summary": true,
+          "log_exists": true,
+          "log_matches_manifest": true,
+          "failures": [],
+          "changed_inputs": {
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": "9ae833ebde9403f6b94024190bf6557486ff6677d710ef400e16975f860f6a80",
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": "b0e44d5a3dfae3a77e8daa49bad73f0312f10f3c0eea6f1f211604e84f88772a",
+            "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs": "e678c247971962a292e9208a3f9d0db3388bca18968b027f7c2459ff3501f750"
+          }
+        },
+        {
+          "manifest": "issue66/red-inputs.json",
+          "head": "0fb86dcb3bc3de3cb1d11ef7338bad14cbbf9bd7",
+          "status": "M tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs\n?? docs/development/evidence/WP02-08/coord-corrections/",
+          "exit_code": 1,
+          "counts": {
+            "Failed": 1
+          },
+          "trx_matches_manifest": true,
+          "trx_matches_summary": true,
+          "log_exists": true,
+          "log_matches_manifest": true,
+          "failures": [
+            {
+              "name": "CP6.Platform.WP0208.PostgreSqlTests.OutboxTransactionTests.Committed_blocked_epoch_recovers_original_mutation_after_lost_acknowledgement",
+              "outcome": "Failed",
+              "message": "Assert.Equal() Failure: Values differ\r\nExpected: OutboxSwitchResultV2 { Decision = PendingCommit, Epoch = 1, ControlVersion = pg-xmin-v1:1832 }\r\nActual:   OutboxSwitchResultV2 { Decision = Conflict, Epoch = 1, ControlVersion =  }"
+            }
+          ],
+          "changed_inputs": {
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": "9ae833ebde9403f6b94024190bf6557486ff6677d710ef400e16975f860f6a80",
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": "524790900d643a1e9fb6b56a9e414e407e4c255134a93e01c8231f9b0736b9ec",
+            "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs": "e678c247971962a292e9208a3f9d0db3388bca18968b027f7c2459ff3501f750"
+          }
+        },
+        {
+          "manifest": "issue67/green-inputs.json",
+          "head": "6176a2af32eb5d773344e87ddcf9967f72f8eaf3",
+          "status": "M docs/WP02-08-OUTBOX-V2.md\n M src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs\n M tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs\n?? docs/development/evidence/WP02-08/coord-corrections/",
+          "exit_code": 0,
+          "counts": {
+            "Passed": 7
+          },
+          "trx_matches_manifest": true,
+          "trx_matches_summary": true,
+          "log_exists": true,
+          "log_matches_manifest": true,
+          "failures": [],
+          "changed_inputs": {
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": "ff952fd8bfb99c7913d1318b026eacb6d4b4b916e173820c7d53496e8ec5a468",
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": "524790900d643a1e9fb6b56a9e414e407e4c255134a93e01c8231f9b0736b9ec",
+            "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs": "cd0a80bcb87fe601ac5ff68182194280f9ddf23157a9f37f72f15b5e3c3c5251"
+          }
+        },
+        {
+          "manifest": "issue67/green-probe-inputs.json",
+          "head": "6176a2af32eb5d773344e87ddcf9967f72f8eaf3",
+          "status": "M docs/WP02-08-OUTBOX-V2.md\n M src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs\n M tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs\n?? docs/development/evidence/WP02-08/coord-corrections/",
+          "exit_code": 0,
+          "counts": {
+            "Passed": 1
+          },
+          "trx_matches_manifest": true,
+          "trx_matches_summary": true,
+          "log_exists": true,
+          "log_matches_manifest": true,
+          "failures": [],
+          "changed_inputs": {
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": "ff952fd8bfb99c7913d1318b026eacb6d4b4b916e173820c7d53496e8ec5a468",
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": "524790900d643a1e9fb6b56a9e414e407e4c255134a93e01c8231f9b0736b9ec",
+            "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs": "86f650b40b537eed08c3c0907be6048adb767b807911f2f9f04777b32663ed14"
+          }
+        },
+        {
+          "manifest": "issue67/red-cancellation-inputs.json",
+          "head": "6176a2af32eb5d773344e87ddcf9967f72f8eaf3",
+          "status": "M tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs\n?? docs/development/evidence/WP02-08/coord-corrections/",
+          "exit_code": 1,
+          "counts": {
+            "Failed": 1
+          },
+          "trx_matches_manifest": true,
+          "trx_matches_summary": true,
+          "log_exists": true,
+          "log_matches_manifest": true,
+          "failures": [
+            {
+              "name": "CP6.Platform.WP0208.PostgreSqlTests.OutboxTransactionTests.Dispatcher_does_not_enter_publisher_when_cancelled_after_send_commit",
+              "outcome": "Failed",
+              "message": "Assert.Equal() Failure: Values differ\r\nExpected: 0\r\nActual:   1"
+            }
+          ],
+          "changed_inputs": {
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": "9ae833ebde9403f6b94024190bf6557486ff6677d710ef400e16975f860f6a80",
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": "524790900d643a1e9fb6b56a9e414e407e4c255134a93e01c8231f9b0736b9ec",
+            "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs": "cd0a80bcb87fe601ac5ff68182194280f9ddf23157a9f37f72f15b5e3c3c5251"
+          }
+        },
+        {
+          "manifest": "issue67/red-inputs.json",
+          "head": "6176a2af32eb5d773344e87ddcf9967f72f8eaf3",
+          "status": "M tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs",
+          "exit_code": 1,
+          "counts": {
+            "Failed": 2,
+            "Passed": 1
+          },
+          "trx_matches_manifest": true,
+          "trx_matches_summary": true,
+          "log_exists": true,
+          "log_matches_manifest": true,
+          "failures": [
+            {
+              "name": "CP6.Platform.WP0208.PostgreSqlTests.OutboxTransactionTests.Dispatcher_deducts_send_commit_latency_from_publish_timeout",
+              "outcome": "Failed",
+              "message": "Assert.InRange() Failure: Value not in range\r\nRange:  (0.01 - 4.5)\r\nActual: 5.0109877000000003"
+            },
+            {
+              "name": "CP6.Platform.WP0208.PostgreSqlTests.OutboxTransactionTests.Dispatcher_does_not_publish_after_send_commit_acknowledgement_outlives_lease",
+              "outcome": "Failed",
+              "message": "Assert.Equal() Failure: Values differ\r\nExpected: 0\r\nActual:   1"
+            }
+          ],
+          "changed_inputs": {
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": "9ae833ebde9403f6b94024190bf6557486ff6677d710ef400e16975f860f6a80",
+            "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": "524790900d643a1e9fb6b56a9e414e407e4c255134a93e01c8231f9b0736b9ec",
+            "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs": "dd42f6d8058f8cec7a240c34f532e3816f287aa2afc34987092bb10b8a0464f6"
+          }
+        }
+      ],
+      "ancestry": {
+        "3e4c078434ff4ae066f20d83e134fb268663700c": true,
+        "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0": true,
+        "6e580bb4f77d943dcdaeeafd3450891f791aef9e": true,
+        "f17b8669b9dde1826bb231358a0106d16232640b": true,
+        "17886458022bcbbb49d63890e52eccd897ac7256": true
+      },
+      "final_changed_sources": [
+        {
+          "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+          "sha256": "ff952fd8bfb99c7913d1318b026eacb6d4b4b916e173820c7d53496e8ec5a468"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+          "sha256": "b0e44d5a3dfae3a77e8daa49bad73f0312f10f3c0eea6f1f211604e84f88772a"
+        },
+        {
+          "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs",
+          "sha256": "e77aae42202246ffdd8dbe290c3a95be2933c1e605e506f334c89b9e4d358a78"
+        }
+      ],
+      "final_compiled_identity": [
+        {
+          "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.EntityFramework.dll",
+          "sha256": "6c417c4f832f0b707eba03585c68917c4f03bb3cf7f82fd7baf8b556171bf304"
+        },
+        {
+          "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/bin/Debug/net8.0/CP6.Platform.WP0208.PostgreSqlTests.dll",
+          "sha256": "ce85532011f61d5514720aed04d96e552ebedfc5d18e1e230856f7cb592eacc1"
+        }
+      ]
+    },
+    "detail": {
+      "run_source_deltas": {
+        "integrated\\smoke-inputs.json": [],
+        "issue66\\green-inputs.json": [
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+          "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs"
+        ],
+        "issue66\\red-inputs.json": [
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+          "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs"
+        ],
+        "issue67\\green-inputs.json": [
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+          "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs"
+        ],
+        "issue67\\green-probe-inputs.json": [
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+          "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs"
+        ],
+        "issue67\\red-cancellation-inputs.json": [
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+          "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs"
+        ],
+        "issue67\\red-inputs.json": [
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+          "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs",
+          "tests/CP6.Platform.WP0208.PostgreSqlTests/OutboxTransactionTests.cs"
+        ]
+      },
+      "issue_green_current_bytes": {
+        "issue66/green-inputs.json": {
+          "counts": {
+            "sources": 142,
+            "dependencies": 4,
+            "artifacts": 39
+          },
+          "mismatches": []
+        },
+        "issue67/green-probe-inputs.json": {
+          "counts": {
+            "sources": 142,
+            "dependencies": 4,
+            "artifacts": 39
+          },
+          "mismatches": []
+        }
+      },
+      "baseline_red_source_match": {
+        "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs": {
+          "git_blob_sha256": "701e7371bfb757e8961a8b8464dcbb38e56e32fbebd7665d614a8f225843cef1",
+          "crlf_checkout_sha256": "9ae833ebde9403f6b94024190bf6557486ff6677d710ef400e16975f860f6a80",
+          "recorded_red_sha256": "9ae833ebde9403f6b94024190bf6557486ff6677d710ef400e16975f860f6a80",
+          "matches_git_or_crlf": true
+        },
+        "src/CP6.Platform.EntityFramework/OutboxV2/OutboxLifecycleV2.cs": {
+          "git_blob_sha256": "e158a64dcd6acb5c5e02860d06a29a381b13d8e8b3c9ea94cb1e4e905ce5d1c8",
+          "crlf_checkout_sha256": "524790900d643a1e9fb6b56a9e414e407e4c255134a93e01c8231f9b0736b9ec",
+          "recorded_red_sha256": "524790900d643a1e9fb6b56a9e414e407e4c255134a93e01c8231f9b0736b9ec",
+          "matches_git_or_crlf": true
+        }
+      },
+      "final_dependencies": [
+        {
+          "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/obj/project.assets.json",
+          "bytes": 84313,
+          "sha256": "176040ae8587db476e80afb1cc9d4caf2b8f3311c56a8060f9d454fb34755d5a"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/obj/project.assets.json",
+          "bytes": 36831,
+          "sha256": "acfa23a4157fe49022ce78dbdba5265c26629d6062ae5c276e9739f6d0119fae"
+        },
+        {
+          "path": "src/CP6.Platform.Contracts/obj/project.assets.json",
+          "bytes": 3827,
+          "sha256": "330ad2b441073f60c43278eb53a4d9816dc103861c3ec4cd8f5432fccf175721"
+        },
+        {
+          "path": "src/CP6.Platform.Abstractions/obj/project.assets.json",
+          "bytes": 4777,
+          "sha256": "62dc29953019a9944c955e0b1a76fbf564bc0d4ee973114cc2314c8c4c12ced2"
+        }
+      ],
+      "dependency_packages": {
+        "tests/CP6.Platform.WP0208.PostgreSqlTests/obj/project.assets.json": [
+          "Microsoft.EntityFrameworkCore/8.0.30",
+          "Npgsql/8.0.8",
+          "Npgsql.EntityFrameworkCore.PostgreSQL/8.0.11"
+        ],
+        "src/CP6.Platform.EntityFramework/obj/project.assets.json": [
+          "Microsoft.EntityFrameworkCore/8.0.30"
+        ],
+        "src/CP6.Platform.Contracts/obj/project.assets.json": [],
+        "src/CP6.Platform.Abstractions/obj/project.assets.json": []
+      }
+    }
+  },
+  "resource_stop": {
+    "source": "D:/CP6.Platform-worktrees/wp02-08-corrected-20261014/docs/development/evidence/WP02-08/coord-corrections/integrated/resource-stop.json",
+    "verification_kind": "retained evidence inspection; no connection/start/stop performed",
+    "owner": "dcdfb04dda48edc0d52d638b5e7bd2f0",
+    "system_id": "7696392773160066692",
+    "database": "cp6_wp0208_20261014_dcdfb04d",
+    "database_oid": 16385,
+    "port": 55428,
+    "recorded_smart_stop": true,
+    "recorded_postmaster_pid_absent": true,
+    "recorded_port_listening": false
+  },
+  "limitations": [
+    "Focused correction review only; original review and findings remain historical evidence.",
+    "Commit acknowledgement delay is exercised against real PostgreSQL; separate DisposeAsync delay was not injected. Inclusion follows awaited Write helper and await-using disposal ordering.",
+    "Historical RED artifact hashes remain per-run provenance; RED binaries were not rebuilt or claimed to equal current GREEN binaries.",
+    "No PostgreSQL operations, test reruns, git mutations, remote review/merge/Issue closure, Actions, shared status edits or worktree cleanup performed.",
+    "Real Main/CRM Owner/writer/host adoption, broker/network E2E, original 60 business AC, production migration/cutover/package/release/deploy remain unproven/not run.",
+    "COORD owns final remote-head guard and integration with later WP02-07/WP02-25 main changes; this report targets exactly 2e659e382e95988ee06799cd2feb0d580dcd8323."
+  ]
+}

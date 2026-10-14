@@ -1,0 +1,123 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-14T07:52:10.691834+00:00",
+  "scope": "Independent records preserve actual execution time/input identities; this is not a new run of all listed cases. Overlapping architecture/regression results are not summed globally.",
+  "tasks": {
+    "WP01-01": {
+      "display": "准备资料已合并；3509静态检查、33测试按固定输入复用；主任务仍PLANNED/NOT_CHECKED",
+      "command": "Original preparation3509 checks, comparator23+bundle10 tests; COORD source/hash/scope/diff review only",
+      "environment": "Original Python3.13 task-private document tooling; no product build or DB",
+      "scope": "39 additions,33 core artifacts,58 pinned input occurrences/39 sources,577 navigation rows verified.3509 static and33 tests reused; original failure/correction records retained. Unsigned preparation never becomes actual adoption/completion; 123 other targets unchanged. DP01–08 and cross-provider closure pending.",
+      "handoff": "39份准备材料已审查归档，3509检查与33测试原结果复用。33核心文件和完整来源身份已核对。未签署模板保持为空，比较器仍PREPARATION；DP01–08、正式具名采纳及跨仓闭包仍未完成。主任务PLANNED/NOT_CHECKED，本次不改完成门、不计DONE。",
+      "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+      "repository": "GTX537/CP6",
+      "remote_main_sha": "99e61d897e5f166c5817c0aaec196041e1941324",
+      "pr_url": "https://github.com/GTX537/CP6/pull/205",
+      "review": "review-WP01-01.md",
+      "result": "PASS"
+    },
+    "WP02-02": {
+      "display": "消费准备已合并；44检查器、8解析器、10合成路径复用；主任务仍BLOCKED/NOT_CHECKED",
+      "command": "Original checker44, parser8, synthetic probe10; independent87 raw/17source/45fingerprint/100dependency/14archive/32schema/52artifact checks",
+      "environment": "Original Python3.13/SDK8.0.424/runtime8.0.30 private probe; no Main host or PostgreSQL",
+      "scope": "44 final checker and8 parser results reused at exact source hashes;10 actual package DLL synthetic paths only. 87 raw original files,14 archives and32 producer-schema byte identities checked. MSB3277 DiagnosticSource8/10 retained; full dependency compatibility Unknown. Old formal.2 lacks20 context types; localWP0227 is unpublished/untrusted;17PGT unchanged NOT_RUN. No new Current verification/feed readback/release authorization.",
+      "handoff": "125文件准备包已合并；17源码、87保留原件、45来源、100依赖、14包、32Schema和52探针产物已核。44/8/10原验证分别复用，10合成路径不是真实Main/PG验收。旧0.10.2缺新能力，本地包未发布/受信任；MSB3277和17PGT NOT_RUN保持。0.10.3/正式发布仅提案，BLOCKED/NOT_CHECKED未解除。",
+      "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "repository": "GTX537/CP6",
+      "remote_main_sha": "b526e6b2194c232fae224cad7e72aef1c9b85c9e",
+      "pr_url": "https://github.com/GTX537/CP6/pull/206",
+      "review": "review-WP02-02.md",
+      "result": "PASS"
+    },
+    "WP02-08": {
+      "display": "修复Issue66/67后库任务DONE；原153按范围复用，12项不同修复回归/含5新增",
+      "command": "SDK8 real PostgreSQL issue66 RED1 thenGREEN5; issue67 RED2/1 pluscancelRED1 thenGREEN7; strengthenedprobe1 andcombinedsmoke3",
+      "environment": "Windows,SDK8.0.424/runtime8.0.30,ownedPG18.6 at55428; same verified owner/system/db identity,smart stopped",
+      "scope": "Initial153 distinct=15unit+40PG+98architecture preserved. Two separate issue fixes;12 distinct affected successful cases,5new;1+3 repeats not added. Seven correction TRX/raw manifests retained; combined source17886458022bcbbb49d63890e52eccd897ac7256,142 source/4dependency/39artifacts checked; evidence-only final2e659e3. Real commit delay, bounded actual timeout, no-held-lock and cancelled-send boundaries covered. Initial review defects retained; original60businessAC NOT_RUN; realOwner/broker/migration/cutover unproven.",
+      "handoff": "原3e4c078候选初审发现两项P2，现分别通过Issue66/67独立分支修复：Blocked原mutation回执与发送提交延迟预算。真实PG RED/GREEN和12项不同相关成功用例（5新增）保留，组合3项冒烟与独立定向复查通过。原153项只复用未影响范围；PG55428核身份后重启回归并已smart-stop，数据/日志保留。60原业务AC、真实Owner/broker采用仍NOT_RUN。",
+      "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+      "repository": "GTX537/CP6.Platform",
+      "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "pr_url": "https://github.com/GTX537/CP6.Platform/pull/71",
+      "review": "review-WP02-08.md",
+      "result": "PASS",
+      "correction_review": "review-WP02-08-fixes.md",
+      "candidate_identity": {
+        "branch": "codex/wp02-08-corrected-20261014",
+        "worktree": "D:\\CP6.Platform-worktrees\\wp02-08-corrected-20261014",
+        "original_candidate_sha": "3e4c078434ff4ae066f20d83e134fb268663700c",
+        "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+        "tested_source_sha": "17886458022bcbbb49d63890e52eccd897ac7256",
+        "issue_fix_commits": {
+          "66": "6e580bb4f77d943dcdaeeafd3450891f791aef9e",
+          "67": "f17b8669b9dde1826bb231358a0106d16232640b"
+        },
+        "report": "docs/development/evidence/WP02-08/coord-corrections/REPORT.md",
+        "verification": "docs/development/evidence/WP02-08/coord-corrections/summary.json",
+        "observed_at": "2026-10-14T07:41:04.626461+00:00"
+      }
+    },
+    "WP02-25": {
+      "display": "修复Issue68/69后库任务DONE；新相关69/69，原255仅复用未影响范围",
+      "command": "SDK8 identity RED7 thenGREEN7; no-store RED2fail/4control thenGREEN6; combined affected HTTP/identity/health/legacy69",
+      "environment": "Windows,SDK8.0.424/runtime8.0.30,real loopback Kestrel and controlled in-memory clocks; no systemclock or DB change",
+      "scope": "Original255=57unit+100host+98architecture; final69 covers56 earlierhost+13new. Retain original57unit/98architecture/44unaffectedhost only, not binary equivalence. Final263source/7dependency/25artifacts independently matched;19 LF/CRLF source representations disclosed. Testedae4b56abf88aa40f1ba3bf82f1ef4c83a878b378,final80f43346 only evidence after test. Actualready200->503->503 while independentread stays available; all4handlers and2unhealthy outputs no-store. Original32businessACNOT_RUN; observedmodule proof not whole-host/package trust.",
+      "handoff": "原095a66候选初审发现两项P2，Issue68/69分别修复：观察者单调时钟及UTC界限防过期复活，四个健康端点统一no-store。SDK8真实RED/GREEN、合并后69/69相关回归与独立复查通过。原255仅按未影响范围复用，不能写成新候选全量运行。身份仍仅观察者管理的模块范围，Main/CRM/Owner/可信包/生产SLO及32原业务AC未验收。",
+      "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+      "repository": "GTX537/CP6.Platform",
+      "remote_main_sha": "5e882a5e1006ee2eb27fc0fa1170755f552be089",
+      "pr_url": "https://github.com/GTX537/CP6.Platform/pull/70",
+      "review": "review-WP02-25.md",
+      "result": "PASS",
+      "correction_review": "review-WP02-25-fixes.md",
+      "candidate_identity": {
+        "branch": "codex/wp02-25-corrected-20261014",
+        "worktree": "D:\\CP6.Platform-worktrees\\wp02-25-corrected-20261014",
+        "original_candidate_sha": "095a66bfda8b4df2ee65e920541ce6304e8e66c1",
+        "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+        "tested_source_sha": "ae4b56abf88aa40f1ba3bf82f1ef4c83a878b378",
+        "issue_fix_commits": {
+          "68": "db728d17d95147be89ab4afd7bbbab9ebe15cbcb",
+          "69": "621f0abab99db5708ccbe46fc592f33333ca08b1"
+        },
+        "report": "docs/development/evidence/WP02-25/20261014T052841Z/coord-corrections/aggregate/DELIVERY.md",
+        "verification": "docs/development/evidence/WP02-25/20261014T052841Z/coord-corrections/aggregate/verification.json",
+        "observed_at": "2026-10-14T07:36:29.690806+00:00"
+      }
+    }
+  },
+  "common_main_smoke": {
+    "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+    "counts": {
+      "total": "98",
+      "executed": "98",
+      "passed": "98",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "scope": "New local architecture-only check of actual combined remote main after two corrected candidate merges; all candidate file blobs match. Required to check the compiled dependency boundaries after the independently validated observability and Outbox additions meet on common main; no architecture assertion changes. No product suites, PG, formal package publishing, Actions or deployment. Original task-local tests retain their own source/binary identities; no combined business run claimed."
+  },
+  "unchanged": {
+    "business_targets": "0/125",
+    "runtime_revision_cases": "247 NOT_RUN",
+    "historical_static": "41 REFERENCE_ONLY",
+    "unrecoverable_originals": "PLM-ITER/REL",
+    "wp05_basis": "PROPOSED"
+  },
+  "actions": {
+    "started": 0,
+    "cancelled": 0,
+    "trigger_changes": 0
+  }
+}
