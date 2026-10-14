@@ -1,0 +1,120 @@
+{
+  "result": "PASS_FOR_TWO_IMPLEMENTATIONS_AND_TWO_INCREMENTAL_PREPARATIONS",
+  "scope": "Dependency, input and disjoint write/resource windows only; no implementation or service started.",
+  "observed_at": "2026-10-14T09:22:28.191366+00:00",
+  "baselines": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "queued_or_running": []
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "queued_or_running": []
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": []
+    }
+  },
+  "tasks": [
+    {
+      "id": "WP01-01",
+      "mode": "PREPARATION_ONLY",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.md",
+          "sha256": "53e714ce1ec5f55aff8e666dec99daf280e668c8a02a6aa5a514024fd3c0eae8",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.json",
+          "sha256": "c4f618df4e75a8033de9ef5dc87e2ab8daa14b5c5dbc8a2299eea514d5831c1d",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/wp01-01-decision-candidate-20261014",
+      "baseline": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "worktree": "D:/CP6-worktrees/wp01-01-decision-20261014"
+    },
+    {
+      "id": "WP02-02",
+      "mode": "PREPARATION_ONLY",
+      "state": "BLOCKED",
+      "entry_gate": "NOT_CHECKED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.md",
+          "sha256": "0cf67147120df17f65209f75dff60871ddfa9d23549a4f3ef81f188184c19dff",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.json",
+          "sha256": "da2c9b6a54afa11045f9df97baca7a5ffac9e027b134dc6f240315e8daa4eb2a",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/wp02-02-closure-candidate-20261014",
+      "baseline": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "worktree": "D:/CP6-worktrees/wp02-02-closure-20261014"
+    },
+    {
+      "id": "WP02-12",
+      "mode": "IMPLEMENTATION",
+      "state": "READY",
+      "entry_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.md",
+          "sha256": "bf7cf5f2f2f1dce088e9a9cdd815c382e9b2e58d69ae6a1b0ecce15bd72afd41",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.json",
+          "sha256": "a4bfe9972dc07045e6e1817bad7efd3220dab9f2825e99330486a24d8f3ef1a5",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/wp02-12-message-transport-20261014",
+      "baseline": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-12-20261014"
+    },
+    {
+      "id": "WP02-26",
+      "mode": "IMPLEMENTATION",
+      "state": "READY",
+      "entry_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.md",
+          "sha256": "bf7cf5f2f2f1dce088e9a9cdd815c382e9b2e58d69ae6a1b0ecce15bd72afd41",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.json",
+          "sha256": "a4bfe9972dc07045e6e1817bad7efd3220dab9f2825e99330486a24d8f3ef1a5",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "branch": "codex/wp02-26-slo-testing-20261014",
+      "baseline": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-26-20261014"
+    }
+  ],
+  "write_windows_pairwise_disjoint": true,
+  "done_before": 22,
+  "done_after": 22,
+  "business_done": 0,
+  "business_total": 125,
+  "runtime_revision_scenarios": "247 NOT_RUN",
+  "historical_scenarios": "41 REFERENCE_ONLY",
+  "closed_preparation_history_preserved": true
+}

@@ -158642,6 +158642,11 @@
       "date": "2026-10-14",
       "change": "Wave6: WP02-08/25 library implementations merged after four defect corrections; WP01-01/WP02-02 preparation merged without formal admission.22/375 tasks DONE,S01 12/12. WP01-01 remains PLANNED/NOT_CHECKED and WP02-02 BLOCKED/NOT_CHECKED. Business0/125,247 NOT_RUN and historical gaps unchanged. No next-wave dispatch.",
       "evidence": "docs/development/evidence/wave6-integration-20261014/README.md"
+    },
+    {
+      "date": "2026-10-14",
+      "change": "Wave7: WP02-12/26 READY; WP01-01 decision candidate and WP02-02 full dependency diagnostic preparation retain PLANNED/BLOCKED and NOT_CHECKED. Old merged preparations preserved. No worker START;22/375 DONE,S01 12/12,business0/125,247 NOT_RUN unchanged.",
+      "evidence": "docs/development/dispatch/20261014-wave7/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158686,26 +158691,22 @@
       "card_anchor": "wp01-01",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "A / WP01-01 准备（沿用原S01-12对话）",
+        "chat_label": "A / WP01-01 决定候选",
         "repository": "Main",
-        "branch": "codex/wp01-01-admission-prep-20261013",
-        "worktree": "D:/CP6-worktrees/wp01-01-prep-20261013",
-        "claimed_at": "2026-10-14T03:14:11.400961+00:00",
-        "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
-        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "branch": "codex/wp01-01-decision-candidate-20261014",
+        "worktree": "D:/CP6-worktrees/wp01-01-decision-20261014",
+        "claimed_at": "2026-10-14T09:22:28.191366+00:00",
+        "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+        "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
         "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION_INTEGRATED",
-        "worker_ack_at": "2026-10-14T05:29:48Z",
+        "phase": "PREPARATION",
+        "worker_ack_at": null,
         "allowed_write_paths": [
-          "docs/development/evidence/WP01-01/preparation/",
-          "eng/wp01-01/preparation/"
+          "eng/wp01-01/decision-closure/",
+          "docs/development/evidence/WP01-01/decision-closure/"
         ],
         "handoff_branch": "codex/dev-handoff-wp01-01",
-        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
-        "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
-        "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
-        "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
-        "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158741,7 +158742,31 @@
         "review": "docs/development/evidence/wave6-integration-20261014/WP01-01/review.md",
         "formal_adoption": false,
         "full_task_completed": false
-      }
+      },
+      "assignment_history": [
+        {
+          "chat_label": "A / WP01-01 准备（沿用原S01-12对话）",
+          "repository": "Main",
+          "branch": "codex/wp01-01-admission-prep-20261013",
+          "worktree": "D:/CP6-worktrees/wp01-01-prep-20261013",
+          "claimed_at": "2026-10-14T03:14:11.400961+00:00",
+          "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+          "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+          "dispatch_scope": "PREPARATION_ONLY",
+          "phase": "PREPARATION_INTEGRATED",
+          "worker_ack_at": "2026-10-14T05:29:48Z",
+          "allowed_write_paths": [
+            "docs/development/evidence/WP01-01/preparation/",
+            "eng/wp01-01/preparation/"
+          ],
+          "handoff_branch": "codex/dev-handoff-wp01-01",
+          "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+          "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
+          "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
+          "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+          "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        }
+      ]
     },
     {
       "id": "WP01-02",
@@ -159878,26 +159903,29 @@
       "card_anchor": "wp02-02",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "B / WP02-02 准备（沿用原WP02-27对话）",
+        "chat_label": "B / WP02-02 依赖诊断",
         "repository": "Main",
-        "branch": "codex/wp02-02-consumption-prep-20261013",
-        "worktree": "D:/CP6-worktrees/wp02-02-prep-20261013",
-        "claimed_at": "2026-10-14T03:14:11.400961+00:00",
-        "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
-        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "branch": "codex/wp02-02-closure-candidate-20261014",
+        "worktree": "D:/CP6-worktrees/wp02-02-closure-20261014",
+        "claimed_at": "2026-10-14T09:22:28.191366+00:00",
+        "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+        "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
         "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION_INTEGRATED",
-        "worker_ack_at": "2026-10-14T05:30:00Z",
+        "phase": "PREPARATION",
+        "worker_ack_at": null,
         "allowed_write_paths": [
-          "eng/wp02-02/consumption/",
-          "docs/development/evidence/WP02-02/consumption-preparation/"
+          "eng/wp02-02/consumption-compatibility/",
+          "docs/development/evidence/WP02-02/consumption-compatibility/"
         ],
         "handoff_branch": "codex/dev-handoff-wp02-02",
-        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
-        "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
-        "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
-        "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
-        "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+        "reserved_local_resource": {
+          "root": "D:/CP6-worktrees/wp02-02-closure-20261014/artifacts/wp02-02/consumption-compatibility/<owner32>/",
+          "http": "127.0.0.1:0 (owned random port)",
+          "database": false,
+          "production_host_start": false,
+          "provisioned": false
+        }
       },
       "blockers": [
         "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
@@ -159934,7 +159962,31 @@
         "review": "docs/development/evidence/wave6-integration-20261014/WP02-02/review.md",
         "formal_adoption": false,
         "full_task_completed": false
-      }
+      },
+      "assignment_history": [
+        {
+          "chat_label": "B / WP02-02 准备（沿用原WP02-27对话）",
+          "repository": "Main",
+          "branch": "codex/wp02-02-consumption-prep-20261013",
+          "worktree": "D:/CP6-worktrees/wp02-02-prep-20261013",
+          "claimed_at": "2026-10-14T03:14:11.400961+00:00",
+          "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+          "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+          "dispatch_scope": "PREPARATION_ONLY",
+          "phase": "PREPARATION_INTEGRATED",
+          "worker_ack_at": "2026-10-14T05:30:00Z",
+          "allowed_write_paths": [
+            "eng/wp02-02/consumption/",
+            "docs/development/evidence/WP02-02/consumption-preparation/"
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-02",
+          "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+          "coordinator_received_at": "2026-10-14T06:24:02.112426+00:00",
+          "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
+          "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+          "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        }
+      ]
     },
     {
       "id": "WP02-03",
@@ -160441,11 +160493,58 @@
         "Platform:message-transport"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-12",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / WP02-12",
+        "repository": "Platform",
+        "branch": "codex/wp02-12-message-transport-20261014",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-12-20261014",
+        "claimed_at": "2026-10-14T09:22:28.191366+00:00",
+        "baseline_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
+        "dispatch_scope": "IMPLEMENTATION",
+        "phase": "IMPLEMENTATION",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.Messaging/TransportV1/",
+          "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+          "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+          "src/CP6.Platform.EntityFramework/TransportV1/",
+          "tests/CP6.Platform.WP0212.Tests/",
+          "tests/CP6.Platform.WP0212.Fixture/",
+          "tests/wp02-12-runtime/",
+          "docs/WP02-12-MESSAGE-TRANSPORT-V1.md",
+          "docs/development/evidence/WP02-12/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-12",
+        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+        "reserved_local_resource": {
+          "root": "D:/CP6-local-test/WP02-12/<owner32>/",
+          "marker": "CP6-WP02-12:<owner32>",
+          "docker_project": "cp6-wp0212-<owner12>",
+          "docker_labels": {
+            "cp6.task": "WP02-12",
+            "cp6.owner": "<full owner32>"
+          },
+          "bindings": [
+            "127.0.0.1:19092",
+            "127.0.0.1:13500",
+            "127.0.0.1:15001",
+            "127.0.0.1:18012",
+            "127.0.0.1:18013"
+          ],
+          "pg": {
+            "endpoint": "127.0.0.1:55430",
+            "database": "cp6_wp0212_<UTCyyyyMMdd>_<owner8>",
+            "settings_env": "CP6_WP0212_SETTINGS"
+          },
+          "policy": "Worker may provision owned loopback resources after COORD registration and fresh free-port/root checks; pin listed cached digests, pull_policy never, no external paid service/network or image pull. Use task-private offline fixture build against cached SDK; old p05 Dockerfile needs uncached aspnet image and unconstrained restore, so do not run it unchanged. Preserve data/logs/failed attempts. Stop only identity-verified own containers/cluster; never global prune, shared containers, existing data deletion or blanket process kill.",
+          "provisioned": false
+        }
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -160962,11 +161061,46 @@
         "file:Platform:src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-26",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "D / WP02-26",
+        "repository": "Platform",
+        "branch": "codex/wp02-26-slo-testing-20261014",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-26-20261014",
+        "claimed_at": "2026-10-14T09:22:28.191366+00:00",
+        "baseline_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
+        "dispatch_scope": "IMPLEMENTATION",
+        "phase": "IMPLEMENTATION",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "src/CP6.Platform.Contracts/SloQualificationV1/",
+          "src/CP6.Platform.Testing/EvidenceV1/",
+          "src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+          "src/CP6.Platform.Testing/Cp6RecordedMetric.cs",
+          "src/CP6.Platform.Testing/Cp6HttpFaultScript.cs",
+          "src/CP6.Platform.Testing/Cp6HttpFaultHandler.cs",
+          "src/CP6.Platform.Testing/Cp6FaultInjectionServiceCollectionExtensions.cs",
+          "tests/CP6.Platform.WP0226.Tests/",
+          "tests/CP6.Platform.WP0226.PostgreSqlTests/",
+          "docs/WP02-26-SLO-TEST-EVIDENCE-V1.md",
+          "docs/development/evidence/WP02-26/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-26",
+        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+        "reserved_local_resource": {
+          "root": "D:/CP6-local-test/WP02-26/<owner32>/",
+          "marker": "CP6-WP02-26:<owner32>",
+          "endpoint": "127.0.0.1:55429",
+          "database": "cp6_wp0226_<UTCyyyyMMdd>_<owner8>",
+          "settings_env": "CP6_WP0226_SETTINGS",
+          "policy": "First Provision: verify a new full owner token, canonical contained fresh root and free reserved loopback port before creating anything; cluster system id and database OID cannot be required before they exist. Initialize only that owned cluster, then record and verify system id, endpoint, database OID/name/owner, setup/runtime roles and permissions before test use. Subsequent test/crash/restart/stop must match all recorded identities, contained paths, session_user and expected sessions; refuse unknown or mismatched instances. Setup/admin credentials separate from restricted runtime DML role (NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS). Fresh SCRAM credentials remain private, never printed or committed. Requested crash is limited to exact own cluster and labeled; smart-stop normally, preserve data/logs/failures, never terminate unknown sessions, reuse old task roots or touch5432. A failed initial Provision retains its owned marker and partial evidence; recovery first proves exactly which resources were created and never assumes a missing OID is valid runtime identity.",
+          "provisioned": false
+        }
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,

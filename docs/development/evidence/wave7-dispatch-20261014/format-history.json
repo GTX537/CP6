@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-10-14T09:25:43.403965+00:00",
+  "initial_check_exit": 2,
+  "reason": "Copied original CRLF evidence is preserved with -text; default whitespace treated CR as trailing whitespace. Narrow evidence-directory cr-at-eol now recognizes original representation, retaining blank-at-eol/blank-at-eof/space-before-tab checks. No evidence bytes were rewritten.",
+  "raw_log": "C:\\Users\\tt\\CP6-planning-reports\\20261014-wave7-dispatch\\format-before.log",
+  "raw_log_sha256": "aa864beafa31c49b8c50ef7366eaccc5027bc3ecef0bcd166059b7fca75e222a",
+  "remaining_format_check": {
+    "exit_code": 2,
+    "raw_log": "C:\\Users\\tt\\CP6-planning-reports\\20261014-wave7-dispatch\\format-after-crlf.log",
+    "sha256": "bc5d2ea542e84f50b137de7dfc44b45f1bd3998b110443de8a799af1f82c3229",
+    "reason": "Only admission-platform.md received terminal blank line; preserve it with a one-file blank-at-eof exception. No source or product formatting rule relaxed."
+  }
+}
