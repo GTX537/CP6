@@ -1,0 +1,136 @@
+{
+  "task": "WP01-01",
+  "mode": "PREPARATION_ONLY",
+  "checked_at_utc": "2026-10-14T05:31:17.2789220Z",
+  "candidate_baseline": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+  "source_main": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+  "source_platform": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+  "source_crm": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+  "drift": "Main documentation-only dispatch increment; Platform and CRM unchanged after fetch",
+  "handoff_assignment": "ad255c21810a101662fd3e380992a03fde71407e",
+  "handoff_start": "1c255384dae825c9da025b5a39237b885f390c38",
+  "handoff_start_path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261014T052948Z-start-preparation/MESSAGE.md",
+  "handoff_remote_bytes_verified": true,
+  "task_records": [
+    {
+      "id": "WP01-01",
+      "package_id": "WP01",
+      "title": "替代验收采纳后的WP01差异与清单收口",
+      "repository": "Main",
+      "kind": "DESIGN",
+      "target_ids": [],
+      "relative_size": "M",
+      "dependencies": [
+        "WP05-01"
+      ],
+      "exclusive_resources": [
+        "coordination:roadmap"
+      ],
+      "coverage_role": "COORDINATION",
+      "state": "PLANNED",
+      "plan_path": "docs/development/task-plans/WP01.md",
+      "card_anchor": "wp01-01",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": {
+        "chat_label": "A / WP01-01 准备（沿用原S01-12对话）",
+        "repository": "Main",
+        "branch": "codex/wp01-01-admission-prep-20261013",
+        "worktree": "D:/CP6-worktrees/wp01-01-prep-20261013",
+        "claimed_at": "2026-10-13T23:14:11.400961-04:00",
+        "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "dispatch_scope": "PREPARATION_ONLY",
+        "phase": "PREPARATION",
+        "worker_ack_at": null,
+        "allowed_write_paths": [
+          "docs/development/evidence/WP01-01/preparation/",
+          "eng/wp01-01/preparation/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp01-01",
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8"
+      },
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "entry_conditions": [
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "PLM-ITER/REL替代验收设计已审查采纳",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ]
+    },
+    {
+      "id": "WP05-01",
+      "package_id": "WP05",
+      "title": "S00：ITER/REL缺失原验收的替代依据设计",
+      "repository": "Main",
+      "kind": "DESIGN",
+      "target_ids": [
+        "PLM-ITER-01",
+        "PLM-REL-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [],
+      "exclusive_resources": [
+        "Main:engineering-acceptance-basis"
+      ],
+      "coverage_role": "DESIGN",
+      "state": "DONE",
+      "plan_path": "docs/development/task-plans/WP05.md",
+      "card_anchor": "wp05-01",
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / WP05-01",
+        "repository": "Main",
+        "branch": "codex/wp05-01-acceptance-basis-20261012",
+        "worktree": "D:/CP6-worktrees/wp05-01-20261012",
+        "claimed_at": "2026-10-12T03:43:09.907345-04:00",
+        "baseline_sha": "2a8dd0eeae27b885f136991b2b215ee7539677d6",
+        "entry_evidence": "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json",
+        "coordination_branch": "codex/integrate-wp05-01-20261012",
+        "coordination_scope": "COORD accepts existing preparation now and serializes task review, state files and merge; no backdated claim or business implementation.",
+        "window_closed_at": "2026-10-12T04:05:32.886744-04:00",
+        "window_close_reason": "Reviewed design/preparation delivered to remote main; task resources released. No successor task claimed."
+      },
+      "blockers": [],
+      "validation_evidence": [
+        {
+          "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json",
+          "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+          "command": "python docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py --root . --archive-root D:/CP6 --supplement docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json --out docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json",
+          "environment": "Local Windows / CPython 3.13; documentation or checker-only verification; no business, database, migration, deployment or Actions execution",
+          "observed_at": "2026-10-12T03:52:01.151991-04:00",
+          "scope": "581 supplement identity/locator/boundary checks, 49 source references. Independent initial and targeted reviews close known semantic gaps. Original six assets, 221/295 checks and unchanged checker24 tests reused at their recorded hashes; revised input bytes match delivered commit. PROPOSED/NOT_RUN, legacy30/48 retained, completion gate not changed.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+        "remote_main_sha": "38a476dd2e78262060ebbc9123a74b3437ec3867",
+        "pr_url": "https://github.com/GTX537/CP6/pull/180",
+        "observed_at": "2026-10-12T03:56:07.675663-04:00",
+        "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+        "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json"
+      },
+      "entry_conditions": [
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ]
+    }
+  ],
+  "allowed_write_paths": [
+    "docs/development/evidence/WP01-01/preparation/",
+    "eng/wp01-01/preparation/"
+  ],
+  "actions_runs_for_branch": [],
+  "actions_cancelled": [],
+  "actions_triggered": false,
+  "trigger_changes": [],
+  "database_runs": [],
+  "notes": [
+    "No implementation admission or named adoption.",
+    "Root archives and other workspaces unchanged.",
+    "Task state remains PLANNED / NOT_CHECKED.",
+    "Read-only intake commands initially executed two Main lookups from Handoff repo and returned missing-object/path errors; repeated in correct Main worktree succeeded. No source was missing.",
+    "Original business and historical status retained; no business tests run."
+  ]
+}

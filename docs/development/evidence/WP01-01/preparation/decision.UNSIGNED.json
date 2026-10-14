@@ -1,0 +1,368 @@
+{
+  "schema": "WP01-01-PREPARATION-UNSIGNED-DECISION/1",
+  "status": "UNSIGNED",
+  "adoption_id": null,
+  "actor": null,
+  "time": null,
+  "authority": null,
+  "effective_at": null,
+  "decision_text": null,
+  "proposed_wording_not_signed": "以当前可知义务建立新标准，无法证明旧30/48逐项等价",
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.1.0-proposed",
+  "targets": [
+    "PLM-ITER-01",
+    "PLM-REL-01"
+  ],
+  "pins": {
+    "combined_manifest": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+    "base_manifest": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+    "matrix": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063"
+  },
+  "artifact_hashes": [
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+      "bytes": 1091
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+      "bytes": 1161
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/README.md",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+      "bytes": 16704
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/sources.json",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "c2b160e90dbce013cca1990b7189b68e8e3f51998ae891d1f364b4db4da165fc",
+      "bytes": 20958
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/cases.json",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "385c4dd12cb13a9efda4485d0b2a8b3810b85d189683caa97ca6e9829f46b563",
+      "bytes": 489455
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/normative-coverage.json",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "64f4eed670dd8cf1c56905c51e3aa2ec1122757e6761f0a49af5a2b2bbd4b90a",
+      "bytes": 481601
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/coverage.md",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "ab8f1a4208755966acb2ca0e27b978b958262ac29e48087071fa85726162cb6a",
+      "bytes": 54722
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/adoption.json",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+      "bytes": 1778
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/README.md",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "cd19b246f1763c123ab66c0a34ba8b55185eec6eaea097d468470f3a2ec17fcc",
+      "bytes": 11195
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/test-wp05-supplement-checker.py",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "9be105ae86646db9ab11c12d0a42aa0502ff06ee4a200ac1197389bf2374c60e",
+      "bytes": 6973
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "843dc0cd305e56c6867c2bf2e4ab9e9c699a0bc9446b42308e8388cd74ebebff",
+      "bytes": 17807
+    },
+    {
+      "role": "BASIS_ARTIFACT",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json",
+      "git_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+      "bytes": 98184
+    }
+  ],
+  "historical_gaps": [
+    {
+      "id": "GAP-ITER-LEGACY-30",
+      "target": "PLM-ITER-01",
+      "declared_legacy_count": 30,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    },
+    {
+      "id": "GAP-REL-LEGACY-48",
+      "target": "PLM-REL-01",
+      "declared_legacy_count": 48,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    }
+  ],
+  "reviewed_coverage_conclusion": null,
+  "unresolved_decisions": [
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-01",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "技术基线摘要与修订格式",
+      "operation": "取得此项准确后继决定并逐点比对：沿用ENG-REV/TBC-02，具体规范化算法/字符格式由共同合同冻结；本册用opaque digest，不另造第二算法。",
+      "observations": [
+        "沿用ENG-REV/TBC-02，具体规范化算法/字符格式由共同合同冻结；本册用opaque digest，不另造第二算法。",
+        "ENG-REV;H41；阻塞最终序列化契约，不阻塞本册业务审阅"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2565,
+          "line_end": 2569
+        }
+      ],
+      "source_assertion": "沿用ENG-REV/TBC-02，具体规范化算法/字符格式由共同合同冻结；本册用opaque digest，不另造第二算法。\n\nENG-REV;H41；阻塞最终序列化契约，不阻塞本册业务审阅",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    },
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-02",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "审批策略与成员来源",
+      "operation": "取得此项准确后继决定并逐点比对：明确项目成员、评审角色、代理、自批例外及OA绑定；缺策略拒绝，不默认全员审批。",
+      "observations": [
+        "明确项目成员、评审角色、代理、自批例外及OA绑定；缺策略拒绝，不默认全员审批。",
+        "OA-APP;SYS-IAM；影响权限/回调实施"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2572,
+          "line_end": 2576
+        }
+      ],
+      "source_assertion": "明确项目成员、评审角色、代理、自批例外及OA绑定；缺策略拒绝，不默认全员审批。\n\nOA-APP;SYS-IAM；影响权限/回调实施",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    },
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-03",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "物理类型与唯一索引",
+      "operation": "取得此项准确后继决定并逐点比对：逻辑ID沿项目已有统一身份规范；SQLServer/PG映射及CAS方式在实际源码核对后确定。",
+      "observations": [
+        "逻辑ID沿项目已有统一身份规范；SQLServer/PG映射及CAS方式在实际源码核对后确定。",
+        "DATA模型；不是安装/双库迁移授权"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2579,
+          "line_end": 2583
+        }
+      ],
+      "source_assertion": "逻辑ID沿项目已有统一身份规范；SQLServer/PG映射及CAS方式在实际源码核对后确定。\n\nDATA模型；不是安装/双库迁移授权",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    },
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-04",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "保留与更正政策",
+      "operation": "取得此项准确后继决定并逐点比对：已关闭/否决方案及原证据不删除；具体保留期、脱敏与合法清除由适用政策确定。",
+      "observations": [
+        "已关闭/否决方案及原证据不删除；具体保留期、脱敏与合法清除由适用政策确定。",
+        "SYS-PRIV;PLM-DOC；禁止随便设30天清理工程历史"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2586,
+          "line_end": 2590
+        }
+      ],
+      "source_assertion": "已关闭/否决方案及原证据不删除；具体保留期、脱敏与合法清除由适用政策确定。\n\nSYS-PRIV;PLM-DOC；禁止随便设30天清理工程历史",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    },
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-05",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "负载与分页参数",
+      "operation": "取得此项准确后继决定并逐点比对：本稿建议页长50、最大200、对象引用上限500、评审人50、附件引用50；须专项容量确认。",
+      "observations": [
+        "本稿建议页长50、最大200、对象引用上限500、评审人50、附件引用50；须专项容量确认。",
+        "API/检查；候选参数非已批准生产SLO"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2593,
+          "line_end": 2597
+        }
+      ],
+      "source_assertion": "本稿建议页长50、最大200、对象引用上限500、评审人50、附件引用50；须专项容量确认。\n\nAPI/检查；候选参数非已批准生产SLO",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    },
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-06",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "外部试制未决关闭",
+      "operation": "取得此项准确后继决定并逐点比对：H42/H43由PLM-VER/MES回传安全终结证据，迭代不凭超时判停止。",
+      "observations": [
+        "H42/H43由PLM-VER/MES回传安全终结证据，迭代不凭超时判停止。",
+        "PLM-VER;MES；阻塞依赖取消/结案的最终联调"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2600,
+          "line_end": 2604
+        }
+      ],
+      "source_assertion": "H42/H43由PLM-VER/MES回传安全终结证据，迭代不凭超时判停止。\n\nPLM-VER;MES；阻塞依赖取消/结案的最终联调",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    },
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-07",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "字段标签多语言",
+      "operation": "取得此项准确后继决定并逐点比对：当前中文作为审阅语言；日/韩等译文沿既有多语言批准流程，机器翻译不默认发布。",
+      "observations": [
+        "当前中文作为审阅语言；日/韩等译文沿既有多语言批准流程，机器翻译不默认发布。",
+        "SYS-LANG；不影响稳定字段ID"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2607,
+          "line_end": 2611
+        }
+      ],
+      "source_assertion": "当前中文作为审阅语言；日/韩等译文沿既有多语言批准流程，机器翻译不默认发布。\n\nSYS-LANG；不影响稳定字段ID",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    },
+    {
+      "id": "WP05-01/1/BODY/DP-ITER-08",
+      "target": "PLM-ITER-01",
+      "kind": "OPEN_DECISION",
+      "object": "当前代码适配核对",
+      "operation": "取得此项准确后继决定并逐点比对：MASTER-03无独立同范围主项；未来仅按已批准实施包核对实际路径，不从模板推断当前服务存在。",
+      "observations": [
+        "MASTER-03无独立同范围主项；未来仅按已批准实施包核对实际路径，不从模板推断当前服务存在。",
+        "CURRENT audit；本轮未读取业务仓新提交，未新建代码"
+      ],
+      "owner": "原DP适用对象；仅处理后继已明确覆盖部分，其余不默认为已定。",
+      "source_refs": [
+        {
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line_start": 2614,
+          "line_end": 2620
+        }
+      ],
+      "source_assertion": "MASTER-03无独立同范围主项；未来仅按已批准实施包核对实际路径，不从模板推断当前服务存在。\n\nCURRENT audit；本轮未读取业务仓新提交，未新建代码\n\n<!-- SOURCE_END sha256=a61898d1d6ad316570920013708d5f5f3ff0ad4eb45247bbfe6d176572f52845 -->",
+      "supporting_ids": [],
+      "overlays": [
+        "后续数据库目标PostgreSQL；R1只覆盖已明确的摘要/OA映射，不替实际角色、保留、容量和真实能力拍板。"
+      ],
+      "runtime_state": "NOT_RUN",
+      "coverage_state": "UNRESOLVED"
+    }
+  ],
+  "exceptions": null,
+  "expiry_conditions": null,
+  "approval_evidence": [],
+  "actual_adoption": false,
+  "gate_implementation": "NOT_CHANGED",
+  "note": "Template is not a signature. Append a separately identified decision after review; never edit original WP05/adoption or claim assignment approves this version."
+}

@@ -1,0 +1,37 @@
+{
+  "scope": "PREPARATION_STATIC_IDENTITY_LOCATORS_AND_ASSERTION_PRESERVATION",
+  "result": "PASS",
+  "source_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+  "checker_sha256": "2573ee898b33aefd1ecbc821bf3921c27e7486afbdef4f478779b2520c569157",
+  "input_count": 58,
+  "registered_sources": 39,
+  "reference_occurrences_checked": 892,
+  "checks_passed": 3509,
+  "errors": [],
+  "separate_counts": {
+    "recovered": {
+      "PLM-ITER-01": 99,
+      "PLM-REL-01": 122
+    },
+    "body": {
+      "REQ": 30,
+      "BR": 40,
+      "FLD": 78,
+      "PROC": 20,
+      "LOGICAL_DATA": 93,
+      "OPEN_DECISION": 8,
+      "CURRENT_ACTION": 18,
+      "CURRENT_PAGE_FIELDS": 8
+    },
+    "supplement": {
+      "WB": 18,
+      "CP22": 15,
+      "R1": 10
+    },
+    "r1": 8,
+    "detail": 10,
+    "matrix_rows_not_unique_obligations": 577
+  },
+  "actual_adoption": false,
+  "business_runtime": "NOT_RUN"
+}

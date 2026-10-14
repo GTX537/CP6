@@ -1,0 +1,15 @@
+test_actual_unsigned_template_cannot_satisfy_proposal (__main__.BundleTests.test_actual_unsigned_template_cannot_satisfy_proposal) ... ok
+test_all_123_other_targets_reject_even_if_contract_is_extended (__main__.BundleTests.test_all_123_other_targets_reject_even_if_contract_is_extended) ... ok
+test_all_structured_source_reference_occurrences_accounted (__main__.BundleTests.test_all_structured_source_reference_occurrences_accounted) ... ok
+test_dp_and_historical_gaps_remain_open (__main__.BundleTests.test_dp_and_historical_gaps_remain_open) ... ok
+test_duplicate_keys_and_nan_reject (__main__.BundleTests.test_duplicate_keys_and_nan_reject) ... ok
+test_each_pg01_field_observed_not_just_page_count (__main__.BundleTests.test_each_pg01_field_observed_not_just_page_count) ... ok
+test_exact_main_task_and_r1_membership (__main__.BundleTests.test_exact_main_task_and_r1_membership) ... ok
+test_manifest_uses_git_bytes_not_crlf_worktree (__main__.BundleTests.test_manifest_uses_git_bytes_not_crlf_worktree) ... ok
+test_matrix_preserves_every_source_assertion_and_exact_id (__main__.BundleTests.test_matrix_preserves_every_source_assertion_and_exact_id) ... ok
+test_pins_and_unsigned_fields (__main__.BundleTests.test_pins_and_unsigned_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.540s
+
+OK

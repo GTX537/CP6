@@ -1,0 +1,212 @@
+{
+  "scope": "WP01-01_PREPARATION_CORE_IMPLEMENTATION_SNAPSHOT",
+  "status": "PROPOSED_NOT_ADOPTED",
+  "source_revision": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+  "exclusions": [
+    "this manifest (no recursive self hash)",
+    "parent-owned intake.json, review* and publication-*",
+    "future parent delivery/coordination metadata; not automatically part of this snapshot"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/.gitattributes",
+      "sha256": "474256fb62f8f45a4a804582bfc4914b4774f73772cde4ba8cbe35d795785dae",
+      "bytes": 232,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/bookkeeping-correction.json",
+      "sha256": "520b4e2aa57453350b7dc86ca310813c29f9bb067c1188c33446ed7363a4de5b",
+      "bytes": 1120,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stderr.txt",
+      "sha256": "bdf30fe7b5a339b625880aa935294d732840e907f77a9283ec5b495da650c3a6",
+      "bytes": 1364,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stderr.txt",
+      "sha256": "e8e4826ea6343669b8b98a18034a57d38a1f4065a7f0025dcb8cb6f7d8bfb6a7",
+      "bytes": 2359,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/comparator-tests.txt",
+      "sha256": "e9d5f10cf0084309f78ee5c50464d09882fdc96abda6e684c34080e969c198ac",
+      "bytes": 2163,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json",
+      "sha256": "946c1561a1a4a193149198108b917ef9a6a1c2c5128bd88c7ebf7e89140c4b60",
+      "bytes": 17973,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/delivery-draft.md",
+      "sha256": "95acc7fa95e16fcbe008d674bfd54a0d9053bf4030d9bbcbdef962b94cad242f",
+      "bytes": 2778,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json",
+      "sha256": "62004288943e268e05858e7d4db732e074e2161befd11aa69495e5eab5541dbe",
+      "bytes": 31319,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/gate-proposal.md",
+      "sha256": "4f79f5d73ce2a0a1d3132423a1428075e2709abcf1dee4fc937af2fa6efbe134",
+      "bytes": 4832,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/input-lock.json",
+      "sha256": "d771ea749db37c60da2e4eaefa5bb64ba167e9cb0301a063518c2ed05e2f09ec",
+      "bytes": 26081,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stdout.txt",
+      "sha256": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+      "bytes": 395,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+      "sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+      "bytes": 1198041,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.md",
+      "sha256": "d8ca48997c0c35e8560c1e03d935043250e25dc0212f997696dabdbcc7b2ca3e",
+      "bytes": 436431,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/prepare-final.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/prepare-final.stdout.txt",
+      "sha256": "9a5b55ace2d317ee11b91f836111f46cac6515d54220ac4f94b9cbf52679c83b",
+      "bytes": 938,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/prepare-first-run.txt",
+      "sha256": "4554251a849958a21196cf70d0381b48c31ad0d7b281d15966029c6218ec8ea7",
+      "bytes": 938,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/README.md",
+      "sha256": "29f6564ab158063fdabf99571f7e4cd840d332a45ad9c34091c1b7065bdc451d",
+      "bytes": 5114,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/semantic-audit.md",
+      "sha256": "6b0b6540134809792bf8ad5ec87b464a6b4e77d468ee10d43620420608e92ebd",
+      "bytes": 11576,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/source-verification.initial.json",
+      "sha256": "0576f8f42bbc482cad27edf3f1905e3bc9b4b1186cac816dcce38fd10475ea4c",
+      "bytes": 316903,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/source-verification.json",
+      "sha256": "1de02a63ab44d81d046d3ae391016da82c9e5fb22c384a4de410fd2482df455f",
+      "bytes": 316903,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/tdd-malformed-red.txt",
+      "sha256": "7648842a05f3f074ef8f8f3d17b4d29a3b53b8536b85b8c0f994ae325e3f44b0",
+      "bytes": 30550,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/tdd-red.txt",
+      "sha256": "69c05a08ca066ac44d7a08d431bb8ab77550655852d414986b6cd55e1c95cd26",
+      "bytes": 19670,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/tdd-repository-scope-red.txt",
+      "sha256": "a7a344df25f84318e51e879055c24666429917f574273dcf11a0f17430d2501b",
+      "bytes": 3249,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/validation.json",
+      "sha256": "45bd0c724a7fb9be9fe046158c959a8d32da62bb27a6733174a5a638d1b83963",
+      "bytes": 15453,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "eng/wp01-01/preparation/.gitattributes",
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+      "bytes": 14,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "eng/wp01-01/preparation/comparator.py",
+      "sha256": "8ef101805537db56d581b509feb4b6176b542487ca2eed0c7372ddaa0f82c1e5",
+      "bytes": 5802,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "eng/wp01-01/preparation/prepare.py",
+      "sha256": "54da30f9e6ebc42a4a7a33194ed92b675f5b986ec82b8f9c735933a73060c903",
+      "bytes": 26502,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "eng/wp01-01/preparation/run_checks.py",
+      "sha256": "01c50b6d361dddf10735505f635f303123da75890420be3b39b4b5055703905f",
+      "bytes": 5131,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "eng/wp01-01/preparation/test_bundle.py",
+      "sha256": "09f55236131c7871fa169c46c8345b92352327eda7f0d7115f09bab0107d8481",
+      "bytes": 5993,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    },
+    {
+      "path": "eng/wp01-01/preparation/test_comparator.py",
+      "sha256": "acac1c2b99e0bc00d9dca582bab480ad97d018a4f477f44ebec7cf691a836e53",
+      "bytes": 7813,
+      "representation": "RAW_FILE_BYTES_PRESERVED_BY_LOCAL_GITATTRIBUTES"
+    }
+  ],
+  "actual_adoption": false,
+  "actual_completion": false
+}

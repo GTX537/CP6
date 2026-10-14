@@ -1,0 +1,16 @@
+{
+  "scope": "PREPARATION_EVIDENCE_BOOKKEEPING_ONLY",
+  "observed_at": "2026-10-14T05:46:20.642335+00:00",
+  "original_receipt": "validation.json",
+  "original_limitation": "Initial protected hashes mistakenly checked root/CHANGELOG-AI.md, not docs/project-memory/CHANGELOG-AI.md; three status files were covered, fourth was omitted. Original receipt remains unchanged.",
+  "correction": "Runner corrected actual fourth path and future invocations now require fresh unique labels; reject overwrite. No business/static check results relabeled or rerun for bookkeeping.",
+  "actual_fourth_file": "docs/project-memory/CHANGELOG-AI.md",
+  "raw_worktree_sha256": "e0b8f9f0e5414ab72164c9f234fce15e54a0f0cd0468c6a5c46e487e17510b3f",
+  "pinned_git_sha256": "0662ec441ec5d6eaa68be13b88471c4a209ae9c5c147f3104e9266b2c91c3de5",
+  "normalized_worktree_equals_pinned_git": true,
+  "git_diff_exit_code": 0,
+  "git_diff_stdout": "",
+  "git_diff_stderr": "",
+  "python_scripts_syntax": "PASS (ast.parse; no imports/side effects)",
+  "runner_sha256_after_correction": "01c50b6d361dddf10735505f635f303123da75890420be3b39b4b5055703905f"
+}

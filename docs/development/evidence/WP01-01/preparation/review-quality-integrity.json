@@ -1,0 +1,19 @@
+{
+  "scope": "QUALITY_REVIEW_READ_ONLY_ARTIFACT_INTEGRITY",
+  "result": "PASS",
+  "baseline": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+  "core_manifest_sha256": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+  "core_artifacts_disk_index_hash_bytes_checked": 33,
+  "existing_validation_commands_script_and_log_hashes_checked": 4,
+  "matrix_rows_checked": 577,
+  "source_check_result_reused": {
+    "checks": 3509,
+    "reference_occurrences": 892
+  },
+  "protected_diff_exit": 0,
+  "staged_diff_check_exit": 0,
+  "test_suites_rerun": false,
+  "actual_adoption": false,
+  "actual_completion": false,
+  "errors": []
+}
