@@ -1,0 +1,562 @@
+{
+  "schema": "cp6.wave7.admission-assessment.v1",
+  "scope": "READ_ONLY_ASSESSMENT",
+  "lane": "B",
+  "date": "2026-10-14",
+  "recommendation": "ELIGIBLE_FOR_BOUNDED_SOURCE_COMPATIBILITY_PREPARATION_ONLY",
+  "identity": {
+    "Main": {
+      "sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "tree": "fcf79cd38055adddab4a69e4910808c691d442b2"
+    },
+    "Platform": {
+      "sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "tree": "4ae98434d6e87f3fdd852a156fd057c03e336e43",
+      "read_path": "D:\\CP6.Platform-worktrees\\wave6-integration-20261014"
+    },
+    "observation": "Local HEAD/main/origin/main matched. No fresh network read by this assessment; coordinator must refresh at dispatch."
+  },
+  "prior_delivery": {
+    "WP02-02": {
+      "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+      "remote_main_sha": "b526e6b2194c232fae224cad7e72aef1c9b85c9e",
+      "pr_url": "https://github.com/GTX537/CP6/pull/206"
+    },
+    "WP02-08": {
+      "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+      "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "pr_url": "https://github.com/GTX537/CP6.Platform/pull/71"
+    },
+    "WP02-25": {
+      "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+      "remote_main_sha": "5e882a5e1006ee2eb27fc0fa1170755f552be089",
+      "pr_url": "https://github.com/GTX537/CP6.Platform/pull/70"
+    }
+  },
+  "historical_artifacts": {
+    "formal": {
+      "version": "0.10.2",
+      "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+      "publication_sha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+      "packages": [
+        {
+          "id": "CP6.Platform.Abstractions",
+          "version": "0.10.2",
+          "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+          "sha256": "e838ba9c9c6e434f8c8a2bf41e9da7d931a962400435aabb2189f40628c17103",
+          "feed": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Abstractions/0.10.2"
+        },
+        {
+          "id": "CP6.Platform.AspNetCore",
+          "version": "0.10.2",
+          "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+          "sha256": "5dc9cee4335e69f463361afc89d36587650b896059472570753ef485787fec73",
+          "feed": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.AspNetCore/0.10.2"
+        },
+        {
+          "id": "CP6.Platform.Contracts",
+          "version": "0.10.2",
+          "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+          "sha256": "84b62cad23d0ce09a4af545ac5ae73cd625fce33eb77d022740350dac0364570",
+          "feed": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Contracts/0.10.2"
+        },
+        {
+          "id": "CP6.Platform.Deployment",
+          "version": "0.10.2",
+          "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+          "sha256": "231a7cb3e18fd8ba9a7d60bbe01195ca7676c33b55b542a294c4a76c0fff066b",
+          "feed": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Deployment/0.10.2"
+        },
+        {
+          "id": "CP6.Platform.EntityFramework",
+          "version": "0.10.2",
+          "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+          "sha256": "cc780ce1b454c62f96caa990eb2e0462563b1917e8c505b11100a4555d5b4544",
+          "feed": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.EntityFramework/0.10.2"
+        },
+        {
+          "id": "CP6.Platform.Messaging",
+          "version": "0.10.2",
+          "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+          "sha256": "878994735a171194b8944c58fa919508380fa7d0707aa09176427295d0aab235",
+          "feed": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Messaging/0.10.2"
+        },
+        {
+          "id": "CP6.Platform.Release",
+          "version": "0.10.2",
+          "source_sha": "fbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+          "sha256": "0b8fd3b332c837e6f1c0cbe9c312e87a671c4f119d2128768f7284d4fa26a8f1",
+          "feed": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Release/0.10.2"
+        }
+      ],
+      "assessment": "Missing ctx-binding-v1. No Current trust check performed here."
+    },
+    "local": {
+      "source_sha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+      "consumer_lock_sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+      "packages": [
+        {
+          "feedIdentity": "task-local:wp02-27#CP6.Platform.Abstractions/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "packageId": "CP6.Platform.Abstractions",
+          "sha256": "e89880bae01bc6e94bad7cdb4b25917fe08ca0f3656793b3457c0036bfe290de",
+          "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+        },
+        {
+          "feedIdentity": "task-local:wp02-27#CP6.Platform.AspNetCore/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "packageId": "CP6.Platform.AspNetCore",
+          "sha256": "b4190c5dbcf7e5972d59e70e1ef6ae5d026172f1c331ec4b7f06ae9501ba2227",
+          "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+        },
+        {
+          "feedIdentity": "task-local:wp02-27#CP6.Platform.Contracts/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "packageId": "CP6.Platform.Contracts",
+          "sha256": "868def2318528f80cf1611242af992c72ffbf1497d0079af102856f5a17e5a12",
+          "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+        },
+        {
+          "feedIdentity": "task-local:wp02-27#CP6.Platform.Deployment/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "packageId": "CP6.Platform.Deployment",
+          "sha256": "b769ca35159456462fa6c72af68ad17797d7123405a276caaf937cc0202a338e",
+          "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+        },
+        {
+          "feedIdentity": "task-local:wp02-27#CP6.Platform.EntityFramework/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "packageId": "CP6.Platform.EntityFramework",
+          "sha256": "12f2f029568b59d364e2e1fef2535f0e3fa313dc784d656c77dcdf5eabdc59bf",
+          "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+        },
+        {
+          "feedIdentity": "task-local:wp02-27#CP6.Platform.Messaging/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "packageId": "CP6.Platform.Messaging",
+          "sha256": "fd439f96bfbdb4a4ebb922249fafa5d5dae2e26627d179fa4fe2622190551c8d",
+          "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+        },
+        {
+          "feedIdentity": "task-local:wp02-27#CP6.Platform.Release/0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250",
+          "packageId": "CP6.Platform.Release",
+          "sha256": "526eddb7a07e1b44ba3ba65077ed10cac43a905f0565fd5fcd1985d1831a56ea",
+          "sourceGitSha": "7c59256e13c217fc0e8a66b8f3f46905222fdcbc",
+          "version": "0.10.3-wp02.27.g7c59256e13c217fc0e8a66b8f3f46905222fdcbc.20261013134250"
+        }
+      ],
+      "assessment": "Not current producer and never formal trust."
+    },
+    "0.10.3": "PROPOSED_ONLY_NOT_REGISTERED_NOT_PUBLISHED"
+  },
+  "MSB3277": {
+    "observed": "Old four raw-DLL framework-only probe picks DiagnosticSource8 over references to10",
+    "main_core_and_webapi_already_resolve": "10.0.8",
+    "contentHash": "rQHsK7Xr8Uz3449860ayVXp/CaLmrhHlMPxbpT/ibOPtp/dTTsr6+f/SxaGO2NzxHf+0siLE0UfdVN5z1I0EgQ==",
+    "conclusion": "Missing probe closure evidenced; producer downgrade or equivalent product conflict not established. Test full graph and actual telemetry path.",
+    "required_build_argument": "-warnaserror:MSB3277"
+  },
+  "proposed_task": {
+    "id": "WP02-02",
+    "scope": "SOURCE_COMPATIBILITY_PREPARATION_ONLY",
+    "repository": "Main",
+    "branch_example": "codex/wp02-02-source-compatibility-20261014",
+    "committable_writes": [
+      "eng/wp02-02/consumption-compatibility/",
+      "docs/development/evidence/WP02-02/consumption-compatibility/"
+    ],
+    "ephemeral_writes": [
+      "artifacts/wp02-02/consumption-compatibility/<new-attempt>/ inside assigned worktree only"
+    ],
+    "source_build_roots": [
+      "CP6.WebApi/CP6.WebApi.csproj",
+      "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj"
+    ],
+    "snapshot_substitutions": [
+      {
+        "project": "CP6.Core/CP6.Core.csproj",
+        "package": "CP6.Platform.Messaging"
+      },
+      {
+        "project": "CP6.Core/CP6.Core.csproj",
+        "package": "CP6.Platform.EntityFramework"
+      },
+      {
+        "project": "CP6.WebApi/CP6.WebApi.csproj",
+        "package": "CP6.Platform.AspNetCore"
+      },
+      {
+        "project": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+        "package": "CP6.Platform.EntityFramework"
+      }
+    ],
+    "substitution_rule": "Exactly four snapshot-only PackageReference[0.10.2] to fixed producer ProjectReference substitutions; no business .cs changes, skipped compilation items, shared source edits or production source-adoption exception.",
+    "restore_policy": "Exact Main NuGet.config with required signatures and existing mapping/signer pins for external packages; isolated cache/private generated locks and full delta. Zero CP6.Platform NuGet fallback in diagnostic graph.",
+    "restore_config_sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45",
+    "deliverables": [
+      "Immutable Git snapshots, per-input hashes, transparent patch and manifest",
+      "Actual evaluated restore graphs/assets/private lock deltas for two real Main roots",
+      "Actual Release compilation outputs with MSB3277 fatal",
+      "Owned loopback Kestrel context+WP02-25 SDK runtime probe, actual HTTP trace/metric/log output and cleanup",
+      "Loaded five Platform runtime assemblies plus third-party dependency paths/version/MVID/hashes against observed build outputs",
+      "Explicit source-local compatibility status distinct from formal trust, actual Main host and business acceptance"
+    ],
+    "runtime_boundaries": [
+      "127.0.0.1 ephemeral owned ports only",
+      "Synthetic context verifier/authority explicitly labeled",
+      "Use current public AddCp6TrustedRequestContextV1 and AddCp6ObservabilityV1/LocalTelemetrySinkV1",
+      "No Main Program, database-probe entry point, background worker, remote exporter or broker startup"
+    ],
+    "forbidden": [
+      "All Platform repository writes",
+      "Production project/lock/props/solution/NuGet/trust/source changes in any repo",
+      "Shared contracts/schema/version/Capabilities namespace changes",
+      "Formal signing, feed publishing, tags, Actions run/rerun, deployment",
+      "Business DB access/fixture/migration or owner permission/storage activation",
+      "Shared roadmap/generated/project-state writes by lane B"
+    ],
+    "log_policy": "No full environment or user NuGet config/credential/connection string dumps. Publish only required parameters and source-relative verified paths. Scan logs/binlogs; redacted copies must retain separate original/copy hashes and redaction explanation. No machine-specific production config.",
+    "permission": "COORD explicitly grants source export, four private substitutions, isolated generated locks and loopback runtime. Not approval to change consumer admission contract."
+  },
+  "gates": [
+    {
+      "id": "G1",
+      "name": "source-boundary",
+      "required": "Pin exact SHA/tree/blob, new isolated output, reject dirty inputs/mixed producer/escaping paths; originals unchanged."
+    },
+    {
+      "id": "G2",
+      "name": "real-restore",
+      "required": "Evaluate both real project roots and all necessary dependencies; preserve non-Platform declarations, restore signature policy and full private lock delta; no old Platform package fallback."
+    },
+    {
+      "id": "G3",
+      "name": "compile",
+      "required": "Release builds of both actual roots and private probe; --no-restore and -warnaserror:MSB3277; no warning suppression/dependency downgrade/deleted compile scopes to force pass."
+    },
+    {
+      "id": "G4",
+      "name": "loopback-runtime",
+      "required": "Actual HTTP/context/background/message paths with synthetic authority and actual SDK trace/metric/log output; precise loaded dependency identity; safe owned cleanup."
+    },
+    {
+      "id": "G5",
+      "name": "negative-tests",
+      "required": "Wrong source/patch/config, mixed DLL, incomplete closure, signature restore failure, missing telemetry output and cleanup failures reject candidate."
+    },
+    {
+      "id": "G6",
+      "name": "delivery",
+      "required": "Targeted harness tests and one complete task diff review, retain failures. Final state remains preparation only. Candidate/protected-main workflows checked before any push/PR; no Actions."
+    }
+  ],
+  "overlaps": [
+    {
+      "task": "WP02-12",
+      "reads": [
+        "Platform Messaging/Abstractions/Contracts",
+        "Messaging.csproj",
+        "Directory.Packages.props"
+      ],
+      "write_overlap": "NONE with immutable b28db76 snapshot. New dependency/source repair requires coordinator serial window. Later producer inputs do not inherit results."
+    },
+    {
+      "task": "WP02-26",
+      "reads": [
+        "Platform Contracts/AspNetCore/Testing",
+        "Central dependencies"
+      ],
+      "write_overlap": "NONE. Use private probe/current public local sink; no shared SLO evaluator/recorder/schema/test edits; Testing IsPackable=false unchanged. New affected inputs require scoped new validation."
+    }
+  ],
+  "status": {
+    "WP02-02": "BLOCKED",
+    "WP02-02_entry_gate": "NOT_CHECKED",
+    "PGT_17": "NOT_RUN",
+    "WP02-28": "NO_FORMAL_ADOPTION_ADMISSION",
+    "WP02-27": "Existing delivered implementation unchanged; no extra DONE",
+    "new_formal_0.10.3_trust": "NOT_RUN",
+    "formal_compatibility": "UNKNOWN",
+    "actual_Main_host": "NOT_RUN",
+    "business": "NOT_RUN",
+    "next_release_steps": [
+      "Separate Platform exact-version registration implementation window",
+      "Freeze final integrated producer",
+      "Concrete new authorized formal workflow/publication run with scope/minutes",
+      "Protected approval, one-build, RFC3161/current revocation, immutable seven-package byte-preserving feed readback",
+      "Real signed feed consumer restore/16 locks, Main host and PG gates"
+    ]
+  },
+  "assessment_execution": {
+    "repo_writes": 0,
+    "remote_writes": 0,
+    "actions_runs": 0,
+    "actions_cancelled": 0,
+    "workflow_changes": 0,
+    "database_operations": 0,
+    "builds_or_tests_run": 0,
+    "online_queue_queries": 0,
+    "verification": "Read-only source/evidence/lock inspection; all proposed execution gates NOT_RUN."
+  },
+  "input_fingerprints": [
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "AGENTS.md",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "NuGet.config",
+      "sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45",
+      "git_blob": "21a9499d52988046bec0d8b253867ba0fc506778"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "Directory.Build.props",
+      "sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+      "git_blob": "6f73fc306d1c382d18a9673787202c275d5e51d0"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+      "git_blob": "a5ca89c3572b6f64a1db409a5b7faada899b5ae9"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/packages.lock.json",
+      "sha256": "af945b670a5792b9d246e0e7a72e25fa83f9f9531159707aee46dfedab990ca4",
+      "git_blob": "ad56b0ca498666e08ba5b5d5e56f7a708762d0b4"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321",
+      "git_blob": "7012e57b353864125e6f220fe29ba821fd1cb572"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/packages.lock.json",
+      "sha256": "533ad0910797142c5b547f873a3d2db5bf23791e0183ab701e4801bfb3cf5650",
+      "git_blob": "b1e239760c84ae59ce246632310ef9b43bf1285b"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "sha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198",
+      "git_blob": "10e4572f66dc9d61f79aeedccdee3610aa78556d"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "sha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608",
+      "git_blob": "098be5b195c09fab99a31fdf682e1c3cd70f37c0"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Probe.csproj",
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "git_blob": "f2643c232cad10f702db041c0f03130ff7d097b5"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.props",
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "git_blob": "9a371b4acc37f6c663b5a47ca23281e8fcf5b3bf"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/NuGet.Config",
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "git_blob": "ba3ea93735e9089d20d62ad15aa6affb20a55cd4"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/README.md",
+      "sha256": "029bf15b83079c951c2209b36d3cfc803c2642e841d911d1939fe612f556a52f",
+      "git_blob": "6e982b390b0e1b7f98e0ce964d84fd0d13172931"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/DEPENDENCY-PROPOSAL.md",
+      "sha256": "68a31bf22df71b944a2970f39c55533915e832faa3cd9b9826109eb952cec349",
+      "git_blob": "365a82c6668042e9389b84d20c90efff54c75337"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/FORMAL-VERSION-PROPOSAL.md",
+      "sha256": "f1ea5d67f65aecfb542e37a44f7b1581c202f72790a7e8c409c59cb06d15ca6e",
+      "git_blob": "37552831cdb97394aaeff7e08fe9269c81d531c9"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/build.log",
+      "sha256": "98ea061c3ca787b0823c18b62f51bcd27fe6ae2949ec3dae59ac078e3e875a63",
+      "git_blob": "9d3898679f3ab4962a4a99fedca6fa29b83db2f0"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/original-publication.json",
+      "sha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+      "git_blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/local-consumer-lock.json",
+      "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+      "git_blob": "df5db6cdd44abf5c07fd04d86457af3552e07bb8"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-plans/WP02.md",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLT-RELEASE-01.md",
+      "sha256": "402ac4d108efb12cfbd5a902751bec5a659578bdd85d999e5025e19080cd2feb",
+      "git_blob": "cf4a6828dde1f35f6c8309159d33daf9ca4bdc58"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Build.props",
+      "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+      "git_blob": "42131cd740450f08305e95b08b855cfb981c022a"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Packages.props",
+      "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65",
+      "git_blob": "768d4ae02403f682963025d762ff7ed022a9c18d"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "global.json",
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+      "git_blob": "4c4c3ae5ed709aa83aa03569d2c1f6792c553165"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "NuGet.config",
+      "sha256": "bb4ea679b4c1d64f6220321702187bc3241f2e530d4551880f8a7aa6604ff881",
+      "git_blob": "7f55add0ec73ef552270b2fb024d410239c04f71"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "sha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b",
+      "git_blob": "3b66a813bbab6ccf723ee7e12c9492389062040c"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+      "git_blob": "0a735078a1562db562d72998172bd63cf6ab8934"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+      "sha256": "155913bd995dfd0eb2c787268358eeeac3d24a98f4c285ecc64e92bc4650dfe2",
+      "git_blob": "9ce69da3bb822a9adf040e13638d6e7e705755cf"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890",
+      "git_blob": "30b7857046279e978db3e12d443d65bdecc242fb"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "sha256": "347ab97b35caf5961b83409e28be4461e5f2077996904fc953ffc372d9ba6e19",
+      "git_blob": "5431acc9ace1b6cfccd28ab78dd911d619d1dc2f"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Testing/CP6.Platform.Testing.csproj",
+      "sha256": "80a51d405364c3d503fcd9c44bb8afc8b46fcc02dab35ff8f0b07e1a5aee77a9",
+      "git_blob": "83b047c3e4095c6c58ac85008bc72a8c61f37938"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+      "sha256": "f1e4ac737793e57a7eb08f52b10f1250b002b90f4b791f870e4519455bd2b2ae",
+      "git_blob": "b8639c708f4b37ce061c0e521c0324b6a2d0acb5"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+      "sha256": "fefdf49aaf0f86afe448e3a7da1f455609d5d7f57dfc0bbc6ead592484a2a15d",
+      "git_blob": "8460b68baea84370d73c2cbd4412767916c202be"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.AspNetCore/ObservabilityV1/ObservabilityRuntimeV1.cs",
+      "sha256": "cfc5ed9afa9bfc6119863502659173cee31989c04358129c3dc87208cf1725c5",
+      "git_blob": "f039e9c3c0f5215c0ec9d845153483d25366ceb4"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.AspNetCoreTests/ObservabilityV1/TelemetryAdapterTests.cs",
+      "sha256": "b3b67e97327d4edd18f041d195d8fba4ed291851e56a094041b92645e4424362",
+      "git_blob": "3a46be92d8f87c1bf6c2f966b3c4b6515b53c406"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f",
+      "git_blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1",
+      "git_blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "sha256": "dd4c5023b8ffc05b5fda984f0bd8f5c9220b9a4d864382d77f32e0a19d46e031",
+      "git_blob": "c1272a44e443cdc103ec84eb73c58289e5d114ee"
+    }
+  ]
+}

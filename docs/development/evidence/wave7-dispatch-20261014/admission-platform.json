@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "report_kind": "READ_ONLY_ADMISSION_RECOMMENDATION_NOT_LEDGER_UPDATE",
+  "generated_at": "2026-10-14T05:20:48.5834858-04:00",
+  "baselines": {
+    "Main": {
+      "sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "D:/CP6",
+      "status": "Pre-existing untracked user assets retained; no changes"
+    },
+    "Platform": {
+      "sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "D:/CP6.Platform-worktrees/wave6-integration-20261014",
+      "status": "clean; read-only local ancestry checks all returned 0"
+    },
+    "remote_verification": "Reused coordinator-fixed remote main receipts from wave6; no fresh remote query or remote write by admission worker"
+  },
+  "recommendation": {
+    "C": "READY for bounded library implementation and owned local broker/PG qualification after COORD registers exact paths/resources; no real business route enablement",
+    "D": "READY for bounded SLO/test-support implementation and owned local PostgreSQL qualification after COORD registration",
+    "current_ledger_states": {
+      "WP02-12": "PLANNED/NOT_CHECKED/unassigned",
+      "WP02-26": "PLANNED/NOT_CHECKED/unassigned"
+    },
+    "user_decision_required": false,
+    "reason": "Required task dependencies delivered. Local cached broker images, SDK8, PG18 and candidate free ports exist. Remaining setup and identity checks are executable worker preconditions, not permission requests or proof of acceptance."
+  },
+  "prerequisites": [
+    {
+      "id": "S01-09",
+      "repo": "Platform",
+      "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+      "merged_main": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+      "used_by": [
+        "WP02-12"
+      ],
+      "limit": "Native exact input identity/bytes; no full business event route inventory"
+    },
+    {
+      "id": "WP02-01",
+      "repo": "Platform",
+      "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+      "merged_main": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+      "used_by": [
+        "WP02-12"
+      ],
+      "limit": "Host-owned verifier still required; MessageContextExecutorV1 is not transport authentication"
+    },
+    {
+      "id": "WP02-08",
+      "repo": "Platform",
+      "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+      "merged_main": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "used_by": [
+        "WP02-12"
+      ],
+      "limit": "Corrected #66/#67 bounded OutboxV2; no real broker or Main/CRM Owner adoption"
+    },
+    {
+      "id": "S01-03",
+      "repo": "Main",
+      "source_sha": "b24f76445ffdc9b4df0de77eb394a6aa47726a0c",
+      "merged_main": "08bf7c923fa0b21af39d5e1f1fd550ed635246ed",
+      "used_by": [
+        "WP02-26"
+      ],
+      "limit": "CreditAmount BigInteger coefficient/scale; no decimal/double narrowing"
+    },
+    {
+      "id": "S01-04",
+      "repo": "Main",
+      "source_sha": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+      "merged_main": "688383439311a3babf00bae98ee426122ce60cd1",
+      "used_by": [
+        "WP02-26"
+      ],
+      "limit": "Inventory original lexical value separate from arithmetic; BigInteger ratio exact; no total-digit cap introduced"
+    },
+    {
+      "id": "WP02-25",
+      "repo": "Platform",
+      "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+      "merged_main": "5e882a5e1006ee2eb27fc0fa1170755f552be089",
+      "used_by": [
+        "WP02-26"
+      ],
+      "limit": "Corrected #68/#69; local observation Completeness remains Incomplete; no production SLO or actual consumer-host qualification"
+    }
+  ],
+  "sources": [
+    {
+      "path": "D:/CP6/docs/development/roadmap.json",
+      "scope": "Full WP02-12/26 rows and prerequisite delivery evidence"
+    },
+    {
+      "path": "D:/CP6/docs/development/task-definitions.json",
+      "scope": "Full WP02-12/26 task definitions and named downstream prerequisite bindings"
+    },
+    {
+      "path": "D:/CP6/docs/development/task-plans/WP02.md",
+      "scope": "Full WP02-12/26 cards"
+    },
+    {
+      "path": "D:/CP6/docs/development/assessments/20261011/catalogs/foundation.json",
+      "scope": "All 40 MSG,32 OBS,24 TEST acceptance assertions read; original acceptance remains separate"
+    },
+    {
+      "path": "D:/CP6/docs/design-handbook/modules/PLT-MSG-01.md",
+      "scope": "Consolidated module plus full original MSG"
+    },
+    {
+      "path": "D:/CP6/docs/design-handbook/modules/PLT-OBS-01.md",
+      "scope": "Relevant full consolidated semantics; original SLO section"
+    },
+    {
+      "path": "D:/CP6/docs/design-handbook/modules/PLT-TEST-01.md",
+      "scope": "Consolidated semantics; original case/fault/capture sections"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7b/7b59ff237b27e8ef__PLT-MSG-01_完整静态设计_v0.2.md",
+      "sha256": "7b59ff237b27e8efc452ae1ecf776ac77002382466a9e7d9744a3bf924e505e2",
+      "read": "full"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/20c9a128b3f2bab0__PLT-OBS-01_完整静态设计_v0.1.md",
+      "sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+      "read": "original SLO section 4; handbook relevant semantics"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d8/d8b4ef19a1b3a0a5__PLT-TEST-01_完整静态设计_v0.1.md",
+      "sha256": "d8b4ef19a1b3a0a528ddd7831f5159295d75b7eecadfa787e36ad028d362c5aa",
+      "read": "original case/fault/telemetry sections; handbook all sections"
+    },
+    {
+      "path": "D:/CP6/docs/development/evidence/wave6-integration-20261014",
+      "scope": "Fixed delivery rows and focused correction reviews; historical success reused as dependency evidence, no rerun"
+    }
+  ],
+  "resource_probe": {
+    "observed_at": "2026-10-14T05:14:56.8647258-04:00",
+    "read_only": true,
+    "no_services_started": true,
+    "no_database_connection": true,
+    "ports_checked": [
+      19092,
+      13500,
+      15001,
+      55429,
+      55430,
+      18012,
+      18013
+    ],
+    "listeners_on_checked_ports": [],
+    "parent_root": "D:/CP6-local-test",
+    "parent_root_acl_owner": "LAPTOP-3QQ44FJS\\tt",
+    "task_roots_existed": {
+      "D:/CP6-local-test/WP02-12": false,
+      "D:/CP6-local-test/WP02-26": false
+    },
+    "images": [
+      {
+        "tag": "apache/kafka:4.3.1",
+        "digest": "sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837",
+        "platform": "linux/amd64"
+      },
+      {
+        "tag": "daprio/daprd:1.18.2",
+        "digest": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+        "platform": "linux/amd64"
+      },
+      {
+        "tag": "mcr.microsoft.com/dotnet/sdk:8.0",
+        "digest": "sha256:bb32ba3ba3ea36e38572d9d8db76fa15f7cbf722f3f886e06bca6d528bd4fba8",
+        "platform": "linux/amd64"
+      }
+    ],
+    "sdk": {
+      "path": "C:/Users/tt/.dotnet/dotnet.exe",
+      "observed_version": "8.0.424",
+      "warning": "PATH dotnet lists only SDK10; use explicit SDK8 path; do not edit root global.json"
+    },
+    "postgresql": {
+      "binary": "C:/Program Files/PostgreSQL/18/bin/pg_ctl.exe",
+      "observed_version": "18.6"
+    },
+    "nuget_cache_present": [
+      "Dapr.Client/1.18.5",
+      "Npgsql/8.0.8",
+      "Npgsql.EntityFrameworkCore.PostgreSQL/8.0.11"
+    ],
+    "not_proven": [
+      "Complete offline dependency restore",
+      "Actual new fixture compile/run",
+      "Broker metadata/authentication/ACL behavior under new configuration",
+      "New PG cluster ownership/system id/database OID (not provisioned)"
+    ],
+    "existing_resources_do_not_touch": [
+      "cp6-demo-* containers including active kafka",
+      "cp6-kafka (29092)",
+      "cp6-db and all other existing containers",
+      "system/default PG5432",
+      "old WP02-07/WP02-08 cluster data and credentials"
+    ]
+  },
+  "tasks": {
+    "WP02-12": {
+      "lane": "C",
+      "phase": "IMPLEMENTATION_WITH_LOCAL_RESOURCE_GATE",
+      "allowed_write_paths": [
+        "src/CP6.Platform.Messaging/TransportV1/",
+        "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+        "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+        "src/CP6.Platform.EntityFramework/TransportV1/",
+        "tests/CP6.Platform.WP0212.Tests/",
+        "tests/CP6.Platform.WP0212.Fixture/",
+        "tests/wp02-12-runtime/",
+        "docs/WP02-12-MESSAGE-TRANSPORT-V1.md",
+        "docs/development/evidence/WP02-12/"
+      ],
+      "allowed_project_files": "Only new .csproj and child Directory.Packages.props/NuGet.config under the three task-owned tests paths; import existing central props, pin existing dependencies. No shared project/sln/root props edit.",
+      "exclusive_resources": [
+        "Platform:message-transport",
+        "file:Platform:src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+        "file:Platform:src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+        "dir:Platform:src/CP6.Platform.EntityFramework/TransportV1",
+        "local:WP02-12-docker-owner",
+        "local:127.0.0.1:19092",
+        "local:127.0.0.1:13500",
+        "local:127.0.0.1:15001",
+        "local:127.0.0.1:18012",
+        "local:127.0.0.1:18013",
+        "local:127.0.0.1:55430"
+      ],
+      "implementation": [
+        "Explicit immutable trusted route/profile and exact (profile,route,type,schemaId,schemaVersion) selection; separate existing bundle/validator per version; duplicate keys fail even same hash; no new dynamic registry/schema fetch/latest fallback.",
+        "Producer qualification comes from verified context and actual route/transport evidence. Body/header cannot select producer/profile. Verify tenant, region, aggregate and native message metadata before side effects.",
+        "Bounded original byte ownership, max min(profile,host,broker), duplicate member policy and safe bounded diagnostics; preserve root invalid-trace compatibility from S01/P08 rather than change native contracts accidentally.",
+        "Keep generic slash partition and native C02 colon partition distinct. C02 new adoption stays disabled unless actual native producer/consumer manifests and WP02-05/06/29 prerequisites are delivered; don't replace C02 with generic adapter.",
+        "Immutable raw bytes/hash and separate Owner/native digest domains through send, DLQ/quarantine and read-only recovery. Add a narrow IOutboxPublisherV2 bridge only in EntityFramework/TransportV1; no EntityFramework-to-Messaging reverse dependency.",
+        "Confirmed means transport accepted only. Timeout/cancellation/ambiguous response remain Unknown; no fresh message/mutation id or automatic alternate publisher. Permanent reject permits DROP only after actual durable quarantine policy completion; fake callback does not prove durability.",
+        "Use current OutboxV2/InboxV1 as read-only dependencies; no new queue model or migration authority. Missing real Owner transaction or route permission closes new-effect behavior."
+      ],
+      "local_acceptance": [
+        "Task private unit/contract cases for producer/profile/type/schema/version/duplicate/hash conflicts, tenant/region mismatch, header spoofing, unknown schema, exact raw bytes and limits.",
+        "Real cached Kafka4.3.1+Dapr1.18.2 roundtrip on owned isolated network; independent Kafka record observation of topic/key/body hash, actual receiver observation, authenticated sidecar/host path; no value reconstructed from payload may count as broker metadata.",
+        "Demonstrate actual producer entitlement with local authenticated/ACL-controlled broker or equally explicit independently verified dedicated route boundary. The old p05 authType:none and unchecked request headers cannot certify producer identity. If not proven mark that capability Unproven and route disabled; it blocks completion of corresponding positive guarantee.",
+        "Real broker negative cases wrong key/topic/producer, forged direct delivery headers, missing metadata, sidecar/broker unavailable, same original id retry and unknown ACK; application fault injection explicitly labeled.",
+        "Optional-but-required-for-persistence-claims new owned PG55430 test fixture integrates current OutboxV2 with actual publisher; commit versus transport result and original byte/hash DLQ/recovery verified; fixture Owner is labeled, no real business adoption.",
+        "Reuse corrected predecessor regression evidence when inputs unchanged; execute only impacted contract tests and one architecture check at task closeout. No full release/CI suite."
+      ],
+      "resources": {
+        "root": "D:/CP6-local-test/WP02-12/<owner32>/",
+        "marker": "CP6-WP02-12:<owner32>",
+        "docker_project": "cp6-wp0212-<owner12>",
+        "docker_labels": {
+          "cp6.task": "WP02-12",
+          "cp6.owner": "<full owner32>"
+        },
+        "bindings": [
+          "127.0.0.1:19092",
+          "127.0.0.1:13500",
+          "127.0.0.1:15001",
+          "127.0.0.1:18012",
+          "127.0.0.1:18013"
+        ],
+        "pg": {
+          "endpoint": "127.0.0.1:55430",
+          "database": "cp6_wp0212_<UTCyyyyMMdd>_<owner8>",
+          "settings_env": "CP6_WP0212_SETTINGS"
+        },
+        "policy": "Worker may provision owned loopback resources after COORD registration and fresh free-port/root checks; pin listed cached digests, pull_policy never, no external paid service/network or image pull. Use task-private offline fixture build against cached SDK; old p05 Dockerfile needs uncached aspnet image and unconstrained restore, so do not run it unchanged. Preserve data/logs/failed attempts. Stop only identity-verified own containers/cluster; never global prune, shared containers, existing data deletion or blanket process kill."
+      },
+      "conditional_consumers": [
+        {
+          "consumer": "WP02-29 CRM adoption",
+          "required": "Its WP02-09/11/12/25/27 plus real named CRM Owner contracts/entrypoints; transport library delivery alone not adoption"
+        },
+        {
+          "consumer": "C02 Main identity -> CRM",
+          "required": "Native five-type1.0.0 bundle hash24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63, dedicated publisher/validator, colon key/rawPayload=true; WP02-05/06 actual adoption before new effects"
+        },
+        {
+          "consumer": "WP05-34, WP05-61, WP10-43, WP12-20",
+          "required": "Their own Main WP02-10/13 and domain-specific sources/Owner contracts; WP02-12 enables only exact delivered transport profile, not fixture business evidence"
+        },
+        {
+          "consumer": "WP14-08/09",
+          "required": "All relevant owner/adoption prerequisites and actual environment evidence; no task-DONE cascade"
+        }
+      ]
+    },
+    "WP02-26": {
+      "lane": "D",
+      "phase": "IMPLEMENTATION_WITH_LOCAL_RESOURCE_GATE",
+      "allowed_write_paths": [
+        "src/CP6.Platform.Contracts/SloQualificationV1/",
+        "src/CP6.Platform.Testing/EvidenceV1/",
+        "src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+        "src/CP6.Platform.Testing/Cp6RecordedMetric.cs",
+        "src/CP6.Platform.Testing/Cp6HttpFaultScript.cs",
+        "src/CP6.Platform.Testing/Cp6HttpFaultHandler.cs",
+        "src/CP6.Platform.Testing/Cp6FaultInjectionServiceCollectionExtensions.cs",
+        "tests/CP6.Platform.WP0226.Tests/",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/",
+        "docs/WP02-26-SLO-TEST-EVIDENCE-V1.md",
+        "docs/development/evidence/WP02-26/"
+      ],
+      "allowed_project_files": "Only task test child .csproj/Directory.Packages.props/NuGet.config; no root/sln/production csproj edits; Contracts remains dependency-free, Testing IsPackable=false.",
+      "exclusive_resources": [
+        "Platform:test-evidence",
+        "file:Platform:src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs",
+        "file:Platform:src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+        "dir:Platform:src/CP6.Platform.Contracts/SloQualificationV1",
+        "dir:Platform:src/CP6.Platform.Testing/EvidenceV1",
+        "local:127.0.0.1:55429"
+      ],
+      "read_only_legacy_contracts": [
+        "src/CP6.Platform.Contracts/Cp6SloEvidenceDocument.cs",
+        "src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs",
+        "contracts/observability/slo-evidence/v1/",
+        "src/CP6.Platform.Contracts/ObservabilityV1/",
+        "src/CP6.Platform.AspNetCore/ObservabilityV1/",
+        "src/CP6.Platform.EntityFramework/",
+        "all Main native exact value source"
+      ],
+      "implementation": [
+        "Add explicit versioned qualification before legacy Evaluate. Verify actual supplied source/query/definition bytes and hashes with bounded controlled local input; no arbitrary URL fetch; immutable version/supersedes identity, closed windows, no overwrite of prior failures.",
+        "Recompute exact ratio, percentile with declared algorithm/weights/units, gauge with declared sampling/gaps. Population/coverage comes from independently bound expected inventory, never received sample count. Missing/zero/overflow/dropped/mixed-unbound release -> Indeterminate.",
+        "Retain legacy1.0.0 evaluator/JSON semantics as compatibility surface. New API's qualified result distinct; productionSloClaimed=false for all task fixtures even if candidate threshold passes. No new product thresholds.",
+        "Add case-owned deterministic clock/random, bounded script/inner counts, explicit retry pipeline placement, finite in-memory terminal, cancellation/exhaustion/cleanup failure semantics. Test-only, no production fault endpoint.",
+        "Bound capture count/time/bytes, case scope and lifecycle; reject cross-case contamination, preserve links and fan-out/retry/receive/apply DAG without deleting intermediate spans; local sequence not commit order.",
+        "Exact numeric capture/assertions distinguish CLR numeric kind, BigInteger coefficient/scale, rational, original lexical text and original bytes; never compare authoritative values through double/decimal or epsilon.",
+        "Consume fixed S01-03/04 semantics and vectors as input; no new financial contract authority or production reference to Main. Test fixture/source provenance pinned explicitly; source-link execution if used must hash-check exact Main sources and remain test-only.",
+        "Maintain compatibility of legacy recorder accessors, or offer opt-in versioned replacements; any removal/wire-contract change needs COORD contract window. Existing WP02-25 Incomplete telemetry cannot be silently qualified Complete."
+      ],
+      "local_acceptance": [
+        "Same actual frozen local evidence bytes/definition/window recompute same result; one-byte hash drift, altered denominator/query/units/exclusions, late-data overwrite, missing population, mixed release, zero samples reject or Indeterminate.",
+        "Unit/contract cases beyond2^53 and System.Decimal capacity, FIN-CREDIT38/8 and FIN-INV18/12 scale examples, native lexical signed-zero/trailing-zero distinctions and rational nonterminating values; no invented legal input narrowing.",
+        "Fanout + retry + intermediate Dapr span + receive/apply graph; duplicate/replayed operations, dangling/missing/cross-case edges rejected; max capture overflow and disposal prove no false Complete.",
+        "Fault harness verifies Status/Throw do not call inner; Success/Delay reach named in-memory terminal; cancellation/script exhaustion/observer failure and cleanup failure remain visible.",
+        "New real PG55429 concurrent transactions plus crash/restart on task-owned fixture only, retain same native operation/message keys and exact stored values; actual server crash labeled controlled failure and observed DB semantics, application ACK suppression distinctly injected. Do not relabel injected failures native SQLSTATE.",
+        "No production SLO or original real Owner AC acceptance from these local fixtures. Reuse unaffected WP02-25 evidence; one focused task closeout review and relevant architecture check."
+      ],
+      "resources": {
+        "root": "D:/CP6-local-test/WP02-26/<owner32>/",
+        "marker": "CP6-WP02-26:<owner32>",
+        "endpoint": "127.0.0.1:55429",
+        "database": "cp6_wp0226_<UTCyyyyMMdd>_<owner8>",
+        "settings_env": "CP6_WP0226_SETTINGS",
+        "policy": "Worker may provision/run only fresh owned PG18.6 after COORD registration and repeat free-port/root checks. Before setup/test/crash/restart/stop verify full token, canonical contained paths, cluster system id, database OID/name/owner, endpoint, session_user and no unexpected sessions. Setup/admin credential separate from restricted runtime DML role (NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS). Fresh SCRAM credentials remain private; no output or Git copy. A requested crash is limited to exact own cluster and labeled; smart-stop normally, preserve logs/data/failures, never terminate unknown sessions, reuse old task roots or touch5432."
+      },
+      "conditional_consumers": [
+        {
+          "consumer": "Main/CRM/business tests",
+          "required": "Own real Owner/authorization/transaction adapters, current exact source/package contracts and task-private environment; a portable test helper is not their adoption"
+        },
+        {
+          "consumer": "Production SLO",
+          "required": "Real approved SLI threshold/window/source/population/coverage/retention and independent acceptance; task cannot grant productionClaimAuthorized"
+        },
+        {
+          "consumer": "WP14-08/09",
+          "required": "Real domain/task prerequisites and receipts; tool availability does not close business scenarios"
+        }
+      ]
+    }
+  },
+  "coordination": {
+    "parallelism": "C/D code/test/docs scopes disjoint; C holds Messaging and narrow EF/TransportV1, D holds test evidence/Contracts/SloQualificationV1/Testing. C must not edit Contracts or Testing. D must not edit Messaging or EF.",
+    "shared_files": "Main roadmap/generated views/four state files, any shared project/dependency/sln/schema packaging remain COORD only. Legacy SLO schema/evaluator changes require explicit coordinated scope extension; do not weaken architecture assertions.",
+    "integration": "Create each task branch/worktree from then-confirmed Platform main. Serial merge and workflow trigger review before every push/PR. Ordinary Actions never run. Preserve prior correction evidence, no completion until relevant local gates/review/remote main containment."
+  },
+  "evidence_boundary": {
+    "tests_executed": false,
+    "services_created": false,
+    "services_stopped": false,
+    "remote_writes": false,
+    "repo_changes": false,
+    "reports_only": true,
+    "no_current_original_AC_claim": true
+  }
+}

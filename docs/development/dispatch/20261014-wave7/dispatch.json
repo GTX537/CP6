@@ -1,0 +1,490 @@
+{
+  "version": "CP6-WAVE7-DISPATCH/1",
+  "issued_at": "2026-10-14T09:22:28.191366+00:00",
+  "clock_basis": "coordinator host UTC",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "queued_or_running": []
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "queued_or_running": []
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": []
+    }
+  },
+  "main_baseline": "1129953156b7775152a74ad2f51cb95ef430ee56",
+  "platform_baseline": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "tasks": [
+    {
+      "title": "技术决定收口与禁用完成门候选",
+      "goal": "交付可直接审核的DP01–08技术决定、PG无损设计、真实依赖闭包及独立完成门候选。",
+      "architecture": "沿用已接受R1/S01/S02合同；新版本设计候选与只读Python适配器放在两个任务私有目录，生产管理器不引用。",
+      "write_paths": [
+        "eng/wp01-01/decision-closure/",
+        "docs/development/evidence/WP01-01/decision-closure/"
+      ],
+      "write_notes": "旧WP05 1.0.0/1.1.0、preparation、adoption.json、原归档、正式设计、台账与manage_roadmap.py全部只读。新的basis-delta/manifest必须引用旧准确身份；不得生成旧30/48成员或缺件hash。",
+      "checks": [
+        "复用已合并的577行矩阵、221可恢复场景、295正文定位和43补充映射；只审新增决定及变更义务，不重复生成旧空白模板。",
+        "建立decisions.json，逐DP/子句区分继承规则、新候选选择、实际配置未定、提供者未实现、运行未验证；DP01区分技术/评审/aggregate/snapshot摘要，ENG候选算法不能冒充已接受合同。DP02/04/07落实现有权限、保留、语言治理，留下具体业务值；DP05容量仅候选，不擅改合法输入。",
+        "建立postgresql-mapping.json，覆盖ITER/REL字段、身份原字节、精确值、索引/FK/CAS、写集锁序、TenantId/schema/角色与恢复；沿用cp6-pg-tenancy-v1，不照搬SQL Server rowversion，不运行DDL或迁移。",
+        "建立current-source-audit.json，逐符号/路由/模型/写者列REUSE/CHANGE/NEW；静态缺失只转为具体实现任务。DP06验证服务安全终结仍需真实VER/MES；DP08不能把历史分支当已合入代码。",
+        "建立provider-consumer-closure.json，对WP05-18→WP02-10→WP02-07及WP05-18→WP05-14→WP05-13→WP03-17等准确链逐边登记条件、合同pin、Owner事务和提供/消费证据。不能简单Main-only，也不能把所有基线仓强制纳入每场景。",
+        "形成basis-delta.json、manifest.json、gate-design.md、gate-contract.candidate.json和具体剩余决定清单；新义务采用新proposed身份。123原清单+2替代依据不得表述为125原件完整。用户签名/采纳时间继续未签署。",
+        "实现独立只读gate_candidate.py及tests，production_enabled/actual_adoption/actual_completion恒false；逐文件核bytes/hash/路径约束、准确义务与条件依赖。夹具正例仅验证算法，不签署或写生产记录。覆盖错hash、伪造权限、漏子断言、错误目标/其他123、静态/合成/NOT_RUN冒充真实、缺提供者及保持缺件的拒绝场景。",
+        "集中审查一次，输出delivery.md和固定输入/差异/局部验证证据；将真正剩余的采纳选择做成可审核结果后交COORD。"
+      ],
+      "boundary": "本窗口有权形成技术设计候选和禁用验证器；没有正式采纳或生产完成门接线。本任务保持PLANNED/NOT_CHECKED，业务运行均不提升。",
+      "commands": [
+        "python -X utf8 -m unittest discover -s eng/wp01-01/decision-closure/tests -v",
+        "python -X utf8 docs/development/tools/manage_roadmap.py",
+        "git -c core.longpaths=true diff --check"
+      ],
+      "id": "WP01-01",
+      "lane": "A",
+      "previous_task": "WP01-01",
+      "repository": "Main",
+      "repo_slug": "GTX537/CP6",
+      "branch": "codex/wp01-01-decision-candidate-20261014",
+      "worktree": "D:/CP6-worktrees/wp01-01-decision-20261014",
+      "baseline": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp01-01",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/",
+      "dependencies": [
+        {
+          "task": "WP05-01",
+          "delivery": {
+            "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+            "remote_main_sha": "38a476dd2e78262060ebbc9123a74b3437ec3867",
+            "pr_url": "https://github.com/GTX537/CP6/pull/180",
+            "observed_at": "2026-10-12T07:56:07.675663+00:00",
+            "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+            "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json"
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.md",
+          "sha256": "53e714ce1ec5f55aff8e666dec99daf280e668c8a02a6aa5a514024fd3c0eae8",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.json",
+          "sha256": "c4f618df4e75a8033de9ef5dc87e2ab8daa14b5c5dbc8a2299eea514d5831c1d",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "mode": "PREPARATION_ONLY",
+      "ledger_state": "PLANNED",
+      "entry_gate": "NOT_CHECKED"
+    },
+    {
+      "title": "完整依赖与固定源码消费诊断",
+      "goal": "用完整传递依赖完成真实构建和隔离宿主诊断，交付可复现的源码采用候选方案。",
+      "architecture": "Main/Platform固定Git快照，项目替换只发生在本任务临时副本。Python生成器+SDK8构建+随机loopback Kestrel探针；不更改正式包、信任、应用或锁文件。",
+      "write_paths": [
+        "eng/wp02-02/consumption-compatibility/",
+        "docs/development/evidence/WP02-02/consumption-compatibility/"
+      ],
+      "write_notes": "仅新私有生成器、测试、探针csproj及其child Directory.Packages.props、无秘密的执行清单与证据。已有consumption准备原件只读。允许生成新owner临时Main/Platform源码快照并在其中应用明确记录的四项诊断ProjectReference替换、局部锁/输出；禁止改仓库真实Core/WebApi/Space/Persistence、项目依赖/锁、NuGet.config、信任、版本注册、工作流、Program/EF。原外部包源映射和签名策略保持。 临时快照/cache/bin/obj/锁只写本任务工作树已忽略的artifacts/wp02-02/consumption-compatibility/<owner32>/；每次使用新owner目录并核绝对包含性。",
+      "checks": [
+        "固定Main1129953156b7775152a74ad2f51cb95ef430ee56和Platformb28db763f70ab6f164cb7c87d6ce49a6d97267f1的Git原字节、SDK/runtime、全部项目/props/锁和实际包来源；生成不可变快照输入清单，不从其他对话脏目录复制。",
+        "解释原四裸DLL探针MSB3277；Main既有DiagnosticSource10.0.8不因私有探针的8/10冲突被降级。产出完整依赖图/冲突责任，保存旧失败；缺依赖或仍冲突保持Unknown/FAIL，不压警告伪造成功。",
+        "建立只作用于owner快照的精确overlay，四项Platform引用替换为固定源码项目；原生产文件hash前后相同，保留所有外部NuGet源/签名规则。实际restore/build复制的WebApi及DatabaseCompatibility.Probe和相关闭包，只编译后者不执行数据库操作。 所有实际build显式 -warnaserror:MSB3277；其他警告保留真实范围，不能用忽略选项绕开依赖冲突。",
+        "建立真实隔离Kestrel探针，使用实际上下文和WP02-25 trace/metric/log路径；记录实际加载DLL位置/hash/MVID/版本及DiagnosticSource绑定，正反验证缺依赖、错版本、错来源、重复程序集、未知兼容与跨快照混用。伪造认证/Owner必须显式标synthetic，不冒称真实宿主信任或业务权限。",
+        "单独记录source/build/runtime/source-adoption-plan/formal-package-trust/Main-consumption状态；本地源码编译成功不等于旧.2或未来.3受信任包。本次不运行Main Program、不连接数据库、不写17PGT结果。",
+        "输出可审查的SOURCE-ADOPTION-CANDIDATE.md，固定完整身份、可重现步骤、消费者清单、兼容证据、撤销和回退、正式信任差异及后续串行采用所需准确变更。不得再仅交付旧身份提案；未满足部分给出具体真实失败和下一修复点。",
+        "对生成器/overlay只读约束/诊断探针做相关测试和一次完整diff审查，保留真实构建/启动/HTTP/清理证据及原失败。停止自有宿主，数据/证据保留，交COORD。"
+      ],
+      "boundary": "这是可复现源码采用方案的候选验证窗口，不是已批准的源码生产采用或包发布。WP02-02继续BLOCKED/NOT_CHECKED；WP02-28和17PGT仍未获准采用。",
+      "commands": [
+        "python -X utf8 -m unittest discover -s eng/wp02-02/consumption-compatibility/tests -v",
+        "python -X utf8 eng/wp02-02/consumption-compatibility/run.py --phase verify-plan --manifest eng/wp02-02/consumption-compatibility/input-manifest.json",
+        "# 新run.py其余prepare/build/probe阶段须要求明确owner/output并只写owner临时快照；实际build必须 -warnaserror:MSB3277。",
+        "git -c core.longpaths=true diff --check"
+      ],
+      "local_resource": {
+        "root": "D:/CP6-worktrees/wp02-02-closure-20261014/artifacts/wp02-02/consumption-compatibility/<owner32>/",
+        "http": "127.0.0.1:0 (owned random port)",
+        "database": false,
+        "production_host_start": false,
+        "provisioned": false
+      },
+      "id": "WP02-02",
+      "lane": "B",
+      "previous_task": "WP02-02",
+      "repository": "Main",
+      "repo_slug": "GTX537/CP6",
+      "branch": "codex/wp02-02-closure-candidate-20261014",
+      "worktree": "D:/CP6-worktrees/wp02-02-closure-20261014",
+      "baseline": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-02",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/",
+      "dependencies": [
+        {
+          "task": "S02-00",
+          "delivery": {
+            "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+            "remote_main_sha": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
+            "pr_url": "https://github.com/GTX537/CP6/pull/178",
+            "observed_at": "2026-10-12T07:31:41.369832+00:00",
+            "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+            "path": "docs/development/evidence/S02-00/coordination/remote-main.json"
+          }
+        },
+        {
+          "task": "WP02-01",
+          "delivery": {
+            "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+            "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+            "observed_at": "2026-10-13T07:39:05.879535+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.md",
+          "sha256": "0cf67147120df17f65209f75dff60871ddfa9d23549a4f3ef81f188184c19dff",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.json",
+          "sha256": "da2c9b6a54afa11045f9df97baca7a5ffac9e027b134dc6f240315e8daa4eb2a",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "mode": "PREPARATION_ONLY",
+      "ledger_state": "BLOCKED",
+      "entry_gate": "NOT_CHECKED"
+    },
+    {
+      "title": "producer资格、真实传输与死信原字节",
+      "goal": "交付有界消息适配库和独占Kafka/Dapr真实验证，保持原键、原体与身份。",
+      "architecture": "Messaging/TransportV1拥有显式版本路由与资格；EntityFramework/TransportV1仅桥接现有OutboxV2。无反向项目依赖，无新生产表或迁移。",
+      "write_paths": [
+        "src/CP6.Platform.Messaging/TransportV1/",
+        "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+        "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+        "src/CP6.Platform.EntityFramework/TransportV1/",
+        "tests/CP6.Platform.WP0212.Tests/",
+        "tests/CP6.Platform.WP0212.Fixture/",
+        "tests/wp02-12-runtime/",
+        "docs/WP02-12-MESSAGE-TRANSPORT-V1.md",
+        "docs/development/evidence/WP02-12/"
+      ],
+      "write_notes": "Cp6CloudEventValidator.cs/Cp6ContractBundle.cs只允许显式版本opt-in、重复注册冲突拒绝与新路由隔离；旧格式、原字节和未知/根trace兼容保持。新桥接只放EntityFramework/TransportV1，不改OutboxV2/InboxV1原语或legacy默认路由。新增公开类型只位于已列目录，不向共享Contracts/Abstractions加入第二份定义。 只允许已列任务测试目录内的新csproj/child Directory.Packages.props，导入根既有props并固定依赖；私有NuGet.config不得放宽源映射/签名/信任或新设外部服务。根sln/props、生产csproj、发布版本/包和工作流只读。范围外变更先交COORD串行安排。",
+      "checks": [
+        "Explicit immutable trusted route/profile and exact (profile,route,type,schemaId,schemaVersion) selection; separate existing bundle/validator per version; duplicate keys fail even same hash; no new dynamic registry/schema fetch/latest fallback.",
+        "Producer qualification comes from verified context and actual route/transport evidence. Body/header cannot select producer/profile. Verify tenant, region, aggregate and native message metadata before side effects.",
+        "Bounded original byte ownership, max min(profile,host,broker), duplicate member policy and safe bounded diagnostics; preserve root invalid-trace compatibility from S01/P08 rather than change native contracts accidentally.",
+        "Keep generic slash partition and native C02 colon partition distinct. C02 new adoption stays disabled unless actual native producer/consumer manifests and WP02-05/06/29 prerequisites are delivered; don't replace C02 with generic adapter.",
+        "Immutable raw bytes/hash and separate Owner/native digest domains through send, DLQ/quarantine and read-only recovery. Add a narrow IOutboxPublisherV2 bridge only in EntityFramework/TransportV1; no EntityFramework-to-Messaging reverse dependency.",
+        "Confirmed means transport accepted only. Timeout/cancellation/ambiguous response remain Unknown; no fresh message/mutation id or automatic alternate publisher. Permanent reject permits DROP only after actual durable quarantine policy completion; fake callback does not prove durability.",
+        "Use current OutboxV2/InboxV1 as read-only dependencies; no new queue model or migration authority. Missing real Owner transaction or route permission closes new-effect behavior.",
+        "Task private unit/contract cases for producer/profile/type/schema/version/duplicate/hash conflicts, tenant/region mismatch, header spoofing, unknown schema, exact raw bytes and limits.",
+        "Real cached Kafka4.3.1+Dapr1.18.2 roundtrip on owned isolated network; independent Kafka record observation of topic/key/body hash, actual receiver observation, authenticated sidecar/host path; no value reconstructed from payload may count as broker metadata.",
+        "Demonstrate actual producer entitlement with local authenticated/ACL-controlled broker or equally explicit independently verified dedicated route boundary. The old p05 authType:none and unchecked request headers cannot certify producer identity. If not proven mark that capability Unproven and route disabled; it blocks completion of corresponding positive guarantee.",
+        "Real broker negative cases wrong key/topic/producer, forged direct delivery headers, missing metadata, sidecar/broker unavailable, same original id retry and unknown ACK; application fault injection explicitly labeled.",
+        "Optional-but-required-for-persistence-claims new owned PG55430 test fixture integrates current OutboxV2 with actual publisher; commit versus transport result and original byte/hash DLQ/recovery verified; fixture Owner is labeled, no real business adoption.",
+        "Reuse corrected predecessor regression evidence when inputs unchanged; execute only impacted contract tests and one architecture check at task closeout. No full release/CI suite.",
+        "逐条建立原验收/修订场景对应矩阵，区分实际broker/PG、fixture Owner、应用故障注入和NOT_RUN；保留原失败和字节身份。仅完成限定库任务，不将生产SLO或真实Main/CRM采用记通过。"
+      ],
+      "boundary": "该窗口开放库实现及本任务独占原生本地验收。先验证资源身份再运行；缺少真实producer资格、原生持久化或完整证据时保持对应UNPROVEN/NOT_RUN并报告，不以mock或跳过替代。业务Owner、发布信任、生产采用及原业务验收另属后继任务。",
+      "commands": [
+        "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.WP0212.Tests/CP6.Platform.WP0212.Tests.csproj -c Release --logger \"trx;LogFileName=wp02-12.trx\"",
+        "pwsh -NoProfile -File tests/wp02-12-runtime/Invoke-WP0212.ps1 -Mode ValidatePlan",
+        "# 建立任务私有runner；实际Provision/Run/Stop各阶段都必须显式传本任务owner/settings，路径/端口/容器/cluster身份不符即拒绝。",
+        "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj -c Release --logger \"trx;LogFileName=wp02-12-architecture.trx\"",
+        "git -c core.longpaths=true diff --check"
+      ],
+      "local_resource": {
+        "root": "D:/CP6-local-test/WP02-12/<owner32>/",
+        "marker": "CP6-WP02-12:<owner32>",
+        "docker_project": "cp6-wp0212-<owner12>",
+        "docker_labels": {
+          "cp6.task": "WP02-12",
+          "cp6.owner": "<full owner32>"
+        },
+        "bindings": [
+          "127.0.0.1:19092",
+          "127.0.0.1:13500",
+          "127.0.0.1:15001",
+          "127.0.0.1:18012",
+          "127.0.0.1:18013"
+        ],
+        "pg": {
+          "endpoint": "127.0.0.1:55430",
+          "database": "cp6_wp0212_<UTCyyyyMMdd>_<owner8>",
+          "settings_env": "CP6_WP0212_SETTINGS"
+        },
+        "policy": "Worker may provision owned loopback resources after COORD registration and fresh free-port/root checks; pin listed cached digests, pull_policy never, no external paid service/network or image pull. Use task-private offline fixture build against cached SDK; old p05 Dockerfile needs uncached aspnet image and unconstrained restore, so do not run it unchanged. Preserve data/logs/failed attempts. Stop only identity-verified own containers/cluster; never global prune, shared containers, existing data deletion or blanket process kill.",
+        "provisioned": false
+      },
+      "conditional_consumers": [
+        {
+          "consumer": "WP02-29 CRM adoption",
+          "required": "Its WP02-09/11/12/25/27 plus real named CRM Owner contracts/entrypoints; transport library delivery alone not adoption"
+        },
+        {
+          "consumer": "C02 Main identity -> CRM",
+          "required": "Native five-type1.0.0 bundle hash24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63, dedicated publisher/validator, colon key/rawPayload=true; WP02-05/06 actual adoption before new effects"
+        },
+        {
+          "consumer": "WP05-34, WP05-61, WP10-43, WP12-20",
+          "required": "Their own Main WP02-10/13 and domain-specific sources/Owner contracts; WP02-12 enables only exact delivered transport profile, not fixture business evidence"
+        },
+        {
+          "consumer": "WP14-08/09",
+          "required": "All relevant owner/adoption prerequisites and actual environment evidence; no task-DONE cascade"
+        }
+      ],
+      "additional_reservations": [
+        "Platform:message-transport",
+        "file:Platform:src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+        "file:Platform:src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+        "dir:Platform:src/CP6.Platform.EntityFramework/TransportV1",
+        "local:WP02-12-docker-owner",
+        "local:127.0.0.1:19092",
+        "local:127.0.0.1:13500",
+        "local:127.0.0.1:15001",
+        "local:127.0.0.1:18012",
+        "local:127.0.0.1:18013",
+        "local:127.0.0.1:55430"
+      ],
+      "id": "WP02-12",
+      "lane": "C",
+      "previous_task": "WP02-08",
+      "repository": "Platform",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-12-message-transport-20261014",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-12-20261014",
+      "baseline": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-12",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-12/messages/",
+      "dependencies": [
+        {
+          "task": "S01-09",
+          "delivery": {
+            "source_sha": "753696c8333325d9faa5d80ea429ab8b9480e71c",
+            "remote_main_sha": "dc4c0ab216974339ab3c2cebaaf4bb92c9e9b351",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/58",
+            "observed_at": "2026-10-12T13:49:03.966283+00:00",
+            "scope": "Remote main ancestry and all candidate file blobs checked after normal protected merge. Original successful test evidence reused with unchanged task inputs; no new runtime test.",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave2-integration-20261012/S01-09/remote-main.json"
+          }
+        },
+        {
+          "task": "WP02-01",
+          "delivery": {
+            "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+            "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+            "observed_at": "2026-10-13T07:39:05.879535+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        },
+        {
+          "task": "WP02-08",
+          "delivery": {
+            "source_sha": "2e659e382e95988ee06799cd2feb0d580dcd8323",
+            "remote_main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/71",
+            "observed_at": "2026-10-14T07:50:16.667746+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave6-integration-20261014/WP02-08/remote-main.json",
+            "scope": "Normal merge and exact remote ancestry/file-blob check. Bounded library task completion; original business acceptance remains NOT_RUN."
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.md",
+          "sha256": "bf7cf5f2f2f1dce088e9a9cdd815c382e9b2e58d69ae6a1b0ecce15bd72afd41",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.json",
+          "sha256": "a4bfe9972dc07045e6e1817bad7efd3220dab9f2825e99330486a24d8f3ef1a5",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "mode": "IMPLEMENTATION",
+      "ledger_state": "READY",
+      "entry_gate": "CONFIRMED"
+    },
+    {
+      "title": "SLO重算、确定性故障与精确断言",
+      "goal": "交付可重算、可追溯的SLO资格及测试证据库，并验证真实PG并发和故障边界。",
+      "architecture": "无依赖Contracts/SloQualificationV1与不可发包Testing/EvidenceV1分层；保留旧SLO1.0.0比较器，新的资格由完整证据显式计算，fixture不取得生产资格。",
+      "write_paths": [
+        "src/CP6.Platform.Contracts/SloQualificationV1/",
+        "src/CP6.Platform.Testing/EvidenceV1/",
+        "src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+        "src/CP6.Platform.Testing/Cp6RecordedMetric.cs",
+        "src/CP6.Platform.Testing/Cp6HttpFaultScript.cs",
+        "src/CP6.Platform.Testing/Cp6HttpFaultHandler.cs",
+        "src/CP6.Platform.Testing/Cp6FaultInjectionServiceCollectionExtensions.cs",
+        "tests/CP6.Platform.WP0226.Tests/",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/",
+        "docs/WP02-26-SLO-TEST-EVIDENCE-V1.md",
+        "docs/development/evidence/WP02-26/"
+      ],
+      "write_notes": "原Cp6SloEvidenceDocument/Evaluator及v1 schema、ObservabilityV1、所有EF、Main精确值源码均只读。旧recorder/metric/fault脚本兼容面保留，新能力显式opt-in；不可静默将旧double结果标精确或把不完整遥测标完整。主包无新依赖，Testing继续IsPackable=false。 只允许已列任务测试目录内的新csproj/child Directory.Packages.props，导入根既有props并固定依赖；私有NuGet.config不得放宽源映射/签名/信任或新设外部服务。根sln/props、生产csproj、发布版本/包和工作流只读。范围外变更先交COORD串行安排。",
+      "checks": [
+        "Add explicit versioned qualification before legacy Evaluate. Verify actual supplied source/query/definition bytes and hashes with bounded controlled local input; no arbitrary URL fetch; immutable version/supersedes identity, closed windows, no overwrite of prior failures.",
+        "Recompute exact ratio, percentile with declared algorithm/weights/units, gauge with declared sampling/gaps. Population/coverage comes from independently bound expected inventory, never received sample count. Missing/zero/overflow/dropped/mixed-unbound release -> Indeterminate.",
+        "Retain legacy1.0.0 evaluator/JSON semantics as compatibility surface. New API's qualified result distinct; productionSloClaimed=false for all task fixtures even if candidate threshold passes. No new product thresholds.",
+        "Add case-owned deterministic clock/random, bounded script/inner counts, explicit retry pipeline placement, finite in-memory terminal, cancellation/exhaustion/cleanup failure semantics. Test-only, no production fault endpoint.",
+        "Bound capture count/time/bytes, case scope and lifecycle; reject cross-case contamination, preserve links and fan-out/retry/receive/apply DAG without deleting intermediate spans; local sequence not commit order.",
+        "Exact numeric capture/assertions distinguish CLR numeric kind, BigInteger coefficient/scale, rational, original lexical text and original bytes; never compare authoritative values through double/decimal or epsilon.",
+        "Consume fixed S01-03/04 semantics and vectors as input; no new financial contract authority or production reference to Main. Test fixture/source provenance pinned explicitly; source-link execution if used must hash-check exact Main sources and remain test-only.",
+        "Maintain compatibility of legacy recorder accessors, or offer opt-in versioned replacements; any removal/wire-contract change needs COORD contract window. Existing WP02-25 Incomplete telemetry cannot be silently qualified Complete.",
+        "Same actual frozen local evidence bytes/definition/window recompute same result; one-byte hash drift, altered denominator/query/units/exclusions, late-data overwrite, missing population, mixed release, zero samples reject or Indeterminate.",
+        "Unit/contract cases beyond2^53 and System.Decimal capacity, FIN-CREDIT38/8 and FIN-INV18/12 scale examples, native lexical signed-zero/trailing-zero distinctions and rational nonterminating values; no invented legal input narrowing.",
+        "Fanout + retry + intermediate Dapr span + receive/apply graph; duplicate/replayed operations, dangling/missing/cross-case edges rejected; max capture overflow and disposal prove no false Complete.",
+        "Fault harness verifies Status/Throw do not call inner; Success/Delay reach named in-memory terminal; cancellation/script exhaustion/observer failure and cleanup failure remain visible.",
+        "New real PG55429 concurrent transactions plus crash/restart on task-owned fixture only, retain same native operation/message keys and exact stored values; actual server crash labeled controlled failure and observed DB semantics, application ACK suppression distinctly injected. Do not relabel injected failures native SQLSTATE.",
+        "No production SLO or original real Owner AC acceptance from these local fixtures. Reuse unaffected WP02-25 evidence; one focused task closeout review and relevant architecture check.",
+        "逐条建立原验收/修订场景对应矩阵，区分实际broker/PG、fixture Owner、应用故障注入和NOT_RUN；保留原失败和字节身份。仅完成限定库任务，不将生产SLO或真实Main/CRM采用记通过。"
+      ],
+      "boundary": "该窗口开放库实现及本任务独占原生本地验收。先验证资源身份再运行；缺少真实producer资格、原生持久化或完整证据时保持对应UNPROVEN/NOT_RUN并报告，不以mock或跳过替代。业务Owner、发布信任、生产采用及原业务验收另属后继任务。",
+      "commands": [
+        "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.WP0226.Tests/CP6.Platform.WP0226.Tests.csproj -c Release --logger \"trx;LogFileName=wp02-26.trx\"",
+        "# 完成owner/端口/角色核验后，CP6_WP0226_SETTINGS仅指向本任务私有配置；不输出或提交配置内容。",
+        "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.WP0226.PostgreSqlTests/CP6.Platform.WP0226.PostgreSqlTests.csproj -c Release --logger \"trx;LogFileName=wp02-26-pg.trx\"",
+        "& C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj -c Release --logger \"trx;LogFileName=wp02-26-architecture.trx\"",
+        "git -c core.longpaths=true diff --check"
+      ],
+      "local_resource": {
+        "root": "D:/CP6-local-test/WP02-26/<owner32>/",
+        "marker": "CP6-WP02-26:<owner32>",
+        "endpoint": "127.0.0.1:55429",
+        "database": "cp6_wp0226_<UTCyyyyMMdd>_<owner8>",
+        "settings_env": "CP6_WP0226_SETTINGS",
+        "policy": "First Provision: verify a new full owner token, canonical contained fresh root and free reserved loopback port before creating anything; cluster system id and database OID cannot be required before they exist. Initialize only that owned cluster, then record and verify system id, endpoint, database OID/name/owner, setup/runtime roles and permissions before test use. Subsequent test/crash/restart/stop must match all recorded identities, contained paths, session_user and expected sessions; refuse unknown or mismatched instances. Setup/admin credentials separate from restricted runtime DML role (NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS). Fresh SCRAM credentials remain private, never printed or committed. Requested crash is limited to exact own cluster and labeled; smart-stop normally, preserve data/logs/failures, never terminate unknown sessions, reuse old task roots or touch5432. A failed initial Provision retains its owned marker and partial evidence; recovery first proves exactly which resources were created and never assumes a missing OID is valid runtime identity.",
+        "provisioned": false
+      },
+      "conditional_consumers": [
+        {
+          "consumer": "Main/CRM/business tests",
+          "required": "Own real Owner/authorization/transaction adapters, current exact source/package contracts and task-private environment; a portable test helper is not their adoption"
+        },
+        {
+          "consumer": "Production SLO",
+          "required": "Real approved SLI threshold/window/source/population/coverage/retention and independent acceptance; task cannot grant productionClaimAuthorized"
+        },
+        {
+          "consumer": "WP14-08/09",
+          "required": "Real domain/task prerequisites and receipts; tool availability does not close business scenarios"
+        }
+      ],
+      "additional_reservations": [
+        "Platform:test-evidence",
+        "file:Platform:src/CP6.Platform.Contracts/Cp6SloEvidenceEvaluator.cs",
+        "file:Platform:src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs",
+        "dir:Platform:src/CP6.Platform.Contracts/SloQualificationV1",
+        "dir:Platform:src/CP6.Platform.Testing/EvidenceV1",
+        "local:127.0.0.1:55429"
+      ],
+      "id": "WP02-26",
+      "lane": "D",
+      "previous_task": "WP02-25",
+      "repository": "Platform",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-26-slo-testing-20261014",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-26-20261014",
+      "baseline": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-26",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/",
+      "dependencies": [
+        {
+          "task": "S01-03",
+          "delivery": {
+            "source_sha": "b24f76445ffdc9b4df0de77eb394a6aa47726a0c",
+            "remote_main_sha": "08bf7c923fa0b21af39d5e1f1fd550ed635246ed",
+            "pr_url": "https://github.com/GTX537/CP6/pull/188",
+            "observed_at": "2026-10-13T03:40:43.067932+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave3-integration-20261012/S01-03/remote-main.json",
+            "scope": "Normal protected merge; remote main ancestry and all final candidate Git blobs verified. Scoped contract task only, not business acceptance. Fresh verification time uses the coordinator host clock; original host/server timestamps are retained separately in receipt.",
+            "original_host_observed_at": "2026-10-13T02:57:27.194733+00:00",
+            "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263"
+          }
+        },
+        {
+          "task": "S01-04",
+          "delivery": {
+            "source_sha": "bfa00a4c055bfcf4f6b7b7fe696f7a819af720c8",
+            "remote_main_sha": "688383439311a3babf00bae98ee426122ce60cd1",
+            "pr_url": "https://github.com/GTX537/CP6/pull/190",
+            "observed_at": "2026-10-13T03:40:43.897257+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave3-integration-20261012/S01-04/remote-main.json",
+            "scope": "Normal protected merge; remote main ancestry and all final candidate Git blobs verified. Scoped contract task only, not business acceptance. Fresh verification time uses the coordinator host clock; original host/server timestamps are retained separately in receipt.",
+            "original_host_observed_at": "2026-10-13T03:07:10.474156+00:00",
+            "verification_remote_main_sha": "dbe59942c34a62a47f5e7b11112a3062a07d1263"
+          }
+        },
+        {
+          "task": "WP02-25",
+          "delivery": {
+            "source_sha": "80f43346e4e94e6d7b402d7b557c685b475ba743",
+            "remote_main_sha": "5e882a5e1006ee2eb27fc0fa1170755f552be089",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/70",
+            "observed_at": "2026-10-14T07:39:58.198624+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave6-integration-20261014/WP02-25/remote-main.json",
+            "scope": "Normal merge and exact remote ancestry/file-blob check. Bounded library task completion; original business acceptance remains NOT_RUN."
+          }
+        }
+      ],
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.md",
+          "sha256": "bf7cf5f2f2f1dce088e9a9cdd815c382e9b2e58d69ae6a1b0ecce15bd72afd41",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.json",
+          "sha256": "a4bfe9972dc07045e6e1817bad7efd3220dab9f2825e99330486a24d8f3ef1a5",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ],
+      "mode": "IMPLEMENTATION",
+      "ledger_state": "READY",
+      "entry_gate": "CONFIRMED"
+    }
+  ],
+  "implementation_ready": [
+    "WP02-12",
+    "WP02-26"
+  ],
+  "preparation_only": [
+    "WP01-01",
+    "WP02-02"
+  ],
+  "worker_acknowledgements": [],
+  "shared_write_owner": "COORD",
+  "formal_wp05_adoption": "PROPOSED",
+  "business_result": "NOT_RUN",
+  "publication_and_formal_adoption_authorized": false
+}

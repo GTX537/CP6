@@ -1,0 +1,432 @@
+{
+  "schema": "CP6-WAVE7-READONLY-ADMISSION/1",
+  "lane": "A",
+  "task": "WP01-01",
+  "observed_at": "2026-10-14T09:17:35.759014+00:00",
+  "baseline": {
+    "main": "1129953156b7775152a74ad2f51cb95ef430ee56",
+    "origin_main_local_tracking": "1129953156b7775152a74ad2f51cb95ef430ee56",
+    "remote_fresh_check": "PARENT_COORDINATOR_RESPONSIBILITY",
+    "root_worktree": "D:/CP6",
+    "root_dirty": "Existing untracked assets preserved; no repository writes"
+  },
+  "recommendation": "DISPATCH_DECISION_CLOSURE_AND_DISABLED_GATE_ADAPTER_CANDIDATE",
+  "current_state": {
+    "task_state": "PLANNED",
+    "entry_gate": "NOT_CHECKED",
+    "previous_phase": "PREPARATION_INTEGRATED",
+    "WP05_01_task": "DONE",
+    "acceptance_basis": "PROPOSED",
+    "adoption": "UNSIGNED",
+    "runtime": "NOT_RUN"
+  },
+  "authority": {
+    "conclusion": "Existing broad design-fix/coordination authorization permits a concrete technical successor decision package and private disabled prototype. It does not manufacture human approval or prove this acceptance basis has been adopted.",
+    "specific_rule": "docs/development/task-deliveries/WP05-01/README.md §6 explicitly says ordinary continue/task claim is design authorization only.",
+    "coordinator_role": "COORD may review and publish its own current design recommendation under verifiable delegated scope; never label it a user signature, backdate it, or fill actor/authority from a fixture. Exact basis adoption must be a separate append-only record with accurate actor/time/authority source.",
+    "now": "Do not solicit user approval now; first produce the concrete reviewable package. Keep production gate and ledger unchanged."
+  },
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2",
+      "bytes": 13424
+    },
+    {
+      "path": "docs/development/task-plans/WP01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "69425198186f221fe177146c40358d4cb8a5b7d90043fee0916d7e2e4f2e6be6",
+      "bytes": 4381
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "725d7a282bf54fe1e8667a8d0b8ab949220a08f5905b37962bf56f030abe0daa",
+      "bytes": 6692203
+    },
+    {
+      "path": "docs/development/task-definitions.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "5905f378d49459427801c27b7779bae1715164895958c8a0a5f8a9b880728195",
+      "bytes": 1449763
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/README.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+      "bytes": 16704
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/adoption.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+      "bytes": 1778
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+      "bytes": 1161
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+      "bytes": 1091
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/preparation-manifest.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+      "bytes": 9481
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+      "bytes": 1198041
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "946c1561a1a4a193149198108b917ef9a6a1c2c5128bd88c7ebf7e89140c4b60",
+      "bytes": 17973
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "62004288943e268e05858e7d4db732e074e2161befd11aa69495e5eab5541dbe",
+      "bytes": 31319
+    },
+    {
+      "path": "eng/wp01-01/preparation/comparator.py",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "8ef101805537db56d581b509feb4b6176b542487ca2eed0c7372ddaa0f82c1e5",
+      "bytes": 5802
+    },
+    {
+      "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/review.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "953bb1332cc2a8fa80dcfbd325a70694ad56823ed78754175d12118e5df3be45",
+      "bytes": 7734
+    },
+    {
+      "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/remote-main.json",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "9a5ed81512ddf2c03c947780f2e6e596e8f92fd732224f92f3cec53d0610d211",
+      "bytes": 6529
+    },
+    {
+      "path": "docs/design-handbook/remediation/01-version-and-authority.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "495c8a2b821d3c5aed2b7d40e743351db6b3b8e4615f8d8f9bc25cd998fd1a7e",
+      "bytes": 3512
+    },
+    {
+      "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa",
+      "bytes": 16851
+    },
+    {
+      "path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "dfcaea44365d92f7457db783908dd8eb6f1eaa7651c67016bdff68281a0148c3",
+      "bytes": 29395
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+      "bytes": 48841
+    },
+    {
+      "path": "docs/design-handbook/modules/PLM-REL-01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "40590a31aabf147120b36327da53be30cd85a5696a49a83c85254699c3a6981d",
+      "bytes": 57254
+    },
+    {
+      "path": "docs/design-handbook/modules/ENG-REV-01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "579800369d5d9b6bf3cbdd3f7ce7b1cd099345a67a81052cd7aaa8c50ac7473c",
+      "bytes": 35964
+    },
+    {
+      "path": "docs/design-handbook/modules/OA-APP-01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "202abf7263a8629dfc3c181967ba7c804366e1274bd3940fbec794923c8d4ee5",
+      "bytes": 53106
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-IAM-01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "72ad3824b77eb54d58292827c4d3682ca870d6647ad959cde84b4d124818d1c8",
+      "bytes": 42903
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-PRIV-01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "3b91ae465401f679347107b94c20842fa61fd0af16b5e1b75ed59e39448eadaf",
+      "bytes": 23070
+    },
+    {
+      "path": "docs/design-handbook/modules/SYS-LANG-01.md",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "090186475176cc1af7ba1d109947c8d9acd4c9b5e4d2de11611d0e7ec4a9a893",
+      "bytes": 24782
+    },
+    {
+      "path": "CP6.Core/Services/Wf/FormSubmissionService.cs",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "9f2032ff02b31d01f919f487c4a70c5e53a384edb61d221ad5af0652f84e66b8",
+      "bytes": 7967
+    },
+    {
+      "path": "CP6.Core/Services/Wf/ApprovalDispatcher.cs",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "8a41944e80130f5124179e18a778a2310185977d0904b0eefa1786d8b2bcd3e8",
+      "bytes": 1988
+    },
+    {
+      "path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "85be931fb3a13ef469ba874f249c0100470454fe0f4213beac91b7d233b37e0e",
+      "bytes": 146356
+    },
+    {
+      "path": "docs/development/tools/manage_roadmap.py",
+      "revision": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "representation": "GIT_BLOB_BYTES",
+      "sha256": "e1a86a1c26cb2fc928d4eb2a5baf1261e46cd60ab9735846fdfc476a03db2e4a",
+      "bytes": 38053
+    }
+  ],
+  "legacy_scope": {
+    "combined_manifest": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+    "base_manifest": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+    "matrix": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "preparation_manifest": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+    "basis_read_pin": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+    "preparation_candidate": "938f53eb44438c066bdc38a60e2d987264871803",
+    "preparation_pr": "https://github.com/GTX537/CP6/pull/205",
+    "counts": "221 recoverable scenarios / 295 body locators / 43 supplemental mappings / 8 target R1 / 577 navigation rows remain distinct",
+    "history": "legacy30/48 NOT_INVENTORIED / UNRECOVERABLE / UNPROVABLE; IDs and missing-original hashes remain null"
+  },
+  "decision_points": [
+    {
+      "id": "DP-ITER-01",
+      "category": "TECHNICAL_SUCCESSOR_DESIGN_PARTIALLY_DETERMINED",
+      "design_work": "固化技术摘要、评审包摘要、aggregate摘要和snapshot摘要四种语义及版本身份。ITER对ENG原摘要保持opaque；R1已明确aggregate/snapshot域分离canonical、合法字符与无损别名规则。把每个wire字段映射到准确Owner原schema、算法版本及输入域；禁止用CD-ENG-01候选示例替代原已接受技术Manifest协议。",
+      "remaining": "ENG共同序列化/修订格式及合法域必须按准确接受来源完成选择和无损对照。若索引未提供已接受算法，交付明确有版本的新技术决定候选与golden vectors，保留ADOPTION_PENDING；这不是缺一个人随意填写sha256的权限问题。",
+      "sources": [
+        "docs/design-handbook/remediation/07-shared-consumer-mappings.md:7-35",
+        "docs/design-handbook/modules/PLM-ITER-01.md:83-85",
+        "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1799cd319ae35310__03_ENG_当前阅读主册.md:1213-1300"
+      ],
+      "future_task": "WP05-03/WP05-19/WP05-12",
+      "gate_effect": "仅未注册算法/不无损表示的路由拒绝；不得把R1已明确部分继续笼统写未决，也不得将整个DP自动标已解决。"
+    },
+    {
+      "id": "DP-ITER-02",
+      "category": "TECHNICAL_POLICY_BINDING_DECIDABLE_ACTUAL_CONFIGURATION_REQUIRED",
+      "design_work": "采用OA R2的绑定治理/唯一Owner/准确policy pin/可信actor/SOD、R1的roundBinding与rejectDisposition仅本地规则。写出项目成员来源、角色及代理授权证据、策略版本、冻结时点与应用时重核的输入合同，缺绑定/缺合格角色拒绝或按原OA Suspended，不默认全员审批或批准。",
+      "remaining": "真实项目成员名单、角色映射、代理授予、自批例外及所选真实OA发布策略没有从资料自动得到批准。允许有版本配置输入和保守拒绝路径，不造租户业务政策。",
+      "sources": [
+        "docs/design-handbook/modules/OA-APP-01.md:57-75",
+        "docs/design-handbook/modules/SYS-IAM-01.md:19,49-59,70",
+        "docs/design-handbook/remediation/07-shared-consumer-mappings.md:7-35"
+      ],
+      "future_task": "WP12-06/WP12-07/WP12-19/WP05-19/WP05-20",
+      "gate_effect": "设计框架可完成；真实送审/应用验收仍需具体配置证据。"
+    },
+    {
+      "id": "DP-ITER-03",
+      "category": "POSTGRESQL_PHYSICAL_DESIGN_AUTHORIZED_RUNTIME_ADOPTION_PENDING",
+      "design_work": "按cp6-pg-tenancy-v1完成ITER/REL逐字段存储、原身份合法域、索引、唯一性、FK、CAS、写集与锁序设计。内部生成键可选自身UUID；外域ID/Ref保完整原字符/bytes/schema，不能仅hash或截断。共用TenantId/可信schema映射、同连接事务、角色/RLS、迁移lineage和恢复，不另造租户方案。显式区分业务修订与数据库并发令牌，PostgreSQL原生CAS不照搬SQL Server rowversion。",
+      "remaining": "需要读取最新Main持久化/精确类型能力并给出具体无损映射；WP02-02目前BLOCKED，WP02-03/10/13/16尚PLANNED，不能声称这些设计已在真实Owner生效。precision/scale/外域限制若变更须有版本与无损证据。",
+      "sources": [
+        "AGENTS.md",
+        "docs/design-handbook/architecture/02-postgresql-tenancy.md:1-155",
+        "docs/design-handbook/modules/PLM-ITER-01.md:31-48,87",
+        "CP6.Core/EFDbContext/CP6Context.cs"
+      ],
+      "future_task": "WP02-02/WP02-03/WP02-10/WP02-13/WP05-18..21/WP05-32..36",
+      "gate_effect": "本轮可完成可实现的DDL/CAS设计候选；不执行迁移、不改共享EF模型、不据文档声称PG通过。"
+    },
+    {
+      "id": "DP-ITER-04",
+      "category": "RETENTION_SAFETY_CONTRACT_DETERMINED_POLICY_VALUES_REQUIRED",
+      "design_work": "明确关闭/否决不删除原工程证据；更正追加；缺有效policy/hold裁决不执行清理。采用SYS-PRIV准确scopeDigest、policyRef/version、批准范围、legalHold及Owner事务门，分类非PII证据/可处理PII/秘密/副本，冲突显示PARTIAL/UNKNOWN。",
+      "remaining": "工程记录具体合法保留期、脱敏及合法清除条件没有已知获准值；不可自行填写30天，亦不能把无限保留当适用法律结论。新设计可固定政策输入及阻断行为，实际销毁另行按政策授权。",
+      "sources": [
+        "docs/design-handbook/modules/SYS-PRIV-01.md:29-33,46-48",
+        "docs/development/evidence/WP01-01/preparation/semantic-audit.md"
+      ],
+      "future_task": "WP02-13/相关SYS-PRIV任务/PLM-DOC Owner",
+      "gate_effect": "缺政策阻破坏性清理与对应验收，不阻只读、追加审计或其他已授权设计。"
+    },
+    {
+      "id": "DP-ITER-05",
+      "category": "TECHNICAL_LIMIT_PROFILE_CANDIDATE_CAPACITY_EVIDENCE_REQUIRED",
+      "design_work": "区分UI页长、API页上限、完整评审集合上限和OA运输硬边界；给出有版本容量profile、合法域/错误/分页稳定排序与配置变更影响。50/200/500/50/50原为建议，不能静默定生产上限；OA既有256KiB snapshot、1MiB body、1000 IDs继续有效。设计对不能无损承载的提交显式拒绝，不能截断候选集合。",
+      "remaining": "生产SLO和特定业务规模容量结论需真实容量输入与专项验证；本轮可选明确候选profile并列验证方法，但不能以fixture通过批准生产参数。",
+      "sources": [
+        "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json:DP-ITER-05",
+        "docs/design-handbook/modules/OA-APP-01.md:46",
+        "docs/design-handbook/remediation/07-shared-consumer-mappings.md:17"
+      ],
+      "future_task": "WP05-18/WP05-19/后续容量验证",
+      "gate_effect": "配置/验证范围单独阻断，不把纯设计检查等同负载测试。"
+    },
+    {
+      "id": "DP-ITER-06",
+      "category": "CONTRACT_SEMANTICS_DETERMINED_PROVIDER_IMPLEMENTATION_MISSING",
+      "design_work": "把VER/MES安全终结证明按原Plan/执行意图/根子集合/原请求键/水位/迟到封闭绑定成消费规则；UNKNOWN、timeout、NOT_FOUND、仅根Cancelled不能推出全部停止或释放。原操作恢复不新造Plan/Baseline/执行键。",
+      "remaining": "真实PLM-VER/MES服务、根/子执行完整性与安全终结事实及联调未交付。这是provider实现/运行证据缺口，不是再请用户拍板即可消除。",
+      "sources": [
+        "docs/design-handbook/modules/PLM-ITER-01.md:83-85",
+        "docs/development/task-plans/WP05.md#wp05-21",
+        "docs/development/task-plans/WP08.md#wp08-15",
+        "docs/development/task-deliveries/WP05-01/README.md:77-79"
+      ],
+      "future_task": "WP05-21/WP05-24/WP08-15/WP08-18",
+      "gate_effect": "仅依赖外部安全终结的取消/结案/释放受阻；设计可以明确完整合同，运行仍NOT_RUN。"
+    },
+    {
+      "id": "DP-ITER-07",
+      "category": "LANGUAGE_WORKFLOW_DETERMINED_TRANSLATION_CONTENT_PENDING",
+      "design_work": "稳定字段ID/字典Value与可翻译Label分开，固定中文审阅来源。使用SYS-LANG的准确租户/key、编辑回draft、显式review集合/version、受权publish/不可变bundle及CAS回退；不将机器翻译直接发布。",
+      "remaining": "日/韩等准确译文及所需审校记录尚未存在；语言发布Owner与客户端真实采用也待实现。无需把语言框架重新当未决定的技术问题。",
+      "sources": [
+        "docs/design-handbook/modules/SYS-LANG-01.md:29-38,40-48,54-62"
+      ],
+      "future_task": "WP02-17/各ITER-REL UI任务",
+      "gate_effect": "阻相应未审译文发布，不阻稳定字段合同和其他语言已授权流程。"
+    },
+    {
+      "id": "DP-ITER-08",
+      "category": "CURRENT_SOURCE_AUDIT_CAN_BE_COMPLETED_IMPLEMENTATION_STILL_MISSING",
+      "design_work": "对最新固定Main、实际Platform包与消费声明做符号/路由/模型/写者清点，形成REUSE/CHANGE/NEW与后继任务路径。当前Main未找到CP6.Core/Services/Plm及PlmEngineeringService；历史b7ec269候选只能参考。FormSubmissionService/ApprovalDispatcher与20261011审计同Git字节，后者仍FirstOrDefault同步直接OnApproved/OnRejected，不具新OA持久应用协议。",
+      "remaining": "静态源码适配审计可本轮完成；真实服务、宿主、worker、DB、UI和实际采用仍由实现任务交付，不能把不存在符号或候选代码说成已实现。",
+      "sources": [
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "CP6.Core/Services/Wf/FormSubmissionService.cs:29",
+        "CP6.Core/Services/Wf/ApprovalDispatcher.cs:23-41",
+        "docs/design-handbook/modules/PLM-ITER-01.md:130-134"
+      ],
+      "future_task": "WP05-18..21/WP05-32..36/WP05-42/WP05-61",
+      "gate_effect": "可关闭本轮已核源码范围的未知项，留下明确实现差异，不提升业务状态。"
+    }
+  ],
+  "cross_repository": {
+    "finding": "Known task implementation owners are Main, but current declared DAG has concrete Platform and CRM dependencies; baseline presence alone is not the reason. Resolve provider/consumer edges and conditional-consumer bindings individually.",
+    "examples": [
+      [
+        "WP05-18",
+        "WP02-10",
+        "WP02-07"
+      ],
+      [
+        "WP05-18",
+        "WP05-14",
+        "WP05-13",
+        "WP03-17"
+      ],
+      [
+        "WP05-34",
+        "WP02-12"
+      ],
+      [
+        "WP05-61",
+        "WP05-60",
+        "WP05-13",
+        "WP03-17"
+      ]
+    ],
+    "deliverable": "Per edge: provider/consumer repository, exact contract/profile/version/hash, task, routing condition, local owner atomic scope, required implementation/remote/package/consumer evidence and state. Do not remove existing declared dependencies as a private worker; propose exact COORD change only when a concrete source establishes narrower applicability."
+  },
+  "next_deliverable": {
+    "identity": "WP01-01-DECISION-CLOSURE/20261014-R1 (proposed identity; choose final identity once package content is fixed)",
+    "acceptance_version": "A new candidate such as CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed if obligations/decisions change; do not mutate 1.0.0/1.1.0 or preparation bytes.",
+    "files": [
+      "README.md and decisions.json: exact DP/subclauses, inherited normative decision vs new candidate choice vs configuration/runtime dependency",
+      "postgresql-mapping.json and current-source-audit.json: actual identities, lossless physical/CAS design, current symbols and implementation tasks",
+      "provider-consumer-closure.json: exact conditional edges and evidence duties",
+      "basis-delta.json + manifest.json: changed obligations only, complete base/supplement references, formal adoption boundary and concrete residual choice list",
+      "gate-design.md + gate-contract.candidate.json: target whitelist, task/target/package distinct completion predicates, immutable old-gap handling, WP01 123-original + 2-new-basis summary semantics without claiming 125 originals",
+      "private read-only disabled adapter + meaningful tests + exact report; no import by production manage_roadmap.py",
+      "delivery.md: exact diff, hashes, reviews and local validation/remaining runtime scope"
+    ],
+    "no_repeat": "Reuse prior checked source/matrix/hash inventory. Do not regenerate identical unsigned template or rename another preparation package as substantive delivery. Each DP must have a clause-level disposition and each unresolved item must name actual missing policy/evidence/provider."
+  },
+  "allowed_writes_future_worker": [
+    "docs/development/evidence/WP01-01/decision-closure/",
+    "eng/wp01-01/decision-closure/"
+  ],
+  "readonly_future_worker": [
+    "docs/development/evidence/WP01-01/preparation/",
+    "eng/wp01-01/preparation/",
+    "docs/development/task-deliveries/WP05-01/",
+    "docs/development/tools/manage_roadmap.py",
+    "docs/development/roadmap.json",
+    "docs/development/task-definitions.json",
+    "docs/development/task-plans/",
+    "docs/project-memory/PROJECT_STATE.md",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "docs/project-memory/CHANGELOG-AI.md",
+    "docs/design-handbook/ existing normative files",
+    "all product/shared contract/EF/model/migration/dependency/workflow files"
+  ],
+  "adapter_constraints": [
+    "Read-only task-private candidate; not imported or invoked by production manager. Default production_enabled=false and actual_adoption/actual_completion=false unconditionally.",
+    "Unlike old shape comparator: validate exact Git/raw file bytes and path containment, source/target/obligation identities and no dropped subassertions; actual decision/evidence files, hashes and declared provider edges must be inspected, not accepted merely because strings are nonempty.",
+    "Separate design resolved, adopted, configuration pending, implementation missing and runtime not run. A conditional exclusion requires exact authorized source and scope; no wholesale N/A or fulfilled-by-disable for target DONE.",
+    "Synthetic tests may drive an isolated evaluate_candidate result; mark every fixture synthetic and never generate a signed/adopted production record. Unsupported authority authenticity/remote ancestry remains explicitly unverified and rejects actual use.",
+    "Later COORD serial adoption/production wiring requires separate exact authority record, public edit window and targeted production gate regression. Approval alone does not make all business evidence PASS."
+  ],
+  "validation_plan": [
+    "Reuse wave6 preparation 3509 checks / comparator23 / bundle10 only at their recorded input hashes; label source time and no new run. Do not rerun simply because SHA changed.",
+    "Check new JSON/schema, hashes, source line/pointer/edge integrity, path links, complete delta/no historical overwrite and git diff --check.",
+    "For new adapter code only run private Python unit tests covering no adoption, forged/malformed authority, hash/source/path drift, wrong target/other123, missing obligation/subassertion, STATIC/REFERENCE_ONLY/synthetic/NOT_RUN/FAIL, conditional dependency omission, actual evidence file mismatch, provider receipt/remote binding, preserved old gaps and no production writes.",
+    "A synthetic complete positive validates candidate algorithm only; actual no-adoption baseline always rejects. Separate WP01 task delivery from WP01 package inventory closure and business target completion.",
+    "One consolidated task-level review before delivery; recheck affected fixes only. No full .NET build, business tests, database/migration, Office recomputation, Actions or deployment for this design/private-Python change."
+  ],
+  "state_recommendation": {
+    "WP01_01": "Keep PLANNED / NOT_CHECKED. assignment.phase may say DECISION_CLOSURE_IN_PROGRESS or delivered equivalent and dispatch_scope DESIGN_ONLY_DISABLED_GATE_CANDIDATE; real worker START time only after receipt.",
+    "WP05_01": "Keep DONE as design-delivery; its acceptance adoption remains PROPOSED.",
+    "targets": "Keep 0/125 and all existing business/R1/historical states; other123 original gate unchanged.",
+    "later": "After concrete package review, COORD handles exact remaining approval choice/adoption and opens serial production gate window. Only then WP01-01 can enter its full post-adoption scope. No claim that WP01 package DONE follows from task candidate delivery."
+  },
+  "performed_checks": "Read-only file/Git-blob inspection, source hashes, roadmap task-state/dependency traversal, targeted source search. No tests, Actions, network messages, database or repository mutation performed."
+}

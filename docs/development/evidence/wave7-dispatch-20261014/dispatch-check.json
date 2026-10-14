@@ -1,0 +1,541 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-14T09:23:59.368432+00:00",
+  "scope": "Static dependencies, source pins, paths, resources, worktrees and ledger conservation only; no implementation tests or services",
+  "implementation_tasks": 2,
+  "incremental_preparation_tasks": 2,
+  "source_pins": [
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "AGENTS.md",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-plans/WP01.md",
+      "git_blob": "c2c16732309a78dc88b3ddc7358c2e46f96ea955",
+      "sha256": "69425198186f221fe177146c40358d4cb8a5b7d90043fee0916d7e2e4f2e6be6"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "bb0e0bca5ce3a1efaf87d94b0d49492fbb8b0a43",
+      "sha256": "725d7a282bf54fe1e8667a8d0b8ab949220a08f5905b37962bf56f030abe0daa"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-definitions.json",
+      "git_blob": "c02393c650e0273fd6cfc64f8a7807ecb94dbd01",
+      "sha256": "5905f378d49459427801c27b7779bae1715164895958c8a0a5f8a9b880728195"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-deliveries/WP05-01/README.md",
+      "git_blob": "0877cd30a5e36f5a90e049a5c2f1d10beb72a11e",
+      "sha256": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-deliveries/WP05-01/adoption.json",
+      "git_blob": "54b493eab2eb23a2af7261e93c967f7b116adfa2",
+      "sha256": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "git_blob": "4488b04dc838a41ef6197089471098f71e01af7f",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "git_blob": "f089db7b989f061ca4f7bf7c2938879c80a172d7",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP01-01/preparation/preparation-manifest.json",
+      "git_blob": "5854fdabf3e59725033821da489a77ffdeca5a36",
+      "sha256": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+      "git_blob": "5e5a8199e4fb37b0ed2965c79c625433b0cc39dc",
+      "sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json",
+      "git_blob": "8a9b331872464a81b8a8da51485aeeaa44ec3505",
+      "sha256": "946c1561a1a4a193149198108b917ef9a6a1c2c5128bd88c7ebf7e89140c4b60"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json",
+      "git_blob": "2acc0e45decd8e66e28a383f22de261e3d0a9786",
+      "sha256": "62004288943e268e05858e7d4db732e074e2161befd11aa69495e5eab5541dbe"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp01-01/preparation/comparator.py",
+      "git_blob": "56158bf659bbea13eb0b4c2596eaed127bf30228",
+      "sha256": "8ef101805537db56d581b509feb4b6176b542487ca2eed0c7372ddaa0f82c1e5"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/review.md",
+      "git_blob": "9e6c33d8ab1288b6426512fdffbe85f9211e9fda",
+      "sha256": "953bb1332cc2a8fa80dcfbd325a70694ad56823ed78754175d12118e5df3be45"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/remote-main.json",
+      "git_blob": "75c34464e1b5bf4786a0060049b180c97b5ee541",
+      "sha256": "9a5ed81512ddf2c03c947780f2e6e596e8f92fd732224f92f3cec53d0610d211"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/remediation/01-version-and-authority.md",
+      "git_blob": "01628e6afd1118e84652ddb17854b74657b86230",
+      "sha256": "495c8a2b821d3c5aed2b7d40e743351db6b3b8e4615f8d8f9bc25cd998fd1a7e"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+      "git_blob": "71e0954e671933f6132d2b5563980ddc3a89fe81",
+      "sha256": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
+      "git_blob": "1c32c3af16afe925fce41d1c8bf7bedf489d17c6",
+      "sha256": "dfcaea44365d92f7457db783908dd8eb6f1eaa7651c67016bdff68281a0148c3"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+      "git_blob": "d1d62350c2c5cc86a8bdfaf6c6237d9490fbcc5b",
+      "sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLM-REL-01.md",
+      "git_blob": "3619db2e68dd32bf2aa4638bd64ed5965d74f7a0",
+      "sha256": "40590a31aabf147120b36327da53be30cd85a5696a49a83c85254699c3a6981d"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/ENG-REV-01.md",
+      "git_blob": "16f8e67fd6462a4b50ed2323aa96d9cf642e2499",
+      "sha256": "579800369d5d9b6bf3cbdd3f7ce7b1cd099345a67a81052cd7aaa8c50ac7473c"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/OA-APP-01.md",
+      "git_blob": "b001bf4102ce7ce5a89f8a18bddb2794483bac7f",
+      "sha256": "202abf7263a8629dfc3c181967ba7c804366e1274bd3940fbec794923c8d4ee5"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/SYS-IAM-01.md",
+      "git_blob": "5f67cc303151995dce97fa86900394cb196ff7a7",
+      "sha256": "72ad3824b77eb54d58292827c4d3682ca870d6647ad959cde84b4d124818d1c8"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/SYS-PRIV-01.md",
+      "git_blob": "8dd0375598afbd1d6323de9d9c967d96b5016b01",
+      "sha256": "3b91ae465401f679347107b94c20842fa61fd0af16b5e1b75ed59e39448eadaf"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/SYS-LANG-01.md",
+      "git_blob": "75b1fd62c340e2ab822894488a93e07e9c828931",
+      "sha256": "090186475176cc1af7ba1d109947c8d9acd4c9b5e4d2de11611d0e7ec4a9a893"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/Services/Wf/FormSubmissionService.cs",
+      "git_blob": "6bc15799e699d384fe88f886e43484207c6d6fe1",
+      "sha256": "9f2032ff02b31d01f919f487c4a70c5e53a384edb61d221ad5af0652f84e66b8"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/Services/Wf/ApprovalDispatcher.cs",
+      "git_blob": "1a51f14f9c05677e66bf07501347b99b4e68f649",
+      "sha256": "8a41944e80130f5124179e18a778a2310185977d0904b0eefa1786d8b2bcd3e8"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "git_blob": "f5e03f8cb8eadcf5040476cfee2594d9ac516531",
+      "sha256": "85be931fb3a13ef469ba874f249c0100470454fe0f4213beac91b7d233b37e0e"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/tools/manage_roadmap.py",
+      "git_blob": "eda3913047d71498326ae8b0a2ce430be25e01f5",
+      "sha256": "e1a86a1c26cb2fc928d4eb2a5baf1261e46cd60ab9735846fdfc476a03db2e4a"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "AGENTS.md",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "NuGet.config",
+      "git_blob": "21a9499d52988046bec0d8b253867ba0fc506778",
+      "sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "Directory.Build.props",
+      "git_blob": "6f73fc306d1c382d18a9673787202c275d5e51d0",
+      "sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "git_blob": "a5ca89c3572b6f64a1db409a5b7faada899b5ae9",
+      "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/packages.lock.json",
+      "git_blob": "ad56b0ca498666e08ba5b5d5e56f7a708762d0b4",
+      "sha256": "af945b670a5792b9d246e0e7a72e25fa83f9f9531159707aee46dfedab990ca4"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "git_blob": "7012e57b353864125e6f220fe29ba821fd1cb572",
+      "sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/packages.lock.json",
+      "git_blob": "b1e239760c84ae59ce246632310ef9b43bf1285b",
+      "sha256": "533ad0910797142c5b547f873a3d2db5bf23791e0183ab701e4801bfb3cf5650"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "git_blob": "10e4572f66dc9d61f79aeedccdee3610aa78556d",
+      "sha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "git_blob": "098be5b195c09fab99a31fdf682e1c3cd70f37c0",
+      "sha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Probe.csproj",
+      "git_blob": "f2643c232cad10f702db041c0f03130ff7d097b5",
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.props",
+      "git_blob": "9a371b4acc37f6c663b5a47ca23281e8fcf5b3bf",
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/NuGet.Config",
+      "git_blob": "ba3ea93735e9089d20d62ad15aa6affb20a55cd4",
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/README.md",
+      "git_blob": "6e982b390b0e1b7f98e0ce964d84fd0d13172931",
+      "sha256": "029bf15b83079c951c2209b36d3cfc803c2642e841d911d1939fe612f556a52f"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/DEPENDENCY-PROPOSAL.md",
+      "git_blob": "365a82c6668042e9389b84d20c90efff54c75337",
+      "sha256": "68a31bf22df71b944a2970f39c55533915e832faa3cd9b9826109eb952cec349"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/FORMAL-VERSION-PROPOSAL.md",
+      "git_blob": "37552831cdb97394aaeff7e08fe9269c81d531c9",
+      "sha256": "f1ea5d67f65aecfb542e37a44f7b1581c202f72790a7e8c409c59cb06d15ca6e"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/build.log",
+      "git_blob": "9d3898679f3ab4962a4a99fedca6fa29b83db2f0",
+      "sha256": "98ea061c3ca787b0823c18b62f51bcd27fe6ae2949ec3dae59ac078e3e875a63"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/original-publication.json",
+      "git_blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829",
+      "sha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/local-consumer-lock.json",
+      "git_blob": "df5db6cdd44abf5c07fd04d86457af3552e07bb8",
+      "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLT-RELEASE-01.md",
+      "git_blob": "cf4a6828dde1f35f6c8309159d33daf9ca4bdc58",
+      "sha256": "402ac4d108efb12cfbd5a902751bec5a659578bdd85d999e5025e19080cd2feb"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Build.props",
+      "git_blob": "42131cd740450f08305e95b08b855cfb981c022a",
+      "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Packages.props",
+      "git_blob": "768d4ae02403f682963025d762ff7ed022a9c18d",
+      "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "global.json",
+      "git_blob": "4c4c3ae5ed709aa83aa03569d2c1f6792c553165",
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "NuGet.config",
+      "git_blob": "7f55add0ec73ef552270b2fb024d410239c04f71",
+      "sha256": "bb4ea679b4c1d64f6220321702187bc3241f2e530d4551880f8a7aa6604ff881"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "git_blob": "3b66a813bbab6ccf723ee7e12c9492389062040c",
+      "sha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "git_blob": "0a735078a1562db562d72998172bd63cf6ab8934",
+      "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+      "git_blob": "9ce69da3bb822a9adf040e13638d6e7e705755cf",
+      "sha256": "155913bd995dfd0eb2c787268358eeeac3d24a98f4c285ecc64e92bc4650dfe2"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "git_blob": "30b7857046279e978db3e12d443d65bdecc242fb",
+      "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "git_blob": "5431acc9ace1b6cfccd28ab78dd911d619d1dc2f",
+      "sha256": "347ab97b35caf5961b83409e28be4461e5f2077996904fc953ffc372d9ba6e19"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Testing/CP6.Platform.Testing.csproj",
+      "git_blob": "83b047c3e4095c6c58ac85008bc72a8c61f37938",
+      "sha256": "80a51d405364c3d503fcd9c44bb8afc8b46fcc02dab35ff8f0b07e1a5aee77a9"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+      "git_blob": "b8639c708f4b37ce061c0e521c0324b6a2d0acb5",
+      "sha256": "f1e4ac737793e57a7eb08f52b10f1250b002b90f4b791f870e4519455bd2b2ae"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+      "git_blob": "8460b68baea84370d73c2cbd4412767916c202be",
+      "sha256": "fefdf49aaf0f86afe448e3a7da1f455609d5d7f57dfc0bbc6ead592484a2a15d"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.AspNetCore/ObservabilityV1/ObservabilityRuntimeV1.cs",
+      "git_blob": "f039e9c3c0f5215c0ec9d845153483d25366ceb4",
+      "sha256": "cfc5ed9afa9bfc6119863502659173cee31989c04358129c3dc87208cf1725c5"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.AspNetCoreTests/ObservabilityV1/TelemetryAdapterTests.cs",
+      "git_blob": "3a46be92d8f87c1bf6c2f966b3c4b6515b53c406",
+      "sha256": "b3b67e97327d4edd18f041d195d8fba4ed291851e56a094041b92645e4424362"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "git_blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "git_blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d",
+      "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1"
+    },
+    {
+      "repository": "Platform",
+      "commit": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "git_blob": "c1272a44e443cdc103ec84eb73c58289e5d114ee",
+      "sha256": "dd4c5023b8ffc05b5fda984f0bd8f5c9220b9a4d864382d77f32e0a19d46e031"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/roadmap.json",
+      "git_blob": "bb0e0bca5ce3a1efaf87d94b0d49492fbb8b0a43",
+      "sha256": "725d7a282bf54fe1e8667a8d0b8ab949220a08f5905b37962bf56f030abe0daa"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-definitions.json",
+      "git_blob": "c02393c650e0273fd6cfc64f8a7807ecb94dbd01",
+      "sha256": "5905f378d49459427801c27b7779bae1715164895958c8a0a5f8a9b880728195"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-plans/WP02.md",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/assessments/20261011/catalogs/foundation.json",
+      "git_blob": "e0da267b79bf24cea6df4a6abd2d1e5c2cd068d4",
+      "sha256": "6af601f92d8a3f3b347358313bd6d3c199581a0fd93650b3c6c7090249329417"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLT-MSG-01.md",
+      "git_blob": "8aa877ffa99efcd1057c61101013931025b779ae",
+      "sha256": "faef1b87542871a0e4e841f6763185b849f88f60b22964545080531465bda7a0"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLT-OBS-01.md",
+      "git_blob": "7893ecfda9edccdf300e3f31d410ec6f6cf18e8f",
+      "sha256": "2500ecfa284c694288aecab60c69ca589f45612c0e2608d13570f22ecdb7e77d"
+    },
+    {
+      "repository": "Main",
+      "commit": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLT-TEST-01.md",
+      "git_blob": "7bc1ad7e9072391ac731235265bcf11e68b41afe",
+      "sha256": "25693e6bf9eef88dd0192b3e970cc432f02e5be678a2b57b3fbc5c7537405298"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\7b\\7b59ff237b27e8ef__PLT-MSG-01_完整静态设计_v0.2.md",
+      "sha256": "7b59ff237b27e8efc452ae1ecf776ac77002382466a9e7d9744a3bf924e505e2",
+      "representation": "RAW_ARCHIVE"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\20\\20c9a128b3f2bab0__PLT-OBS-01_完整静态设计_v0.1.md",
+      "sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+      "representation": "RAW_ARCHIVE"
+    },
+    {
+      "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\d8\\d8b4ef19a1b3a0a5__PLT-TEST-01_完整静态设计_v0.1.md",
+      "sha256": "d8b4ef19a1b3a0a528ddd7831f5159295d75b7eecadfa787e36ad028d362c5aa",
+      "representation": "RAW_ARCHIVE"
+    }
+  ],
+  "unchanged_other_371_tasks": true,
+  "unchanged_125_targets_and_288_acceptances": true,
+  "prior_preparation_deliveries_and_assignments_preserved": true,
+  "write_windows_disjoint": true,
+  "done_tasks": 22,
+  "business_result": "NOT_RUN"
+}

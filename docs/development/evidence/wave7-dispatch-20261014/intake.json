@@ -1,0 +1,97 @@
+{
+  "observed_at": "2026-10-14T09:13:07.345924+00:00",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "queued_or_running": []
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "queued_or_running": []
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": []
+    }
+  },
+  "handoff_heads": {
+    "WP01-01": "25d88b046968caaab6430c08f54b3e6f7ec5c501",
+    "WP02-02": "c347fabf136de16b877f6895e3331883a7b0e765",
+    "WP02-08": "6eb3a01845906e74adf1f2c30bba41e92d5400b8",
+    "WP02-25": "5826e9a4cbe5d7deb1424bc2d3a19aa7476a2390",
+    "WP02-12": null,
+    "WP02-26": null,
+    "WP02-28": null
+  },
+  "coordination_handoff": "e3b1716ab5d8c8e623349255245406db8835e657",
+  "messages": [
+    {
+      "task": "WP01-01",
+      "branch": "codex/dev-handoff-wp01-01",
+      "sha": "25d88b046968caaab6430c08f54b3e6f7ec5c501",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261014T052948Z-start-preparation/MESSAGE.md",
+      "sha256": "425f679979ef4881d2ee73938788008e41c9c4062750f38456a42201f376557b",
+      "already_read_in_previous_intake": true
+    },
+    {
+      "task": "WP01-01",
+      "branch": "codex/dev-handoff-wp01-01",
+      "sha": "25d88b046968caaab6430c08f54b3e6f7ec5c501",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261014T055651Z-delivery-preparation/MESSAGE.md",
+      "sha256": "13a35b5c3b4221f83cf3bc1d48cc8d5f694aa24968ed7a63dd0128f9b299ffb8",
+      "already_read_in_previous_intake": true
+    },
+    {
+      "task": "WP02-02",
+      "branch": "codex/dev-handoff-wp02-02",
+      "sha": "c347fabf136de16b877f6895e3331883a7b0e765",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261014T053000Z-start-preparation/MESSAGE.md",
+      "sha256": "dca7e57766d183d658ebb8f25f18592cb1aa6edca28f5075705405aa6d3a7457",
+      "already_read_in_previous_intake": true
+    },
+    {
+      "task": "WP02-02",
+      "branch": "codex/dev-handoff-wp02-02",
+      "sha": "c347fabf136de16b877f6895e3331883a7b0e765",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261014T055155Z-delivery-preparation/MESSAGE.md",
+      "sha256": "17eb9539230e42d7800a82ffabd2174d065c475b6dee3aa333a5277b324fb67e",
+      "already_read_in_previous_intake": true
+    },
+    {
+      "task": "WP02-08",
+      "branch": "codex/dev-handoff-wp02-08",
+      "sha": "6eb3a01845906e74adf1f2c30bba41e92d5400b8",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-08/messages/20261014T053047Z-c-start/MESSAGE.md",
+      "sha256": "e6e0ca1a04a923942c25b80f204aae6e6d66eb8a92f4f565a421dfa3dabe5c5f",
+      "already_read_in_previous_intake": true
+    },
+    {
+      "task": "WP02-08",
+      "branch": "codex/dev-handoff-wp02-08",
+      "sha": "6eb3a01845906e74adf1f2c30bba41e92d5400b8",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-08/messages/20261014T060732Z-c-delivery/MESSAGE.md",
+      "sha256": "4b1366622e571ed3094215650409a33ece9b333ae54fb7bce6c46f6b25b9cfc7",
+      "already_read_in_previous_intake": true
+    },
+    {
+      "task": "WP02-25",
+      "branch": "codex/dev-handoff-wp02-25",
+      "sha": "5826e9a4cbe5d7deb1424bc2d3a19aa7476a2390",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-25/messages/20261014T052841Z-start/MESSAGE.md",
+      "sha256": "55d2e66071b733bf096df4f85d9b8c2d84cc29f7c2f93eda372fca8df3b641a3",
+      "already_read_in_previous_intake": true
+    },
+    {
+      "task": "WP02-25",
+      "branch": "codex/dev-handoff-wp02-25",
+      "sha": "5826e9a4cbe5d7deb1424bc2d3a19aa7476a2390",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-25/messages/20261014T061625Z-delivery/MESSAGE.md",
+      "sha256": "95bcd2239c0f5350b9d3ec92db123f380b0049b16d767ad770d18b2e5e0afcb1",
+      "already_read_in_previous_intake": true
+    }
+  ],
+  "new_messages": []
+}

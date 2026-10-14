@@ -1,0 +1,322 @@
+{
+  "schema": "CP6-WAVE7-DISPATCH-REVIEW/1",
+  "observed_at": "2026-10-14T09:34:32.890643+00:00",
+  "decision": "ACCEPT",
+  "open_findings": [],
+  "scope": "One concentrated independent review of the documentation-only staged dispatch, followed by a focused resource-policy correction review; no product execution.",
+  "branch": "codex/wave7-dispatch-20261014",
+  "worktree": "D:\\CP6-worktrees\\wave7-dispatch-20261014",
+  "base": "1129953156b7775152a74ad2f51cb95ef430ee56",
+  "initial_raw_hash_aggregate": "be4bfe9a368c8936bcaae8e7275ec45fc912737b251e8ef80fa8d72a74a57287",
+  "final_raw_hash_aggregate": "fb592ec8800b243aaaec50d0597934c623d2ee5912bd8220b413380b799be87f",
+  "final_staged_blob_hash_aggregate": "f9466b9f4bf748d2155a5e571dcc591888a5ac2dad7c5582b1f9fb0e28f07ffa",
+  "final_staged_diff_sha256": "4ce29111f4e20a359d9d669a12fda67b297aa6a430f972c945116cac35649a78",
+  "hash_aggregate_algorithm": "sha256(json.dumps(ordered per-file hashes, sort_keys=True).encode())",
+  "reviewed_files": [
+    {
+      "path": "docs/development/07-detailed-tasks.md",
+      "sha256": "8c0215be8835644d27ce583a704492014724019906ce45390ab9c2cd775223bd"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/README.md",
+      "sha256": "10d5b1b5350e20c32de855bd98eb838d1db4c4879d6a5f1bdd905ea57bb28f49"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP01-01.md",
+      "sha256": "0605a52ead2762708c0972e2cfae01a2cbc34b317fc70c6d6cb08b218ba4df4b"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP02-02.md",
+      "sha256": "4daaf902bcf3fc1fe4eaf9664290b12170f183179a13f09a22fea24deec3cb16"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP02-12.md",
+      "sha256": "19bf3879d3b15c2f53bab4946c7e8055e65499f2109f6163b92c78e6b2688038"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP02-26.md",
+      "sha256": "ecc4fab40687bfe3dd918c35ef231faa6cb19ecca3f905dc446b75d19633f991"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/dispatch.json",
+      "sha256": "576d704d46464336416abdf99d875480b7c02c280d406d4ddad0c674d3281983"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/.gitattributes",
+      "sha256": "a00fc659fbf50dfc5003b29888b0c6d8c5bec7682fb26646e7b0a9d840d29468"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/README.md",
+      "sha256": "0ac0d3001037ec74836e21df5267538aa011f1ea6fcc2b7326441308e9b60726"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/added-links.json",
+      "sha256": "07620226227f243fd4c6a789adc728bc7c8a242429df42dd133afef1a1b72023"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.json",
+      "sha256": "da2c9b6a54afa11045f9df97baca7a5ffac9e027b134dc6f240315e8daa4eb2a"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.md",
+      "sha256": "0cf67147120df17f65209f75dff60871ddfa9d23549a4f3ef81f188184c19dff"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.json",
+      "sha256": "a4bfe9972dc07045e6e1817bad7efd3220dab9f2825e99330486a24d8f3ef1a5"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.md",
+      "sha256": "bf7cf5f2f2f1dce088e9a9cdd815c382e9b2e58d69ae6a1b0ecce15bd72afd41"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.json",
+      "sha256": "c4f618df4e75a8033de9ef5dc87e2ab8daa14b5c5dbc8a2299eea514d5831c1d"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.md",
+      "sha256": "53e714ce1ec5f55aff8e666dec99daf280e668c8a02a6aa5a514024fd3c0eae8"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
+      "sha256": "8ea9cf464c5db14d57d5f35d8591db0853b5df2362861d0cc53b878c0861928b"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/dispatch-check.json",
+      "sha256": "aac4f2b82da1c1c8c96898804c96de29800fbed766a50cadd3a2b7c9b46f5e3a"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/format-history.json",
+      "sha256": "d5bb664d5a9197873ce10ed91c31dde92a086fbcdff598167fa1b6d903a6380a"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/intake-main.json",
+      "sha256": "e68c1f5d72aab8b5f9d3d8da196ac8a879f6c3b44bfae89b9b831d94da2cc98d"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/intake-platform.json",
+      "sha256": "a5d6ba411c41813e895fd07ed8a97759fe5368307e36f446f02328d708c80687"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/intake.json",
+      "sha256": "15d4fc5b84e1e99e0c7fab071acfa181849e7228051e5077d8a9990a8c578249"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/ledger-check.json",
+      "sha256": "6988a3f58a39335c5cf75f797496d71c6bb32d1cf906f483f10dfa8e60fc0b0b"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/setup.json",
+      "sha256": "8219cad11252c978e4ebc13b38360d2e0ece1a721109c2c408b83cd562615c9b"
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "sha256": "540493b3a6a69c13aa2b980c306aa35e50030f41e5964063bd87d0c67c56b93a"
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "sha256": "0e140e1309eb74acb207d2005b450ad037e899f65ab82c4b8898ea99453bdefc"
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "sha256": "b8c22a8048c0a9c4be35ae5ac65e74fa8869ccceceddbddcd2558b3d12017f4d"
+    },
+    {
+      "path": "docs/project-memory/CHANGELOG-AI.md",
+      "sha256": "3c4950d0de8a335d28dc446d2e2fa73c26f4a2e99fcde5a2404b9ab6a21dde33"
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "sha256": "37b7cccdac210b6c71a398ba7bcafcab65a23669e4adfd4cbb242e5fdf21689a"
+    }
+  ],
+  "staged_blob_hashes": [
+    {
+      "path": "docs/development/07-detailed-tasks.md",
+      "sha256": "89969a15101aacac82f45e78489860f546cf23fc658ee8149c6e235dac1cbd9c"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/README.md",
+      "sha256": "10d5b1b5350e20c32de855bd98eb838d1db4c4879d6a5f1bdd905ea57bb28f49"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP01-01.md",
+      "sha256": "0605a52ead2762708c0972e2cfae01a2cbc34b317fc70c6d6cb08b218ba4df4b"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP02-02.md",
+      "sha256": "4daaf902bcf3fc1fe4eaf9664290b12170f183179a13f09a22fea24deec3cb16"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP02-12.md",
+      "sha256": "19bf3879d3b15c2f53bab4946c7e8055e65499f2109f6163b92c78e6b2688038"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/WP02-26.md",
+      "sha256": "ecc4fab40687bfe3dd918c35ef231faa6cb19ecca3f905dc446b75d19633f991"
+    },
+    {
+      "path": "docs/development/dispatch/20261014-wave7/dispatch.json",
+      "sha256": "576d704d46464336416abdf99d875480b7c02c280d406d4ddad0c674d3281983"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/.gitattributes",
+      "sha256": "a00fc659fbf50dfc5003b29888b0c6d8c5bec7682fb26646e7b0a9d840d29468"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/README.md",
+      "sha256": "0ac0d3001037ec74836e21df5267538aa011f1ea6fcc2b7326441308e9b60726"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/added-links.json",
+      "sha256": "07620226227f243fd4c6a789adc728bc7c8a242429df42dd133afef1a1b72023"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.json",
+      "sha256": "da2c9b6a54afa11045f9df97baca7a5ffac9e027b134dc6f240315e8daa4eb2a"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-package.md",
+      "sha256": "0cf67147120df17f65209f75dff60871ddfa9d23549a4f3ef81f188184c19dff"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.json",
+      "sha256": "a4bfe9972dc07045e6e1817bad7efd3220dab9f2825e99330486a24d8f3ef1a5"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-platform.md",
+      "sha256": "bf7cf5f2f2f1dce088e9a9cdd815c382e9b2e58d69ae6a1b0ecce15bd72afd41"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.json",
+      "sha256": "c4f618df4e75a8033de9ef5dc87e2ab8daa14b5c5dbc8a2299eea514d5831c1d"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission-plm.md",
+      "sha256": "53e714ce1ec5f55aff8e666dec99daf280e668c8a02a6aa5a514024fd3c0eae8"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
+      "sha256": "8ea9cf464c5db14d57d5f35d8591db0853b5df2362861d0cc53b878c0861928b"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/dispatch-check.json",
+      "sha256": "aac4f2b82da1c1c8c96898804c96de29800fbed766a50cadd3a2b7c9b46f5e3a"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/format-history.json",
+      "sha256": "d5bb664d5a9197873ce10ed91c31dde92a086fbcdff598167fa1b6d903a6380a"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/intake-main.json",
+      "sha256": "e68c1f5d72aab8b5f9d3d8da196ac8a879f6c3b44bfae89b9b831d94da2cc98d"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/intake-platform.json",
+      "sha256": "a5d6ba411c41813e895fd07ed8a97759fe5368307e36f446f02328d708c80687"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/intake.json",
+      "sha256": "15d4fc5b84e1e99e0c7fab071acfa181849e7228051e5077d8a9990a8c578249"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/ledger-check.json",
+      "sha256": "6988a3f58a39335c5cf75f797496d71c6bb32d1cf906f483f10dfa8e60fc0b0b"
+    },
+    {
+      "path": "docs/development/evidence/wave7-dispatch-20261014/setup.json",
+      "sha256": "8219cad11252c978e4ebc13b38360d2e0ece1a721109c2c408b83cd562615c9b"
+    },
+    {
+      "path": "docs/development/roadmap.json",
+      "sha256": "540493b3a6a69c13aa2b980c306aa35e50030f41e5964063bd87d0c67c56b93a"
+    },
+    {
+      "path": "docs/project-memory/05-Completed.md",
+      "sha256": "0e140e1309eb74acb207d2005b450ad037e899f65ab82c4b8898ea99453bdefc"
+    },
+    {
+      "path": "docs/project-memory/06-Todo.md",
+      "sha256": "b8c22a8048c0a9c4be35ae5ac65e74fa8869ccceceddbddcd2558b3d12017f4d"
+    },
+    {
+      "path": "docs/project-memory/CHANGELOG-AI.md",
+      "sha256": "3c4950d0de8a335d28dc446d2e2fa73c26f4a2e99fcde5a2404b9ab6a21dde33"
+    },
+    {
+      "path": "docs/project-memory/PROJECT_STATE.md",
+      "sha256": "37b7cccdac210b6c71a398ba7bcafcab65a23669e4adfd4cbb242e5fdf21689a"
+    }
+  ],
+  "findings": [
+    {
+      "id": "W7-DISPATCH-01",
+      "priority": "P2",
+      "status": "RESOLVED",
+      "title": "Separate initial PostgreSQL provisioning from post-creation identity gates",
+      "initial_problem": "An unprovisioned fresh cluster cannot supply its system identifier and database OID before first setup. Requiring them before setup creates an impossible execution precondition.",
+      "final_locations": [
+        {
+          "path": "docs/development/dispatch/20261014-wave7/WP02-26.md",
+          "line": 43
+        },
+        {
+          "path": "docs/development/dispatch/20261014-wave7/dispatch.json",
+          "line": 382
+        },
+        {
+          "path": "docs/development/roadmap.json",
+          "line": 161100
+        }
+      ],
+      "resolution": "First Provision checks owner, contained fresh root and free loopback port. Post-creation records/verifies cluster, database and role identities before tests. Subsequent operations require all identities; partial initialization preserves marker/evidence and fails closed on unknown identity.",
+      "focused_verification": "All three final policy strings identical, staged files match final freeze, explicit card clarification supersedes the unchanged raw recommendation; remaining 26 raw files unchanged."
+    }
+  ],
+  "checks": {
+    "final_freeze_files": 29,
+    "unchanged_after_fix_files": 26,
+    "staged_index_matches_final_freeze": true,
+    "unstaged_diff_empty_with_core_longpaths": true,
+    "diff_check_exit_code": 0,
+    "source_pins_verified": 76,
+    "prerequisite_ancestry_checks": 9,
+    "added_relative_file_links_verified": 48,
+    "received_raw_files_verified": 10,
+    "only_four_task_rows_changed": true,
+    "other_371_tasks_unchanged": true,
+    "all_125_targets_unchanged": true,
+    "all_288_acceptance_entries_unchanged": true,
+    "old_assignments_and_preparation_deliveries_preserved": true,
+    "done_before": 22,
+    "done_after": 22,
+    "business_done": 0,
+    "runtime_not_run": 247,
+    "historical_reference_only": 41,
+    "write_scopes_pairwise_disjoint": true,
+    "worker_worktrees_clean_at_assigned_baselines": 4,
+    "raw_evidence_preserved": true
+  },
+  "accepted_boundaries": {
+    "WP01-01": "PREPARATION_ONLY / PLANNED / NOT_CHECKED; disabled candidate, no adoption",
+    "WP02-02": "PREPARATION_ONLY / BLOCKED / NOT_CHECKED; isolated source diagnostics, no formal trust or production adoption",
+    "WP02-12": "IMPLEMENTATION / READY / CONFIRMED; no START, actual local broker/persistence gates still required",
+    "WP02-26": "IMPLEMENTATION / READY / CONFIRMED; no START, actual PG/evidence gates still required"
+  },
+  "not_executed": [
+    "product build/test",
+    "broker or database startup/connection",
+    "remote source or workflow queries",
+    "GitHub Actions run/cancel",
+    "remote writes",
+    "formal publication",
+    "business migration",
+    "deployment"
+  ],
+  "evidence_reuse": "Initial static source/link/ledger checks remain applicable because the focused correction changes only the WP02-26 provisioning policy. Historical runtime results retain their own recorded scope. Final index hashes and diff check freshly observed.",
+  "execution_notes": [
+    "An initial local review-helper attempt encountered KeyError on RAW_ARCHIVE entries lacking a repository field. The helper was corrected to read explicit raw archive bytes; the completed 76-pin check passed. This was a helper failure, not a source/product failure.",
+    "Initial per-file scan overlapped the coordinator correction. Final index was reread directly and matched final freeze; only the final diff hash is claimed."
+  ],
+  "report_markdown_sha256": "524ccc14de422dc1cfc7982d1249d66b03dae06fbb4b0d542151c66c9717f36a"
+}
