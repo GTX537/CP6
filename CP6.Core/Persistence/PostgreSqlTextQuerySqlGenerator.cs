@@ -35,7 +35,8 @@ internal sealed class PostgreSqlTextQuerySqlGenerator(
         Sql.Append("convert_from(pg_catalog.bpcharsend(");
         Visit(expression);
         Sql.Append("), 'UTF8')");
-        if (collation is not null) Sql.Append(" COLLATE ").Append(_sqlGenerationHelper.DelimitIdentifier(collation)).Append(")");
+        if (collation is not null) Sql.Append(" COLLATE ").Append(_sqlGenerationHelper.DelimitIdentifier(collation,
+            collation == PostgreSqlModelConfiguration.BusinessTextCollation ? "public" : null)).Append(")");
     }
 
     protected override Expression VisitSqlUnary(SqlUnaryExpression expression)

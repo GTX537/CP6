@@ -158687,6 +158687,16 @@
       "date": "2026-10-15",
       "change": "COORD delivers internal tenant connection component; 28 related local unit/owned PostgreSQL fixture cases pass with zero failures/skips. Four-model328-table metadata inventory prepares next mapping step. No business route, original17PGT or full-task completion claimed; no Actions/migration/deployment.",
       "evidence": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "COORD starts accepted ERP shared8-table row-security/helper and same-transaction EF adapter after PR222 tenant connections; no business routing or original17PGT completion claimed.",
+      "evidence": "docs/development/evidence/WP02-02/erp-tenant-isolation/PLAN.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "COORD delivers ERP shared8-table login-based row security and internal same-transaction EF adapter; 10 related local cases pass. Global unique keys/append-only audits retained; actual model tested only in owned synthetic PG. No business activation, original17PGT completion, Actions or existing migration/deployment.",
+      "evidence": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -160057,23 +160067,24 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / WP02-02 租户连接组件",
+        "chat_label": "COORD / WP02-02 ERP共享隔离与EF接入",
         "repository": "Main",
-        "branch": "codex/wp02-02-tenant-storage-20261015",
+        "branch": "codex/wp02-02-erp-tenant-isolation-20261015",
         "worktree": "D:/CP6-worktrees/wave8-dispatch-20261015",
-        "claimed_at": "2026-10-15T11:24:55.598023+00:00",
-        "baseline_sha": "7837009aab983f38e068f0f3dd56745c12450449",
-        "phase": "TENANT_CONNECTION_COMPONENT_VALIDATED",
-        "dispatch_scope": "UNWIRED_INTERNAL_COMPONENT",
-        "entry_evidence": "docs/development/evidence/WP02-02/tenant-connections/PLAN.md",
+        "claimed_at": "2026-10-15T13:42:43.201651+00:00",
+        "baseline_sha": "f6cc17b936d05b0336d319cbfa5097a77511d658",
+        "phase": "ERP_SHARED_RLS_AND_EF_VALIDATED",
+        "dispatch_scope": "INTERNAL_ERP_STORAGE_ADAPTER",
+        "entry_evidence": "docs/development/evidence/WP02-02/erp-tenant-isolation/PLAN.md",
         "bounded_window_gate": "CONFIRMED",
         "reserved_write_resources": [
           "Main:tenant-storage",
+          "Main:ef-model",
           "coordination:roadmap"
         ],
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -160233,6 +160244,26 @@
           "formal_publication_authorized": false,
           "actions_authorized": false,
           "delivery_pr": "https://github.com/GTX537/CP6/pull/221"
+        },
+        {
+          "chat_label": "COORD / WP02-02 租户连接组件",
+          "repository": "Main",
+          "branch": "codex/wp02-02-tenant-storage-20261015",
+          "worktree": "D:/CP6-worktrees/wave8-dispatch-20261015",
+          "claimed_at": "2026-10-15T11:24:55.598023+00:00",
+          "baseline_sha": "7837009aab983f38e068f0f3dd56745c12450449",
+          "phase": "TENANT_CONNECTION_COMPONENT_INTEGRATED",
+          "dispatch_scope": "UNWIRED_INTERNAL_COMPONENT",
+          "entry_evidence": "docs/development/evidence/WP02-02/tenant-connections/PLAN.md",
+          "bounded_window_gate": "CLOSED",
+          "reserved_write_resources": [
+            "Main:tenant-storage",
+            "coordination:roadmap"
+          ],
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
+          "delivery_pr": "https://github.com/GTX537/CP6/pull/222"
         }
       ],
       "preparation_delivery_history": [
@@ -160310,7 +160341,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "Internal trusted binding/catalog, bounded dedicated DataSource and transaction lease implemented and locally tested with an owned PG fixture. Real host current authorization and Owner final fence, full object/raw SQL/writer inventory, shared RLS/helper, EF mapping/cache, migrations/restore and original17PGT remain; full WP02-02 IN_PROGRESS, business NOT_RUN.",
+      "remaining_scope": "Tenant connections and ERP fixed shared-schema row-security/EF transaction adapter implemented and tested in owned local PG. Real host current authorization/Owner final fence, existing handlers/workers adoption, other-context classification/schema/cache, repeatable provisioning/migration/restore and original17PGT remain. Full WP02-02 IN_PROGRESS; business NOT_RUN.",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -160335,7 +160366,7 @@
         }
       },
       "tenant_connection_component": {
-        "state": "LOCALLY_VALIDATED",
+        "state": "MERGED",
         "scope": "Internal unwired binding/catalog/dedicated DataSource/transaction lease; no business route activation",
         "path": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
         "baseline_sha": "7837009aab983f38e068f0f3dd56745c12450449",
@@ -160359,7 +160390,32 @@
         "business_acceptance": "NOT_RUN",
         "full_task_complete": false,
         "observed_at": "2026-10-15T11:55:07.860483+00:00",
-        "review": "Single combined SPEC/QUALITY review passed; cancellation redaction correction verified, no remaining blocker for unwired component."
+        "review": "Single combined SPEC/QUALITY review passed; cancellation redaction correction verified, no remaining blocker for unwired component.",
+        "remote_delivery": {
+          "source_sha": "60a0d8bdbf77af534e36717408481e97bc10c47b",
+          "main_sha": "f6cc17b936d05b0336d319cbfa5097a77511d658",
+          "pull_request": "https://github.com/GTX537/CP6/pull/222",
+          "handoff_sha": "ce1a115102527a5af790da5edd150a9c693426f5",
+          "scope": "Previous normal merge, ancestry and all27 scoped blobs verified; local main synced."
+        }
+      },
+      "erp_shared_isolation": {
+        "state": "LOCALLY_VALIDATED",
+        "scope": "Explicit fresh-layout ERP eight shared tables with protected session-login directory/helper, RLS, and internal same-transaction EF adapter; business routes unchanged",
+        "path": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md",
+        "object_inventory": "docs/development/evidence/WP02-02/erp-tenant-isolation/OBJECTS.md",
+        "baseline_sha": "f6cc17b936d05b0336d319cbfa5097a77511d658",
+        "validation": {
+          "passed": 10,
+          "failed": 0,
+          "skipped": 0,
+          "evidence": "docs/development/evidence/WP02-02/erp-tenant-isolation/erp-tenant-postgres.trx",
+          "environment": "Local SDK8 / owned native PostgreSQL18 / actual ErpIntegrationContext model with synthetic A/B data"
+        },
+        "original_17_pgt": "NOT_RUN",
+        "business_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "observed_at": "2026-10-15T14:25:53.064662+00:00"
       }
     },
     {

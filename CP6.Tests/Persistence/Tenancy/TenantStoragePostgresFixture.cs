@@ -114,15 +114,15 @@ public sealed class TenantStoragePostgresFixture : IAsyncLifetime
         }
     }
 
-    internal async Task<NpgsqlConnection> OpenOwnerAsync(string database = Database)
-        => await OpenRawAsync("fixture_owner", _ownerPassword, database);
+    internal async Task<NpgsqlConnection> OpenOwnerAsync(string database = Database, string searchPath = "pg_catalog")
+        => await OpenRawAsync("fixture_owner", _ownerPassword, database, searchPath);
 
-    internal static async Task<NpgsqlConnection> OpenRawAsync(string username, string password, string database = Database)
+    internal static async Task<NpgsqlConnection> OpenRawAsync(string username, string password, string database = Database, string searchPath = "pg_catalog")
     {
         var connection = new NpgsqlConnection(new NpgsqlConnectionStringBuilder
         {
             Host = "127.0.0.1", Port = Port, Database = database, Username = username, Password = password,
-            Pooling = false, SearchPath = "pg_catalog", SslMode = SslMode.Disable, Enlist = false,
+            Pooling = false, SearchPath = searchPath, SslMode = SslMode.Disable, Enlist = false,
             IncludeErrorDetail = false, Timeout = 5, CommandTimeout = 5, Options = " "
         }.ConnectionString);
         try { await connection.OpenAsync(); return connection; }

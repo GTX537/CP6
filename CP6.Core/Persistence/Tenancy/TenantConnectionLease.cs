@@ -28,6 +28,7 @@ internal sealed class TenantConnectionLease : IAsyncDisposable
         if (Volatile.Read(ref _closed) != 0) throw new TenantStorageException(TenantStorageFailure.LeaseClosed);
         _manager.CheckCurrent(_pool, _trusted);
     }
+    internal TenantStorageBindingV1 CurrentBinding { get { CheckCurrent(); return _pool.Binding; } }
     internal async Task CheckConnectionAsync(CancellationToken cancellationToken)
     {
         CheckCurrent();
@@ -102,6 +103,17 @@ internal sealed class TenantStorageTransaction
     private bool _committed;
     internal TenantStorageTransaction(TenantConnectionLease lease, NpgsqlConnection connection, NpgsqlTransaction transaction)
         => (_lease, _connection, _transaction) = (lease, connection, transaction);
+
+    internal TenantStorageBindingV1 CurrentBinding
+    {
+        get
+        {
+            if (Volatile.Read(ref _closed) != 0 || _committed)
+                throw new TenantStorageException(TenantStorageFailure.LeaseClosed);
+            return _lease.CurrentBinding;
+        }
+    }
+    internal Task CheckConnectionAsync(CancellationToken ct) => _lease.CheckConnectionAsync(ct);
 
     public async Task<T> ExecuteAsync<T>(Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task<T>> action,
         CancellationToken cancellationToken = default)
