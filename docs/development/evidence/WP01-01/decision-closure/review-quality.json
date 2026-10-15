@@ -18,7 +18,8 @@
         "WP05-01/1/REL/R1/PE-HANDOFF-NAMESPACE-POS"
       ],
       "required_fix": "Use stable lossless comparison for string and structured JSON assertions on all sides, preserving all fields. Add actual-shape positive/changed/missing-field negatives and assert precise intended rejection reasons for both real target baselines.",
-      "status": "REMEDIATION_PENDING"
+      "status": "CLOSED_BY_TARGETED_REVIEW",
+      "resolution": "Expected, submitted and evidence assertions use the same typed recursive structural key. All 577 real matrix rows, including 18 objects, are supported without changing the matrix. All fields and array order are preserved, object key order is ignored and a string cannot impersonate an object. Both actual target baselines reach the exact intended rejection reasons."
     }
   ],
   "independent_checks": {
@@ -36,7 +37,19 @@
   },
   "critical_findings": 0,
   "minor_findings": 0,
-  "final_result": "PENDING_TARGETED_REVIEW",
+  "remediation_candidate": "21cb6082c1ebaca8f2cbf2f60b7df9dd3a7ff106",
+  "remediation_manifest_sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+  "targeted_review_result": "PASS",
+  "targeted_review_scope": "QUALITY-01 and direct impact only; no new blocking issue. Read-only inspection of all 577 assertion shapes and both actual target rejection records; no suite rerun.",
+  "final_validation": {
+    "private_tests": 54,
+    "test_run": "tests-final-20261015T012923391938Z.run.json",
+    "static_checks": 12251,
+    "core_manifest_files_verified": 80,
+    "manager_run": "manage-roadmap.run.json",
+    "reviewer_reran_tests": false
+  },
+  "final_result": "QUALITY_READY_PREPARATION_ONLY",
   "production_enabled": false,
   "actual_adoption": false,
   "actual_completion": false
