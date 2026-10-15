@@ -158697,6 +158697,11 @@
       "date": "2026-10-15",
       "change": "COORD delivers ERP shared8-table login-based row security and internal same-transaction EF adapter; 10 related local cases pass. Global unique keys/append-only audits retained; actual model tested only in owned synthetic PG. No business activation, original17PGT completion, Actions or existing migration/deployment.",
       "evidence": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "Wave9 assigns A stage-scoped acceptance trust, B Identity+ERP shared tenancy, C actual Main runtime identity, D pure CodeGen preview. Four disjoint worktrees; no worker START yet. C READY after delivered dependencies; A/D full tasks remain PLANNED/NOT_CHECKED. PR223 ERP delivery recorded; no DONE/business upgrades or new release/Actions authorization.",
+      "evidence": "docs/development/dispatch/20261015-wave9/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158741,39 +158746,36 @@
       "card_anchor": "wp01-01",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "A / WP01-01 第八轮已集成",
+        "chat_label": "A / WP01-01 第九轮 验收工具按阶段加载信任配置",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp01-01-adoption-gate-20261015",
-        "worktree": "D:/CP6-worktrees/wp01-01-adoption-gate-20261015",
-        "claimed_at": "2026-10-15T05:11:19.013652+00:00",
-        "baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
-        "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
-        "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "LEDGER_GATE_IMPLEMENTATION_ONLY",
-        "bounded_window_gate": "CLOSED",
+        "branch": "codex/wp01-01-trust-stages-20261015",
+        "worktree": "D:/CP6-worktrees/wp01-01-trust-stages-20261015",
+        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP01-01.md",
+        "phase": "ASSIGNED_NOT_STARTED",
+        "dispatch_scope": "STAGE_SCOPED_ACCEPTANCE_TRUST",
+        "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_ack_at": "2026-10-15T05:28:06.928146+00:00",
+        "worker_start_received": false,
         "allowed_write_paths": [
-          "docs/development/evidence/WP01-01/adoption-v1.2/",
           "docs/development/tools/acceptance_basis.py",
           "docs/development/tools/test_acceptance_basis.py",
           "docs/development/tools/manage_roadmap.py",
-          "docs/development/tools/test_manage_roadmap.py"
+          "docs/development/tools/test_manage_roadmap.py",
+          "docs/development/evidence/WP01-01/adoption-v1.2/OPERATOR.md",
+          "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
         ],
         "reserved_write_resources": [
-          "coordination:roadmap",
-          "Main:acceptance-basis-gate",
-          "file:Main:docs/development/tools/manage_roadmap.py",
-          "file:Main:docs/development/tools/test_manage_roadmap.py"
+          "Main:acceptance-basis-gate"
         ],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-handoff-wp01-01",
-        "formal_adoption_authorized": false,
+        "actions_authorized": false,
         "formal_publication_authorized": false,
-        "execution_baseline_sha": "b3eb755bc43e370f697480a6ea41474c3d978488",
-        "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
-        "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
+        "delivery_report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158871,6 +158873,41 @@
             "original_static_checks": "12251 historical snapshot only",
             "limitations": "Design candidate only. No database, runtime, formal adoption or task completion."
           }
+        },
+        {
+          "chat_label": "A / WP01-01 第八轮已集成",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp01-01-adoption-gate-20261015",
+          "worktree": "D:/CP6-worktrees/wp01-01-adoption-gate-20261015",
+          "claimed_at": "2026-10-15T05:11:19.013652+00:00",
+          "baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+          "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+          "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "LEDGER_GATE_IMPLEMENTATION_ONLY",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_ack_at": "2026-10-15T05:28:06.928146+00:00",
+          "allowed_write_paths": [
+            "docs/development/evidence/WP01-01/adoption-v1.2/",
+            "docs/development/tools/acceptance_basis.py",
+            "docs/development/tools/test_acceptance_basis.py",
+            "docs/development/tools/manage_roadmap.py",
+            "docs/development/tools/test_manage_roadmap.py"
+          ],
+          "reserved_write_resources": [
+            "coordination:roadmap",
+            "Main:acceptance-basis-gate",
+            "file:Main:docs/development/tools/manage_roadmap.py",
+            "file:Main:docs/development/tools/test_manage_roadmap.py"
+          ],
+          "handoff_branch": "codex/dev-handoff-wp01-01",
+          "formal_adoption_authorized": false,
+          "formal_publication_authorized": false,
+          "execution_baseline_sha": "b3eb755bc43e370f697480a6ea41474c3d978488",
+          "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
+          "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
         }
       ],
       "preparation_delivery_history": [
@@ -160067,24 +160104,37 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / WP02-02 ERP共享隔离与EF接入",
+        "chat_label": "B / WP02-02 第九轮 Identity 四表租户隔离与 ERP 同事务接入",
         "repository": "Main",
-        "branch": "codex/wp02-02-erp-tenant-isolation-20261015",
-        "worktree": "D:/CP6-worktrees/wave8-dispatch-20261015",
-        "claimed_at": "2026-10-15T13:42:43.201651+00:00",
-        "baseline_sha": "f6cc17b936d05b0336d319cbfa5097a77511d658",
-        "phase": "ERP_SHARED_RLS_AND_EF_VALIDATED",
-        "dispatch_scope": "INTERNAL_ERP_STORAGE_ADAPTER",
-        "entry_evidence": "docs/development/evidence/WP02-02/erp-tenant-isolation/PLAN.md",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-02-identity-storage-20261015",
+        "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
+        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-02.md",
+        "phase": "ASSIGNED_NOT_STARTED",
+        "dispatch_scope": "IDENTITY_PRIORITY_STORAGE_ADAPTER",
         "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": false,
+        "worker_start_received": false,
+        "allowed_write_paths": [
+          "CP6.Core/Persistence/Tenancy/",
+          "CP6.Tests/Persistence/Tenancy/",
+          "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+          "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/"
+        ],
         "reserved_write_resources": [
           "Main:tenant-storage",
-          "Main:ef-model",
-          "coordination:roadmap"
+          "Main:ef-model"
         ],
+        "reserved_postgresql_ports": [
+          55436
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-02",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -160264,6 +160314,28 @@
           "formal_publication_authorized": false,
           "delivery_report": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
           "delivery_pr": "https://github.com/GTX537/CP6/pull/222"
+        },
+        {
+          "chat_label": "COORD / WP02-02 ERP共享隔离与EF接入",
+          "repository": "Main",
+          "branch": "codex/wp02-02-erp-tenant-isolation-20261015",
+          "worktree": "D:/CP6-worktrees/wave8-dispatch-20261015",
+          "claimed_at": "2026-10-15T13:42:43.201651+00:00",
+          "baseline_sha": "f6cc17b936d05b0336d319cbfa5097a77511d658",
+          "phase": "ERP_SHARED_RLS_AND_EF_INTEGRATED",
+          "dispatch_scope": "INTERNAL_ERP_STORAGE_ADAPTER",
+          "entry_evidence": "docs/development/evidence/WP02-02/erp-tenant-isolation/PLAN.md",
+          "bounded_window_gate": "CLOSED",
+          "reserved_write_resources": [
+            "Main:tenant-storage",
+            "Main:ef-model",
+            "coordination:roadmap"
+          ],
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md",
+          "window_closed_at": "2026-10-15T15:10:23.577941+00:00",
+          "delivery_pr": "https://github.com/GTX537/CP6/pull/223"
         }
       ],
       "preparation_delivery_history": [
@@ -160400,7 +160472,7 @@
         }
       },
       "erp_shared_isolation": {
-        "state": "LOCALLY_VALIDATED",
+        "state": "MERGED",
         "scope": "Explicit fresh-layout ERP eight shared tables with protected session-login directory/helper, RLS, and internal same-transaction EF adapter; business routes unchanged",
         "path": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md",
         "object_inventory": "docs/development/evidence/WP02-02/erp-tenant-isolation/OBJECTS.md",
@@ -160415,7 +160487,14 @@
         "original_17_pgt": "NOT_RUN",
         "business_acceptance": "NOT_RUN",
         "full_task_complete": false,
-        "observed_at": "2026-10-15T14:25:53.064662+00:00"
+        "observed_at": "2026-10-15T14:25:53.064662+00:00",
+        "remote_delivery": {
+          "source_sha": "a08bf0154d5831a46116c906d6fa7ea5a92dfd30",
+          "main_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "pull_request": "https://github.com/GTX537/CP6/pull/223",
+          "handoff_sha": "888d7f49d594a0f142126e8972eb515d59593238",
+          "scope": "Previous normal merge, ancestry and all25 scoped blobs verified; local main synced. No new product test run in dispatch."
+        }
       }
     },
     {
@@ -161127,7 +161206,40 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-16",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "D / WP02-16 第九轮 代码生成器安全即时预览",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-16-codegen-preview-20261015",
+        "worktree": "D:/CP6-worktrees/wp02-16-codegen-preview-20261015",
+        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-16.md",
+        "phase": "ASSIGNED_NOT_STARTED",
+        "dispatch_scope": "PURE_CODEGEN_PREVIEW_ONLY",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": false,
+        "allowed_write_paths": [
+          "CP6.Core/Services/Pub/CodeGenService.cs",
+          "CP6.Core/Services/Pub/CodeGenPreview*.cs",
+          "CP6.WebApi/Controllers/Pub/CodeGenController.cs",
+          "CP6.Web/src/api/pub/codegen.ts",
+          "CP6.Web/src/views/pms/CodeGenView.vue",
+          "CP6.Tests/CodeGenServiceTests.cs",
+          "CP6.Tests/CodeGenPreview*.cs",
+          "docs/development/evidence/WP02-16/codegen-preview/"
+        ],
+        "reserved_write_resources": [
+          "Main:codegen-preview"
+        ],
+        "reserved_postgresql_ports": [],
+        "handoff_branch": "codex/dev-handoff-wp02-16",
+        "actions_authorized": false,
+        "formal_publication_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -161689,11 +161801,47 @@
         "Main:host-package-adoption"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "READY",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-28",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "C / WP02-28 第九轮 Main 实际运行身份与兼容回退判断",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-28-runtime-identity-20261015",
+        "worktree": "D:/CP6-worktrees/wp02-28-runtime-identity-20261015",
+        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-28.md",
+        "phase": "ASSIGNED_NOT_STARTED",
+        "dispatch_scope": "ACTUAL_MAIN_HOST_IDENTITY",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": false,
+        "worker_start_received": false,
+        "allowed_write_paths": [
+          "CP6.WebApi/Configuration/PlatformHostIdentityConfiguration.cs",
+          "CP6.WebApi/Observability/PlatformHostIdentity*.cs",
+          "CP6.WebApi/Health/PlatformHostIdentity*.cs",
+          "CP6.WebApi/Program.cs",
+          "CP6.Tests/Platform/PlatformHostIdentity*.cs",
+          "CP6.Tests/Platform/PlatformHostRollback*.cs",
+          "eng/wp02-28/",
+          "docs/development/evidence/WP02-28/"
+        ],
+        "reserved_write_resources": [
+          "Main:host-package-adoption",
+          "file:Main:CP6.WebApi/Program.cs:identity-registration-and-release-health-only"
+        ],
+        "reserved_postgresql_ports": [
+          55438
+        ],
+        "handoff_branch": "codex/dev-handoff-wp02-28",
+        "actions_authorized": false,
+        "formal_publication_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-28/DELIVERY.md"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -177574,7 +177722,14 @@
       "WP14-01"
     ],
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
-    "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b"
+    "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
+    "current_wave": {
+      "id": "20261015-wave9",
+      "path": "docs/development/dispatch/20261015-wave9/README.md",
+      "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+      "coordinator_shared_state_only": true,
+      "workers_started": false
+    }
   },
   "acceptance_basis": {
     "manifest": {

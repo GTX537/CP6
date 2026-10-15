@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前由 COORD 独占 WP02-02 存储/EF 窗口：ERP 8 张共享表的受保护目录、RLS 与同事务 EF 接入器已实现并经自有 PG 验证，见[本步骤交付](evidence/WP02-02/erp-tenant-isolation/DELIVERY.md)。既有 handler/worker 尚未切换；后续继续真实宿主/Owner、其他上下文映射和生命周期。完整任务 IN_PROGRESS，原 17 PGT 与业务验收 NOT_RUN；其他对话未新增派工。
+> 当前派工：[第九轮四对话执行包](dispatch/20261015-wave9/README.md)。A→WP01-01 分阶段信任配置，B→WP02-02 Identity 四表与 ERP 同事务隔离，C→WP02-28 实际宿主身份，D→WP02-16 安全即时预览。四工作树与写入/端口范围已登记，尚未收到本轮 START；已确认窗口发布一次真实 START 即可继续，不重复等待 ACK。COORD 只保留共享台账与串行合并。完整状态与局部窗口分别记录，不提升业务验收。
+
+> 历史已交付窗口由 COORD 独占 WP02-02 存储/EF：ERP 8 张共享表的受保护目录、RLS 与同事务 EF 接入器已实现并经自有 PG 验证，见[本步骤交付](evidence/WP02-02/erp-tenant-isolation/DELIVERY.md)。既有 handler/worker 尚未切换；后续继续真实宿主/Owner、其他上下文映射和生命周期。完整任务 IN_PROGRESS，原 17 PGT 与业务验收 NOT_RUN；其他对话未新增派工。
 
 > 前序窗口由 COORD 独占 WP02-02 租户存储窗口：内部绑定、专用池及事务租约已实现并经自有 PostgreSQL 定向验证，见[本步骤交付](evidence/WP02-02/tenant-connections/DELIVERY.md)。四模型 328 表清单准备下一步映射；真实宿主/Owner、RLS/helper、EF 及原 17 PGT 仍待完成，完整任务 IN_PROGRESS。其他对话未新增派工。
 
