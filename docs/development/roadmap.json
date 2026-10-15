@@ -158662,6 +158662,11 @@
       "date": "2026-10-15",
       "change": "Wave8 bounded implementations integrated: WP01-01 ledger adapter via PR217; WP02-02 Platform0.10.3 registration after Pkcs fix and two precise test corrections. Full tasks remain PLANNED/BLOCKED and NOT_CHECKED;24/375 DONE,0/125 business,247 NOT_RUN,41 REFERENCE_ONLY unchanged. Final producer source frozen; no formal adoption, publication or next-wave dispatch.",
       "evidence": "docs/development/evidence/wave8-integration-20261015/README.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "User explicitly adopted WP01-01-ACCEPTANCE-BASIS-1.2.0 at manifest ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883 and approved one exact Platform0.10.3 formal release at1277da5e0a20c6d96f0a95d0e9b4f20e0008332a. User decision and automated trust are separate; historical originals and business states remain unchanged. Authorized run38709310767/attempt1 succeeded; seven packages/archive digests/Current evidence and unchanged feed visibility verified. Consumer matrix/Main adoption remain pending; no full task or business state promotion.",
+      "evidence": "docs/development/evidence/authorized-adoption-release-20261015/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158887,6 +158892,14 @@
         "business_acceptance": "NOT_RUN",
         "manifest_sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
         "nonblocking_issue": "https://github.com/GTX537/CP6/issues/216"
+      },
+      "adoption_decision": {
+        "state": "ADOPTED_BY_USER",
+        "formal_adoption_authorized": true,
+        "record": "docs/development/evidence/authorized-adoption-release-20261015/authorization.json",
+        "manifest_sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+        "machine_trust_state": "INDEPENDENT_VERIFIER_UNCONFIGURED",
+        "remaining_scope": "User adoption is now decided; independently governed trust policy/attestation is not provisioned, so automatic inventory closure and full WP01 completion remain unverified. Do not request the same adoption decision again. Business runtime belongs to consumer tasks."
       }
     },
     {
@@ -160075,7 +160088,7 @@
         "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
       },
       "blockers": [
-        "Platform 0.10.3 登记源码已合并并冻结 producer 1277da5e0a20c6d96f0a95d0e9b4f20e0008332a；Pkcs 与两条旧断言的源码交付阻塞已解除。正式七包尚未签名/发布/Current验证，Main仍采用[0.10.2]；后续正式执行须另行授权，取得可信制品后再开展实际Main/Owner/PostgreSQL采用与原17PGT。旧私有宿主诊断不代替最终producer消费验收，WP02-28未开放。见 docs/development/evidence/wave8-integration-20261015/README.md。"
+        "Platform0.10.3 seven packages are now signed, published and verified at authorized run38709310767/attempt1; producer absence is resolved. Main remains [0.10.2], exact consumer matrix/lock and real Main/Owner/PostgreSQL adoption plus original17PGT are not executed. These are the next consumption window; formal release approval is no longer pending. WP02-28 is not automatically opened. See docs/development/evidence/authorized-adoption-release-20261015/README.md."
       ],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -160215,6 +160228,29 @@
         "producer_version": "0.10.3",
         "published_package_identity": null,
         "dependency_fix": "https://github.com/GTX537/CP6.Platform/pull/76"
+      },
+      "formal_release_execution": {
+        "state": "PUBLISHED_VERIFIED",
+        "formal_publication_authorized": true,
+        "record": "docs/development/evidence/authorized-adoption-release-20261015/authorization.json",
+        "source_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+        "version": "0.10.3",
+        "run_id": 38709310767,
+        "run_attempt": 1,
+        "run_url": "https://github.com/GTX537/CP6.Platform/actions/runs/38709310767",
+        "environment_approval": "NORMAL_REQUIRED_REVIEW_APPROVED",
+        "published_package_identity": {
+          "version": "0.10.3",
+          "publication_path": "docs/development/evidence/authorized-adoption-release-20261015/publication/formal-package-publication.v1.json",
+          "publication_sha256": "fae24b7cc239d79f12f7e2b0dc627789423f3aa6275ad38fb54a5f9ebc05bc36",
+          "final_artifact_id": 11959274479,
+          "package_artifact_id": 11959124489,
+          "package_count": 7,
+          "source_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "verification": "Windows and Linux Current success at authorized run38709310767/attempt1; seven exact archive bytes verified",
+          "observed_at": "2026-10-15T09:04:09.425565+00:00"
+        },
+        "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       }
     },
     {
@@ -177374,5 +177410,14 @@
     ],
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b"
+  },
+  "acceptance_basis": {
+    "manifest": {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/manifest.json",
+      "sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+      "bytes": 2570,
+      "representation": "RAW_FILE_BYTES"
+    },
+    "runtime": {}
   }
 }
