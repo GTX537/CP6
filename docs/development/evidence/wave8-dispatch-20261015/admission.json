@@ -1,0 +1,99 @@
+{
+  "result": "PASS_FOR_TWO_BOUNDED_IMPLEMENTATION_WINDOWS",
+  "observed_at": "2026-10-15T05:11:19.013652+00:00",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "queued_or_running": [],
+      "local_main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_head": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_branch": "main"
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "queued_or_running": [],
+      "local_main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "working_head": "97df4f650847d164923750ce0d0de925731aeac4",
+      "working_branch": "codex/p03-auth-problem-details"
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": [],
+      "local_main_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "working_head": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+      "working_branch": "codex/bug-189-s01-08-terminal-adoption"
+    }
+  },
+  "tasks": [
+    {
+      "id": "WP01-01",
+      "repository": "Main",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "window_gate": "CONFIRMED",
+      "mode": "LEDGER_GATE_IMPLEMENTATION_ONLY",
+      "branch": "codex/wp01-01-adoption-gate-20261015",
+      "baseline": "b0a4f5601b008d0003598065bbf3241124442890",
+      "worktree": "D:/CP6-worktrees/wp01-01-adoption-gate-20261015",
+      "reserved_resources": [
+        "coordination:roadmap",
+        "Main:acceptance-basis-gate",
+        "file:Main:docs/development/tools/manage_roadmap.py",
+        "file:Main:docs/development/tools/test_manage_roadmap.py"
+      ],
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-plm.md",
+          "sha256": "31ba143970e46abdd7f94cd708910d932b116f4c44f3a2ef31fd0e115bd94635",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-plm.json",
+          "sha256": "3e3e8780514a7f804aa1c211effb446086164e06150a258bcf4b17cc2d9be10f",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    },
+    {
+      "id": "WP02-02",
+      "repository": "Platform",
+      "state": "BLOCKED",
+      "entry_gate": "NOT_CHECKED",
+      "window_gate": "CONFIRMED",
+      "mode": "PRODUCER_REGISTRATION_ONLY",
+      "branch": "codex/wp02-02-formal-registration-20261015",
+      "baseline": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-02-formal-registration-20261015",
+      "reserved_resources": [
+        "Platform:package-trust",
+        "Platform:formal-version-registration",
+        "Platform:release-schema-and-writer"
+      ],
+      "source_reports": [
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-package.md",
+          "sha256": "83ac67cfdb9f6d93da5628f9f8cf189589512c7da08b65bfaba6da84302380fe",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-package.json",
+          "sha256": "aeee4d7475b11719b2e7e3a9028f53600c90fd8c62c9b951c3cb171a8ffcd591",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    }
+  ],
+  "writer_windows_disjoint": true,
+  "shared_tools_window": "A exclusively owns manager/adapter code; COORD exclusively owns ledger/generation/status at integration; no concurrent editing of same paths.",
+  "full_task_gate_not_bypassed": true,
+  "done_before": 24,
+  "done_after": 24,
+  "business": "0/125",
+  "runtime": "247 NOT_RUN",
+  "historical": "41 REFERENCE_ONLY",
+  "unrecoverable_originals_preserved": true,
+  "no_implementation_started": true
+}

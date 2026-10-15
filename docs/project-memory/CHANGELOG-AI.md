@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-15：第八轮正式门与版本登记窗口
+
+第八轮只开放A/WP01-01正式台账adapter/manager及完整采纳记录候选、B/WP02-02在Platform的0.10.3正式登记代码窗口。两个局部窗口CONFIRMED；完整任务仍PLANNED/BLOCKED与NOT_CHECKED，未收到START，不代表实际采纳或业务开工。C/D旧窗口关闭且不新增派工，WP02-28等待可信producer。24/375 DONE、S01 12/12、业务0/125、247 NOT_RUN、41REFERENCE_ONLY及历史缺件保持。无Actions、正式签名/发包、数据库/业务迁库或部署。 [执行包](../development/dispatch/20261015-wave8/README.md)；[准入证据](../development/evidence/wave8-dispatch-20261015/README.md)。下文保留历史时点。
+
 ## 2026-10-14：第七轮两项库实现完成、两项准备归档
 
 WP02-12消息传输与WP02-26 SLO/精确断言/故障工具经集中审查、正常合并和远端核对登记DONE。累计24/375任务，S01为12/12；业务目标0/125、247运行NOT_RUN和41历史REFERENCE_ONLY保持。原始本地证据按准确输入复用，合流只做必要架构冒烟，详见[第七轮协调证据](../development/evidence/wave7-integration-20261014/README.md)。

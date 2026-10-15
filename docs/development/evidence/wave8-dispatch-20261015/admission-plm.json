@@ -1,0 +1,345 @@
+{
+  "schema": "CP6-WAVE8-PLM-ADMISSION/1",
+  "date": "2026-10-15",
+  "mode": "READ_ONLY_ADMISSION_ANALYSIS",
+  "main": "b0a4f5601b008d0003598065bbf3241124442890",
+  "origin_main_local_tracking_ref": "b0a4f5601b008d0003598065bbf3241124442890",
+  "platform_coordinator_supplied": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+  "network_used": false,
+  "repository_modified": false,
+  "runtime_tests_executed": false,
+  "recommendation": "ADMIT_BOUNDED_WP01_01_LEDGER_ADAPTER_IMPLEMENTATION_AND_COMPLETE_ADOPTION_CANDIDATE",
+  "task_state_observed": {
+    "WP01-01": "PLANNED/NOT_CHECKED",
+    "WP05-01": "DONE/CONFIRMED"
+  },
+  "authorization": {
+    "technical_design_and_development": "Existing user authorization reported by coordinator permits concrete technical choices and actual adapter implementation; this analysis has no exact user statement adopting the final manifest/579 obligations. Overall basis adoption remains pending.",
+    "record_actor": "Actual COORD agent identity for technical choices only; no invented user signature, business approver or effective date",
+    "required_provenance": "Verifiable original authorization source and delegated scope; distinguish delegation from exact technical decision",
+    "no_reconfirmation_for": [
+      "PostgreSQL-only physical design",
+      "lossless candidate selection",
+      "pagination budget",
+      "local ledger adapter",
+      "provider implementation"
+    ],
+    "specific_business_inputs": [
+      "Actual membership/roles/delegation/SOD exceptions/OA policy and disposition",
+      "Engineering retention periods and legal hold facts",
+      "Accepted production workload/SLO",
+      "Reviewed Japanese/Korean content and qualified reviewer"
+    ]
+  },
+  "pins": {
+    "candidate_basis_version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed",
+    "recommended_formal_version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0",
+    "candidate_manifest_raw_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+    "candidate_gate_raw_sha256": "7fd2401374e1e77900de73879937f720fcca5267dfdf7a2a99edeb2b62c9fee6",
+    "candidate_gate_bytes": 94101,
+    "matrix_sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "inherited_unique_obligations": 577,
+    "added_obligations": [
+      "DC-01",
+      "DC-02"
+    ],
+    "total_unique_obligations": 579,
+    "by_target": {
+      "PLM-ITER-01": 401,
+      "PLM-REL-01": 178
+    },
+    "structured_source_assertions": 18,
+    "historical_missing_original_counts": [
+      30,
+      48
+    ],
+    "formal_version_status": "ADOPTION_PENDING"
+  },
+  "gate_findings": {
+    "production_entry": "docs/development/tools/manage_roadmap.py",
+    "package_gate_line": 94,
+    "target_gate_line": 149,
+    "candidate_actual_mode": "Always rejects authority authenticity and remote ancestry; requires production_enabled=false",
+    "implementation": "Separate versioned adapter; preserve candidate bytes and unchanged 123 original gates",
+    "predicates": [
+      "basis_adoption_valid",
+      "inventory_coverage_valid",
+      "target_runtime_valid"
+    ],
+    "scope": "Local planning-ledger completion gate; not CI or deployment activation"
+  },
+  "decisions": [
+    {
+      "id": "DP-ITER-01",
+      "recommend": "Preserve four digest meanings; retain original ENG opaque digest; new CD-ENG envelope stays a separately versioned candidate until owner-domain compatibility is proved",
+      "missing": [
+        "Exact ENG schema/version/canonicalization/domain/field set",
+        "Legal-domain compatibility vectors and lossless old-to-new mapping"
+      ],
+      "kind": "TECHNICAL_CONTRACT_AND_COMPATIBILITY",
+      "blocked_scope": "New ENG serialization route",
+      "tasks": [
+        "WP05-03",
+        "WP05-12",
+        "WP05-19"
+      ]
+    },
+    {
+      "id": "DP-ITER-02",
+      "recommend": "Trusted registration and frozen policy/round binding; implement both exact pinned and single published-policy resolution; missing config fails closed",
+      "missing": [
+        "tenant/project",
+        "member directory version and IDs",
+        "role assignment versions",
+        "delegation grant/ref/validity",
+        "SOD rule and authorized exceptions",
+        "published policy ID/version/digest",
+        "selectionMode",
+        "rejectDisposition RETURN or REJECT"
+      ],
+      "kind": "ACTUAL_BUSINESS_CONFIGURATION",
+      "blocked_scope": "Project-specific OA submit/apply",
+      "tasks": [
+        "WP12-06",
+        "WP12-07",
+        "WP12-19",
+        "WP05-19",
+        "WP05-20"
+      ]
+    },
+    {
+      "id": "DP-ITER-03",
+      "recommend": "Adopt bounded PostgreSQL physical design; preserve Project/Iteration global Id and four source-scoped Id identities, TenantId, exact raw values and independent CAS",
+      "missing": [
+        "Actual role/RLS/schema/login binding",
+        "all-writer compatible lock order",
+        "numeric driver roundtrip",
+        "migration lineage",
+        "CAS/recovery evidence"
+      ],
+      "kind": "TECHNICAL_DESIGN_PLUS_RUNTIME",
+      "blocked_scope": "Real PostgreSQL writers and migrations",
+      "tasks": [
+        "WP02-02",
+        "WP02-03",
+        "WP02-10",
+        "WP02-13",
+        "WP05-18",
+        "WP05-32"
+      ]
+    },
+    {
+      "id": "DP-ITER-04",
+      "recommend": "Append-only corrections; retain evidence; missing effective policy blocks destruction only",
+      "missing": [
+        "Retention periods and start points by classification/jurisdiction/scope",
+        "Anonymization boundaries",
+        "Approved destruction conditions and policyRef/version/scopeDigest",
+        "Actual legalHold and target version"
+      ],
+      "kind": "ACTUAL_BUSINESS_POLICY",
+      "blocked_scope": "Destruction and anonymization",
+      "tasks": [
+        "WP02-13",
+        "WP05-21",
+        "WP05-36"
+      ]
+    },
+    {
+      "id": "DP-ITER-05",
+      "recommend": "50/200/500/50/50 pagination and chunk budgets, never legal-domain maxima; unchanged OA wire limits",
+      "missing": [
+        "Real workload distribution and largest project set",
+        "Accepted latency/throughput/memory SLO",
+        "Measured environment and capacity report"
+      ],
+      "kind": "TECHNICAL_BUDGET_PLUS_BUSINESS_SLO_AND_MEASUREMENT",
+      "blocked_scope": "Production capacity acceptance and unsupported oversized OA route",
+      "tasks": [
+        "WP05-18",
+        "WP05-19"
+      ]
+    },
+    {
+      "id": "DP-ITER-06",
+      "recommend": "Implement existing exact root/complete-child safe-terminal facts and no-late-effect fence; unknown does not release",
+      "missing": [
+        "Real VER/MES safe closure providers",
+        "Complete linked facts and watermarks",
+        "Joint fault/race/recovery evidence"
+      ],
+      "kind": "IMPLEMENTATION_NOT_USER_APPROVAL",
+      "blocked_scope": "Dependent cancel/close/release/settlement",
+      "tasks": [
+        "WP05-21",
+        "WP05-24",
+        "WP08-15",
+        "WP08-18"
+      ]
+    },
+    {
+      "id": "DP-ITER-07",
+      "recommend": "Chinese review basis, stable IDs, versioned draft/review/publish/bundle CAS; machine output remains draft",
+      "missing": [
+        "Final Japanese/Korean content per key",
+        "Exact review set and entry versions",
+        "Qualified actual reviewer and authority",
+        "Published bundle and client adoption"
+      ],
+      "kind": "CONTENT_REVIEW_AND_CLIENT_IMPLEMENTATION",
+      "blocked_scope": "Japanese/Korean publication and language acceptance",
+      "tasks": [
+        "WP02-17",
+        "WP05-18",
+        "WP05-32"
+      ]
+    },
+    {
+      "id": "DP-ITER-08",
+      "recommend": "Reuse bounded current source audit; no relevant Main product-source changes since audit baseline; historical b7ec269 reference only",
+      "missing": [
+        "Real PLM/OA/VER/MES services/models/routes/host/workers/UI/DB",
+        "Exact Platform package adoption and lock composition",
+        "Provider/consumer remote evidence"
+      ],
+      "kind": "IMPLEMENTATION_AND_CONSUMER_EVIDENCE",
+      "blocked_scope": "Business completion, not local gate implementation",
+      "tasks": [
+        "WP05-18",
+        "WP05-19",
+        "WP05-20",
+        "WP05-21",
+        "WP05-32",
+        "WP05-33",
+        "WP05-34",
+        "WP05-35",
+        "WP05-36",
+        "WP05-42",
+        "WP05-61"
+      ]
+    }
+  ],
+  "provider_graph": {
+    "transitive_planning_edges": 1256,
+    "null_contract_profiles": 1256,
+    "null_provider_implementation_evidence": 1256,
+    "null_consumer_application_evidence": 1256,
+    "rule": "Preserve declared TASK_DELIVERY prerequisites; bind exact authorized scenario applicability before activation. Do not treat all transitive edges as one runtime scenario or all as WP01 implementation prerequisites.",
+    "profile_candidates": [
+      "CallerTransactionInboxV1",
+      "OutboxV2"
+    ],
+    "main_declared_package_version": "[0.10.2]",
+    "source_build_default_is_not_artifact_or_adoption": true
+  },
+  "missing_real_consumers": {
+    "ITER": [
+      "WP05-18",
+      "WP05-19",
+      "WP05-20",
+      "WP05-21"
+    ],
+    "OA": [
+      "WP12-06",
+      "WP12-07",
+      "WP12-19"
+    ],
+    "REL": [
+      "WP05-32",
+      "WP05-33",
+      "WP05-34",
+      "WP05-35",
+      "WP05-36",
+      "WP05-42"
+    ],
+    "VER_MES": [
+      "WP05-24",
+      "WP08-15",
+      "WP08-18"
+    ],
+    "RESULT_PUBLISHER": [
+      "WP05-61"
+    ],
+    "FOUNDATION": [
+      "WP02-10",
+      "WP02-12",
+      "WP02-13",
+      "WP02-17"
+    ]
+  },
+  "task_card": {
+    "id": "WP01-01",
+    "window": "Bounded formal ledger adapter implementation and complete append-only adoption candidate",
+    "exclusive_resources": [
+      "coordination:roadmap",
+      "file:Main:docs/development/tools/manage_roadmap.py",
+      "file:Main:docs/development/tools/test_manage_roadmap.py"
+    ],
+    "write_paths": [
+      "docs/development/evidence/WP01-01/adoption-v1.2/",
+      "docs/development/tools/acceptance_basis.py",
+      "docs/development/tools/test_acceptance_basis.py",
+      "docs/development/tools/manage_roadmap.py",
+      "docs/development/tools/test_manage_roadmap.py"
+    ],
+    "coordinator_serial_write_paths": [
+      "docs/development/task-definitions.json",
+      "docs/development/roadmap.json",
+      "generated task/progress views",
+      "four project status files"
+    ],
+    "forbidden_writes": [
+      "Frozen WP05/preparation/decision-closure evidence",
+      "Business Core/Entity/WebApi/UI",
+      "EF/DDL/migrations",
+      "Platform/CRM repositories",
+      "existing environments",
+      ".github/workflows"
+    ],
+    "prerequisites": [
+      "Latest confirmed main and independent branch/worktree",
+      "WP05-01 exact delivery plus Issue211 fixes",
+      "Referenceable existing user authorization source",
+      "Coordinator serial shared-tools/ledger window",
+      "Exact source artifact bytes available"
+    ],
+    "acceptance": [
+      "Complete adoption candidate and truthful COORD technical-choice provenance; actual_adoption=false and ADOPTION_PENDING until final authority is verified",
+      "Separate task/inventory/target predicates",
+      "401+178 obligations and 18 structured assertions exactly preserved",
+      "All other 123 targets retain original gate",
+      "No real business PASS/DONE or legacy recovery fabricated",
+      "Reject unverified authority/remote, forged static/synthetic evidence, missing source/obligation/consumer",
+      "Run targeted adapter/manager tests and read-only ledger validation locally",
+      "Single task-level review and remote-main containment at delivery"
+    ],
+    "not_prerequisites": [
+      "All 1256 graph edges implemented",
+      "Real business policy values for every project",
+      "All PLM runtime consumers completed"
+    ],
+    "unverified": [
+      "Final formal basis adoption",
+      "Human business approval/configuration",
+      "Production SLO",
+      "Japanese/Korean review",
+      "Database role/RLS/transaction/runtime",
+      "Actual provider-consumer adoption",
+      "Package restore/publication",
+      "Live remote ancestry"
+    ],
+    "overall_task_state": "PLANNED",
+    "overall_entry_gate": "NOT_CHECKED",
+    "bounded_window_gate": "CONFIRMED_BY_COORDINATOR_FOR_EXACT_CODE_SCOPE_ONLY",
+    "actual_adoption": false,
+    "completion_rule": "Code slice delivery does not complete WP01-01; final basis adoption is handled only after exact manifest, obligations and gate behavior are concrete and reviewable.",
+    "code_edit_authority": "COORD grants lane A the exclusive actual-edit window for manage_roadmap.py and test_manage_roadmap.py in this round. Ledger, task-definitions, generated views and four project state files remain COORD only."
+  },
+  "full_report": "admission-plm.md",
+  "disposition": {
+    "task_state": "PLANNED",
+    "entry_gate": "NOT_CHECKED",
+    "bounded_window": "CONFIRMED",
+    "actual_adoption": false
+  }
+}

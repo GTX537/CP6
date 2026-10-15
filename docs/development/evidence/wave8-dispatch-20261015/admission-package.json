@@ -1,0 +1,230 @@
+{
+  "schema_version": "1.0",
+  "task_id": "WP02-02",
+  "window": "PRODUCER_REGISTRATION_ONLY",
+  "prepared_on": "2026-10-15",
+  "mode": "READ_ONLY_ADMISSION",
+  "decision": "READY_FOR_COORDINATOR_BOUNDED_ASSIGNMENT",
+  "recommendation": "Use WP02-02 bounded producer-registration follow-up in Platform; preserve WP02-27 completed delivery. Implement registration now, do not request premature publishing approval.",
+  "authorization": {
+    "ordinary_local_registration": "Covered by user instruction to continue; coordinator must issue exact Platform write window before implementation.",
+    "formal_actions": "NOT_AUTHORIZED",
+    "formal_feed_write": "NOT_AUTHORIZED",
+    "private_signer_access": "NOT_AUTHORIZED",
+    "production_deployment": "NOT_AUTHORIZED",
+    "source_adoption_exception": "NOT_AUTHORIZED"
+  },
+  "baselines": {
+    "main": {
+      "repository": "D:/CP6",
+      "commit": "b0a4f5601b008d0003598065bbf3241124442890",
+      "local_main_matches_tracking": true
+    },
+    "platform": {
+      "repository": "D:/CP6/CP6.Platform",
+      "commit": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "tree": "4bb731924244ef7876805294b623fdbe8dd2155a",
+      "read_method": "git show/git grep origin/main; checkout is unrelated old branch",
+      "local_main_matches_tracking": true
+    },
+    "network_refresh": "NOT_RUN by this read-only assignment; coordinator must verify current remote main before branch creation",
+    "old_compatibility": {
+      "main": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "platform": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "owner": "0615c0909a5a4ee4976ca49cd1339694",
+      "three_builds": "PASS on fixed old inputs",
+      "private_runtime": "31 assertions PASS; synthetic authority",
+      "formal_trust": "BLOCKED",
+      "main_consumption": "NOT_RUN",
+      "pgt17": "NOT_RUN"
+    },
+    "original_proposal_platform": "e5c63a28c94bae4cc66ec50fbe6079553c03d0d0",
+    "registration_paths_changed_since_proposal": false
+  },
+  "proposed_version": {
+    "value": "0.10.3",
+    "status": "PROPOSED_NOT_RESERVED_NOT_PUBLISHED",
+    "last_observation": "2026-10-14 historical seven-package metadata showed absence; no new network observation",
+    "required_prewrite": "Read-only all-pages authenticated seven-slot check; 403/404/network errors UNKNOWN; repeat formal preflight immediately before immutable publication"
+  },
+  "required_write_paths": [
+    "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+    "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+    "contracts/release/v1/formal-package-publication.v1.schema.json",
+    "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+    ".github/workflows/p10-formal-packages.yml",
+    "eng/p10/Test-P10FormalPrerequisites.ps1",
+    "eng/p10/Pack-P10FormalPackages.ps1",
+    "eng/p10/New-P10FormalPackageSet.ps1",
+    "eng/p10/Publish-P10FormalPackageSet.ps1",
+    "eng/p10/New-P10FormalPublicationRecord.ps1",
+    "eng/p10/Test-P10FormalPackageSet.ps1",
+    "tests/CP6.Platform.ReleaseTests/FormalPackagePublicationTests.cs",
+    "tests/CP6.Platform.ReleaseTests/ReleaseSchemaParityTests.cs",
+    "tests/CP6.Platform.ReleaseTests/ReleaseSchemaAssetTests.cs",
+    "tests/CP6.Platform.ReleaseTests/P10FormalWorkflowContractTests.cs",
+    "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
+    "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityTrustTests.cs",
+    "docs/P10-RELEASE-GOVERNANCE.md",
+    "docs/development/evidence/WP02-02/formal-registration/"
+  ],
+  "narrowly_optional_write_paths": [
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/ReleaseSchemaTestData.cs",
+      "reason": "Only if new-version schema parity fixture needs a new explicit generator; do not rewrite old fixture identities."
+    },
+    {
+      "path": "tests/CP6.Platform.ReleaseTests/P10FormalRegistrationTests.cs",
+      "reason": "New task-owned local script/AST behavior tests if existing workflow test cannot cover exact reader/writer acceptance."
+    },
+    {
+      "path": "eng/wp02-02/formal-registration/",
+      "reason": "Task-owned local validation/evidence runner, no publication entry point."
+    },
+    {
+      "path": "VERSION",
+      "reason": "Coordinator may explicitly include audit-only 0.10.2.0 -> 0.10.3.0 when registration is integrated; this is not package publication and does not require runtime defaults change."
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reason": "If VERSION is updated, record registration prepared/unpublished and retain historical publication text."
+    }
+  ],
+  "readonly_paths": [
+    "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+    "Directory.Build.props",
+    "Directory.Packages.props",
+    "global.json",
+    "NuGet.config",
+    "src/*/*.csproj",
+    "tools/CP6.Platform.ReleaseTool/Program.cs",
+    "tools/CP6.Platform.ReleaseTool/FormalPackageVerifier.cs",
+    "eng/p10/trust/",
+    ".github/workflows/p10-rfc3161-preflight.yml",
+    "tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs",
+    ".github/workflows/p10-formal-packages-recovery.yml",
+    ".github/workflows/p10-formal-signer-revalidation.yml",
+    "docs/evidence/c01/0.10.2/",
+    "Main production projects/locks/Program/EF models/migrations",
+    "Main roadmap and four project state files (coordinator only)"
+  ],
+  "locks": [
+    "Platform:package-trust",
+    "file:Platform:<each required/explicitly-admitted optional write path>",
+    "Platform formal producer freeze after integration until dispatch/publication finishes; no uncoordinated source changes during exact-main authorization"
+  ],
+  "behavior": {
+    "reader_versions": [
+      "0.10.0",
+      "0.10.1",
+      "0.10.2",
+      "0.10.3"
+    ],
+    "writer_version": "0.10.3",
+    "new_formal_capability": {
+      "id": "ctx-binding-v1",
+      "version": "1.0.0",
+      "profiles": [
+        "ctx-v1"
+      ],
+      "scope": [
+        "Background",
+        "Http",
+        "Message"
+      ]
+    },
+    "historical_capabilities": "0.10.0/1/2 remain empty",
+    "forbid_new_claims": [
+      "S01-09 formal qualification",
+      "new transport/OBS/SLO declarations without separate exact evidence",
+      "Allowed consumer rows without actual measured identity",
+      "Main host adoption",
+      "production ProjectReference"
+    ],
+    "preserve": [
+      "seven exact package IDs including Release and excluding Testing",
+      "source/version/feed/archive bindings",
+      "one-build",
+      "Current revocation and RFC3161",
+      "independent Windows/Linux verification",
+      "immutable consumed marker and unknown-outcome readback",
+      "BytePreserving feed readback",
+      "independent approval/policy/publication evidence",
+      "existing trust and certificate bytes"
+    ]
+  },
+  "workflows": {
+    "total": 8,
+    "ordinary_and_formal_manual": true,
+    "exception": {
+      "workflow": ".github/workflows/p10-rfc3161-preflight.yml",
+      "event": "pull_request",
+      "paths": [
+        ".github/workflows/p10-rfc3161-preflight.yml",
+        "tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs"
+      ]
+    },
+    "planned_paths_match_exception": false,
+    "required_before_push_pr": "Reinspect candidate plus current protected main all events/filters/dependencies; this audit does not waive fresh check",
+    "remote_runs": "NOT_QUERIED; no network allowed in this audit"
+  },
+  "mandatory_local_checks": [
+    "API/source-schema/actual packed-schema positive and negative parity for .0/.1/.2/.3; mixed version/source/feed/hash, .4, latest, metadata rejected.",
+    "New exact .3 ctx capability only; old formal claiming ctx, TaskLocal claiming formal, unknown capability, missing/changed policy/publication approval, absent schema rejected; unmeasured consumer remains Unknown.",
+    "Formal workflow/script tests retain exact-main/event/checkout identity, protected environment, action pins, least permissions, one-build, immutable marker, seven-slot conflict and unknown-result readback.",
+    "Release and Capabilities related tests including trust/Current/Historical/Revoked/unknown signer/timestamp/tampered-archive regressions; label fixtures and unavailable network honestly.",
+    "One task-level Architecture suite; actual Release package schema extraction/byte comparison using unique TaskLocal prerelease, no stable signed packages.",
+    "Frozen new producer drift audit: old b28db76 -> current includes Contracts/SloQualificationV1, Messaging validators/bundle/transport and EF transport bridge; reassess three-entry Main closure and runtime inputs, rerun only affected scopes with task-local manifest if needed, do not relabel old 31 assertions as new producer.",
+    "Task-level full diff/security/evidence review once; fixes get focused recheck; git diff --check.",
+    "Before final formal authorization freeze actual integrated complete source SHA/tree, package plan, test provenance, release workflow hash, environment/current signer/slot observations; no placeholders as success."
+  ],
+  "formal_authorization_request": {
+    "repository": "GTX537/CP6.Platform",
+    "workflow": ".github/workflows/p10-formal-packages.yml",
+    "dispatch_ref": "main",
+    "inputs": {
+      "expected_commit": "PENDING final integrated full SHA",
+      "version": "0.10.3"
+    },
+    "actions": "One protected Windows build/sign/RFC3161/publish/readback of seven immutable GitHub NuGet packages, followed by independent Linux verification and real publication artifacts.",
+    "runner_minutes_estimate": "20-50 aggregate minutes (planning only)",
+    "hard_timeout_minutes": {
+      "windows_2025": 45,
+      "ubuntu_latest": 20,
+      "total": 65
+    },
+    "actual_price": "Not queried; verify account/repository billing and remaining quota when concrete approval is requested.",
+    "not_included": [
+      "extra retries",
+      "recovery",
+      "RFC3161 preflight workflow",
+      "signer revalidation workflow",
+      "R2/GHCR candidate",
+      "DB migration",
+      "Main consumption/17PGT",
+      "production deployment"
+    ],
+    "separate_workflow_caps": {
+      "rfc3161_preflight": "2 x 15 + 10 = 40 runner-minute hard caps",
+      "signer_revalidation": 20,
+      "recovery": 20
+    },
+    "protections": "Normal p10-formal-release environment review remains mandatory; no admin bypass or policy/certificate changes."
+  },
+  "disposition": {
+    "wp0202": "Keep BLOCKED/NOT_CHECKED for business adoption; only producer-preparation subwindow becomes CONFIRMED",
+    "wp0227": "Preserve prior completed implementation, do not invent a second completion",
+    "wp0228": "Not opened",
+    "pgt17": "NOT_RUN",
+    "formal_package_trust": "BLOCKED until actual exact-source trusted feed bytes exist"
+  },
+  "audit_execution": {
+    "repository_writes": false,
+    "commits": false,
+    "network": false,
+    "database": false,
+    "actions": false,
+    "tests": false,
+    "scratch_only": true
+  }
+}

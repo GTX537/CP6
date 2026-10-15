@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-15T05:12:20.952071+00:00",
+  "unchanged_tasks": 373,
+  "all_task_states_unchanged": 375,
+  "targets_unchanged": 125,
+  "revision_acceptances_unchanged": 288,
+  "preparation_deliveries_preserved": true,
+  "closed_assignment_history_preserved": true,
+  "bounded_windows": 2,
+  "standby_lanes": [
+    "C",
+    "D"
+  ],
+  "window_scope": "Exact code only, full task and business gates preserved",
+  "feed_metadata": "7 authenticated paginated responses match recorded bytes; no slot reserved",
+  "business_tests_executed": false
+}

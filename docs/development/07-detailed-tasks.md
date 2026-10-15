@@ -1,6 +1,6 @@
 # 细分任务进度
 
-台账日期：2026-10-14。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
+台账日期：2026-10-15。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
 全部已登记任务 375 项，已交付 24 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
@@ -10,7 +10,7 @@
 
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
-| [WP01-01 替代验收采纳后的WP01差异与清单收口](../../docs/development/task-plans/WP01.md#wp01-01) | Main | 待安排 | WP05-01 | DESIGN / M | A / WP01-01 决定候选 |
+| [WP01-01 替代验收采纳后的WP01差异与清单收口](../../docs/development/task-plans/WP01.md#wp01-01) | Main | 待安排 | WP05-01 | DESIGN / M | A / WP01-01 正式台账门实施 |
 | [WP01-02 首批多对话交付汇总与下一轮分配依据](../../docs/development/task-plans/WP01.md#wp01-02) | Main | 已交付 | S01-01, S02-00, WP05-01, WP14-01 | DESIGN / M | COORD / WP01-02 |
 
 ## WP02 公共平台与系统基础
@@ -31,7 +31,7 @@
 | [S01-12 采用证据与消费者交接](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07, S01-08, S01-09, S01-10, S01-11 | DESIGN / M | A / S01-12（沿用原S01-11对话） |
 | [S02-00 PostgreSQL 多租户存储与事务布局设计](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | B / S02-00 |
 | [WP02-01 Platform可信请求、消息与后台租户上下文](../../docs/development/task-plans/WP02.md#wp02-01) | Platform | 已交付 | S01-02 | CODE / M | C / WP02-01（沿用原S01-06对话） |
-| [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 受阻 | S02-00, WP02-01 | CODE / M | B / WP02-02 依赖诊断 |
+| [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 受阻 | S02-00, WP02-01 | CODE / M | B / WP02-02 Platform正式登记 |
 | [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | 未领取 |
 | [WP02-04 租户创建、暂停恢复与管理审计](../../docs/development/task-plans/WP02.md#wp02-04) | Main | 待安排 | WP02-03 | CODE / M | 未领取 |
 | [WP02-05 Main身份权威快照及完整目录发布](../../docs/development/task-plans/WP02.md#wp02-05) | Main | 待安排 | S01-09, WP02-03, WP02-04 | CODE / M | 未领取 |

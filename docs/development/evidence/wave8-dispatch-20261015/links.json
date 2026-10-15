@@ -1,0 +1,184 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-15T05:17:56.855251+00:00",
+  "scope": "Added Markdown relative file links in staged diff; historical unchanged lines and web availability not checked",
+  "checked": 35,
+  "errors": [],
+  "links": [
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP01.md#wp01-01",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-02",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/README.md",
+      "link": "WP01-01.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/README.md",
+      "link": "WP02-02.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/README.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/README.md",
+      "link": "../../evidence/wave8-dispatch-20261015/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/README.md",
+      "link": "../../roadmap.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP01-01.md",
+      "link": "../../task-plans/WP01.md#wp01-01",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP01-01.md",
+      "link": "../../09-parallel-development.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP01-01.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP01-01.md",
+      "link": "../../evidence/wave8-dispatch-20261015/admission-plm.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP01-01.md",
+      "link": "../../evidence/wave8-dispatch-20261015/admission-plm.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "../../task-plans/WP02.md#wp02-02",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "../../09-parallel-development.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "dispatch.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "../../evidence/wave8-dispatch-20261015/admission-package.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "../../evidence/wave8-dispatch-20261015/admission-package.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "../../evidence/WP02-02/consumption-preparation/FORMAL-VERSION-PROPOSAL.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "../../evidence/WP02-02/consumption-compatibility/SOURCE-ADOPTION-CANDIDATE.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/dispatch/20261015-wave8/WP02-02.md",
+      "link": "../../evidence/wave8-dispatch-20261015/feed-version-observation.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave8-dispatch-20261015/README.md",
+      "link": "admission.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave8-dispatch-20261015/README.md",
+      "link": "intake.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave8-dispatch-20261015/README.md",
+      "link": "setup.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave8-dispatch-20261015/README.md",
+      "link": "feed-version-observation.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave8-dispatch-20261015/README.md",
+      "link": "../../dispatch/20261015-wave8/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave8-dispatch-20261015/README.md",
+      "link": "admission-plm.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave8-dispatch-20261015/README.md",
+      "link": "admission-package.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/dispatch/20261015-wave8/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/evidence/wave8-dispatch-20261015/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/dispatch/20261015-wave8/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/evidence/wave8-dispatch-20261015/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/dispatch/20261015-wave8/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/evidence/wave8-dispatch-20261015/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/dispatch/20261015-wave8/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/evidence/wave8-dispatch-20261015/README.md",
+      "exists": true
+    }
+  ]
+}

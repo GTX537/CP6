@@ -1,0 +1,263 @@
+{
+  "version": "CP6-WAVE8-DISPATCH/1",
+  "issued_at": "2026-10-15T05:11:19.013652+00:00",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "queued_or_running": [],
+      "local_main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_head": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_branch": "main"
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "queued_or_running": [],
+      "local_main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "working_head": "97df4f650847d164923750ce0d0de925731aeac4",
+      "working_branch": "codex/p03-auth-problem-details"
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": [],
+      "local_main_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "working_head": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+      "working_branch": "codex/bug-189-s01-08-terminal-adoption"
+    }
+  },
+  "tasks": [
+    {
+      "title": "版本化采纳记录候选与正式台账门实现",
+      "mode": "LEDGER_GATE_IMPLEMENTATION_ONLY",
+      "goal": "完成可审查的正式台账adapter及manager接线，构成最终采纳前的具体实现；不再新增一个永远禁用的旁路验证器。",
+      "architecture": "Python只读本地台账门，使用独立可信授权/远端证据验证输入；既有candidate原字节不变，正式record尚未采纳时明确拒绝关闭。",
+      "write_paths": [
+        "docs/development/evidence/WP01-01/adoption-v1.2/",
+        "docs/development/tools/acceptance_basis.py",
+        "docs/development/tools/test_acceptance_basis.py",
+        "docs/development/tools/manage_roadmap.py",
+        "docs/development/tools/test_manage_roadmap.py"
+      ],
+      "resources": [
+        "coordination:roadmap",
+        "Main:acceptance-basis-gate",
+        "file:Main:docs/development/tools/manage_roadmap.py",
+        "file:Main:docs/development/tools/test_manage_roadmap.py"
+      ],
+      "readonly": [
+        "docs/development/task-definitions.json",
+        "docs/development/roadmap.json",
+        "生成任务/进度页及四份状态",
+        "docs/development/task-deliveries/WP05-01/",
+        "docs/development/evidence/WP01-01/preparation/",
+        "docs/development/evidence/WP01-01/decision-closure/",
+        "原归档、产品/EF/迁移/前端",
+        ".github/workflows/",
+        "Platform/CRM仓库"
+      ],
+      "checks": [
+        "从最终Issue211修订后的 manifest SHA256 7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839、1.1矩阵与1.2 delta建立完整append-only采纳记录候选及精确manifest。保留577+2=579义务、ITER401/REL178、18结构化source_assertion；旧30/48成员与缺件hash仍null，旧adoption.json不可改写。",
+        "明确区分COORD授权本轮技术实现与最终业务basis采纳。技术选择可记录真实代理身份及可核来源；不得把用户“继续推进”、本派工、worker提交或自填approved_by当作最终manifest的正式采纳证据。记录候选保持未生效，actual_adoption=false，不伪造用户签名、批准时间或业务配置。",
+        "实现独立 acceptance_basis.py，并在manage_roadmap.py的WP01清单汇总门和ITER/REL目标DONE门同时接入。分离 basis_adoption_valid、inventory_coverage_valid、target_runtime_valid；其余123目标沿原门。旧125原件完整的硬条件只能由“123份原清单＋2份准确新依据”专门路径替代，不能改原件状态或把新依据写成恢复旧清单。",
+        "先定义可信输入与威胁边界，再实现来源、权限范围、版本/hash、append-only身份、准确远端main包含性及撤销/过期处理。普通调用者自带的同包authority/receipt文本不能自己证明真实授权；缺独立来源或无法验证则拒绝。允许只读Git/GitHub核验，禁止付费执行、伪造签名或增加无关身份系统。不要直接删除candidate的UNVERIFIED标记或翻false开关。",
+        "579个义务要逐项保完整来源、准确断言、Owner/消费者、R1、证据类型和适用场景。1256条传递规划边不是一个场景的运行清单；按已批准的场景范围绑定准确profile/version/hash和提供/消费证据，不能伪造全图已实现，也不能删除TASK_DELIVERY前置。当前未配置/未实施/NOT_RUN的场景仍不能关闭目标。",
+        "保留DP01四种摘要与原ENG域；新ENG序列化只作独立候选。DP03沿Issue211两global四scoped原身份、TenantId、无损数量/金额和CAS；DP05分页/分块值仅预算、不缩小合法域。DP02真实角色/OA策略、DP04保留/销毁政策、DP05实际SLO、DP07日/韩审核留待准确业务输入。DP06真实VER/MES是实施前置，不变成索要用户批准的代替品。",
+        "针对正式adapter/manager写正反回归：可信与不可信来源、原字节篡改/路径逃逸、漏义务/漏结构化断言、其他目标、假静态/合成/NOT_RUN、丢消费者、未知远端/权限撤销、无采纳时所有原状态不变。synthetic正例只证明算法，实际台账仍无正式采纳和业务完成。保存RED/GREEN和准确输入/输出。",
+        "形成DELIVERY.md、准确变更清单、最终采纳记录候选、可直接审核的采纳差异与未验证范围。总台账/生成页/四状态由COORD收尾串行同步。主任务的最终DONE要等真实采纳与完整门交付，不能仅凭本次代码候选登记。"
+      ],
+      "commands": [
+        "python -B -X utf8 -m unittest discover -s docs/development/tools -p \"test_acceptance_basis.py\" -v",
+        "python -B -X utf8 -m unittest discover -s docs/development/tools -p \"test_manage_roadmap.py\" -v",
+        "python -B -X utf8 docs/development/tools/manage_roadmap.py",
+        "git -c core.longpaths=true diff --check"
+      ],
+      "boundary": "本窗口允许正式本地台账门代码和接线；不是实际企业批准/最终basis采纳，也不开放真实PLM业务或数据库。WP01-01整体PLANNED/NOT_CHECKED，局部实施窗口CONFIRMED。最终采纳记录须在准确实现和manifest可审核后处理。",
+      "id": "WP01-01",
+      "lane": "A",
+      "previous_task": "WP01-01",
+      "repository": "Main",
+      "owning_task_repository": "Main",
+      "repo_slug": "GTX537/CP6",
+      "branch": "codex/wp01-01-adoption-gate-20261015",
+      "worktree": "D:/CP6-worktrees/wp01-01-adoption-gate-20261015",
+      "baseline": "b0a4f5601b008d0003598065bbf3241124442890",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp01-01",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/",
+      "dependencies": [
+        {
+          "task": "WP05-01",
+          "delivery": {
+            "source_sha": "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+            "remote_main_sha": "38a476dd2e78262060ebbc9123a74b3437ec3867",
+            "pr_url": "https://github.com/GTX537/CP6/pull/180",
+            "observed_at": "2026-10-12T07:56:07.675663+00:00",
+            "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+            "path": "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json"
+          }
+        }
+      ],
+      "ledger_state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "window_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-plm.md",
+          "sha256": "31ba143970e46abdd7f94cd708910d932b116f4c44f3a2ef31fd0e115bd94635",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-plm.json",
+          "sha256": "3e3e8780514a7f804aa1c211effb446086164e06150a258bcf4b17cc2d9be10f",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    },
+    {
+      "title": "Platform 0.10.3 正式登记实现",
+      "mode": "PRODUCER_REGISTRATION_ONLY",
+      "goal": "把已有正式版本提案落成可测试的API/schema/能力及正式writer代码，形成发布前可审核的准确源码；保持正式feed路线。",
+      "architecture": "在Platform独立分支修改正式Release登记；旧.0/.1/.2读取行为保留，唯一新writer为0.10.3。Main生产引用与正式信任仍不变。",
+      "write_paths": [
+        "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+        "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+        "contracts/release/v1/formal-package-publication.v1.schema.json",
+        "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+        ".github/workflows/p10-formal-packages.yml",
+        "eng/p10/Test-P10FormalPrerequisites.ps1",
+        "eng/p10/Pack-P10FormalPackages.ps1",
+        "eng/p10/New-P10FormalPackageSet.ps1",
+        "eng/p10/Publish-P10FormalPackageSet.ps1",
+        "eng/p10/New-P10FormalPublicationRecord.ps1",
+        "eng/p10/Test-P10FormalPackageSet.ps1",
+        "tests/CP6.Platform.ReleaseTests/FormalPackagePublicationTests.cs",
+        "tests/CP6.Platform.ReleaseTests/ReleaseSchemaParityTests.cs",
+        "tests/CP6.Platform.ReleaseTests/ReleaseSchemaAssetTests.cs",
+        "tests/CP6.Platform.ReleaseTests/P10FormalWorkflowContractTests.cs",
+        "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
+        "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityTrustTests.cs",
+        "docs/P10-RELEASE-GOVERNANCE.md",
+        "docs/development/evidence/WP02-02/formal-registration/",
+        "tests/CP6.Platform.ReleaseTests/ReleaseSchemaTestData.cs",
+        "tests/CP6.Platform.ReleaseTests/P10FormalRegistrationTests.cs",
+        "eng/wp02-02/formal-registration/"
+      ],
+      "resources": [
+        "Platform:package-trust",
+        "Platform:formal-version-registration",
+        "Platform:release-schema-and-writer"
+      ],
+      "readonly": [
+        "contracts/release/capabilities/v1/consumer-lock.v1.schema.json",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        "NuGet.config",
+        "src/*/*.csproj",
+        "tools/CP6.Platform.ReleaseTool/Program.cs",
+        "tools/CP6.Platform.ReleaseTool/FormalPackageVerifier.cs",
+        "eng/p10/trust/",
+        ".github/workflows/p10-rfc3161-preflight.yml",
+        "tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs",
+        ".github/workflows/p10-formal-packages-recovery.yml",
+        ".github/workflows/p10-formal-signer-revalidation.yml",
+        "docs/evidence/c01/0.10.2/",
+        "Main production projects/locks/Program/EF models/migrations",
+        "Main roadmap and four project state files (coordinator only)",
+        "VERSION",
+        "CHANGELOG.md",
+        "其他任务的已接受证据"
+      ],
+      "checks": [
+        "读取本执行包与Main的FORMAL-VERSION-PROPOSAL.md、SOURCE-ADOPTION-CANDIDATE.md、DevOps/P10/PLT-RELEASE规范。开工时重核七包全部分页槽位与当前授权主体；最新协调观测均未列0.10.3，但不是预留。403/404/网络错误为UNKNOWN，不能当作未占用；若已占用立即提交事实，不擅自改下一版。",
+        "按19项明确文件清单实施：formal API及source/packed schema准确扩读.0/.1/.2/.3，拒绝混版、未知.4/latest/metadata和错误source/feed/hash；writer仅.3。consumer-lock schema、运行默认版本/依赖/项目、旧publication、信任policy/cert与工具密码学验证入口保持原字节。3个可选测试/私有工具路径已允许，仅按实际需要新增；VERSION和CHANGELOG本轮只读，避免把准备登记写成已发布。",
+        "新formal能力只增加已证实ctx-binding-v1/1.0.0、ctx-v1、Http/Message/Background。旧三版仍能力空；未测consumer行保持Unknown；TaskLocal不转正式信任。不要据包内代码存在宣称S01-09/Transport/OBS/SLO正式资格或Main采用完成。",
+        "正式workflow/脚本只作准确版本登记，保留workflow_dispatch、expected_commit=event main=checkout、受保护环境、固定actions、最小权限、one-build、七包author签名/RFC3161/Current、Windows/Linux独立验签、immutable consumed marker、未知发布结果查回和BytePreserving feed readback。不得执行正式writer、读取本机私钥、改触发器/保护/证书或运行Actions。",
+        "本地执行受影响Release/Capabilities/API/source-schema/实际packed-schema正反测试和一次必要Architecture门。用唯一TaskLocal prerelease验证包内schema原字节，禁止生成被称为正式的稳定签名包。保留原版本回归、真实失败、源码/依赖/TRX和打包身份；未执行的Current在线验证不能写PASS。",
+        "比较旧兼容输入Platform b28db763f70ab6f164cb7c87d6ce49a6d97267f1与本轮当前/最终producer：Contracts、Messaging及EF已变，旧31断言不能整体继承。给出逐输入复用与重验矩阵。允许在本任务私有eng目录复制并固定既有诊断runner作为验证工具，在新owner临时快照中按准确新producer复核受影响的三入口build/私有宿主路径；只使用固定Git对象、原NuGet信任及独立cache，不改Main文件/真实锁/Program。若无法完成则明确等待后继验证，不把登记通过等同消费兼容。",
+        "收尾交付DELIVERY.md、源码变动/精确七包计划/本地结果、实际工作流hash、未发布声明及正式执行授权清单。最终producer SHA只能在COORD审查合入并核远端main后冻结；当前空值不得伪装已冻结。正式执行请求应明确.3、最终SHA、受保护workflow一次运行、预计20–50 runner分钟/65分钟硬上限和签名/七包写入范围；实际账单届时核查，不含额外重试/恢复/RFC3161预检/部署。"
+      ],
+      "commands": [
+        "C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj -c Release --logger trx",
+        "C:/Users/tt/.dotnet/dotnet.exe test tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj -c Release --logger trx",
+        "git -c core.longpaths=true diff --check"
+      ],
+      "boundary": "这是WP02-02的跨仓生产者登记子窗口；不重开或再次计数已DONE的WP02-27。主任务仍属于Main且BLOCKED/NOT_CHECKED，登记窗口在Platform独占CONFIRMED。正式包信任、Main消费、17PGT仍未满足；不授权Actions、正式签名/发包、生产ProjectReference、迁库或部署。",
+      "id": "WP02-02",
+      "lane": "B",
+      "previous_task": "WP02-02",
+      "repository": "Platform",
+      "owning_task_repository": "Main",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-02-formal-registration-20261015",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-02-formal-registration-20261015",
+      "baseline": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-02",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/",
+      "dependencies": [
+        {
+          "task": "S02-00",
+          "delivery": {
+            "source_sha": "9e2f1d4f1ed7048c125d350e31a4067745ae3233",
+            "remote_main_sha": "b584563e5ebf323c840866e9c242a710f8c8d6ec",
+            "pr_url": "https://github.com/GTX537/CP6/pull/178",
+            "observed_at": "2026-10-12T07:31:41.369832+00:00",
+            "scope": "Remote main contains reviewed integration and original candidate; complete merged tree equals checked tree. Documentation validation reused; no business execution.",
+            "path": "docs/development/evidence/S02-00/coordination/remote-main.json"
+          }
+        },
+        {
+          "task": "WP02-01",
+          "delivery": {
+            "source_sha": "d5ab56de99a3c9a3db0b58d7ae6e2540d05c72c6",
+            "remote_main_sha": "9259a45d39bae7e98ca804a74778a588c1ad4619",
+            "pr_url": "https://github.com/GTX537/CP6.Platform/pull/59",
+            "observed_at": "2026-10-13T07:39:05.879535+00:00",
+            "repository": "GTX537/CP6.Platform",
+            "path": "docs/development/evidence/wave4-integration-20261013/WP02-01/remote-main.json",
+            "scope": "Normal protected merge; remote ancestry and each candidate blob matched. Bounded foundation task only, not business acceptance."
+          }
+        }
+      ],
+      "ledger_state": "BLOCKED",
+      "entry_gate": "NOT_CHECKED",
+      "window_gate": "CONFIRMED",
+      "worker_start_received": false,
+      "admission_reports": [
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-package.md",
+          "sha256": "83ac67cfdb9f6d93da5628f9f8cf189589512c7da08b65bfaba6da84302380fe",
+          "representation": "RAW_COPIED_BYTES"
+        },
+        {
+          "path": "docs/development/evidence/wave8-dispatch-20261015/admission-package.json",
+          "sha256": "aeee4d7475b11719b2e7e3a9028f53600c90fd8c62c9b951c3cb171a8ffcd591",
+          "representation": "RAW_COPIED_BYTES"
+        }
+      ]
+    }
+  ],
+  "coordinator_owner": "COORD",
+  "shared_ledger_editor": "COORD_ONLY_AT_DELIVERY",
+  "worker_acknowledgements": [],
+  "not_assigned": [
+    {
+      "lane": "C",
+      "previous_task": "WP02-12",
+      "reason": "Completed window remains closed; actual Main/CRM host and tenant adoption need trusted producer identity; no replacement assignment."
+    },
+    {
+      "lane": "D",
+      "previous_task": "WP02-26",
+      "reason": "Completed window remains closed; no independent eligible full implementation beyond current adoption blockers."
+    }
+  ],
+  "formal_adoption_authorized": false,
+  "actions_authorized": false,
+  "formal_publication_authorized": false,
+  "business_result": "NOT_RUN"
+}
