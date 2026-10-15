@@ -158657,6 +158657,11 @@
       "date": "2026-10-15",
       "change": "Wave8 assigns two bounded implementation windows: WP01-01 real ledger adapter plus unsigned adoption candidate; WP02-02 Platform0.10.3 formal-registration code only. Full task PLANNED/BLOCKED and NOT_CHECKED remain;24/375 DONE,0/125 business,247 NOT_RUN unchanged. C/D not assigned; WP02-28 awaits trusted producer.",
       "evidence": "docs/development/dispatch/20261015-wave8/README.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "Wave8 bounded implementations integrated: WP01-01 ledger adapter via PR217; WP02-02 Platform0.10.3 registration after Pkcs fix and two precise test corrections. Full tasks remain PLANNED/BLOCKED and NOT_CHECKED;24/375 DONE,0/125 business,247 NOT_RUN,41 REFERENCE_ONLY unchanged. Final producer source frozen; no formal adoption, publication or next-wave dispatch.",
+      "evidence": "docs/development/evidence/wave8-integration-20261015/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158701,7 +158706,7 @@
       "card_anchor": "wp01-01",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "A / WP01-01 正式台账门实施",
+        "chat_label": "A / WP01-01 第八轮已集成",
         "repository": "Main",
         "owning_task_repository": "Main",
         "branch": "codex/wp01-01-adoption-gate-20261015",
@@ -158710,11 +158715,11 @@
         "baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
         "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
         "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
-        "phase": "BOUNDED_IMPLEMENTATION",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "LEDGER_GATE_IMPLEMENTATION_ONLY",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": true,
-        "worker_ack_at": null,
+        "worker_ack_at": "2026-10-15T05:28:06.928146+00:00",
         "allowed_write_paths": [
           "docs/development/evidence/WP01-01/adoption-v1.2/",
           "docs/development/tools/acceptance_basis.py",
@@ -158730,7 +158735,10 @@
         ],
         "handoff_branch": "codex/dev-handoff-wp01-01",
         "formal_adoption_authorized": false,
-        "formal_publication_authorized": false
+        "formal_publication_authorized": false,
+        "execution_baseline_sha": "b3eb755bc43e370f697480a6ea41474c3d978488",
+        "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
+        "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158858,7 +158866,28 @@
           "formal_adoption": false,
           "full_task_completed": false
         }
-      ]
+      ],
+      "bounded_implementation_delivery": {
+        "status": "MERGED",
+        "scope": "LEDGER_GATE_IMPLEMENTATION_ONLY",
+        "source_candidate_sha": "fd3c879ae21429ab0da669aa06814593a600ce54",
+        "integrated_source_sha": "fd3c879ae21429ab0da669aa06814593a600ce54",
+        "remote_main_sha": "4819b05b6e532f6eb6875134393d4fa51f732476",
+        "repository": "Main",
+        "pull_request": "https://github.com/GTX537/CP6/pull/217",
+        "remote_verified_at": "2026-10-15T07:22:57.844606+00:00",
+        "handoff_delivery": {
+          "commit": "a6de20194cdbee52ecb090d83b7292b867762b0f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T062740Z-wave8-delivery/MESSAGE.md"
+        },
+        "evidence": "docs/development/evidence/wave8-integration-20261015/README.md",
+        "full_task_complete": false,
+        "formal_adoption": false,
+        "formal_publication": false,
+        "business_acceptance": "NOT_RUN",
+        "manifest_sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+        "nonblocking_issue": "https://github.com/GTX537/CP6/issues/216"
+      }
     },
     {
       "id": "WP01-02",
@@ -159995,7 +160024,7 @@
       "card_anchor": "wp02-02",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "B / WP02-02 Platform正式登记",
+        "chat_label": "B / WP02-02 第八轮已集成",
         "repository": "Platform",
         "owning_task_repository": "Main",
         "branch": "codex/wp02-02-formal-registration-20261015",
@@ -160004,11 +160033,11 @@
         "baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
         "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
         "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
-        "phase": "BOUNDED_IMPLEMENTATION",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "PRODUCER_REGISTRATION_ONLY",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": true,
-        "worker_ack_at": null,
+        "worker_ack_at": "2026-10-15T05:29:51.0199347Z",
         "allowed_write_paths": [
           "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
           "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
@@ -160040,10 +160069,13 @@
         ],
         "handoff_branch": "codex/dev-handoff-wp02-02",
         "formal_adoption_authorized": false,
-        "formal_publication_authorized": false
+        "formal_publication_authorized": false,
+        "execution_baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+        "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
+        "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
       },
       "blockers": [
-        "第七轮固定 Main/Platform 源码三入口构建和私有宿主指定路径诊断已审查归档，可复现 SOURCE-ADOPTION-CANDIDATE 已具备；它不是获准生产采用例外。Main仍消费正式[0.10.2]，新能力尚无兼容且受信任的正式包；正式包路线/源码例外及后继真实Host/Owner/PostgreSQL采用须另行准入。当前未发包、未改变信任或生产引用，原17PGT仍NOT_RUN，WP02-28未开放。详见 docs/development/evidence/WP02-02/consumption-compatibility/SOURCE-ADOPTION-CANDIDATE.md。"
+        "Platform 0.10.3 登记源码已合并并冻结 producer 1277da5e0a20c6d96f0a95d0e9b4f20e0008332a；Pkcs 与两条旧断言的源码交付阻塞已解除。正式七包尚未签名/发布/Current验证，Main仍采用[0.10.2]；后续正式执行须另行授权，取得可信制品后再开展实际Main/Owner/PostgreSQL采用与原17PGT。旧私有宿主诊断不代替最终producer消费验收，WP02-28未开放。见 docs/development/evidence/wave8-integration-20261015/README.md。"
       ],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -160160,7 +160192,30 @@
           "formal_adoption": false,
           "full_task_completed": false
         }
-      ]
+      ],
+      "bounded_implementation_delivery": {
+        "status": "MERGED",
+        "scope": "PRODUCER_REGISTRATION_ONLY",
+        "source_candidate_sha": "fcb43d3077f2b4c503929307410b1e3f2831712e",
+        "integrated_source_sha": "f13334588bb25cfcf407eb8f21d5013fbf254066",
+        "remote_main_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+        "repository": "Platform",
+        "pull_request": "https://github.com/GTX537/CP6.Platform/pull/77",
+        "remote_verified_at": "2026-10-15T07:39:52.187525+00:00",
+        "handoff_delivery": {
+          "commit": "afc1d101ef25f17290dffc7ba6e70462c8f3788d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261015T061652Z-wave8-delivery-blocked-candidate/MESSAGE.md"
+        },
+        "evidence": "docs/development/evidence/wave8-integration-20261015/README.md",
+        "full_task_complete": false,
+        "formal_adoption": false,
+        "formal_publication": false,
+        "business_acceptance": "NOT_RUN",
+        "final_producer_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+        "producer_version": "0.10.3",
+        "published_package_identity": null,
+        "dependency_fix": "https://github.com/GTX537/CP6.Platform/pull/76"
+      }
     },
     {
       "id": "WP02-03",
