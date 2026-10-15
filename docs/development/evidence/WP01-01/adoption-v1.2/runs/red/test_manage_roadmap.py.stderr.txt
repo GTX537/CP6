@@ -1,0 +1,93 @@
+test_activity_view_updates_with_package_status (test_manage_roadmap.FormalAcceptanceRouteTests.test_activity_view_updates_with_package_status) ... ok
+test_adoption_inventory_alone_cannot_close_target (test_manage_roadmap.FormalAcceptanceRouteTests.test_adoption_inventory_alone_cannot_close_target) ... FAIL
+test_blocked_needs_reason (test_manage_roadmap.FormalAcceptanceRouteTests.test_blocked_needs_reason) ... ok
+test_cannot_drop_required_revision_assets (test_manage_roadmap.FormalAcceptanceRouteTests.test_cannot_drop_required_revision_assets) ... ok
+test_complete_baseline_is_valid (test_manage_roadmap.FormalAcceptanceRouteTests.test_complete_baseline_is_valid) ... ok
+test_count_each_runtime_case_once (test_manage_roadmap.FormalAcceptanceRouteTests.test_count_each_runtime_case_once) ... ok
+test_done_cannot_skip_original_module_acceptance (test_manage_roadmap.FormalAcceptanceRouteTests.test_done_cannot_skip_original_module_acceptance) ... ok
+test_duplicate_package_ownership_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_duplicate_package_ownership_rejected) ... ok
+test_duplicate_target_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_duplicate_target_rejected) ... ok
+test_empty_task_inventory_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_empty_task_inventory_rejected) ... ok
+test_evidenced_progress_can_advance_in_memory (test_manage_roadmap.FormalAcceptanceRouteTests.test_evidenced_progress_can_advance_in_memory) ... ok
+test_evidenced_task_delivery_does_not_close_targets_or_cases (test_manage_roadmap.FormalAcceptanceRouteTests.test_evidenced_task_delivery_does_not_close_targets_or_cases) ... ok
+test_iter_rel_route_preserves_all_noninventory_and_task_gates (test_manage_roadmap.FormalAcceptanceRouteTests.test_iter_rel_route_preserves_all_noninventory_and_task_gates) ... FAIL
+test_missing_consumer_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_missing_consumer_rejected) ... ok
+test_missing_target_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_missing_target_rejected) ... ok
+test_other_123_keep_original_gate (test_manage_roadmap.FormalAcceptanceRouteTests.test_other_123_keep_original_gate) ... FAIL
+test_overview_summarizes_long_dependencies_without_truncating_task_cards (test_manage_roadmap.FormalAcceptanceRouteTests.test_overview_summarizes_long_dependencies_without_truncating_task_cards) ... ok
+test_render_has_distinct_business_and_static_counts (test_manage_roadmap.FormalAcceptanceRouteTests.test_render_has_distinct_business_and_static_counts) ... ok
+test_runtime_pass_without_execution_evidence_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_runtime_pass_without_execution_evidence_rejected) ... ok
+test_static_pass_cannot_inflate_runtime (test_manage_roadmap.FormalAcceptanceRouteTests.test_static_pass_cannot_inflate_runtime) ... ok
+test_task_blocked_and_missing_plan_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_task_blocked_and_missing_plan_rejected) ... ok
+test_task_cannot_start_before_dependencies_done (test_manage_roadmap.FormalAcceptanceRouteTests.test_task_cannot_start_before_dependencies_done) ... ok
+test_task_done_requires_validation_and_remote_receipt (test_manage_roadmap.FormalAcceptanceRouteTests.test_task_done_requires_validation_and_remote_receipt) ... ok
+test_task_plan_cannot_escape_repository (test_manage_roadmap.FormalAcceptanceRouteTests.test_task_plan_cannot_escape_repository) ... ok
+test_tasks_need_unique_ids_and_valid_targets (test_manage_roadmap.FormalAcceptanceRouteTests.test_tasks_need_unique_ids_and_valid_targets) ... ok
+test_unadopted_candidate_leaves_all_original_states_unchanged (test_manage_roadmap.FormalAcceptanceRouteTests.test_unadopted_candidate_leaves_all_original_states_unchanged) ... FAIL
+test_unassessed_existing_code_not_counted_as_delivered (test_manage_roadmap.FormalAcceptanceRouteTests.test_unassessed_existing_code_not_counted_as_delivered) ... ok
+test_unknown_task_dependency_and_cycle_rejected (test_manage_roadmap.FormalAcceptanceRouteTests.test_unknown_task_dependency_and_cycle_rejected) ... ok
+test_wp01_123_originals_plus_two_new_bases (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp01_123_originals_plus_two_new_bases) ... FAIL
+test_wp01_cannot_close_with_empty_or_duplicate_inventory (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp01_cannot_close_with_empty_or_duplicate_inventory) ... ok
+test_wp01_cannot_close_without_original_inventories (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp01_cannot_close_without_original_inventories) ... ok
+test_wp01_inventory_completion_does_not_require_runtime_pass (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp01_inventory_completion_does_not_require_runtime_pass) ... ok
+test_wp_tasks_cannot_disable_definition_and_dispatch_checks (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp_tasks_cannot_disable_definition_and_dispatch_checks) ... ok
+
+======================================================================
+FAIL: test_adoption_inventory_alone_cannot_close_target (test_manage_roadmap.FormalAcceptanceRouteTests.test_adoption_inventory_alone_cannot_close_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 558, in test_adoption_inventory_alone_cannot_close_target
+    errors = self.routed_validate(self.new_result())
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 526, in routed_validate
+    self.assertTrue(hasattr(roadmap, 'acceptance_basis'), 'manager must wire the independent adapter')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : manager must wire the independent adapter
+
+======================================================================
+FAIL: test_iter_rel_route_preserves_all_noninventory_and_task_gates (test_manage_roadmap.FormalAcceptanceRouteTests.test_iter_rel_route_preserves_all_noninventory_and_task_gates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 551, in test_iter_rel_route_preserves_all_noninventory_and_task_gates
+    def test_iter_rel_route_preserves_all_noninventory_and_task_gates(self):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 526, in routed_validate
+    return {'basis_adoption_valid': True, 'inventory_coverage_valid': True,
+AssertionError: False is not true : manager must wire the independent adapter
+
+======================================================================
+FAIL: test_other_123_keep_original_gate (test_manage_roadmap.FormalAcceptanceRouteTests.test_other_123_keep_original_gate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 544, in test_other_123_keep_original_gate
+    for target in self.data['targets']:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 526, in routed_validate
+    return {'basis_adoption_valid': True, 'inventory_coverage_valid': True,
+AssertionError: False is not true : manager must wire the independent adapter
+
+======================================================================
+FAIL: test_unadopted_candidate_leaves_all_original_states_unchanged (test_manage_roadmap.FormalAcceptanceRouteTests.test_unadopted_candidate_leaves_all_original_states_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 565, in test_unadopted_candidate_leaves_all_original_states_unchanged
+    def test_unadopted_candidate_leaves_all_original_states_unchanged(self):
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 526, in routed_validate
+    return {'basis_adoption_valid': True, 'inventory_coverage_valid': True,
+AssertionError: False is not true : manager must wire the independent adapter
+
+======================================================================
+FAIL: test_wp01_123_originals_plus_two_new_bases (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp01_123_originals_plus_two_new_bases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 536, in test_wp01_123_originals_plus_two_new_bases
+    self.prepare_assessed_wp01()
+                     ~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 526, in routed_validate
+    return {'basis_adoption_valid': True, 'inventory_coverage_valid': True,
+AssertionError: False is not true : manager must wire the independent adapter
+
+----------------------------------------------------------------------
+Ran 33 tests in 630.599s
+
+FAILED (failures=5)

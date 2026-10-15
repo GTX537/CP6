@@ -1,0 +1,10 @@
+test_adoption_inventory_alone_cannot_close_target (test_manage_roadmap.FormalAcceptanceRouteTests.test_adoption_inventory_alone_cannot_close_target) ... ok
+test_iter_rel_route_preserves_all_noninventory_and_task_gates (test_manage_roadmap.FormalAcceptanceRouteTests.test_iter_rel_route_preserves_all_noninventory_and_task_gates) ... ok
+test_other_123_keep_original_gate (test_manage_roadmap.FormalAcceptanceRouteTests.test_other_123_keep_original_gate) ... ok
+test_unadopted_candidate_leaves_all_original_states_unchanged (test_manage_roadmap.FormalAcceptanceRouteTests.test_unadopted_candidate_leaves_all_original_states_unchanged) ... ok
+test_wp01_123_originals_plus_two_new_bases (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp01_123_originals_plus_two_new_bases) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 257.938s
+
+OK

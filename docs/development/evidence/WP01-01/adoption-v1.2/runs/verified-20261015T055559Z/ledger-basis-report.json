@@ -1,0 +1,12 @@
+{
+  "basis_adoption_valid": false,
+  "inventory_coverage_valid": false,
+  "target_runtime_valid": {
+    "PLM-ITER-01": false,
+    "PLM-REL-01": false
+  },
+  "errors": [
+    "NO_BASIS_SELECTED"
+  ],
+  "inventory_route": "original inventories; new bases unverified"
+}

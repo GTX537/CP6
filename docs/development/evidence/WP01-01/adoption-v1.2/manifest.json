@@ -1,0 +1,64 @@
+{
+  "schema": "CP6-ACCEPTANCE-MANIFEST/1",
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0",
+  "identity": "WP01-01-ACCEPTANCE-BASIS-1.2.0",
+  "artifacts": [
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/basis.json",
+      "sha256": "85ed405919d0827a0a0b2ab358e659e33734d63acc3eb4a24eea44bbfcce3436",
+      "bytes": 1256614,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/adoption.candidate.json",
+      "sha256": "4aecc2f2e8e6272b7689074064c2c72afe14ccffb4a6703bbc878e8a492fe39e",
+      "bytes": 1836,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/technical-decisions.json",
+      "sha256": "21adf92cb7fc644bfd001a35c132f73480163e4667cbddd355777cc27ef007a4",
+      "bytes": 3899,
+      "representation": "RAW_FILE_BYTES"
+    }
+  ],
+  "basis": {
+    "path": "docs/development/evidence/WP01-01/adoption-v1.2/basis.json",
+    "sha256": "85ed405919d0827a0a0b2ab358e659e33734d63acc3eb4a24eea44bbfcce3436",
+    "bytes": 1256614,
+    "representation": "RAW_FILE_BYTES"
+  },
+  "predecessors": [
+    {
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+      "bytes": 1161,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+      "bytes": 1091,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+      "sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+      "bytes": 1198041,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/basis-delta.json",
+      "sha256": "41d06ff2e0e3b934977f72c927a2e943a7c76f2202a5aad5acafbedddaa1fb5c",
+      "bytes": 35416,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+      "bytes": 42112,
+      "representation": "RAW_FILE_BYTES"
+    }
+  ],
+  "excluded": "manifest itself; run/review/publication/intake/operational documentation. These are not adoption payload."
+}

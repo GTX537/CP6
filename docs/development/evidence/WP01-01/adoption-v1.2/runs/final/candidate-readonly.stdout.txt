@@ -1,0 +1,20 @@
+{
+  "basis_adoption_valid": false,
+  "inventory_coverage_valid": true,
+  "target_runtime_valid": {
+    "PLM-ITER-01": false,
+    "PLM-REL-01": false
+  },
+  "errors": [
+    "INDEPENDENT_VERIFIER_UNCONFIGURED"
+  ],
+  "scope": "REAL_CANDIDATE_STRUCTURAL_SOURCE_CHECK_ONLY",
+  "business_tests_executed": false,
+  "manifest": {
+    "path": "docs/development/evidence/WP01-01/adoption-v1.2/manifest.json",
+    "sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+    "bytes": 2570,
+    "representation": "RAW_FILE_BYTES"
+  },
+  "archive_root": "D:\\CP6"
+}

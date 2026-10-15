@@ -1,0 +1,15 @@
+test_known_missing_originals_cannot_be_fabricated_to_bypass_basis (test_manage_roadmap.FormalAcceptanceRouteTests.test_known_missing_originals_cannot_be_fabricated_to_bypass_basis) ... FAIL
+
+======================================================================
+FAIL: test_known_missing_originals_cannot_be_fabricated_to_bypass_basis (test_manage_roadmap.FormalAcceptanceRouteTests.test_known_missing_originals_cannot_be_fabricated_to_bypass_basis)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 606, in test_known_missing_originals_cannot_be_fabricated_to_bypass_basis
+    self.assertEqual(sum('known missing original inventory cannot be relabelled' in e for e in errors), 2)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2
+
+----------------------------------------------------------------------
+Ran 1 test in 10.249s
+
+FAILED (failures=1)

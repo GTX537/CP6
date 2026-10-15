@@ -1,0 +1,27 @@
+test_actual_openssh_signature_and_tampered_registry (test_acceptance_basis.AcceptanceBasisTests.test_actual_openssh_signature_and_tampered_registry) ... ok
+test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused (test_acceptance_basis.AcceptanceBasisTests.test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused) ... ok
+test_candidate_preserves_full_real_rows_and_gaps (test_acceptance_basis.AcceptanceBasisTests.test_candidate_preserves_full_real_rows_and_gaps) ... ok
+test_configured_production_adapter_complete_synthetic_path (test_acceptance_basis.AcceptanceBasisTests.test_configured_production_adapter_complete_synthetic_path)
+Real policy loader/signatures/algorithms; transport and business are fixtures. ... ok
+test_exact_rows_missing_extra_duplicate_structure_order_and_types (test_acceptance_basis.AcceptanceBasisTests.test_exact_rows_missing_extra_duplicate_structure_order_and_types) ... ok
+test_malformed_objects_fail_closed (test_acceptance_basis.AcceptanceBasisTests.test_malformed_objects_fail_closed) ... ok
+test_manifest_source_bytes_and_path_escape (test_acceptance_basis.AcceptanceBasisTests.test_manifest_source_bytes_and_path_escape) ... ok
+test_no_independent_verifier_rejects_self_authority (test_acceptance_basis.AcceptanceBasisTests.test_no_independent_verifier_rejects_self_authority) ... ok
+test_operable_isolated_runtime_algorithm (test_acceptance_basis.AcceptanceBasisTests.test_operable_isolated_runtime_algorithm) ... ok
+test_operable_trusted_basis_inventory_without_runtime (test_acceptance_basis.AcceptanceBasisTests.test_operable_trusted_basis_inventory_without_runtime) ... ok
+test_package_bytes_and_real_configuration_required (test_acceptance_basis.AcceptanceBasisTests.test_package_bytes_and_real_configuration_required) ... ok
+test_planning_graph_cannot_be_privately_rewritten (test_acceptance_basis.AcceptanceBasisTests.test_planning_graph_cannot_be_privately_rewritten) ... ok
+test_policy_in_git_worktree_is_rejected (test_acceptance_basis.AcceptanceBasisTests.test_policy_in_git_worktree_is_rejected) ... ok
+test_production_adapter_checks_adoption_delivery_and_immutable_identity (test_acceptance_basis.AcceptanceBasisTests.test_production_adapter_checks_adoption_delivery_and_immutable_identity) ... ok
+test_production_registry_rejects_expired_revoked_wrong_scope_identity (test_acceptance_basis.AcceptanceBasisTests.test_production_registry_rejects_expired_revoked_wrong_scope_identity) ... ok
+test_production_remote_ancestry_queries_exact_current_main (test_acceptance_basis.AcceptanceBasisTests.test_production_remote_ancestry_queries_exact_current_main) ... ok
+test_replacing_inherited_sources_cannot_redefine_contract (test_acceptance_basis.AcceptanceBasisTests.test_replacing_inherited_sources_cannot_redefine_contract) ... ok
+test_runtime_missing_edge_or_extra_obligation_rejected (test_acceptance_basis.AcceptanceBasisTests.test_runtime_missing_edge_or_extra_obligation_rejected) ... ok
+test_runtime_static_synthetic_not_run_missing_consumer_or_raw_log (test_acceptance_basis.AcceptanceBasisTests.test_runtime_static_synthetic_not_run_missing_consumer_or_raw_log) ... ok
+test_transport_failure_never_means_verified (test_acceptance_basis.AcceptanceBasisTests.test_transport_failure_never_means_verified) ... ok
+test_untrusted_authority_and_execution_and_unknown_remote (test_acceptance_basis.AcceptanceBasisTests.test_untrusted_authority_and_execution_and_unknown_remote) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 8.262s
+
+OK

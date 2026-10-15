@@ -1,0 +1,14 @@
+test_adoption_inventory_alone_cannot_close_target (test_manage_roadmap.FormalAcceptanceRouteTests.test_adoption_inventory_alone_cannot_close_target) ... ok
+test_cli_report_and_gate_use_one_independent_observation (test_manage_roadmap.FormalAcceptanceRouteTests.test_cli_report_and_gate_use_one_independent_observation) ... ok
+test_cli_report_does_not_label_coverage_as_adoption (test_manage_roadmap.FormalAcceptanceRouteTests.test_cli_report_does_not_label_coverage_as_adoption) ... ok
+test_iter_rel_route_preserves_all_noninventory_and_task_gates (test_manage_roadmap.FormalAcceptanceRouteTests.test_iter_rel_route_preserves_all_noninventory_and_task_gates) ... ok
+test_known_missing_originals_cannot_be_fabricated_to_bypass_basis (test_manage_roadmap.FormalAcceptanceRouteTests.test_known_missing_originals_cannot_be_fabricated_to_bypass_basis) ... ok
+test_other_123_keep_original_gate (test_manage_roadmap.FormalAcceptanceRouteTests.test_other_123_keep_original_gate) ... ok
+test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness (test_manage_roadmap.FormalAcceptanceRouteTests.test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness) ... ok
+test_unadopted_candidate_leaves_all_original_states_unchanged (test_manage_roadmap.FormalAcceptanceRouteTests.test_unadopted_candidate_leaves_all_original_states_unchanged) ... ok
+test_wp01_123_originals_plus_two_new_bases (test_manage_roadmap.FormalAcceptanceRouteTests.test_wp01_123_originals_plus_two_new_bases) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 90.139s
+
+OK

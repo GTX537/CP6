@@ -1,0 +1,31 @@
+{
+  "task": "WP01-01",
+  "type": "START_BOUNDED_IMPLEMENTATION",
+  "lane": "A",
+  "to": "COORD",
+  "observed_at": "2026-10-15T05:28:06.928146+00:00",
+  "repository": "GTX537/CP6",
+  "branch": "codex/wp01-01-adoption-gate-20261015",
+  "worktree": "D:\\CP6-worktrees\\wp01-01-adoption-gate-20261015",
+  "main_sha": "b3eb755bc43e370f697480a6ea41474c3d978488",
+  "handoff_assignment_sha": "6c44c1f8ffba124b381366adefe41bf86ea924e3",
+  "handoff_assignment_path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/replies/20261015T052239Z-assigned-wave8/MESSAGE.md",
+  "task_state": "PLANNED",
+  "entry_gate": "NOT_CHECKED",
+  "window": "LEDGER_GATE_IMPLEMENTATION_ONLY",
+  "window_gate": "CONFIRMED",
+  "actual_adoption": false,
+  "predecessors_contained_in_confirmed_main": [
+    "876a5344fc1e48ba092f896f22dd1a1f160ac191",
+    "731f96e260845f5f21e30ef4ab32471759ac8ff6"
+  ],
+  "candidate_manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+  "allowed_write_paths": [
+    "docs/development/evidence/WP01-01/adoption-v1.2/",
+    "docs/development/tools/acceptance_basis.py",
+    "docs/development/tools/test_acceptance_basis.py",
+    "docs/development/tools/manage_roadmap.py",
+    "docs/development/tools/test_manage_roadmap.py"
+  ],
+  "actions_runs_at_intake": []
+}

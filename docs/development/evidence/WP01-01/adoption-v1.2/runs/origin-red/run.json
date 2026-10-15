@@ -1,0 +1,22 @@
+{
+  "started_at": "2026-10-15T05:42:08.446261+00:00",
+  "sources": {
+    "acceptance_basis.py": "fae732c0266edffb65f53e9e03153a1681d9170dd0a092cd626fba0e5cee7abe",
+    "test_acceptance_basis.py": "e359729568d4034ff8aa4bd722bba7f21824541d9c7a4f0a98112fc1f0d18704"
+  },
+  "command": [
+    "C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe",
+    "-B",
+    "-Xutf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "docs/development/tools",
+    "-p",
+    "test_acceptance_basis.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "ended_at": "2026-10-15T05:42:37.265152+00:00"
+}

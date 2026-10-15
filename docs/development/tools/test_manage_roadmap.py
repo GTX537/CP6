@@ -115,8 +115,13 @@ class ProgressIntegrityTests(unittest.TestCase):
     def test_wp01_inventory_completion_does_not_require_runtime_pass(self):
         self.prepare_assessed_wp01()
         for target in self.data["targets"]:
+            if target['id'] in {'PLM-ITER-01', 'PLM-REL-01'}:
+                continue
             target["original_acceptance_inventory"].update(state="COMPLETE", cases=[{"id": "fixture-ac", "state": "NOT_RUN"}])
-        self.assertEqual(roadmap.validate(self.data, ROOT, check_pins=False), [])
+        verdict = {'basis_adoption_valid': True, 'inventory_coverage_valid': True,
+                   'target_runtime_valid': {'PLM-ITER-01': False, 'PLM-REL-01': False}, 'errors': []}
+        with mock.patch.object(roadmap.acceptance_basis, 'evaluate', return_value=verdict):
+            self.assertEqual(roadmap.validate(self.data, ROOT, check_pins=False), [])
         self.assertEqual(roadmap.metrics(self.data)["runtime_states"], {"NOT_RUN": 247})
 
     def test_count_each_runtime_case_once(self):
@@ -479,7 +484,7 @@ class TaskDefinitionTests(unittest.TestCase):
         args = ["manage_roadmap.py", "--root", str(self.root)] + (["--write"] if write else [])
         output = io.StringIO()
         with mock.patch("sys.argv", args), contextlib.redirect_stdout(output), \
-             mock.patch.object(roadmap, "validate", side_effect=lambda data, root: roadmap.validate_tasks(data, root, self.targets)), \
+             mock.patch.object(roadmap, "validate", side_effect=lambda data, root, **kwargs: roadmap.validate_tasks(data, root, self.targets)), \
              mock.patch.object(roadmap, "render", return_value={}):
             result = roadmap.main()
         return result, json.loads(output.getvalue())
@@ -513,6 +518,99 @@ class TaskDefinitionTests(unittest.TestCase):
         new = roadmap.render_cards(self.definitions, self.data)
         self.assertNotEqual(old["task-plans/WP02.md"], new["task-plans/WP02.md"])
         self.assertIn("Revocation prevents a late worker effect.", new["task-plans/WP02.md"])
+
+
+class FormalAcceptanceRouteTests(unittest.TestCase):
+    """Synthetic injected adapter verdicts isolate manager routing, never adoption."""
+
+    setUpClass = classmethod(ProgressIntegrityTests.setUpClass.__func__)
+    setUp = ProgressIntegrityTests.setUp
+    prepare_assessed_wp01 = ProgressIntegrityTests.prepare_assessed_wp01
+
+    def new_result(self, runtime=False):
+        return {'basis_adoption_valid': True, 'inventory_coverage_valid': True,
+                'target_runtime_valid': {'PLM-ITER-01': runtime, 'PLM-REL-01': runtime}, 'errors': []}
+
+    def routed_validate(self, result):
+        self.assertTrue(hasattr(roadmap, 'acceptance_basis'), 'manager must wire the independent adapter')
+        self.data['acceptance_basis'] = {'manifest': {'path': 'synthetic only'}}
+        with mock.patch.object(roadmap.acceptance_basis, 'evaluate', return_value=result):
+            return roadmap.validate(self.data, ROOT, check_pins=False)
+
+    def test_wp01_123_originals_plus_two_new_bases(self):
+        self.prepare_assessed_wp01()
+        for target in self.data['targets']:
+            if target['id'] not in {'PLM-ITER-01', 'PLM-REL-01'}:
+                target['original_acceptance_inventory'].update(state='COMPLETE', cases=[{'id': 'fixture', 'state': 'NOT_RUN'}])
+        self.assertEqual(self.routed_validate(self.new_result()), [])
+        self.assertEqual(roadmap.metrics(self.data)['original_inventories_complete'], 123)
+
+    def test_other_123_keep_original_gate(self):
+        for target in self.data['targets']:
+            if target['id'] in {'PLM-ITER-01', 'PLM-REL-01'}:
+                continue
+            target['delivery_state'] = 'DONE'
+        errors = self.routed_validate(self.new_result(True))
+        self.assertEqual(sum('DONE requires all original acceptance cases' in e for e in errors), 123)
+
+    def test_iter_rel_route_preserves_all_noninventory_and_task_gates(self):
+        for target in self.data['targets']:
+            if target['id'] in {'PLM-ITER-01', 'PLM-REL-01'}:
+                target['delivery_state'] = 'DONE'
+        errors = self.routed_validate(self.new_result(True))
+        self.assertFalse(any('DONE requires all original acceptance cases' in e for e in errors), errors)
+        for phrase in ['DONE with required revision cases', 'DONE lacks implementation', 'DONE lacks audited remote-main', 'target DONE with unfinished']:
+            self.assertTrue(any(phrase in e for e in errors), (phrase, errors))
+
+    def test_adoption_inventory_alone_cannot_close_target(self):
+        next(t for t in self.data['targets'] if t['id'] == 'PLM-ITER-01')['delivery_state'] = 'DONE'
+        errors = self.routed_validate(self.new_result())
+        self.assertTrue(any('acceptance basis runtime remains unverified' in e for e in errors), errors)
+
+    def test_unadopted_candidate_leaves_all_original_states_unchanged(self):
+        before = copy.deepcopy(self.data)
+        result = self.new_result()
+        result.update(basis_adoption_valid=False, inventory_coverage_valid=False)
+        self.assertEqual(self.routed_validate(result), [])
+        self.data.pop('acceptance_basis')
+        self.assertEqual(self.data, before)
+
+    def test_cli_report_does_not_label_coverage_as_adoption(self):
+        result = self.new_result()
+        result['basis_adoption_valid'] = False
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / 'basis-report.json'
+            args = ['manage_roadmap.py', '--root', str(ROOT), '--basis-report', str(output)]
+            with mock.patch('sys.argv', args), contextlib.redirect_stdout(io.StringIO()), \
+                 mock.patch.object(roadmap.acceptance_basis, 'evaluate', return_value=result), \
+                 mock.patch.object(roadmap, 'validate', return_value=['isolated CLI report fixture']):
+                roadmap.main()
+            self.assertIn('unverified', json.loads(output.read_text())['inventory_route'])
+
+    def test_cli_report_and_gate_use_one_independent_observation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / 'basis-report.json'
+            args = ['manage_roadmap.py', '--root', str(ROOT), '--basis-report', str(output)]
+            with mock.patch('sys.argv', args), contextlib.redirect_stdout(io.StringIO()), \
+                 mock.patch.object(roadmap.acceptance_basis, 'evaluate', return_value=self.new_result()) as evaluate, \
+                 mock.patch.object(roadmap, 'render', return_value={}), \
+                 mock.patch.object(roadmap, 'render_cards', return_value={}):
+                roadmap.main()
+            self.assertEqual(evaluate.call_count, 1)
+
+    def test_known_missing_originals_cannot_be_fabricated_to_bypass_basis(self):
+        for target in self.data['targets']:
+            if target['id'] in {'PLM-ITER-01', 'PLM-REL-01'}:
+                target['original_acceptance_inventory'].update(state='COMPLETE', cases=[{'id': 'invented', 'state': 'NOT_RUN'}])
+        errors = self.routed_validate(self.new_result())
+        self.assertEqual(sum('known missing original inventory cannot be relabelled' in e for e in errors), 2)
+
+    def test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness(self):
+        actual = copy.deepcopy(self.baseline)
+        inventories = [t['original_acceptance_inventory'] for t in actual['targets'] if t['id'] in {'PLM-ITER-01', 'PLM-REL-01'}]
+        self.assertEqual([len(i['cases']) for i in inventories], [99, 122])
+        self.assertTrue(all(i['state'] == 'NOT_INVENTORIED' for i in inventories))
+        self.assertEqual(roadmap.validate(actual, ROOT, check_pins=False), [])
 
 
 if __name__ == "__main__":

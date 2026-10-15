@@ -1,0 +1,2 @@
+# This append-only evidence package hashes exact bytes, including run snapshots.
+* -text whitespace=cr-at-eol

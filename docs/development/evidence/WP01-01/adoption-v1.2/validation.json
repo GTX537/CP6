@@ -1,0 +1,122 @@
+{
+  "scope": "LEDGER_GATE_IMPLEMENTATION_ONLY",
+  "entry_gate": "CONFIRMED",
+  "result": "PASS_LOCAL_IMPLEMENTATION_VALIDATION",
+  "recorded_at": "2026-10-15T06:11:25.172966+00:00",
+  "source_baseline": "b3eb755bc43e370f697480a6ea41474c3d978488",
+  "source_snapshots": {
+    "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/sources",
+    "representation": "RAW_FILE_BYTES",
+    "sha256": {
+      "acceptance_basis.py": "e90856d50787adc19b7bddb1d42030c3dff98e68b0824c2440e401d1ec71da1d",
+      "test_acceptance_basis.py": "fae4cc5b0d3e31f81c1da123a7b25006ca7617c04df0d37ae66079b17c506f84",
+      "manage_roadmap.py": "efe400e4d30a206c0f6f6f7b4ce6e3f797919c60194bad116bf8a246736f6ae7",
+      "test_manage_roadmap.py": "2123e45a54b3cae6c950bb583fef8327245b258becc3730cc90e3d7888f61a14"
+    }
+  },
+  "final_run": {
+    "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/run.json",
+    "sha256": "1709f4db56825016549430efdb97818aaa20e2acebb3a95b5373daec81d2944f"
+  },
+  "checks": {
+    "adapter_unittest": {
+      "executed": 22,
+      "passed": 22,
+      "source": "runs/verified-20261015T060818Z/adapter-tests.stderr.txt"
+    },
+    "manager_affected_unittest": {
+      "executed": 9,
+      "passed": 9,
+      "source": "runs/verified-20261015T060818Z/manager-tests.stderr.txt"
+    },
+    "manager_unaffected_reuse": {
+      "reused": 62,
+      "actually_executed_in_source_run": 70,
+      "source": "runs/verified-20261015T055559Z/manager-tests.stderr.txt",
+      "source_metadata": "runs/verified-20261015T055559Z/run.json",
+      "applicability": "Pre-existing manager checks/test inputs unchanged; latest identity-history adapter change and preserving legitimate recovered rows are covered by current22+9. No claim these62were rerun on finalsource."
+    },
+    "manager_readonly": {
+      "result": "PASS",
+      "scope": "ledger/source traceability, structural evidence requirements and generated view consistency only",
+      "business_tests_executed": false,
+      "metrics": {
+        "packages": 14,
+        "targets": 125,
+        "targets_assessed": 125,
+        "targets_delivered": 0,
+        "original_inventories_complete": 123,
+        "revision_runtime": 247,
+        "runtime_states": {
+          "NOT_RUN": 247
+        },
+        "historical_static": 41
+      },
+      "errors": []
+    },
+    "candidate_readonly": {
+      "basis_adoption_valid": false,
+      "inventory_coverage_valid": true,
+      "target_runtime_valid": {
+        "PLM-ITER-01": false,
+        "PLM-REL-01": false
+      },
+      "errors": [
+        "INDEPENDENT_VERIFIER_UNCONFIGURED"
+      ],
+      "scope": "REAL_CANDIDATE_STRUCTURAL_SOURCE_CHECK_ONLY",
+      "business_tests_executed": false,
+      "manifest": {
+        "path": "docs/development/evidence/WP01-01/adoption-v1.2/manifest.json",
+        "sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+        "bytes": 2570,
+        "representation": "RAW_FILE_BYTES"
+      },
+      "archive_root": "D:\\CP6"
+    },
+    "diff_check": {
+      "exit_code": 0,
+      "source": "runs/verified-20261015T060818Z/diff-check.stdout.txt"
+    }
+  },
+  "run_applicability": {
+    "runs/final": "INTERMEDIATE/SUPERSEDED:21adapter+68manager passed pre Owner/consumer and CLI/gap fixes; source snapshots preserve original tested bytes. Later commands occurred after source edits; no final validation claim.",
+    "runs/verified-20261015T055559Z": "INTERMEDIATE/PARTIALLY_REUSED:21adapter+70manager passed; real manager readonly FAILED on legitimate99/122recovered rows. Failure retained. Only unchanged62manager regression scopes reused; not a green delivery run.",
+    "runs/verified-20261015T060818Z": "FINAL_FOCUSED_GREEN:22adapter+9affectedmanager+realreadonly+candidate sources+diff check; final raw source snapshots match currentfiles."
+  },
+  "append_only_identity": "operator-fixed identity namespace + SHA256(identity UTF8) filename; exact observed authority-main path history has single creation; added-file/single-parent creation proof; exactcurrentbytes and mainancestry; alternatepath/edit/reassign/unknown reject",
+  "unchanged_inputs": {
+    "docs/development/roadmap.json": "eea9c4c08b6be2a53281cb875da2a97d1b705d6fcbd33015972ab82fc2476a1e",
+    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+    "docs/development/task-deliveries/WP05-01/adoption.json": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+    "docs/development/evidence/WP01-01/preparation/obligation-matrix.json": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "docs/development/evidence/WP01-01/decision-closure/manifest.json": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839"
+  },
+  "ledger": {
+    "tasks_done": 24,
+    "tasks_total": 375,
+    "business_targets_done": 0,
+    "business_targets_total": 125,
+    "runtime_not_run": 247,
+    "historical_reference_only": 41,
+    "original_inventory_complete": 123,
+    "original_missing_inventory_states": [
+      "NOT_INVENTORIED",
+      "NOT_INVENTORIED"
+    ],
+    "recovered_cases_preserved": [
+      99,
+      122
+    ],
+    "WP01-01_state": "PLANNED",
+    "WP01-01_entry_gate": "NOT_CHECKED"
+  },
+  "actual_adoption": false,
+  "actual_business_tests_executed": false,
+  "trust_policy_configured": false,
+  "actions_triggered": 0,
+  "workflow_changes": 0,
+  "network_mutations": 0,
+  "production_services_or_database_operations": 0,
+  "remaining": "Independent SPEC/QUALITY and coordinator publication/state synchronization/remote main check. Actual business authorization/trust provisioning/configuration/runtime/package adoption not provided. Positive fixtures are algorithm-only."
+}
