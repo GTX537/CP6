@@ -1,0 +1,16 @@
+{
+  "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+  "core_artifacts_verified": 141,
+  "inherited_pins_verified": 4,
+  "protected_inputs_unchanged": true,
+  "result": "PASS",
+  "scope": "Current worktree source/hash integrity only; commit and remote containment left to COORD",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false,
+  "staged_git_and_worktree_artifacts_verified": 141,
+  "staged_changed_files": 72,
+  "diff_check": "PASS",
+  "scope_only": true
+}

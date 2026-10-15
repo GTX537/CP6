@@ -1,0 +1,97 @@
+test_absolute_path (test_gate_candidate.GateTests.test_absolute_path) ... ok
+test_actual_authority_and_remote_never_verified (test_gate_candidate.GateTests.test_actual_authority_and_remote_never_verified) ... ok
+test_actual_mode_reads_source_before_rejecting_trust (test_gate_candidate.GateTests.test_actual_mode_reads_source_before_rejecting_trust) ... ok
+test_authority_scope_mismatch (test_gate_candidate.GateTests.test_authority_scope_mismatch) ... ok
+test_conditional_edge_requires_scope_authority (test_gate_candidate.GateTests.test_conditional_edge_requires_scope_authority) ... ok
+test_consumer_evidence_wrong_contract (test_gate_candidate.GateTests.test_consumer_evidence_wrong_contract) ... FAIL
+test_contract_cannot_drop_declared_edges (test_gate_candidate.GateTests.test_contract_cannot_drop_declared_edges) ... ok
+test_contract_cannot_enable_production (test_gate_candidate.GateTests.test_contract_cannot_enable_production) ... ok
+test_contract_profile_file_drift (test_gate_candidate.GateTests.test_contract_profile_file_drift) ... ok
+test_decision_file_drift (test_gate_candidate.GateTests.test_decision_file_drift) ... FAIL
+test_delta_cannot_drop_obligations (test_gate_candidate.GateTests.test_delta_cannot_drop_obligations) ... FAIL
+test_duplicate_json_members (test_gate_candidate.GateTests.test_duplicate_json_members) ... ok
+test_duplicate_obligation (test_gate_candidate.GateTests.test_duplicate_obligation) ... ok
+test_evidence_file_mismatch (test_gate_candidate.GateTests.test_evidence_file_mismatch) ... ok
+test_evidence_wrong_source (test_gate_candidate.GateTests.test_evidence_wrong_source) ... ok
+test_extra_obligation (test_gate_candidate.GateTests.test_extra_obligation) ... ok
+test_forged_authority (test_gate_candidate.GateTests.test_forged_authority) ... ok
+test_history_cannot_be_relabelled (test_gate_candidate.GateTests.test_history_cannot_be_relabelled) ... ok
+test_malformed_authority (test_gate_candidate.GateTests.test_malformed_authority) ... ok
+test_matrix_hash_drift (test_gate_candidate.GateTests.test_matrix_hash_drift) ... ok
+test_missing_adoption (test_gate_candidate.GateTests.test_missing_adoption) ... ok
+test_missing_obligation (test_gate_candidate.GateTests.test_missing_obligation) ... ok
+test_missing_provider_artifact (test_gate_candidate.GateTests.test_missing_provider_artifact) ... ok
+test_missing_provider_edge (test_gate_candidate.GateTests.test_missing_provider_edge) ... ok
+test_missing_subassertion (test_gate_candidate.GateTests.test_missing_subassertion) ... ok
+test_nonfinite_json (test_gate_candidate.GateTests.test_nonfinite_json) ... ok
+test_nonruntime_statuses (test_gate_candidate.GateTests.test_nonruntime_statuses) ... ok
+test_other_123_not_accepted (test_gate_candidate.GateTests.test_other_123_not_accepted) ... ok
+test_path_escape (test_gate_candidate.GateTests.test_path_escape) ... ok
+test_provider_status_cannot_be_static (test_gate_candidate.GateTests.test_provider_status_cannot_be_static) ... FAIL
+test_receipt_remote_binding (test_gate_candidate.GateTests.test_receipt_remote_binding) ... ok
+test_source_assertion_not_dropped (test_gate_candidate.GateTests.test_source_assertion_not_dropped) ... ok
+test_source_bytes_drift (test_gate_candidate.GateTests.test_source_bytes_drift) ... ok
+test_synthetic_cannot_be_real (test_gate_candidate.GateTests.test_synthetic_cannot_be_real) ... ok
+test_synthetic_conditional_exclusion_requires_exact_scope (test_gate_candidate.GateTests.test_synthetic_conditional_exclusion_requires_exact_scope) ... ok
+test_synthetic_positive_only (test_gate_candidate.GateTests.test_synthetic_positive_only) ... ok
+test_unknown_original_hash_stays_null (test_gate_candidate.GateTests.test_unknown_original_hash_stays_null) ... ok
+test_unmarked_synthetic (test_gate_candidate.GateTests.test_unmarked_synthetic) ... ok
+test_wrong_consumer_task (test_gate_candidate.GateTests.test_wrong_consumer_task) ... ok
+test_wrong_edge_contract_hash (test_gate_candidate.GateTests.test_wrong_edge_contract_hash) ... ok
+test_wrong_edge_contract_profile (test_gate_candidate.GateTests.test_wrong_edge_contract_profile) ... ok
+test_wrong_edge_contract_version (test_gate_candidate.GateTests.test_wrong_edge_contract_version) ... ok
+test_wrong_provider_repository (test_gate_candidate.GateTests.test_wrong_provider_repository) ... ok
+test_wrong_target (test_gate_candidate.GateTests.test_wrong_target) ... ok
+
+======================================================================
+FAIL: test_consumer_evidence_wrong_contract (test_gate_candidate.GateTests.test_consumer_evidence_wrong_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 230, in test_consumer_evidence_wrong_contract
+    self.sub['edges'][0]['receipt']=self.put('receipt.json',r);self.reject()
+                                                               ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 80, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_decision_file_drift (test_gate_candidate.GateTests.test_decision_file_drift)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 233, in test_decision_file_drift
+    (self.root/'decisions.json').write_text('{}');self.reject()
+                                                  ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 80, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_delta_cannot_drop_obligations (test_gate_candidate.GateTests.test_delta_cannot_drop_obligations)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 237, in test_delta_cannot_drop_obligations
+    self.reject()
+    ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 80, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_provider_status_cannot_be_static (test_gate_candidate.GateTests.test_provider_status_cannot_be_static)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 225, in test_provider_status_cannot_be_static
+    self.sub['edges'][0]['receipt']=self.put('receipt.json',r);self.reject()
+                                                               ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 80, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 44 tests in 16.512s
+
+FAILED (failures=4)

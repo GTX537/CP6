@@ -1,0 +1,39 @@
+{
+  "phase": "RED_BEFORE_FIX",
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp01-01/decision-closure/tests",
+    "-p",
+    "test_original_identity_mapping.py",
+    "-v"
+  ],
+  "started_at": "2026-10-15T02:41:36.533981+00:00",
+  "finished_at": "2026-10-15T02:41:37.031593+00:00",
+  "exit_code": 1,
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "0233e84a1e42fd0792b9faeebf0c5f40d162da07ee1af68056621546929deb6b",
+    "eng/wp01-01/decision-closure/build_candidate.py": "568ba1dacff713dba6f643bdd60d00ca411081939693231dc21db195785a9238",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "1dd70e194960534c1480d2ce2b8ab7cc82cbe088004e6859fba5f6a6535e9440"
+  },
+  "logs": {
+    "stdout": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.stderr.txt",
+      "bytes": 1804774,
+      "sha256": "deb1279bc85cb0b9e49fc531e2ffcada8b25f5d357c54d21f9e151d4ed6f9ebd"
+    }
+  },
+  "scope": "Task-private static mapping regression; no DB/production/runtime claims"
+}

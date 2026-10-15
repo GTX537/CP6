@@ -1,0 +1,56 @@
+{
+  "schema": "WP01-01-WAVE7-QUALITY-REVIEW/1",
+  "scope": "One complete task-level independent quality review, then only targeted remediation review",
+  "baseline": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "initial_candidate": "48d2209be04ab364849dc6fb9f875f9c66d055e6",
+  "initial_manifest_sha256": "19847f58c1a2de9afd72bec357a74bf7165d5b45d5421aed46842cb4117fad80",
+  "reviewer": "Independent wp01_wave7_quality agent; read-only inspection and bounded reproduction",
+  "initial_result": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "QUALITY-01",
+      "severity": "IMPORTANT",
+      "path": "eng/wp01-01/decision-closure/gate_candidate.py",
+      "initial_lines": [179, 180],
+      "finding": "The real matrix contains 18 object-valued source_assertion entries (ITER 8, REL 10), but direct insertion into a set raises TypeError. The actual baseline records this internal exception and the validator only checks false, incorrectly accepting the early exit as the expected rejection.",
+      "first_affected_obligations": [
+        "WP05-01/1/ITER/R1/PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING-POS",
+        "WP05-01/1/REL/R1/PE-HANDOFF-NAMESPACE-POS"
+      ],
+      "required_fix": "Use stable lossless comparison for string and structured JSON assertions on all sides, preserving all fields. Add actual-shape positive/changed/missing-field negatives and assert precise intended rejection reasons for both real target baselines.",
+      "status": "CLOSED_BY_TARGETED_REVIEW",
+      "resolution": "Expected, submitted and evidence assertions use the same typed recursive structural key. All 577 real matrix rows, including 18 objects, are supported without changing the matrix. All fields and array order are preserved, object key order is ignored and a string cannot impersonate an object. Both actual target baselines reach the exact intended rejection reasons."
+    }
+  ],
+  "independent_checks": {
+    "manifest_core_files": 69,
+    "manifest_bytes_and_hashes": "PASS",
+    "inherited_pins": "PASS",
+    "test_and_manager_source_log_hashes": "PASS_REUSED_NO_RERUN",
+    "declared_graph": {"nodes": 214, "edges": 1256, "cross_repository_edges": 17},
+    "required_four_chains_and_target_scopes": "PASS",
+    "main_source_audit_records_verified": 16,
+    "scope_only_two_directories": true,
+    "diff_check": "PASS",
+    "production_manager_imports_private_gate": false,
+    "complete_obligation_source_binding": "PASS"
+  },
+  "critical_findings": 0,
+  "minor_findings": 0,
+  "remediation_candidate": "21cb6082c1ebaca8f2cbf2f60b7df9dd3a7ff106",
+  "remediation_manifest_sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+  "targeted_review_result": "PASS",
+  "targeted_review_scope": "QUALITY-01 and direct impact only; no new blocking issue. Read-only inspection of all 577 assertion shapes and both actual target rejection records; no suite rerun.",
+  "final_validation": {
+    "private_tests": 54,
+    "test_run": "tests-final-20261015T012923391938Z.run.json",
+    "static_checks": 12251,
+    "core_manifest_files_verified": 80,
+    "manager_run": "manage-roadmap.run.json",
+    "reviewer_reran_tests": false
+  },
+  "final_result": "QUALITY_READY_PREPARATION_ONLY",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}

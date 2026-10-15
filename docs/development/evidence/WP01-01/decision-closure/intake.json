@@ -1,0 +1,130 @@
+{
+  "task": "WP01-01",
+  "window": "wave7",
+  "scope": "PREPARATION_ONLY",
+  "checked_at_utc": "2026-10-15T00:20:24.3131075Z",
+  "main_baseline": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "product_main": "1129953156b7775152a74ad2f51cb95ef430ee56",
+  "platform": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "crm": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+  "input_drift": "Main wave7 dispatch documentation only; Platform/CRM refreshed exact pins",
+  "worktree": "D:/CP6-worktrees/wp01-01-decision-20261014",
+  "branch": "codex/wp01-01-decision-candidate-20261014",
+  "handoff_assignment": "ebeae808b2aa35c8c9115519fed564edebbbde0c",
+  "handoff_start": "a07b805919c338cd5c692788c55181ad8fce8608",
+  "handoff_start_path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T001806Z-wave7-start-preparation/MESSAGE.md",
+  "handoff_remote_files_verified": 2,
+  "task_record": {
+    "id": "WP01-01",
+    "package_id": "WP01",
+    "title": "替代验收采纳后的WP01差异与清单收口",
+    "repository": "Main",
+    "kind": "DESIGN",
+    "target_ids": [],
+    "relative_size": "M",
+    "dependencies": [
+      "WP05-01"
+    ],
+    "exclusive_resources": [
+      "coordination:roadmap"
+    ],
+    "coverage_role": "COORDINATION",
+    "state": "PLANNED",
+    "plan_path": "docs/development/task-plans/WP01.md",
+    "card_anchor": "wp01-01",
+    "entry_gate": "NOT_CHECKED",
+    "assignment": {
+      "chat_label": "A / WP01-01 决定候选",
+      "repository": "Main",
+      "branch": "codex/wp01-01-decision-candidate-20261014",
+      "worktree": "D:/CP6-worktrees/wp01-01-decision-20261014",
+      "claimed_at": "2026-10-14T05:22:28.191366-04:00",
+      "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
+      "dispatch_scope": "PREPARATION_ONLY",
+      "phase": "PREPARATION",
+      "worker_ack_at": null,
+      "allowed_write_paths": [
+        "eng/wp01-01/decision-closure/",
+        "docs/development/evidence/WP01-01/decision-closure/"
+      ],
+      "handoff_branch": "codex/dev-handoff-wp01-01",
+      "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56"
+    },
+    "blockers": [],
+    "validation_evidence": [],
+    "delivery_evidence": null,
+    "entry_conditions": [
+      "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+      "PLM-ITER/REL替代验收设计已审查采纳",
+      "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+    ],
+    "preparation_delivery": {
+      "state": "MERGED",
+      "delivery_evidence": {
+        "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+        "remote_main_sha": "99e61d897e5f166c5817c0aaec196041e1941324",
+        "pr_url": "https://github.com/GTX537/CP6/pull/205",
+        "observed_at": "2026-10-14T02:57:39.243553-04:00",
+        "repository": "GTX537/CP6",
+        "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/remote-main.json",
+        "scope": "Normal merge and exact remote ancestry/file-blob check. Preparation only; no formal adoption or task completion."
+      },
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+          "repository": "GTX537/CP6",
+          "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+          "command": "Original preparation3509 checks, comparator23+bundle10 tests; COORD source/hash/scope/diff review only",
+          "environment": "Original Python3.13 task-private document tooling; no product build or DB",
+          "observed_at": "2026-10-14T03:55:32.880255-04:00",
+          "scope": "COORD observation time; actual execution and reused identities retained separately. 39 additions,33 core artifacts,58 pinned input occurrences/39 sources,577 navigation rows verified.3509 static and33 tests reused; original failure/correction records retained. Unsigned preparation never becomes actual adoption/completion; 123 other targets unchanged. DP01–08 and cross-provider closure pending.",
+          "result": "PASS"
+        }
+      ],
+      "review": "docs/development/evidence/wave6-integration-20261014/WP01-01/review.md",
+      "formal_adoption": false,
+      "full_task_completed": false
+    },
+    "assignment_history": [
+      {
+        "chat_label": "A / WP01-01 准备（沿用原S01-12对话）",
+        "repository": "Main",
+        "branch": "codex/wp01-01-admission-prep-20261013",
+        "worktree": "D:/CP6-worktrees/wp01-01-prep-20261013",
+        "claimed_at": "2026-10-13T23:14:11.400961-04:00",
+        "baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "entry_evidence": "docs/development/evidence/wave6-dispatch-20261013/admission.json",
+        "dispatch_scope": "PREPARATION_ONLY",
+        "phase": "PREPARATION_INTEGRATED",
+        "worker_ack_at": "2026-10-14T05:29:48Z",
+        "allowed_write_paths": [
+          "docs/development/evidence/WP01-01/preparation/",
+          "eng/wp01-01/preparation/"
+        ],
+        "handoff_branch": "codex/dev-handoff-wp01-01",
+        "coordination_baseline_sha": "9a0155dec1c3366df8a6631f3d8fdb086aa32fc8",
+        "coordinator_received_at": "2026-10-14T02:24:02.112426-04:00",
+        "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
+        "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
+        "window_closed_at": "2026-10-14T03:55:32.880255-04:00"
+      }
+    ]
+  },
+  "allowed_write_paths": [
+    "eng/wp01-01/decision-closure/",
+    "docs/development/evidence/WP01-01/decision-closure/"
+  ],
+  "actions_runs": [],
+  "actions_cancelled": [],
+  "trigger_changes": [],
+  "database_resources": [],
+  "actual_adoption": false,
+  "actual_completion": false,
+  "notes": [
+    "Actual clock at intake is 2026-10-15 UTC; wave7 directory retains assigned20261014 identity.",
+    "Unrelated root untracked archives and Platform directory preserved.",
+    "Initial parent source search named nonexistent CP6.Interfaces and CP6.Api; corrected to actual CP6.Entity and CP6.WebApi. This is a search-location error, not evidence those actual modules are absent.",
+    "Old preparation and all existing normative/product/shared-state files remain readonly."
+  ]
+}

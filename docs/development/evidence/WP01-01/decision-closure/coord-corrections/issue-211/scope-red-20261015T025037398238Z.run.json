@@ -1,0 +1,38 @@
+{
+  "phase": "RED_SOURCE_SCOPE_CORRECTION",
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp01-01/decision-closure/tests",
+    "-p",
+    "test_original_identity_mapping.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "checked_at": "2026-10-15T02:50:37.947257+00:00",
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6"
+  },
+  "logs": {
+    "stdout": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-red-20261015T025037398238Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "stderr": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-red-20261015T025037398238Z.stderr.txt",
+      "sha256": "830726ad2c022772e781c64986083f55dbbb8b8979d9b9709781c7287e032aa2",
+      "bytes": 23690
+    }
+  },
+  "scope": "Reject earlier unsupported global assumption for four grouped source identities; preserve original first GREEN as superseded"
+}

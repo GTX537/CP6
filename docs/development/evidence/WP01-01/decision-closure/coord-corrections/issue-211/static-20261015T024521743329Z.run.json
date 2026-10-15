@@ -1,0 +1,35 @@
+{
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\verify-correction.py",
+    "--root",
+    ".",
+    "--archive-root",
+    "D:/CP6"
+  ],
+  "checked_at": "2026-10-15T02:45:22.625037+00:00",
+  "exit_code": 0,
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+    "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+  },
+  "logs": {
+    "stdout": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stdout.txt",
+      "bytes": 948,
+      "sha256": "903caac85857244fd311351d199dd054426927ab9b3755c6daef52e8d6421243"
+    },
+    "stderr": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scope": "Fresh read-only candidate mapping structure/source/old-run hash verification"
+}

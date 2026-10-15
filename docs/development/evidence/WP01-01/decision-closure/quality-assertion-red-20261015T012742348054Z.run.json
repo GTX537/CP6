@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-15T01:27:42.351210+00:00",
+  "finished_at": "2026-10-15T01:27:56.629503+00:00",
+  "exit_code": 1,
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/gate_candidate.py": "48c783c4484b1f7ced2fb7cf162b2ce75997acb4d11184d40e9f037aacf5fdce",
+    "eng/wp01-01/decision-closure/tests/test_gate_candidate.py": "4321323e93c9ab8f12c0184f09829256cba718e061d1e0110fb7dcf07ff8b245"
+  },
+  "source_snapshots": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z",
+  "scope": "SYNTHETIC_TDD_ONLY"
+}

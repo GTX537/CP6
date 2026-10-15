@@ -1,0 +1,106 @@
+{
+  "schema": "WP01-01-ISSUE-211-SUPERSEDED/1",
+  "original_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+  "correction_start": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "created_at": "2026-10-15T02:40:32.133143+00:00",
+  "status": "IMMUTABLE_HISTORICAL_ORIGINAL",
+  "scope": "Original reviewed files/metadata captured before correction. Original run logs and 54 gate tests remain untouched at their recorded paths. Old SPEC/QUALITY conclusions apply only to their exact recorded commits; not to corrected mapping.",
+  "files": [
+    {
+      "original_path": "eng/wp01-01/decision-closure/build_candidate.py",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/build_candidate.py",
+      "bytes": 45050,
+      "sha256": "568ba1dacff713dba6f643bdd60d00ca411081939693231dc21db195785a9238"
+    },
+    {
+      "original_path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/mapping_constraints.py",
+      "bytes": 19039,
+      "sha256": "0233e84a1e42fd0792b9faeebf0c5f40d162da07ee1af68056621546929deb6b"
+    },
+    {
+      "original_path": "eng/wp01-01/decision-closure/validate_candidate.py",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/validate_candidate.py",
+      "bytes": 19425,
+      "sha256": "b475730500c78ee30fb6cd43cb41e269063e3395cd2c923cf3155fa6438b67cf"
+    },
+    {
+      "original_path": "eng/wp01-01/decision-closure/README.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/README.md",
+      "bytes": 1817,
+      "sha256": "c9a690b1242fc37d25a4c9ff23a5c6d442af7ad71f36c0dbc51124e8c0a0c8d9"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "bytes": 3068484,
+      "sha256": "1dd70e194960534c1480d2ce2b8ab7cc82cbe088004e6859fba5f6a6535e9440"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "bytes": 22088,
+      "sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "bytes": 36290,
+      "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+      "bytes": 3452,
+      "sha256": "6f7e8a80ec517229a26776a6836be25a7be8560237e916d478d3e456b7d53c41"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+      "bytes": 524,
+      "sha256": "59299a4618feb337c4c2c42bc8f4cc04cd0f700143b768123b1e78e32c103a81"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/review-spec.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/review-spec.json",
+      "bytes": 3665,
+      "sha256": "a3db482cb897cbed9bbc05c9352827938b3dc2f07f5532ad9a316fb66e06697b"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/review-quality.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/review-quality.json",
+      "bytes": 3300,
+      "sha256": "b06346191f82a33de3880359eab6ea4ef98fa40c26e46b2d0fe469994891bb89"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "bytes": 3796,
+      "sha256": "da304904da92c7b6fd051304b573ba04da2abf759f1f3058e5e3158a0b854476"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/README.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/README.md",
+      "bytes": 3995,
+      "sha256": "bbf6eb3d4bb360229c6b796b6277ac2c50ba02d27b30553a632a40a49a14bce2"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "bytes": 7832,
+      "sha256": "e0bb0ec3940090de265cbf853a48e3d41db580b0146a2dd809e3235227882a68"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+      "bytes": 1250,
+      "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26"
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+      "bytes": 1256,
+      "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610"
+    }
+  ]
+}

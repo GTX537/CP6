@@ -1,0 +1,387 @@
+{
+  "schema": "WP01-01-ISSUE-211-VALIDATION/1",
+  "result": "PASS",
+  "checked_at": "2026-10-15T02:53:41.509807+00:00",
+  "scope": "Issue211 static correction only; original gate/runtime boundaries unchanged",
+  "source_revision": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+  "prerequisite_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+  "checks": 1000,
+  "new_tests": 8,
+  "red": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-red-20261015T025037398238Z.run.json",
+    "bytes": 1674,
+    "sha256": "4611db3d8154188675c448e76b76920559514ab502f076d14b15519498da742a",
+    "representation": "RAW_FILE_BYTES"
+  },
+  "commands": [
+    {
+      "phase": "scope-green",
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "eng/wp01-01/decision-closure/tests",
+        "-p",
+        "test_original_identity_mapping.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "checked_at": "2026-10-15T02:52:00.247427+00:00",
+      "source_hashes": {
+        "eng/wp01-01/decision-closure/mapping_constraints.py": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+        "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+        "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+        "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+        "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+      },
+      "logs": {
+        "stdout": {
+          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.stderr.txt",
+          "sha256": "2f1971b32430217cbcb64347a817836c5b22b4fa667c64c12b293e044cb30315",
+          "bytes": 1663
+        }
+      },
+      "scope": "Current exact original identity scope correction; all earlier failures and prior green remain preserved"
+    },
+    {
+      "phase": "scope-static",
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\verify-correction.py",
+        "--root",
+        ".",
+        "--archive-root",
+        "D:/CP6"
+      ],
+      "exit_code": 0,
+      "checked_at": "2026-10-15T02:52:01.249543+00:00",
+      "source_hashes": {
+        "eng/wp01-01/decision-closure/mapping_constraints.py": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+        "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+        "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+        "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+        "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+      },
+      "logs": {
+        "stdout": {
+          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-static-20261015T025200254609Z.stdout.txt",
+          "sha256": "903caac85857244fd311351d199dd054426927ab9b3755c6daef52e8d6421243",
+          "bytes": 948
+        },
+        "stderr": {
+          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-static-20261015T025200254609Z.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "scope": "Current exact original identity scope correction; all earlier failures and prior green remain preserved"
+    }
+  ],
+  "reused_validation": {
+    "gate_tests": {
+      "count": 54,
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+        "bytes": 1250,
+        "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "input_and_log_hashes": "EXACT_MATCH",
+      "additional_input_fields": "Original matrix unchanged; exact roadmap target ID list unchanged",
+      "scope": "Original synthetic gate algorithm only; not rerun"
+    },
+    "manager": {
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+        "bytes": 1256,
+        "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "input_and_log_hashes": "EXACT_MATCH",
+      "scope": "Original read-only manager run reused, not rerun"
+    },
+    "original_static_checks": {
+      "count": 12251,
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+        "bytes": 36290,
+        "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "scope": "Original mapping snapshot only; superseded for corrected mapping. Not a fresh run or proof of the corrected identity design."
+    }
+  },
+  "protected_input_hashes_before": {
+    "docs/development/roadmap.json": "91014dd78e8355aa83fe0b8bb5c5d05f25125bf3444a94e12ce556b3242b55df",
+    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+    "docs/development/tools/manage_roadmap.py": "992e88abcaefd904ac9c0b555405df443f0e521170998237e3ca2f81c917545b",
+    "docs/project-memory/PROJECT_STATE.md": "5b7b97ef26a6ffb4e722c20c491046352a99e0f2a7504784a61e017889ce3890",
+    "docs/project-memory/05-Completed.md": "74b81ac6aa4ec406cebf2fa81520e431208a4e31fcc019edf7582dcdc555c09d",
+    "docs/project-memory/06-Todo.md": "6062e8cdbfea9895d5ee8e22ac9b24c6f2064a92f9466c7d9f137de15a2810e4",
+    "docs/project-memory/CHANGELOG-AI.md": "dffcf538a736a6d623a91f5f8995633543b8eaa2e93483ade14198cd66723c03",
+    "eng/wp01-01/preparation/.gitattributes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+    "eng/wp01-01/preparation/comparator.py": "8ef101805537db56d581b509feb4b6176b542487ca2eed0c7372ddaa0f82c1e5",
+    "eng/wp01-01/preparation/prepare.py": "54da30f9e6ebc42a4a7a33194ed92b675f5b986ec82b8f9c735933a73060c903",
+    "eng/wp01-01/preparation/run_checks.py": "01c50b6d361dddf10735505f635f303123da75890420be3b39b4b5055703905f",
+    "eng/wp01-01/preparation/test_bundle.py": "09f55236131c7871fa169c46c8345b92352327eda7f0d7115f09bab0107d8481",
+    "eng/wp01-01/preparation/test_comparator.py": "acac1c2b99e0bc00d9dca582bab480ad97d018a4f477f44ebec7cf691a836e53",
+    "docs/development/evidence/WP01-01/preparation/.gitattributes": "474256fb62f8f45a4a804582bfc4914b4774f73772cde4ba8cbe35d795785dae",
+    "docs/development/evidence/WP01-01/preparation/bookkeeping-correction.json": "520b4e2aa57453350b7dc86ca310813c29f9bb067c1188c33446ed7363a4de5b",
+    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stderr.txt": "bdf30fe7b5a339b625880aa935294d732840e907f77a9283ec5b495da650c3a6",
+    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stderr.txt": "e8e4826ea6343669b8b98a18034a57d38a1f4065a7f0025dcb8cb6f7d8bfb6a7",
+    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/comparator-tests.txt": "e9d5f10cf0084309f78ee5c50464d09882fdc96abda6e684c34080e969c198ac",
+    "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json": "946c1561a1a4a193149198108b917ef9a6a1c2c5128bd88c7ebf7e89140c4b60",
+    "docs/development/evidence/WP01-01/preparation/delivery-draft.md": "95acc7fa95e16fcbe008d674bfd54a0d9053bf4030d9bbcbdef962b94cad242f",
+    "docs/development/evidence/WP01-01/preparation/delivery.md": "035b6956c70ca2bcdd128352ff1b9721c227687996de6665c425ec1aa4e29d39",
+    "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json": "62004288943e268e05858e7d4db732e074e2161befd11aa69495e5eab5541dbe",
+    "docs/development/evidence/WP01-01/preparation/gate-proposal.md": "4f79f5d73ce2a0a1d3132423a1428075e2709abcf1dee4fc937af2fa6efbe134",
+    "docs/development/evidence/WP01-01/preparation/input-lock.json": "d771ea749db37c60da2e4eaefa5bb64ba167e9cb0301a063518c2ed05e2f09ec",
+    "docs/development/evidence/WP01-01/preparation/intake.json": "ea39328cbb53dc9ebd33116e87f3176c4c8e5a932e1c1b0a8b5ee4025a8013aa",
+    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stdout.txt": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+    "docs/development/evidence/WP01-01/preparation/obligation-matrix.json": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "docs/development/evidence/WP01-01/preparation/obligation-matrix.md": "d8ca48997c0c35e8560c1e03d935043250e25dc0212f997696dabdbcc7b2ca3e",
+    "docs/development/evidence/WP01-01/preparation/preparation-manifest.json": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+    "docs/development/evidence/WP01-01/preparation/prepare-final.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/prepare-final.stdout.txt": "9a5b55ace2d317ee11b91f836111f46cac6515d54220ac4f94b9cbf52679c83b",
+    "docs/development/evidence/WP01-01/preparation/prepare-first-run.txt": "4554251a849958a21196cf70d0381b48c31ad0d7b281d15966029c6218ec8ea7",
+    "docs/development/evidence/WP01-01/preparation/README.md": "29f6564ab158063fdabf99571f7e4cd840d332a45ad9c34091c1b7065bdc451d",
+    "docs/development/evidence/WP01-01/preparation/review-quality-integrity.json": "55a67bca1a7aa42eeda0a620ed48488f059e75dd79045d6809fc05f161636404",
+    "docs/development/evidence/WP01-01/preparation/review-quality.md": "20aa120253697daab0329dbdb8bb05c80edfdf2a75aeb0d0997031146c3aa548",
+    "docs/development/evidence/WP01-01/preparation/review-spec.md": "499beb08e808ea48cb72789aadd4abeee99188d5efbf61bb1ebcf082c963c9d6",
+    "docs/development/evidence/WP01-01/preparation/semantic-audit.md": "6b0b6540134809792bf8ad5ec87b464a6b4e77d468ee10d43620420608e92ebd",
+    "docs/development/evidence/WP01-01/preparation/source-verification.initial.json": "0576f8f42bbc482cad27edf3f1905e3bc9b4b1186cac816dcce38fd10475ea4c",
+    "docs/development/evidence/WP01-01/preparation/source-verification.json": "1de02a63ab44d81d046d3ae391016da82c9e5fb22c384a4de410fd2482df455f",
+    "docs/development/evidence/WP01-01/preparation/tdd-malformed-red.txt": "7648842a05f3f074ef8f8f3d17b4d29a3b53b8536b85b8c0f994ae325e3f44b0",
+    "docs/development/evidence/WP01-01/preparation/tdd-red.txt": "69c05a08ca066ac44d7a08d431bb8ab77550655852d414986b6cd55e1c95cd26",
+    "docs/development/evidence/WP01-01/preparation/tdd-repository-scope-red.txt": "a7a344df25f84318e51e879055c24666429917f574273dcf11a0f17430d2501b",
+    "docs/development/evidence/WP01-01/preparation/validation.json": "45bd0c724a7fb9be9fe046158c959a8d32da62bb27a6733174a5a638d1b83963",
+    "docs/development/task-deliveries/WP05-01/.gitattributes": "9a4df49b928aa02632ef71671b1674b19f423fca6292181d3c3bf214fc4b68cd",
+    "docs/development/task-deliveries/WP05-01/adoption.json": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+    "docs/development/task-deliveries/WP05-01/basis-manifest.json": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+    "docs/development/task-deliveries/WP05-01/cases.json": "385c4dd12cb13a9efda4485d0b2a8b3810b85d189683caa97ca6e9829f46b563",
+    "docs/development/task-deliveries/WP05-01/coverage.md": "ab8f1a4208755966acb2ca0e27b978b958262ac29e48087071fa85726162cb6a",
+    "docs/development/task-deliveries/WP05-01/delivery.md": "74a574113f1f799f37420aa9251c78229490709b2cd613bb62d9a46a1559546a",
+    "docs/development/task-deliveries/WP05-01/normative-coverage.json": "64f4eed670dd8cf1c56905c51e3aa2ec1122757e6761f0a49af5a2b2bbd4b90a",
+    "docs/development/task-deliveries/WP05-01/README.md": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+    "docs/development/task-deliveries/WP05-01/sources.json": "c2b160e90dbce013cca1990b7189b68e8e3f51998ae891d1f364b4db4da165fc",
+    "docs/development/task-deliveries/WP05-01/verify.py": "73a4e90d6ed492c4621316356cc8ff6d937daf9de90f035c636290b49b6961fa",
+    "docs/development/task-deliveries/WP05-01/evidence/staged-byte-check.failure.json": "2b2f4a0f05857ee1a0a81a63d4159f488ed1ecdee190118a8b618e8307f51e38",
+    "docs/development/task-deliveries/WP05-01/evidence/staged-review.final.json": "9c20df68af20b1147bd4f6b123a06431bb777750bd554b6ee9b79ba2fea1688f",
+    "docs/development/task-deliveries/WP05-01/evidence/static-check.final.json": "6e6a9372e67d7a93fe531b0443ef5c54b57432b7abed53022e2765c5d8c7a134",
+    "docs/development/task-deliveries/WP05-01/evidence/static-check.initial.json": "96170d90bd739f13951da82cc120d41044a0001f2cd9e945acbee7906d2f2f60",
+    "docs/development/task-deliveries/WP05-01/evidence/workflow-inspection.json": "4be6ef44cdf039f82bba227fb39ba206e9f63e9289f30f989c8928ae167e4629",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/README.md": "cd19b246f1763c123ab66c0a34ba8b55185eec6eaea097d468470f3a2ec17fcc",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/test-wp05-supplement-checker.py": "9be105ae86646db9ab11c12d0a42aa0502ff06ee4a200ac1197389bf2374c60e",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py": "843dc0cd305e56c6867c2bf2e4ab9e9c699a0bc9446b42308e8388cd74ebebff",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-original-static.json": "866d7299f4115e1b9a6b932f23b536f4efebcd80eaf616266cfcf5c3474796aa",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-tests-reused.json": "e1e77c35fc60a480fd7b3f262abe9213d6806678b82f8f50b792c4ca5e67b062",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/followup.md": "2eb7537654a45c892b01335315b8ce65199f0445e7d627ea47d18656c99bce12",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json": "1e719dd5927a5c46b4fc509a7cd7c29b748a05d4fc3bb4e0bb353d7b9ca002bb",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/ledger-review.json": "7cbb3e59eb1908e7641224cbde5cb93e5955b3858c53bd4f1bd7f0c87db873d7",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/README.md": "a59da010a57ba6185f022ffea850d84cf511700b48ebc9905e40e157480c8802",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json": "b42a8a9beefd1baf4fa73057e12bbd01790214cfb66c1e18b12519a7ed4ef6df",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/review.md": "8b96d5d8246e7c27d5889a98506b386cf318072560d6a220610bf2afcd7971f0",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json": "6e4b4d789dfdfd435663a5667fd161a0fa16999cdc28b0159e82591b5e930525",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.json": "ef017002d8fbc01f155dbd315d2b1c59ae7765b5840f912822fc86c87af314bb",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.md": "53192d7c98d83c6b493f56b2e83d9cdedcfd4ea75e680809f326d82fd3ac57c0",
+    ".github/workflows/client-contract.yml": "fb633108d5d43b368d9c8a75d7d0ec81f718e119630c811334fd1bd4eb5f1454",
+    ".github/workflows/crm-saas-public-contract.yml": "5174f62866dd6d84c61143074809718837086787fb886a19f085c24189d5d2c9",
+    ".github/workflows/crm-v1-prd-head.yml": "9797044712711f8bc503b5b7a3b4da5755aaf6c8874a8104d30c20842a64fe6a",
+    ".github/workflows/crm-v1-prd.yml": "25bb5f0e9b7626a88a71aba7a35322d7b7e51e5699c1e9c4766faa994b9c131e",
+    ".github/workflows/p10-platform-audit.yml": "941ccf864b7985b1b7d2b0c3277a01845003a0e4a44a97a55481d1f8fcad1d0e",
+    ".github/workflows/p10-platform-candidate.yml": "df5ab1ce8ba02338cf6705bf41ffd4f5647be445d83cefbb23606a7e48802db9",
+    ".github/workflows/p10-platform-preflight.yml": "8ffd7d626a3ef0566ec2caeaf1bd00e0bb5c89d3300f6403c6079cc89e4e353f",
+    ".github/workflows/p10-platform-validation.yml": "169662caca8ab9d972976c17e2ca7d14a3986fcb354ca82933097f8d776fda02",
+    ".github/workflows/r2-candidate.yml": "cfea8ab19c0bb5fe3800e6ee64d06dacd5c0bcaf0446bd3c8c0c82b6cb3923f3",
+    ".github/workflows/r2-deploy.yml": "37960838ab5c7d8565a69d29bd8137546946b8c2f5af696c2275971442f92b9f",
+    ".github/workflows/r2-freeze.yml": "37ce4fb3de9d4c16e331c0864b245545efcef370d6efaeab2169e348bccb4a4e",
+    ".github/workflows/space-ga-evidence.yml": "4f2904f963fefa8b87f3e8281a533255c5b76895001bd2b9c7d35570974452a2",
+    ".github/workflows/wms-production-sql.yml": "f44ac479f2378d9e05468a9a9b6f24e067da6ae6d475be796ffcd7661e15ed91"
+  },
+  "protected_input_hashes_after": {
+    "docs/development/roadmap.json": "91014dd78e8355aa83fe0b8bb5c5d05f25125bf3444a94e12ce556b3242b55df",
+    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+    "docs/development/tools/manage_roadmap.py": "992e88abcaefd904ac9c0b555405df443f0e521170998237e3ca2f81c917545b",
+    "docs/project-memory/PROJECT_STATE.md": "5b7b97ef26a6ffb4e722c20c491046352a99e0f2a7504784a61e017889ce3890",
+    "docs/project-memory/05-Completed.md": "74b81ac6aa4ec406cebf2fa81520e431208a4e31fcc019edf7582dcdc555c09d",
+    "docs/project-memory/06-Todo.md": "6062e8cdbfea9895d5ee8e22ac9b24c6f2064a92f9466c7d9f137de15a2810e4",
+    "docs/project-memory/CHANGELOG-AI.md": "dffcf538a736a6d623a91f5f8995633543b8eaa2e93483ade14198cd66723c03",
+    "eng/wp01-01/preparation/.gitattributes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+    "eng/wp01-01/preparation/comparator.py": "8ef101805537db56d581b509feb4b6176b542487ca2eed0c7372ddaa0f82c1e5",
+    "eng/wp01-01/preparation/prepare.py": "54da30f9e6ebc42a4a7a33194ed92b675f5b986ec82b8f9c735933a73060c903",
+    "eng/wp01-01/preparation/run_checks.py": "01c50b6d361dddf10735505f635f303123da75890420be3b39b4b5055703905f",
+    "eng/wp01-01/preparation/test_bundle.py": "09f55236131c7871fa169c46c8345b92352327eda7f0d7115f09bab0107d8481",
+    "eng/wp01-01/preparation/test_comparator.py": "acac1c2b99e0bc00d9dca582bab480ad97d018a4f477f44ebec7cf691a836e53",
+    "docs/development/evidence/WP01-01/preparation/.gitattributes": "474256fb62f8f45a4a804582bfc4914b4774f73772cde4ba8cbe35d795785dae",
+    "docs/development/evidence/WP01-01/preparation/bookkeeping-correction.json": "520b4e2aa57453350b7dc86ca310813c29f9bb067c1188c33446ed7363a4de5b",
+    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stderr.txt": "bdf30fe7b5a339b625880aa935294d732840e907f77a9283ec5b495da650c3a6",
+    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stderr.txt": "e8e4826ea6343669b8b98a18034a57d38a1f4065a7f0025dcb8cb6f7d8bfb6a7",
+    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/comparator-tests.txt": "e9d5f10cf0084309f78ee5c50464d09882fdc96abda6e684c34080e969c198ac",
+    "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json": "946c1561a1a4a193149198108b917ef9a6a1c2c5128bd88c7ebf7e89140c4b60",
+    "docs/development/evidence/WP01-01/preparation/delivery-draft.md": "95acc7fa95e16fcbe008d674bfd54a0d9053bf4030d9bbcbdef962b94cad242f",
+    "docs/development/evidence/WP01-01/preparation/delivery.md": "035b6956c70ca2bcdd128352ff1b9721c227687996de6665c425ec1aa4e29d39",
+    "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json": "62004288943e268e05858e7d4db732e074e2161befd11aa69495e5eab5541dbe",
+    "docs/development/evidence/WP01-01/preparation/gate-proposal.md": "4f79f5d73ce2a0a1d3132423a1428075e2709abcf1dee4fc937af2fa6efbe134",
+    "docs/development/evidence/WP01-01/preparation/input-lock.json": "d771ea749db37c60da2e4eaefa5bb64ba167e9cb0301a063518c2ed05e2f09ec",
+    "docs/development/evidence/WP01-01/preparation/intake.json": "ea39328cbb53dc9ebd33116e87f3176c4c8e5a932e1c1b0a8b5ee4025a8013aa",
+    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stdout.txt": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+    "docs/development/evidence/WP01-01/preparation/obligation-matrix.json": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "docs/development/evidence/WP01-01/preparation/obligation-matrix.md": "d8ca48997c0c35e8560c1e03d935043250e25dc0212f997696dabdbcc7b2ca3e",
+    "docs/development/evidence/WP01-01/preparation/preparation-manifest.json": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+    "docs/development/evidence/WP01-01/preparation/prepare-final.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/development/evidence/WP01-01/preparation/prepare-final.stdout.txt": "9a5b55ace2d317ee11b91f836111f46cac6515d54220ac4f94b9cbf52679c83b",
+    "docs/development/evidence/WP01-01/preparation/prepare-first-run.txt": "4554251a849958a21196cf70d0381b48c31ad0d7b281d15966029c6218ec8ea7",
+    "docs/development/evidence/WP01-01/preparation/README.md": "29f6564ab158063fdabf99571f7e4cd840d332a45ad9c34091c1b7065bdc451d",
+    "docs/development/evidence/WP01-01/preparation/review-quality-integrity.json": "55a67bca1a7aa42eeda0a620ed48488f059e75dd79045d6809fc05f161636404",
+    "docs/development/evidence/WP01-01/preparation/review-quality.md": "20aa120253697daab0329dbdb8bb05c80edfdf2a75aeb0d0997031146c3aa548",
+    "docs/development/evidence/WP01-01/preparation/review-spec.md": "499beb08e808ea48cb72789aadd4abeee99188d5efbf61bb1ebcf082c963c9d6",
+    "docs/development/evidence/WP01-01/preparation/semantic-audit.md": "6b0b6540134809792bf8ad5ec87b464a6b4e77d468ee10d43620420608e92ebd",
+    "docs/development/evidence/WP01-01/preparation/source-verification.initial.json": "0576f8f42bbc482cad27edf3f1905e3bc9b4b1186cac816dcce38fd10475ea4c",
+    "docs/development/evidence/WP01-01/preparation/source-verification.json": "1de02a63ab44d81d046d3ae391016da82c9e5fb22c384a4de410fd2482df455f",
+    "docs/development/evidence/WP01-01/preparation/tdd-malformed-red.txt": "7648842a05f3f074ef8f8f3d17b4d29a3b53b8536b85b8c0f994ae325e3f44b0",
+    "docs/development/evidence/WP01-01/preparation/tdd-red.txt": "69c05a08ca066ac44d7a08d431bb8ab77550655852d414986b6cd55e1c95cd26",
+    "docs/development/evidence/WP01-01/preparation/tdd-repository-scope-red.txt": "a7a344df25f84318e51e879055c24666429917f574273dcf11a0f17430d2501b",
+    "docs/development/evidence/WP01-01/preparation/validation.json": "45bd0c724a7fb9be9fe046158c959a8d32da62bb27a6733174a5a638d1b83963",
+    "docs/development/task-deliveries/WP05-01/.gitattributes": "9a4df49b928aa02632ef71671b1674b19f423fca6292181d3c3bf214fc4b68cd",
+    "docs/development/task-deliveries/WP05-01/adoption.json": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+    "docs/development/task-deliveries/WP05-01/basis-manifest.json": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+    "docs/development/task-deliveries/WP05-01/cases.json": "385c4dd12cb13a9efda4485d0b2a8b3810b85d189683caa97ca6e9829f46b563",
+    "docs/development/task-deliveries/WP05-01/coverage.md": "ab8f1a4208755966acb2ca0e27b978b958262ac29e48087071fa85726162cb6a",
+    "docs/development/task-deliveries/WP05-01/delivery.md": "74a574113f1f799f37420aa9251c78229490709b2cd613bb62d9a46a1559546a",
+    "docs/development/task-deliveries/WP05-01/normative-coverage.json": "64f4eed670dd8cf1c56905c51e3aa2ec1122757e6761f0a49af5a2b2bbd4b90a",
+    "docs/development/task-deliveries/WP05-01/README.md": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+    "docs/development/task-deliveries/WP05-01/sources.json": "c2b160e90dbce013cca1990b7189b68e8e3f51998ae891d1f364b4db4da165fc",
+    "docs/development/task-deliveries/WP05-01/verify.py": "73a4e90d6ed492c4621316356cc8ff6d937daf9de90f035c636290b49b6961fa",
+    "docs/development/task-deliveries/WP05-01/evidence/staged-byte-check.failure.json": "2b2f4a0f05857ee1a0a81a63d4159f488ed1ecdee190118a8b618e8307f51e38",
+    "docs/development/task-deliveries/WP05-01/evidence/staged-review.final.json": "9c20df68af20b1147bd4f6b123a06431bb777750bd554b6ee9b79ba2fea1688f",
+    "docs/development/task-deliveries/WP05-01/evidence/static-check.final.json": "6e6a9372e67d7a93fe531b0443ef5c54b57432b7abed53022e2765c5d8c7a134",
+    "docs/development/task-deliveries/WP05-01/evidence/static-check.initial.json": "96170d90bd739f13951da82cc120d41044a0001f2cd9e945acbee7906d2f2f60",
+    "docs/development/task-deliveries/WP05-01/evidence/workflow-inspection.json": "4be6ef44cdf039f82bba227fb39ba206e9f63e9289f30f989c8928ae167e4629",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/README.md": "cd19b246f1763c123ab66c0a34ba8b55185eec6eaea097d468470f3a2ec17fcc",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/test-wp05-supplement-checker.py": "9be105ae86646db9ab11c12d0a42aa0502ff06ee4a200ac1197389bf2374c60e",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py": "843dc0cd305e56c6867c2bf2e4ab9e9c699a0bc9446b42308e8388cd74ebebff",
+    "docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-original-static.json": "866d7299f4115e1b9a6b932f23b536f4efebcd80eaf616266cfcf5c3474796aa",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-tests-reused.json": "e1e77c35fc60a480fd7b3f262abe9213d6806678b82f8f50b792c4ca5e67b062",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/followup.md": "2eb7537654a45c892b01335315b8ce65199f0445e7d627ea47d18656c99bce12",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json": "1e719dd5927a5c46b4fc509a7cd7c29b748a05d4fc3bb4e0bb353d7b9ca002bb",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/ledger-review.json": "7cbb3e59eb1908e7641224cbde5cb93e5955b3858c53bd4f1bd7f0c87db873d7",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/README.md": "a59da010a57ba6185f022ffea850d84cf511700b48ebc9905e40e157480c8802",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json": "b42a8a9beefd1baf4fa73057e12bbd01790214cfb66c1e18b12519a7ed4ef6df",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/review.md": "8b96d5d8246e7c27d5889a98506b386cf318072560d6a220610bf2afcd7971f0",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json": "6e4b4d789dfdfd435663a5667fd161a0fa16999cdc28b0159e82591b5e930525",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.json": "ef017002d8fbc01f155dbd315d2b1c59ae7765b5840f912822fc86c87af314bb",
+    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.md": "53192d7c98d83c6b493f56b2e83d9cdedcfd4ea75e680809f326d82fd3ac57c0",
+    ".github/workflows/client-contract.yml": "fb633108d5d43b368d9c8a75d7d0ec81f718e119630c811334fd1bd4eb5f1454",
+    ".github/workflows/crm-saas-public-contract.yml": "5174f62866dd6d84c61143074809718837086787fb886a19f085c24189d5d2c9",
+    ".github/workflows/crm-v1-prd-head.yml": "9797044712711f8bc503b5b7a3b4da5755aaf6c8874a8104d30c20842a64fe6a",
+    ".github/workflows/crm-v1-prd.yml": "25bb5f0e9b7626a88a71aba7a35322d7b7e51e5699c1e9c4766faa994b9c131e",
+    ".github/workflows/p10-platform-audit.yml": "941ccf864b7985b1b7d2b0c3277a01845003a0e4a44a97a55481d1f8fcad1d0e",
+    ".github/workflows/p10-platform-candidate.yml": "df5ab1ce8ba02338cf6705bf41ffd4f5647be445d83cefbb23606a7e48802db9",
+    ".github/workflows/p10-platform-preflight.yml": "8ffd7d626a3ef0566ec2caeaf1bd00e0bb5c89d3300f6403c6079cc89e4e353f",
+    ".github/workflows/p10-platform-validation.yml": "169662caca8ab9d972976c17e2ca7d14a3986fcb354ca82933097f8d776fda02",
+    ".github/workflows/r2-candidate.yml": "cfea8ab19c0bb5fe3800e6ee64d06dacd5c0bcaf0446bd3c8c0c82b6cb3923f3",
+    ".github/workflows/r2-deploy.yml": "37960838ab5c7d8565a69d29bd8137546946b8c2f5af696c2275971442f92b9f",
+    ".github/workflows/r2-freeze.yml": "37ce4fb3de9d4c16e331c0864b245545efcef370d6efaeab2169e348bccb4a4e",
+    ".github/workflows/space-ga-evidence.yml": "4f2904f963fefa8b87f3e8281a533255c5b76895001bd2b9c7d35570974452a2",
+    ".github/workflows/wms-production-sql.yml": "f44ac479f2378d9e05468a9a9b6f24e067da6ae6d475be796ffcd7661e15ed91"
+  },
+  "protected_inputs_unchanged": true,
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+    "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+  },
+  "historical_failure_retention": "Original failures, first 6-test RED/GREEN and scope-correction 8-test RED/GREEN all retained. All-global source/mapping/metadata are explicitly superseded; current evidence is the scope-* runs.",
+  "diagnostic_notes": [
+    "A local reuse preflight incorrectly expected roadmap inputs to differ and asserted before invoking the manager. The corrected read-only verifier established exact input equality; no extra manager run occurred. Original preflight trace remains in the tool transcript.",
+    "First metadata diff check reported CRLF-only trailing-whitespace under raw-byte attributes. The raw failure output is retained; only current metadata was rewritten with LF. Historical snapshots and logs preserve original bytes."
+  ],
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false,
+  "not_run": [
+    "database/DDL/runtime registry/lock isolation",
+    "product build",
+    "business/provider runtime acceptance",
+    "authority authentication",
+    "remote ancestry",
+    "Actions",
+    "deployment"
+  ],
+  "review_status": "PENDING_COORD_FOCUSED_REVIEW",
+  "identity_scope_profiles": {
+    "Project": {
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK"
+    },
+    "Iteration": {
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK"
+    },
+    "IterationInput": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    },
+    "CandidateRef": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    },
+    "ReviewRound": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    },
+    "ExternalRequestReceipt": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    }
+  },
+  "superseded_intermediate": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global-index.json",
+    "bytes": 6031,
+    "sha256": "5e1697fc90b731094e0d6e0241719a2a5320bd64aed4fef4fda6004b7d2f940e",
+    "representation": "RAW_FILE_BYTES"
+  }
+}

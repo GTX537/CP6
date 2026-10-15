@@ -1,0 +1,4 @@
+* -text
+*.json whitespace=cr-at-eol
+*.stdout.txt whitespace=-blank-at-eof,-blank-at-eol
+*.stderr.txt whitespace=-blank-at-eof,-blank-at-eol

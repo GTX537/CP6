@@ -1,0 +1,11 @@
+{
+  "command": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "diff",
+    "--check"
+  ],
+  "exit_code": 2,
+  "scope": "Current draft metadata used Windows default CRLF under raw-byte attributes; normalize only current metadata, preserve historical snapshots and logs."
+}

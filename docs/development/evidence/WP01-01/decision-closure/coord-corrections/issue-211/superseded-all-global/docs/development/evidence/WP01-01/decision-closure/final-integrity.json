@@ -1,0 +1,12 @@
+{
+  "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "manifest_sha256": "1aac9bae8c2084e8d6a02ff4f1116daa2241ca1b6a8df0b54aaf58b92b4a247b",
+  "core_artifacts_verified": 111,
+  "inherited_pins_verified": 4,
+  "protected_inputs_unchanged": true,
+  "result": "PASS",
+  "scope": "Current worktree source/hash integrity only; commit and remote containment left to COORD",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}

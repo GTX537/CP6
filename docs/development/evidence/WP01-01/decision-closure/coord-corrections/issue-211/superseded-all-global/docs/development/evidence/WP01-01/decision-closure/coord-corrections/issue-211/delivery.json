@@ -1,0 +1,111 @@
+{
+  "schema": "WP01-01-ISSUE-211-DELIVERY/1",
+  "issue": "https://github.com/GTX537/CP6/issues/211",
+  "task": "WP01-01",
+  "scope": "PREPARATION_ONLY",
+  "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "original_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+  "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+  "corrected_entities": [
+    "Project",
+    "Iteration",
+    "IterationInput",
+    "CandidateRef",
+    "ReviewRound",
+    "ExternalRequestReceipt"
+  ],
+  "global_identity": "Fixed original Owner/entity/schema, exact raw Id, empty scope bytes; no tenant/parent/business/version in tuple or lock key. Cross-tenant hit conflicts without new UUID; same-bucket different tuple keeps distinct identity.",
+  "new_validation": {
+    "tests": 6,
+    "static_checks": 1000,
+    "red": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.run.json",
+      "bytes": 1690,
+      "sha256": "948e90ab6a6e7badb35c267c9d690bb12421736aa825070b025466188715071d",
+      "representation": "RAW_FILE_BYTES"
+    },
+    "green": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.run.json",
+      "bytes": 1692,
+      "sha256": "88a08fa59541ac803600a26c298ab700111bda531370b9895e637d5eea2258d1",
+      "representation": "RAW_FILE_BYTES"
+    },
+    "static": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.run.json",
+      "bytes": 1804,
+      "sha256": "5b78313425366143d8b2e2ad76266227d93721575e121fe150e98260259bcc41",
+      "representation": "RAW_FILE_BYTES"
+    }
+  },
+  "reused_validation": {
+    "gate_tests": {
+      "count": 54,
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+        "bytes": 1250,
+        "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "input_and_log_hashes": "EXACT_MATCH",
+      "additional_input_fields": "Original matrix unchanged; exact roadmap target ID list unchanged",
+      "scope": "Original synthetic gate algorithm only; not rerun"
+    },
+    "manager": {
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+        "bytes": 1256,
+        "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "input_and_log_hashes": "EXACT_MATCH",
+      "scope": "Original read-only manager run reused, not rerun"
+    },
+    "original_static_checks": {
+      "count": 12251,
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+        "bytes": 36290,
+        "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "scope": "Original mapping snapshot only; superseded for corrected mapping. Not a fresh run or proof of the corrected identity design."
+    }
+  },
+  "superseded": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-index.json",
+    "bytes": 6838,
+    "sha256": "71c56f4dae5002d661783c34bca236c78af2d951062dda63bee6f0e9850980d8",
+    "representation": "RAW_FILE_BYTES"
+  },
+  "mapping_regeneration": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/mapping-regeneration.json",
+    "bytes": 1132,
+    "sha256": "fb6289bc01439015a1e343f9e43b4a1f2170f6ee91be3286b6cbf09c634f3d48",
+    "representation": "RAW_FILE_BYTES"
+  },
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+    "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+  },
+  "review_status": "PENDING_COORD_FOCUSED_REVIEW",
+  "actions_triggered": false,
+  "actions_cancelled": [],
+  "workflow_changes": [],
+  "task_state": "PLANNED",
+  "entry_gate": "NOT_CHECKED",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false,
+  "limitations": [
+    "database/DDL/runtime registry/lock isolation",
+    "product build",
+    "business/provider runtime acceptance",
+    "authority authentication",
+    "remote ancestry",
+    "Actions",
+    "deployment"
+  ]
+}

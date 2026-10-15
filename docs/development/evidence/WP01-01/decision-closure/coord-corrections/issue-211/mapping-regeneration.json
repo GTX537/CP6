@@ -1,0 +1,19 @@
+{
+  "schema": "WP01-01-ISSUE-211-MAPPING-REGEN/1",
+  "command": "Import build_candidate from fixed task path, set explicit read-only ARCHIVE_ROOT=D:/CP6, invoke mapping() only",
+  "executed_at": "2026-10-15T02:42:58.165397+00:00",
+  "unchanged_original_inputs": {
+    "docs/design-handbook/architecture/02-postgresql-tenancy.md": "ad62f478e077f4b783bbaddab4e8c8c1018a314484a9d3ba2b1c0c018498dee9",
+    "docs/design-handbook/modules/PLM-ITER-01.md": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+    "docs/design-handbook/modules/PLM-REL-01.md": "65f4c863688200c94cac1065149badadf8e164b105823de49090cd3720fe3aeb",
+    "docs/design-handbook/remediation/07-shared-consumer-mappings.md": "7defc5f9b65df9269124f433abf58f3331b69dc9fde36f1422ffd0de32d864aa"
+  },
+  "changed_files": [
+    "postgresql-mapping.json"
+  ],
+  "mapping_before_sha256": "1dd70e194960534c1480d2ce2b8ab7cc82cbe088004e6859fba5f6a6535e9440",
+  "mapping_after_sha256": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}
