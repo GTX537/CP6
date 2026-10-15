@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-15：开发流程精简
+
+全项目长期规则与第八轮执行说明已调整：去除重复SPEC/QUALITY、默认全量架构/宿主验证和证据复制，旧有效结果复用。此项为流程文档调整，不增加375任务完成数，不代表业务验收通过。见[项目规则](../../AGENTS.md)。
+
 ## 2026-10-15：第八轮正式门与版本登记窗口
 
 第八轮只开放A/WP01-01正式台账adapter/manager及完整采纳记录候选、B/WP02-02在Platform的0.10.3正式登记代码窗口。两个局部窗口CONFIRMED；完整任务仍PLANNED/BLOCKED与NOT_CHECKED，未收到START，不代表实际采纳或业务开工。C/D旧窗口关闭且不新增派工，WP02-28等待可信producer。24/375 DONE、S01 12/12、业务0/125、247 NOT_RUN、41REFERENCE_ONLY及历史缺件保持。无Actions、正式签名/发包、数据库/业务迁库或部署。 [执行包](../development/dispatch/20261015-wave8/README.md)；[准入证据](../development/evidence/wave8-dispatch-20261015/README.md)。下文保留历史时点。

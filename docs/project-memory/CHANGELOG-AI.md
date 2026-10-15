@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-15：用户要求全项目减少门禁与测试
+
+更新AGENTS、并行约定及第八轮A/B执行说明，并同步Platform/CRM开发入口。普通文档只做diff/链接检查；不改产品代码、工作流触发、保护、依赖或历史证据，不执行产品测试、Actions、数据库操作或部署。
+
 ## 2026-10-15：第八轮正式门与版本登记窗口
 
 第八轮只开放A/WP01-01正式台账adapter/manager及完整采纳记录候选、B/WP02-02在Platform的0.10.3正式登记代码窗口。两个局部窗口CONFIRMED；完整任务仍PLANNED/BLOCKED与NOT_CHECKED，未收到START，不代表实际采纳或业务开工。C/D旧窗口关闭且不新增派工，WP02-28等待可信producer。24/375 DONE、S01 12/12、业务0/125、247 NOT_RUN、41REFERENCE_ONLY及历史缺件保持。无Actions、正式签名/发包、数据库/业务迁库或部署。 [执行包](../development/dispatch/20261015-wave8/README.md)；[准入证据](../development/evidence/wave8-dispatch-20261015/README.md)。下文保留历史时点。

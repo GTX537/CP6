@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-15：全项目精简开发验证
+
+用户要求当前及后续任务减少门禁和测试。Main、Platform、CRM统一采用相关验证、一次集中审查、一份报告及有效结果复用；旧贡献指南的默认全套检查/等待远程CI要求被当前规则取代。第八轮A/B验证同步精简，任务完成与业务验收状态不变。见[项目规则](../../AGENTS.md)和[并行约定](../development/09-parallel-development.md)。
+
 ## 2026-10-15：第八轮正式门与版本登记窗口
 
 第八轮只开放A/WP01-01正式台账adapter/manager及完整采纳记录候选、B/WP02-02在Platform的0.10.3正式登记代码窗口。两个局部窗口CONFIRMED；完整任务仍PLANNED/BLOCKED与NOT_CHECKED，未收到START，不代表实际采纳或业务开工。C/D旧窗口关闭且不新增派工，WP02-28等待可信producer。24/375 DONE、S01 12/12、业务0/125、247 NOT_RUN、41REFERENCE_ONLY及历史缺件保持。无Actions、正式签名/发包、数据库/业务迁库或部署。 [执行包](../development/dispatch/20261015-wave8/README.md)；[准入证据](../development/evidence/wave8-dispatch-20261015/README.md)。下文保留历史时点。
