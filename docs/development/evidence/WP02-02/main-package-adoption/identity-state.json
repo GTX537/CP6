@@ -1,0 +1,15 @@
+{
+  "sourceFrozen": "Verified",
+  "contractShapeValid": "Verified",
+  "artifactBytesVerified": "Verified",
+  "trustCurrentlyAccepted": "Unknown",
+  "compatibility": "Unknown",
+  "consumerQualified": "Unknown",
+  "hostRegistered": "Unknown",
+  "configEnabled": "Unknown",
+  "runtimeObserved": "Unknown",
+  "businessApplied": "Unknown",
+  "independentlyAccepted": "Unknown",
+  "releaseAssemblySha256": "223d8e514865adb750a01cb3032b4bed03e25d08124ca87b88d2d5e4688578cb",
+  "scope": "Exact formal identity only; signature results remain in the separately recorded authorized release run."
+}

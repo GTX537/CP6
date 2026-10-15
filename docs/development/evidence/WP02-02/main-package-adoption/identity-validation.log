@@ -1,0 +1,44 @@
+COMMAND ["C:/Users/tt/.dotnet/dotnet.exe", "restore", "eng/wp02-02/main-package-adoption/IdentityInspector.csproj", "--configfile", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\NuGet.config", "--verbosity", "minimal"]
+EXIT 0
+  Determining projects to restore...
+  Restored $WORKTREE\eng\wp02-02\main-package-adoption\IdentityInspector.csproj (in 13.63 sec).
+
+
+COMMAND ["C:/Users/tt/.dotnet/dotnet.exe", "build", "eng/wp02-02/main-package-adoption/IdentityInspector.csproj", "--no-restore", "-c", "Release", "-warnaserror:MSB3277", "--verbosity", "minimal"]
+EXIT 0
+  IdentityInspector -> $WORKTREE\eng\wp02-02\main-package-adoption\bin\Release\net8.0\IdentityInspector.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.15
+
+
+COMMAND ["C:/Users/tt/.dotnet/dotnet.exe", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\eng\\wp02-02\\main-package-adoption\\bin\\Release\\net8.0\\IdentityInspector.dll", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\docs\\development\\evidence\\WP02-02\\main-package-adoption\\matrix.json", "7c416c705703d0dd6327e7ee5de0f486eb391dff07c1f40fcfe8ce9a3d9518e5", "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\docs\\development\\evidence\\authorized-adoption-release-20261015\\publication\\formal-package-publication.v1.json", "fae24b7cc239d79f12f7e2b0dc627789423f3aa6275ad38fb54a5f9ebc05bc36", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\trust\\p10-formal-nuget-trust-store.v1.json", "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\trust\\certificates", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\feed-readback-packages", "D:\\CP6-local-test\\WP02-02\\adopt-a1\\identity-output"]
+EXIT 0
+{
+  "sourceFrozen": "Verified",
+  "contractShapeValid": "Verified",
+  "artifactBytesVerified": "Verified",
+  "trustCurrentlyAccepted": "Unknown",
+  "compatibility": "Unknown",
+  "consumerQualified": "Unknown",
+  "hostRegistered": "Unknown",
+  "configEnabled": "Unknown",
+  "runtimeObserved": "Unknown",
+  "businessApplied": "Unknown",
+  "independentlyAccepted": "Unknown",
+  "releaseAssemblySha256": "223d8e514865adb750a01cb3032b4bed03e25d08124ca87b88d2d5e4688578cb",
+  "scope": "Exact formal identity only; signature results remain in the separately recorded authorized release run."
+}
+
+
+COMMAND ["C:/Users/tt/.dotnet/dotnet.exe", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\eng\\wp02-02\\main-package-adoption\\bin\\Release\\net8.0\\IdentityInspector.dll", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\docs\\development\\evidence\\WP02-02\\main-package-adoption\\matrix.json", "0000000000000000000000000000000000000000000000000000000000000000", "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\docs\\development\\evidence\\authorized-adoption-release-20261015\\publication\\formal-package-publication.v1.json", "fae24b7cc239d79f12f7e2b0dc627789423f3aa6275ad38fb54a5f9ebc05bc36", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\trust\\p10-formal-nuget-trust-store.v1.json", "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\trust\\certificates", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\feed-readback-packages", "D:\\CP6-local-test\\WP02-02\\adopt-a1\\identity-bad-pin"]
+EXIT 2
+matrix pin mismatch
+
+
+COMMAND ["C:/Users/tt/.dotnet/dotnet.exe", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\eng\\wp02-02\\main-package-adoption\\bin\\Release\\net8.0\\IdentityInspector.dll", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\docs\\development\\evidence\\WP02-02\\main-package-adoption\\matrix.json", "7c416c705703d0dd6327e7ee5de0f486eb391dff07c1f40fcfe8ce9a3d9518e5", "0000000000000000000000000000000000000000", "D:\\CP6-worktrees\\wave8-dispatch-20261015\\docs\\development\\evidence\\authorized-adoption-release-20261015\\publication\\formal-package-publication.v1.json", "fae24b7cc239d79f12f7e2b0dc627789423f3aa6275ad38fb54a5f9ebc05bc36", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\trust\\p10-formal-nuget-trust-store.v1.json", "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\trust\\certificates", "C:\\Users\\tt\\CP6-planning-reports\\20261015-wave8-integration\\formal-run-38709310767\\11959124489\\feed-readback-packages", "D:\\CP6-local-test\\WP02-02\\adopt-a1\\identity-bad-source"]
+EXIT 2
+approval-identity: Matrix/source do not match independently approved identity.

@@ -11,7 +11,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="[8.0.11]" />
     <PackageReference Include="Npgsql" Version="[8.0.8]" />
     <PackageReference Include="Dapper" Version="2.1.72" />
-    <PackageReference Include="CP6.Platform.EntityFramework" Version="[0.10.2]" />
+    <PackageReference Include="CP6.Platform.EntityFramework" Version="[0.10.3]" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../CP6.Core/CP6.Core.csproj" />

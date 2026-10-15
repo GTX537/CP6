@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net8.0": {
+      "CP6.Platform.Release": {
+        "type": "Direct",
+        "requested": "[0.10.3, 0.10.3]",
+        "resolved": "0.10.3",
+        "contentHash": "ImrsGTcyt0/Urb01kbII/srXcTTZOwRxqRqeyuLbeEi20g9q7PrAswGE6KBi6i6XYk0RodvP5S9rTlzumN5C9Q=="
+      }
+    }
+  }
+}

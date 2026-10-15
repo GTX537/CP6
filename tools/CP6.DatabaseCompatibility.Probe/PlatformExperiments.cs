@@ -456,7 +456,7 @@ internal static class PlatformExperiments
         Expect.True(result.Disposition == Cp6InboxDisposition.RetryScheduled, "Actual package generic exception path must schedule retry for actual serialization failure.");
         var committed = await db.Connection.QuerySingleAsync<string>("SELECT \"Value\" FROM " + db.Table("BusinessRecords") + " WHERE \"Id\"=@Id", new { Id = id });
         Expect.True(committed == "competitor committed", "Serialization loser must not lose competitor's committed write.");
-        return "Actual PostgreSQL SQLSTATE 40001 observed; Platform 0.10.2 generic exception path returned RetryScheduled, rolled back loser and retained competitor. This is behavior evidence, not provider-specific error classification.";
+        return "Actual PostgreSQL SQLSTATE 40001 observed; the consumed Platform package's generic exception path returned RetryScheduled, rolled back loser and retained competitor. This is behavior evidence, not provider-specific error classification.";
     }
 
     private sealed class TwoPartyGate

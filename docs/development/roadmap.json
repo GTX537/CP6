@@ -158667,6 +158667,16 @@
       "date": "2026-10-15",
       "change": "User explicitly adopted WP01-01-ACCEPTANCE-BASIS-1.2.0 at manifest ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883 and approved one exact Platform0.10.3 formal release at1277da5e0a20c6d96f0a95d0e9b4f20e0008332a. User decision and automated trust are separate; historical originals and business states remain unchanged. Authorized run38709310767/attempt1 succeeded; seven packages/archive digests/Current evidence and unchanged feed visibility verified. Consumer matrix/Main adoption remain pending; no full task or business state promotion.",
       "evidence": "docs/development/evidence/authorized-adoption-release-20261015/README.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "COORD opens WP02-02 Main actual0.10.3 feed dependency adoption after user continue; direct prerequisites DONE, exact formal publication verified, exclusive shared resources free. Full task IN_PROGRESS/CONFIRMED, real PG/business acceptance remains NOT_RUN. No further Actions/publication/migration/deployment authorized.",
+      "evidence": "docs/development/evidence/WP02-02/main-package-adoption/PLAN.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "Main bounded formal0.10.3 adoption updates four references and sixteen restored locks; WebApi/Probe builds and151 related contracts/model tests pass. Exact formal identity recorded without Allowed/runtime claims. FullWP02-02 remains IN_PROGRESS, original17PGT/business NOT_RUN; no Actions, migration or deployment.",
+      "evidence": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -160032,64 +160042,31 @@
         "file:Main:CP6.WebApi/Controllers/Sys/AuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "BLOCKED",
+      "state": "IN_PROGRESS",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-02",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "B / WP02-02 第八轮已集成",
-        "repository": "Platform",
-        "owning_task_repository": "Main",
-        "branch": "codex/wp02-02-formal-registration-20261015",
-        "worktree": "D:/CP6.Platform-worktrees/wp02-02-formal-registration-20261015",
-        "claimed_at": "2026-10-15T05:11:19.013652+00:00",
-        "baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
-        "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
-        "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "PRODUCER_REGISTRATION_ONLY",
-        "bounded_window_gate": "CLOSED",
-        "full_task_gate_unchanged": true,
-        "worker_ack_at": "2026-10-15T05:29:51.0199347Z",
-        "allowed_write_paths": [
-          "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
-          "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
-          "contracts/release/v1/formal-package-publication.v1.schema.json",
-          "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
-          ".github/workflows/p10-formal-packages.yml",
-          "eng/p10/Test-P10FormalPrerequisites.ps1",
-          "eng/p10/Pack-P10FormalPackages.ps1",
-          "eng/p10/New-P10FormalPackageSet.ps1",
-          "eng/p10/Publish-P10FormalPackageSet.ps1",
-          "eng/p10/New-P10FormalPublicationRecord.ps1",
-          "eng/p10/Test-P10FormalPackageSet.ps1",
-          "tests/CP6.Platform.ReleaseTests/FormalPackagePublicationTests.cs",
-          "tests/CP6.Platform.ReleaseTests/ReleaseSchemaParityTests.cs",
-          "tests/CP6.Platform.ReleaseTests/ReleaseSchemaAssetTests.cs",
-          "tests/CP6.Platform.ReleaseTests/P10FormalWorkflowContractTests.cs",
-          "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
-          "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityTrustTests.cs",
-          "docs/P10-RELEASE-GOVERNANCE.md",
-          "docs/development/evidence/WP02-02/formal-registration/",
-          "tests/CP6.Platform.ReleaseTests/ReleaseSchemaTestData.cs",
-          "tests/CP6.Platform.ReleaseTests/P10FormalRegistrationTests.cs",
-          "eng/wp02-02/formal-registration/"
-        ],
+        "chat_label": "COORD / WP02-02 Main正式包采用",
+        "repository": "Main",
+        "branch": "codex/wp02-02-main-adoption-20261015",
+        "worktree": "D:/CP6-worktrees/wave8-dispatch-20261015",
+        "claimed_at": "2026-10-15T09:29:28.614463+00:00",
+        "baseline_sha": "5816d04eaff210db7a3b788390e4f560a67603f7",
+        "entry_evidence": "docs/development/evidence/WP02-02/main-package-adoption/PLAN.md",
+        "phase": "MAIN_PACKAGE_ADOPTION",
+        "dispatch_scope": "ACTUAL_FEED_DEPENDENCY_ADOPTION",
+        "bounded_window_gate": "CONFIRMED",
         "reserved_write_resources": [
-          "Platform:package-trust",
-          "Platform:formal-version-registration",
-          "Platform:release-schema-and-writer"
+          "Main:platform-package-pins",
+          "Main:tenant-storage",
+          "Main:ef-model",
+          "coordination:roadmap"
         ],
-        "handoff_branch": "codex/dev-handoff-wp02-02",
-        "formal_adoption_authorized": false,
         "formal_publication_authorized": false,
-        "execution_baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
-        "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
-        "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
+        "actions_authorized": false
       },
-      "blockers": [
-        "Platform0.10.3 seven packages are now signed, published and verified at authorized run38709310767/attempt1; producer absence is resolved. Main remains [0.10.2], exact consumer matrix/lock and real Main/Owner/PostgreSQL adoption plus original17PGT are not executed. These are the next consumption window; formal release approval is no longer pending. WP02-28 is not automatically opened. See docs/development/evidence/authorized-adoption-release-20261015/README.md."
-      ],
+      "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "entry_conditions": [
@@ -160175,6 +160152,57 @@
           "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
           "execution_baseline_sha": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
           "window_closed_at": "2026-10-15T03:02:23.922495+00:00"
+        },
+        {
+          "chat_label": "B / WP02-02 第八轮已集成",
+          "repository": "Platform",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-02-formal-registration-20261015",
+          "worktree": "D:/CP6.Platform-worktrees/wp02-02-formal-registration-20261015",
+          "claimed_at": "2026-10-15T05:11:19.013652+00:00",
+          "baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+          "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+          "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "PRODUCER_REGISTRATION_ONLY",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_ack_at": "2026-10-15T05:29:51.0199347Z",
+          "allowed_write_paths": [
+            "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+            "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+            "contracts/release/v1/formal-package-publication.v1.schema.json",
+            "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+            ".github/workflows/p10-formal-packages.yml",
+            "eng/p10/Test-P10FormalPrerequisites.ps1",
+            "eng/p10/Pack-P10FormalPackages.ps1",
+            "eng/p10/New-P10FormalPackageSet.ps1",
+            "eng/p10/Publish-P10FormalPackageSet.ps1",
+            "eng/p10/New-P10FormalPublicationRecord.ps1",
+            "eng/p10/Test-P10FormalPackageSet.ps1",
+            "tests/CP6.Platform.ReleaseTests/FormalPackagePublicationTests.cs",
+            "tests/CP6.Platform.ReleaseTests/ReleaseSchemaParityTests.cs",
+            "tests/CP6.Platform.ReleaseTests/ReleaseSchemaAssetTests.cs",
+            "tests/CP6.Platform.ReleaseTests/P10FormalWorkflowContractTests.cs",
+            "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
+            "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityTrustTests.cs",
+            "docs/P10-RELEASE-GOVERNANCE.md",
+            "docs/development/evidence/WP02-02/formal-registration/",
+            "tests/CP6.Platform.ReleaseTests/ReleaseSchemaTestData.cs",
+            "tests/CP6.Platform.ReleaseTests/P10FormalRegistrationTests.cs",
+            "eng/wp02-02/formal-registration/"
+          ],
+          "reserved_write_resources": [
+            "Platform:package-trust",
+            "Platform:formal-version-registration",
+            "Platform:release-schema-and-writer"
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-02",
+          "formal_adoption_authorized": false,
+          "formal_publication_authorized": false,
+          "execution_baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+          "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
+          "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
         }
       ],
       "preparation_delivery_history": [
@@ -160251,6 +160279,24 @@
           "observed_at": "2026-10-15T09:04:09.425565+00:00"
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
+      },
+      "remaining_scope": "Actual Main formal0.10.3 restore/build/contracts/model checks passed; technical identity matrix/lock recorded. Trusted tenant binding, LOGIN/DataSource, EF/RLS/transaction/Owner adoption and original17PGT remain NOT_RUN; full task is IN_PROGRESS.",
+      "main_package_adoption": {
+        "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
+        "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
+        "producer_source_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+        "version": "0.10.3",
+        "publication_sha256": "fae24b7cc239d79f12f7e2b0dc627789423f3aa6275ad38fb54a5f9ebc05bc36",
+        "local_validation": {
+          "restores": 16,
+          "builds": 2,
+          "related_tests_passed": 151,
+          "failed": 0,
+          "skipped": 0
+        },
+        "identity_evaluation": "Source/shape/archive verified; compatibility and fresh cryptographic trust Unknown",
+        "original_17_pgt": "NOT_RUN",
+        "business_acceptance": "NOT_RUN"
       }
     },
     {
