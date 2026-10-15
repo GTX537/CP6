@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-15：第九轮四对话派工
+
+[执行包](../development/dispatch/20261015-wave9/README.md)已登记：A 分阶段采纳信任、B Identity/ERP 同事务租户隔离、C Main 实际运行身份、D CodeGen 安全预览。各自独立分支/工作树，源码及 PG 55436/55438 范围分离；本轮 START 均未收到。A/D 完整任务保持 PLANNED/NOT_CHECKED，B IN_PROGRESS/CONFIRMED，C READY/CONFIRMED。ERP PR223 已核对远端并记录 MERGED。24/375 DONE、0/125 业务完成、247 NOT_RUN 与 41 历史引用不变。本次只检查派工资料和台账，不运行产品测试、Actions、数据库或部署。
+
 ## 2026-10-15：ERP 共享存储隔离与 EF 事务接入
 
 已实现 ERP 8 张共享表的受保护登录→租户目录、最小权限 helper 与数据库行隔离，

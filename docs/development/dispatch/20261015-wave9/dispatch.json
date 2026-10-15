@@ -1,0 +1,125 @@
+{
+  "version": "CP6-WAVE9-DISPATCH/1",
+  "issued_at": "2026-10-15T15:10:23.577941+00:00",
+  "main_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+  "platform_readonly_main_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+  "coordination_branch": "codex/wave9-dispatch-20261015",
+  "tasks": [
+    {
+      "id": "WP01-01",
+      "chat": "A",
+      "title": "验收工具按阶段加载信任配置",
+      "mode": "STAGE_SCOPED_ACCEPTANCE_TRUST",
+      "state": "PLANNED",
+      "gate": "NOT_CHECKED",
+      "branch": "codex/wp01-01-trust-stages-20261015",
+      "worktree": "D:/CP6-worktrees/wp01-01-trust-stages-20261015",
+      "handoff": "codex/dev-handoff-wp01-01",
+      "write_paths": [
+        "docs/development/tools/acceptance_basis.py",
+        "docs/development/tools/test_acceptance_basis.py",
+        "docs/development/tools/manage_roadmap.py",
+        "docs/development/tools/test_manage_roadmap.py",
+        "docs/development/evidence/WP01-01/adoption-v1.2/OPERATOR.md",
+        "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
+      ],
+      "resources": [
+        "Main:acceptance-basis-gate"
+      ],
+      "ports": [],
+      "report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    },
+    {
+      "id": "WP02-02",
+      "chat": "B",
+      "title": "Identity 四表租户隔离与 ERP 同事务接入",
+      "mode": "IDENTITY_PRIORITY_STORAGE_ADAPTER",
+      "state": "IN_PROGRESS",
+      "gate": "CONFIRMED",
+      "branch": "codex/wp02-02-identity-storage-20261015",
+      "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
+      "handoff": "codex/dev-handoff-wp02-02",
+      "write_paths": [
+        "CP6.Core/Persistence/Tenancy/",
+        "CP6.Tests/Persistence/Tenancy/",
+        "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+        "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/"
+      ],
+      "resources": [
+        "Main:tenant-storage",
+        "Main:ef-model"
+      ],
+      "ports": [
+        55436
+      ],
+      "report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    },
+    {
+      "id": "WP02-28",
+      "chat": "C",
+      "title": "Main 实际运行身份与兼容回退判断",
+      "mode": "ACTUAL_MAIN_HOST_IDENTITY",
+      "state": "READY",
+      "gate": "CONFIRMED",
+      "branch": "codex/wp02-28-runtime-identity-20261015",
+      "worktree": "D:/CP6-worktrees/wp02-28-runtime-identity-20261015",
+      "handoff": "codex/dev-handoff-wp02-28",
+      "write_paths": [
+        "CP6.WebApi/Configuration/PlatformHostIdentityConfiguration.cs",
+        "CP6.WebApi/Observability/PlatformHostIdentity*.cs",
+        "CP6.WebApi/Health/PlatformHostIdentity*.cs",
+        "CP6.WebApi/Program.cs",
+        "CP6.Tests/Platform/PlatformHostIdentity*.cs",
+        "CP6.Tests/Platform/PlatformHostRollback*.cs",
+        "eng/wp02-28/",
+        "docs/development/evidence/WP02-28/"
+      ],
+      "resources": [
+        "Main:host-package-adoption",
+        "file:Main:CP6.WebApi/Program.cs:identity-registration-and-release-health-only"
+      ],
+      "ports": [
+        55438
+      ],
+      "report": "docs/development/evidence/WP02-28/DELIVERY.md",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    },
+    {
+      "id": "WP02-16",
+      "chat": "D",
+      "title": "代码生成器安全即时预览",
+      "mode": "PURE_CODEGEN_PREVIEW_ONLY",
+      "state": "PLANNED",
+      "gate": "NOT_CHECKED",
+      "branch": "codex/wp02-16-codegen-preview-20261015",
+      "worktree": "D:/CP6-worktrees/wp02-16-codegen-preview-20261015",
+      "handoff": "codex/dev-handoff-wp02-16",
+      "write_paths": [
+        "CP6.Core/Services/Pub/CodeGenService.cs",
+        "CP6.Core/Services/Pub/CodeGenPreview*.cs",
+        "CP6.WebApi/Controllers/Pub/CodeGenController.cs",
+        "CP6.Web/src/api/pub/codegen.ts",
+        "CP6.Web/src/views/pms/CodeGenView.vue",
+        "CP6.Tests/CodeGenServiceTests.cs",
+        "CP6.Tests/CodeGenPreview*.cs",
+        "docs/development/evidence/WP02-16/codegen-preview/"
+      ],
+      "resources": [
+        "Main:codegen-preview"
+      ],
+      "ports": [],
+      "report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    }
+  ],
+  "actions_authorized": false,
+  "formal_publication_authorized": false,
+  "existing_database_migration_authorized": false,
+  "deployment_authorized": false
+}
