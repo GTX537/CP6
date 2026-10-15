@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前由 COORD 独占 WP02-02 租户存储窗口：内部绑定、专用池及事务租约已实现并经自有 PostgreSQL 定向验证，见[本步骤交付](evidence/WP02-02/tenant-connections/DELIVERY.md)。四模型 328 表清单准备下一步映射；真实宿主/Owner、RLS/helper、EF 及原 17 PGT 仍待完成，完整任务 IN_PROGRESS。其他对话未新增派工。
+> 当前由 COORD 独占 WP02-02 存储/EF 窗口：ERP 8 张共享表的受保护目录、RLS 与同事务 EF 接入器已实现并经自有 PG 验证，见[本步骤交付](evidence/WP02-02/erp-tenant-isolation/DELIVERY.md)。既有 handler/worker 尚未切换；后续继续真实宿主/Owner、其他上下文映射和生命周期。完整任务 IN_PROGRESS，原 17 PGT 与业务验收 NOT_RUN；其他对话未新增派工。
+
+> 前序窗口由 COORD 独占 WP02-02 租户存储窗口：内部绑定、专用池及事务租约已实现并经自有 PostgreSQL 定向验证，见[本步骤交付](evidence/WP02-02/tenant-connections/DELIVERY.md)。四模型 328 表清单准备下一步映射；真实宿主/Owner、RLS/helper、EF 及原 17 PGT 仍待完成，完整任务 IN_PROGRESS。其他对话未新增派工。
 
 > 前序窗口由 COORD 独占 WP02-02 Main 正式包采用窗口：四处引用与 16 份锁升级到正式 0.10.3，相关本地检查通过，见[本步骤交付](evidence/WP02-02/main-package-adoption/DELIVERY.md)。完整任务 IN_PROGRESS，随后进入 PostgreSQL 租户存储；原 17 PGT 仍 NOT_RUN。A/B 第八轮局部窗口已关闭，[原授权及一次发布](evidence/authorized-adoption-release-20261015/README.md)和下方分配记录保留为历史。
 

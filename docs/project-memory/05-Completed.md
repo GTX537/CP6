@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-15：ERP 共享存储隔离与 EF 事务接入
+
+已实现 ERP 8 张共享表的受保护登录→租户目录、最小权限 helper 与数据库行隔离，
+并让内部 EF 接入器使用租约中的同一连接/事务；现有全局唯一键与只追加审计保持。
+10 项相关本地验证通过，零失败、零跳过，使用真实 ErpIntegrationContext 模型和自有 PG18 中的合成 A/B 数据。
+详见[本步骤交付](../development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md)及[8 表写入清单](../development/evidence/WP02-02/erp-tenant-isolation/OBJECTS.md)。
+安装限显式调用的新布局；已有对象拒绝接管，重复初始化/升级/恢复仍待完整生命周期任务。
+现有 handler/worker/业务路由未切换；真实宿主授权、Owner 最终门、其他上下文映射与原 17 PGT 仍待完成。
+WP02-02 保持 IN_PROGRESS / CONFIRMED；24/375 DONE、0/125 业务完成及 247 NOT_RUN 不变。
+自有 PostgreSQL 已停止，数据与失败记录保留。本步骤没有 Actions 触发/取消/配置变更、发包、既有业务迁库或部署。
+下文保留历史时点；原“没有共享 RLS/helper”不代表本轮 ERP 局部组件完成后的状态。
+
 ## 2026-10-15：PostgreSQL 租户连接组件
 
 已实现宿主内部的不可变租户绑定、受控目录、专用连接池和显式事务租约；
