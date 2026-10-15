@@ -1,0 +1,10 @@
+{
+  "started_at": "2026-10-15T00:50:04.605629+00:00",
+  "finished_at": "2026-10-15T00:50:17.176961+00:00",
+  "exit_code": 1,
+  "source_hashes": {
+    "eng\\wp01-01\\decision-closure\\gate_candidate.py": "f5a52a15ea83eddbdf74b013aa92ab973d63afcb3dc627189ac3a887640fc7fa",
+    "eng\\wp01-01\\decision-closure\\tests\\test_gate_candidate.py": "9b4cfbdd46be38819ad4985fe9bb002de6fa76dace04d23214e67c25243a3828"
+  },
+  "scope": "SYNTHETIC_TDD_ONLY"
+}

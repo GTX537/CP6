@@ -1,0 +1,523 @@
+{
+  "schema": "WP01-01-CORE-MANIFEST/1",
+  "identity": "WP01-01-DECISION-CLOSURE/20261014-R1",
+  "basis_version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed",
+  "status": "PROPOSED_NOT_ADOPTED",
+  "source_revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "artifacts": [
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/.gitattributes",
+      "sha256": "34416cff64edfd8fab21c71ca75ee841f1ec2a5b24dec60b6e65062c4dcd2409",
+      "bytes": 185,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.json",
+      "sha256": "8b684dcf01ce5c8743dd563f319ce5364974910ee2f3167ef12d64c2cf947ca1",
+      "bytes": 383,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.PLM-ITER-01.json",
+      "sha256": "8b684dcf01ce5c8743dd563f319ce5364974910ee2f3167ef12d64c2cf947ca1",
+      "bytes": 383,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.PLM-REL-01.json",
+      "sha256": "8b684dcf01ce5c8743dd563f319ce5364974910ee2f3167ef12d64c2cf947ca1",
+      "bytes": 383,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/basis-delta.json",
+      "sha256": "41d06ff2e0e3b934977f72c927a2e943a7c76f2202a5aad5acafbedddaa1fb5c",
+      "bytes": 35416,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-final.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-final.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-provider-evidence.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-provider-evidence.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-second.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-second.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-third.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-third.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build.stderr.txt",
+      "sha256": "c38b23f5af8cc46a5f0e136f4b6cf88dc1fbc6d38ceb7b267699dbb77eac8c7b",
+      "bytes": 1624,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/contract-ref.json",
+      "sha256": "0c45fac5ae309186118f5fda09731ee57a8365f6771ea0b4601f4f5cf32c3f13",
+      "bytes": 232,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/current-source-audit.json",
+      "sha256": "fe1eca0cc8688077e98cc514128be8f4b68b244ca050d7ba8c389fcb85650d70",
+      "bytes": 47773,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/decisions.json",
+      "sha256": "0ba8d8fb82af67c231daf606ab9d4a4243d2503c37b61459e55e0e3682588c24",
+      "bytes": 279323,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "sha256": "da304904da92c7b6fd051304b573ba04da2abf759f1f3058e5e3158a0b854476",
+      "bytes": 3796,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/digest-vectors.candidate.json",
+      "sha256": "337799ebdf2985a735019b4cebbb8d45ca2879885c5e4399d54c00b531cb9497",
+      "bytes": 1411,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/gate-contract.candidate.json",
+      "sha256": "7fd2401374e1e77900de73879937f720fcca5267dfdf7a2a99edeb2b62c9fee6",
+      "bytes": 94101,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "sha256": "e0bb0ec3940090de265cbf853a48e3d41db580b0146a2dd809e3235227882a68",
+      "bytes": 7832,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+      "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+      "bytes": 1256,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stdout.txt",
+      "sha256": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+      "bytes": 395,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "sha256": "1dd70e194960534c1480d2ce2b8ab7cc82cbe088004e6859fba5f6a6535e9440",
+      "bytes": 3068484,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/provider-consumer-closure.json",
+      "sha256": "2c59282749f87d8ed4b2fa11cdce7c66f06036a68f6afbfd1cded451bf11b844",
+      "bytes": 3868358,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/actual-baseline-result.before-fix.json",
+      "sha256": "1fe8d43e2b86b45fa05e0dfcfca10648e4023a9a6d95381d21766611097b845d",
+      "bytes": 377,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/gate_candidate.py",
+      "sha256": "48c783c4484b1f7ced2fb7cf162b2ce75997acb4d11184d40e9f037aacf5fdce",
+      "bytes": 16877,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/test_gate_candidate.py",
+      "sha256": "4321323e93c9ab8f12c0184f09829256cba718e061d1e0110fb7dcf07ff8b245",
+      "bytes": 20030,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.run.json",
+      "sha256": "34a44c382a80b81f811871d5c3a07387a0921cc9577e54fcf3fc86fa409fdb8c",
+      "bytes": 560,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.stderr.txt",
+      "sha256": "1d5b794e77bc6daaac7bcd99010ff928c34babab5242e7000a6d6a4e6a5cf14f",
+      "bytes": 10985,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/README.md",
+      "sha256": "bbf6eb3d4bb360229c6b796b6277ac2c50ba02d27b30553a632a40a49a14bce2",
+      "bytes": 3995,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stdout.txt",
+      "sha256": "0716a3e5e663d2df293126d5bd2137962095c006c673ba6b6da684a3629cdbd0",
+      "bytes": 249,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/gate_candidate.py",
+      "sha256": "f8e2c5f1a7129b9ebdb2c6ce26b2cf142174a2576201966ab5142f59ad26e50c",
+      "bytes": 11041,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/test_gate_candidate.py",
+      "sha256": "38d1c1cc859140bb36aa4b2d4f798562b8f6cadc65733ed496295d81655fdf26",
+      "bytes": 16205,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.run.json",
+      "sha256": "eb2d431bfebed3ffc4f14ce09dcfd0b00210eeabaecb8767b5f3836acab31b19",
+      "bytes": 554,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stderr.txt",
+      "sha256": "e62a6640d2ed0138d0465e4a4c5693a8db895d20339e2e927d1d6632b6e00cd0",
+      "bytes": 7731,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/submission.actual-unadopted.json",
+      "sha256": "663e99e31bef47d94b74579e8615a9e3811f654ac90f31ed7a0370f56d0f3f67",
+      "bytes": 1031,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-bindings-red.stderr.txt",
+      "sha256": "39330befbc8b905b57f772d9115e5d78068256f0cf5acc7cfc6c3f6ca7d5a68f",
+      "bytes": 10305,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-bindings-red.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.run.json",
+      "sha256": "fcdda57fdc640599601f314d0555031684a9e973027f046d0709acda1116615c",
+      "bytes": 456,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.stderr.txt",
+      "sha256": "4df88b7babc0dc25becd12debc9bd32d3c460d5831857445f6ceb78d9c3c59ea",
+      "bytes": 5565,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.run.json",
+      "sha256": "53cc667783457d19dfc10074a0100c1e331aeb397cba00bf243276282b59b817",
+      "bytes": 583,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.stderr.txt",
+      "sha256": "ff398170cad8c81b9fc6e9968e46c998b1f57e89861e1581165e0dca6a4397d3",
+      "bytes": 7962,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-red.stderr.txt",
+      "sha256": "31e0c409338ef40a8de332902cf6a6d0eb8bb17ce61d6b7fd3c454e3de6e4202",
+      "bytes": 203421,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-red.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-bindings.stderr.txt",
+      "sha256": "f6740e3b72da7d99e2c3140e874ff63ba31a129e29d70d25c2a7d59a01a8672c",
+      "bytes": 3949,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-bindings.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.run.json",
+      "sha256": "6a57a41d663d324bbe0e59099f8ba98ec709d5f3d7b6f5d383798ba4212893ca",
+      "bytes": 1250,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stderr.txt",
+      "sha256": "a2d5e18e0e345e5932b7c6ec12cfb3df7b9722f00ea5f9e2b0192323ba6aac86",
+      "bytes": 4651,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.run.json",
+      "sha256": "7ddf7d1a43663e3d80055fbf6bdb34feb60475c8c39246ad2bc9fac2d2e257fe",
+      "bytes": 1250,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stderr.txt",
+      "sha256": "4bb69bae845659b6792d07234ed3f95c1e40226a3255a1232c4293231af6e512",
+      "bytes": 5263,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.run.json",
+      "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+      "bytes": 1250,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.stderr.txt",
+      "sha256": "a72a0d0a1c7e83d361987a01dcdfcfbf2e8b7e8ee83fc4b9796e41a8da8e8ef6",
+      "bytes": 6029,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+      "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+      "bytes": 1250,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.stderr.txt",
+      "sha256": "9cba60d827606ef0dd997450cfa0cd12ea9a70a8de88802ba56488a663484364",
+      "bytes": 4537,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-first.stderr.txt",
+      "sha256": "d69917e5293975396168694db15a1a4314bbf3e773243abb7434a1876bb6957a",
+      "bytes": 2908,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-first.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+      "bytes": 36290,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/.gitattributes",
+      "sha256": "97bb06d126ebba7eea9df6626feee657ff0d7b120ee4a3576e564ed91f8cc1fb",
+      "bytes": 152,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/build_candidate.py",
+      "sha256": "568ba1dacff713dba6f643bdd60d00ca411081939693231dc21db195785a9238",
+      "bytes": 45050,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/gate_candidate.py",
+      "sha256": "26de2446b61ad78dd5788b62a23bc1c7804522b7d4a8673a3f2eb0dd3f1756db",
+      "bytes": 18095,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "sha256": "0233e84a1e42fd0792b9faeebf0c5f40d162da07ee1af68056621546929deb6b",
+      "bytes": 19039,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/README.md",
+      "sha256": "c9a690b1242fc37d25a4c9ff23a5c6d442af7ad71f36c0dbc51124e8c0a0c8d9",
+      "bytes": 1817,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/tests/test_gate_candidate.py",
+      "sha256": "4321323e93c9ab8f12c0184f09829256cba718e061d1e0110fb7dcf07ff8b245",
+      "bytes": 20030,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/validate_candidate.py",
+      "sha256": "b475730500c78ee30fb6cd43cb41e269063e3395cd2c923cf3155fa6438b67cf",
+      "bytes": 19425,
+      "representation": "RAW_FILE_BYTES"
+    }
+  ],
+  "inherited_immutable_pins": [
+    {
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+      "bytes": 1161,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+      "bytes": 1091,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/preparation-manifest.json",
+      "sha256": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+      "bytes": 9481,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+      "sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+      "bytes": 1198041,
+      "representation": "RAW_FILE_BYTES"
+    }
+  ],
+  "exclusions": [
+    "manifest.json (no self hash)",
+    "parent intake.json, review*, publication*, final-*",
+    "future parent coordination metadata not automatically core"
+  ],
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}

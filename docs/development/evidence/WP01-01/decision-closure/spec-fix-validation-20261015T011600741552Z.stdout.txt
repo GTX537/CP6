@@ -1,0 +1,1 @@
+{"result": "FAIL", "checks": 12239, "errors": ["FK physical types ExternalRequestReceipt", "FK physical types UseRequest", "FK physical types ExecutionIntent"], "manifest_sha256": "be09549e72df19b8e641fe586ea9ccfed178738ca9e1df5bf2d95892161592c8"}

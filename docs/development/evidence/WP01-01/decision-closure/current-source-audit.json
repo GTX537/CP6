@@ -1,0 +1,1154 @@
+{
+  "schema": "WP01-01-CURRENT-SOURCE/1",
+  "repository_baselines": {
+    "Main": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+    "Platform": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+    "CRM": "1e4eea61c31d7547c3b3495d392eefbed99b7339"
+  },
+  "scope": "Exact listed symbols/routes/models/writers and fixed tree searches; not a full product audit.",
+  "historical_candidate": {
+    "revision": "b7ec269",
+    "status": "REFERENCE_ONLY",
+    "current_source": false
+  },
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false,
+  "records": [
+    {
+      "id": "OA-SUBMISSION",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Core/Services/Wf/FormSubmissionService.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "9f2032ff02b31d01f919f487c4a70c5e53a384edb61d221ad5af0652f84e66b8",
+        "bytes": 7967,
+        "anchors": [
+          {
+            "line": 29,
+            "text": "public async Task<SubmitFormResult> SubmitAsync(SubmitFormCommand command, CancellationToken ct = default)"
+          },
+          {
+            "line": 31,
+            "text": "ValidateSubmissionKey(command.SubmissionKey);"
+          },
+          {
+            "line": 39,
+            "text": ".SingleOrDefaultAsync(x => x.SubmissionKey == command.SubmissionKey, ct);"
+          },
+          {
+            "line": 51,
+            "text": "await using var tx = ownsTransaction ? await _db.Database.BeginTransactionAsync(ct) : null;"
+          },
+          {
+            "line": 60,
+            "text": "SubmissionKey = command.SubmissionKey,"
+          },
+          {
+            "line": 101,
+            "text": ".SingleOrDefaultAsync(x => x.SubmissionKey == command.SubmissionKey, ct);"
+          },
+          {
+            "line": 125,
+            "text": "private static void ValidateSubmissionKey(string key)"
+          }
+        ]
+      },
+      "finding": "Existing submission-key lookup and local transaction are reusable only within the old form protocol. Implement immutable ITER aggregate/snapshot/round binding, exact original-operation recovery, current final authorization and persistent application receipt. A successful old submission is not R1 application evidence.",
+      "successor_tasks": [
+        "WP05-19",
+        "WP05-20",
+        "WP12-06",
+        "WP12-07"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "OA-HTTP",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.WebApi/Controllers/Oa/FormSubmissionController.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "4be78019b2207e70b3dd63436bf2252e88b429e52a8b9bfc677900ac97be6a41",
+        "bytes": 1813,
+        "anchors": [
+          {
+            "line": 11,
+            "text": "[Route(\"api/oa/forms/{formKey}/submissions\")]"
+          },
+          {
+            "line": 24,
+            "text": "[HttpPost]"
+          },
+          {
+            "line": 27,
+            "text": "public async Task<IActionResult> Submit(string formKey, [FromBody] SubmissionRequest request, CancellationToken ct)"
+          },
+          {
+            "line": 29,
+            "text": "if (!HttpContext.Request.Headers.TryGetValue(\"Idempotency-Key\", out var values) ||"
+          }
+        ]
+      },
+      "finding": "POST api/oa/forms/{formKey}/submissions exists and reads Idempotency-Key. It is not an implemented PLM ITER endpoint or proof of Owner receipt/unknown-commit semantics; preserve its existing callers during a separately versioned adapter rollout.",
+      "successor_tasks": [
+        "WP05-19",
+        "WP12-06"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "OA-DISPATCH",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Core/Services/Wf/ApprovalDispatcher.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "8a41944e80130f5124179e18a778a2310185977d0904b0eefa1786d8b2bcd3e8",
+        "bytes": 1988,
+        "anchors": [
+          {
+            "line": 23,
+            "text": "public async Task OnInstanceFinishedAsync(Wf_FlowInstance inst, bool approved, Guid? decidedBy, string? reason)"
+          },
+          {
+            "line": 27,
+            "text": "var cb = _callbacks.FirstOrDefault(c => c.BizType == inst.BizType)"
+          },
+          {
+            "line": 40,
+            "text": "if (approved) await cb.OnApprovedAsync(ctx);   // 同步直调，业务在回调里走自己的状态机"
+          },
+          {
+            "line": 41,
+            "text": "else          await cb.OnRejectedAsync(ctx);"
+          }
+        ]
+      },
+      "finding": "Current dispatcher selects the first matching callback and synchronously invokes approved/rejected callbacks. R1 needs durable receive/application separation and unique governed Owner routing, not direct invocation promoted to a committed business receipt.",
+      "successor_tasks": [
+        "WP05-19",
+        "WP05-20",
+        "WP12-07",
+        "WP12-19"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "OA-BINDING-MODEL",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "e9ba19a7bad2b32b3f5524e20bda805c7a2b25334a843403ae6455eca4fa6ed5",
+        "bytes": 1865,
+        "anchors": [
+          {
+            "line": 8,
+            "text": "/// 时，按本表的 BizType 找到对应 FlowKey 起流程。一种业务类型一条启用绑定（UX 唯一索引）。"
+          },
+          {
+            "line": 9,
+            "text": "/// ConditionJson 预留\"按表单字段选不同流程\"（v1 直用 FlowKey，条件选流程后续增强）。"
+          },
+          {
+            "line": 11,
+            "text": "// [审计纳入] 审批绑定单源＝业务类型→审批流程的治理映射（BizType→FlowKey、启停）。改绑/停用直接改变"
+          },
+          {
+            "line": 14,
+            "text": "public class Wf_ApprovalBinding : BaseTenantEntity, IAuditable"
+          },
+          {
+            "line": 18,
+            "text": "public string BizType { get; set; } = string.Empty;"
+          },
+          {
+            "line": 20,
+            "text": "/// <summary>绑定的流程定义 FlowKey（Wf_FlowDef.FlowKey）</summary>"
+          },
+          {
+            "line": 22,
+            "text": "public string FlowKey { get; set; } = string.Empty;"
+          },
+          {
+            "line": 27,
+            "text": "/// <summary>条件选流程（预留，v1 未用；将来按 formSnapshot 字段在多个 FlowKey 间择一）</summary>"
+          },
+          {
+            "line": 29,
+            "text": "public string? ConditionJson { get; set; }"
+          }
+        ]
+      },
+      "finding": "Existing tenant-scoped BizType/FlowKey governance row has reserved ConditionJson. It does not store the required immutable policy/round/aggregate identities, qualified project actors, delegation and SOD evidence. Existing max lengths are not new foreign-identity domain limits.",
+      "successor_tasks": [
+        "WP12-06",
+        "WP12-07",
+        "WP05-19"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PG-MODEL-COMPATIBILITY",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Core/Persistence/PostgreSqlModelConfiguration.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "7ee4e3d0ed5c121ec4832b4bb3c756842322891ba1a509ca4d5cad0316552596",
+        "bytes": 17811,
+        "anchors": [
+          {
+            "line": 68,
+            "text": "property.SetColumnType(\"bytea\");"
+          },
+          {
+            "line": 75,
+            "text": "AddCapacityCheck(entity, property, store, \"TokenLength\", $\"octet_length({Quote(property.GetColumnName(store)!)}) = 8\");"
+          },
+          {
+            "line": 227,
+            "text": "\"decimal\" or \"numeric\" => $\"numeric({size})\","
+          },
+          {
+            "line": 252,
+            "text": "if (type == typeof(decimal)) return $\"numeric({property.GetPrecision() ?? 18},{property.GetScale() ?? 2})\";"
+          },
+          {
+            "line": 276,
+            "text": "[GeneratedRegex(@\"\\A(nvarchar|varchar|nchar|char|binary|varbinary|decimal|numeric)\\((max|\\d+(?:,\\d+)?)\\)\\z\", RegexOptions.CultureInvariant)]"
+          }
+        ]
+      },
+      "finding": "Compatibility mapping includes an eight-byte generated token and decimal typmod fallbacks. It is not the new ITER/REL exact amount storage or PostgreSQL-native adopted concurrency profile; no accepted external domain may be narrowed to these compatibility defaults.",
+      "successor_tasks": [
+        "WP02-02",
+        "WP02-03",
+        "WP05-18",
+        "WP05-32"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PG-UTC-WRITERS",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "17938c6f13cd7cb5d23dfd2d7807e0397042a18091fb673594a8762233d3d59d",
+        "bytes": 4601,
+        "anchors": [
+          {
+            "line": 15,
+            "text": "private static readonly IReadOnlySet<(Type EntityType, string Property)> UtcDateTimes ="
+          },
+          {
+            "line": 66,
+            "text": "public static void Apply(ModelBuilder modelBuilder) => PostgreSqlModelConfiguration.Apply(modelBuilder, UtcDateTimes, PostgreSqlFixedTextDomainsV1.Core);"
+          }
+        ]
+      },
+      "finding": "The audited UTC writer allowlist and fixed-text domains are existing bounded configuration. New PLM writers require field-specific timestamp/original-byte and text-domain audit, not blanket DateTime conversion.",
+      "successor_tasks": [
+        "WP02-02",
+        "WP05-18",
+        "WP05-32"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "TENANT-EF",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Core/EFDbContext/CP6Context.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "85be931fb3a13ef469ba874f249c0100470454fe0f4213beac91b7d233b37e0e",
+        "bytes": 146356,
+        "anchors": [
+          {
+            "line": 61,
+            "text": "public Guid CurrentTenantId => _tenant?.CurrentTenantId ?? TenantContext.DefaultTenant;"
+          },
+          {
+            "line": 681,
+            "text": "e.HasQueryFilter(x => x.TenantId == CurrentTenantId);"
+          },
+          {
+            "line": 690,
+            "text": "e.HasQueryFilter(x => x.TenantId == CurrentTenantId);"
+          },
+          {
+            "line": 2471,
+            "text": "e.HasQueryFilter(x => x.TenantId == CurrentTenantId);"
+          },
+          {
+            "line": 2581,
+            "text": "modelBuilder.Entity(et.ClrType).HasQueryFilter(Expression.Lambda(body, p));"
+          },
+          {
+            "line": 2637,
+            "text": "if (Database.IsNpgsql()) CorePostgreSqlModelConfiguration.Apply(modelBuilder);"
+          }
+        ]
+      },
+      "finding": "Current model applies tenant filters and PostgreSQL compatibility mapping. This does not prove dedicated tenant LOGIN/pool, trusted storage binding, shared RLS, all raw/bulk writers or schema migration/recovery adoption. Keep all existing TenantId and global unique-key contracts.",
+      "successor_tasks": [
+        "WP02-02",
+        "WP02-03",
+        "WP02-10",
+        "WP02-13"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "TENANT-SCOPE",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Core/Services/Common/TenantScope.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "4cc783c97544ef87d875e7c0dc4703f406b9248749f3d2f94249e3ebefd1e1d7",
+        "bytes": 815,
+        "anchors": [
+          {
+            "line": 9,
+            "text": "public sealed class TenantScope : IDisposable"
+          },
+          {
+            "line": 17,
+            "text": "_previous = ctx.CurrentTenantId;"
+          },
+          {
+            "line": 18,
+            "text": "ctx.CurrentTenantId = target;"
+          },
+          {
+            "line": 21,
+            "text": "public void Dispose() => _ctx.CurrentTenantId = _previous;"
+          }
+        ]
+      },
+      "finding": "Mutable in-process tenant scope restores the previous TenantId. It cannot itself authenticate schema/database principal selection or current authorization.",
+      "successor_tasks": [
+        "WP02-02",
+        "WP02-03"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "TENANT-WORKER",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.WebApi/BackgroundServices/TenantScopeRunner.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "6c1e1293b153ebc082d6f5f9eb437b505de308b7364791e52309f1d18f731e5d",
+        "bytes": 2583,
+        "anchors": [
+          {
+            "line": 11,
+            "text": "/// <see cref=\"ITenantContext.CurrentTenantId\"/>——同一 scope 内 ITenantContext 与 CP6Context 是同一份，"
+          },
+          {
+            "line": 17,
+            "text": "public static async Task ForEachTenantAsync("
+          },
+          {
+            "line": 27,
+            "text": ".GetRequiredService<ITenantEnumerator>().ListActiveAsync(ct);"
+          },
+          {
+            "line": 37,
+            "text": "scope.ServiceProvider.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;"
+          }
+        ]
+      },
+      "finding": "Existing worker helper enumerates tenants and opens separate DI scopes. Future PLM workers must additionally bind the trusted tenant storage principal/connection and protocol fences; enumeration is not a current write grant.",
+      "successor_tasks": [
+        "WP02-03",
+        "WP02-10",
+        "WP05-19",
+        "WP05-21"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "LANG-HTTP-GOVERNANCE",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.WebApi/Controllers/Sys/LangController.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "80b61d91a91679db1cb9b2df987118fd0a5bc7984ac166120961a16c3323975c",
+        "bytes": 11204,
+        "anchors": [
+          {
+            "line": 123,
+            "text": "[HttpPost(\"publish\")]"
+          },
+          {
+            "line": 125,
+            "text": "[RequirePermission(\"lang\", \"publish\")]"
+          },
+          {
+            "line": 133,
+            "text": "[HttpPost(\"publish/rollback\")]"
+          },
+          {
+            "line": 135,
+            "text": "[RequirePermission(\"lang\", \"publish\")]"
+          },
+          {
+            "line": 136,
+            "text": "public async Task<IActionResult> Rollback([FromBody] RollbackRequest req)"
+          },
+          {
+            "line": 143,
+            "text": "public class RollbackRequest { public string Version { get; set; } = \"\"; }"
+          },
+          {
+            "line": 147,
+            "text": "[HttpPost(\"review\")]"
+          },
+          {
+            "line": 149,
+            "text": "[RequirePermission(\"lang\", \"review\")]"
+          },
+          {
+            "line": 150,
+            "text": "public async Task<IActionResult> Review([FromBody] int[]? ids)"
+          },
+          {
+            "line": 152,
+            "text": "var rows = (ids != null && ids.Length > 0)"
+          },
+          {
+            "line": 193,
+            "text": "[RequirePermission(\"lang\", \"update\")]"
+          },
+          {
+            "line": 216,
+            "text": "[RequirePermission(\"lang\", \"update\")]"
+          },
+          {
+            "line": 243,
+            "text": "[RequirePermission(\"lang\", \"delete\")]"
+          }
+        ]
+      },
+      "finding": "Permission-decorated routes exist. Review with absent/empty ids currently selects every non-reviewed row; published rollback request carries Version only. SYS-LANG requires explicit reviewed set/version, edit-to-draft and CAS-governed publication/rollback; no assumption that existing routes fully satisfy those contracts.",
+      "successor_tasks": [
+        "WP02-17"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "LANG-PUBLISH-WRITER",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.WebApi/Services/LangPublishService.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "1cd739b4ad5f5f8b60a0186aef15804586e1bccf978683cbafe61854d1856c8f",
+        "bytes": 4302,
+        "anchors": [
+          {
+            "line": 32,
+            "text": "public async Task<string> PublishAsync(string? publishedBy, DateTime now)"
+          },
+          {
+            "line": 34,
+            "text": "var version = \"v\" + now.ToString(\"yyyyMMddHHmmss\");"
+          },
+          {
+            "line": 37,
+            "text": "var query = context.Sys_Langs.AsNoTracking().Where(x => x.TenantId == null);"
+          },
+          {
+            "line": 38,
+            "text": "if (_configuration.GetValue<bool>(\"I18n:ServeReviewedOnly\"))"
+          },
+          {
+            "line": 56,
+            "text": "await SaveJsonAsync(ManifestPath, manifest);"
+          },
+          {
+            "line": 94,
+            "text": "public async Task<bool> RollbackAsync("
+          },
+          {
+            "line": 107,
+            "text": "await SaveJsonAsync(ManifestPath, manifest);"
+          }
+        ]
+      },
+      "finding": "Publish uses a seconds-resolution version and global TenantId-null entries; reviewed-only filtering is configurable. Rollback checks the first language file and overwrites the manifest without expected-version CAS. Immutable exact bundles, complete language closure and current policy must be implemented before claiming governed ITER/REL translation publication.",
+      "successor_tasks": [
+        "WP02-17"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "EXACT-FIN-CREDIT",
+      "disposition": "REUSE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Entity/Contracts/FinCredit/CreditAmount.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "cce1e47c4016eaa64fd9293199d646cfc4d84399ab379927b449e8ea899c4efe",
+        "bytes": 6810,
+        "anchors": [
+          {
+            "line": 10,
+            "text": "/// FromIntermediate permit values outside any field profile; ToFieldString or the configured JSON converter"
+          },
+          {
+            "line": 16,
+            "text": "public readonly struct CreditAmount : IComparable<CreditAmount>, IEquatable<CreditAmount>"
+          },
+          {
+            "line": 18,
+            "text": "private static readonly BigInteger FieldCoefficientLimit = BigInteger.Pow(10, 38);"
+          },
+          {
+            "line": 20,
+            "text": "public BigInteger Coefficient { get; }"
+          },
+          {
+            "line": 23,
+            "text": "private CreditAmount(BigInteger coefficient, int scale)"
+          },
+          {
+            "line": 29,
+            "text": "var quotient = BigInteger.DivRem(coefficient, 10, out var remainder);"
+          },
+          {
+            "line": 40,
+            "text": "public static CreditAmount Parse(string text, CreditAmountProfile profile)"
+          },
+          {
+            "line": 62,
+            "text": "var coefficient = BigInteger.Parse(digits, NumberStyles.None, CultureInfo.InvariantCulture);"
+          },
+          {
+            "line": 67,
+            "text": "/// <remarks>This is explicitly not field validation. Scale must be nonnegative; emit through ToFieldString(profile).</remarks>"
+          },
+          {
+            "line": 68,
+            "text": "public static CreditAmount FromIntermediate(BigInteger coefficient, int scale) => new(coefficient, scale);"
+          },
+          {
+            "line": 99,
+            "text": "public string ToFieldString(CreditAmountProfile profile)"
+          },
+          {
+            "line": 102,
+            "text": "if (Scale > 8 || BigInteger.Abs(Coefficient) >= FieldCoefficientLimit ||"
+          },
+          {
+            "line": 106,
+            "text": "var digits = BigInteger.Abs(Coefficient).ToString(CultureInfo.InvariantCulture);"
+          },
+          {
+            "line": 127,
+            "text": "private BigInteger AtScale(int scale) => Coefficient * BigInteger.Pow(10, scale - Scale);"
+          }
+        ]
+      },
+      "finding": "Reuse only the explicit native FIN-CREDIT canonical profile and exact intermediate arithmetic. Native field scale/sign/canonical limits do not define FIN-INV, ERP-CREDIT or new engineering fields; the value type is not storage or Owner adoption.",
+      "successor_tasks": [
+        "WP05-18",
+        "WP05-32"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "EXACT-FIN-INVENTORY",
+      "disposition": "REUSE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Entity/Contracts/FinInventory/InventoryDecimal.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "2786d97ee49ce6d8be95720ba2e0b91da39858c7d1c51b5e5ec8c104921b22a3",
+        "bytes": 5836,
+        "anchors": [
+          {
+            "line": 8,
+            "text": "public enum InventoryDecimalProfile { Decimal18, Qty12, NonNegativeQty12 }"
+          },
+          {
+            "line": 11,
+            "text": "/// <remarks>OriginalWire is a decoded field string, not the original JSON document bytes.</remarks>"
+          },
+          {
+            "line": 19,
+            "text": "public string OriginalWire { get; }"
+          },
+          {
+            "line": 25,
+            "text": "OriginalWire = originalWire;"
+          },
+          {
+            "line": 28,
+            "text": "internal static int MaximumScale(InventoryDecimalProfile profile) => profile switch"
+          },
+          {
+            "line": 37,
+            "text": "var maximumScale = MaximumScale(profile);"
+          },
+          {
+            "line": 52,
+            "text": "var coefficient = BigInteger.Parse(wire.Replace(\".\", \"\"), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);"
+          },
+          {
+            "line": 68,
+            "text": "Validate(OriginalWire, profile);"
+          },
+          {
+            "line": 69,
+            "text": "return OriginalWire;"
+          },
+          {
+            "line": 72,
+            "text": "public override string ToString() => OriginalWire;"
+          },
+          {
+            "line": 78,
+            "text": "public BigInteger Coefficient { get; }"
+          },
+          {
+            "line": 81,
+            "text": "private InventoryDecimalValue(BigInteger coefficient, int scale)"
+          },
+          {
+            "line": 87,
+            "text": "public static InventoryDecimalValue FromParts(BigInteger coefficient, int scale)"
+          },
+          {
+            "line": 90,
+            "text": "if (coefficient.IsZero) return new InventoryDecimalValue(BigInteger.Zero, 0);"
+          },
+          {
+            "line": 93,
+            "text": "var quotient = BigInteger.DivRem(coefficient, 10, out var remainder);"
+          },
+          {
+            "line": 101,
+            "text": "private (BigInteger Left, BigInteger Right, int Scale) Align(InventoryDecimalValue other)"
+          },
+          {
+            "line": 105,
+            "text": "return (Coefficient * BigInteger.Pow(10, scale - Scale),"
+          },
+          {
+            "line": 106,
+            "text": "other.Coefficient * BigInteger.Pow(10, scale - other.Scale), scale);"
+          },
+          {
+            "line": 137,
+            "text": "var digits = BigInteger.Abs(Coefficient).ToString(CultureInfo.InvariantCulture);"
+          }
+        ]
+      },
+      "finding": "Reuse only the exact original decoded wire and native FIN-INV Decimal18/Qty12/NonNegativeQty12 profile. OriginalWire is not original JSON bytes. Storage, accepted unbounded integer range and final destination-profile validation remain separate obligations.",
+      "successor_tasks": [
+        "WP05-18",
+        "WP05-32"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "ERP-CREDIT-BOUNDARY",
+      "disposition": "REUSE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Entity/Contracts/ErpCredit/README.md",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "81dd807ddbc0893a10ba61463ef1ca51565e5396da0dd2e3c9e61701ab6d1561",
+        "bytes": 4325,
+        "anchors": [
+          {
+            "line": 3,
+            "text": "`Cp6.ErpCredit.CurrentV1.Generated.CurrentCreditCodec` and"
+          },
+          {
+            "line": 4,
+            "text": "`Cp6.ErpCredit.Generated.FrozenR8CreditCodec` load exactly three byte-pinned files:"
+          },
+          {
+            "line": 14,
+            "text": "the same roots through `createCurrentCreditCodec` / `createFrozenR8CreditCodec`"
+          },
+          {
+            "line": 31,
+            "text": "WMS Money is exactly `{value,currency}` with a signed decimal string of at most"
+          },
+          {
+            "line": 32,
+            "text": "30 integer and 8 fraction digits. FIN-AR D8 has at most 20 integer and 8 fraction"
+          },
+          {
+            "line": 62,
+            "text": "The legacy CreditNote amount/storage and search API remain outside this adoption."
+          }
+        ]
+      },
+      "finding": "Reuse pinned current/frozen native codecs and raw-byte preservation only within their exposed roots. WMS 30+8 and FIN-AR 20+8 profiles permit lexical forms unlike FIN-CREDIT canonical. Legacy CreditNote storage is explicitly outside adoption; codec availability is not real Owner effect evidence.",
+      "successor_tasks": [
+        "WP05-32",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "HOST-WIRING",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.WebApi/Program.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "e8780458a545023d435abdf8f7b32b620dd7c97eb5ccba8a3b001ecc5fbfeff9",
+        "bytes": 267556,
+        "anchors": [
+          {
+            "line": 247,
+            "text": "builder.Services.AddSingleton<CP6.WebApi.Services.LangPublishService>();"
+          },
+          {
+            "line": 280,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Wf.IFormSubmissionService, CP6.Core.Services.Wf.FormSubmissionService>();"
+          },
+          {
+            "line": 302,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Wf.ApprovalDispatcher>();                                          // 章05 §4 终态分发（注入所有 IApprovalCallback）"
+          },
+          {
+            "line": 303,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.JournalApprovalCallback>(); // 章05 §7 财务凭证示范回调（兑现 MVP）"
+          },
+          {
+            "line": 304,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.BudgetApprovalCallback>(); // A5 §8 预算版本审批回调（通过→自动激活/驳回→可重编）"
+          },
+          {
+            "line": 305,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PoApprovalCallback>(); // 采购 PO 审批回调（通过→Confirmed/驳回→Draft）"
+          },
+          {
+            "line": 306,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PrApprovalCallback>(); // 采购 PR 审批回调（通过→Approved/驳回→Draft）"
+          },
+          {
+            "line": 307,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Wms.WmsFeatureFlagApprovalCallback>();"
+          },
+          {
+            "line": 352,
+            "text": "builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();"
+          }
+        ]
+      },
+      "finding": "Current host registers old OA form/dispatcher/business callbacks and the user-facing OA InboxService. This is not Platform CallerTransactionInboxV1 or OutboxV2 adoption, and no new PLM writer coverage can be inferred from service registration.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "CONSUMED-PACKAGE-DECLARATIONS",
+      "disposition": "REUSE",
+      "source": {
+        "repository": "Main",
+        "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "path": "CP6.Core/CP6.Core.csproj",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+        "bytes": 2840,
+        "anchors": [
+          {
+            "line": 13,
+            "text": "<PackageReference Include=\"CP6.Platform.Messaging\" Version=\"[0.10.2]\" />"
+          },
+          {
+            "line": 14,
+            "text": "<PackageReference Include=\"CP6.Platform.EntityFramework\" Version=\"[0.10.2]\" />"
+          },
+          {
+            "line": 23,
+            "text": "<PackageReference Include=\"Npgsql.EntityFrameworkCore.PostgreSQL\" Version=\"[8.0.11]\" />"
+          },
+          {
+            "line": 24,
+            "text": "<PackageReference Include=\"Npgsql\" Version=\"[8.0.8]\" />"
+          }
+        ]
+      },
+      "finding": "Project declarations pin Platform Messaging and EntityFramework [0.10.2], Npgsql EF [8.0.11] and Npgsql [8.0.8]. They are neither restored package hashes nor proof that current Platform source seams are in the package consumed by this host; record restore/artifact/host use separately.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PLATFORM-CallerTransactionInboxV1",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Platform",
+        "revision": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "path": "src/CP6.Platform.EntityFramework/InboxV1/CallerTransactionInboxV1.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "60917e2582c92a1e302199540252f03db69b17973b569c656a119d953104de1b",
+        "bytes": 12240,
+        "anchors": [
+          {
+            "line": 11,
+            "text": "public sealed class CallerTransactionInboxV1(ITrustedContextAccessorV1 context, ICp6InboxPreCheckpointV1 owner)"
+          },
+          {
+            "line": 16,
+            "text": "public async Task<PendingCommitResult> ProcessWithPreCheckpointV1(DbContext db, DbTransaction transaction,"
+          },
+          {
+            "line": 117,
+            "text": "public async Task<CommittedDeliveryOutcome?> ReadOriginalResultAsync(DbContext db, DbTransaction transaction,"
+          },
+          {
+            "line": 141,
+            "text": "public async Task<CommittedOriginalResultV1?> ReadOriginalOperationAsync(DbContext db, DbTransaction transaction,"
+          }
+        ]
+      },
+      "finding": "Available source seam/default property only. Host must verify actual package/source identity, opt-in model, compatible lock profile, current authority and every writer. Default VersionPrefix/Suffix is not consumed released package identity.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PLATFORM-OutboxPostgreSqlV2",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Platform",
+        "revision": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxPostgreSqlV2.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "69ee56a11dc03b99a2caeeaf5e0c4e9ed27d12853fe8cec73c5bb6c569f59978",
+        "bytes": 8021,
+        "anchors": [
+          {
+            "line": 7,
+            "text": "public static class OutboxPostgreSqlV2"
+          }
+        ]
+      },
+      "finding": "Available source seam/default property only. Host must verify actual package/source identity, opt-in model, compatible lock profile, current authority and every writer. Default VersionPrefix/Suffix is not consumed released package identity.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PLATFORM-OutboxDispatcherV2",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Platform",
+        "revision": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "path": "src/CP6.Platform.EntityFramework/OutboxV2/OutboxDispatcherV2.cs",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "8fc27744c28934a3beed404f29472837a8363e02c1f65eaa7f1abcb6ab846af7",
+        "bytes": 8033,
+        "anchors": [
+          {
+            "line": 15,
+            "text": "ValueTask<OutboxTransportResultV2> PublishAsync(Cp6OutboxDispatchMessage message, CancellationToken ct);"
+          },
+          {
+            "line": 17,
+            "text": "public sealed record OutboxDispatchObservationV2(string State, Guid ClaimRequestId, Guid? MutationId,"
+          },
+          {
+            "line": 22,
+            "text": "public sealed class OutboxDispatcherV2<TContext>(IDbContextFactory<TContext> factory, ITrustedContextAccessorV1 trusted,"
+          },
+          {
+            "line": 27,
+            "text": "public async Task<IReadOnlyList<OutboxDispatchObservationV2>> DispatchBatchV2(OutboxRootKeyV2 root, Guid requestId,"
+          },
+          {
+            "line": 45,
+            "text": "var observations = new List<OutboxDispatchObservationV2>();"
+          },
+          {
+            "line": 46,
+            "text": "foreach (var ticket in confirmed.Committed!) observations.Add(await DispatchClaimV2(ticket, ticket.Ticket.ClaimReceiptRef, ct));"
+          },
+          {
+            "line": 51,
+            "text": "public async Task<OutboxDispatchObservationV2> DispatchClaimV2(CommittedClaimTicketV2 committed, Guid mutationId, CancellationToken ct = default)"
+          },
+          {
+            "line": 64,
+            "text": "(await _store.PrepareSendV2(tx, committed, mutationId, ct), tx.Registration.Policy.Version, tx.Registration.Policy.PublishBudget), ct);"
+          }
+        ]
+      },
+      "finding": "Available source seam/default property only. Host must verify actual package/source identity, opt-in model, compatible lock profile, current authority and every writer. Default VersionPrefix/Suffix is not consumed released package identity.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PLATFORM-WP02-07-CALLER-TRANSACTION-INBOX",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Platform",
+        "revision": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "path": "docs/WP02-07-CALLER-TRANSACTION-INBOX.md",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "3b7d35337689233f1fe942027387b9f37795dbf16c9d8a5f3669f0f48a01f6a4",
+        "bytes": 8274,
+        "anchors": [
+          {
+            "line": 3,
+            "text": "This opt-in PostgreSQL library seam is `CP6.Platform.EntityFramework.InboxV1.CallerTransactionInboxV1`. The caller owns the **actual** DbContext, connection and transaction. Legacy `Cp6InboxProcessor.ProcessAsync`, its models/enums, Outbox and retention remain unchanged. Main/CRM adoption, their business acceptance and package publication are **NOT_RUN / UNPROVEN**."
+          },
+          {
+            "line": 14,
+            "text": "The concrete native lock profile implemented here supports Owner **transaction-scoped advisory locks**, delegated at the start of a transaction with no prior advisory locks. It does not infer the order of pre-held row/advisory locks or create a second parallel lock namespace. Row-lock profiles and already-held registration adapters require separate reviewed support; they must stay disabled. Host adoption must inventory and wire every receive/reconciliation/publish/revocation writer to its original shared protocol. A fixture holding seven locks does not prove real host writer coverage."
+          },
+          {
+            "line": 42,
+            "text": "To reproduce: run the task-private `pg_resource.py create`, set `CP6_WP0207_SETTINGS` to the printed private settings file, then run the three commands in PLAN. Missing owned resource fails rather than skips. `pg_resource.py stop <settings-path>` verifies identity and zero unexpected client sessions, requests smart shutdown and retains data/logs. It performs no recursive deletion. The fixture Owner/authentication/catalogue is synthetic test infrastructure; it is not Main/CRM adoption or production acceptance."
+          }
+        ]
+      },
+      "finding": "Available source seam/default property only. Host must verify actual package/source identity, opt-in model, compatible lock profile, current authority and every writer. Default VersionPrefix/Suffix is not consumed released package identity.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PLATFORM-WP02-08-OUTBOX-V2",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Platform",
+        "revision": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "path": "docs/WP02-08-OUTBOX-V2.md",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "0f78da7af3844ceb62f672f0b22510300a959893cd8a93f0db4cc9fdc57d7926",
+        "bytes": 10474,
+        "anchors": [
+          {
+            "line": 3,
+            "text": "`CP6.Platform.EntityFramework.OutboxV2` adds the opt-in `cp6-outbox-lease-v2` profile, version 1. The native `Cp6_OutboxMessage` remains the queue authority. This is a Platform library implementation; Main/CRM migration, host adoption, real broker delivery and original business acceptance are **NOT_RUN / UNPROVEN**."
+          },
+          {
+            "line": 9,
+            "text": "`OutboxRegistrationV2.AuthorityRows` is mandatory for write capabilities. These are the Owner's existing stable authorization, registration, policy and hold control rows, each with its exact schema/table/key. Every relevant Owner writer must update/lock that same durable fence; omission of an authorization dependency is an invalid host adoption. Outbox acquires the registered existing Owner advisory transaction locks, then these actual rows `FOR UPDATE`, then the unique RouteControl advisory lock and row, then stable native IDs, Binding rows and evidence. A Serializable snapshot may precede an advisory-lock wait: locking the actual changed authority row forces PostgreSQL `40001` rather than silently using a stale grant or hold. Merely sharing a mutex is insufficient. Hosts must supply the complete existing order and bounded fence list; missing rows, preheld unproven advisory locks, different connection/transaction, changed trusted context, wrong provider or unsupported isolation fail closed."
+          },
+          {
+            "line": 41,
+            "text": "The task-private PostgreSQL fixture is an independent authority adapter and publisher, not a production Owner or broker. It exercises actual concurrency, native tokens, rollback, SQLSTATE23505/40001, application-level acknowledgement loss after a real COMMIT, writer fencing and retention races. The [task report](development/evidence/WP02-08/REPORT.md), all retained logs/TRX, source/dependency/artifact identities and [60-AC mapping](development/evidence/WP02-08/acceptance-map.json) state the exact tested scope. No production data, migration, package publication, Actions or deployment is included."
+          }
+        ]
+      },
+      "finding": "Available source seam/default property only. Host must verify actual package/source identity, opt-in model, compatible lock profile, current authority and every writer. Default VersionPrefix/Suffix is not consumed released package identity.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    },
+    {
+      "id": "PLATFORM-Directory.Build",
+      "disposition": "CHANGE",
+      "source": {
+        "repository": "Platform",
+        "revision": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "path": "Directory.Build.props",
+        "representation": "GIT_BLOB_BYTES",
+        "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+        "bytes": 1144,
+        "anchors": [
+          {
+            "line": 21,
+            "text": "<VersionPrefix>0.8.0</VersionPrefix>"
+          },
+          {
+            "line": 22,
+            "text": "<VersionSuffix>alpha.2</VersionSuffix>"
+          }
+        ]
+      },
+      "finding": "Available source seam/default property only. Host must verify actual package/source identity, opt-in model, compatible lock profile, current authority and every writer. Default VersionPrefix/Suffix is not consumed released package identity.",
+      "successor_tasks": [
+        "WP02-10",
+        "WP02-12",
+        "WP05-19",
+        "WP05-34"
+      ],
+      "evidence_class": "STATIC_SOURCE_AUDIT",
+      "runtime": "NOT_RUN"
+    }
+  ],
+  "fixed_tree_absence_check": {
+    "repository": "Main",
+    "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+    "paths": [
+      "CP6.Core",
+      "CP6.Entity",
+      "CP6.WebApi"
+    ],
+    "command": [
+      "git",
+      "-c",
+      "core.longpaths=true",
+      "grep",
+      "-n",
+      "-E",
+      "PlmEngineeringService|PLM-ITER|PLM-REL|ITER-CANDIDATE|roundBinding|reviewPackageDigest|SafeTermination",
+      "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+      "--",
+      "CP6.Core",
+      "CP6.Entity",
+      "CP6.WebApi"
+    ],
+    "exit_code": 1,
+    "matches": [],
+    "candidate_plm_paths": [],
+    "interpretation": "Bounded exact-tree absence; not proof no concept exists under another name. NEW means specified ITER/REL protocol implementation is absent from audited symbols, not entire repository functionality absent."
+  },
+  "required_new_writers": [
+    {
+      "id": "ITER-OWNER",
+      "disposition": "NEW",
+      "tasks": [
+        "WP05-18",
+        "WP05-19",
+        "WP05-20",
+        "WP05-21"
+      ],
+      "writers": [
+        "project/baseline candidate mutation",
+        "freeze/submit/OA receive/application",
+        "verification plan dispatch/recovery",
+        "cancel/close/safe-termination consumption"
+      ],
+      "required_evidence": "Named actual service/route/model/transaction/authorization and every bypass writer, immutable original operation and receipts; current-source absence does not satisfy runtime coverage."
+    },
+    {
+      "id": "REL-OWNER",
+      "disposition": "NEW",
+      "tasks": [
+        "WP05-32",
+        "WP05-33",
+        "WP05-34",
+        "WP05-35",
+        "WP05-36",
+        "WP05-42",
+        "WP05-61"
+      ],
+      "writers": [
+        "release/readiness freeze",
+        "controlled registration and downstream consumption",
+        "withdrawal/reconciliation/recovery",
+        "batch and signed evidence application"
+      ],
+      "required_evidence": "Actual host/package/source binding, full Owner write set and policy fences, real consumer route and remote-main adoption."
+    },
+    {
+      "id": "VER-MES-PROVIDER",
+      "disposition": "NEW",
+      "tasks": [
+        "WP05-21",
+        "WP05-24",
+        "WP08-15",
+        "WP08-18"
+      ],
+      "writers": [
+        "original plan/intent recovery",
+        "root and complete child terminal fact production",
+        "watermark and late-effect closure"
+      ],
+      "required_evidence": "Real providers must prove no remaining/future effects; UNKNOWN, timeout, NOT_FOUND or root Cancelled alone never authorizes release."
+    }
+  ],
+  "platform_composition_boundary": {
+    "inbox": "CallerTransactionInboxV1 supports fresh Serializable caller transaction and its registered transaction advisory lock profile; preheld row/advisory profiles are not automatically supported.",
+    "outbox": "OutboxV2 uses existing Owner advisory locks then actual AuthorityRows FOR UPDATE then RouteControl/root, with no network call inside Owner transaction.",
+    "required_change": "Reconcile R1 PLM lock order with each precise Platform profile and audit all writers. Do not compose differing lock namespaces or substitute static bools for held authorization fences.",
+    "unknown_commit": "Separate ReadCommitted READ ONLY recovery with current read/field grant; absence stays unknown and does not authorize replacement operation IDs.",
+    "adoption": "UNPROVEN",
+    "runtime": "NOT_RUN"
+  },
+  "audit_limits": [
+    "No product code, EF model, migration, host DI, package configuration or shared contract modified.",
+    "Only exact listed symbols and bounded fixed-tree searches inspected; full host writer inventory remains implementation work.",
+    "Static source statements are not new runtime tests, package publication, signed authority or consumer adoption."
+  ]
+}

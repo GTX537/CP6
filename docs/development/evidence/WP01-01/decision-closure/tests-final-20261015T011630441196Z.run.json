@@ -1,0 +1,34 @@
+{
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp01-01/decision-closure/tests",
+    "-v"
+  ],
+  "started_at": "2026-10-15T01:16:30.441150+00:00",
+  "finished_at": "2026-10-15T01:17:21.372834+00:00",
+  "exit_code": 0,
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/gate_candidate.py": "48c783c4484b1f7ced2fb7cf162b2ce75997acb4d11184d40e9f037aacf5fdce",
+    "eng/wp01-01/decision-closure/tests/test_gate_candidate.py": "a6d6d418d82d8e50d33e6a038455f1bbb2af1cafd4c97942d6f695f366bc2c9e"
+  },
+  "stdout": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stdout.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "representation": "RAW_FILE_BYTES"
+  },
+  "stderr": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stderr.txt",
+    "sha256": "4bb69bae845659b6792d07234ed3f95c1e40226a3255a1232c4293231af6e512",
+    "bytes": 5263,
+    "representation": "RAW_FILE_BYTES"
+  },
+  "scope": "PRIVATE_LOCAL_STATIC_OR_SYNTHETIC_ONLY"
+}

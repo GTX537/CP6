@@ -1,0 +1,131 @@
+test_absolute_path (test_gate_candidate.GateTests.test_absolute_path) ... ok
+test_actual_authority_and_remote_never_verified (test_gate_candidate.GateTests.test_actual_authority_and_remote_never_verified) ... ok
+test_actual_mode_reads_source_before_rejecting_trust (test_gate_candidate.GateTests.test_actual_mode_reads_source_before_rejecting_trust) ... FAIL
+test_authority_scope_mismatch (test_gate_candidate.GateTests.test_authority_scope_mismatch) ... ok
+test_conditional_edge_requires_scope_authority (test_gate_candidate.GateTests.test_conditional_edge_requires_scope_authority) ... ok
+test_contract_cannot_drop_declared_edges (test_gate_candidate.GateTests.test_contract_cannot_drop_declared_edges) ... ok
+test_contract_cannot_enable_production (test_gate_candidate.GateTests.test_contract_cannot_enable_production) ... ok
+test_contract_profile_file_drift (test_gate_candidate.GateTests.test_contract_profile_file_drift) ... FAIL
+test_duplicate_json_members (test_gate_candidate.GateTests.test_duplicate_json_members) ... FAIL
+test_duplicate_obligation (test_gate_candidate.GateTests.test_duplicate_obligation) ... ok
+test_evidence_file_mismatch (test_gate_candidate.GateTests.test_evidence_file_mismatch) ... ok
+test_evidence_wrong_source (test_gate_candidate.GateTests.test_evidence_wrong_source) ... ok
+test_extra_obligation (test_gate_candidate.GateTests.test_extra_obligation) ... ok
+test_forged_authority (test_gate_candidate.GateTests.test_forged_authority) ... ok
+test_history_cannot_be_relabelled (test_gate_candidate.GateTests.test_history_cannot_be_relabelled) ... ok
+test_malformed_authority (test_gate_candidate.GateTests.test_malformed_authority) ... ok
+test_matrix_hash_drift (test_gate_candidate.GateTests.test_matrix_hash_drift) ... ok
+test_missing_adoption (test_gate_candidate.GateTests.test_missing_adoption) ... ok
+test_missing_obligation (test_gate_candidate.GateTests.test_missing_obligation) ... ok
+test_missing_provider_artifact (test_gate_candidate.GateTests.test_missing_provider_artifact) ... ok
+test_missing_provider_edge (test_gate_candidate.GateTests.test_missing_provider_edge) ... ok
+test_missing_subassertion (test_gate_candidate.GateTests.test_missing_subassertion) ... ok
+test_nonfinite_json (test_gate_candidate.GateTests.test_nonfinite_json) ... FAIL
+test_nonruntime_statuses (test_gate_candidate.GateTests.test_nonruntime_statuses) ... ok
+test_other_123_not_accepted (test_gate_candidate.GateTests.test_other_123_not_accepted) ... ok
+test_path_escape (test_gate_candidate.GateTests.test_path_escape) ... ok
+test_receipt_remote_binding (test_gate_candidate.GateTests.test_receipt_remote_binding) ... ok
+test_source_assertion_not_dropped (test_gate_candidate.GateTests.test_source_assertion_not_dropped) ... FAIL
+test_source_bytes_drift (test_gate_candidate.GateTests.test_source_bytes_drift) ... ok
+test_synthetic_cannot_be_real (test_gate_candidate.GateTests.test_synthetic_cannot_be_real) ... ok
+test_synthetic_positive_only (test_gate_candidate.GateTests.test_synthetic_positive_only) ... ok
+test_unknown_original_hash_stays_null (test_gate_candidate.GateTests.test_unknown_original_hash_stays_null) ... ok
+test_unmarked_synthetic (test_gate_candidate.GateTests.test_unmarked_synthetic) ... ok
+test_wrong_consumer_task (test_gate_candidate.GateTests.test_wrong_consumer_task) ... ok
+test_wrong_edge_contract_hash (test_gate_candidate.GateTests.test_wrong_edge_contract_hash) ... FAIL
+test_wrong_edge_contract_profile (test_gate_candidate.GateTests.test_wrong_edge_contract_profile) ... FAIL
+test_wrong_edge_contract_version (test_gate_candidate.GateTests.test_wrong_edge_contract_version) ... FAIL
+test_wrong_provider_repository (test_gate_candidate.GateTests.test_wrong_provider_repository) ... ok
+test_wrong_target (test_gate_candidate.GateTests.test_wrong_target) ... ok
+
+======================================================================
+FAIL: test_actual_mode_reads_source_before_rejecting_trust (test_gate_candidate.GateTests.test_actual_mode_reads_source_before_rejecting_trust)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 190, in test_actual_mode_reads_source_before_rejecting_trust
+    self.assertIn('FILE_BYTES_MISMATCH', self.evaluate('actual')['errors'])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'FILE_BYTES_MISMATCH' not found in ['AUTHORITY_AUTHENTICITY_UNVERIFIED', 'REMOTE_ANCESTRY_UNVERIFIED', 'SYNTHETIC_NOT_REAL']
+
+======================================================================
+FAIL: test_contract_profile_file_drift (test_gate_candidate.GateTests.test_contract_profile_file_drift)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 213, in test_contract_profile_file_drift
+    (self.root/'profile.json').write_text('{}');self.reject()
+                                                ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 78, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_duplicate_json_members (test_gate_candidate.GateTests.test_duplicate_json_members)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 181, in test_duplicate_json_members
+    self.assertIn('JSON_DUPLICATE_KEY', ' '.join(self.evaluate()['errors']))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'JSON_DUPLICATE_KEY' not found in "'synthetic'"
+
+======================================================================
+FAIL: test_nonfinite_json (test_gate_candidate.GateTests.test_nonfinite_json)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 185, in test_nonfinite_json
+    self.assertIn('JSON_NONFINITE', ' '.join(self.evaluate()['errors']))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'JSON_NONFINITE' not found in "'kind'"
+
+======================================================================
+FAIL: test_source_assertion_not_dropped (test_gate_candidate.GateTests.test_source_assertion_not_dropped)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 218, in test_source_assertion_not_dropped
+    self.reject()
+    ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 78, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_wrong_edge_contract_hash (test_gate_candidate.GateTests.test_wrong_edge_contract_hash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 198, in test_wrong_edge_contract_hash
+    self.sub['edges'][0]['receipt']=self.put('receipt.json',d);self.reject()
+                                                               ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 78, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_wrong_edge_contract_profile (test_gate_candidate.GateTests.test_wrong_edge_contract_profile)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 202, in test_wrong_edge_contract_profile
+    self.sub['edges'][0]['receipt']=self.put('receipt.json',d);self.reject()
+                                                               ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 78, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_wrong_edge_contract_version (test_gate_candidate.GateTests.test_wrong_edge_contract_version)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 194, in test_wrong_edge_contract_version
+    self.sub['edges'][0]['receipt']=self.put('receipt.json',d);self.reject()
+                                                               ~~~~~~~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\tests\test_gate_candidate.py", line 78, in reject
+    self.assertFalse(self.evaluate()['candidate_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 39 tests in 21.329s
+
+FAILED (failures=8)

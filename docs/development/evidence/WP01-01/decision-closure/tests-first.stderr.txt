@@ -1,0 +1,34 @@
+test_absolute_path (test_gate_candidate.GateTests.test_absolute_path) ... ok
+test_actual_authority_and_remote_never_verified (test_gate_candidate.GateTests.test_actual_authority_and_remote_never_verified) ... ok
+test_authority_scope_mismatch (test_gate_candidate.GateTests.test_authority_scope_mismatch) ... ok
+test_conditional_edge_requires_scope_authority (test_gate_candidate.GateTests.test_conditional_edge_requires_scope_authority) ... ok
+test_contract_cannot_drop_declared_edges (test_gate_candidate.GateTests.test_contract_cannot_drop_declared_edges) ... ok
+test_contract_cannot_enable_production (test_gate_candidate.GateTests.test_contract_cannot_enable_production) ... ok
+test_duplicate_obligation (test_gate_candidate.GateTests.test_duplicate_obligation) ... ok
+test_evidence_file_mismatch (test_gate_candidate.GateTests.test_evidence_file_mismatch) ... ok
+test_evidence_wrong_source (test_gate_candidate.GateTests.test_evidence_wrong_source) ... ok
+test_extra_obligation (test_gate_candidate.GateTests.test_extra_obligation) ... ok
+test_forged_authority (test_gate_candidate.GateTests.test_forged_authority) ... ok
+test_history_cannot_be_relabelled (test_gate_candidate.GateTests.test_history_cannot_be_relabelled) ... ok
+test_malformed_authority (test_gate_candidate.GateTests.test_malformed_authority) ... ok
+test_matrix_hash_drift (test_gate_candidate.GateTests.test_matrix_hash_drift) ... ok
+test_missing_adoption (test_gate_candidate.GateTests.test_missing_adoption) ... ok
+test_missing_obligation (test_gate_candidate.GateTests.test_missing_obligation) ... ok
+test_missing_provider_artifact (test_gate_candidate.GateTests.test_missing_provider_artifact) ... ok
+test_missing_provider_edge (test_gate_candidate.GateTests.test_missing_provider_edge) ... ok
+test_missing_subassertion (test_gate_candidate.GateTests.test_missing_subassertion) ... ok
+test_nonruntime_statuses (test_gate_candidate.GateTests.test_nonruntime_statuses) ... ok
+test_other_123_not_accepted (test_gate_candidate.GateTests.test_other_123_not_accepted) ... ok
+test_path_escape (test_gate_candidate.GateTests.test_path_escape) ... ok
+test_receipt_remote_binding (test_gate_candidate.GateTests.test_receipt_remote_binding) ... ok
+test_source_bytes_drift (test_gate_candidate.GateTests.test_source_bytes_drift) ... ok
+test_synthetic_cannot_be_real (test_gate_candidate.GateTests.test_synthetic_cannot_be_real) ... ok
+test_synthetic_positive_only (test_gate_candidate.GateTests.test_synthetic_positive_only) ... ok
+test_unknown_original_hash_stays_null (test_gate_candidate.GateTests.test_unknown_original_hash_stays_null) ... ok
+test_unmarked_synthetic (test_gate_candidate.GateTests.test_unmarked_synthetic) ... ok
+test_wrong_target (test_gate_candidate.GateTests.test_wrong_target) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 8.672s
+
+OK

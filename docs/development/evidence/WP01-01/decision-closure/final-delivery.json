@@ -1,0 +1,59 @@
+{
+  "schema": "WP01-01-WAVE7-WORKER-DELIVERY/1",
+  "task": "WP01-01",
+  "window": "20261014-wave7",
+  "scope": "PREPARATION_ONLY",
+  "branch": "codex/wp01-01-decision-candidate-20261014",
+  "source_baselines": {
+    "Main": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+    "Platform": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+    "CRM": "1e4eea61c31d7547c3b3495d392eefbed99b7339"
+  },
+  "core_candidate": "21cb6082c1ebaca8f2cbf2f60b7df9dd3a7ff106",
+  "core_manifest_sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+  "basis_version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed",
+  "independent_review": {
+    "spec": "PASS_AFTER_TWO_TARGETED_FIXES",
+    "quality": "READY_AFTER_ONE_TARGETED_FIX",
+    "records": ["review-spec.json", "review-quality.json"],
+    "cadence": "One complete task-level SPEC then QUALITY review; corrections received targeted follow-up only."
+  },
+  "validation": {
+    "private_tests": 54,
+    "test_run": "tests-final-20261015T012923391938Z.run.json",
+    "static_checks": 12251,
+    "manager_run": "manage-roadmap.run.json",
+    "manager_execution_count": 1,
+    "core_files_git_and_worktree_verified": 80,
+    "integrity_record": "final-integrity.json",
+    "reuse": "Unchanged manager and prior bounded results retain their actual origins; metadata commits do not rerun successful tests.",
+    "failure_retention": "All captured red/failing logs and later source snapshots remain; early uncaptured source snapshots and the initial unredirected build traceback are explicitly limited in validation.json."
+  },
+  "delivery_contents": {
+    "decisions": "DP01-08 clause dispositions, inherited rules and explicit technical candidates",
+    "physical_mapping_entities": 31,
+    "source_audit_records": 22,
+    "dependency_nodes": 214,
+    "dependency_edges": 1256,
+    "cross_repository_edges": 17,
+    "gate": "Private read-only integrity/source/obligation/provider-consumer evaluator; actual trust verification unsupported and actual use rejected."
+  },
+  "remaining": [
+    "COORD exact candidate receipt, normal serial merge, shared status synchronization and remote main containment verification",
+    "Separate exact authority/adoption decision and authorized production gate integration window",
+    "Actual project roles/delegation/policy, retention values, reviewed translations and capacity/SLO evidence",
+    "Owner implementations, compatible all-writer lock integration, real VER/MES safety proofs and consumer runtime/package/remote adoption"
+  ],
+  "actions_triggered": false,
+  "actions_cancelled": [],
+  "workflow_changes": [],
+  "not_run": ["product/full-repository build", "database validation or migration", "real business runtime acceptance", "deployment"],
+  "publication_evidence": "Final task SHA/PR and exact pre-push/pre-PR workflow inspections are published in this worker's fixed-SHA Handoff DELIVERY after publication; no self-referential commit hash is invented here.",
+  "task_status": "PLANNED",
+  "verification_status": "NOT_CHECKED",
+  "global_counts_unchanged": {"task_done": "22/375", "business_done": "0/125", "not_run": 247, "reference_only": 41},
+  "historical_original_gaps": "Original 30/48 remain NOT_INVENTORIED / UNRECOVERABLE / UNPROVABLE with null member IDs and missing hashes; 123 originals + 2 prospective bases does not mean 125 originals recovered.",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}
