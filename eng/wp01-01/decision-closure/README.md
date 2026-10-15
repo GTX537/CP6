@@ -1,5 +1,14 @@
 # Private WP01-01 candidate tools
 
+Issue #211 corrects six original ITER identity mappings. Its current focused validation is:
+
+```text
+<python> -B -X utf8 -m unittest discover -s eng/wp01-01/decision-closure/tests -p test_original_identity_mapping.py -v
+<python> -B -X utf8 docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py --root . --archive-root <registered archive workspace>
+```
+
+The original 54 gate tests and roadmap check retain their exact unchanged input/log identities and are reused, not rerun. The broad build/finalization entry points below reproduce the original wave7 workflow; do not run them merely to refresh correction metadata. Issue #211 invokes only `build_candidate.mapping()` after checking the original source pins, and records that bounded regeneration. Historical validation, review and manifest snapshots are preserved under `coord-corrections/issue-211/superseded/`.
+
 Use an explicitly selected Python 3.13 interpreter with `-B -X utf8`; no dependencies are installed. Run from repository root:
 
 ```text

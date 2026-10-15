@@ -1,0 +1,35 @@
+{
+  "result": "PASS",
+  "checks": 1000,
+  "changed_entities": [
+    "CandidateRef",
+    "ExternalRequestReceipt",
+    "Iteration",
+    "IterationInput",
+    "OwnerKey",
+    "Project",
+    "ReviewRound"
+  ],
+  "unchanged_entities": 24,
+  "source_files_verified": 3,
+  "reused_runs": [
+    {
+      "record": "tests-final.run.json",
+      "started_at": "2026-10-15T01:29:23.391898+00:00",
+      "scope": "Original exact input/log hashes; reused, not rerun"
+    },
+    {
+      "record": "manage-roadmap.run.json",
+      "started_at": "2026-10-15T00:48:55.484689+00:00",
+      "scope": "Original exact input/log hashes; reused, not rerun"
+    }
+  ],
+  "analogous_identity_entities_inspected_unchanged": [
+    "Candidate",
+    "EngineeringTask",
+    "ReviewIssue",
+    "Evaluation",
+    "AuditClosureAmendment"
+  ],
+  "scope": "Static candidate/schema/source/hash checks only; no DB, runtime, adoption or completion"
+}

@@ -1,6 +1,8 @@
 # WP01-01 decision closure candidate
 
-Identity: `WP01-01-DECISION-CLOSURE/20261014-R1`. Prospective basis: `CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed`. Main source baseline `99fc0ce383d2d02c1404a8adbb3abe971b41d332`; product baseline `1129953156b7775152a74ad2f51cb95ef430ee56`. Platform `b28db763f70ab6f164cb7c87d6ce49a6d97267f1`; CRM `1e4eea61c31d7547c3b3495d392eefbed99b7339`.
+Current correction: [Issue #211](https://github.com/GTX537/CP6/issues/211), recorded in [coord-corrections/issue-211/delivery.md](coord-corrections/issue-211/delivery.md). The original R1 manifest/review/validation snapshots remain immutable under that directory's `superseded/` tree. The current manifest identifies `WP01-01-DECISION-CLOSURE/20261014-R1+issue-211`; the unadopted basis stays `1.2.0-proposed` because this correction restores inherited original identity duties. Prior SPEC/QUALITY conclusions retain only their original reviewed commits; focused COORD review of the correction is separate.
+
+Original candidate identity: `WP01-01-DECISION-CLOSURE/20261014-R1`. Prospective basis: `CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed`. Main source baseline `99fc0ce383d2d02c1404a8adbb3abe971b41d332`; product baseline `1129953156b7775152a74ad2f51cb95ef430ee56`. Platform `b28db763f70ab6f164cb7c87d6ce49a6d97267f1`; CRM `1e4eea61c31d7547c3b3495d392eefbed99b7339`.
 
 This package makes concrete technical choices for review. It is unsigned and unadopted. The private gate cannot enable production, establish adoption or complete a task/target. WP01-01 remains PLANNED / NOT_CHECKED. Actual actor/signature/time are not inferred from transport, ACK, task assignment, fixtures or a coordinator recommendation.
 

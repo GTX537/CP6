@@ -1,0 +1,11 @@
+test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) ... ok
+test_global_original_identity_is_independent_of_existing_business_keys (test_original_identity_mapping.OriginalIdentityMappingTests.test_global_original_identity_is_independent_of_existing_business_keys) ... ok
+test_hash_collision_compares_all_original_tuple_bytes (test_original_identity_mapping.OriginalIdentityMappingTests.test_hash_collision_compares_all_original_tuple_bytes) ... ok
+test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) ... ok
+test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) ... ok
+test_same_original_id_conflicts_despite_changed_business_number_and_tenant (test_original_identity_mapping.OriginalIdentityMappingTests.test_same_original_id_conflicts_despite_changed_business_number_and_tenant) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.022s
+
+OK

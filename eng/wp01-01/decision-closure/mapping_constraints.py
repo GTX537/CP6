@@ -170,6 +170,111 @@ def enrich(entities, module, original):
     receipt['checks'].append({'name':'one_applied_receipt','columns':['application_storage_id','outcome'],
         'enforcement':'POSTGRESQL_PARTIAL_UNIQUE_AFTER_REGISTERED_OUTCOME_MAPPING','rule':'One APPLIED receipt per registered application unit; original outcome encoding is fixed by OA mapping, never free text/action renaming.'})
     uq(receipt,'owner_receipt_applied',['tenant_id','application_storage_id'],'Only one APPLIED revision per application unit',"outcome = convert_to('APPLIED','UTF8')")
+    # Original row identity is independent of business numbers/version/command keys.
+    # Only explicit bare-Id PKs are global. Grouped original identities retain their
+    # cited tenant/iteration tuple; do not infer a stricter bare-Id global contract.
+    original_ids = {
+        'Project': ('Project', 1580, []),
+        'Iteration': ('Iteration', 1602, []),
+        'IterationInput': ('IterationInput', 1632, ['TenantId', 'IterationId']),
+        'CandidateRef': ('CandidateObjectRef', 1664, ['TenantId']),
+        'ReviewRound': ('ReviewRound', 1692, ['TenantId', 'IterationId']),
+        'ExternalRequestReceipt': ('ExternalRequestReceipt', 1738, ['TenantId', 'IterationId']),
+    }
+    interning = {
+        'tuple_columns': ['domain_key', 'schema_bytes', 'scope_bytes', 'identity_bytes'],
+        'equality': 'FULL_TUPLE_BYTES',
+        'bucket_digest_unique': False,
+        'same_tuple_same_tenant': 'RETURN_EXISTING_UUID',
+        'same_tuple_other_tenant': 'SAFE_IDENTITY_CONFLICT_NO_NEW_UUID',
+        'different_tuple_same_bucket': 'COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID',
+        'atomicity': 'ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT',
+    }
+    for name, (source_entity, line, scope_components) in original_ids.items():
+        e = entity(name)
+        source = original('ITER', line, line)
+        scope = 'ORIGINAL_SOURCE_TUPLE_IDENTITY' if scope_components else 'ORIGINAL_GLOBAL_IDENTITY'
+        bindings = {}
+        if 'TenantId' in scope_components:
+            bindings['TenantId'] = {'column': 'tenant_id', 'authority': 'TRUSTED_ORIGINAL_TENANT_ID'}
+        if 'IterationId' in scope_components:
+            bindings['IterationId'] = {'via_fk': 'iteration_storage_id', 'target_entity': 'Iteration',
+                                      'target_original_column': 'id', 'same_tenant': True,
+                                      'authority': 'EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES'}
+        field = next(f for f in e['fields'] if f['field'] == 'Id')
+        field.update(nullability='NOT NULL', source_pin=source,
+                     identity_scope=scope)
+        columns(e)['id'].update(postgresql='bytea', nullable=False, source_pin=source)
+        domain = 'ITER/' + source_entity + '.Id'
+        key(e, 'original_id_key', domain)
+        columns(e)['original_id_key']['identity_binding'].update(
+            scope=scope, scope_components=scope_components,
+            scope_bytes_hex=None if scope_components else '', scope_bindings=bindings,
+            raw_column='id', schema_binding='PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED',
+            source_pin=source)
+        uq(e, name.lower() + '_original_id', ['original_id_key'],
+           'One row per registered original identity; exact source scope is independent of business keys')
+        e['unique_constraints'][-1]['source_pin'] = source
+        e['original_identity'] = {
+            'source_field': 'Id', 'source_entity': source_entity, 'source_pin': source,
+            'raw_column': 'id', 'key_column': 'original_id_key',
+            'registry_domain': domain, 'scope': scope, 'scope_components': scope_components,
+            'scope_bytes_hex': None if scope_components else '', 'scope_bindings': bindings,
+            'scope_encoding': 'LENGTH_PREFIXED_ORIGINAL_COMPONENT_BYTES_IN_DECLARED_ORDER' if scope_components else 'EMPTY_BYTES',
+            'scope_limit': 'BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW' if scope_components else 'EXPLICIT_ORIGINAL_BARE_ID_PK',
+            'different_scope_same_raw': 'DISTINCT_SOURCE_TUPLE_ALLOW_DISTINCT_UUID' if scope_components else 'SAME_GLOBAL_IDENTITY_CONFLICT',
+            'raw_binding': 'EXACT_ORIGINAL_BYTES',
+            'schema_binding': 'PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED',
+            'interning': dict(interning),
+            'rule': 'Fix the original Owner/entity and accepted Id schema from the cited source; '
+                    'do not accept a caller-selected schema/domain. Project/Iteration have empty '
+                    'scope: tenant and parent cannot split those explicit global PKs. The four '
+                    'grouped source entries retain exactly their declared TenantId[/IterationId] '
+                    'components; identical raw Id in a distinct source tuple is not rejected as '
+                    'a bare-Id global collision. Scope bytes frame exact original components in '
+                    'declared order without normalization/casts; resolve parent Id through the '
+                    'same-tenant FK, never use its surrogate UUID as original identity. A matching '
+                    'complete tuple resolves one UUID; an incompatible tenant assignment conflicts '
+                    'without a new UUID. UNIQUE(original_id_key) rejects duplicate complete '
+                    'identities independently of business numbers/versions/command keys. '
+                    'Digest collisions compare every tuple byte before allocating a distinct '
+                    'identity under the same Owner transaction lock. Bare-Id global scope for '
+                    'grouped entries remains unproven and cannot be silently imposed by this candidate.',
+        }
+        e['checks'].append({
+            'name': 'original_id_authority_binding',
+            'columns': ['tenant_id', 'id', 'original_id_key'] + (['iteration_storage_id'] if 'IterationId' in scope_components else []),
+            'enforcement': 'OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT',
+            'comparison': 'EXACT_SOURCE_TUPLE_RAW_SCHEMA_DOMAIN_AND_PARENT',
+            'rule': 'Resolve original_id_key through the declared exact source tuple and compare '
+                    'id with OwnerKey.identity_bytes exactly; require the fixed original '
+                    'Owner/schema, exact declared scope components and immutable tenant assignment '
+                    'before commit. Parent scope resolves original Id through its same-tenant FK. '
+                    'Every writer/import/recovery uses this same lock and comparison. '
+                    'The composite tenant FK and global key UQ are additional constraints, '
+                    'not substitutes for exact interning or raw/key consistency.',
+            'source_pin': source,
+        })
+    registry['checks'].append({
+        'name': 'original_source_id_interning',
+        'columns': ['domain_key', 'schema_bytes', 'scope_bytes', 'identity_bytes',
+                    'tenant_id', 'bucket_digest'],
+        'enforcement': 'OWNER_SERIALIZED_FULL_BYTE_COMPARISON',
+        'domains': [entity(name)['original_identity']['registry_domain'] for name in original_ids],
+        'scope_profiles': [{k: entity(name)['original_identity'][k] for k in
+                            ('registry_domain', 'scope', 'scope_components', 'scope_bindings', 'scope_limit')}
+                           for name in original_ids],
+        'interning': dict(interning),
+        'rule': 'Apply each named source scope profile before deriving equality and its lock '
+                'bucket. Project/Iteration exclude TenantId and parent from their global PK '
+                'tuple. Grouped identities include exactly their original tenant[/iteration] '
+                'components; distinct source tuples may retain the same raw Id. Same complete '
+                'tuple never allocates another UUID, and an incompatible tenant assignment '
+                'returns safe conflict. Distinct tuple bytes sharing a digest remain distinct '
+                'identities. Owner/schema/domain selection is trusted and fixed from original '
+                'sources; no normalization, caller-selected scope or business-key substitution.',
+        'source_pins': [entity(name)['original_identity']['source_pin'] for name in original_ids],
+    })
     for e in entities[:-1]:
         for index,f in enumerate(e['foreign_keys']):
             e['indexes'].append({'name':e['entity'].lower()+'_fk_'+str(index),'columns':f['columns'],'unique':False})

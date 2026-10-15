@@ -1,0 +1,285 @@
+test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) ... 
+  test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='IterationInput') ... FAIL
+  test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='CandidateRef') ... FAIL
+  test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='ReviewRound') ... FAIL
+  test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='ExternalRequestReceipt') ... FAIL
+test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) ... 
+  test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='IterationInput') ... FAIL
+  test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='CandidateRef') ... FAIL
+  test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='ReviewRound') ... FAIL
+  test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='ExternalRequestReceipt') ... FAIL
+test_hash_collision_compares_all_original_tuple_bytes (test_original_identity_mapping.OriginalIdentityMappingTests.test_hash_collision_compares_all_original_tuple_bytes) ... ok
+test_only_explicit_global_primary_keys_ignore_tenant_and_parent (test_original_identity_mapping.OriginalIdentityMappingTests.test_only_explicit_global_primary_keys_ignore_tenant_and_parent) ... ok
+test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) ... 
+  test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='IterationInput') ... FAIL
+  test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='CandidateRef') ... FAIL
+  test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='ReviewRound') ... FAIL
+  test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='ExternalRequestReceipt') ... FAIL
+test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) ... 
+  test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='Project') ... FAIL
+  test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='Iteration') ... FAIL
+  test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='IterationInput') ... FAIL
+  test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='CandidateRef') ... FAIL
+  test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='ReviewRound') ... FAIL
+  test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='ExternalRequestReceipt') ... FAIL
+test_registered_original_identity_is_independent_of_existing_business_keys (test_original_identity_mapping.OriginalIdentityMappingTests.test_registered_original_identity_is_independent_of_existing_business_keys) ... ok
+test_same_original_tuple_conflicts_despite_changed_business_number (test_original_identity_mapping.OriginalIdentityMappingTests.test_same_original_tuple_conflicts_despite_changed_business_number) ... ok
+
+======================================================================
+FAIL: test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='IterationInput')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 49, in test_all_six_original_ids_are_required_bytes_with_required_authority
+    self.assertEqual('ORIGINAL_GLOBAL_IDENTITY' if not SCOPES[name]
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     else 'ORIGINAL_SOURCE_TUPLE_IDENTITY', identity['scope'])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ORIGINAL_SOURCE_TUPLE_IDENTITY' != 'ORIGINAL_GLOBAL_IDENTITY'
+- ORIGINAL_SOURCE_TUPLE_IDENTITY
+?          ^ ^^^^^^^^ -
++ ORIGINAL_GLOBAL_IDENTITY
+?          ^^ ^^
+
+
+======================================================================
+FAIL: test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='CandidateRef')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 49, in test_all_six_original_ids_are_required_bytes_with_required_authority
+    self.assertEqual('ORIGINAL_GLOBAL_IDENTITY' if not SCOPES[name]
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     else 'ORIGINAL_SOURCE_TUPLE_IDENTITY', identity['scope'])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ORIGINAL_SOURCE_TUPLE_IDENTITY' != 'ORIGINAL_GLOBAL_IDENTITY'
+- ORIGINAL_SOURCE_TUPLE_IDENTITY
+?          ^ ^^^^^^^^ -
++ ORIGINAL_GLOBAL_IDENTITY
+?          ^^ ^^
+
+
+======================================================================
+FAIL: test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='ReviewRound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 49, in test_all_six_original_ids_are_required_bytes_with_required_authority
+    self.assertEqual('ORIGINAL_GLOBAL_IDENTITY' if not SCOPES[name]
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     else 'ORIGINAL_SOURCE_TUPLE_IDENTITY', identity['scope'])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ORIGINAL_SOURCE_TUPLE_IDENTITY' != 'ORIGINAL_GLOBAL_IDENTITY'
+- ORIGINAL_SOURCE_TUPLE_IDENTITY
+?          ^ ^^^^^^^^ -
++ ORIGINAL_GLOBAL_IDENTITY
+?          ^^ ^^
+
+
+======================================================================
+FAIL: test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) (entity='ExternalRequestReceipt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 49, in test_all_six_original_ids_are_required_bytes_with_required_authority
+    self.assertEqual('ORIGINAL_GLOBAL_IDENTITY' if not SCOPES[name]
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     else 'ORIGINAL_SOURCE_TUPLE_IDENTITY', identity['scope'])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ORIGINAL_SOURCE_TUPLE_IDENTITY' != 'ORIGINAL_GLOBAL_IDENTITY'
+- ORIGINAL_SOURCE_TUPLE_IDENTITY
+?          ^ ^^^^^^^^ -
++ ORIGINAL_GLOBAL_IDENTITY
+?          ^^ ^^
+
+
+======================================================================
+FAIL: test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='IterationInput')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 96, in test_grouped_source_ids_preserve_exact_tenant_and_parent_scope
+    self.assertEqual(SCOPES[name], identity.get('scope_components', []))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['TenantId', 'IterationId'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'TenantId'
+
+- ['TenantId', 'IterationId']
++ []
+
+======================================================================
+FAIL: test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='CandidateRef')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 96, in test_grouped_source_ids_preserve_exact_tenant_and_parent_scope
+    self.assertEqual(SCOPES[name], identity.get('scope_components', []))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['TenantId'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'TenantId'
+
+- ['TenantId']
++ []
+
+======================================================================
+FAIL: test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='ReviewRound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 96, in test_grouped_source_ids_preserve_exact_tenant_and_parent_scope
+    self.assertEqual(SCOPES[name], identity.get('scope_components', []))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['TenantId', 'IterationId'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'TenantId'
+
+- ['TenantId', 'IterationId']
++ []
+
+======================================================================
+FAIL: test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) (entity='ExternalRequestReceipt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 96, in test_grouped_source_ids_preserve_exact_tenant_and_parent_scope
+    self.assertEqual(SCOPES[name], identity.get('scope_components', []))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['TenantId', 'IterationId'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'TenantId'
+
+- ['TenantId', 'IterationId']
++ []
+
+======================================================================
+FAIL: test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='IterationInput')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 135, in test_original_bytes_and_owner_domain_are_not_normalized
+    self.assertEqual('', identity['scope_bytes_hex']) if not SCOPES[name] else self.assertIsNone(identity['scope_bytes_hex'])
+                                                                               ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '' is not None
+
+======================================================================
+FAIL: test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='CandidateRef')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 135, in test_original_bytes_and_owner_domain_are_not_normalized
+    self.assertEqual('', identity['scope_bytes_hex']) if not SCOPES[name] else self.assertIsNone(identity['scope_bytes_hex'])
+                                                                               ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '' is not None
+
+======================================================================
+FAIL: test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='ReviewRound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 135, in test_original_bytes_and_owner_domain_are_not_normalized
+    self.assertEqual('', identity['scope_bytes_hex']) if not SCOPES[name] else self.assertIsNone(identity['scope_bytes_hex'])
+                                                                               ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '' is not None
+
+======================================================================
+FAIL: test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) (entity='ExternalRequestReceipt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 135, in test_original_bytes_and_owner_domain_are_not_normalized
+    self.assertEqual('', identity['scope_bytes_hex']) if not SCOPES[name] else self.assertIsNone(identity['scope_bytes_hex'])
+                                                                               ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '' is not None
+
+======================================================================
+FAIL: test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='Project')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 154, in test_raw_id_cannot_disagree_with_registry_authority
+    self.assertEqual('OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT', check['enforcement'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT' != 'OWNER_GLOBAL_INTERN_AND_EXACT_RAW_BINDING_BEFORE_COMMIT'
+- OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT
++ OWNER_GLOBAL_INTERN_AND_EXACT_RAW_BINDING_BEFORE_COMMIT
+
+
+======================================================================
+FAIL: test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='Iteration')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 154, in test_raw_id_cannot_disagree_with_registry_authority
+    self.assertEqual('OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT', check['enforcement'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT' != 'OWNER_GLOBAL_INTERN_AND_EXACT_RAW_BINDING_BEFORE_COMMIT'
+- OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT
++ OWNER_GLOBAL_INTERN_AND_EXACT_RAW_BINDING_BEFORE_COMMIT
+
+
+======================================================================
+FAIL: test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='IterationInput')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 153, in test_raw_id_cannot_disagree_with_registry_authority
+    self.assertEqual(columns, check['columns'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['tenant_id', 'id', 'original_id_key', 'iteration_storage_id'] != ['tenant_id', 'id', 'original_id_key']
+
+First list contains 1 additional elements.
+First extra element 3:
+'iteration_storage_id'
+
+- ['tenant_id', 'id', 'original_id_key', 'iteration_storage_id']
+?                                      ------------------------
+
++ ['tenant_id', 'id', 'original_id_key']
+
+======================================================================
+FAIL: test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='CandidateRef')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 154, in test_raw_id_cannot_disagree_with_registry_authority
+    self.assertEqual('OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT', check['enforcement'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT' != 'OWNER_GLOBAL_INTERN_AND_EXACT_RAW_BINDING_BEFORE_COMMIT'
+- OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT
++ OWNER_GLOBAL_INTERN_AND_EXACT_RAW_BINDING_BEFORE_COMMIT
+
+
+======================================================================
+FAIL: test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='ReviewRound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 153, in test_raw_id_cannot_disagree_with_registry_authority
+    self.assertEqual(columns, check['columns'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['tenant_id', 'id', 'original_id_key', 'iteration_storage_id'] != ['tenant_id', 'id', 'original_id_key']
+
+First list contains 1 additional elements.
+First extra element 3:
+'iteration_storage_id'
+
+- ['tenant_id', 'id', 'original_id_key', 'iteration_storage_id']
+?                                      ------------------------
+
++ ['tenant_id', 'id', 'original_id_key']
+
+======================================================================
+FAIL: test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) (entity='ExternalRequestReceipt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\bug-211-plm-identity-20261014\eng\wp01-01\decision-closure\tests\test_original_identity_mapping.py", line 153, in test_raw_id_cannot_disagree_with_registry_authority
+    self.assertEqual(columns, check['columns'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['tenant_id', 'id', 'original_id_key', 'iteration_storage_id'] != ['tenant_id', 'id', 'original_id_key']
+
+First list contains 1 additional elements.
+First extra element 3:
+'iteration_storage_id'
+
+- ['tenant_id', 'id', 'original_id_key', 'iteration_storage_id']
+?                                      ------------------------
+
++ ['tenant_id', 'id', 'original_id_key']
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.043s
+
+FAILED (failures=18)

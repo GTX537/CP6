@@ -84,19 +84,17 @@
           "field": "Id",
           "storage_profile": "opaque",
           "source_pin": {
-            "repository": "Main",
-            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
-            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
-            "bytes": 49000,
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
             "representation": "RAW_FILE_BYTES",
-            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
-            "line_start": 37,
-            "line_end": 37,
-            "excerpt": "|Project|Id/TenantId、ProjectNo≤40租户内唯一、Title1..200、Objective≤4000、ProductId草稿可空、OwnerId激活前有效、SiteIds≥1、日期Start≤End、PlanVersion、opaque VersionToken。激活还须里程碑条件。[原文I:667](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:667) [原文I:688](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:688) [原文I:702](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:702) [原文I:1210](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1210) [原文I:1580](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1580)|"
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1580,
+            "line_end": 1580,
+            "excerpt": "- DATA-PLM-ITER-01-001 `Project.Id`：ID，可空N；PK/稳定身份。"
           },
-          "nullability": "SOURCE_CONDITIONAL; source text is authoritative, no blanket NOT NULL inference",
-          "identity_scope": "original Owner/domain; do not widen or narrow",
+          "nullability": "NOT NULL",
+          "identity_scope": "ORIGINAL_GLOBAL_IDENTITY",
           "candidate_column": "id",
           "physical_columns": [
             "id"
@@ -373,6 +371,33 @@
             "line_end": 37,
             "excerpt": "|Project|Id/TenantId、ProjectNo≤40租户内唯一、Title1..200、Objective≤4000、ProductId草稿可空、OwnerId激活前有效、SiteIds≥1、日期Start≤End、PlanVersion、opaque VersionToken。激活还须里程碑条件。[原文I:667](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:667) [原文I:688](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:688) [原文I:702](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:702) [原文I:1210](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1210) [原文I:1580](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1580)|"
           }
+        },
+        {
+          "columns": [
+            "tenant_id",
+            "original_id_key"
+          ],
+          "target_entity": "OwnerKey",
+          "target_columns": [
+            "tenant_id",
+            "storage_id"
+          ],
+          "nullable": false,
+          "on_delete": "RESTRICT",
+          "deferrable": "INITIALLY_DEFERRED only for atomic creation cycles; checked at commit",
+          "scope": "same TenantId; exact stored immutable parent row",
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 37,
+            "line_end": 37,
+            "excerpt": "|Project|Id/TenantId、ProjectNo≤40租户内唯一、Title1..200、Objective≤4000、ProductId草稿可空、OwnerId激活前有效、SiteIds≥1、日期Start≤End、PlanVersion、opaque VersionToken。激活还须里程碑条件。[原文I:667](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:667) [原文I:688](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:688) [原文I:702](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:702) [原文I:1210](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1210) [原文I:1580](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1580)|"
+          }
         }
       ],
       "delete_rule": "RESTRICT; immutable history cannot cascade; explicit privacy disposition uses separate approved protocol",
@@ -382,6 +407,14 @@
           "columns": [
             "tenant_id",
             "project_no_key"
+          ],
+          "unique": false
+        },
+        {
+          "name": "project_fk_1",
+          "columns": [
+            "tenant_id",
+            "original_id_key"
           ],
           "unique": false
         }
@@ -422,18 +455,16 @@
         {
           "name": "id",
           "postgresql": "bytea",
-          "nullable": true,
+          "nullable": false,
           "source_pin": {
-            "repository": "Main",
-            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
-            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
-            "bytes": 49000,
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
             "representation": "RAW_FILE_BYTES",
-            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
-            "line_start": 37,
-            "line_end": 37,
-            "excerpt": "|Project|Id/TenantId、ProjectNo≤40租户内唯一、Title1..200、Objective≤4000、ProductId草稿可空、OwnerId激活前有效、SiteIds≥1、日期Start≤End、PlanVersion、opaque VersionToken。激活还须里程碑条件。[原文I:667](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:667) [原文I:688](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:688) [原文I:702](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:702) [原文I:1210](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1210) [原文I:1580](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1580)|"
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1580,
+            "line_end": 1580,
+            "excerpt": "- DATA-PLM-ITER-01-001 `Project.Id`：ID，可空N；PK/稳定身份。"
           },
           "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
         },
@@ -675,6 +706,45 @@
             "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
             "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof"
           }
+        },
+        {
+          "name": "original_id_key",
+          "postgresql": "uuid",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 37,
+            "line_end": 37,
+            "excerpt": "|Project|Id/TenantId、ProjectNo≤40租户内唯一、Title1..200、Objective≤4000、ProductId草稿可空、OwnerId激活前有效、SiteIds≥1、日期Start≤End、PlanVersion、opaque VersionToken。激活还须里程碑条件。[原文I:667](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:667) [原文I:688](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:688) [原文I:702](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:702) [原文I:1210](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1210) [原文I:1580](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1580)|"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name",
+          "identity_binding": {
+            "domain": "ITER/Project.Id",
+            "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
+            "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof",
+            "scope": "ORIGINAL_GLOBAL_IDENTITY",
+            "scope_components": [],
+            "scope_bytes_hex": "",
+            "scope_bindings": {},
+            "raw_column": "id",
+            "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+            "source_pin": {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1580,
+              "line_end": 1580,
+              "excerpt": "- DATA-PLM-ITER-01-001 `Project.Id`：ID，可空N；PK/稳定身份。"
+            }
+          }
         }
       ],
       "unique_constraints": [
@@ -719,9 +789,49 @@
             "line_end": 37,
             "excerpt": "|Project|Id/TenantId、ProjectNo≤40租户内唯一、Title1..200、Objective≤4000、ProductId草稿可空、OwnerId激活前有效、SiteIds≥1、日期Start≤End、PlanVersion、opaque VersionToken。激活还须里程碑条件。[原文I:667](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:667) [原文I:688](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:688) [原文I:702](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:702) [原文I:1210](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1210) [原文I:1580](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1580)|"
           }
+        },
+        {
+          "name": "project_original_id",
+          "columns": [
+            "original_id_key"
+          ],
+          "scope": "One row per registered original identity; exact source scope is independent of business keys",
+          "enforcement": "POSTGRESQL_UNIQUE",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1580,
+            "line_end": 1580,
+            "excerpt": "- DATA-PLM-ITER-01-001 `Project.Id`：ID，可空N；PK/稳定身份。"
+          }
         }
       ],
-      "checks": [],
+      "checks": [
+        {
+          "name": "original_id_authority_binding",
+          "columns": [
+            "tenant_id",
+            "id",
+            "original_id_key"
+          ],
+          "enforcement": "OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT",
+          "comparison": "EXACT_SOURCE_TUPLE_RAW_SCHEMA_DOMAIN_AND_PARENT",
+          "rule": "Resolve original_id_key through the declared exact source tuple and compare id with OwnerKey.identity_bytes exactly; require the fixed original Owner/schema, exact declared scope components and immutable tenant assignment before commit. Parent scope resolves original Id through its same-tenant FK. Every writer/import/recovery uses this same lock and comparison. The composite tenant FK and global key UQ are additional constraints, not substitutes for exact interning or raw/key consistency.",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1580,
+            "line_end": 1580,
+            "excerpt": "- DATA-PLM-ITER-01-001 `Project.Id`：ID，可空N；PK/稳定身份。"
+          }
+        }
+      ],
       "primary_key": {
         "columns": [
           "storage_id"
@@ -739,7 +849,48 @@
         "immutable_columns": "Original signed/reviewed payload, identities and versions never UPDATE. Successor creates a new storage_id; token governs only mutable control/projection columns.",
         "zero_rows": "stale/conflict; no success receipt; unknown commit queries original operation"
       },
-      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption."
+      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption.",
+      "original_identity": {
+        "source_field": "Id",
+        "source_entity": "Project",
+        "source_pin": {
+          "repository": "Archive",
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "representation": "RAW_FILE_BYTES",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "bytes": 96100,
+          "line_start": 1580,
+          "line_end": 1580,
+          "excerpt": "- DATA-PLM-ITER-01-001 `Project.Id`：ID，可空N；PK/稳定身份。"
+        },
+        "raw_column": "id",
+        "key_column": "original_id_key",
+        "registry_domain": "ITER/Project.Id",
+        "scope": "ORIGINAL_GLOBAL_IDENTITY",
+        "scope_components": [],
+        "scope_bytes_hex": "",
+        "scope_bindings": {},
+        "scope_encoding": "EMPTY_BYTES",
+        "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK",
+        "different_scope_same_raw": "SAME_GLOBAL_IDENTITY_CONFLICT",
+        "raw_binding": "EXACT_ORIGINAL_BYTES",
+        "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+        "interning": {
+          "tuple_columns": [
+            "domain_key",
+            "schema_bytes",
+            "scope_bytes",
+            "identity_bytes"
+          ],
+          "equality": "FULL_TUPLE_BYTES",
+          "bucket_digest_unique": false,
+          "same_tuple_same_tenant": "RETURN_EXISTING_UUID",
+          "same_tuple_other_tenant": "SAFE_IDENTITY_CONFLICT_NO_NEW_UUID",
+          "different_tuple_same_bucket": "COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID",
+          "atomicity": "ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT"
+        },
+        "rule": "Fix the original Owner/entity and accepted Id schema from the cited source; do not accept a caller-selected schema/domain. Project/Iteration have empty scope: tenant and parent cannot split those explicit global PKs. The four grouped source entries retain exactly their declared TenantId[/IterationId] components; identical raw Id in a distinct source tuple is not rejected as a bare-Id global collision. Scope bytes frame exact original components in declared order without normalization/casts; resolve parent Id through the same-tenant FK, never use its surrogate UUID as original identity. A matching complete tuple resolves one UUID; an incompatible tenant assignment conflicts without a new UUID. UNIQUE(original_id_key) rejects duplicate complete identities independently of business numbers/versions/command keys. Digest collisions compare every tuple byte before allocating a distinct identity under the same Owner transaction lock. Bare-Id global scope for grouped entries remains unproven and cannot be silently imposed by this candidate."
+      }
     },
     {
       "entity": "Iteration",
@@ -772,19 +923,17 @@
           "field": "Id",
           "storage_profile": "opaque",
           "source_pin": {
-            "repository": "Main",
-            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
-            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
-            "bytes": 49000,
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
             "representation": "RAW_FILE_BYTES",
-            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
-            "line_start": 38,
-            "line_end": 38,
-            "excerpt": "|Iteration|Id/Tenant/Project、IterationNo≤40租户内唯一、Title/Goal、Origin NEW_PRODUCT/CHANGE/IMPROVEMENT、ParentBaseline/NoParentReason≤1000、ChangeId、Predecessor防环、Owner、InputVersion/PlanVersion独立、Stage/Hold/EvaluationId/VersionToken。[原文I:742](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:742) [原文I:763](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:763) [原文I:1602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1602)|"
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1602,
+            "line_end": 1602,
+            "excerpt": "- DATA-PLM-ITER-01-012 `Iteration.Id`：ID，可空N；PK。"
           },
-          "nullability": "SOURCE_CONDITIONAL; source text is authoritative, no blanket NOT NULL inference",
-          "identity_scope": "original Owner/domain; do not widen or narrow",
+          "nullability": "NOT NULL",
+          "identity_scope": "ORIGINAL_GLOBAL_IDENTITY",
           "candidate_column": "id",
           "physical_columns": [
             "id"
@@ -1274,6 +1423,33 @@
             "line_end": 1628,
             "excerpt": "- DATA-PLM-ITER-01-025 `Iteration.CurrentEvaluationId`：ID，可空Y；当前有效评价。"
           }
+        },
+        {
+          "columns": [
+            "tenant_id",
+            "original_id_key"
+          ],
+          "target_entity": "OwnerKey",
+          "target_columns": [
+            "tenant_id",
+            "storage_id"
+          ],
+          "nullable": false,
+          "on_delete": "RESTRICT",
+          "deferrable": "INITIALLY_DEFERRED only for atomic creation cycles; checked at commit",
+          "scope": "same TenantId; exact stored immutable parent row",
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 38,
+            "line_end": 38,
+            "excerpt": "|Iteration|Id/Tenant/Project、IterationNo≤40租户内唯一、Title/Goal、Origin NEW_PRODUCT/CHANGE/IMPROVEMENT、ParentBaseline/NoParentReason≤1000、ChangeId、Predecessor防环、Owner、InputVersion/PlanVersion独立、Stage/Hold/EvaluationId/VersionToken。[原文I:742](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:742) [原文I:763](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:763) [原文I:1602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1602)|"
+          }
         }
       ],
       "delete_rule": "RESTRICT; immutable history cannot cascade; explicit privacy disposition uses separate approved protocol",
@@ -1308,6 +1484,14 @@
             "tenant_id",
             "storage_id",
             "current_evaluation_storage_id"
+          ],
+          "unique": false
+        },
+        {
+          "name": "iteration_fk_4",
+          "columns": [
+            "tenant_id",
+            "original_id_key"
           ],
           "unique": false
         }
@@ -1348,18 +1532,16 @@
         {
           "name": "id",
           "postgresql": "bytea",
-          "nullable": true,
+          "nullable": false,
           "source_pin": {
-            "repository": "Main",
-            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
-            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
-            "bytes": 49000,
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
             "representation": "RAW_FILE_BYTES",
-            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
-            "line_start": 38,
-            "line_end": 38,
-            "excerpt": "|Iteration|Id/Tenant/Project、IterationNo≤40租户内唯一、Title/Goal、Origin NEW_PRODUCT/CHANGE/IMPROVEMENT、ParentBaseline/NoParentReason≤1000、ChangeId、Predecessor防环、Owner、InputVersion/PlanVersion独立、Stage/Hold/EvaluationId/VersionToken。[原文I:742](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:742) [原文I:763](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:763) [原文I:1602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1602)|"
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1602,
+            "line_end": 1602,
+            "excerpt": "- DATA-PLM-ITER-01-012 `Iteration.Id`：ID，可空N；PK。"
           },
           "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
         },
@@ -1763,6 +1945,45 @@
             "excerpt": "|Iteration|Id/Tenant/Project、IterationNo≤40租户内唯一、Title/Goal、Origin NEW_PRODUCT/CHANGE/IMPROVEMENT、ParentBaseline/NoParentReason≤1000、ChangeId、Predecessor防环、Owner、InputVersion/PlanVersion独立、Stage/Hold/EvaluationId/VersionToken。[原文I:742](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:742) [原文I:763](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:763) [原文I:1602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1602)|"
           },
           "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
+        },
+        {
+          "name": "original_id_key",
+          "postgresql": "uuid",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 38,
+            "line_end": 38,
+            "excerpt": "|Iteration|Id/Tenant/Project、IterationNo≤40租户内唯一、Title/Goal、Origin NEW_PRODUCT/CHANGE/IMPROVEMENT、ParentBaseline/NoParentReason≤1000、ChangeId、Predecessor防环、Owner、InputVersion/PlanVersion独立、Stage/Hold/EvaluationId/VersionToken。[原文I:742](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:742) [原文I:763](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:763) [原文I:1602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1602)|"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name",
+          "identity_binding": {
+            "domain": "ITER/Iteration.Id",
+            "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
+            "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof",
+            "scope": "ORIGINAL_GLOBAL_IDENTITY",
+            "scope_components": [],
+            "scope_bytes_hex": "",
+            "scope_bindings": {},
+            "raw_column": "id",
+            "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+            "source_pin": {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1602,
+              "line_end": 1602,
+              "excerpt": "- DATA-PLM-ITER-01-012 `Iteration.Id`：ID，可空N；PK。"
+            }
+          }
         }
       ],
       "unique_constraints": [
@@ -1806,6 +2027,24 @@
             "line_start": 38,
             "line_end": 38,
             "excerpt": "|Iteration|Id/Tenant/Project、IterationNo≤40租户内唯一、Title/Goal、Origin NEW_PRODUCT/CHANGE/IMPROVEMENT、ParentBaseline/NoParentReason≤1000、ChangeId、Predecessor防环、Owner、InputVersion/PlanVersion独立、Stage/Hold/EvaluationId/VersionToken。[原文I:742](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:742) [原文I:763](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:763) [原文I:1602](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1602)|"
+          }
+        },
+        {
+          "name": "iteration_original_id",
+          "columns": [
+            "original_id_key"
+          ],
+          "scope": "One row per registered original identity; exact source scope is independent of business keys",
+          "enforcement": "POSTGRESQL_UNIQUE",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1602,
+            "line_end": 1602,
+            "excerpt": "- DATA-PLM-ITER-01-012 `Iteration.Id`：ID，可空N；PK。"
           }
         }
       ],
@@ -1851,6 +2090,27 @@
               "excerpt": "- DATA-PLM-ITER-01-072 `IterationEvaluation.Id/TenantId/IterationId`：ID tuple，可空N；评价身份。\n\n- DATA-PLM-ITER-01-073 `IterationEvaluation.Outcome`：enum，可空N；ADOPT/REJECT/CONTINUE/TERMINATE。\n\n- DATA-PLM-ITER-01-074 `IterationEvaluation.SelectedCandidateVersion`：ref，可空Y；ADOPT必填。\n\n- DATA-PLM-ITER-01-075 `IterationEvaluation.ReviewRoundId/VerificationRefs`：refs，可空Y；按结果适用。"
             }
           ]
+        },
+        {
+          "name": "original_id_authority_binding",
+          "columns": [
+            "tenant_id",
+            "id",
+            "original_id_key"
+          ],
+          "enforcement": "OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT",
+          "comparison": "EXACT_SOURCE_TUPLE_RAW_SCHEMA_DOMAIN_AND_PARENT",
+          "rule": "Resolve original_id_key through the declared exact source tuple and compare id with OwnerKey.identity_bytes exactly; require the fixed original Owner/schema, exact declared scope components and immutable tenant assignment before commit. Parent scope resolves original Id through its same-tenant FK. Every writer/import/recovery uses this same lock and comparison. The composite tenant FK and global key UQ are additional constraints, not substitutes for exact interning or raw/key consistency.",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1602,
+            "line_end": 1602,
+            "excerpt": "- DATA-PLM-ITER-01-012 `Iteration.Id`：ID，可空N；PK。"
+          }
         }
       ],
       "primary_key": {
@@ -1870,7 +2130,48 @@
         "immutable_columns": "Original signed/reviewed payload, identities and versions never UPDATE. Successor creates a new storage_id; token governs only mutable control/projection columns.",
         "zero_rows": "stale/conflict; no success receipt; unknown commit queries original operation"
       },
-      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption."
+      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption.",
+      "original_identity": {
+        "source_field": "Id",
+        "source_entity": "Iteration",
+        "source_pin": {
+          "repository": "Archive",
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "representation": "RAW_FILE_BYTES",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "bytes": 96100,
+          "line_start": 1602,
+          "line_end": 1602,
+          "excerpt": "- DATA-PLM-ITER-01-012 `Iteration.Id`：ID，可空N；PK。"
+        },
+        "raw_column": "id",
+        "key_column": "original_id_key",
+        "registry_domain": "ITER/Iteration.Id",
+        "scope": "ORIGINAL_GLOBAL_IDENTITY",
+        "scope_components": [],
+        "scope_bytes_hex": "",
+        "scope_bindings": {},
+        "scope_encoding": "EMPTY_BYTES",
+        "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK",
+        "different_scope_same_raw": "SAME_GLOBAL_IDENTITY_CONFLICT",
+        "raw_binding": "EXACT_ORIGINAL_BYTES",
+        "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+        "interning": {
+          "tuple_columns": [
+            "domain_key",
+            "schema_bytes",
+            "scope_bytes",
+            "identity_bytes"
+          ],
+          "equality": "FULL_TUPLE_BYTES",
+          "bucket_digest_unique": false,
+          "same_tuple_same_tenant": "RETURN_EXISTING_UUID",
+          "same_tuple_other_tenant": "SAFE_IDENTITY_CONFLICT_NO_NEW_UUID",
+          "different_tuple_same_bucket": "COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID",
+          "atomicity": "ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT"
+        },
+        "rule": "Fix the original Owner/entity and accepted Id schema from the cited source; do not accept a caller-selected schema/domain. Project/Iteration have empty scope: tenant and parent cannot split those explicit global PKs. The four grouped source entries retain exactly their declared TenantId[/IterationId] components; identical raw Id in a distinct source tuple is not rejected as a bare-Id global collision. Scope bytes frame exact original components in declared order without normalization/casts; resolve parent Id through the same-tenant FK, never use its surrogate UUID as original identity. A matching complete tuple resolves one UUID; an incompatible tenant assignment conflicts without a new UUID. UNIQUE(original_id_key) rejects duplicate complete identities independently of business numbers/versions/command keys. Digest collisions compare every tuple byte before allocating a distinct identity under the same Owner transaction lock. Bare-Id global scope for grouped entries remains unproven and cannot be silently imposed by this candidate."
+      }
     },
     {
       "entity": "IterationInput",
@@ -1897,6 +2198,26 @@
           "candidate_column": "storage_id",
           "physical_columns": [
             "storage_id"
+          ]
+        },
+        {
+          "field": "Id",
+          "storage_profile": "opaque",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1632,
+            "line_end": 1632,
+            "excerpt": "- DATA-PLM-ITER-01-027 `IterationInput.Id/TenantId/IterationId`：ID tuple，可空N；主键及作用域。"
+          },
+          "nullability": "NOT NULL",
+          "identity_scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+          "candidate_column": "id",
+          "physical_columns": [
+            "id"
           ]
         },
         {
@@ -2175,6 +2496,33 @@
             "line_end": 39,
             "excerpt": "|IterationInput|InputVersion、SourceOwner/RequestId/RequestRevision、SourceDigest、逐Requirement/AcceptanceRef、ResolutionState CONFIRMED/NEEDS_CLARIFICATION、CapturedAt/By；不可达SourceDrift不能false。[原文I:791](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:791) [原文I:798](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:798) [原文I:1632](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1632)|"
           }
+        },
+        {
+          "columns": [
+            "tenant_id",
+            "original_id_key"
+          ],
+          "target_entity": "OwnerKey",
+          "target_columns": [
+            "tenant_id",
+            "storage_id"
+          ],
+          "nullable": false,
+          "on_delete": "RESTRICT",
+          "deferrable": "INITIALLY_DEFERRED only for atomic creation cycles; checked at commit",
+          "scope": "same TenantId; exact stored immutable parent row",
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 39,
+            "line_end": 39,
+            "excerpt": "|IterationInput|InputVersion、SourceOwner/RequestId/RequestRevision、SourceDigest、逐Requirement/AcceptanceRef、ResolutionState CONFIRMED/NEEDS_CLARIFICATION、CapturedAt/By；不可达SourceDrift不能false。[原文I:791](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:791) [原文I:798](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:798) [原文I:1632](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1632)|"
+          }
         }
       ],
       "delete_rule": "RESTRICT; immutable history cannot cascade; explicit privacy disposition uses separate approved protocol",
@@ -2192,6 +2540,14 @@
           "columns": [
             "tenant_id",
             "input_version_key"
+          ],
+          "unique": false
+        },
+        {
+          "name": "iterationinput_fk_2",
+          "columns": [
+            "tenant_id",
+            "original_id_key"
           ],
           "unique": false
         }
@@ -2226,6 +2582,22 @@
             "line_start": 49,
             "line_end": 53,
             "excerpt": "\n以上是明确的数据组分配，不冒充全库逐表迁移清单。实施时由 WP02-02/CRM 对实际 EF 模型及 raw SQL/视图/触发器/函数/sequence 生成逐对象清单：`Owner、位置、tenant列、唯一域、FK、writer、事务域、保留策略、恢复依赖`。未分类对象保持原位置且不得开放新 schema 路由；缺完整清单是采用门未满足。\n\n逐对象清单必须覆盖**所有**主键和唯一键，不能只检查消息。若原表的 Id、业务编号或其他键必须跨 tenant 唯一，将表复制到 N 个 schema 会削弱原约束；这类表本版继续放共享域。只有证明该对象的合法唯一域原本就是 tenant 内、且所有引用保持无损时才迁入租户 schema。若确需共享全局身份注册表与租户实体同事务的适配，应作为具名后继设计另审，不能偷偷改成 `(TenantId, Id)`。\n"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
+        },
+        {
+          "name": "id",
+          "postgresql": "bytea",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1632,
+            "line_end": 1632,
+            "excerpt": "- DATA-PLM-ITER-01-027 `IterationInput.Id/TenantId/IterationId`：ID tuple，可空N；主键及作用域。"
           },
           "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
         },
@@ -2485,6 +2857,60 @@
             "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
             "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof"
           }
+        },
+        {
+          "name": "original_id_key",
+          "postgresql": "uuid",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 39,
+            "line_end": 39,
+            "excerpt": "|IterationInput|InputVersion、SourceOwner/RequestId/RequestRevision、SourceDigest、逐Requirement/AcceptanceRef、ResolutionState CONFIRMED/NEEDS_CLARIFICATION、CapturedAt/By；不可达SourceDrift不能false。[原文I:791](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:791) [原文I:798](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:798) [原文I:1632](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1632)|"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name",
+          "identity_binding": {
+            "domain": "ITER/IterationInput.Id",
+            "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
+            "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof",
+            "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+            "scope_components": [
+              "TenantId",
+              "IterationId"
+            ],
+            "scope_bytes_hex": null,
+            "scope_bindings": {
+              "TenantId": {
+                "column": "tenant_id",
+                "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+              },
+              "IterationId": {
+                "via_fk": "iteration_storage_id",
+                "target_entity": "Iteration",
+                "target_original_column": "id",
+                "same_tenant": true,
+                "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+              }
+            },
+            "raw_column": "id",
+            "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+            "source_pin": {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1632,
+              "line_end": 1632,
+              "excerpt": "- DATA-PLM-ITER-01-027 `IterationInput.Id/TenantId/IterationId`：ID tuple，可空N；主键及作用域。"
+            }
+          }
         }
       ],
       "unique_constraints": [
@@ -2552,9 +2978,50 @@
             "line_end": 39,
             "excerpt": "|IterationInput|InputVersion、SourceOwner/RequestId/RequestRevision、SourceDigest、逐Requirement/AcceptanceRef、ResolutionState CONFIRMED/NEEDS_CLARIFICATION、CapturedAt/By；不可达SourceDrift不能false。[原文I:791](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:791) [原文I:798](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:798) [原文I:1632](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1632)|"
           }
+        },
+        {
+          "name": "iterationinput_original_id",
+          "columns": [
+            "original_id_key"
+          ],
+          "scope": "One row per registered original identity; exact source scope is independent of business keys",
+          "enforcement": "POSTGRESQL_UNIQUE",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1632,
+            "line_end": 1632,
+            "excerpt": "- DATA-PLM-ITER-01-027 `IterationInput.Id/TenantId/IterationId`：ID tuple，可空N；主键及作用域。"
+          }
         }
       ],
-      "checks": [],
+      "checks": [
+        {
+          "name": "original_id_authority_binding",
+          "columns": [
+            "tenant_id",
+            "id",
+            "original_id_key",
+            "iteration_storage_id"
+          ],
+          "enforcement": "OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT",
+          "comparison": "EXACT_SOURCE_TUPLE_RAW_SCHEMA_DOMAIN_AND_PARENT",
+          "rule": "Resolve original_id_key through the declared exact source tuple and compare id with OwnerKey.identity_bytes exactly; require the fixed original Owner/schema, exact declared scope components and immutable tenant assignment before commit. Parent scope resolves original Id through its same-tenant FK. Every writer/import/recovery uses this same lock and comparison. The composite tenant FK and global key UQ are additional constraints, not substitutes for exact interning or raw/key consistency.",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1632,
+            "line_end": 1632,
+            "excerpt": "- DATA-PLM-ITER-01-027 `IterationInput.Id/TenantId/IterationId`：ID tuple，可空N；主键及作用域。"
+          }
+        }
+      ],
       "primary_key": {
         "columns": [
           "storage_id"
@@ -2572,7 +3039,63 @@
         "immutable_columns": "Original signed/reviewed payload, identities and versions never UPDATE. Successor creates a new storage_id; token governs only mutable control/projection columns.",
         "zero_rows": "stale/conflict; no success receipt; unknown commit queries original operation"
       },
-      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption."
+      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption.",
+      "original_identity": {
+        "source_field": "Id",
+        "source_entity": "IterationInput",
+        "source_pin": {
+          "repository": "Archive",
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "representation": "RAW_FILE_BYTES",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "bytes": 96100,
+          "line_start": 1632,
+          "line_end": 1632,
+          "excerpt": "- DATA-PLM-ITER-01-027 `IterationInput.Id/TenantId/IterationId`：ID tuple，可空N；主键及作用域。"
+        },
+        "raw_column": "id",
+        "key_column": "original_id_key",
+        "registry_domain": "ITER/IterationInput.Id",
+        "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+        "scope_components": [
+          "TenantId",
+          "IterationId"
+        ],
+        "scope_bytes_hex": null,
+        "scope_bindings": {
+          "TenantId": {
+            "column": "tenant_id",
+            "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+          },
+          "IterationId": {
+            "via_fk": "iteration_storage_id",
+            "target_entity": "Iteration",
+            "target_original_column": "id",
+            "same_tenant": true,
+            "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+          }
+        },
+        "scope_encoding": "LENGTH_PREFIXED_ORIGINAL_COMPONENT_BYTES_IN_DECLARED_ORDER",
+        "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+        "different_scope_same_raw": "DISTINCT_SOURCE_TUPLE_ALLOW_DISTINCT_UUID",
+        "raw_binding": "EXACT_ORIGINAL_BYTES",
+        "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+        "interning": {
+          "tuple_columns": [
+            "domain_key",
+            "schema_bytes",
+            "scope_bytes",
+            "identity_bytes"
+          ],
+          "equality": "FULL_TUPLE_BYTES",
+          "bucket_digest_unique": false,
+          "same_tuple_same_tenant": "RETURN_EXISTING_UUID",
+          "same_tuple_other_tenant": "SAFE_IDENTITY_CONFLICT_NO_NEW_UUID",
+          "different_tuple_same_bucket": "COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID",
+          "atomicity": "ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT"
+        },
+        "rule": "Fix the original Owner/entity and accepted Id schema from the cited source; do not accept a caller-selected schema/domain. Project/Iteration have empty scope: tenant and parent cannot split those explicit global PKs. The four grouped source entries retain exactly their declared TenantId[/IterationId] components; identical raw Id in a distinct source tuple is not rejected as a bare-Id global collision. Scope bytes frame exact original components in declared order without normalization/casts; resolve parent Id through the same-tenant FK, never use its surrogate UUID as original identity. A matching complete tuple resolves one UUID; an incompatible tenant assignment conflicts without a new UUID. UNIQUE(original_id_key) rejects duplicate complete identities independently of business numbers/versions/command keys. Digest collisions compare every tuple byte before allocating a distinct identity under the same Owner transaction lock. Bare-Id global scope for grouped entries remains unproven and cannot be silently imposed by this candidate."
+      }
     },
     {
       "entity": "Candidate",
@@ -3363,6 +3886,26 @@
           ]
         },
         {
+          "field": "Id",
+          "storage_profile": "opaque",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1664,
+            "line_end": 1664,
+            "excerpt": "- DATA-PLM-ITER-01-043 `CandidateObjectRef.Id/TenantId`：ID pair，可空N；主身份。"
+          },
+          "nullability": "NOT NULL",
+          "identity_scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+          "candidate_column": "id",
+          "physical_columns": [
+            "id"
+          ]
+        },
+        {
           "field": "OwnerType",
           "storage_profile": "opaque",
           "source_pin": {
@@ -3550,6 +4093,33 @@
             "line_end": 40,
             "excerpt": "|Candidate / Ref|独立Id及CandidateVersion≥1、父方案/父基线、Title/ChangeSummary/Assumptions、ContentDigest、DriftAssessmentRef、CAS；Ref携OwnerType BOM/ROUTE/DOC/CONFIG/QUALITY、准确ObjectId/Revision/Occurrence/digest/applicability。结构Occurrence必填，同物料多位置不并。[原文I:910](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:910) [原文I:917](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:917) [原文I:931](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:931) [原文I:1646](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1646)|"
           }
+        },
+        {
+          "columns": [
+            "tenant_id",
+            "original_id_key"
+          ],
+          "target_entity": "OwnerKey",
+          "target_columns": [
+            "tenant_id",
+            "storage_id"
+          ],
+          "nullable": false,
+          "on_delete": "RESTRICT",
+          "deferrable": "INITIALLY_DEFERRED only for atomic creation cycles; checked at commit",
+          "scope": "same TenantId; exact stored immutable parent row",
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 40,
+            "line_end": 40,
+            "excerpt": "|Candidate / Ref|独立Id及CandidateVersion≥1、父方案/父基线、Title/ChangeSummary/Assumptions、ContentDigest、DriftAssessmentRef、CAS；Ref携OwnerType BOM/ROUTE/DOC/CONFIG/QUALITY、准确ObjectId/Revision/Occurrence/digest/applicability。结构Occurrence必填，同物料多位置不并。[原文I:910](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:910) [原文I:917](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:917) [原文I:931](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:931) [原文I:1646](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1646)|"
+          }
         }
       ],
       "delete_rule": "RESTRICT; immutable history cannot cascade; explicit privacy disposition uses separate approved protocol",
@@ -3567,6 +4137,14 @@
           "columns": [
             "tenant_id",
             "reference_tuple_key"
+          ],
+          "unique": false
+        },
+        {
+          "name": "candidateref_fk_2",
+          "columns": [
+            "tenant_id",
+            "original_id_key"
           ],
           "unique": false
         }
@@ -3601,6 +4179,22 @@
             "line_start": 49,
             "line_end": 53,
             "excerpt": "\n以上是明确的数据组分配，不冒充全库逐表迁移清单。实施时由 WP02-02/CRM 对实际 EF 模型及 raw SQL/视图/触发器/函数/sequence 生成逐对象清单：`Owner、位置、tenant列、唯一域、FK、writer、事务域、保留策略、恢复依赖`。未分类对象保持原位置且不得开放新 schema 路由；缺完整清单是采用门未满足。\n\n逐对象清单必须覆盖**所有**主键和唯一键，不能只检查消息。若原表的 Id、业务编号或其他键必须跨 tenant 唯一，将表复制到 N 个 schema 会削弱原约束；这类表本版继续放共享域。只有证明该对象的合法唯一域原本就是 tenant 内、且所有引用保持无损时才迁入租户 schema。若确需共享全局身份注册表与租户实体同事务的适配，应作为具名后继设计另审，不能偷偷改成 `(TenantId, Id)`。\n"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
+        },
+        {
+          "name": "id",
+          "postgresql": "bytea",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1664,
+            "line_end": 1664,
+            "excerpt": "- DATA-PLM-ITER-01-043 `CandidateObjectRef.Id/TenantId`：ID pair，可空N；主身份。"
           },
           "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
         },
@@ -3788,6 +4382,52 @@
             "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
             "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof"
           }
+        },
+        {
+          "name": "original_id_key",
+          "postgresql": "uuid",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 40,
+            "line_end": 40,
+            "excerpt": "|Candidate / Ref|独立Id及CandidateVersion≥1、父方案/父基线、Title/ChangeSummary/Assumptions、ContentDigest、DriftAssessmentRef、CAS；Ref携OwnerType BOM/ROUTE/DOC/CONFIG/QUALITY、准确ObjectId/Revision/Occurrence/digest/applicability。结构Occurrence必填，同物料多位置不并。[原文I:910](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:910) [原文I:917](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:917) [原文I:931](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:931) [原文I:1646](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1646)|"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name",
+          "identity_binding": {
+            "domain": "ITER/CandidateObjectRef.Id",
+            "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
+            "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof",
+            "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+            "scope_components": [
+              "TenantId"
+            ],
+            "scope_bytes_hex": null,
+            "scope_bindings": {
+              "TenantId": {
+                "column": "tenant_id",
+                "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+              }
+            },
+            "raw_column": "id",
+            "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+            "source_pin": {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1664,
+              "line_end": 1664,
+              "excerpt": "- DATA-PLM-ITER-01-043 `CandidateObjectRef.Id/TenantId`：ID pair，可空N；主身份。"
+            }
+          }
         }
       ],
       "unique_constraints": [
@@ -3833,9 +4473,49 @@
             "line_end": 40,
             "excerpt": "|Candidate / Ref|独立Id及CandidateVersion≥1、父方案/父基线、Title/ChangeSummary/Assumptions、ContentDigest、DriftAssessmentRef、CAS；Ref携OwnerType BOM/ROUTE/DOC/CONFIG/QUALITY、准确ObjectId/Revision/Occurrence/digest/applicability。结构Occurrence必填，同物料多位置不并。[原文I:910](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:910) [原文I:917](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:917) [原文I:931](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:931) [原文I:1646](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1646)|"
           }
+        },
+        {
+          "name": "candidateref_original_id",
+          "columns": [
+            "original_id_key"
+          ],
+          "scope": "One row per registered original identity; exact source scope is independent of business keys",
+          "enforcement": "POSTGRESQL_UNIQUE",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1664,
+            "line_end": 1664,
+            "excerpt": "- DATA-PLM-ITER-01-043 `CandidateObjectRef.Id/TenantId`：ID pair，可空N；主身份。"
+          }
         }
       ],
-      "checks": [],
+      "checks": [
+        {
+          "name": "original_id_authority_binding",
+          "columns": [
+            "tenant_id",
+            "id",
+            "original_id_key"
+          ],
+          "enforcement": "OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT",
+          "comparison": "EXACT_SOURCE_TUPLE_RAW_SCHEMA_DOMAIN_AND_PARENT",
+          "rule": "Resolve original_id_key through the declared exact source tuple and compare id with OwnerKey.identity_bytes exactly; require the fixed original Owner/schema, exact declared scope components and immutable tenant assignment before commit. Parent scope resolves original Id through its same-tenant FK. Every writer/import/recovery uses this same lock and comparison. The composite tenant FK and global key UQ are additional constraints, not substitutes for exact interning or raw/key consistency.",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1664,
+            "line_end": 1664,
+            "excerpt": "- DATA-PLM-ITER-01-043 `CandidateObjectRef.Id/TenantId`：ID pair，可空N；主身份。"
+          }
+        }
+      ],
       "primary_key": {
         "columns": [
           "storage_id"
@@ -3853,7 +4533,55 @@
         "immutable_columns": "Original signed/reviewed payload, identities and versions never UPDATE. Successor creates a new storage_id; token governs only mutable control/projection columns.",
         "zero_rows": "stale/conflict; no success receipt; unknown commit queries original operation"
       },
-      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption."
+      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption.",
+      "original_identity": {
+        "source_field": "Id",
+        "source_entity": "CandidateObjectRef",
+        "source_pin": {
+          "repository": "Archive",
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "representation": "RAW_FILE_BYTES",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "bytes": 96100,
+          "line_start": 1664,
+          "line_end": 1664,
+          "excerpt": "- DATA-PLM-ITER-01-043 `CandidateObjectRef.Id/TenantId`：ID pair，可空N；主身份。"
+        },
+        "raw_column": "id",
+        "key_column": "original_id_key",
+        "registry_domain": "ITER/CandidateObjectRef.Id",
+        "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+        "scope_components": [
+          "TenantId"
+        ],
+        "scope_bytes_hex": null,
+        "scope_bindings": {
+          "TenantId": {
+            "column": "tenant_id",
+            "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+          }
+        },
+        "scope_encoding": "LENGTH_PREFIXED_ORIGINAL_COMPONENT_BYTES_IN_DECLARED_ORDER",
+        "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+        "different_scope_same_raw": "DISTINCT_SOURCE_TUPLE_ALLOW_DISTINCT_UUID",
+        "raw_binding": "EXACT_ORIGINAL_BYTES",
+        "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+        "interning": {
+          "tuple_columns": [
+            "domain_key",
+            "schema_bytes",
+            "scope_bytes",
+            "identity_bytes"
+          ],
+          "equality": "FULL_TUPLE_BYTES",
+          "bucket_digest_unique": false,
+          "same_tuple_same_tenant": "RETURN_EXISTING_UUID",
+          "same_tuple_other_tenant": "SAFE_IDENTITY_CONFLICT_NO_NEW_UUID",
+          "different_tuple_same_bucket": "COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID",
+          "atomicity": "ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT"
+        },
+        "rule": "Fix the original Owner/entity and accepted Id schema from the cited source; do not accept a caller-selected schema/domain. Project/Iteration have empty scope: tenant and parent cannot split those explicit global PKs. The four grouped source entries retain exactly their declared TenantId[/IterationId] components; identical raw Id in a distinct source tuple is not rejected as a bare-Id global collision. Scope bytes frame exact original components in declared order without normalization/casts; resolve parent Id through the same-tenant FK, never use its surrogate UUID as original identity. A matching complete tuple resolves one UUID; an incompatible tenant assignment conflicts without a new UUID. UNIQUE(original_id_key) rejects duplicate complete identities independently of business numbers/versions/command keys. Digest collisions compare every tuple byte before allocating a distinct identity under the same Owner transaction lock. Bare-Id global scope for grouped entries remains unproven and cannot be silently imposed by this candidate."
+      }
     },
     {
       "entity": "EngineeringTask",
@@ -4664,19 +5392,17 @@
           "field": "Id",
           "storage_profile": "opaque",
           "source_pin": {
-            "repository": "Main",
-            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
-            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
-            "bytes": 49000,
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
             "representation": "RAW_FILE_BYTES",
-            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
-            "line_start": 42,
-            "line_end": 42,
-            "excerpt": "|ReviewRound|Id/Iteration/RoundNo（迭代内唯一递增）、固定InputVersion/CandidateManifest/PackageDigest、PolicyId/Version、DispatchPending/InReview/Approved/Returned/Rejected/Withdrawn、真实OAInstanceRef/DecisionRef。[原文I:973](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:973) [原文I:1692](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1692)|"
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1692,
+            "line_end": 1692,
+            "excerpt": "- DATA-PLM-ITER-01-057 `ReviewRound.Id/TenantId/IterationId`：ID tuple，可空N；身份及范围。"
           },
-          "nullability": "SOURCE_CONDITIONAL; source text is authoritative, no blanket NOT NULL inference",
-          "identity_scope": "original Owner/domain; do not widen or narrow",
+          "nullability": "NOT NULL",
+          "identity_scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
           "candidate_column": "id",
           "physical_columns": [
             "id"
@@ -5002,6 +5728,33 @@
             "line_end": 42,
             "excerpt": "|ReviewRound|Id/Iteration/RoundNo（迭代内唯一递增）、固定InputVersion/CandidateManifest/PackageDigest、PolicyId/Version、DispatchPending/InReview/Approved/Returned/Rejected/Withdrawn、真实OAInstanceRef/DecisionRef。[原文I:973](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:973) [原文I:1692](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1692)|"
           }
+        },
+        {
+          "columns": [
+            "tenant_id",
+            "original_id_key"
+          ],
+          "target_entity": "OwnerKey",
+          "target_columns": [
+            "tenant_id",
+            "storage_id"
+          ],
+          "nullable": false,
+          "on_delete": "RESTRICT",
+          "deferrable": "INITIALLY_DEFERRED only for atomic creation cycles; checked at commit",
+          "scope": "same TenantId; exact stored immutable parent row",
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 42,
+            "line_end": 42,
+            "excerpt": "|ReviewRound|Id/Iteration/RoundNo（迭代内唯一递增）、固定InputVersion/CandidateManifest/PackageDigest、PolicyId/Version、DispatchPending/InReview/Approved/Returned/Rejected/Withdrawn、真实OAInstanceRef/DecisionRef。[原文I:973](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:973) [原文I:1692](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1692)|"
+          }
         }
       ],
       "delete_rule": "RESTRICT; immutable history cannot cascade; explicit privacy disposition uses separate approved protocol",
@@ -5019,6 +5772,14 @@
           "columns": [
             "tenant_id",
             "round_no_key"
+          ],
+          "unique": false
+        },
+        {
+          "name": "reviewround_fk_2",
+          "columns": [
+            "tenant_id",
+            "original_id_key"
           ],
           "unique": false
         }
@@ -5059,18 +5820,16 @@
         {
           "name": "id",
           "postgresql": "bytea",
-          "nullable": true,
+          "nullable": false,
           "source_pin": {
-            "repository": "Main",
-            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
-            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
-            "bytes": 49000,
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
             "representation": "RAW_FILE_BYTES",
-            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
-            "line_start": 42,
-            "line_end": 42,
-            "excerpt": "|ReviewRound|Id/Iteration/RoundNo（迭代内唯一递增）、固定InputVersion/CandidateManifest/PackageDigest、PolicyId/Version、DispatchPending/InReview/Approved/Returned/Rejected/Withdrawn、真实OAInstanceRef/DecisionRef。[原文I:973](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:973) [原文I:1692](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1692)|"
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1692,
+            "line_end": 1692,
+            "excerpt": "- DATA-PLM-ITER-01-057 `ReviewRound.Id/TenantId/IterationId`：ID tuple，可空N；身份及范围。"
           },
           "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
         },
@@ -5366,6 +6125,60 @@
             "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
             "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof"
           }
+        },
+        {
+          "name": "original_id_key",
+          "postgresql": "uuid",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 42,
+            "line_end": 42,
+            "excerpt": "|ReviewRound|Id/Iteration/RoundNo（迭代内唯一递增）、固定InputVersion/CandidateManifest/PackageDigest、PolicyId/Version、DispatchPending/InReview/Approved/Returned/Rejected/Withdrawn、真实OAInstanceRef/DecisionRef。[原文I:973](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:973) [原文I:1692](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1692)|"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name",
+          "identity_binding": {
+            "domain": "ITER/ReviewRound.Id",
+            "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
+            "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof",
+            "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+            "scope_components": [
+              "TenantId",
+              "IterationId"
+            ],
+            "scope_bytes_hex": null,
+            "scope_bindings": {
+              "TenantId": {
+                "column": "tenant_id",
+                "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+              },
+              "IterationId": {
+                "via_fk": "iteration_storage_id",
+                "target_entity": "Iteration",
+                "target_original_column": "id",
+                "same_tenant": true,
+                "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+              }
+            },
+            "raw_column": "id",
+            "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+            "source_pin": {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1692,
+              "line_end": 1692,
+              "excerpt": "- DATA-PLM-ITER-01-057 `ReviewRound.Id/TenantId/IterationId`：ID tuple，可空N；身份及范围。"
+            }
+          }
         }
       ],
       "unique_constraints": [
@@ -5433,9 +6246,50 @@
             "line_end": 42,
             "excerpt": "|ReviewRound|Id/Iteration/RoundNo（迭代内唯一递增）、固定InputVersion/CandidateManifest/PackageDigest、PolicyId/Version、DispatchPending/InReview/Approved/Returned/Rejected/Withdrawn、真实OAInstanceRef/DecisionRef。[原文I:973](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:973) [原文I:1692](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1692)|"
           }
+        },
+        {
+          "name": "reviewround_original_id",
+          "columns": [
+            "original_id_key"
+          ],
+          "scope": "One row per registered original identity; exact source scope is independent of business keys",
+          "enforcement": "POSTGRESQL_UNIQUE",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1692,
+            "line_end": 1692,
+            "excerpt": "- DATA-PLM-ITER-01-057 `ReviewRound.Id/TenantId/IterationId`：ID tuple，可空N；身份及范围。"
+          }
         }
       ],
-      "checks": [],
+      "checks": [
+        {
+          "name": "original_id_authority_binding",
+          "columns": [
+            "tenant_id",
+            "id",
+            "original_id_key",
+            "iteration_storage_id"
+          ],
+          "enforcement": "OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT",
+          "comparison": "EXACT_SOURCE_TUPLE_RAW_SCHEMA_DOMAIN_AND_PARENT",
+          "rule": "Resolve original_id_key through the declared exact source tuple and compare id with OwnerKey.identity_bytes exactly; require the fixed original Owner/schema, exact declared scope components and immutable tenant assignment before commit. Parent scope resolves original Id through its same-tenant FK. Every writer/import/recovery uses this same lock and comparison. The composite tenant FK and global key UQ are additional constraints, not substitutes for exact interning or raw/key consistency.",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1692,
+            "line_end": 1692,
+            "excerpt": "- DATA-PLM-ITER-01-057 `ReviewRound.Id/TenantId/IterationId`：ID tuple，可空N；身份及范围。"
+          }
+        }
+      ],
       "primary_key": {
         "columns": [
           "storage_id"
@@ -5453,7 +6307,63 @@
         "immutable_columns": "Original signed/reviewed payload, identities and versions never UPDATE. Successor creates a new storage_id; token governs only mutable control/projection columns.",
         "zero_rows": "stale/conflict; no success receipt; unknown commit queries original operation"
       },
-      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption."
+      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption.",
+      "original_identity": {
+        "source_field": "Id",
+        "source_entity": "ReviewRound",
+        "source_pin": {
+          "repository": "Archive",
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "representation": "RAW_FILE_BYTES",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "bytes": 96100,
+          "line_start": 1692,
+          "line_end": 1692,
+          "excerpt": "- DATA-PLM-ITER-01-057 `ReviewRound.Id/TenantId/IterationId`：ID tuple，可空N；身份及范围。"
+        },
+        "raw_column": "id",
+        "key_column": "original_id_key",
+        "registry_domain": "ITER/ReviewRound.Id",
+        "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+        "scope_components": [
+          "TenantId",
+          "IterationId"
+        ],
+        "scope_bytes_hex": null,
+        "scope_bindings": {
+          "TenantId": {
+            "column": "tenant_id",
+            "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+          },
+          "IterationId": {
+            "via_fk": "iteration_storage_id",
+            "target_entity": "Iteration",
+            "target_original_column": "id",
+            "same_tenant": true,
+            "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+          }
+        },
+        "scope_encoding": "LENGTH_PREFIXED_ORIGINAL_COMPONENT_BYTES_IN_DECLARED_ORDER",
+        "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+        "different_scope_same_raw": "DISTINCT_SOURCE_TUPLE_ALLOW_DISTINCT_UUID",
+        "raw_binding": "EXACT_ORIGINAL_BYTES",
+        "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+        "interning": {
+          "tuple_columns": [
+            "domain_key",
+            "schema_bytes",
+            "scope_bytes",
+            "identity_bytes"
+          ],
+          "equality": "FULL_TUPLE_BYTES",
+          "bucket_digest_unique": false,
+          "same_tuple_same_tenant": "RETURN_EXISTING_UUID",
+          "same_tuple_other_tenant": "SAFE_IDENTITY_CONFLICT_NO_NEW_UUID",
+          "different_tuple_same_bucket": "COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID",
+          "atomicity": "ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT"
+        },
+        "rule": "Fix the original Owner/entity and accepted Id schema from the cited source; do not accept a caller-selected schema/domain. Project/Iteration have empty scope: tenant and parent cannot split those explicit global PKs. The four grouped source entries retain exactly their declared TenantId[/IterationId] components; identical raw Id in a distinct source tuple is not rejected as a bare-Id global collision. Scope bytes frame exact original components in declared order without normalization/casts; resolve parent Id through the same-tenant FK, never use its surrogate UUID as original identity. A matching complete tuple resolves one UUID; an incompatible tenant assignment conflicts without a new UUID. UNIQUE(original_id_key) rejects duplicate complete identities independently of business numbers/versions/command keys. Digest collisions compare every tuple byte before allocating a distinct identity under the same Owner transaction lock. Bare-Id global scope for grouped entries remains unproven and cannot be silently imposed by this candidate."
+      }
     },
     {
       "entity": "ReviewIssue",
@@ -7118,6 +8028,26 @@
           ]
         },
         {
+          "field": "Id",
+          "storage_profile": "opaque",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1738,
+            "line_end": 1738,
+            "excerpt": "- DATA-PLM-ITER-01-080 `ExternalRequestReceipt.Id/TenantId/IterationId`：ID tuple，可空N；请求身份。"
+          },
+          "nullability": "NOT NULL",
+          "identity_scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+          "candidate_column": "id",
+          "physical_columns": [
+            "id"
+          ]
+        },
+        {
           "field": "OperationType",
           "storage_profile": "opaque",
           "source_pin": {
@@ -7469,6 +8399,33 @@
             "line_end": 45,
             "excerpt": "|ExternalRequestReceipt|OperationType/RequestKey、PayloadDigest、Owner/RequestRef、Pending/Accepted/Rejected/Conflict/Unknown/Cancelled、真实ResultId/Version/Digest、AttemptState/LastCheckedAt；技术尝试与业务結果分开。[原文I:1738](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1738)|"
           }
+        },
+        {
+          "columns": [
+            "tenant_id",
+            "original_id_key"
+          ],
+          "target_entity": "OwnerKey",
+          "target_columns": [
+            "tenant_id",
+            "storage_id"
+          ],
+          "nullable": false,
+          "on_delete": "RESTRICT",
+          "deferrable": "INITIALLY_DEFERRED only for atomic creation cycles; checked at commit",
+          "scope": "same TenantId; exact stored immutable parent row",
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 45,
+            "line_end": 45,
+            "excerpt": "|ExternalRequestReceipt|OperationType/RequestKey、PayloadDigest、Owner/RequestRef、Pending/Accepted/Rejected/Conflict/Unknown/Cancelled、真实ResultId/Version/Digest、AttemptState/LastCheckedAt；技术尝试与业务結果分开。[原文I:1738](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1738)|"
+          }
         }
       ],
       "delete_rule": "RESTRICT; immutable history cannot cascade; explicit privacy disposition uses separate approved protocol",
@@ -7504,6 +8461,14 @@
             "request_key_id"
           ],
           "unique": false
+        },
+        {
+          "name": "externalrequestreceipt_fk_4",
+          "columns": [
+            "tenant_id",
+            "original_id_key"
+          ],
+          "unique": false
         }
       ],
       "migration_state": "NOT_EXECUTED",
@@ -7536,6 +8501,22 @@
             "line_start": 49,
             "line_end": 53,
             "excerpt": "\n以上是明确的数据组分配，不冒充全库逐表迁移清单。实施时由 WP02-02/CRM 对实际 EF 模型及 raw SQL/视图/触发器/函数/sequence 生成逐对象清单：`Owner、位置、tenant列、唯一域、FK、writer、事务域、保留策略、恢复依赖`。未分类对象保持原位置且不得开放新 schema 路由；缺完整清单是采用门未满足。\n\n逐对象清单必须覆盖**所有**主键和唯一键，不能只检查消息。若原表的 Id、业务编号或其他键必须跨 tenant 唯一，将表复制到 N 个 schema 会削弱原约束；这类表本版继续放共享域。只有证明该对象的合法唯一域原本就是 tenant 内、且所有引用保持无损时才迁入租户 schema。若确需共享全局身份注册表与租户实体同事务的适配，应作为具名后继设计另审，不能偷偷改成 `(TenantId, Id)`。\n"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
+        },
+        {
+          "name": "id",
+          "postgresql": "bytea",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1738,
+            "line_end": 1738,
+            "excerpt": "- DATA-PLM-ITER-01-080 `ExternalRequestReceipt.Id/TenantId/IterationId`：ID tuple，可空N；请求身份。"
           },
           "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name"
         },
@@ -7859,6 +8840,60 @@
             "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
             "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof"
           }
+        },
+        {
+          "name": "original_id_key",
+          "postgresql": "uuid",
+          "nullable": false,
+          "source_pin": {
+            "repository": "Main",
+            "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+            "path": "docs/design-handbook/modules/PLM-ITER-01.md",
+            "sha256": "b75567c5c3ba3d9accd911758fcf20d55d87a1bb4e81f14c60d839b867b5aaab",
+            "bytes": 49000,
+            "representation": "RAW_FILE_BYTES",
+            "git_blob_sha256": "33ba6f158de20f7ee460236d349aebd6d5b892112b88f20cbe51beb3cc3e925c",
+            "line_start": 45,
+            "line_end": 45,
+            "excerpt": "|ExternalRequestReceipt|OperationType/RequestKey、PayloadDigest、Owner/RequestRef、Pending/Accepted/Rejected/Conflict/Unknown/Cancelled、真实ResultId/Version/Digest、AttemptState/LastCheckedAt；技术尝试与业务結果分开。[原文I:1738](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1738)|"
+          },
+          "origin": "NEW_CANDIDATE_PHYSICAL_COLUMN; source specifies logical duty, not this SQL column name",
+          "identity_binding": {
+            "domain": "ITER/ExternalRequestReceipt.Id",
+            "original_bytes": "retained in OwnerKey.identity_bytes with exact schema/scope",
+            "admission": "Trusted Owner resolves exact raw identity under registry lock; external Owner truth still needs its original provider proof",
+            "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+            "scope_components": [
+              "TenantId",
+              "IterationId"
+            ],
+            "scope_bytes_hex": null,
+            "scope_bindings": {
+              "TenantId": {
+                "column": "tenant_id",
+                "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+              },
+              "IterationId": {
+                "via_fk": "iteration_storage_id",
+                "target_entity": "Iteration",
+                "target_original_column": "id",
+                "same_tenant": true,
+                "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+              }
+            },
+            "raw_column": "id",
+            "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+            "source_pin": {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1738,
+              "line_end": 1738,
+              "excerpt": "- DATA-PLM-ITER-01-080 `ExternalRequestReceipt.Id/TenantId/IterationId`：ID tuple，可空N；请求身份。"
+            }
+          }
         }
       ],
       "unique_constraints": [
@@ -7927,6 +8962,24 @@
             "line_end": 45,
             "excerpt": "|ExternalRequestReceipt|OperationType/RequestKey、PayloadDigest、Owner/RequestRef、Pending/Accepted/Rejected/Conflict/Unknown/Cancelled、真实ResultId/Version/Digest、AttemptState/LastCheckedAt；技术尝试与业务結果分开。[原文I:1738](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md:1738)|"
           }
+        },
+        {
+          "name": "externalrequestreceipt_original_id",
+          "columns": [
+            "original_id_key"
+          ],
+          "scope": "One row per registered original identity; exact source scope is independent of business keys",
+          "enforcement": "POSTGRESQL_UNIQUE",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1738,
+            "line_end": 1738,
+            "excerpt": "- DATA-PLM-ITER-01-080 `ExternalRequestReceipt.Id/TenantId/IterationId`：ID tuple，可空N；请求身份。"
+          }
         }
       ],
       "checks": [
@@ -7950,6 +9003,28 @@
             "line_end": 526,
             "excerpt": "### BR-PLM-ITER-01-029 幂等作用域\n\n唯一键=(TenantId,OperationType,Aggregate/SourceScope,RequestKey)，保存原载荷摘要和业务回执。\n\n相同RequestKey不同租户不碰撞；同键异载荷409。"
           }
+        },
+        {
+          "name": "original_id_authority_binding",
+          "columns": [
+            "tenant_id",
+            "id",
+            "original_id_key",
+            "iteration_storage_id"
+          ],
+          "enforcement": "OWNER_EXACT_SOURCE_IDENTITY_INTERN_AND_RAW_BINDING_BEFORE_COMMIT",
+          "comparison": "EXACT_SOURCE_TUPLE_RAW_SCHEMA_DOMAIN_AND_PARENT",
+          "rule": "Resolve original_id_key through the declared exact source tuple and compare id with OwnerKey.identity_bytes exactly; require the fixed original Owner/schema, exact declared scope components and immutable tenant assignment before commit. Parent scope resolves original Id through its same-tenant FK. Every writer/import/recovery uses this same lock and comparison. The composite tenant FK and global key UQ are additional constraints, not substitutes for exact interning or raw/key consistency.",
+          "source_pin": {
+            "repository": "Archive",
+            "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+            "representation": "RAW_FILE_BYTES",
+            "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+            "bytes": 96100,
+            "line_start": 1738,
+            "line_end": 1738,
+            "excerpt": "- DATA-PLM-ITER-01-080 `ExternalRequestReceipt.Id/TenantId/IterationId`：ID tuple，可空N；请求身份。"
+          }
         }
       ],
       "primary_key": {
@@ -7969,7 +9044,63 @@
         "immutable_columns": "Original signed/reviewed payload, identities and versions never UPDATE. Successor creates a new storage_id; token governs only mutable control/projection columns.",
         "zero_rows": "stale/conflict; no success receipt; unknown commit queries original operation"
       },
-      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption."
+      "external_reference_checks": "Original external Owner/schema/ref/version bytes remain opaque; local FK to OwnerKey only proves local identity binding, not remote existence or adoption.",
+      "original_identity": {
+        "source_field": "Id",
+        "source_entity": "ExternalRequestReceipt",
+        "source_pin": {
+          "repository": "Archive",
+          "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "representation": "RAW_FILE_BYTES",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "bytes": 96100,
+          "line_start": 1738,
+          "line_end": 1738,
+          "excerpt": "- DATA-PLM-ITER-01-080 `ExternalRequestReceipt.Id/TenantId/IterationId`：ID tuple，可空N；请求身份。"
+        },
+        "raw_column": "id",
+        "key_column": "original_id_key",
+        "registry_domain": "ITER/ExternalRequestReceipt.Id",
+        "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+        "scope_components": [
+          "TenantId",
+          "IterationId"
+        ],
+        "scope_bytes_hex": null,
+        "scope_bindings": {
+          "TenantId": {
+            "column": "tenant_id",
+            "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+          },
+          "IterationId": {
+            "via_fk": "iteration_storage_id",
+            "target_entity": "Iteration",
+            "target_original_column": "id",
+            "same_tenant": true,
+            "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+          }
+        },
+        "scope_encoding": "LENGTH_PREFIXED_ORIGINAL_COMPONENT_BYTES_IN_DECLARED_ORDER",
+        "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+        "different_scope_same_raw": "DISTINCT_SOURCE_TUPLE_ALLOW_DISTINCT_UUID",
+        "raw_binding": "EXACT_ORIGINAL_BYTES",
+        "schema_binding": "PINNED_ORIGINAL_OWNER_SCHEMA_NOT_CALLER_SELECTED",
+        "interning": {
+          "tuple_columns": [
+            "domain_key",
+            "schema_bytes",
+            "scope_bytes",
+            "identity_bytes"
+          ],
+          "equality": "FULL_TUPLE_BYTES",
+          "bucket_digest_unique": false,
+          "same_tuple_same_tenant": "RETURN_EXISTING_UUID",
+          "same_tuple_other_tenant": "SAFE_IDENTITY_CONFLICT_NO_NEW_UUID",
+          "different_tuple_same_bucket": "COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID",
+          "atomicity": "ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT"
+        },
+        "rule": "Fix the original Owner/entity and accepted Id schema from the cited source; do not accept a caller-selected schema/domain. Project/Iteration have empty scope: tenant and parent cannot split those explicit global PKs. The four grouped source entries retain exactly their declared TenantId[/IterationId] components; identical raw Id in a distinct source tuple is not rejected as a bare-Id global collision. Scope bytes frame exact original components in declared order without normalization/casts; resolve parent Id through the same-tenant FK, never use its surrogate UUID as original identity. A matching complete tuple resolves one UUID; an incompatible tenant assignment conflicts without a new UUID. UNIQUE(original_id_key) rejects duplicate complete identities independently of business numbers/versions/command keys. Digest collisions compare every tuple byte before allocating a distinct identity under the same Owner transaction lock. Bare-Id global scope for grouped entries remains unproven and cannot be silently imposed by this candidate."
+      }
     },
     {
       "entity": "AuditClosureAmendment",
@@ -26034,6 +27165,199 @@
           ],
           "enforcement": "OWNER_SERIALIZED_FULL_BYTE_COMPARISON",
           "rule": "Length-prefixed tuple domain/schema/scope/original bytes determines bucket. Lock bucket; compare complete tuple, return existing key or append distinct UUID. All writers/import/recovery use the same transaction lock. Hash collision never means same identity; no unbounded bytea btree UQ."
+        },
+        {
+          "name": "original_source_id_interning",
+          "columns": [
+            "domain_key",
+            "schema_bytes",
+            "scope_bytes",
+            "identity_bytes",
+            "tenant_id",
+            "bucket_digest"
+          ],
+          "enforcement": "OWNER_SERIALIZED_FULL_BYTE_COMPARISON",
+          "domains": [
+            "ITER/Project.Id",
+            "ITER/Iteration.Id",
+            "ITER/IterationInput.Id",
+            "ITER/CandidateObjectRef.Id",
+            "ITER/ReviewRound.Id",
+            "ITER/ExternalRequestReceipt.Id"
+          ],
+          "scope_profiles": [
+            {
+              "registry_domain": "ITER/Project.Id",
+              "scope": "ORIGINAL_GLOBAL_IDENTITY",
+              "scope_components": [],
+              "scope_bindings": {},
+              "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK"
+            },
+            {
+              "registry_domain": "ITER/Iteration.Id",
+              "scope": "ORIGINAL_GLOBAL_IDENTITY",
+              "scope_components": [],
+              "scope_bindings": {},
+              "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK"
+            },
+            {
+              "registry_domain": "ITER/IterationInput.Id",
+              "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+              "scope_components": [
+                "TenantId",
+                "IterationId"
+              ],
+              "scope_bindings": {
+                "TenantId": {
+                  "column": "tenant_id",
+                  "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+                },
+                "IterationId": {
+                  "via_fk": "iteration_storage_id",
+                  "target_entity": "Iteration",
+                  "target_original_column": "id",
+                  "same_tenant": true,
+                  "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+                }
+              },
+              "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+            },
+            {
+              "registry_domain": "ITER/CandidateObjectRef.Id",
+              "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+              "scope_components": [
+                "TenantId"
+              ],
+              "scope_bindings": {
+                "TenantId": {
+                  "column": "tenant_id",
+                  "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+                }
+              },
+              "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+            },
+            {
+              "registry_domain": "ITER/ReviewRound.Id",
+              "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+              "scope_components": [
+                "TenantId",
+                "IterationId"
+              ],
+              "scope_bindings": {
+                "TenantId": {
+                  "column": "tenant_id",
+                  "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+                },
+                "IterationId": {
+                  "via_fk": "iteration_storage_id",
+                  "target_entity": "Iteration",
+                  "target_original_column": "id",
+                  "same_tenant": true,
+                  "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+                }
+              },
+              "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+            },
+            {
+              "registry_domain": "ITER/ExternalRequestReceipt.Id",
+              "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+              "scope_components": [
+                "TenantId",
+                "IterationId"
+              ],
+              "scope_bindings": {
+                "TenantId": {
+                  "column": "tenant_id",
+                  "authority": "TRUSTED_ORIGINAL_TENANT_ID"
+                },
+                "IterationId": {
+                  "via_fk": "iteration_storage_id",
+                  "target_entity": "Iteration",
+                  "target_original_column": "id",
+                  "same_tenant": true,
+                  "authority": "EXACT_REFERENCED_ORIGINAL_PARENT_ID_BYTES"
+                }
+              },
+              "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+            }
+          ],
+          "interning": {
+            "tuple_columns": [
+              "domain_key",
+              "schema_bytes",
+              "scope_bytes",
+              "identity_bytes"
+            ],
+            "equality": "FULL_TUPLE_BYTES",
+            "bucket_digest_unique": false,
+            "same_tuple_same_tenant": "RETURN_EXISTING_UUID",
+            "same_tuple_other_tenant": "SAFE_IDENTITY_CONFLICT_NO_NEW_UUID",
+            "different_tuple_same_bucket": "COMPARE_FULL_TUPLE_THEN_ALLOCATE_DISTINCT_UUID",
+            "atomicity": "ONE_OWNER_TRANSACTION_BUCKET_LOCK_COMPARE_INSERT"
+          },
+          "rule": "Apply each named source scope profile before deriving equality and its lock bucket. Project/Iteration exclude TenantId and parent from their global PK tuple. Grouped identities include exactly their original tenant[/iteration] components; distinct source tuples may retain the same raw Id. Same complete tuple never allocates another UUID, and an incompatible tenant assignment returns safe conflict. Distinct tuple bytes sharing a digest remain distinct identities. Owner/schema/domain selection is trusted and fixed from original sources; no normalization, caller-selected scope or business-key substitution.",
+          "source_pins": [
+            {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1580,
+              "line_end": 1580,
+              "excerpt": "- DATA-PLM-ITER-01-001 `Project.Id`：ID，可空N；PK/稳定身份。"
+            },
+            {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1602,
+              "line_end": 1602,
+              "excerpt": "- DATA-PLM-ITER-01-012 `Iteration.Id`：ID，可空N；PK。"
+            },
+            {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1632,
+              "line_end": 1632,
+              "excerpt": "- DATA-PLM-ITER-01-027 `IterationInput.Id/TenantId/IterationId`：ID tuple，可空N；主键及作用域。"
+            },
+            {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1664,
+              "line_end": 1664,
+              "excerpt": "- DATA-PLM-ITER-01-043 `CandidateObjectRef.Id/TenantId`：ID pair，可空N；主身份。"
+            },
+            {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1692,
+              "line_end": 1692,
+              "excerpt": "- DATA-PLM-ITER-01-057 `ReviewRound.Id/TenantId/IterationId`：ID tuple，可空N；身份及范围。"
+            },
+            {
+              "repository": "Archive",
+              "path": "docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+              "representation": "RAW_FILE_BYTES",
+              "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+              "bytes": 96100,
+              "line_start": 1738,
+              "line_end": 1738,
+              "excerpt": "- DATA-PLM-ITER-01-080 `ExternalRequestReceipt.Id/TenantId/IterationId`：ID tuple，可空N；请求身份。"
+            }
+          ]
         }
       ],
       "cas": {

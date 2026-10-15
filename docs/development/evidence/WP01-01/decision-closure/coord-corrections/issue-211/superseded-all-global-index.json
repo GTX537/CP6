@@ -1,0 +1,91 @@
+{
+  "status": "SUPERSEDED_INTERMEDIATE_HYPOTHESIS_NOT_ACCEPTED",
+  "reason": "Original grouped Id/TenantId[/IterationId] entries do not prove bare-Id global uniqueness. First GREEN proves prior declarations only; source-semantic review requires two global PK profiles and four source tuple profiles.",
+  "original_green": "green-20261015T024315465471Z.run.json",
+  "files": [
+    {
+      "original_path": "eng/wp01-01/decision-closure/build_candidate.py",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/build_candidate.py",
+      "sha256": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+      "bytes": 45059
+    },
+    {
+      "original_path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/mapping_constraints.py",
+      "sha256": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+      "bytes": 24427
+    },
+    {
+      "original_path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+      "sha256": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+      "bytes": 7084
+    },
+    {
+      "original_path": "eng/wp01-01/decision-closure/README.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/README.md",
+      "sha256": "4b2697fb12f215f690dcaf06f0ab40cbeabfa7bc966450f3fd3fea7cd5a4b7f3",
+      "bytes": 2730
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "sha256": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+      "bytes": 3127424
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "sha256": "1aac9bae8c2084e8d6a02ff4f1116daa2241ca1b6a8df0b54aaf58b92b4a247b",
+      "bytes": 32994
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "sha256": "eee1e45453bde8987f606b7922597b45f3b43c0c0a2507b1c01fc014e231e48a",
+      "bytes": 32595
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+      "sha256": "c21209fdb418c041157715a6c8b1953476eb2c5daaf1ba9c4742126ee1f1a488",
+      "bytes": 5696
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+      "sha256": "2cb924dd6e0f402c8fdba2a376f89a4fdbd6c4374e91c26d75caa220a157c9e5",
+      "bytes": 481
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "sha256": "bee5b4d65e328306ccb292a9d2f4682d26f7d096d6af0485bbf5f80e1fddc071",
+      "bytes": 1675
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/README.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/README.md",
+      "sha256": "0de626dc4f4037bdb3ee57eaeebed59458f53d114a5b474da2809ae8d3c2d83d",
+      "bytes": 4603
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "sha256": "7c0a736dbf208a93911ec20e5d1457e48dcee8eb1f9bdf6375a9ebf63163f27c",
+      "bytes": 8786
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.json",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.json",
+      "sha256": "a066214c1dea5c298c6f1339be7bc217ad7f64839b7622fcc799f98bfb31ac98",
+      "bytes": 5187
+    },
+    {
+      "original_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.md",
+      "snapshot_path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.md",
+      "sha256": "7b2c55c3c0043c30c165fd6a163834d8eac7083052a553b3c6bb1f18d276d0ae",
+      "bytes": 2736
+    }
+  ]
+}

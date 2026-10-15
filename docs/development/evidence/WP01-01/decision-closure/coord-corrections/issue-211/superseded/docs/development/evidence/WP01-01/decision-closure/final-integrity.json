@@ -1,0 +1,12 @@
+{
+  "candidate": "21cb6082c1ebaca8f2cbf2f60b7df9dd3a7ff106",
+  "base": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "manifest_sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+  "git_and_worktree_artifacts_verified": 80,
+  "changed_paths": 84,
+  "scope_only": true,
+  "diff_check": "PASS",
+  "worktree_clean": true,
+  "result": "PASS",
+  "limits": "Integrity/scope verification only; successful unchanged tests are reused, not rerun. No adoption, completion, remote ancestry or runtime claim."
+}

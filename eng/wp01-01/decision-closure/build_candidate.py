@@ -110,14 +110,14 @@ def mapping():
       'PLM-ITER-01':[
        ('Project',35,'Id TenantId ProjectNo Title Objective ProductId OwnerId SiteIds Start End PlanVersion VersionToken'),
        ('Iteration',36,'Id TenantId ProjectId IterationNo Title Goal Origin ParentBaseline NoParentReason ChangeId PredecessorId OwnerId InputVersion PlanVersion Stage Hold EvaluationId VersionToken'),
-       ('IterationInput',37,'InputVersion SourceOwner RequestId RequestRevision SourceDigest RequirementRefs AcceptanceRefs ResolutionState CapturedAt CapturedBy'),
+       ('IterationInput',37,'Id InputVersion SourceOwner RequestId RequestRevision SourceDigest RequirementRefs AcceptanceRefs ResolutionState CapturedAt CapturedBy'),
        ('Candidate',38,'Id CandidateVersion ParentCandidate ParentBaseline Title ChangeSummary Assumptions ContentDigest DriftAssessmentRef VersionToken'),
-       ('CandidateRef',38,'OwnerType ObjectId Revision Occurrence Digest Applicability'),
+       ('CandidateRef',38,'Id OwnerType ObjectId Revision Occurrence Digest Applicability'),
        ('EngineeringTask',39,'Id Title OwnerId DueDate Weight PlanVersion State DeliverableRefs ConfirmationId CandidateRef'),
        ('ReviewRound',42,'Id IterationId RoundNo InputVersion CandidateManifest PackageDigest ReviewPolicyVersion SnapshotDigest State OaInstanceId SubmittedAt ClosedAt VersionToken'),
        ('ReviewIssue',40,'Id RoundId ObjectPosition Text Severity DowngradeReason OwnerId DueDate State ResolutionRef VerifiedBy VerifiedAt'),
        ('Evaluation',41,'Id Outcome SelectedCandidateVersion ReviewRound VerificationRefs Reason HandoverRef DecisionBy DecisionAt SnapshotDigest ActiveSelection'),
-       ('ExternalRequestReceipt',42,'OperationType RequestKey PayloadDigest Owner RequestRef State ResultId ResultVersion ResultDigest AttemptState LastCheckedAt'),
+       ('ExternalRequestReceipt',42,'Id OperationType RequestKey PayloadDigest Owner RequestRef State ResultId ResultVersion ResultDigest AttemptState LastCheckedAt'),
        ('AuditClosureAmendment',43,'EventId TenantId IterationId EventType Actor OccurredAt SourceVersion TargetVersion Before After Reason RequestRef FactRef IntegrityDigest')],
       'PLM-REL-01':[
        ('UseRequest',33,'RequestId RequestKey SourceBusinessVersion ImmutablePayload Baseline Manifest FrozenConfiguration TechnicalDigest ReviewPackageDigest ActivityKind ProductDestination Purpose PolicyRevision Site Customer Configuration ObjectScope Validity LimitMaximum UOM Profile VerificationRefs ConfigurationRefs DeviationRefs ConditionRefs'),

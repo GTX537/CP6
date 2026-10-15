@@ -1,0 +1,13 @@
+test_all_six_original_ids_are_required_bytes_with_required_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_all_six_original_ids_are_required_bytes_with_required_authority) ... ok
+test_grouped_source_ids_preserve_exact_tenant_and_parent_scope (test_original_identity_mapping.OriginalIdentityMappingTests.test_grouped_source_ids_preserve_exact_tenant_and_parent_scope) ... ok
+test_hash_collision_compares_all_original_tuple_bytes (test_original_identity_mapping.OriginalIdentityMappingTests.test_hash_collision_compares_all_original_tuple_bytes) ... ok
+test_only_explicit_global_primary_keys_ignore_tenant_and_parent (test_original_identity_mapping.OriginalIdentityMappingTests.test_only_explicit_global_primary_keys_ignore_tenant_and_parent) ... ok
+test_original_bytes_and_owner_domain_are_not_normalized (test_original_identity_mapping.OriginalIdentityMappingTests.test_original_bytes_and_owner_domain_are_not_normalized) ... ok
+test_raw_id_cannot_disagree_with_registry_authority (test_original_identity_mapping.OriginalIdentityMappingTests.test_raw_id_cannot_disagree_with_registry_authority) ... ok
+test_registered_original_identity_is_independent_of_existing_business_keys (test_original_identity_mapping.OriginalIdentityMappingTests.test_registered_original_identity_is_independent_of_existing_business_keys) ... ok
+test_same_original_tuple_conflicts_despite_changed_business_number (test_original_identity_mapping.OriginalIdentityMappingTests.test_same_original_tuple_conflicts_despite_changed_business_number) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.022s
+
+OK

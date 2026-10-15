@@ -1,0 +1,2394 @@
+docs/development/evidence/WP01-01/decision-closure/delivery.md:1: trailing whitespace.
++# WP01-01 current preparation delivery — Issue #211 correction
+docs/development/evidence/WP01-01/decision-closure/delivery.md:2: trailing whitespace.
++
+docs/development/evidence/WP01-01/decision-closure/delivery.md:3: trailing whitespace.
++The current candidate corrects six original ITER identity mappings. Required exact raw Id bytes and required global identity keys now remain independent of business-number/version/command uniqueness. TenantId and parent/business/version values cannot split the global interning tuple or lock key. Cross-tenant hits conflict without allocating another UUID; digest collisions compare full original bytes. Details and exact source/validation identities are in [the correction delivery](coord-corrections/issue-211/delivery.md) and [machine record](coord-corrections/issue-211/delivery.json).
+docs/development/evidence/WP01-01/decision-closure/delivery.md:4: trailing whitespace.
++
+docs/development/evidence/WP01-01/decision-closure/delivery.md:5: trailing whitespace.
++Fresh validation: **6 static regression tests and 1,000 structural/source/hash checks**. The original **54 gate tests and one roadmap run are reused**, with exact source/log hashes checked. The original 12,251-check result applies to the old mapping snapshot and is not claimed as a fresh correction check. All original failure logs, RED failures, and original manifest/validation/review/delivery snapshots remain preserved. Independent focused review is performed separately by COORD; old SPEC/QUALITY conclusions retain their original commit scope.
+docs/development/evidence/WP01-01/decision-closure/delivery.md:6: trailing whitespace.
++
+docs/development/evidence/WP01-01/decision-closure/delivery.md:7: trailing whitespace.
++Only task-private generator/mapping/tests and necessary evidence metadata changed. The two original declared dependency chains, graph, decisions, basis, gate code/contract, roadmap and formal adoption remain untouched. No DB/DDL/runtime registry, product build, Actions or deployment was run. No real actor/signature/time, adoption or completion is created. WP01-01 remains **PLANNED / NOT_CHECKED** with all three production/adoption/completion flags false.
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:1: trailing whitespace.
++{
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:2: trailing whitespace.
++  "schema": "WP01-01-WAVE7-WORKER-DELIVERY/2",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:3: trailing whitespace.
++  "issue": "https://github.com/GTX537/CP6/issues/211",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:4: trailing whitespace.
++  "task": "WP01-01",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:5: trailing whitespace.
++  "scope": "PREPARATION_ONLY",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:6: trailing whitespace.
++  "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:7: trailing whitespace.
++  "original_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:8: trailing whitespace.
++  "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:9: trailing whitespace.
++  "corrected_entities": [
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:10: trailing whitespace.
++    "Project",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:11: trailing whitespace.
++    "Iteration",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:12: trailing whitespace.
++    "IterationInput",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:13: trailing whitespace.
++    "CandidateRef",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:14: trailing whitespace.
++    "ReviewRound",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:15: trailing whitespace.
++    "ExternalRequestReceipt"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:16: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:17: trailing whitespace.
++  "global_identity": "Fixed original Owner/entity/schema, exact raw Id, empty scope bytes; no tenant/parent/business/version in tuple or lock key. Cross-tenant hit conflicts without new UUID; same-bucket different tuple keeps distinct identity.",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:18: trailing whitespace.
++  "new_validation": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:19: trailing whitespace.
++    "tests": 6,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:20: trailing whitespace.
++    "static_checks": 1000,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:21: trailing whitespace.
++    "red": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:22: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:23: trailing whitespace.
++      "bytes": 1690,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:24: trailing whitespace.
++      "sha256": "948e90ab6a6e7badb35c267c9d690bb12421736aa825070b025466188715071d",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:25: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:26: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:27: trailing whitespace.
++    "green": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:28: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:29: trailing whitespace.
++      "bytes": 1692,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:30: trailing whitespace.
++      "sha256": "88a08fa59541ac803600a26c298ab700111bda531370b9895e637d5eea2258d1",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:31: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:32: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:33: trailing whitespace.
++    "static": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:34: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:35: trailing whitespace.
++      "bytes": 1804,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:36: trailing whitespace.
++      "sha256": "5b78313425366143d8b2e2ad76266227d93721575e121fe150e98260259bcc41",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:37: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:38: trailing whitespace.
++    }
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:39: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:40: trailing whitespace.
++  "reused_validation": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:41: trailing whitespace.
++    "gate_tests": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:42: trailing whitespace.
++      "count": 54,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:43: trailing whitespace.
++      "record": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:44: trailing whitespace.
++        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:45: trailing whitespace.
++        "bytes": 1250,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:46: trailing whitespace.
++        "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:47: trailing whitespace.
++        "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:48: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:49: trailing whitespace.
++      "input_and_log_hashes": "EXACT_MATCH",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:50: trailing whitespace.
++      "additional_input_fields": "Original matrix unchanged; exact roadmap target ID list unchanged",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:51: trailing whitespace.
++      "scope": "Original synthetic gate algorithm only; not rerun"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:52: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:53: trailing whitespace.
++    "manager": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:54: trailing whitespace.
++      "record": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:55: trailing whitespace.
++        "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:56: trailing whitespace.
++        "bytes": 1256,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:57: trailing whitespace.
++        "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:58: trailing whitespace.
++        "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:59: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:60: trailing whitespace.
++      "input_and_log_hashes": "EXACT_MATCH",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:61: trailing whitespace.
++      "scope": "Original read-only manager run reused, not rerun"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:62: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:63: trailing whitespace.
++    "original_static_checks": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:64: trailing whitespace.
++      "count": 12251,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:65: trailing whitespace.
++      "record": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:66: trailing whitespace.
++        "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:67: trailing whitespace.
++        "bytes": 36290,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:68: trailing whitespace.
++        "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:69: trailing whitespace.
++        "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:70: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:71: trailing whitespace.
++      "scope": "Original mapping snapshot only; superseded for corrected mapping. Not a fresh run or proof of the corrected identity design."
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:72: trailing whitespace.
++    }
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:73: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:74: trailing whitespace.
++  "superseded": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:75: trailing whitespace.
++    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-index.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:76: trailing whitespace.
++    "bytes": 6838,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:77: trailing whitespace.
++    "sha256": "71c56f4dae5002d661783c34bca236c78af2d951062dda63bee6f0e9850980d8",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:78: trailing whitespace.
++    "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:79: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:80: trailing whitespace.
++  "mapping_regeneration": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:81: trailing whitespace.
++    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/mapping-regeneration.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:82: trailing whitespace.
++    "bytes": 1132,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:83: trailing whitespace.
++    "sha256": "fb6289bc01439015a1e343f9e43b4a1f2170f6ee91be3286b6cbf09c634f3d48",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:84: trailing whitespace.
++    "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:85: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:86: trailing whitespace.
++  "source_hashes": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:87: trailing whitespace.
++    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:88: trailing whitespace.
++    "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:89: trailing whitespace.
++    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:90: trailing whitespace.
++    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:91: trailing whitespace.
++    "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:92: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:93: trailing whitespace.
++  "review_status": "PENDING_COORD_FOCUSED_REVIEW",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:94: trailing whitespace.
++  "actions_triggered": false,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:95: trailing whitespace.
++  "actions_cancelled": [],
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:96: trailing whitespace.
++  "workflow_changes": [],
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:97: trailing whitespace.
++  "task_state": "PLANNED",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:98: trailing whitespace.
++  "entry_gate": "NOT_CHECKED",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:99: trailing whitespace.
++  "production_enabled": false,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:100: trailing whitespace.
++  "actual_adoption": false,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:101: trailing whitespace.
++  "actual_completion": false,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:102: trailing whitespace.
++  "limitations": [
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:103: trailing whitespace.
++    "database/DDL/runtime registry/lock isolation",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:104: trailing whitespace.
++    "product build",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:105: trailing whitespace.
++    "business/provider runtime acceptance",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:106: trailing whitespace.
++    "authority authentication",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:107: trailing whitespace.
++    "remote ancestry",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:108: trailing whitespace.
++    "Actions",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:109: trailing whitespace.
++    "deployment"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:110: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:111: trailing whitespace.
++  "core_manifest_sha256": "1aac9bae8c2084e8d6a02ff4f1116daa2241ca1b6a8df0b54aaf58b92b4a247b",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:112: trailing whitespace.
++  "current_identity": "WP01-01-DECISION-CLOSURE/20261014-R1+issue-211",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:113: trailing whitespace.
++  "historical_review_records": [
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:114: trailing whitespace.
++    "review-spec.json",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:115: trailing whitespace.
++    "review-quality.json"
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:116: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:117: trailing whitespace.
++  "historical_review_scope": "Original recorded candidates only; correction focused review separate",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:118: trailing whitespace.
++  "state_counts_unchanged": {
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:119: trailing whitespace.
++    "task_done": "22/375",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:120: trailing whitespace.
++    "business_done": "0/125",
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:121: trailing whitespace.
++    "not_run": 247,
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:122: trailing whitespace.
++    "reference_only": 41
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:123: trailing whitespace.
++  }
+docs/development/evidence/WP01-01/decision-closure/final-delivery.json:124: trailing whitespace.
++}
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:1: trailing whitespace.
++{
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:2: trailing whitespace.
++  "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:3: trailing whitespace.
++  "manifest_sha256": "1aac9bae8c2084e8d6a02ff4f1116daa2241ca1b6a8df0b54aaf58b92b4a247b",
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:4: trailing whitespace.
++  "core_artifacts_verified": 111,
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:5: trailing whitespace.
++  "inherited_pins_verified": 4,
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:6: trailing whitespace.
++  "protected_inputs_unchanged": true,
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:7: trailing whitespace.
++  "result": "PASS",
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:8: trailing whitespace.
++  "scope": "Current worktree source/hash integrity only; commit and remote containment left to COORD",
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:9: trailing whitespace.
++  "production_enabled": false,
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:10: trailing whitespace.
++  "actual_adoption": false,
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:11: trailing whitespace.
++  "actual_completion": false
+docs/development/evidence/WP01-01/decision-closure/final-integrity.json:12: trailing whitespace.
++}
+docs/development/evidence/WP01-01/decision-closure/manifest.json:1: trailing whitespace.
++{
+docs/development/evidence/WP01-01/decision-closure/manifest.json:2: trailing whitespace.
++  "schema": "WP01-01-CORE-MANIFEST/1",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:3: trailing whitespace.
++  "identity": "WP01-01-DECISION-CLOSURE/20261014-R1+issue-211",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:4: trailing whitespace.
++  "basis_version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:5: trailing whitespace.
++  "status": "PROPOSED_NOT_ADOPTED",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:6: trailing whitespace.
++  "source_revision": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:7: trailing whitespace.
++  "original_product_source_revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:8: trailing whitespace.
++  "original_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:9: trailing whitespace.
++  "supersedes_manifest": {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:10: trailing whitespace.
++    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/manifest.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:11: trailing whitespace.
++    "bytes": 22088,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:12: trailing whitespace.
++    "sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:13: trailing whitespace.
++    "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:14: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:15: trailing whitespace.
++  "artifacts": [
+docs/development/evidence/WP01-01/decision-closure/manifest.json:16: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:17: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/.gitattributes",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:18: trailing whitespace.
++      "bytes": 185,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:19: trailing whitespace.
++      "sha256": "34416cff64edfd8fab21c71ca75ee841f1ec2a5b24dec60b6e65062c4dcd2409",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:20: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:21: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:22: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:23: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:24: trailing whitespace.
++      "bytes": 383,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:25: trailing whitespace.
++      "sha256": "8b684dcf01ce5c8743dd563f319ce5364974910ee2f3167ef12d64c2cf947ca1",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:26: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:27: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:28: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:29: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.PLM-ITER-01.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:30: trailing whitespace.
++      "bytes": 383,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:31: trailing whitespace.
++      "sha256": "8b684dcf01ce5c8743dd563f319ce5364974910ee2f3167ef12d64c2cf947ca1",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:32: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:33: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:34: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:35: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.PLM-REL-01.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:36: trailing whitespace.
++      "bytes": 383,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:37: trailing whitespace.
++      "sha256": "8b684dcf01ce5c8743dd563f319ce5364974910ee2f3167ef12d64c2cf947ca1",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:38: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:39: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:40: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:41: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/basis-delta.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:42: trailing whitespace.
++      "bytes": 35416,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:43: trailing whitespace.
++      "sha256": "41d06ff2e0e3b934977f72c927a2e943a7c76f2202a5aad5acafbedddaa1fb5c",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:44: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:45: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:46: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:47: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-final.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:48: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:49: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:50: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:51: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:52: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:53: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-final.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:54: trailing whitespace.
++      "bytes": 93,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:55: trailing whitespace.
++      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:56: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:57: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:58: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:59: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-provider-evidence.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:60: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:61: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:62: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:63: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:64: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:65: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-provider-evidence.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:66: trailing whitespace.
++      "bytes": 93,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:67: trailing whitespace.
++      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:68: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:69: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:70: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:71: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-second.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:72: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:73: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:74: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:75: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:76: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:77: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-second.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:78: trailing whitespace.
++      "bytes": 93,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:79: trailing whitespace.
++      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:80: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:81: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:82: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:83: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-third.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:84: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:85: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:86: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:87: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:88: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:89: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build-third.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:90: trailing whitespace.
++      "bytes": 93,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:91: trailing whitespace.
++      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:92: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:93: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:94: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:95: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:96: trailing whitespace.
++      "bytes": 1624,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:97: trailing whitespace.
++      "sha256": "c38b23f5af8cc46a5f0e136f4b6cf88dc1fbc6d38ceb7b267699dbb77eac8c7b",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:98: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:99: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:100: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:101: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/build.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:102: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:103: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:104: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:105: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:106: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:107: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/contract-ref.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:108: trailing whitespace.
++      "bytes": 232,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:109: trailing whitespace.
++      "sha256": "0c45fac5ae309186118f5fda09731ee57a8365f6771ea0b4601f4f5cf32c3f13",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:110: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:111: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:112: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:113: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:114: trailing whitespace.
++      "bytes": 5187,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:115: trailing whitespace.
++      "sha256": "a066214c1dea5c298c6f1339be7bc217ad7f64839b7622fcc799f98bfb31ac98",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:116: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:117: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:118: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:119: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:120: trailing whitespace.
++      "bytes": 2736,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:121: trailing whitespace.
++      "sha256": "7b2c55c3c0043c30c165fd6a163834d8eac7083052a553b3c6bb1f18d276d0ae",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:122: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:123: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:124: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:125: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:126: trailing whitespace.
++      "bytes": 1692,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:127: trailing whitespace.
++      "sha256": "88a08fa59541ac803600a26c298ab700111bda531370b9895e637d5eea2258d1",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:128: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:129: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:130: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:131: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:132: trailing whitespace.
++      "bytes": 1277,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:133: trailing whitespace.
++      "sha256": "8301251fc54eea74d19abafea4fa46d8f3bf57064c0ee1a648721068305d3cbb",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:134: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:135: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:136: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:137: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:138: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:139: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:140: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:141: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:142: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:143: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/mapping-regeneration.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:144: trailing whitespace.
++      "bytes": 1132,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:145: trailing whitespace.
++      "sha256": "fb6289bc01439015a1e343f9e43b4a1f2170f6ee91be3286b6cbf09c634f3d48",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:146: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:147: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:148: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:149: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:150: trailing whitespace.
++      "bytes": 1690,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:151: trailing whitespace.
++      "sha256": "948e90ab6a6e7badb35c267c9d690bb12421736aa825070b025466188715071d",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:152: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:153: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:154: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:155: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:156: trailing whitespace.
++      "bytes": 1804774,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:157: trailing whitespace.
++      "sha256": "deb1279bc85cb0b9e49fc531e2ffcada8b25f5d357c54d21f9e151d4ed6f9ebd",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:158: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:159: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:160: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:161: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:162: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:163: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:164: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:165: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:166: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:167: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:168: trailing whitespace.
++      "bytes": 1804,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:169: trailing whitespace.
++      "sha256": "5b78313425366143d8b2e2ad76266227d93721575e121fe150e98260259bcc41",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:170: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:171: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:172: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:173: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:174: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:175: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:176: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:177: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:178: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:179: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:180: trailing whitespace.
++      "bytes": 948,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:181: trailing whitespace.
++      "sha256": "903caac85857244fd311351d199dd054426927ab9b3755c6daef52e8d6421243",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:182: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:183: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:184: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:185: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/delivery.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:186: trailing whitespace.
++      "bytes": 3796,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:187: trailing whitespace.
++      "sha256": "da304904da92c7b6fd051304b573ba04da2abf759f1f3058e5e3158a0b854476",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:188: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:189: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:190: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:191: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:192: trailing whitespace.
++      "bytes": 3452,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:193: trailing whitespace.
++      "sha256": "6f7e8a80ec517229a26776a6836be25a7be8560237e916d478d3e456b7d53c41",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:194: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:195: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:196: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:197: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:198: trailing whitespace.
++      "bytes": 524,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:199: trailing whitespace.
++      "sha256": "59299a4618feb337c4c2c42bc8f4cc04cd0f700143b768123b1e78e32c103a81",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:200: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:201: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:202: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:203: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:204: trailing whitespace.
++      "bytes": 7832,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:205: trailing whitespace.
++      "sha256": "e0bb0ec3940090de265cbf853a48e3d41db580b0146a2dd809e3235227882a68",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:206: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:207: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:208: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:209: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:210: trailing whitespace.
++      "bytes": 1256,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:211: trailing whitespace.
++      "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:212: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:213: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:214: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:215: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/manifest.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:216: trailing whitespace.
++      "bytes": 22088,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:217: trailing whitespace.
++      "sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:218: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:219: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:220: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:221: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:222: trailing whitespace.
++      "bytes": 3068484,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:223: trailing whitespace.
++      "sha256": "1dd70e194960534c1480d2ce2b8ab7cc82cbe088004e6859fba5f6a6535e9440",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:224: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:225: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:226: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:227: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/README.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:228: trailing whitespace.
++      "bytes": 3995,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:229: trailing whitespace.
++      "sha256": "bbf6eb3d4bb360229c6b796b6277ac2c50ba02d27b30553a632a40a49a14bce2",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:230: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:231: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:232: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:233: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/review-quality.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:234: trailing whitespace.
++      "bytes": 3300,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:235: trailing whitespace.
++      "sha256": "b06346191f82a33de3880359eab6ea4ef98fa40c26e46b2d0fe469994891bb89",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:236: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:237: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:238: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:239: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/review-spec.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:240: trailing whitespace.
++      "bytes": 3665,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:241: trailing whitespace.
++      "sha256": "a3db482cb897cbed9bbc05c9352827938b3dc2f07f5532ad9a316fb66e06697b",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:242: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:243: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:244: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:245: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:246: trailing whitespace.
++      "bytes": 1250,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:247: trailing whitespace.
++      "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:248: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:249: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:250: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:251: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:252: trailing whitespace.
++      "bytes": 36290,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:253: trailing whitespace.
++      "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:254: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:255: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:256: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:257: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/build_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:258: trailing whitespace.
++      "bytes": 45050,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:259: trailing whitespace.
++      "sha256": "568ba1dacff713dba6f643bdd60d00ca411081939693231dc21db195785a9238",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:260: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:261: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:262: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:263: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/mapping_constraints.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:264: trailing whitespace.
++      "bytes": 19039,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:265: trailing whitespace.
++      "sha256": "0233e84a1e42fd0792b9faeebf0c5f40d162da07ee1af68056621546929deb6b",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:266: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:267: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:268: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:269: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/README.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:270: trailing whitespace.
++      "bytes": 1817,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:271: trailing whitespace.
++      "sha256": "c9a690b1242fc37d25a4c9ff23a5c6d442af7ad71f36c0dbc51124e8c0a0c8d9",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:272: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:273: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:274: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:275: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/validate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:276: trailing whitespace.
++      "bytes": 19425,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:277: trailing whitespace.
++      "sha256": "b475730500c78ee30fb6cd43cb41e269063e3395cd2c923cf3155fa6438b67cf",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:278: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:279: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:280: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:281: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-index.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:282: trailing whitespace.
++      "bytes": 6838,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:283: trailing whitespace.
++      "sha256": "71c56f4dae5002d661783c34bca236c78af2d951062dda63bee6f0e9850980d8",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:284: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:285: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:286: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:287: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:288: trailing whitespace.
++      "bytes": 5843,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:289: trailing whitespace.
++      "sha256": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:290: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:291: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:292: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:293: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/current-source-audit.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:294: trailing whitespace.
++      "bytes": 47773,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:295: trailing whitespace.
++      "sha256": "fe1eca0cc8688077e98cc514128be8f4b68b244ca050d7ba8c389fcb85650d70",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:296: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:297: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:298: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:299: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/decisions.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:300: trailing whitespace.
++      "bytes": 279323,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:301: trailing whitespace.
++      "sha256": "0ba8d8fb82af67c231daf606ab9d4a4243d2503c37b61459e55e0e3682588c24",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:302: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:303: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:304: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:305: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/delivery.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:306: trailing whitespace.
++      "bytes": 1675,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:307: trailing whitespace.
++      "sha256": "bee5b4d65e328306ccb292a9d2f4682d26f7d096d6af0485bbf5f80e1fddc071",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:308: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:309: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:310: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:311: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/digest-vectors.candidate.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:312: trailing whitespace.
++      "bytes": 1411,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:313: trailing whitespace.
++      "sha256": "337799ebdf2985a735019b4cebbb8d45ca2879885c5e4399d54c00b531cb9497",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:314: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:315: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:316: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:317: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/gate-contract.candidate.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:318: trailing whitespace.
++      "bytes": 94101,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:319: trailing whitespace.
++      "sha256": "7fd2401374e1e77900de73879937f720fcca5267dfdf7a2a99edeb2b62c9fee6",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:320: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:321: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:322: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:323: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:324: trailing whitespace.
++      "bytes": 8786,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:325: trailing whitespace.
++      "sha256": "7c0a736dbf208a93911ec20e5d1457e48dcee8eb1f9bdf6375a9ebf63163f27c",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:326: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:327: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:328: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:329: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:330: trailing whitespace.
++      "bytes": 1256,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:331: trailing whitespace.
++      "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:332: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:333: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:334: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:335: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:336: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:337: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:338: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:339: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:340: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:341: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:342: trailing whitespace.
++      "bytes": 395,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:343: trailing whitespace.
++      "sha256": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:344: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:345: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:346: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:347: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:348: trailing whitespace.
++      "bytes": 3127424,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:349: trailing whitespace.
++      "sha256": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:350: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:351: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:352: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:353: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/provider-consumer-closure.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:354: trailing whitespace.
++      "bytes": 3868358,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:355: trailing whitespace.
++      "sha256": "2c59282749f87d8ed4b2fa11cdce7c66f06036a68f6afbfd1cded451bf11b844",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:356: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:357: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:358: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:359: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/actual-baseline-result.before-fix.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:360: trailing whitespace.
++      "bytes": 377,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:361: trailing whitespace.
++      "sha256": "1fe8d43e2b86b45fa05e0dfcfca10648e4023a9a6d95381d21766611097b845d",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:362: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:363: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:364: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:365: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/gate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:366: trailing whitespace.
++      "bytes": 16877,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:367: trailing whitespace.
++      "sha256": "48c783c4484b1f7ced2fb7cf162b2ce75997acb4d11184d40e9f037aacf5fdce",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:368: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:369: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:370: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:371: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/test_gate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:372: trailing whitespace.
++      "bytes": 20030,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:373: trailing whitespace.
++      "sha256": "4321323e93c9ab8f12c0184f09829256cba718e061d1e0110fb7dcf07ff8b245",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:374: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:375: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:376: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:377: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:378: trailing whitespace.
++      "bytes": 560,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:379: trailing whitespace.
++      "sha256": "34a44c382a80b81f811871d5c3a07387a0921cc9577e54fcf3fc86fa409fdb8c",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:380: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:381: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:382: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:383: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:384: trailing whitespace.
++      "bytes": 10985,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:385: trailing whitespace.
++      "sha256": "1d5b794e77bc6daaac7bcd99010ff928c34babab5242e7000a6d6a4e6a5cf14f",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:386: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:387: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:388: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:389: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:390: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:391: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:392: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:393: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:394: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:395: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/README.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:396: trailing whitespace.
++      "bytes": 4603,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:397: trailing whitespace.
++      "sha256": "0de626dc4f4037bdb3ee57eaeebed59458f53d114a5b474da2809ae8d3c2d83d",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:398: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:399: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:400: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:401: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:402: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:403: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:404: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:405: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:406: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:407: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:408: trailing whitespace.
++      "bytes": 93,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:409: trailing whitespace.
++      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:410: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:411: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:412: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:413: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:414: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:415: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:416: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:417: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:418: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:419: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:420: trailing whitespace.
++      "bytes": 93,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:421: trailing whitespace.
++      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:422: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:423: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:424: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:425: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:426: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:427: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:428: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:429: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:430: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:431: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:432: trailing whitespace.
++      "bytes": 249,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:433: trailing whitespace.
++      "sha256": "0716a3e5e663d2df293126d5bd2137962095c006c673ba6b6da684a3629cdbd0",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:434: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:435: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:436: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:437: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/gate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:438: trailing whitespace.
++      "bytes": 11041,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:439: trailing whitespace.
++      "sha256": "f8e2c5f1a7129b9ebdb2c6ce26b2cf142174a2576201966ab5142f59ad26e50c",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:440: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:441: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:442: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:443: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/test_gate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:444: trailing whitespace.
++      "bytes": 16205,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:445: trailing whitespace.
++      "sha256": "38d1c1cc859140bb36aa4b2d4f798562b8f6cadc65733ed496295d81655fdf26",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:446: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:447: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:448: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:449: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:450: trailing whitespace.
++      "bytes": 554,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:451: trailing whitespace.
++      "sha256": "eb2d431bfebed3ffc4f14ce09dcfd0b00210eeabaecb8767b5f3836acab31b19",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:452: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:453: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:454: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:455: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:456: trailing whitespace.
++      "bytes": 7731,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:457: trailing whitespace.
++      "sha256": "e62a6640d2ed0138d0465e4a4c5693a8db895d20339e2e927d1d6632b6e00cd0",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:458: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:459: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:460: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:461: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:462: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:463: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:464: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:465: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:466: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:467: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/submission.actual-unadopted.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:468: trailing whitespace.
++      "bytes": 1031,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:469: trailing whitespace.
++      "sha256": "663e99e31bef47d94b74579e8615a9e3811f654ac90f31ed7a0370f56d0f3f67",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:470: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:471: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:472: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:473: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-bindings-red.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:474: trailing whitespace.
++      "bytes": 10305,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:475: trailing whitespace.
++      "sha256": "39330befbc8b905b57f772d9115e5d78068256f0cf5acc7cfc6c3f6ca7d5a68f",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:476: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:477: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:478: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:479: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-bindings-red.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:480: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:481: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:482: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:483: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:484: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:485: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:486: trailing whitespace.
++      "bytes": 456,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:487: trailing whitespace.
++      "sha256": "fcdda57fdc640599601f314d0555031684a9e973027f046d0709acda1116615c",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:488: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:489: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:490: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:491: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:492: trailing whitespace.
++      "bytes": 5565,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:493: trailing whitespace.
++      "sha256": "4df88b7babc0dc25becd12debc9bd32d3c460d5831857445f6ceb78d9c3c59ea",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:494: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:495: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:496: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:497: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:498: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:499: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:500: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:501: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:502: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:503: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:504: trailing whitespace.
++      "bytes": 583,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:505: trailing whitespace.
++      "sha256": "53cc667783457d19dfc10074a0100c1e331aeb397cba00bf243276282b59b817",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:506: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:507: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:508: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:509: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:510: trailing whitespace.
++      "bytes": 7962,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:511: trailing whitespace.
++      "sha256": "ff398170cad8c81b9fc6e9968e46c998b1f57e89861e1581165e0dca6a4397d3",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:512: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:513: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:514: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:515: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:516: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:517: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:518: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:519: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:520: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:521: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-red.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:522: trailing whitespace.
++      "bytes": 203421,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:523: trailing whitespace.
++      "sha256": "31e0c409338ef40a8de332902cf6a6d0eb8bb17ce61d6b7fd3c454e3de6e4202",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:524: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:525: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:526: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:527: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-red.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:528: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:529: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:530: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:531: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:532: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:533: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-bindings.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:534: trailing whitespace.
++      "bytes": 3949,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:535: trailing whitespace.
++      "sha256": "f6740e3b72da7d99e2c3140e874ff63ba31a129e29d70d25c2a7d59a01a8672c",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:536: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:537: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:538: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:539: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-bindings.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:540: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:541: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:542: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:543: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:544: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:545: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:546: trailing whitespace.
++      "bytes": 1250,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:547: trailing whitespace.
++      "sha256": "6a57a41d663d324bbe0e59099f8ba98ec709d5f3d7b6f5d383798ba4212893ca",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:548: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:549: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:550: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:551: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:552: trailing whitespace.
++      "bytes": 4651,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:553: trailing whitespace.
++      "sha256": "a2d5e18e0e345e5932b7c6ec12cfb3df7b9722f00ea5f9e2b0192323ba6aac86",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:554: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:555: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:556: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:557: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:558: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:559: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:560: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:561: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:562: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:563: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:564: trailing whitespace.
++      "bytes": 1250,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:565: trailing whitespace.
++      "sha256": "7ddf7d1a43663e3d80055fbf6bdb34feb60475c8c39246ad2bc9fac2d2e257fe",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:566: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:567: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:568: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:569: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:570: trailing whitespace.
++      "bytes": 5263,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:571: trailing whitespace.
++      "sha256": "4bb69bae845659b6792d07234ed3f95c1e40226a3255a1232c4293231af6e512",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:572: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:573: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:574: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:575: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:576: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:577: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:578: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:579: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:580: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:581: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:582: trailing whitespace.
++      "bytes": 1250,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:583: trailing whitespace.
++      "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:584: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:585: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:586: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:587: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:588: trailing whitespace.
++      "bytes": 6029,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:589: trailing whitespace.
++      "sha256": "a72a0d0a1c7e83d361987a01dcdfcfbf2e8b7e8ee83fc4b9796e41a8da8e8ef6",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:590: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:591: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:592: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:593: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:594: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:595: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:596: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:597: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:598: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:599: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:600: trailing whitespace.
++      "bytes": 1250,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:601: trailing whitespace.
++      "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:602: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:603: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:604: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:605: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:606: trailing whitespace.
++      "bytes": 4537,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:607: trailing whitespace.
++      "sha256": "9cba60d827606ef0dd997450cfa0cd12ea9a70a8de88802ba56488a663484364",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:608: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:609: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:610: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:611: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:612: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:613: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:614: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:615: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:616: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:617: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-first.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:618: trailing whitespace.
++      "bytes": 2908,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:619: trailing whitespace.
++      "sha256": "d69917e5293975396168694db15a1a4314bbf3e773243abb7434a1876bb6957a",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:620: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:621: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:622: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:623: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/tests-first.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:624: trailing whitespace.
++      "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:625: trailing whitespace.
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:626: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:627: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:628: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:629: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/decision-closure/validation.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:630: trailing whitespace.
++      "bytes": 32595,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:631: trailing whitespace.
++      "sha256": "eee1e45453bde8987f606b7922597b45f3b43c0c0a2507b1c01fc014e231e48a",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:632: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:633: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:634: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:635: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/.gitattributes",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:636: trailing whitespace.
++      "bytes": 152,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:637: trailing whitespace.
++      "sha256": "97bb06d126ebba7eea9df6626feee657ff0d7b120ee4a3576e564ed91f8cc1fb",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:638: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:639: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:640: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:641: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/build_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:642: trailing whitespace.
++      "bytes": 45059,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:643: trailing whitespace.
++      "sha256": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:644: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:645: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:646: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:647: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/gate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:648: trailing whitespace.
++      "bytes": 18095,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:649: trailing whitespace.
++      "sha256": "26de2446b61ad78dd5788b62a23bc1c7804522b7d4a8673a3f2eb0dd3f1756db",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:650: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:651: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:652: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:653: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:654: trailing whitespace.
++      "bytes": 24427,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:655: trailing whitespace.
++      "sha256": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:656: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:657: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:658: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:659: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/README.md",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:660: trailing whitespace.
++      "bytes": 2730,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:661: trailing whitespace.
++      "sha256": "4b2697fb12f215f690dcaf06f0ab40cbeabfa7bc966450f3fd3fea7cd5a4b7f3",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:662: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:663: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:664: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:665: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/tests/test_gate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:666: trailing whitespace.
++      "bytes": 20030,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:667: trailing whitespace.
++      "sha256": "4321323e93c9ab8f12c0184f09829256cba718e061d1e0110fb7dcf07ff8b245",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:668: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:669: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:670: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:671: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:672: trailing whitespace.
++      "bytes": 7084,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:673: trailing whitespace.
++      "sha256": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:674: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:675: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:676: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:677: trailing whitespace.
++      "path": "eng/wp01-01/decision-closure/validate_candidate.py",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:678: trailing whitespace.
++      "bytes": 19425,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:679: trailing whitespace.
++      "sha256": "b475730500c78ee30fb6cd43cb41e269063e3395cd2c923cf3155fa6438b67cf",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:680: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:681: trailing whitespace.
++    }
+docs/development/evidence/WP01-01/decision-closure/manifest.json:682: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/manifest.json:683: trailing whitespace.
++  "inherited_immutable_pins": [
+docs/development/evidence/WP01-01/decision-closure/manifest.json:684: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:685: trailing whitespace.
++      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:686: trailing whitespace.
++      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:687: trailing whitespace.
++      "bytes": 1161,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:688: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:689: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:690: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:691: trailing whitespace.
++      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:692: trailing whitespace.
++      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:693: trailing whitespace.
++      "bytes": 1091,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:694: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:695: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:696: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:697: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/preparation/preparation-manifest.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:698: trailing whitespace.
++      "sha256": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:699: trailing whitespace.
++      "bytes": 9481,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:700: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:701: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/manifest.json:702: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/manifest.json:703: trailing whitespace.
++      "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:704: trailing whitespace.
++      "sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:705: trailing whitespace.
++      "bytes": 1198041,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:706: trailing whitespace.
++      "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:707: trailing whitespace.
++    }
+docs/development/evidence/WP01-01/decision-closure/manifest.json:708: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/manifest.json:709: trailing whitespace.
++  "exclusions": [
+docs/development/evidence/WP01-01/decision-closure/manifest.json:710: trailing whitespace.
++    "current manifest.json (no self hash)",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:711: trailing whitespace.
++    "top-level original intake/review records and final delivery/integrity summaries",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:712: trailing whitespace.
++    "future coordinator focused review/transport metadata"
+docs/development/evidence/WP01-01/decision-closure/manifest.json:713: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/manifest.json:714: trailing whitespace.
++  "correction_scope": "Restores inherited original identity constraints; no new adopted basis or production connection",
+docs/development/evidence/WP01-01/decision-closure/manifest.json:715: trailing whitespace.
++  "production_enabled": false,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:716: trailing whitespace.
++  "actual_adoption": false,
+docs/development/evidence/WP01-01/decision-closure/manifest.json:717: trailing whitespace.
++  "actual_completion": false
+docs/development/evidence/WP01-01/decision-closure/manifest.json:718: trailing whitespace.
++}
+docs/development/evidence/WP01-01/decision-closure/validation.json:1: trailing whitespace.
++{
+docs/development/evidence/WP01-01/decision-closure/validation.json:2: trailing whitespace.
++  "schema": "WP01-01-ISSUE-211-VALIDATION/1",
+docs/development/evidence/WP01-01/decision-closure/validation.json:3: trailing whitespace.
++  "result": "PASS",
+docs/development/evidence/WP01-01/decision-closure/validation.json:4: trailing whitespace.
++  "checked_at": "2026-10-15T02:48:16.170280+00:00",
+docs/development/evidence/WP01-01/decision-closure/validation.json:5: trailing whitespace.
++  "scope": "Issue211 static correction only; original gate/runtime boundaries unchanged",
+docs/development/evidence/WP01-01/decision-closure/validation.json:6: trailing whitespace.
++  "source_revision": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+docs/development/evidence/WP01-01/decision-closure/validation.json:7: trailing whitespace.
++  "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+docs/development/evidence/WP01-01/decision-closure/validation.json:8: trailing whitespace.
++  "prerequisite_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+docs/development/evidence/WP01-01/decision-closure/validation.json:9: trailing whitespace.
++  "checks": 1000,
+docs/development/evidence/WP01-01/decision-closure/validation.json:10: trailing whitespace.
++  "new_tests": 6,
+docs/development/evidence/WP01-01/decision-closure/validation.json:11: trailing whitespace.
++  "red": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:12: trailing whitespace.
++    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.run.json",
+docs/development/evidence/WP01-01/decision-closure/validation.json:13: trailing whitespace.
++    "bytes": 1690,
+docs/development/evidence/WP01-01/decision-closure/validation.json:14: trailing whitespace.
++    "sha256": "948e90ab6a6e7badb35c267c9d690bb12421736aa825070b025466188715071d",
+docs/development/evidence/WP01-01/decision-closure/validation.json:15: trailing whitespace.
++    "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/validation.json:16: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/validation.json:17: trailing whitespace.
++  "commands": [
+docs/development/evidence/WP01-01/decision-closure/validation.json:18: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/validation.json:19: trailing whitespace.
++      "phase": "GREEN_AFTER_FIX",
+docs/development/evidence/WP01-01/decision-closure/validation.json:20: trailing whitespace.
++      "command": [
+docs/development/evidence/WP01-01/decision-closure/validation.json:21: trailing whitespace.
++        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+docs/development/evidence/WP01-01/decision-closure/validation.json:22: trailing whitespace.
++        "-B",
+docs/development/evidence/WP01-01/decision-closure/validation.json:23: trailing whitespace.
++        "-X",
+docs/development/evidence/WP01-01/decision-closure/validation.json:24: trailing whitespace.
++        "utf8",
+docs/development/evidence/WP01-01/decision-closure/validation.json:25: trailing whitespace.
++        "-m",
+docs/development/evidence/WP01-01/decision-closure/validation.json:26: trailing whitespace.
++        "unittest",
+docs/development/evidence/WP01-01/decision-closure/validation.json:27: trailing whitespace.
++        "discover",
+docs/development/evidence/WP01-01/decision-closure/validation.json:28: trailing whitespace.
++        "-s",
+docs/development/evidence/WP01-01/decision-closure/validation.json:29: trailing whitespace.
++        "eng/wp01-01/decision-closure/tests",
+docs/development/evidence/WP01-01/decision-closure/validation.json:30: trailing whitespace.
++        "-p",
+docs/development/evidence/WP01-01/decision-closure/validation.json:31: trailing whitespace.
++        "test_original_identity_mapping.py",
+docs/development/evidence/WP01-01/decision-closure/validation.json:32: trailing whitespace.
++        "-v"
+docs/development/evidence/WP01-01/decision-closure/validation.json:33: trailing whitespace.
++      ],
+docs/development/evidence/WP01-01/decision-closure/validation.json:34: trailing whitespace.
++      "started_at": "2026-10-15T02:43:15.465539+00:00",
+docs/development/evidence/WP01-01/decision-closure/validation.json:35: trailing whitespace.
++      "finished_at": "2026-10-15T02:43:16.208202+00:00",
+docs/development/evidence/WP01-01/decision-closure/validation.json:36: trailing whitespace.
++      "exit_code": 0,
+docs/development/evidence/WP01-01/decision-closure/validation.json:37: trailing whitespace.
++      "source_hashes": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:38: trailing whitespace.
++        "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+docs/development/evidence/WP01-01/decision-closure/validation.json:39: trailing whitespace.
++        "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+docs/development/evidence/WP01-01/decision-closure/validation.json:40: trailing whitespace.
++        "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:41: trailing whitespace.
++        "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6"
+docs/development/evidence/WP01-01/decision-closure/validation.json:42: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/validation.json:43: trailing whitespace.
++      "logs": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:44: trailing whitespace.
++        "stdout": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:45: trailing whitespace.
++          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/validation.json:46: trailing whitespace.
++          "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/validation.json:47: trailing whitespace.
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+docs/development/evidence/WP01-01/decision-closure/validation.json:48: trailing whitespace.
++        },
+docs/development/evidence/WP01-01/decision-closure/validation.json:49: trailing whitespace.
++        "stderr": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:50: trailing whitespace.
++          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/validation.json:51: trailing whitespace.
++          "bytes": 1277,
+docs/development/evidence/WP01-01/decision-closure/validation.json:52: trailing whitespace.
++          "sha256": "8301251fc54eea74d19abafea4fa46d8f3bf57064c0ee1a648721068305d3cbb"
+docs/development/evidence/WP01-01/decision-closure/validation.json:53: trailing whitespace.
++        }
+docs/development/evidence/WP01-01/decision-closure/validation.json:54: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/validation.json:55: trailing whitespace.
++      "scope": "Task-private static mapping regression; no DB/production/runtime claims"
+docs/development/evidence/WP01-01/decision-closure/validation.json:56: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/validation.json:57: trailing whitespace.
++    {
+docs/development/evidence/WP01-01/decision-closure/validation.json:58: trailing whitespace.
++      "command": [
+docs/development/evidence/WP01-01/decision-closure/validation.json:59: trailing whitespace.
++        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+docs/development/evidence/WP01-01/decision-closure/validation.json:60: trailing whitespace.
++        "-B",
+docs/development/evidence/WP01-01/decision-closure/validation.json:61: trailing whitespace.
++        "-X",
+docs/development/evidence/WP01-01/decision-closure/validation.json:62: trailing whitespace.
++        "utf8",
+docs/development/evidence/WP01-01/decision-closure/validation.json:63: trailing whitespace.
++        "docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\verify-correction.py",
+docs/development/evidence/WP01-01/decision-closure/validation.json:64: trailing whitespace.
++        "--root",
+docs/development/evidence/WP01-01/decision-closure/validation.json:65: trailing whitespace.
++        ".",
+docs/development/evidence/WP01-01/decision-closure/validation.json:66: trailing whitespace.
++        "--archive-root",
+docs/development/evidence/WP01-01/decision-closure/validation.json:67: trailing whitespace.
++        "D:/CP6"
+docs/development/evidence/WP01-01/decision-closure/validation.json:68: trailing whitespace.
++      ],
+docs/development/evidence/WP01-01/decision-closure/validation.json:69: trailing whitespace.
++      "checked_at": "2026-10-15T02:45:22.625037+00:00",
+docs/development/evidence/WP01-01/decision-closure/validation.json:70: trailing whitespace.
++      "exit_code": 0,
+docs/development/evidence/WP01-01/decision-closure/validation.json:71: trailing whitespace.
++      "source_hashes": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:72: trailing whitespace.
++        "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+docs/development/evidence/WP01-01/decision-closure/validation.json:73: trailing whitespace.
++        "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+docs/development/evidence/WP01-01/decision-closure/validation.json:74: trailing whitespace.
++        "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:75: trailing whitespace.
++        "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+docs/development/evidence/WP01-01/decision-closure/validation.json:76: trailing whitespace.
++        "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+docs/development/evidence/WP01-01/decision-closure/validation.json:77: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/validation.json:78: trailing whitespace.
++      "logs": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:79: trailing whitespace.
++        "stdout": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:80: trailing whitespace.
++          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stdout.txt",
+docs/development/evidence/WP01-01/decision-closure/validation.json:81: trailing whitespace.
++          "bytes": 948,
+docs/development/evidence/WP01-01/decision-closure/validation.json:82: trailing whitespace.
++          "sha256": "903caac85857244fd311351d199dd054426927ab9b3755c6daef52e8d6421243"
+docs/development/evidence/WP01-01/decision-closure/validation.json:83: trailing whitespace.
++        },
+docs/development/evidence/WP01-01/decision-closure/validation.json:84: trailing whitespace.
++        "stderr": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:85: trailing whitespace.
++          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stderr.txt",
+docs/development/evidence/WP01-01/decision-closure/validation.json:86: trailing whitespace.
++          "bytes": 0,
+docs/development/evidence/WP01-01/decision-closure/validation.json:87: trailing whitespace.
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+docs/development/evidence/WP01-01/decision-closure/validation.json:88: trailing whitespace.
++        }
+docs/development/evidence/WP01-01/decision-closure/validation.json:89: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/validation.json:90: trailing whitespace.
++      "scope": "Fresh read-only candidate mapping structure/source/old-run hash verification"
+docs/development/evidence/WP01-01/decision-closure/validation.json:91: trailing whitespace.
++    }
+docs/development/evidence/WP01-01/decision-closure/validation.json:92: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/validation.json:93: trailing whitespace.
++  "reused_validation": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:94: trailing whitespace.
++    "gate_tests": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:95: trailing whitespace.
++      "count": 54,
+docs/development/evidence/WP01-01/decision-closure/validation.json:96: trailing whitespace.
++      "record": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:97: trailing whitespace.
++        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+docs/development/evidence/WP01-01/decision-closure/validation.json:98: trailing whitespace.
++        "bytes": 1250,
+docs/development/evidence/WP01-01/decision-closure/validation.json:99: trailing whitespace.
++        "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+docs/development/evidence/WP01-01/decision-closure/validation.json:100: trailing whitespace.
++        "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/validation.json:101: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/validation.json:102: trailing whitespace.
++      "input_and_log_hashes": "EXACT_MATCH",
+docs/development/evidence/WP01-01/decision-closure/validation.json:103: trailing whitespace.
++      "additional_input_fields": "Original matrix unchanged; exact roadmap target ID list unchanged",
+docs/development/evidence/WP01-01/decision-closure/validation.json:104: trailing whitespace.
++      "scope": "Original synthetic gate algorithm only; not rerun"
+docs/development/evidence/WP01-01/decision-closure/validation.json:105: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/validation.json:106: trailing whitespace.
++    "manager": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:107: trailing whitespace.
++      "record": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:108: trailing whitespace.
++        "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+docs/development/evidence/WP01-01/decision-closure/validation.json:109: trailing whitespace.
++        "bytes": 1256,
+docs/development/evidence/WP01-01/decision-closure/validation.json:110: trailing whitespace.
++        "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+docs/development/evidence/WP01-01/decision-closure/validation.json:111: trailing whitespace.
++        "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/validation.json:112: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/validation.json:113: trailing whitespace.
++      "input_and_log_hashes": "EXACT_MATCH",
+docs/development/evidence/WP01-01/decision-closure/validation.json:114: trailing whitespace.
++      "scope": "Original read-only manager run reused, not rerun"
+docs/development/evidence/WP01-01/decision-closure/validation.json:115: trailing whitespace.
++    },
+docs/development/evidence/WP01-01/decision-closure/validation.json:116: trailing whitespace.
++    "original_static_checks": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:117: trailing whitespace.
++      "count": 12251,
+docs/development/evidence/WP01-01/decision-closure/validation.json:118: trailing whitespace.
++      "record": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:119: trailing whitespace.
++        "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+docs/development/evidence/WP01-01/decision-closure/validation.json:120: trailing whitespace.
++        "bytes": 36290,
+docs/development/evidence/WP01-01/decision-closure/validation.json:121: trailing whitespace.
++        "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+docs/development/evidence/WP01-01/decision-closure/validation.json:122: trailing whitespace.
++        "representation": "RAW_FILE_BYTES"
+docs/development/evidence/WP01-01/decision-closure/validation.json:123: trailing whitespace.
++      },
+docs/development/evidence/WP01-01/decision-closure/validation.json:124: trailing whitespace.
++      "scope": "Original mapping snapshot only; superseded for corrected mapping. Not a fresh run or proof of the corrected identity design."
+docs/development/evidence/WP01-01/decision-closure/validation.json:125: trailing whitespace.
++    }
+docs/development/evidence/WP01-01/decision-closure/validation.json:126: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/validation.json:127: trailing whitespace.
++  "protected_input_hashes_before": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:128: trailing whitespace.
++    "docs/development/roadmap.json": "91014dd78e8355aa83fe0b8bb5c5d05f25125bf3444a94e12ce556b3242b55df",
+docs/development/evidence/WP01-01/decision-closure/validation.json:129: trailing whitespace.
++    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+docs/development/evidence/WP01-01/decision-closure/validation.json:130: trailing whitespace.
++    "docs/development/tools/manage_roadmap.py": "992e88abcaefd904ac9c0b555405df443f0e521170998237e3ca2f81c917545b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:131: trailing whitespace.
++    "docs/project-memory/PROJECT_STATE.md": "5b7b97ef26a6ffb4e722c20c491046352a99e0f2a7504784a61e017889ce3890",
+docs/development/evidence/WP01-01/decision-closure/validation.json:132: trailing whitespace.
++    "docs/project-memory/05-Completed.md": "74b81ac6aa4ec406cebf2fa81520e431208a4e31fcc019edf7582dcdc555c09d",
+docs/development/evidence/WP01-01/decision-closure/validation.json:133: trailing whitespace.
++    "docs/project-memory/06-Todo.md": "6062e8cdbfea9895d5ee8e22ac9b24c6f2064a92f9466c7d9f137de15a2810e4",
+docs/development/evidence/WP01-01/decision-closure/validation.json:134: trailing whitespace.
++    "docs/project-memory/CHANGELOG-AI.md": "dffcf538a736a6d623a91f5f8995633543b8eaa2e93483ade14198cd66723c03",
+docs/development/evidence/WP01-01/decision-closure/validation.json:135: trailing whitespace.
++    "eng/wp01-01/preparation/.gitattributes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+docs/development/evidence/WP01-01/decision-closure/validation.json:136: trailing whitespace.
++    "eng/wp01-01/preparation/comparator.py": "8ef101805537db56d581b509feb4b6176b542487ca2eed0c7372ddaa0f82c1e5",
+docs/development/evidence/WP01-01/decision-closure/validation.json:137: trailing whitespace.
++    "eng/wp01-01/preparation/prepare.py": "54da30f9e6ebc42a4a7a33194ed92b675f5b986ec82b8f9c735933a73060c903",
+docs/development/evidence/WP01-01/decision-closure/validation.json:138: trailing whitespace.
++    "eng/wp01-01/preparation/run_checks.py": "01c50b6d361dddf10735505f635f303123da75890420be3b39b4b5055703905f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:139: trailing whitespace.
++    "eng/wp01-01/preparation/test_bundle.py": "09f55236131c7871fa169c46c8345b92352327eda7f0d7115f09bab0107d8481",
+docs/development/evidence/WP01-01/decision-closure/validation.json:140: trailing whitespace.
++    "eng/wp01-01/preparation/test_comparator.py": "acac1c2b99e0bc00d9dca582bab480ad97d018a4f477f44ebec7cf691a836e53",
+docs/development/evidence/WP01-01/decision-closure/validation.json:141: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/.gitattributes": "474256fb62f8f45a4a804582bfc4914b4774f73772cde4ba8cbe35d795785dae",
+docs/development/evidence/WP01-01/decision-closure/validation.json:142: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/bookkeeping-correction.json": "520b4e2aa57453350b7dc86ca310813c29f9bb067c1188c33446ed7363a4de5b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:143: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stderr.txt": "bdf30fe7b5a339b625880aa935294d732840e907f77a9283ec5b495da650c3a6",
+docs/development/evidence/WP01-01/decision-closure/validation.json:144: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:145: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stderr.txt": "e8e4826ea6343669b8b98a18034a57d38a1f4065a7f0025dcb8cb6f7d8bfb6a7",
+docs/development/evidence/WP01-01/decision-closure/validation.json:146: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:147: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/comparator-tests.txt": "e9d5f10cf0084309f78ee5c50464d09882fdc96abda6e684c34080e969c198ac",
+docs/development/evidence/WP01-01/decision-closure/validation.json:148: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json": "946c1561a1a4a193149198108b917ef9a6a1c2c5128bd88c7ebf7e89140c4b60",
+docs/development/evidence/WP01-01/decision-closure/validation.json:149: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/delivery-draft.md": "95acc7fa95e16fcbe008d674bfd54a0d9053bf4030d9bbcbdef962b94cad242f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:150: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/delivery.md": "035b6956c70ca2bcdd128352ff1b9721c227687996de6665c425ec1aa4e29d39",
+docs/development/evidence/WP01-01/decision-closure/validation.json:151: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json": "62004288943e268e05858e7d4db732e074e2161befd11aa69495e5eab5541dbe",
+docs/development/evidence/WP01-01/decision-closure/validation.json:152: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/gate-proposal.md": "4f79f5d73ce2a0a1d3132423a1428075e2709abcf1dee4fc937af2fa6efbe134",
+docs/development/evidence/WP01-01/decision-closure/validation.json:153: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/input-lock.json": "d771ea749db37c60da2e4eaefa5bb64ba167e9cb0301a063518c2ed05e2f09ec",
+docs/development/evidence/WP01-01/decision-closure/validation.json:154: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/intake.json": "ea39328cbb53dc9ebd33116e87f3176c4c8e5a932e1c1b0a8b5ee4025a8013aa",
+docs/development/evidence/WP01-01/decision-closure/validation.json:155: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:156: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stdout.txt": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+docs/development/evidence/WP01-01/decision-closure/validation.json:157: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/obligation-matrix.json": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+docs/development/evidence/WP01-01/decision-closure/validation.json:158: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/obligation-matrix.md": "d8ca48997c0c35e8560c1e03d935043250e25dc0212f997696dabdbcc7b2ca3e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:159: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/preparation-manifest.json": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+docs/development/evidence/WP01-01/decision-closure/validation.json:160: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/prepare-final.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:161: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/prepare-final.stdout.txt": "9a5b55ace2d317ee11b91f836111f46cac6515d54220ac4f94b9cbf52679c83b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:162: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/prepare-first-run.txt": "4554251a849958a21196cf70d0381b48c31ad0d7b281d15966029c6218ec8ea7",
+docs/development/evidence/WP01-01/decision-closure/validation.json:163: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/README.md": "29f6564ab158063fdabf99571f7e4cd840d332a45ad9c34091c1b7065bdc451d",
+docs/development/evidence/WP01-01/decision-closure/validation.json:164: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/review-quality-integrity.json": "55a67bca1a7aa42eeda0a620ed48488f059e75dd79045d6809fc05f161636404",
+docs/development/evidence/WP01-01/decision-closure/validation.json:165: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/review-quality.md": "20aa120253697daab0329dbdb8bb05c80edfdf2a75aeb0d0997031146c3aa548",
+docs/development/evidence/WP01-01/decision-closure/validation.json:166: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/review-spec.md": "499beb08e808ea48cb72789aadd4abeee99188d5efbf61bb1ebcf082c963c9d6",
+docs/development/evidence/WP01-01/decision-closure/validation.json:167: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/semantic-audit.md": "6b0b6540134809792bf8ad5ec87b464a6b4e77d468ee10d43620420608e92ebd",
+docs/development/evidence/WP01-01/decision-closure/validation.json:168: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/source-verification.initial.json": "0576f8f42bbc482cad27edf3f1905e3bc9b4b1186cac816dcce38fd10475ea4c",
+docs/development/evidence/WP01-01/decision-closure/validation.json:169: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/source-verification.json": "1de02a63ab44d81d046d3ae391016da82c9e5fb22c384a4de410fd2482df455f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:170: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/tdd-malformed-red.txt": "7648842a05f3f074ef8f8f3d17b4d29a3b53b8536b85b8c0f994ae325e3f44b0",
+docs/development/evidence/WP01-01/decision-closure/validation.json:171: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/tdd-red.txt": "69c05a08ca066ac44d7a08d431bb8ab77550655852d414986b6cd55e1c95cd26",
+docs/development/evidence/WP01-01/decision-closure/validation.json:172: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/tdd-repository-scope-red.txt": "a7a344df25f84318e51e879055c24666429917f574273dcf11a0f17430d2501b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:173: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/validation.json": "45bd0c724a7fb9be9fe046158c959a8d32da62bb27a6733174a5a638d1b83963",
+docs/development/evidence/WP01-01/decision-closure/validation.json:174: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/.gitattributes": "9a4df49b928aa02632ef71671b1674b19f423fca6292181d3c3bf214fc4b68cd",
+docs/development/evidence/WP01-01/decision-closure/validation.json:175: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/adoption.json": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+docs/development/evidence/WP01-01/decision-closure/validation.json:176: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/basis-manifest.json": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+docs/development/evidence/WP01-01/decision-closure/validation.json:177: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/cases.json": "385c4dd12cb13a9efda4485d0b2a8b3810b85d189683caa97ca6e9829f46b563",
+docs/development/evidence/WP01-01/decision-closure/validation.json:178: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/coverage.md": "ab8f1a4208755966acb2ca0e27b978b958262ac29e48087071fa85726162cb6a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:179: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/delivery.md": "74a574113f1f799f37420aa9251c78229490709b2cd613bb62d9a46a1559546a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:180: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/normative-coverage.json": "64f4eed670dd8cf1c56905c51e3aa2ec1122757e6761f0a49af5a2b2bbd4b90a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:181: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/README.md": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+docs/development/evidence/WP01-01/decision-closure/validation.json:182: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/sources.json": "c2b160e90dbce013cca1990b7189b68e8e3f51998ae891d1f364b4db4da165fc",
+docs/development/evidence/WP01-01/decision-closure/validation.json:183: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/verify.py": "73a4e90d6ed492c4621316356cc8ff6d937daf9de90f035c636290b49b6961fa",
+docs/development/evidence/WP01-01/decision-closure/validation.json:184: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/staged-byte-check.failure.json": "2b2f4a0f05857ee1a0a81a63d4159f488ed1ecdee190118a8b618e8307f51e38",
+docs/development/evidence/WP01-01/decision-closure/validation.json:185: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/staged-review.final.json": "9c20df68af20b1147bd4f6b123a06431bb777750bd554b6ee9b79ba2fea1688f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:186: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/static-check.final.json": "6e6a9372e67d7a93fe531b0443ef5c54b57432b7abed53022e2765c5d8c7a134",
+docs/development/evidence/WP01-01/decision-closure/validation.json:187: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/static-check.initial.json": "96170d90bd739f13951da82cc120d41044a0001f2cd9e945acbee7906d2f2f60",
+docs/development/evidence/WP01-01/decision-closure/validation.json:188: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/workflow-inspection.json": "4be6ef44cdf039f82bba227fb39ba206e9f63e9289f30f989c8928ae167e4629",
+docs/development/evidence/WP01-01/decision-closure/validation.json:189: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+docs/development/evidence/WP01-01/decision-closure/validation.json:190: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/README.md": "cd19b246f1763c123ab66c0a34ba8b55185eec6eaea097d468470f3a2ec17fcc",
+docs/development/evidence/WP01-01/decision-closure/validation.json:191: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/test-wp05-supplement-checker.py": "9be105ae86646db9ab11c12d0a42aa0502ff06ee4a200ac1197389bf2374c60e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:192: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py": "843dc0cd305e56c6867c2bf2e4ab9e9c699a0bc9446b42308e8388cd74ebebff",
+docs/development/evidence/WP01-01/decision-closure/validation.json:193: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+docs/development/evidence/WP01-01/decision-closure/validation.json:194: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-original-static.json": "866d7299f4115e1b9a6b932f23b536f4efebcd80eaf616266cfcf5c3474796aa",
+docs/development/evidence/WP01-01/decision-closure/validation.json:195: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-tests-reused.json": "e1e77c35fc60a480fd7b3f262abe9213d6806678b82f8f50b792c4ca5e67b062",
+docs/development/evidence/WP01-01/decision-closure/validation.json:196: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/followup.md": "2eb7537654a45c892b01335315b8ce65199f0445e7d627ea47d18656c99bce12",
+docs/development/evidence/WP01-01/decision-closure/validation.json:197: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json": "1e719dd5927a5c46b4fc509a7cd7c29b748a05d4fc3bb4e0bb353d7b9ca002bb",
+docs/development/evidence/WP01-01/decision-closure/validation.json:198: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/ledger-review.json": "7cbb3e59eb1908e7641224cbde5cb93e5955b3858c53bd4f1bd7f0c87db873d7",
+docs/development/evidence/WP01-01/decision-closure/validation.json:199: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/README.md": "a59da010a57ba6185f022ffea850d84cf511700b48ebc9905e40e157480c8802",
+docs/development/evidence/WP01-01/decision-closure/validation.json:200: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json": "b42a8a9beefd1baf4fa73057e12bbd01790214cfb66c1e18b12519a7ed4ef6df",
+docs/development/evidence/WP01-01/decision-closure/validation.json:201: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/review.md": "8b96d5d8246e7c27d5889a98506b386cf318072560d6a220610bf2afcd7971f0",
+docs/development/evidence/WP01-01/decision-closure/validation.json:202: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json": "6e4b4d789dfdfd435663a5667fd161a0fa16999cdc28b0159e82591b5e930525",
+docs/development/evidence/WP01-01/decision-closure/validation.json:203: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.json": "ef017002d8fbc01f155dbd315d2b1c59ae7765b5840f912822fc86c87af314bb",
+docs/development/evidence/WP01-01/decision-closure/validation.json:204: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.md": "53192d7c98d83c6b493f56b2e83d9cdedcfd4ea75e680809f326d82fd3ac57c0",
+docs/development/evidence/WP01-01/decision-closure/validation.json:205: trailing whitespace.
++    ".github/workflows/client-contract.yml": "fb633108d5d43b368d9c8a75d7d0ec81f718e119630c811334fd1bd4eb5f1454",
+docs/development/evidence/WP01-01/decision-closure/validation.json:206: trailing whitespace.
++    ".github/workflows/crm-saas-public-contract.yml": "5174f62866dd6d84c61143074809718837086787fb886a19f085c24189d5d2c9",
+docs/development/evidence/WP01-01/decision-closure/validation.json:207: trailing whitespace.
++    ".github/workflows/crm-v1-prd-head.yml": "9797044712711f8bc503b5b7a3b4da5755aaf6c8874a8104d30c20842a64fe6a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:208: trailing whitespace.
++    ".github/workflows/crm-v1-prd.yml": "25bb5f0e9b7626a88a71aba7a35322d7b7e51e5699c1e9c4766faa994b9c131e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:209: trailing whitespace.
++    ".github/workflows/p10-platform-audit.yml": "941ccf864b7985b1b7d2b0c3277a01845003a0e4a44a97a55481d1f8fcad1d0e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:210: trailing whitespace.
++    ".github/workflows/p10-platform-candidate.yml": "df5ab1ce8ba02338cf6705bf41ffd4f5647be445d83cefbb23606a7e48802db9",
+docs/development/evidence/WP01-01/decision-closure/validation.json:211: trailing whitespace.
++    ".github/workflows/p10-platform-preflight.yml": "8ffd7d626a3ef0566ec2caeaf1bd00e0bb5c89d3300f6403c6079cc89e4e353f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:212: trailing whitespace.
++    ".github/workflows/p10-platform-validation.yml": "169662caca8ab9d972976c17e2ca7d14a3986fcb354ca82933097f8d776fda02",
+docs/development/evidence/WP01-01/decision-closure/validation.json:213: trailing whitespace.
++    ".github/workflows/r2-candidate.yml": "cfea8ab19c0bb5fe3800e6ee64d06dacd5c0bcaf0446bd3c8c0c82b6cb3923f3",
+docs/development/evidence/WP01-01/decision-closure/validation.json:214: trailing whitespace.
++    ".github/workflows/r2-deploy.yml": "37960838ab5c7d8565a69d29bd8137546946b8c2f5af696c2275971442f92b9f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:215: trailing whitespace.
++    ".github/workflows/r2-freeze.yml": "37ce4fb3de9d4c16e331c0864b245545efcef370d6efaeab2169e348bccb4a4e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:216: trailing whitespace.
++    ".github/workflows/space-ga-evidence.yml": "4f2904f963fefa8b87f3e8281a533255c5b76895001bd2b9c7d35570974452a2",
+docs/development/evidence/WP01-01/decision-closure/validation.json:217: trailing whitespace.
++    ".github/workflows/wms-production-sql.yml": "f44ac479f2378d9e05468a9a9b6f24e067da6ae6d475be796ffcd7661e15ed91"
+docs/development/evidence/WP01-01/decision-closure/validation.json:218: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/validation.json:219: trailing whitespace.
++  "protected_input_hashes_after": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:220: trailing whitespace.
++    "docs/development/roadmap.json": "91014dd78e8355aa83fe0b8bb5c5d05f25125bf3444a94e12ce556b3242b55df",
+docs/development/evidence/WP01-01/decision-closure/validation.json:221: trailing whitespace.
++    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+docs/development/evidence/WP01-01/decision-closure/validation.json:222: trailing whitespace.
++    "docs/development/tools/manage_roadmap.py": "992e88abcaefd904ac9c0b555405df443f0e521170998237e3ca2f81c917545b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:223: trailing whitespace.
++    "docs/project-memory/PROJECT_STATE.md": "5b7b97ef26a6ffb4e722c20c491046352a99e0f2a7504784a61e017889ce3890",
+docs/development/evidence/WP01-01/decision-closure/validation.json:224: trailing whitespace.
++    "docs/project-memory/05-Completed.md": "74b81ac6aa4ec406cebf2fa81520e431208a4e31fcc019edf7582dcdc555c09d",
+docs/development/evidence/WP01-01/decision-closure/validation.json:225: trailing whitespace.
++    "docs/project-memory/06-Todo.md": "6062e8cdbfea9895d5ee8e22ac9b24c6f2064a92f9466c7d9f137de15a2810e4",
+docs/development/evidence/WP01-01/decision-closure/validation.json:226: trailing whitespace.
++    "docs/project-memory/CHANGELOG-AI.md": "dffcf538a736a6d623a91f5f8995633543b8eaa2e93483ade14198cd66723c03",
+docs/development/evidence/WP01-01/decision-closure/validation.json:227: trailing whitespace.
++    "eng/wp01-01/preparation/.gitattributes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+docs/development/evidence/WP01-01/decision-closure/validation.json:228: trailing whitespace.
++    "eng/wp01-01/preparation/comparator.py": "8ef101805537db56d581b509feb4b6176b542487ca2eed0c7372ddaa0f82c1e5",
+docs/development/evidence/WP01-01/decision-closure/validation.json:229: trailing whitespace.
++    "eng/wp01-01/preparation/prepare.py": "54da30f9e6ebc42a4a7a33194ed92b675f5b986ec82b8f9c735933a73060c903",
+docs/development/evidence/WP01-01/decision-closure/validation.json:230: trailing whitespace.
++    "eng/wp01-01/preparation/run_checks.py": "01c50b6d361dddf10735505f635f303123da75890420be3b39b4b5055703905f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:231: trailing whitespace.
++    "eng/wp01-01/preparation/test_bundle.py": "09f55236131c7871fa169c46c8345b92352327eda7f0d7115f09bab0107d8481",
+docs/development/evidence/WP01-01/decision-closure/validation.json:232: trailing whitespace.
++    "eng/wp01-01/preparation/test_comparator.py": "acac1c2b99e0bc00d9dca582bab480ad97d018a4f477f44ebec7cf691a836e53",
+docs/development/evidence/WP01-01/decision-closure/validation.json:233: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/.gitattributes": "474256fb62f8f45a4a804582bfc4914b4774f73772cde4ba8cbe35d795785dae",
+docs/development/evidence/WP01-01/decision-closure/validation.json:234: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/bookkeeping-correction.json": "520b4e2aa57453350b7dc86ca310813c29f9bb067c1188c33446ed7363a4de5b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:235: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stderr.txt": "bdf30fe7b5a339b625880aa935294d732840e907f77a9283ec5b495da650c3a6",
+docs/development/evidence/WP01-01/decision-closure/validation.json:236: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/bundle-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:237: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stderr.txt": "e8e4826ea6343669b8b98a18034a57d38a1f4065a7f0025dcb8cb6f7d8bfb6a7",
+docs/development/evidence/WP01-01/decision-closure/validation.json:238: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/comparator-tests-final.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:239: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/comparator-tests.txt": "e9d5f10cf0084309f78ee5c50464d09882fdc96abda6e684c34080e969c198ac",
+docs/development/evidence/WP01-01/decision-closure/validation.json:240: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/decision.UNSIGNED.json": "946c1561a1a4a193149198108b917ef9a6a1c2c5128bd88c7ebf7e89140c4b60",
+docs/development/evidence/WP01-01/decision-closure/validation.json:241: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/delivery-draft.md": "95acc7fa95e16fcbe008d674bfd54a0d9053bf4030d9bbcbdef962b94cad242f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:242: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/delivery.md": "035b6956c70ca2bcdd128352ff1b9721c227687996de6665c425ec1aa4e29d39",
+docs/development/evidence/WP01-01/decision-closure/validation.json:243: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/gate-contract.proposed.json": "62004288943e268e05858e7d4db732e074e2161befd11aa69495e5eab5541dbe",
+docs/development/evidence/WP01-01/decision-closure/validation.json:244: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/gate-proposal.md": "4f79f5d73ce2a0a1d3132423a1428075e2709abcf1dee4fc937af2fa6efbe134",
+docs/development/evidence/WP01-01/decision-closure/validation.json:245: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/input-lock.json": "d771ea749db37c60da2e4eaefa5bb64ba167e9cb0301a063518c2ed05e2f09ec",
+docs/development/evidence/WP01-01/decision-closure/validation.json:246: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/intake.json": "ea39328cbb53dc9ebd33116e87f3176c4c8e5a932e1c1b0a8b5ee4025a8013aa",
+docs/development/evidence/WP01-01/decision-closure/validation.json:247: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:248: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/manage-roadmap-readonly.stdout.txt": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+docs/development/evidence/WP01-01/decision-closure/validation.json:249: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/obligation-matrix.json": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+docs/development/evidence/WP01-01/decision-closure/validation.json:250: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/obligation-matrix.md": "d8ca48997c0c35e8560c1e03d935043250e25dc0212f997696dabdbcc7b2ca3e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:251: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/preparation-manifest.json": "b9e26854717573ba4216e48cb2e576ff4440985b4e77f9605748cc6605e9ab26",
+docs/development/evidence/WP01-01/decision-closure/validation.json:252: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/prepare-final.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+docs/development/evidence/WP01-01/decision-closure/validation.json:253: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/prepare-final.stdout.txt": "9a5b55ace2d317ee11b91f836111f46cac6515d54220ac4f94b9cbf52679c83b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:254: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/prepare-first-run.txt": "4554251a849958a21196cf70d0381b48c31ad0d7b281d15966029c6218ec8ea7",
+docs/development/evidence/WP01-01/decision-closure/validation.json:255: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/README.md": "29f6564ab158063fdabf99571f7e4cd840d332a45ad9c34091c1b7065bdc451d",
+docs/development/evidence/WP01-01/decision-closure/validation.json:256: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/review-quality-integrity.json": "55a67bca1a7aa42eeda0a620ed48488f059e75dd79045d6809fc05f161636404",
+docs/development/evidence/WP01-01/decision-closure/validation.json:257: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/review-quality.md": "20aa120253697daab0329dbdb8bb05c80edfdf2a75aeb0d0997031146c3aa548",
+docs/development/evidence/WP01-01/decision-closure/validation.json:258: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/review-spec.md": "499beb08e808ea48cb72789aadd4abeee99188d5efbf61bb1ebcf082c963c9d6",
+docs/development/evidence/WP01-01/decision-closure/validation.json:259: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/semantic-audit.md": "6b0b6540134809792bf8ad5ec87b464a6b4e77d468ee10d43620420608e92ebd",
+docs/development/evidence/WP01-01/decision-closure/validation.json:260: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/source-verification.initial.json": "0576f8f42bbc482cad27edf3f1905e3bc9b4b1186cac816dcce38fd10475ea4c",
+docs/development/evidence/WP01-01/decision-closure/validation.json:261: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/source-verification.json": "1de02a63ab44d81d046d3ae391016da82c9e5fb22c384a4de410fd2482df455f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:262: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/tdd-malformed-red.txt": "7648842a05f3f074ef8f8f3d17b4d29a3b53b8536b85b8c0f994ae325e3f44b0",
+docs/development/evidence/WP01-01/decision-closure/validation.json:263: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/tdd-red.txt": "69c05a08ca066ac44d7a08d431bb8ab77550655852d414986b6cd55e1c95cd26",
+docs/development/evidence/WP01-01/decision-closure/validation.json:264: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/tdd-repository-scope-red.txt": "a7a344df25f84318e51e879055c24666429917f574273dcf11a0f17430d2501b",
+docs/development/evidence/WP01-01/decision-closure/validation.json:265: trailing whitespace.
++    "docs/development/evidence/WP01-01/preparation/validation.json": "45bd0c724a7fb9be9fe046158c959a8d32da62bb27a6733174a5a638d1b83963",
+docs/development/evidence/WP01-01/decision-closure/validation.json:266: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/.gitattributes": "9a4df49b928aa02632ef71671b1674b19f423fca6292181d3c3bf214fc4b68cd",
+docs/development/evidence/WP01-01/decision-closure/validation.json:267: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/adoption.json": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+docs/development/evidence/WP01-01/decision-closure/validation.json:268: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/basis-manifest.json": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+docs/development/evidence/WP01-01/decision-closure/validation.json:269: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/cases.json": "385c4dd12cb13a9efda4485d0b2a8b3810b85d189683caa97ca6e9829f46b563",
+docs/development/evidence/WP01-01/decision-closure/validation.json:270: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/coverage.md": "ab8f1a4208755966acb2ca0e27b978b958262ac29e48087071fa85726162cb6a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:271: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/delivery.md": "74a574113f1f799f37420aa9251c78229490709b2cd613bb62d9a46a1559546a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:272: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/normative-coverage.json": "64f4eed670dd8cf1c56905c51e3aa2ec1122757e6761f0a49af5a2b2bbd4b90a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:273: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/README.md": "48a7281872fa1cc41349810a498ad3b9bdfae333e9be7e11ba56b70a76dee976",
+docs/development/evidence/WP01-01/decision-closure/validation.json:274: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/sources.json": "c2b160e90dbce013cca1990b7189b68e8e3f51998ae891d1f364b4db4da165fc",
+docs/development/evidence/WP01-01/decision-closure/validation.json:275: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/verify.py": "73a4e90d6ed492c4621316356cc8ff6d937daf9de90f035c636290b49b6961fa",
+docs/development/evidence/WP01-01/decision-closure/validation.json:276: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/staged-byte-check.failure.json": "2b2f4a0f05857ee1a0a81a63d4159f488ed1ecdee190118a8b618e8307f51e38",
+docs/development/evidence/WP01-01/decision-closure/validation.json:277: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/staged-review.final.json": "9c20df68af20b1147bd4f6b123a06431bb777750bd554b6ee9b79ba2fea1688f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:278: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/static-check.final.json": "6e6a9372e67d7a93fe531b0443ef5c54b57432b7abed53022e2765c5d8c7a134",
+docs/development/evidence/WP01-01/decision-closure/validation.json:279: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/static-check.initial.json": "96170d90bd739f13951da82cc120d41044a0001f2cd9e945acbee7906d2f2f60",
+docs/development/evidence/WP01-01/decision-closure/validation.json:280: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/workflow-inspection.json": "4be6ef44cdf039f82bba227fb39ba206e9f63e9289f30f989c8928ae167e4629",
+docs/development/evidence/WP01-01/decision-closure/validation.json:281: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+docs/development/evidence/WP01-01/decision-closure/validation.json:282: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/README.md": "cd19b246f1763c123ab66c0a34ba8b55185eec6eaea097d468470f3a2ec17fcc",
+docs/development/evidence/WP01-01/decision-closure/validation.json:283: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/test-wp05-supplement-checker.py": "9be105ae86646db9ab11c12d0a42aa0502ff06ee4a200ac1197389bf2374c60e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:284: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/verify-wp05-supplement.py": "843dc0cd305e56c6867c2bf2e4ab9e9c699a0bc9446b42308e8388cd74ebebff",
+docs/development/evidence/WP01-01/decision-closure/validation.json:285: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/supplements/review-r1/wp05-supplement-proposed.json": "d308e9bfdd6e2389f0e78a89990217c2c4a47eaeea0546e28cffac24d407c5ec",
+docs/development/evidence/WP01-01/decision-closure/validation.json:286: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-original-static.json": "866d7299f4115e1b9a6b932f23b536f4efebcd80eaf616266cfcf5c3474796aa",
+docs/development/evidence/WP01-01/decision-closure/validation.json:287: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/checker-tests-reused.json": "e1e77c35fc60a480fd7b3f262abe9213d6806678b82f8f50b792c4ca5e67b062",
+docs/development/evidence/WP01-01/decision-closure/validation.json:288: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/followup.md": "2eb7537654a45c892b01335315b8ce65199f0445e7d627ea47d18656c99bce12",
+docs/development/evidence/WP01-01/decision-closure/validation.json:289: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/intake.json": "1e719dd5927a5c46b4fc509a7cd7c29b748a05d4fc3bb4e0bb353d7b9ca002bb",
+docs/development/evidence/WP01-01/decision-closure/validation.json:290: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/ledger-review.json": "7cbb3e59eb1908e7641224cbde5cb93e5955b3858c53bd4f1bd7f0c87db873d7",
+docs/development/evidence/WP01-01/decision-closure/validation.json:291: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/README.md": "a59da010a57ba6185f022ffea850d84cf511700b48ebc9905e40e157480c8802",
+docs/development/evidence/WP01-01/decision-closure/validation.json:292: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/remote-main.json": "b42a8a9beefd1baf4fa73057e12bbd01790214cfb66c1e18b12519a7ed4ef6df",
+docs/development/evidence/WP01-01/decision-closure/validation.json:293: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/review.md": "8b96d5d8246e7c27d5889a98506b386cf318072560d6a220610bf2afcd7971f0",
+docs/development/evidence/WP01-01/decision-closure/validation.json:294: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/supplement-static.json": "6e4b4d789dfdfd435663a5667fd161a0fa16999cdc28b0159e82591b5e930525",
+docs/development/evidence/WP01-01/decision-closure/validation.json:295: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.json": "ef017002d8fbc01f155dbd315d2b1c59ae7765b5840f912822fc86c87af314bb",
+docs/development/evidence/WP01-01/decision-closure/validation.json:296: trailing whitespace.
++    "docs/development/task-deliveries/WP05-01/evidence/coordination/wp05-review-supplement.md": "53192d7c98d83c6b493f56b2e83d9cdedcfd4ea75e680809f326d82fd3ac57c0",
+docs/development/evidence/WP01-01/decision-closure/validation.json:297: trailing whitespace.
++    ".github/workflows/client-contract.yml": "fb633108d5d43b368d9c8a75d7d0ec81f718e119630c811334fd1bd4eb5f1454",
+docs/development/evidence/WP01-01/decision-closure/validation.json:298: trailing whitespace.
++    ".github/workflows/crm-saas-public-contract.yml": "5174f62866dd6d84c61143074809718837086787fb886a19f085c24189d5d2c9",
+docs/development/evidence/WP01-01/decision-closure/validation.json:299: trailing whitespace.
++    ".github/workflows/crm-v1-prd-head.yml": "9797044712711f8bc503b5b7a3b4da5755aaf6c8874a8104d30c20842a64fe6a",
+docs/development/evidence/WP01-01/decision-closure/validation.json:300: trailing whitespace.
++    ".github/workflows/crm-v1-prd.yml": "25bb5f0e9b7626a88a71aba7a35322d7b7e51e5699c1e9c4766faa994b9c131e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:301: trailing whitespace.
++    ".github/workflows/p10-platform-audit.yml": "941ccf864b7985b1b7d2b0c3277a01845003a0e4a44a97a55481d1f8fcad1d0e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:302: trailing whitespace.
++    ".github/workflows/p10-platform-candidate.yml": "df5ab1ce8ba02338cf6705bf41ffd4f5647be445d83cefbb23606a7e48802db9",
+docs/development/evidence/WP01-01/decision-closure/validation.json:303: trailing whitespace.
++    ".github/workflows/p10-platform-preflight.yml": "8ffd7d626a3ef0566ec2caeaf1bd00e0bb5c89d3300f6403c6079cc89e4e353f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:304: trailing whitespace.
++    ".github/workflows/p10-platform-validation.yml": "169662caca8ab9d972976c17e2ca7d14a3986fcb354ca82933097f8d776fda02",
+docs/development/evidence/WP01-01/decision-closure/validation.json:305: trailing whitespace.
++    ".github/workflows/r2-candidate.yml": "cfea8ab19c0bb5fe3800e6ee64d06dacd5c0bcaf0446bd3c8c0c82b6cb3923f3",
+docs/development/evidence/WP01-01/decision-closure/validation.json:306: trailing whitespace.
++    ".github/workflows/r2-deploy.yml": "37960838ab5c7d8565a69d29bd8137546946b8c2f5af696c2275971442f92b9f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:307: trailing whitespace.
++    ".github/workflows/r2-freeze.yml": "37ce4fb3de9d4c16e331c0864b245545efcef370d6efaeab2169e348bccb4a4e",
+docs/development/evidence/WP01-01/decision-closure/validation.json:308: trailing whitespace.
++    ".github/workflows/space-ga-evidence.yml": "4f2904f963fefa8b87f3e8281a533255c5b76895001bd2b9c7d35570974452a2",
+docs/development/evidence/WP01-01/decision-closure/validation.json:309: trailing whitespace.
++    ".github/workflows/wms-production-sql.yml": "f44ac479f2378d9e05468a9a9b6f24e067da6ae6d475be796ffcd7661e15ed91"
+docs/development/evidence/WP01-01/decision-closure/validation.json:310: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/validation.json:311: trailing whitespace.
++  "protected_inputs_unchanged": true,
+docs/development/evidence/WP01-01/decision-closure/validation.json:312: trailing whitespace.
++  "source_hashes": {
+docs/development/evidence/WP01-01/decision-closure/validation.json:313: trailing whitespace.
++    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+docs/development/evidence/WP01-01/decision-closure/validation.json:314: trailing whitespace.
++    "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+docs/development/evidence/WP01-01/decision-closure/validation.json:315: trailing whitespace.
++    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+docs/development/evidence/WP01-01/decision-closure/validation.json:316: trailing whitespace.
++    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+docs/development/evidence/WP01-01/decision-closure/validation.json:317: trailing whitespace.
++    "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+docs/development/evidence/WP01-01/decision-closure/validation.json:318: trailing whitespace.
++  },
+docs/development/evidence/WP01-01/decision-closure/validation.json:319: trailing whitespace.
++  "historical_failure_retention": "All original logs and new immutable RED logs retained. Original pre-correction files pinned in superseded-index.json.",
+docs/development/evidence/WP01-01/decision-closure/validation.json:320: trailing whitespace.
++  "diagnostic_notes": [
+docs/development/evidence/WP01-01/decision-closure/validation.json:321: trailing whitespace.
++    "A local reuse preflight incorrectly expected roadmap inputs to differ and asserted before invoking the manager. The corrected read-only verifier established exact input equality; no extra manager run occurred. Original preflight trace remains in the tool transcript."
+docs/development/evidence/WP01-01/decision-closure/validation.json:322: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/validation.json:323: trailing whitespace.
++  "production_enabled": false,
+docs/development/evidence/WP01-01/decision-closure/validation.json:324: trailing whitespace.
++  "actual_adoption": false,
+docs/development/evidence/WP01-01/decision-closure/validation.json:325: trailing whitespace.
++  "actual_completion": false,
+docs/development/evidence/WP01-01/decision-closure/validation.json:326: trailing whitespace.
++  "not_run": [
+docs/development/evidence/WP01-01/decision-closure/validation.json:327: trailing whitespace.
++    "database/DDL/runtime registry/lock isolation",
+docs/development/evidence/WP01-01/decision-closure/validation.json:328: trailing whitespace.
++    "product build",
+docs/development/evidence/WP01-01/decision-closure/validation.json:329: trailing whitespace.
++    "business/provider runtime acceptance",
+docs/development/evidence/WP01-01/decision-closure/validation.json:330: trailing whitespace.
++    "authority authentication",
+docs/development/evidence/WP01-01/decision-closure/validation.json:331: trailing whitespace.
++    "remote ancestry",
+docs/development/evidence/WP01-01/decision-closure/validation.json:332: trailing whitespace.
++    "Actions",
+docs/development/evidence/WP01-01/decision-closure/validation.json:333: trailing whitespace.
++    "deployment"
+docs/development/evidence/WP01-01/decision-closure/validation.json:334: trailing whitespace.
++  ],
+docs/development/evidence/WP01-01/decision-closure/validation.json:335: trailing whitespace.
++  "review_status": "PENDING_COORD_FOCUSED_REVIEW"
+docs/development/evidence/WP01-01/decision-closure/validation.json:336: trailing whitespace.
++}

@@ -1,0 +1,32 @@
+{
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "docs/development/tools/manage_roadmap.py",
+    "--root",
+    "."
+  ],
+  "started_at": "2026-10-15T00:48:55.484689+00:00",
+  "finished_at": "2026-10-15T00:49:09.712487+00:00",
+  "exit_code": 0,
+  "source_hashes": {
+    "docs/development/roadmap.json": "91014dd78e8355aa83fe0b8bb5c5d05f25125bf3444a94e12ce556b3242b55df",
+    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+    "docs/development/tools/manage_roadmap.py": "992e88abcaefd904ac9c0b555405df443f0e521170998237e3ca2f81c917545b"
+  },
+  "stdout": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stdout.txt",
+    "sha256": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+    "bytes": 395,
+    "representation": "RAW_FILE_BYTES"
+  },
+  "stderr": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stderr.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "representation": "RAW_FILE_BYTES"
+  },
+  "scope": "PRIVATE_LOCAL_STATIC_OR_SYNTHETIC_ONLY"
+}

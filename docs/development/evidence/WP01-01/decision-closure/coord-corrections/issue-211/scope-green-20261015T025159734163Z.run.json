@@ -1,0 +1,39 @@
+{
+  "phase": "scope-green",
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp01-01/decision-closure/tests",
+    "-p",
+    "test_original_identity_mapping.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "checked_at": "2026-10-15T02:52:00.247427+00:00",
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+    "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+  },
+  "logs": {
+    "stdout": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "stderr": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.stderr.txt",
+      "sha256": "2f1971b32430217cbcb64347a817836c5b22b4fa667c64c12b293e044cb30315",
+      "bytes": 1663
+    }
+  },
+  "scope": "Current exact original identity scope correction; all earlier failures and prior green remain preserved"
+}

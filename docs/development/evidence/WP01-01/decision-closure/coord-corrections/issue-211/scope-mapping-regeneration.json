@@ -1,0 +1,6 @@
+{
+  "command": "build_candidate.mapping() only, original pinned inputs retained",
+  "before_sha256": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+  "after_sha256": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+  "scope": "Two explicit global PKs; four source Id+TenantId[/IterationId] tuples; supersedes first all-global candidate"
+}

@@ -1,0 +1,160 @@
+{
+  "schema": "WP01-01-ISSUE-211-DELIVERY/1",
+  "issue": "https://github.com/GTX537/CP6/issues/211",
+  "task": "WP01-01",
+  "scope": "PREPARATION_ONLY",
+  "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "original_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+  "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+  "corrected_entities": [
+    "Project",
+    "Iteration",
+    "IterationInput",
+    "CandidateRef",
+    "ReviewRound",
+    "ExternalRequestReceipt"
+  ],
+  "new_validation": {
+    "tests": 8,
+    "static_checks": 1000,
+    "red": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-red-20261015T025037398238Z.run.json",
+      "bytes": 1674,
+      "sha256": "4611db3d8154188675c448e76b76920559514ab502f076d14b15519498da742a",
+      "representation": "RAW_FILE_BYTES"
+    },
+    "green": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.run.json",
+      "bytes": 1815,
+      "sha256": "b4ffbd0a8c11009a87eb6cf1ed722279cd88905111336bede86a503a8a93c163",
+      "representation": "RAW_FILE_BYTES"
+    },
+    "static": {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-static-20261015T025200254609Z.run.json",
+      "bytes": 1885,
+      "sha256": "0e1d83bba9dd018761145b6f8fe042f23909d0638e7b7a737297af74bf57aebc",
+      "representation": "RAW_FILE_BYTES"
+    }
+  },
+  "reused_validation": {
+    "gate_tests": {
+      "count": 54,
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+        "bytes": 1250,
+        "sha256": "1daf7d1374a53a6e0c6f383c78bc39434dd49141db17f102a0479903579d0f26",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "input_and_log_hashes": "EXACT_MATCH",
+      "additional_input_fields": "Original matrix unchanged; exact roadmap target ID list unchanged",
+      "scope": "Original synthetic gate algorithm only; not rerun"
+    },
+    "manager": {
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+        "bytes": 1256,
+        "sha256": "6b5c6e1ca9c9c4bf75888c151653301cac35d1d344db3304efa7f39cb0759610",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "input_and_log_hashes": "EXACT_MATCH",
+      "scope": "Original read-only manager run reused, not rerun"
+    },
+    "original_static_checks": {
+      "count": 12251,
+      "record": {
+        "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+        "bytes": 36290,
+        "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+        "representation": "RAW_FILE_BYTES"
+      },
+      "scope": "Original mapping snapshot only; superseded for corrected mapping. Not a fresh run or proof of the corrected identity design."
+    }
+  },
+  "superseded": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-index.json",
+    "bytes": 6838,
+    "sha256": "71c56f4dae5002d661783c34bca236c78af2d951062dda63bee6f0e9850980d8",
+    "representation": "RAW_FILE_BYTES"
+  },
+  "mapping_regeneration": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-mapping-regeneration.json",
+    "bytes": 379,
+    "sha256": "bd38a3da88efefc62ccbabcb47bc2adc6c8b45dd2c26f18180771c1674e6d609",
+    "representation": "RAW_FILE_BYTES"
+  },
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+    "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+  },
+  "review_status": "PENDING_COORD_FOCUSED_REVIEW",
+  "actions_triggered": false,
+  "actions_cancelled": [],
+  "workflow_changes": [],
+  "task_state": "PLANNED",
+  "entry_gate": "NOT_CHECKED",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false,
+  "limitations": [
+    "database/DDL/runtime registry/lock isolation",
+    "product build",
+    "business/provider runtime acceptance",
+    "authority authentication",
+    "remote ancestry",
+    "Actions",
+    "deployment"
+  ],
+  "identity_scope_profiles": {
+    "Project": {
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK"
+    },
+    "Iteration": {
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK"
+    },
+    "IterationInput": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    },
+    "CandidateRef": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    },
+    "ReviewRound": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    },
+    "ExternalRequestReceipt": {
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW"
+    }
+  },
+  "identity_rule": "Project/Iteration preserve explicit global bare-Id PK. Four grouped source identities preserve exact TenantId[/IterationId]+Id; bare-Id global scope remains unproven and is not imposed. All original raw bytes/schema/Owner domains remain fixed; digest collisions compare full tuples.",
+  "superseded_intermediate": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global-index.json",
+    "bytes": 6031,
+    "sha256": "5e1697fc90b731094e0d6e0241719a2a5320bd64aed4fef4fda6004b7d2f940e",
+    "representation": "RAW_FILE_BYTES"
+  }
+}
