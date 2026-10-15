@@ -1,12 +1,12 @@
 {
   "schema": "WP01-01-PRIVATE-VALIDATION/1",
   "result": "PASS",
-  "checked_at": "2026-10-15T00:54:00.586080+00:00",
+  "checked_at": "2026-10-15T01:20:40.097568+00:00",
   "source_revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
   "python": "3.13.13 (main, May  8 2026, 19:33:50) [MSC v.1944 64 bit (AMD64)]",
   "executable": "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
   "platform": "Windows-11-10.0.26200-SP0",
-  "checks": 7222,
+  "checks": 12248,
   "errors": [],
   "commands": [
     {
@@ -22,23 +22,23 @@
         "eng/wp01-01/decision-closure/tests",
         "-v"
       ],
-      "started_at": "2026-10-15T00:52:08.564905+00:00",
-      "finished_at": "2026-10-15T00:52:23.621095+00:00",
+      "started_at": "2026-10-15T01:16:30.441150+00:00",
+      "finished_at": "2026-10-15T01:17:21.372834+00:00",
       "exit_code": 0,
       "source_hashes": {
-        "eng/wp01-01/decision-closure/gate_candidate.py": "f8e2c5f1a7129b9ebdb2c6ce26b2cf142174a2576201966ab5142f59ad26e50c",
-        "eng/wp01-01/decision-closure/tests/test_gate_candidate.py": "9b4cfbdd46be38819ad4985fe9bb002de6fa76dace04d23214e67c25243a3828"
+        "eng/wp01-01/decision-closure/gate_candidate.py": "48c783c4484b1f7ced2fb7cf162b2ce75997acb4d11184d40e9f037aacf5fdce",
+        "eng/wp01-01/decision-closure/tests/test_gate_candidate.py": "a6d6d418d82d8e50d33e6a038455f1bbb2af1cafd4c97942d6f695f366bc2c9e"
       },
       "stdout": {
-        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stdout.txt",
+        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stdout.txt",
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "bytes": 0,
         "representation": "RAW_FILE_BYTES"
       },
       "stderr": {
-        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stderr.txt",
-        "sha256": "a2d5e18e0e345e5932b7c6ec12cfb3df7b9722f00ea5f9e2b0192323ba6aac86",
-        "bytes": 4651,
+        "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stderr.txt",
+        "sha256": "4bb69bae845659b6792d07234ed3f95c1e40226a3255a1232c4293231af6e512",
+        "bytes": 5263,
         "representation": "RAW_FILE_BYTES"
       },
       "scope": "PRIVATE_LOCAL_STATIC_OR_SYNTHETIC_ONLY",
@@ -406,6 +406,26 @@
       "reason": "S01 definitions reside in roadmap, fixed task union; traceback remains in tool transcript, no fabricated raw file"
     },
     "initial_source_snapshot_limit": "First two red phases pre-change source hash not captured; raw logs preserved, exact subsequent phase source hashes recorded. Do not claim a missing historical snapshot."
+  },
+  "targeted_spec_repair": {
+    "source_red_runs": [
+      {
+        "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.run.json",
+        "sha256": "eb2d431bfebed3ffc4f14ce09dcfd0b00210eeabaecb8767b5f3836acab31b19",
+        "bytes": 554,
+        "representation": "RAW_FILE_BYTES"
+      }
+    ],
+    "static_failure_logs": [
+      {
+        "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stdout.txt",
+        "sha256": "0716a3e5e663d2df293126d5bd2137962095c006c673ba6b6da684a3629cdbd0",
+        "bytes": 249,
+        "representation": "RAW_FILE_BYTES"
+      }
+    ],
+    "scope": "Only concrete PG column/constraint completeness and per-obligation original source binding; gate runtime/production remains disabled",
+    "source_materialization": "Original archives explicitly read via supplied --archive-root; no original files copied or edited; absent originals reject separately from permanent legacy30/48 gaps"
   },
   "not_run": [
     "product compilation/tests",

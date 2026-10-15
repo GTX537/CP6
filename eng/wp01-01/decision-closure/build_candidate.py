@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+from mapping_constraints import enrich
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT/'docs/development/evidence/WP01-01/decision-closure'
@@ -17,6 +18,7 @@ BASE = '99fc0ce383d2d02c1404a8adbb3abe971b41d332'
 VERSION = 'CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed'
 REPOS = {'Main': (ROOT, BASE)}
 PIN_CACHE = {}
+ARCHIVE_ROOT = None
 
 
 def read(path):
@@ -44,6 +46,15 @@ def pin(path, start=None, end=None, repo='Main'):
 
 def module(name, start, end=None):
     return pin('docs/design-handbook/modules/'+name+'.md',start,end)
+
+
+def original(kind,start,end):
+    names={'ITER':'eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md','REL':'eb/eb9e104758448081__05_REL_当前阅读主册.md',
+        'TARGET':'fb/fbea5fc28e708764__fbea5fc28e708764dd16175b9392279fa1cddf5ea90fb97feaff9bafb0d74860.md'}
+    path='docs/CP6_完整成果归档_20261009/完整成果/docs/originals/'+names[kind]
+    data=(ARCHIVE_ROOT/path).read_bytes();lines=data.decode('utf-8-sig').splitlines()
+    return {'repository':'Archive','path':path,'representation':'RAW_FILE_BYTES','sha256':hashlib.sha256(data).hexdigest(),
+        'bytes':len(data),'line_start':start,'line_end':end,'excerpt':'\n'.join(lines[start-1:end])}
 
 
 def clause(ident, category, rule, source, tasks, missing=None):
@@ -154,11 +165,14 @@ def mapping():
       'RoundBinding':'roundBindingId oaRoundKey OriginalRoundIdentity Round aggregateId aggregateVersion aggregateDigest PackageRef PackageDigest PolicyRef PolicyVersion PolicyDigest technicalManifestDigest mappingVersion rejectDisposition',
       'ReviewSnapshot':'schema aggregate binding canonicalBytes snapshotDigest canonicalizationVersion',
       'OwnerApplication':'InboxId Producer EventId InstanceId SubjectRevision DecisionId ApplicationUnitId action ApplicationReceiptId revision previousReceiptId businessResultRef currentSubjectRevision OwnerApplicationOutboxId AuditRef'}
+    r1groups['OwnerInbox']='InboxId Scope Producer EventId InstanceId SubjectRevision DecisionId OriginalPayload PayloadDigest'
+    r1groups['OwnerApplicationReceipt']='ReceiptId StreamId Revision EventId DecisionId ApplicationUnitId Outcome PreviousReceiptId BusinessResultRef RecordedAt PayloadDigest OriginalPayload'
     for name, fields in r1groups.items():
       entities.append({'entity':name,'target':'PLM-ITER-01','owner':'ITER','fields':[{'field':f,'storage_profile':'opaque','source_pin':shared,'nullability':'as exact R1/OA mapping; technicalManifestDigest nullable only per contract'} for f in fields.split()],
        'physical_location':'Owner local business schema unless original UQ requires shared domain','foreign_keys':'TenantId included for parent binding, aggregate, round and immutable package relations; full Scope retained',
        'indexes':['R1 Scope+Producer+EventId','Instance+SubjectRevision+Decision','registered ApplicationUnitId APPLIED uniqueness; action renaming cannot bypass'],
        'delete_rule':'RESTRICT','runtime':'NOT_RUN'})
+    enrich(entities,module,original)
     write('postgresql-mapping.json',{'schema':'ITER-REL-PG-PHYSICAL/1.0.0-proposed','status':'CANDIDATE_NOT_DDL','tenancy_profile':'cp6-pg-tenancy-v1',
       'source':pin('docs/design-handbook/architecture/02-postgresql-tenancy.md',1,155),'storage_profiles':types,'entities':entities,
       'identity_registry':{'status':'CANDIDATE_REQUIRES_REVIEW_BEFORE_GLOBAL_ID_REGISTRATION_ADAPTATION','algorithm':'Classify original uniqueness domain first. Keep global objects shared. For unbounded opaque IDs index digest(domain+raw bytes) as nonunique bucket; transaction lock bucket then compare complete domain/schema/raw bytes before insert/reuse internal UUID. Every writer/import/recovery must use same registry; collision means same bucket, never same identity. No hash-only PK/UQ, no unbounded bytea btree assumption.','cross_tenant_conflict':'Safe identity conflict only; no disclosure of other tenant data/results, no new ID retry'},
@@ -260,7 +274,9 @@ def basis_and_gate(g):
     # Navigation rows are reused, not regenerated or counted as newly recovered originals.
     changes=[('DC-01','PLM-ITER-01',['Four digest meanings kept distinct; proposed ENG envelope never accepted implicitly','Capacity pagination profile cannot narrow legal collection size','Physical field identity and exact value roundtrip require actual Owner evidence']),
              ('DC-02','PLM-REL-01',['Physical exact quantity/profile/identity representation preserves original domain','Declared provider/consumer edges and exact package/remote adoption evidence required per authorized scope'])]
-    extra=[{'id':ident,'target':target,'observations':obs,'status':'PROPOSED_NOT_ADOPTED','kind':'NEW_BASIS_DELTA_NOT_ORIGINAL_AC'} for ident,target,obs in changes]
+    extra=[{'id':ident,'target':target,'observations':obs,'status':'PROPOSED_NOT_ADOPTED','kind':'NEW_BASIS_DELTA_NOT_ORIGINAL_AC',
+        'source_refs':[module(target,37,48),pin('docs/design-handbook/remediation/07-shared-consumer-mappings.md',7,35),
+                       pin('docs/design-handbook/architecture/02-postgresql-tenancy.md',49,53)]} for ident,target,obs in changes]
     delta={'schema':'WP01-01-BASIS-DELTA/1','version':VERSION,'status':'PROPOSED_NOT_ADOPTED',
       'predecessors':[pin('docs/development/task-deliveries/WP05-01/basis-manifest.json'),pin('docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json')],
       'unchanged_matrix':pin('docs/development/evidence/WP01-01/preparation/obligation-matrix.json'),
@@ -279,6 +295,7 @@ def basis_and_gate(g):
     contract={'schema':'WP01-01-DISABLED-GATE/1','version':VERSION,'production_enabled':False,
       'matrix':pin('docs/development/evidence/WP01-01/preparation/obligation-matrix.json'),'sources':[pin(p) for p in sourcepaths],
       'decision_package':generated_ref('decisions.json'),'basis_delta':generated_ref('basis-delta.json'),
+      'inherited_source_inventory':pin('docs/development/evidence/WP01-01/preparation/input-lock.json'),
       'provider_graph':graphref,'target_edges':{t:[e['id'] for e in g['edges'] if t in e['targets']] for t in g['roots']},
       'additional_obligations':extra,'historical_gaps':old['historical_gaps'],'target_whitelist':['PLM-ITER-01','PLM-REL-01'],
       'predicates':{'candidate_delivery':'All candidate artifacts + local private validation + full task review; does not complete WP01-01',
@@ -291,16 +308,19 @@ def basis_and_gate(g):
 
 
 def main():
+    global ARCHIVE_ROOT
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--platform-repo',type=Path,required=True)
     parser.add_argument('--crm-repo',type=Path,required=True)
+    parser.add_argument('--archive-root',type=Path,required=True)
     args=parser.parse_args()
+    ARCHIVE_ROOT=args.archive_root
     REPOS.update(Platform=(args.platform_repo,'b28db763f70ab6f164cb7c87d6ce49a6d97267f1'),CRM=(args.crm_repo,'1e4eea61c31d7547c3b3495d392eefbed99b7339'))
     OUT.mkdir(parents=True,exist_ok=True)
     for folder in [OUT,ROOT/'eng/wp01-01/decision-closure']:
       rules='* -text\n.gitattributes whitespace=cr-at-eol\n'
       if folder==OUT:
-        rules+='tdd-deep-red.run.json whitespace=cr-at-eol\ntdd-consumer-remote-red.run.json whitespace=cr-at-eol\n'
+        rules+='*.run.json whitespace=cr-at-eol\n'
       rules+='*.stdout.txt whitespace=-blank-at-eof,-blank-at-eol\n*.stderr.txt whitespace=-blank-at-eof,-blank-at-eol\n'
       (folder/'.gitattributes').write_text(rules,encoding='utf-8')
     decisions();mapping();g=graph();basis_and_gate(g)

@@ -7,8 +7,8 @@
   "artifacts": [
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/.gitattributes",
-      "sha256": "acaa39026b34bba821e0c4da09d730f54c422827a3c4e243e2f0a5f6e7078534",
-      "bytes": 251,
+      "sha256": "34416cff64edfd8fab21c71ca75ee841f1ec2a5b24dec60b6e65062c4dcd2409",
+      "bytes": 185,
       "representation": "RAW_FILE_BYTES"
     },
     {
@@ -19,8 +19,8 @@
     },
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/basis-delta.json",
-      "sha256": "ff306f1b72f10bd1bd54399250131c7361d974e6afe0619c90d899ac21b4b9df",
-      "bytes": 3752,
+      "sha256": "41d06ff2e0e3b934977f72c927a2e943a7c76f2202a5aad5acafbedddaa1fb5c",
+      "bytes": 35416,
       "representation": "RAW_FILE_BYTES"
     },
     {
@@ -85,7 +85,7 @@
     },
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/contract-ref.json",
-      "sha256": "d383c669c7ff9519c004770bd33f7276d8a34aae0984e3dfe09ed039575a48dd",
+      "sha256": "0c45fac5ae309186118f5fda09731ee57a8365f6771ea0b4601f4f5cf32c3f13",
       "bytes": 232,
       "representation": "RAW_FILE_BYTES"
     },
@@ -103,8 +103,8 @@
     },
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/delivery.md",
-      "sha256": "492192ef5fb618d328eb7ff6a31d0b0b13bc1ade602577080a4669265a0b9513",
-      "bytes": 2561,
+      "sha256": "f8f4012b40fcde9f522c2dcfd367525aca209699700024a24cc2a5744da69c10",
+      "bytes": 3234,
       "representation": "RAW_FILE_BYTES"
     },
     {
@@ -115,14 +115,14 @@
     },
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/gate-contract.candidate.json",
-      "sha256": "dcb7a4846a385de6018aedfef31a0d71c356c57380263ead526b8920cecd2e91",
-      "bytes": 62002,
+      "sha256": "7fd2401374e1e77900de73879937f720fcca5267dfdf7a2a99edeb2b62c9fee6",
+      "bytes": 94101,
       "representation": "RAW_FILE_BYTES"
     },
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/gate-design.md",
-      "sha256": "c7cdcc3958320b0e8835689657fcc190c88ba2680c752b735317635df5a7cfe4",
-      "bytes": 5476,
+      "sha256": "48a4fc99810288060ceeb16595a55dc9604624354fb933ee7bcbe6fc446a1f9c",
+      "bytes": 7288,
       "representation": "RAW_FILE_BYTES"
     },
     {
@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
-      "sha256": "dce086fc42688bc7f5a1d75bd982f4b700b3f8236227a5ffad8a6ab8a77ade0f",
-      "bytes": 889782,
+      "sha256": "1dd70e194960534c1480d2ce2b8ab7cc82cbe088004e6859fba5f6a6535e9440",
+      "bytes": 3068484,
       "representation": "RAW_FILE_BYTES"
     },
     {
@@ -159,6 +159,72 @@
       "path": "docs/development/evidence/WP01-01/decision-closure/README.md",
       "sha256": "bbf6eb3d4bb360229c6b796b6277ac2c50ba02d27b30553a632a40a49a14bce2",
       "bytes": 3995,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stdout.txt",
+      "sha256": "188a0ea260a75ec3ccf6343252f25630a201d0bcfa8efca0bde00cc84f92c370",
+      "bytes": 93,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stdout.txt",
+      "sha256": "0716a3e5e663d2df293126d5bd2137962095c006c673ba6b6da684a3629cdbd0",
+      "bytes": 249,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/gate_candidate.py",
+      "sha256": "f8e2c5f1a7129b9ebdb2c6ce26b2cf142174a2576201966ab5142f59ad26e50c",
+      "bytes": 11041,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/test_gate_candidate.py",
+      "sha256": "38d1c1cc859140bb36aa4b2d4f798562b8f6cadc65733ed496295d81655fdf26",
+      "bytes": 16205,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.run.json",
+      "sha256": "eb2d431bfebed3ffc4f14ce09dcfd0b00210eeabaecb8767b5f3836acab31b19",
+      "bytes": 554,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stderr.txt",
+      "sha256": "e62a6640d2ed0138d0465e4a4c5693a8db895d20339e2e927d1d6632b6e00cd0",
+      "bytes": 7731,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
       "representation": "RAW_FILE_BYTES"
     },
     {
@@ -258,8 +324,26 @@
       "representation": "RAW_FILE_BYTES"
     },
     {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.run.json",
+      "sha256": "7ddf7d1a43663e3d80055fbf6bdb34feb60475c8c39246ad2bc9fac2d2e257fe",
+      "bytes": 1250,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stderr.txt",
+      "sha256": "4bb69bae845659b6792d07234ed3f95c1e40226a3255a1232c4293231af6e512",
+      "bytes": 5263,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
       "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
-      "sha256": "6a57a41d663d324bbe0e59099f8ba98ec709d5f3d7b6f5d383798ba4212893ca",
+      "sha256": "7ddf7d1a43663e3d80055fbf6bdb34feb60475c8c39246ad2bc9fac2d2e257fe",
       "bytes": 1250,
       "representation": "RAW_FILE_BYTES"
     },
@@ -289,8 +373,8 @@
     },
     {
       "path": "docs/development/evidence/WP01-01/decision-closure/validation.json",
-      "sha256": "84ff4d3c09385b4d20be809330b7c0174314e03e8fea96c7e6face42934c2943",
-      "bytes": 34178,
+      "sha256": "9ed8e60e86604fa2869033e1e0ea78eccca2c40cf0d3bedce88fa9cb14b2829e",
+      "bytes": 35203,
       "representation": "RAW_FILE_BYTES"
     },
     {
@@ -301,32 +385,38 @@
     },
     {
       "path": "eng/wp01-01/decision-closure/build_candidate.py",
-      "sha256": "f23b2a5a3cf62dabd434447237b49c9af5f916c3382f322b3ab184029835c958",
-      "bytes": 43581,
+      "sha256": "568ba1dacff713dba6f643bdd60d00ca411081939693231dc21db195785a9238",
+      "bytes": 45050,
       "representation": "RAW_FILE_BYTES"
     },
     {
       "path": "eng/wp01-01/decision-closure/gate_candidate.py",
-      "sha256": "f8e2c5f1a7129b9ebdb2c6ce26b2cf142174a2576201966ab5142f59ad26e50c",
-      "bytes": 11041,
+      "sha256": "48c783c4484b1f7ced2fb7cf162b2ce75997acb4d11184d40e9f037aacf5fdce",
+      "bytes": 16877,
+      "representation": "RAW_FILE_BYTES"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "sha256": "0233e84a1e42fd0792b9faeebf0c5f40d162da07ee1af68056621546929deb6b",
+      "bytes": 19039,
       "representation": "RAW_FILE_BYTES"
     },
     {
       "path": "eng/wp01-01/decision-closure/README.md",
-      "sha256": "6ed7355aff4b7eaa0bd3723dff264843798864269fed3168649a99729cf3b729",
-      "bytes": 1581,
+      "sha256": "c9a690b1242fc37d25a4c9ff23a5c6d442af7ad71f36c0dbc51124e8c0a0c8d9",
+      "bytes": 1817,
       "representation": "RAW_FILE_BYTES"
     },
     {
       "path": "eng/wp01-01/decision-closure/tests/test_gate_candidate.py",
-      "sha256": "9b4cfbdd46be38819ad4985fe9bb002de6fa76dace04d23214e67c25243a3828",
-      "bytes": 14893,
+      "sha256": "a6d6d418d82d8e50d33e6a038455f1bbb2af1cafd4c97942d6f695f366bc2c9e",
+      "bytes": 17428,
       "representation": "RAW_FILE_BYTES"
     },
     {
       "path": "eng/wp01-01/decision-closure/validate_candidate.py",
-      "sha256": "8c20c7cc1a6c0e60c78162e92317ebd01553eebccc62c5462b0b5432f13a9098",
-      "bytes": 13908,
+      "sha256": "44da9a475c0ed5aacbae9d95fbd766a0236af7e65300c7f108fe9e824336c5aa",
+      "bytes": 18524,
       "representation": "RAW_FILE_BYTES"
     }
   ],

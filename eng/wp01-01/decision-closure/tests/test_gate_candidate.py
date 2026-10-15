@@ -21,7 +21,9 @@ class GateTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.original_source=self.put('original.txt','Original obligation source\nexact second line')
         self.matrix = {'rows': [{'id': 'O1', 'target': 'PLM-ITER-01',
+                                'source_refs':[dict(self.original_source,line_start=1,line_end=2)],
                                 'observations': ['retain original bytes', 'same Owner transaction']}]}
         self.history = [{'declared_legacy_count': 30, 'legacy_case_ids': None,
                          'missing_original_sha256': None, 'historical_inventory_state': 'NOT_INVENTORIED',
@@ -49,7 +51,8 @@ class GateTests(unittest.TestCase):
                         'evidence': self.put('evidence.json', {'status': 'PASS', 'kind': 'SYNTHETIC_RUNTIME',
                             'synthetic': True, 'target': 'PLM-ITER-01', 'obligation': 'O1',
                             'subassertions': self.matrix['rows'][0]['observations'],
-                            'source_sha256': self.contract['sources'][0]['sha256']})}],
+                            'source_sha256': self.original_source['sha256'],
+                            'source_bindings':[{'path':self.original_source['path'],'sha256':self.original_source['sha256']}]})}],
                     'edges': [{'id': self.edge['id'], 'state': 'BOUND', 'receipt': self.put('receipt.json', {
                         'synthetic': True, 'status': 'PASS', 'edge': self.edge['id'], 'provider_task': 'provider',
                         'consumer_task': 'consumer', 'provider_repository': 'Platform', 'consumer_repository': 'Main',
@@ -256,6 +259,40 @@ class GateTests(unittest.TestCase):
         d=json.loads((self.root/'consumer-remote.json').read_bytes());d['package_sha256']='e'*64
         r=json.loads((self.root/'receipt.json').read_bytes());r['consumer_remote']=self.put('consumer-remote.json',d)
         self.sub['edges'][0]['receipt']=self.put('receipt.json',r);self.reject()
+
+    def test_unrelated_valid_top_level_source_cannot_replace_obligation_source(self):
+        d=json.loads((self.root/'evidence.json').read_bytes())
+        d['source_sha256']=self.contract['sources'][0]['sha256']
+        d['source_bindings']=[{'path':self.contract['sources'][0]['path'],'sha256':self.contract['sources'][0]['sha256']}]
+        self.sub['obligations'][0]['evidence']=self.put('evidence.json',d)
+        self.reject()
+
+    def test_obligation_original_file_drift_rejected(self):
+        # Keep the formerly accepted unrelated top-level hash to expose the missing original read.
+        d=json.loads((self.root/'evidence.json').read_bytes());d['source_sha256']=self.contract['sources'][0]['sha256']
+        self.sub['obligations'][0]['evidence']=self.put('evidence.json',d)
+        (self.root/'original.txt').write_text('drift')
+        result=self.evaluate()
+        self.assertFalse(result['candidate_valid'])
+        self.assertIn('FILE_BYTES_MISMATCH',result['errors'])
+
+    def test_original_matrix_shape_without_bytes_and_owner_authority(self):
+        self.matrix['rows'][0]['source_refs']=[{'path':'original.txt','sha256':self.original_source['sha256'],'line_start':2}]
+        self.matrix['rows'][0]['owner_authority']={'source_path':'original.txt','source_sha256':self.original_source['sha256'],
+            'source_line':1,'observation':'Original obligation source'}
+        self.contract['matrix']=self.put('matrix.json',self.matrix)
+        self.assertTrue(self.evaluate()['candidate_valid'])
+
+    def test_duplicate_navigation_preserves_source_union(self):
+        second=self.put('second-original.txt','second source')
+        self.matrix['rows'].append(dict(self.matrix['rows'][0],source_refs=[second]))
+        self.contract['matrix']=self.put('matrix.json',self.matrix)
+        d=json.loads((self.root/'evidence.json').read_bytes())
+        d['source_bindings'].append({'path':second['path'],'sha256':second['sha256']})
+        self.sub['obligations'][0]['evidence']=self.put('evidence.json',d)
+        self.assertTrue(self.evaluate()['candidate_valid'])
+        d['source_bindings'].pop()
+        self.sub['obligations'][0]['evidence']=self.put('evidence.json',d);self.reject()
 
 if __name__ == '__main__':
     unittest.main()

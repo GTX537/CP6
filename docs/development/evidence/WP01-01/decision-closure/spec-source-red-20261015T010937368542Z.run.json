@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-15T01:09:37.372948+00:00",
+  "finished_at": "2026-10-15T01:10:00.231318+00:00",
+  "exit_code": 1,
+  "source_hashes": {
+    "eng/wp01-01/decision-closure/gate_candidate.py": "f8e2c5f1a7129b9ebdb2c6ce26b2cf142174a2576201966ab5142f59ad26e50c",
+    "eng/wp01-01/decision-closure/tests/test_gate_candidate.py": "38d1c1cc859140bb36aa4b2d4f798562b8f6cadc65733ed496295d81655fdf26"
+  },
+  "source_snapshots": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z",
+  "scope": "SYNTHETIC_TDD_ONLY"
+}

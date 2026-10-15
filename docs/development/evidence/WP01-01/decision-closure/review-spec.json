@@ -1,0 +1,35 @@
+{
+  "schema": "WP01-01-WAVE7-SPEC-REVIEW/1",
+  "scope": "One task-level independent SPEC review, followed only by targeted remediation review",
+  "baseline": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "initial_candidate": "9f731f583727d5d49e66d68d3a3cf24ee8c0d6df",
+  "initial_manifest_sha256": "0cf1408c99b909554e0ece6e816edc5defbf9047b3e75e920896ceeff084db55",
+  "initial_result": "CHANGES_REQUIRED",
+  "reviewer": "Independent wp01_wave7_spec agent; read-only review of actual code, design data and source clauses",
+  "findings": [
+    {
+      "id": "SPEC-01",
+      "severity": "P2",
+      "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "initial_lines": [310, 1799, 2308],
+      "finding": "Generic FK/index templates do not identify actual declared columns, referenced entities or uniqueness scopes. Known ProjectNo, IterationNo, RoundNo and Evaluation/ActiveSelection rules must be represented concretely without inventing narrower domains.",
+      "required_fix": "Define per-entity physical columns and PK/UQ/FK targets/scopes; preserve original identity domains and exact Evaluation meaning. No DDL/runtime adoption requested.",
+      "status": "REMEDIATION_PENDING"
+    },
+    {
+      "id": "SPEC-02",
+      "severity": "P2",
+      "path": "eng/wp01-01/decision-closure/gate_candidate.py",
+      "initial_lines": [93, 104, 126],
+      "finding": "Obligation evidence can name any top-level source hash, including an unrelated valid source, rather than the specific matrix source_refs and owner_authority. The actual original obligation source is not read/bound.",
+      "required_fix": "Read and validate the exact per-obligation source files/hash/locations; merge source unions across repeated navigation rows; bind evidence to that obligation. Add unrelated-source substitution and original-source drift negatives.",
+      "status": "REMEDIATION_PENDING"
+    }
+  ],
+  "other_scope": "No additional required findings in eight decision dispositions, historical gaps, required DAG chains, three completion predicates or disabled production boundary.",
+  "test_policy": "Initial successful 45-test result reused for review. Changed gate behavior requires targeted local regression; unchanged manager result reused. No Actions, database or production execution.",
+  "final_result": "PENDING_TARGETED_REVIEW",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}

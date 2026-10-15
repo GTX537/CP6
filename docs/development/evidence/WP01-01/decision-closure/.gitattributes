@@ -1,6 +1,5 @@
 * -text
 .gitattributes whitespace=cr-at-eol
-tdd-deep-red.run.json whitespace=cr-at-eol
-tdd-consumer-remote-red.run.json whitespace=cr-at-eol
+*.run.json whitespace=cr-at-eol
 *.stdout.txt whitespace=-blank-at-eof,-blank-at-eol
 *.stderr.txt whitespace=-blank-at-eof,-blank-at-eol

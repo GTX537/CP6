@@ -5,9 +5,14 @@ rejects these unsupported trust checks; synthetic mode proves algorithm only.
 """
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path, PurePosixPath, PureWindowsPath
+import posixpath
 import re
+import subprocess
+import xml.etree.ElementTree as ET
+import zipfile
 
 TARGETS = frozenset({'PLM-ITER-01', 'PLM-REL-01'})
 VERSION = 'CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed'
@@ -65,7 +70,76 @@ def exact_index(items, key='id'):
     return result
 
 
-def evaluate_candidate(root, contract_ref, submission, *, mode='actual'):
+def read_source(root, source, inventory, cache, archive_root=None):
+    """Read original matrix shapes without inventing a byte-length assertion.
+
+    The immutable preparation lock supplies representation/revision when present.
+    Only original archive sources may resolve through the explicit archive root;
+    evidence/authority files always remain confined to the evaluation root.
+    """
+    path, digest = source['path'], source['sha256']
+    require(isinstance(path,str) and path and ':' not in path and '\\' not in path
+            and not PurePosixPath(path).is_absolute() and '..' not in PurePosixPath(path).parts, 'SOURCE_PATH_ESCAPE')
+    require(re.fullmatch('[0-9a-f]{64}',digest) is not None,'SOURCE_HASH_FORMAT')
+    registered = [p for p in inventory if p.get('path')==path and p.get('sha256')==digest]
+    require(len(registered)<=1,'SOURCE_REGISTRATION_AMBIGUOUS')
+    binding = dict(registered[0],**source) if registered else source
+    key=(path,digest,binding.get('git_revision'),binding.get('representation'))
+    if key not in cache:
+        if binding.get('representation')=='GIT_BLOB_BYTES' or binding.get('git_revision'):
+            revision=binding.get('git_revision') or binding.get('revision')
+            require(isinstance(revision,str) and re.fullmatch('[0-9a-f]{40}',revision) is not None,'SOURCE_REVISION_REQUIRED')
+            process=subprocess.run(['git','-c','core.longpaths=true','show',revision+':'+path],cwd=root,capture_output=True)
+            require(process.returncode==0,'SOURCE_GIT_BLOB_MISSING:'+path)
+            data=process.stdout
+        else:
+            base=Path(root).resolve()
+            if archive_root is not None and path.startswith('docs/CP6_完整成果归档_20261009/'):
+                base=Path(archive_root).resolve()
+            actual=(base/path).resolve()
+            require(actual.is_relative_to(base),'SOURCE_PATH_ESCAPE')
+            require(actual.is_file(),'SOURCE_FILE_MISSING_NOT_MATERIALIZED:'+path)
+            data=actual.read_bytes()
+        require(hashlib.sha256(data).hexdigest()==digest,'FILE_BYTES_MISMATCH')
+        if 'bytes' in binding:
+            require(len(data)==binding['bytes'],'SOURCE_LENGTH_MISMATCH')
+        cache[key]=data
+    data=cache[key]
+    if 'json_pointer' in source:
+        if (key,'json') not in cache:cache[key,'json']=strict_json(data)
+        value=cache[key,'json']
+        pointer=source['json_pointer']
+        require(pointer=='' or pointer.startswith('/'),'SOURCE_POINTER_INVALID')
+        for part in pointer.split('/')[1:]:
+            part=part.replace('~1','/').replace('~0','~')
+            value=value[int(part)] if isinstance(value,list) else value[part]
+    if 'line_start' in source:
+        if (key,'lines') not in cache:cache[key,'lines']=data.decode('utf-8-sig').splitlines()
+        lines=cache[key,'lines'];start=source['line_start'];end=source.get('line_end',start)
+        require(isinstance(start,int) and isinstance(end,int) and 1<=start<=end<=len(lines),'SOURCE_LINE_INVALID')
+        if 'excerpt' in source:
+            require('\n'.join(lines[start-1:end])==source['excerpt'],'SOURCE_EXCERPT_MISMATCH')
+    if 'sheet' in source:
+        ns={'m':'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+        with zipfile.ZipFile(io.BytesIO(data)) as book:
+            workbook=ET.fromstring(book.read('xl/workbook.xml'))
+            sheet=next(s for s in workbook.findall('m:sheets/m:sheet',ns) if s.attrib['name']==source['sheet'])
+            rid=sheet.attrib['{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id']
+            relationships=ET.fromstring(book.read('xl/_rels/workbook.xml.rels'))
+            target=next(r.attrib['Target'] for r in relationships if r.attrib['Id']==rid)
+            member=target.lstrip('/') if target.startswith('/') else posixpath.normpath('xl/'+target)
+            shared=[]
+            if 'xl/sharedStrings.xml' in book.namelist():
+                shared=[''.join(s.itertext()) for s in ET.fromstring(book.read('xl/sharedStrings.xml'))]
+            cells={c.attrib['r']:c for c in ET.fromstring(book.read(member)).findall('.//m:c',ns)}
+            for address,expected in source['cells'].items():
+                cell=cells[address];value=cell.find('m:v',ns)
+                actual=shared[int(value.text)] if cell.attrib.get('t')=='s' else ''.join(cell.find('m:is',ns).itertext()) if cell.attrib.get('t')=='inlineStr' else value.text if value is not None else ''
+                require(actual==expected,'SOURCE_CELL_MISMATCH:'+address)
+    return path,digest
+
+
+def evaluate_candidate(root, contract_ref, submission, *, mode='actual', archive_root=None):
     result = {'production_enabled': False, 'actual_adoption': False, 'actual_completion': False,
               'candidate_valid': False, 'mode': mode, 'errors': [],
               'authority_authenticity': 'UNVERIFIED', 'remote_ancestry': 'UNVERIFIED',
@@ -90,7 +164,6 @@ def evaluate_candidate(root, contract_ref, submission, *, mode='actual'):
         require(bool(sources), 'SOURCE_REQUIRED')
         for source in sources:
             read_ref(root, source)
-        source_hashes = {s['sha256'] for s in sources}
         decisions = read_ref(root, contract['decision_package'], as_json=True)
         for flag in ('production_enabled', 'actual_adoption', 'actual_completion'):
             require(decisions[flag] is False, 'DECISION_PACKAGE_CANNOT_ENABLE_PRODUCTION')
@@ -98,12 +171,22 @@ def evaluate_candidate(root, contract_ref, submission, *, mode='actual'):
         require(delta['additional_obligations'] == contract['additional_obligations']
                 and delta['removed_obligations'] == [], 'EXACT_DELTA_REQUIRED')
         matrix = read_ref(root, contract['matrix'], as_json=True)
-        expected = {}
+        inventory=read_ref(root,contract['inherited_source_inventory'],as_json=True)['inputs'] if 'inherited_source_inventory' in contract else []
+        expected = {}; obligation_sources={};source_cache={}
         for row in matrix['rows'] + contract['additional_obligations']:
             if row['target'] == target:
                 expected.setdefault(row['id'], set()).update(row['observations'])
                 if row.get('source_assertion'):
                     expected[row['id']].add(row['source_assertion'])
+                refs=list(row.get('source_refs',[]))
+                if row.get('owner_authority'):
+                    owner=row['owner_authority']
+                    refs.append({'path':owner['source_path'],'sha256':owner['source_sha256'],
+                                 'line_start':owner['source_line'],'excerpt':owner['observation']})
+                require(bool(refs),'OBLIGATION_SOURCE_REQUIRED:'+row['id'])
+                for source in refs:
+                    identity=read_source(root,source,inventory,source_cache,archive_root)
+                    obligation_sources.setdefault(row['id'],set()).add(identity)
         require(bool(expected), 'EMPTY_OBLIGATION_SET')
         provided = exact_index(submission['obligations'])
         require(set(expected) == set(provided), 'EXACT_OBLIGATION_SET_REQUIRED')
@@ -123,7 +206,9 @@ def evaluate_candidate(root, contract_ref, submission, *, mode='actual'):
             require(evidence['target'] == target and evidence['obligation'] == oid
                     and set(evidence['subassertions']) == observations
                     and len(evidence['subassertions']) == len(observations)
-                    and evidence['source_sha256'] in source_hashes, 'EVIDENCE_BINDING_MISMATCH')
+                    and evidence['source_sha256'] in {s[1] for s in obligation_sources[oid]}, 'EVIDENCE_BINDING_MISMATCH')
+            bindings=[(s['path'],s['sha256']) for s in evidence['source_bindings']]
+            require(set(bindings)==obligation_sources[oid] and len(bindings)==len(set(bindings)), 'EXACT_OBLIGATION_SOURCE_SET_REQUIRED')
         graph = read_ref(root, contract['provider_graph'], as_json=True)
         graph_edges = exact_index(graph['edges'])
         # Graph owns applicability. The contract cannot privately delete a declared edge.
@@ -171,7 +256,7 @@ def evaluate_candidate(root, contract_ref, submission, *, mode='actual'):
                     and re.fullmatch('[0-9a-f]{40}', consumer_remote['commit'])
                     and consumer_remote['package_sha256'] == receipt['package']['sha256'], 'CONSUMER_REMOTE_PACKAGE_BINDING_MISMATCH')
         result['candidate_valid'] = not result['errors']
-    except (Invalid, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+    except (Invalid, OSError, ValueError, KeyError, TypeError, AttributeError, IndexError, StopIteration, zipfile.BadZipFile, ET.ParseError) as exc:
         result['errors'].append(str(exc))
     return result
 
@@ -181,8 +266,9 @@ def main():
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--contract-ref', type=Path, required=True)
     parser.add_argument('--submission', type=Path, required=True)
+    parser.add_argument('--archive-root',type=Path)
     args = parser.parse_args()
-    result = evaluate_candidate(args.root, strict_json(args.contract_ref.read_bytes()), strict_json(args.submission.read_bytes()))
+    result = evaluate_candidate(args.root, strict_json(args.contract_ref.read_bytes()), strict_json(args.submission.read_bytes()),archive_root=args.archive_root)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result['candidate_valid'] else 1
 

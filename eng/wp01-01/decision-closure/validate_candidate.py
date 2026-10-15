@@ -63,8 +63,9 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--platform-repo',required=True,type=Path)
     parser.add_argument('--crm-repo',required=True,type=Path)
+    parser.add_argument('--archive-root',required=True,type=Path)
     args=parser.parse_args()
-    repos={'Main':ROOT,'Platform':args.platform_repo,'CRM':args.crm_repo}
+    repos={'Main':ROOT,'Platform':args.platform_repo,'CRM':args.crm_repo,'Archive':args.archive_root}
     before=protected(); errors=[];checks=[];cache={};parsed={}
     def check(condition,message):
         checks.append(message)
@@ -103,6 +104,35 @@ def main():
     names=['decisions.json','postgresql-mapping.json','current-source-audit.json','provider-consumer-closure.json','basis-delta.json','gate-contract.candidate.json','digest-vectors.candidate.json']
     docs={name:gate.strict_json((OUT/name).read_bytes()) for name in names}
     for name,doc in docs.items():verify_pin(doc)
+    tables={e['entity']:e for e in docs['postgresql-mapping.json']['entities']}
+    for name,table in tables.items():
+        cols={c['name']:c for c in table['columns']}
+        check(len(cols)==len(table['columns']),'unique physical column declarations '+name)
+        keys=[table['primary_key']['columns']]+[u['columns'] for u in table['unique_constraints'] if not u.get('predicate')]
+        for kind in ['primary_key','cas']:
+            used=table[kind].get('columns',table[kind].get('predicate_columns',[]))
+            check(set(used)<=set(cols),'declared '+kind+' columns '+name)
+        check(all(not cols[c]['nullable'] for c in table['primary_key']['columns']),'PK nonnull '+name)
+        check(cols['tenant_id']['postgresql']=='uuid' and not cols['tenant_id']['nullable'],'explicit TenantId '+name)
+        for item in table['unique_constraints']+table['indexes']+table['checks']:
+            check(set(item['columns']+item.get('predicate_columns',[]))<=set(cols),'declared constraint columns '+name+'/'+item['name'])
+        for field in table.get('fields',[]):
+            check(set(field['physical_columns'])<=set(cols),'field physical storage '+name+'/'+field['field'])
+        for foreign in table['foreign_keys']:
+            check(set(foreign['columns'])<=set(cols),'local FK columns '+name)
+            target=tables[foreign['target_entity']];targetcols={c['name']:c for c in target['columns']}
+            targetkeys=[target['primary_key']['columns']]+[u['columns'] for u in target['unique_constraints'] if not u.get('predicate')]
+            check(foreign['target_columns'] in targetkeys,'FK exact target PK/UQ '+name+'->'+target['entity'])
+            check(len(foreign['columns'])==len(foreign['target_columns']) and all(cols[a]['postgresql']==targetcols[b]['postgresql'] for a,b in zip(foreign['columns'],foreign['target_columns'])),'FK physical types '+name)
+            check('tenant_id' in foreign['columns'] and 'tenant_id' in foreign['target_columns'],'FK retains TenantId '+name)
+    expected_unique={'Project':['tenant_id','project_no_key'],'Iteration':['tenant_id','iteration_no_key'],
+        'ReviewRound':['tenant_id','iteration_storage_id','round_no_key'],
+        'ExternalRequestReceipt':['tenant_id','operation_type_key','aggregate_source_scope_key','request_key_id'],
+        'ReleaseRecord':['tenant_id','release_identity_key','release_revision_key'],
+        'ReleaseTarget':['tenant_id','release_storage_id','target_identity_key','target_scope_version_key']}
+    for name,cols in expected_unique.items():check(any(u['columns']==cols for u in tables[name]['unique_constraints']),'exact inherited unique domain '+name)
+    check(any(f['columns']==['tenant_id','storage_id','current_evaluation_storage_id'] and f['target_entity']=='Evaluation' and f['target_columns']==['tenant_id','iteration_storage_id','storage_id'] for f in tables['Iteration']['foreign_keys']),'current Evaluation exact iteration FK')
+    check(not any(u['columns']==['tenant_id','review_round_storage_id'] for u in tables['Evaluation']['unique_constraints']),'optional review round not falsely unique evaluation domain')
     decision=docs['decisions.json'];check(len(decision['decisions'])==8,'all eight DP dispositions')
     allowed={'INHERITED_ACCEPTED_RULE','NEW_CANDIDATE_CHOICE','ACTUAL_CONFIGURATION_PENDING','PROVIDER_IMPLEMENTATION_MISSING','RUNTIME_UNVERIFIED'}
     check(all(c['category'] in allowed and c['source_pins'] for d in decision['decisions'] for c in d['clauses']),'clause category and source complete')
@@ -126,9 +156,19 @@ def main():
     for vector in docs['digest-vectors.candidate.json']['vectors']:
         check(sha(bytes.fromhex(vector['preimage_hex']))==vector['sha256'] and vector['synthetic'] is True,'synthetic digest vector integrity')
     contractref=ref(OUT/'gate-contract.candidate.json');save('contract-ref.json',contractref)
-    actual=gate.evaluate_candidate(ROOT,contractref,gate.strict_json((OUT/'submission.actual-unadopted.json').read_bytes()))
+    actual=gate.evaluate_candidate(ROOT,contractref,gate.strict_json((OUT/'submission.actual-unadopted.json').read_bytes()),archive_root=args.archive_root)
     save('actual-baseline-result.json',actual)
     check(actual['candidate_valid'] is False and actual['actual_adoption'] is False and actual['actual_completion'] is False and actual['production_enabled'] is False,'actual unadopted baseline rejects')
+    # Independently verify all inherited and new obligation locators, for both targets.
+    source_inventory=gate.read_ref(ROOT,contract['inherited_source_inventory'],as_json=True)['inputs'];source_cache={}
+    for row in matrix['rows']+contract['additional_obligations']:
+        refs=list(row.get('source_refs',[]))
+        if row.get('owner_authority'):
+            a=row['owner_authority'];refs.append({'path':a['source_path'],'sha256':a['source_sha256'],'line_start':a['source_line'],'excerpt':a['observation']})
+        check(bool(refs),'obligation original sources present '+row['id'])
+        for source in refs:
+            gate.read_source(ROOT,source,source_inventory,source_cache,args.archive_root)
+            check(True,'obligation original hash and locator '+row['id'])
     testinputs={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in [CODE/'gate_candidate.py',*sorted((CODE/'tests').glob('*.py'))]}
     testrecord=OUT/'tests-final.run.json'
     if testrecord.exists() and gate.strict_json(testrecord.read_bytes())['source_hashes']==testinputs:
@@ -160,6 +200,10 @@ def main():
        'tdd-deep-red':{'exit_code':1,'record':'tdd-deep-red.run.json'},'build':{'exit_code':1,'reason':'Platform fixed revision file absent in current checkout; corrected to git blob read'},
        'initial_unredirected_build':{'exit_code':1,'reason':'S01 definitions reside in roadmap, fixed task union; traceback remains in tool transcript, no fabricated raw file'},
        'initial_source_snapshot_limit':'First two red phases pre-change source hash not captured; raw logs preserved, exact subsequent phase source hashes recorded. Do not claim a missing historical snapshot.'},
+      'targeted_spec_repair':{'source_red_runs':[ref(p) for p in sorted(OUT.glob('spec-source-red-*.run.json'))],
+        'static_failure_logs':[ref(p) for p in sorted(OUT.glob('spec-fix-validation-*.stdout.txt'))],
+        'scope':'Only concrete PG column/constraint completeness and per-obligation original source binding; gate runtime/production remains disabled',
+        'source_materialization':'Original archives explicitly read via supplied --archive-root; no original files copied or edited; absent originals reject separately from permanent legacy30/48 gaps'},
       'not_run':['product compilation/tests','real PostgreSQL/DDL/migration/roles/RLS/precision/CAS/recovery','provider/consumer runtime','load/SLO','authority authenticity','remote ancestry','Actions','deployment']}
     save('validation.json',result)
     excludes={'manifest.json','intake.json'}
