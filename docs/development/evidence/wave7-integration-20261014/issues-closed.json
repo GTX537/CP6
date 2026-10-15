@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-15T03:02:11.552560+00:00",
+  "issues": [
+    {
+      "number": 211,
+      "state": "CLOSED",
+      "url": "https://github.com/GTX537/CP6/issues/211"
+    }
+  ],
+  "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+  "remote_main_sha": "d5084957a7b58d4c99765eb48c29e88c2e158585",
+  "scope": "Candidate design correction complete; no production adoption or business acceptance claim"
+}

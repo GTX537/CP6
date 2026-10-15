@@ -1,0 +1,1268 @@
+{
+  "task": "WP02-26",
+  "reviewed_base": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "reviewed_head": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+  "verified_at": "2026-10-15T02:36:00.837517+00:00",
+  "status": "PASS",
+  "changed_files": 161,
+  "changed_source_and_test_files": 23,
+  "parsed_evidence": {
+    "json": 60,
+    "trx": 16
+  },
+  "git_manifest": [
+    {
+      "path": "docs/WP02-26-SLO-TEST-EVIDENCE-V1.md",
+      "git_blob": "39ad3625201353d779345b4af831079ad739fa2d",
+      "sha256": "a070872e14d2caba7f64988be0816721d4cce836becccf1805b82a450314e9ab",
+      "bytes": 12685
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/.gitattributes",
+      "git_blob": "c16a19ca504950c2920bc03bea0931d550d74ffd",
+      "sha256": "2bae64b621f97f1d809193858f6438b7c59374303b822579dc7d580bdc931176",
+      "bytes": 59
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/DELIVERY.md",
+      "git_blob": "01f5a8f1d8908b23be84037b72609dc4ce45af1c",
+      "sha256": "502932daedf1b5c3e732996079699921ab48637372a803f7c0ade421f9c260ed",
+      "bytes": 6481
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/PLAN.md",
+      "git_blob": "63efaae88aad47a7eb1037a54baa1d7d01887f9d",
+      "sha256": "07c9230ff497623bea6d64c0b972eab114a68ef7493810b2de748000b9a0ead2",
+      "bytes": 3061
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/acceptance-final.json",
+      "git_blob": "93ab092632a0876ce7f05c0d145e677131436f43",
+      "sha256": "d4496c59034090d7ac9c8a549dcf435b971399bd7144196ca530731a3680cb02",
+      "bytes": 93113
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/execution-matrix-final.json",
+      "git_blob": "0797bdb11afa05d7830b440c8510b67b0d8a6d84",
+      "sha256": "95a362b0d86fee9228d5cfb74dc6be908ee19b8a1141722f4d0b735280086f14",
+      "bytes": 86793
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/console.log",
+      "git_blob": "515faf6a550b19fa0cd5d77d97fa8fee4de09877",
+      "sha256": "0f5dbb77b414d5fe517df1f31c3b0b377b9ca0b430b985031c3ec3c7e256f6c4",
+      "bytes": 946
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/execution.json",
+      "git_blob": "5bc20b76501db9085083d611c9d50b124023755a",
+      "sha256": "3fac0154e069ea39b02a3e5306f55b4da230e736f9945f6ecc016714a37bbd2b",
+      "bytes": 609
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/sdk-info.txt",
+      "git_blob": "2c8c8b06b7ccffea8b628a6c1aa5cf76df262101",
+      "sha256": "36a1af4ae94425d2dc562f372504059d2304a39849b08da929e63a02654a5a59",
+      "bytes": 2258
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/source-after.json",
+      "git_blob": "e3d000be8caa7a0a29e0490b25ac18565ff023a0",
+      "sha256": "02fdaafbc0201ff59dbc64c90812947a6e9442262d3cbe6ec59d431dfba93b67",
+      "bytes": 70621
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/source-before.json",
+      "git_blob": "baef596e7e710c579460672f6eef6b85a453e87f",
+      "sha256": "fe0b0e25aa72097691bd41d11c08d5c108aaf9c965fe31b35d425b7ccd718488",
+      "bytes": 70243
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/wp02-26-architecture.trx",
+      "git_blob": "1b660bc942b9174d3fba838a0c417927463c9da0",
+      "sha256": "206f10a2571370db43f052df5f399d1b957158f554579b0b7f468f3e34188fe8",
+      "bytes": 155894
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/collection.json",
+      "git_blob": "06776db42a04e9b370bacd2c809707d78abfafc1",
+      "sha256": "b8daf994690e87e6209b04b3aca48b5b53a56b2191739009c1ecf6d137ff65e8",
+      "bytes": 2571
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/config-seal.json",
+      "git_blob": "4b27de973aba7cb01b065a52328d91d01d4227fb",
+      "sha256": "33032bcdd25d21141f0a497f6167853d071e039551346b3d5cc316f0fde47069",
+      "bytes": 484
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/crash-1792024876711791000.json",
+      "git_blob": "92fe94e9f8dca2fc74f199a002a82f460557c4ca",
+      "sha256": "59d0057e382c18580a6a192046b69ea910e842682a0c42920e30833210a4bad3",
+      "bytes": 1396
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/crash-1792027074182481900.json",
+      "git_blob": "d27210fb97d737358207292c5cba82cf6b67c912",
+      "sha256": "04d314f89be5cb413c4e1a46fdfdf9c44e2fb27b6ca3f013dd567f5ad66e0dc5",
+      "bytes": 1396
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/failed-1792024378614915500.json",
+      "git_blob": "16ac6587dcb335faa34785e21128ce944fcb937b",
+      "sha256": "c98d44db38af1d8c70025ac18946313550d8306ca1fdcbdbb8786634927a9fb4",
+      "bytes": 99
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/failed-1792024436413099400.json",
+      "git_blob": "34c08090abdc9727258099ff3bd803901fc66fac",
+      "sha256": "6e23aeda3695ff22da506a66beb4d2c8c7d417d8cbf74fc9d460036c2cfaff1d",
+      "bytes": 95
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/owner-marker.json",
+      "git_blob": "f28376011475598f7243bfc2324204a5697887f7",
+      "sha256": "a1711d681b461689bd1cea2d5386e651720a6cc9332033ba6a28b87e1fd10c3f",
+      "bytes": 118
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/ownership.json",
+      "git_blob": "88950ce75bb13ae576e1f488e8f981980b5f9c8e",
+      "sha256": "0c1549897fdd77800a98cfa77cdce9be5f3747d0359aef1c15c4fbef70ef4e13",
+      "bytes": 1089
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/server.log",
+      "git_blob": "e31780e789b559b8c83f8cc020a065c870268264",
+      "sha256": "48b9511ad59a0ec8bbf418efefa73fcf11babf603bd7691940d0551ef35deea8",
+      "bytes": 9755
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/start-1792024882268880600.json",
+      "git_blob": "7689e87c3de9e0dec0b77aeca38107bb5eb9a109",
+      "sha256": "59ed5b7ba913c000668bf71a3b95a90979891a45f406c2a454def4278b757415",
+      "bytes": 1190
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/start-1792026997595690600.json",
+      "git_blob": "e29aeb3aaa92359d62910250fc05750b89d61ecf",
+      "sha256": "f797045c1ff5178a8fb6654edae89719b624ab359a85de19b4db5a4ba0f22a53",
+      "bytes": 1190
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/start-1792027087491891500.json",
+      "git_blob": "afea92ff99b2333cb7e94058e80a177782e2e0c7",
+      "sha256": "a7e846ef7deb8263b5043a001b6e9dc8b9c35e9dc5fe3b69fb567ecbb1d30f0a",
+      "bytes": 1190
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/stop-1792024920132746900.json",
+      "git_blob": "1e4b4e4ad6f3ae11d44794d3bab936fbc75f03c6",
+      "sha256": "1d84491d1ef8b82dd826ef949ff7e3f2db1344fa121cf0c35dd7d7b6489276d5",
+      "bytes": 1189
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg-resource/stop-1792027109612470800.json",
+      "git_blob": "c4272704fd06887c41965dc55aee229cf294e415",
+      "sha256": "d57d6729dce441507f7a6f35afe3f2f61b62e21b26481d1122d01f7d887d9059",
+      "bytes": 1189
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/console.log",
+      "git_blob": "0c66505e2cff0ae0f630862333c6ccf3a693ca20",
+      "sha256": "1519542430669dd96b48efbf27fcc3e8a5b3e105105f5d4be1e5d684f9cef299",
+      "bytes": 1752
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/execution.json",
+      "git_blob": "4db0521dbd2f6603adfc5061f5615d02c5612a4a",
+      "sha256": "deaca4716acb679949cecedc1e8839a7d3ab170a5e4315df7b9395f6c35f8095",
+      "bytes": 598
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/sdk-info.txt",
+      "git_blob": "2c8c8b06b7ccffea8b628a6c1aa5cf76df262101",
+      "sha256": "36a1af4ae94425d2dc562f372504059d2304a39849b08da929e63a02654a5a59",
+      "bytes": 2258
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/source-after.json",
+      "git_blob": "674a6c40a06d56620f50920cb5995d1e64d770ef",
+      "sha256": "c6facf3500031b2c2b3507c28a94571eab029d37809382630c7452ed8987a7f2",
+      "bytes": 70243
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/source-before.json",
+      "git_blob": "d1a1ae1dc4d6a0e32adbd3a391548719114176d5",
+      "sha256": "dfda1f7fcd3c97c1aaae686357abfa9ee4337c8229a5fb77d646b9f3337896fc",
+      "bytes": 70243
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/wp02-26-pg.trx",
+      "git_blob": "3af3d7a532646e05e3b104ed5106701aae402317",
+      "sha256": "06531f888807e5f7f23e4cdba57872879472a55f2accb8d269adc71e7fea2ae3",
+      "bytes": 12447
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/console.log",
+      "git_blob": "9f28443f8e5fce2c4ce01da6f217c00cb1e2db6f",
+      "sha256": "898f74c3501c6c5188abd2dde13942fa4891a58895f265854e0db7b66d9ec3b9",
+      "bytes": 1695
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/execution.json",
+      "git_blob": "895b8bf36779c12557648ce2ff97f6064ad64be6",
+      "sha256": "a6591f7f444f4732f144e0002ffffdea40f44d32743ed9a035427fcf62f51454",
+      "bytes": 583
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/sdk-info.txt",
+      "git_blob": "2c8c8b06b7ccffea8b628a6c1aa5cf76df262101",
+      "sha256": "36a1af4ae94425d2dc562f372504059d2304a39849b08da929e63a02654a5a59",
+      "bytes": 2258
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/source-after.json",
+      "git_blob": "0740909d75e1cca00e18d98053fc3da4123229a0",
+      "sha256": "a149db41a899ce40e5edf4691f7dba7d2d7c019ca5ec51a7fdbc2e05d2b55909",
+      "bytes": 70243
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/source-before.json",
+      "git_blob": "00aff3ed417a0399d79594d8bdf52f6314f76b84",
+      "sha256": "e6dac25262d0e28d22fef28627487efcb213e3a59815647e523d66c9b5323f0d",
+      "bytes": 70243
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/wp02-26-unit.trx",
+      "git_blob": "a4cd5dc796628fd8e6a0e19d2bbe340c2b02e6ac",
+      "sha256": "f2867b9ffd92c30fef4741b56bcf1e60b51feec112b7fb1786011888826c24b8",
+      "bytes": 159872
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/library-provenance.json",
+      "git_blob": "47ab3677eb647d0a57361fb736da9732a2abd649",
+      "sha256": "b951f8f6e582b966312ac26dd891ad2b6d44d2e22d8af3456542484e6c35880f",
+      "bytes": 1052
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-01/command.txt",
+      "git_blob": "c30e1f0208632e703d60abeb3fe7461650484a45",
+      "sha256": "24067a044c2862a2754a2f372c5e723b80c7a516f7f5eb53ae6bae0ba07522fa",
+      "bytes": 254
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-01/output.log",
+      "git_blob": "def3017738504297fa9b1dcaf1fac9bb0a1c5ad0",
+      "sha256": "d38a798dbc504154e24ef5f3f9176854f816ef5e755b3acbbbd3eb9798fa4e7b",
+      "bytes": 1703
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-02/command.txt",
+      "git_blob": "f8cbe2205d624512ebd7a2a8940b34bd07ca0c7a",
+      "sha256": "766686fc01538b8d556ca45625eb23118b30592b75f8d68e1d136546399feaab",
+      "bytes": 267
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-02/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-02/output.log",
+      "git_blob": "519e17746482ef728891ba1b35a78f5fea5889ad",
+      "sha256": "ef5ee23c162698b36e3367f31ddcf95b25a3b5578985562ff1ed02ac5ac87587",
+      "bytes": 2554
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-02/wp02-26.trx",
+      "git_blob": "c8d85ee5e7b45983b4d476ff13c92941b65cccc2",
+      "sha256": "eb4ef6480621ef1da033a50596cc22541d2778e4c33fa66b46627e22be2d4a4b",
+      "bytes": 115110
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-capture-budget-01/command.txt",
+      "git_blob": "6e05107ccca9717e55bdc8bf953d29fc0c8ccc14",
+      "sha256": "aaeba1840b3eebc0e60438520222e838b82069f14e5da5f69ea7dc1ece92ea2d",
+      "bytes": 325
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-capture-budget-01/exit-code.txt",
+      "git_blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-capture-budget-01/output.log",
+      "git_blob": "5cab46811eabd373ef5a26b65e04e4af380a941a",
+      "sha256": "f0ee04680f9b918953ec7e1431673258af352250825bbb56af732ba6cfcba9da",
+      "bytes": 1641
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-capture-budget-01/source-inputs.json",
+      "git_blob": "31ed604b0732a088dcaf04e8f4d0f92095495425",
+      "sha256": "adbd50a7457347cccdb229beeb5b47b8452912ede017906f7249006a221951a5",
+      "bytes": 1801
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-capture-budget-01/wp02-26.trx",
+      "git_blob": "a441b9c598869557fabaa774f68b5e782b621957",
+      "sha256": "cf35ede5b2a127d8c4421a9c114e212bc33e26447d43b7ee4bc853d39ee11f39",
+      "bytes": 39383
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-final-lifecycle-01/command.txt",
+      "git_blob": "5bcbaaea713a069a3af21be6e47ff83304f9c7e8",
+      "sha256": "f18203c41dcf5a51b0c430878fbfb35372977563e5c441aef37fb5f4172a5f23",
+      "bytes": 356
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-final-lifecycle-01/exit-code.txt",
+      "git_blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-final-lifecycle-01/output.log",
+      "git_blob": "eadffa5b6600c8e1b406d12007d54a6c07c00d14",
+      "sha256": "da92d9e64f21030d90106ddbd99325189282a61ebb702f435674245c100488a6",
+      "bytes": 1642
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-final-lifecycle-01/source-inputs.json",
+      "git_blob": "82e1fda9802abaf2881f113eadc06a6cc2c216d6",
+      "sha256": "b71d0503b078581ecc2fd92e607fd2cc6caf8b32c1e66bf61563f1d3ebea3a89",
+      "bytes": 808
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-final-lifecycle-01/wp02-26.trx",
+      "git_blob": "7bd0084a47c4bbb7c401dca3d1d35b11eb5dfd75",
+      "sha256": "07e6fc82a4b102a110c773d8ef0ea9ff95b497394bc2159a558d47363151c7c5",
+      "bytes": 58345
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-hardening-01/command.txt",
+      "git_blob": "df606f6bafa662a361006e6d951962943ae8334f",
+      "sha256": "38f1b33dce1f2352e2707f81ff92fd0145b71da33a1916fee5f0c83ce253d1f4",
+      "bytes": 858
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-hardening-01/exit-code.txt",
+      "git_blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-hardening-01/output.log",
+      "git_blob": "d00c41add94a4a0ed71802aa3fb1bfcddcf5eeee",
+      "sha256": "e2bb169944de8451239258172165c6c31062440fb17354043c2aab4d3ef118cd",
+      "bytes": 1633
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-hardening-01/source-inputs.json",
+      "git_blob": "a3c2200be1a814322bfa98f0b22fa2ec3fcf88c0",
+      "sha256": "7fa11739737096ca9914ad9669b942d79be5bf46ac164603f5accc87c2f10113",
+      "bytes": 1801
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-green-hardening-01/wp02-26.trx",
+      "git_blob": "8b3ade7259260333752460801845a9c258b97ec2",
+      "sha256": "f2443315c408649b96ca71dc1dbfdc49075cf69a49831c36d53ac1bf7eb50737",
+      "bytes": 29455
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-01/command.txt",
+      "git_blob": "121d1ae94dd1dcd34ab8f7ae1431a6ede318ca45",
+      "sha256": "462a67598dfb1593b2e556c87b23c6d7b95efcd5e050c3a9a172976cdd8d53a7",
+      "bytes": 252
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-01/output.log",
+      "git_blob": "5fe48c2cb9e093d6c410a750d8bd8dc12690fdd3",
+      "sha256": "4b3020e9912f7337ed11118834306a7d8a1b7c39bfd0e9a0f457c120516072b1",
+      "bytes": 6208
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-01/wp02-26.trx",
+      "git_blob": "829b1b93466908d95fd84f8d463fd1463ddf23de",
+      "sha256": "796db8f4dcf50dc1e2c112dba15dbff3c73e7827b2aaaf1c143cb651e379352f",
+      "bytes": 14662
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-boundaries-01/command.txt",
+      "git_blob": "c7af40c485ce333231234c33c92400d4a4c06fed",
+      "sha256": "8bc79344dc943b4130d491d625e091bfaf320b8370895642c9311b18fac9bc31",
+      "bytes": 396
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-boundaries-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-boundaries-01/output.log",
+      "git_blob": "9e14fba264479a28ee1bac7745954b8372b9a7d6",
+      "sha256": "346332feaf56fe06fe7fcf148f462a61ed124df5f8412a6f2eb5afdf2254e434",
+      "bytes": 4128
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-boundaries-01/source-inputs.json",
+      "git_blob": "0061310d861293bb8a88aa4613bfe5df9d6fe916",
+      "sha256": "3080872a760773b33d3f8ff28dc5c1d3f8fa29a8acd9d73d39c2ccbfda1929e0",
+      "bytes": 1801
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-boundaries-01/wp02-26.trx",
+      "git_blob": "b6a25454cd06ece6c3cd7d42b27e7e4110cfeba4",
+      "sha256": "d51d6afd73ea022d2585eb497741756204aa1816c3c41307f80643919820038f",
+      "bytes": 11354
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-capture-budget-01/command.txt",
+      "git_blob": "88a66917a2eae7c13cce471b47637b834ebfa572",
+      "sha256": "a4a9abf102452fc289ec457982da0bb7a89761637c639ab78a7847bc73534241",
+      "bytes": 404
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-capture-budget-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-capture-budget-01/output.log",
+      "git_blob": "40e217b316c193aed253444c420d26f3689e4f67",
+      "sha256": "738b920b0446c8061ca60330b0c248fd31aa8143dda44f7fda03850a6830299d",
+      "bytes": 4051
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-capture-budget-01/source-inputs.json",
+      "git_blob": "1f4108bee388f6f08cbc0eb755ee1b7807141b2c",
+      "sha256": "171c00beea935ac33ad4c5e816d923e5eebfee21533303cbf49b5afb4a256a36",
+      "bytes": 1801
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-capture-budget-01/wp02-26.trx",
+      "git_blob": "fcb498b4fa73afa9a3bd842cce796d5408186175",
+      "sha256": "647ceb88f9127d8bce896f3ff02ec8cb0edf50b49fb776c6103dd9cad95bd43e",
+      "bytes": 11190
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-cleanup-reentry-01/command.txt",
+      "git_blob": "6de2c38ba895d758ad791312a50839a1a20eb1f9",
+      "sha256": "a71f63a3ba453478e5e7f5ae6295f8e3a0365023f9aebe4527ce570510d5db4b",
+      "bytes": 329
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-cleanup-reentry-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-cleanup-reentry-01/output.log",
+      "git_blob": "f68d7470a1d93c9ee9256513fdfe0926b0b6932d",
+      "sha256": "c68c51aa976691ac2758709081c5e91213d687ef7f60c05ff33197c7bfb5c456",
+      "bytes": 3137
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-cleanup-reentry-01/source-inputs.json",
+      "git_blob": "cde241d6a50ce56813544d67f7c699ebf9e36136",
+      "sha256": "80f1211d58b13f20a18b509b9e85e99d0bb50e1c5d3dd01ab941ee72528a5e26",
+      "bytes": 808
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-cleanup-reentry-01/wp02-26.trx",
+      "git_blob": "4011a18654c20bc687afa428ade3dd815b8d543f",
+      "sha256": "ed711b999cf68829549de1d20279baf339dd9a2ecf379f4e9c0c3ed9e1830230",
+      "bytes": 7754
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-completion-01/command.txt",
+      "git_blob": "3675c8650986080725a6d0bdbf77ca64a17447ca",
+      "sha256": "a0e256e3ca6c3bf2362f48dcbaf0011a4c2febbaf4fa008c2c4196a0c3b9828f",
+      "bytes": 336
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-completion-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-completion-01/output.log",
+      "git_blob": "29c53541a4bdaedaaa60e5e7892838b476165672",
+      "sha256": "e6c94b8d03fa2b3bc2a22bd5dec33f2b937cc16890f306d970d7ef41e10a33c6",
+      "bytes": 3445
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-completion-01/source-inputs.json",
+      "git_blob": "8c8405828afc609e823eb288b40c154753eabed6",
+      "sha256": "63e39301d5a8771bae0f420dbc8e17ec2cc2e032ab7d384cab1838c98ad3b2c1",
+      "bytes": 482
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-completion-01/wp02-26.trx",
+      "git_blob": "6bb382e3781edc3bec67f321cbb2fd5a378c760d",
+      "sha256": "bed88a19d5d21ed526d80eb3489759f339b1ffb40e1d620077e15a69cd748c45",
+      "bytes": 8385
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-hardening-01/command.txt",
+      "git_blob": "3db2a483a73a9162d8f375436eacacec4ea105d0",
+      "sha256": "18904a17eb2665052d2440875dd819bddf71642c108af9761539e91a7f8d4f2e",
+      "bytes": 468
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-hardening-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-hardening-01/output.log",
+      "git_blob": "7284ed3cc8dc42b17f91c3a35bb9921645d5f584",
+      "sha256": "c236c563a8857f32de173c03ace284cd3e68c60033b195ce47e3f8d48b8850ca",
+      "bytes": 7980
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-hardening-01/source-inputs.json",
+      "git_blob": "6fecc2b1102f0c973988ef0c4c58999f82cd7e52",
+      "sha256": "b27aa9252f8b396af09db1a7889d367ad0958832e4f954dd1c3a1e06d296ddd3",
+      "bytes": 1801
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-hardening-01/wp02-26.trx",
+      "git_blob": "abcdf841a5676d06e1ce3cca51e0afa04c728adb",
+      "sha256": "3f36690fe9ea1aa0b88c63b129fcd517389d8ab668c142df7657c5cce4c7bcf1",
+      "bytes": 25170
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-numeric-budget-01/command.txt",
+      "git_blob": "ebdbea5c78011c809ce438093fc976fc4cdcf03d",
+      "sha256": "a741554fc35f172995fa90cb79022da05418e50f3313bf29c345a8b2e24fb8ac",
+      "bytes": 372
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-numeric-budget-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-numeric-budget-01/output.log",
+      "git_blob": "32afe77a6aff3be2ed5e6e15cb1e948a70da4a95",
+      "sha256": "c6133605945c10dc6d0c020152f46bc49438c4541022e94ce1346750f39c5d94",
+      "bytes": 2453
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-numeric-budget-01/source-inputs.json",
+      "git_blob": "12d175c84afdfbb62d477e17a73f8ddac753cc28",
+      "sha256": "f754711170daf5f3a2d22c59091d23f0a3acaba95554fb626bc223a248767500",
+      "bytes": 482
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-numeric-budget-01/wp02-26.trx",
+      "git_blob": "b33995ef50ad23a54ee2edc3d50e848390596399",
+      "sha256": "2880b8e8d933ee92e753b5d2a04584cdc442f92d50a39c959cdfbe13a7b67ebb",
+      "bytes": 6318
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-observer-reentry-01/command.txt",
+      "git_blob": "cd6f3f219191fb7da37448605f952dd80549e5d2",
+      "sha256": "afdfd61db05b4aca393ba68a08adb16a8deed379de036e001212f1df81d210f1",
+      "bytes": 337
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-observer-reentry-01/exit-code.txt",
+      "git_blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-observer-reentry-01/output.log",
+      "git_blob": "9e64f9b923c63546e491fb75942d6b55f2770532",
+      "sha256": "e7839e9051679a4ad34eb64e3d89c716170b4748a54d72ed7d2787bce9fd42d7",
+      "bytes": 3142
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-observer-reentry-01/source-inputs.json",
+      "git_blob": "f19ca208c4798d8ef75bdce5b46d3bc87299b16c",
+      "sha256": "bf8d8ac399837bbd7b68f9419598af265775b478ebe4537e6c1dda425f5be495",
+      "bytes": 808
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/implementation/unit-red-observer-reentry-01/wp02-26.trx",
+      "git_blob": "8366ce3a12333d1917594363be05f07c9f1cc101",
+      "sha256": "54d0ef30220afc70f0ccf000ebea9211e27821c0761659af1e91fc465425d28a",
+      "bytes": 7762
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/index-audit-final.json",
+      "git_blob": "1277e29084cc0804024e4fc9da1004762f321f45",
+      "sha256": "6c5080e15c3b1c2f3e9be8e9e6b17237a165cfbf0619ddd3e556f9009cf0250d",
+      "bytes": 46732
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/index-audit-pre-restoration.json",
+      "git_blob": "ec187f2d9a3f33f5b27a3038b6b64afeb147e6f8",
+      "sha256": "f5661f631bbb4a772ee7a2d8e2dee18c2b764f3f714c8e49e28f943f0e286e16",
+      "bytes": 46287
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/input-pins.json",
+      "git_blob": "9c89738675d23ba3202356e80fbaad4c0cb1c529",
+      "sha256": "34b445d0985da484de4800aad450a50cd8ed6f67cc920c634553d06f92862097",
+      "bytes": 1843
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/WP02-26.md",
+      "git_blob": "8f41f5ecb9a8514774cbfa1dee5cdd4dccf596b5",
+      "sha256": "ecc4fab40687bfe3dd918c35ef231faa6cb19ecca3f905dc446b75d19633f991",
+      "bytes": 11117
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/admission-platform.json",
+      "git_blob": "8b488965a9588b85c85d2afdd8a53d19474aa97c",
+      "sha256": "a4bfe9972dc07045e6e1817bad7efd3220dab9f2825e99330486a24d8f3ef1a5",
+      "bytes": 23149
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/admission-platform.md",
+      "git_blob": "7f774334fda4f331df40ae5ef2c9da2d9fca8c96",
+      "sha256": "bf7cf5f2f2f1dce088e9a9cdd815c382e9b2e58d69ae6a1b0ecce15bd72afd41",
+      "bytes": 16515
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/assignment.json",
+      "git_blob": "99a333edc1ff0189fd44e0f9bbab0c69b829d11e",
+      "sha256": "6cb40a112fc0aacd06cdc6e5289988ed6d06edbddc5fe12d69158e7de6fd5f13",
+      "bytes": 4142
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/catalog.json",
+      "git_blob": "88cb1cce523296d1b30bd8bc71d0f1932be369f3",
+      "sha256": "3dab4365b3c4691a0d859fa232c4907d26488de5ba92ad2a5736397fbb8cdc2c",
+      "bytes": 36610
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/dispatch.json",
+      "git_blob": "7ed9891c6ab6ea18fe598657d747be24cecbb331",
+      "sha256": "576d704d46464336416abdf99d875480b7c02c280d406d4ddad0c674d3281983",
+      "bytes": 37780
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/original-PLT-OBS-01.md",
+      "git_blob": "0c5af19114eb820b14c0611cc6e57d320783723a",
+      "sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+      "bytes": 22681
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/original-PLT-TEST-01.md",
+      "git_blob": "280008bfa7b15a3e7b1ffaebb813401622dfc93a",
+      "sha256": "d8b4ef19a1b3a0a528ddd7831f5159295d75b7eecadfa787e36ad028d362c5aa",
+      "bytes": 19809
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/inputs/vectors.json",
+      "git_blob": "0864b8e0d9d4be0b7487a9579e8fd06f5cc18bf2",
+      "sha256": "b9a63a1512da2d2374e95d49d9f69c8636d06465f88a47862dc3604605d5be01",
+      "bytes": 132820
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/matrix-green-01/execution.json",
+      "git_blob": "f81648a85998b22bd3baff09ffaf3e55f9c2096a",
+      "sha256": "7768d5128fd1df1f7f2a0729f882741f6c019b56758525def5113a033f6062ca",
+      "bytes": 743
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/matrix-green-01/output.log",
+      "git_blob": "e613b33bb8644e8df677a7fc11dc18576911f1cd",
+      "sha256": "518a14ccc96b0c26cde67f234f91621a3769dfab1feb01b62a1f3a8ca698aaa0",
+      "bytes": 99
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/matrix-red-01/byte-restoration.json",
+      "git_blob": "9d7293e701a24fa61f357d7a2a55acbeb37d6d71",
+      "sha256": "b18ac50ebe964a31f2a3f4b6982137dc49ea13f311af023dac5ff28924a00331",
+      "bytes": 300
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/matrix-red-01/failure.json",
+      "git_blob": "e96f67ec97f00da85f26b26ba4e5eec04c16056c",
+      "sha256": "c359781ecd7ac736ed2c1cf696822900d14e2b3c513ac6880bdc78777df6e213",
+      "bytes": 753
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/matrix-red-01/receipt-note.md",
+      "git_blob": "33afafaeba3b51746d065501203e7249ab5e9a8d",
+      "sha256": "3af7e58a3145d7b5eb3bdf137a3c73afa55ff1b7a15897bd83524525883c5484",
+      "bytes": 390
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-development-01/pg/console.log",
+      "git_blob": "6d2b9e73829157c1e71b8dbcf49d948513570879",
+      "sha256": "59888e6ac016651026254be450a18a33e0a71c18843a368ca674b52fa358eaf0",
+      "bytes": 1919
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-development-01/pg/execution.json",
+      "git_blob": "7f3d2680f96534d38ab15fa94f120e520df5b9dd",
+      "sha256": "af2416d2df93cbb7d516ed1f05ce799ecf7f86416830c804d74450c835dc9fde",
+      "bytes": 607
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-development-01/pg/sdk-info.txt",
+      "git_blob": "2c8c8b06b7ccffea8b628a6c1aa5cf76df262101",
+      "sha256": "36a1af4ae94425d2dc562f372504059d2304a39849b08da929e63a02654a5a59",
+      "bytes": 2258
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-development-01/pg/source-after.json",
+      "git_blob": "89874a5fafba914ea02c314384d8ace6e6f910ac",
+      "sha256": "0fbb14812524dddd366d0ef06a751e07139b1884fbf984f88ce4a8ec0de809bb",
+      "bytes": 66124
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-development-01/pg/source-before.json",
+      "git_blob": "6d85922cb1b4f46fc8bab20b2b3cd0b87daf4730",
+      "sha256": "9d9643c9757a63cb4f5b1b2657b0d7dd7ee27c35818a0bee2d194f1d334a0732",
+      "bytes": 64322
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-development-01/pg/wp02-26-pg.trx",
+      "git_blob": "1c514280bfe9dbdc8cbbbacc282c69dad33b0957",
+      "sha256": "9b62e8186257f03c4ce62ed8efbcdd1a8ab8b6b738d1c120fdba7a7176b04684",
+      "bytes": 12447
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-resource/command-1792024506229563300.json",
+      "git_blob": "96e1c2d342f85099ee04b943cea1727539dd7278",
+      "sha256": "236e0b14c77880d5143c60e6efce5f0effc45d3dd1fc5513dd6d1a925e057c33",
+      "bytes": 201
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-resource/owner-marker.json",
+      "git_blob": "f28376011475598f7243bfc2324204a5697887f7",
+      "sha256": "a1711d681b461689bd1cea2d5386e651720a6cc9332033ba6a28b87e1fd10c3f",
+      "bytes": 118
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-resource/ownership.json",
+      "git_blob": "88950ce75bb13ae576e1f488e8f981980b5f9c8e",
+      "sha256": "0c1549897fdd77800a98cfa77cdce9be5f3747d0359aef1c15c4fbef70ef4e13",
+      "bytes": 1089
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-resource/post-first-tests-identity.json",
+      "git_blob": "88950ce75bb13ae576e1f488e8f981980b5f9c8e",
+      "sha256": "0c1549897fdd77800a98cfa77cdce9be5f3747d0359aef1c15c4fbef70ef4e13",
+      "bytes": 1089
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/pg-resource/provision-history.json",
+      "git_blob": "5512c322f870ca01b600ff6661391a92b43faf17",
+      "sha256": "358a105f05bd318b8cd2ff4b3cb7f774e73011ce08688dc03eddbefe2c63afa3",
+      "bytes": 1420
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/resource-guards-01/console.log",
+      "git_blob": "5fd033959e3b9fca1fb288bac2630560f8e1c192",
+      "sha256": "c68193d69d993c1b0a7eca0249f8b19e7620e25ad2ddfbb9059cdf650fec8e11",
+      "bytes": 859
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/resource-guards-01/execution.json",
+      "git_blob": "c3ba814001f86511e164ec928fd90544c430a5ec",
+      "sha256": "1296085b3be121ba0429c294c4385e1ca9561d294ace65eb7e39693fc9ed4320",
+      "bytes": 305
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/resource-guards-02/console.log",
+      "git_blob": "18dbd3bc6c5f381a33deb685eb57fbea19fb1e4e",
+      "sha256": "e85adaa4b00bf290e764f2b2640f10e50a8780ad73f33d70e144073132071956",
+      "bytes": 1041
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/resource-guards-02/execution.json",
+      "git_blob": "c2d6ae341ff7a212f0f61ef96163b7ab8ab2f897",
+      "sha256": "a33518f86916c96efec92264b5ca4477d9576fd0f3d85c3f482c51de196480eb",
+      "bytes": 250
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/reviews/quality.md",
+      "git_blob": "42ffa61e45ecdce31756b0889d0c5ac499567d39",
+      "sha256": "bbe8d918e6ef495f83734ce808be15e7e3dc0983301032bd208c84d555fc6145",
+      "bytes": 16000
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/reviews/spec.md",
+      "git_blob": "016abbd0c12a18f1191359dde7f7656022954340",
+      "sha256": "b68bb2d75bc3d866cc515e4379d6065c33bc86d55d79c2a89b5a4c44b1f6c059",
+      "bytes": 7637
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/snapshot-verified-final.json",
+      "git_blob": "b5f8f050d716248b53e5a7ef7ac6c5823e0748cf",
+      "sha256": "b81e6115462f82a574e56b4e8a5c835c52be756896465fc97414b1509ad19ae5",
+      "bytes": 70621
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/verified-gates-final.json",
+      "git_blob": "9f263f0fa9de5352731f81d05284129262f2a3cb",
+      "sha256": "82dabd57fbaebd886323fe4c81c1730d7407175545e3a031a46854b754782803",
+      "bytes": 15367
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/workflows-delivery.json",
+      "git_blob": "58a038e47ce1403a8113a8dcac9a7016f7b2877e",
+      "sha256": "860481eb3e242e4e69a780125fd4ff5de26c716f52ba08e7c433e49d117321a0",
+      "bytes": 35656
+    },
+    {
+      "path": "docs/development/evidence/WP02-26/20261015T001945Z/workflows-intake.json",
+      "git_blob": "c79f62c6c9e33b436fbd4d2e46601582842c743a",
+      "sha256": "d52157d9311e5fbdb379c0f08ea9f01e104dae459f6fb20eb13e6aeed32a7a1e",
+      "bytes": 25751
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/SloQualificationV1/ExactNumber.cs",
+      "git_blob": "d7b446e98d66fc0514f1cae904efb5d2ce34b17b",
+      "sha256": "e3127e5bd47588c6d11ccd5692494f775642372e0558302192c943a7d576a424",
+      "bytes": 3275
+    },
+    {
+      "path": "src/CP6.Platform.Contracts/SloQualificationV1/SloQualifier.cs",
+      "git_blob": "4bac0184d28f5026bf0bd95a69c2159def3fe0ce",
+      "sha256": "27dd5e8bc6c08056648c4514d2575aeda1a953af5be839d09cbd96135b26c1be",
+      "bytes": 15895
+    },
+    {
+      "path": "src/CP6.Platform.Testing/EvidenceV1/DeterministicFaultCase.cs",
+      "git_blob": "5dfe851787a5e6f519be6fd75e53d9e7d6cbb332",
+      "sha256": "2564301c8120583ab9301a5a6a8adafa56cbda1ec0e82f8676e0a8ac9efa909c",
+      "bytes": 8296
+    },
+    {
+      "path": "src/CP6.Platform.Testing/EvidenceV1/EvidenceCase.cs",
+      "git_blob": "3dde522dc26d9a8fd5bb4652277e2c75a3a950c6",
+      "sha256": "a295f500a06d3dad3a052f4186dda25101081f08f9ab2cb938e4be99c472356c",
+      "bytes": 19824
+    },
+    {
+      "path": "src/CP6.Platform.Testing/EvidenceV1/ExactValue.cs",
+      "git_blob": "b6be63749abeb24ab57a3bd9869c57a756eb67ef",
+      "sha256": "54589df207dbbffaa7c5329de664443414554117eed54c6d62ee198d0e83a95a",
+      "bytes": 4200
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/CP6.Platform.WP0226.PostgreSqlTests.csproj",
+      "git_blob": "139d7cd9af60ae2112c2ee43deb65d37843d5611",
+      "sha256": "264c4e743a710c00be3f611f52f3413ca609bd0c0d76c7112faf717a2e49510e",
+      "bytes": 540
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/Directory.Packages.props",
+      "git_blob": "e522ca6530d070b13a97ecd9831436051e1a294b",
+      "sha256": "2fb217b26add88c81381e3079b956d6445b82a0a18cf404a44c9777f52ee0085",
+      "bytes": 152
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/NativeEvidenceTests.cs",
+      "git_blob": "7257abdaaa6e585ee9700e6aab6dd8e3928d6769",
+      "sha256": "92147bbc0d6766c0598c07cb1f5e00c64e4f87817c3a6eddd0a581dbaac05519",
+      "bytes": 10579
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/PgFixture.cs",
+      "git_blob": "af2174655b5598852189d26ec25f5e18c6d9c2bf",
+      "sha256": "fafe0029d80dfa3ff5b9a600e5f6c32a26523bf3c69d1cd7ef7c7e1d5464013c",
+      "bytes": 5459
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/README.md",
+      "git_blob": "3da1d45418060fa7c51378837f8cc3eeb07d52c9",
+      "sha256": "0e30021972d31b5bdbdb67c3c6e8f0ee26223bf77df482eba6d7b0e293fd0b74",
+      "bytes": 4213
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/audit_workflows.py",
+      "git_blob": "e6ec259c6d2b65288797112e708d4e10792531d6",
+      "sha256": "2d51f0558dd6b50dec1197fee6534f480d5dd49a9766bfbe6c71701e235803c1",
+      "bytes": 4309
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/collect_resource_evidence.py",
+      "git_blob": "3a6f69b7d3347e2f5e9cdd206413281f9ca6d217",
+      "sha256": "818595dc16c5225fd81d8583660f965b8bfdad58b89340d542c80a086cb879f3",
+      "bytes": 2697
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/map_acceptance.py",
+      "git_blob": "f65e3f987a500aff29313aa9201e0d369279932d",
+      "sha256": "d234cd915114c79bfdbd36722e767004cafbb9db00a53261d56f1d39a438efc7",
+      "bytes": 9262
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/pg_resource.py",
+      "git_blob": "8b6c3df04a20814e03b81046de3a02936c57e8f3",
+      "sha256": "2673eb2b06349f6a1eb2c0f4533013a55ddc6877a041bbb2b5492cc7cf6d6668",
+      "bytes": 20844
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/run_gate.py",
+      "git_blob": "d5c37c2c3fdaf6f45c6f5736b3c96c0c5e699f77",
+      "sha256": "7aa3e5b0c77fdc1527c4ee558b1c64b28f2f71024d7fdb7f4233a61357ac469a",
+      "bytes": 4230
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/test_resource_guards.py",
+      "git_blob": "a53329ce3031fb6adaaea4186c05381452b29c91",
+      "sha256": "dea1096fe4dfbb04cd7e2e56a5cb9694f7ab63dcdb49434fefdfd2d6779b9a5b",
+      "bytes": 2891
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/verify_gates.py",
+      "git_blob": "ef0fcfc708c0971901909bdc9a12a736858db3e4",
+      "sha256": "7a2f8c468a3995aef98d433168ee7f8b42f2a62c11f9dff17ff595ede78fa5c5",
+      "bytes": 3735
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.Tests/CP6.Platform.WP0226.Tests.csproj",
+      "git_blob": "e0394c3fa24887ec1024dccca978c9480bb334b6",
+      "sha256": "c7b16661621c86280220b4ad507f1d8db8781de237efd8b0f94ba0827ef30643",
+      "bytes": 989
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.Tests/CapabilityTests.cs",
+      "git_blob": "9662800f4de307dc0fe8b49b8e7bb78e2445c5d2",
+      "sha256": "1b0b0b71f08b1527fdf51151a4f9669ac89299ae056d7e7ae31b3720ba8c68f2",
+      "bytes": 711
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.Tests/CaptureTests.cs",
+      "git_blob": "bbf5725d5f5a8e1ed24af78ac3facf57e11e0a0c",
+      "sha256": "dd7f61749f7836dd74c3ab3da09679684e4a83611a4c08b13990236026e6fdf0",
+      "bytes": 19603
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.Tests/ExactTests.cs",
+      "git_blob": "73fc4b271fb8ca27edd14a4157d8cb87791cd4c1",
+      "sha256": "e42acd924c2c91d9f128332b6abc691ad08fc3f3631413a9000a01370e6964bd",
+      "bytes": 5220
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.Tests/FaultTests.cs",
+      "git_blob": "0b7ef5ee37e01e2fcc40ab552dce160c12af1f82",
+      "sha256": "ba5752e6bed14bb028bc39c0d13ffb1f40e53f70bec3e6a3bbc22f75e7c89aab",
+      "bytes": 6472
+    },
+    {
+      "path": "tests/CP6.Platform.WP0226.Tests/QualificationTests.cs",
+      "git_blob": "862c044bf261d9b82bf0c0cb6c17a8c9abb79313",
+      "sha256": "ff4fc056f9a49030c7a18919101b7a987f56e9560798fee81560289669563bbe",
+      "bytes": 14670
+    }
+  ],
+  "unchanged_legacy_and_workflow_files": 157,
+  "reused_gates": [
+    {
+      "suite": "unit",
+      "total": 108,
+      "passed": 108,
+      "exit_code": 0,
+      "execution": {
+        "command": [
+          "C:/Users/tt/.dotnet/dotnet.exe",
+          "test",
+          "tests/CP6.Platform.WP0226.Tests/CP6.Platform.WP0226.Tests.csproj",
+          "-c",
+          "Release",
+          "--logger",
+          "trx;LogFileName=wp02-26-unit.trx",
+          "--results-directory",
+          "D:\\CP6.Platform-worktrees\\wp02-26-20261014\\docs\\development\\evidence\\WP02-26\\20261015T001945Z\\final-01\\unit"
+        ],
+        "cwd": "D:\\CP6.Platform-worktrees\\wp02-26-20261014",
+        "started_at": "2026-10-15T01:15:08.540086+00:00",
+        "ended_at": "2026-10-15T01:16:02.913507+00:00",
+        "exit_code": 0,
+        "settings_supplied": false
+      },
+      "trx": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/wp02-26-unit.trx",
+      "trx_sha256": "f2867b9ffd92c30fef4741b56bcf1e60b51feec112b7fb1786011888826c24b8",
+      "relevant_source_files": 170,
+      "resolved_dependencies": [
+        {
+          "path": "src/CP6.Platform.Abstractions/obj/project.assets.json",
+          "sha256": "3293615545b9a392c36b584371e9f700b68818ee25ef9a71763aa83aec244861"
+        },
+        {
+          "path": "src/CP6.Platform.AspNetCore/obj/project.assets.json",
+          "sha256": "44a323e37742216cdb6ce818f01e5a4ee64ea16d7110607903fc60b37d64bd90"
+        },
+        {
+          "path": "src/CP6.Platform.Contracts/obj/project.assets.json",
+          "sha256": "2449e36594e626033859e356cf6e38472258a3e302a5c9bfe5c18b662791e66c"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/obj/project.assets.json",
+          "sha256": "c5ae20019be0077c351c89cb60f886ac45d0c05f17de9fc50c3c5a8d83cbf851"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/obj/project.assets.json",
+          "sha256": "901fbff9dd9fb8b1019680f00ae5c2e5927300c7aa0f010d737d64c9e3246891"
+        },
+        {
+          "path": "src/CP6.Platform.Testing/obj/project.assets.json",
+          "sha256": "6ea46a1b542b2c6a98ec728d1f3b042871d47796bbebfcb9666260febc69a74c"
+        },
+        {
+          "path": "tests/CP6.Platform.WP0226.Tests/obj/project.assets.json",
+          "sha256": "1ea926b98106e917c68c4ac35b0ae0d674eb9635a99314d10aabd91975577874"
+        }
+      ],
+      "assembly_hashes": {
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.WP0226.Tests.dll": "815452eeff0d92c29f8ce236a64a8d41201b74be2f5001b69f793e772b02c8d1"
+      },
+      "verified_current_bytes": true,
+      "reused_not_rerun": true
+    },
+    {
+      "suite": "pg",
+      "total": 6,
+      "passed": 6,
+      "exit_code": 0,
+      "execution": {
+        "command": [
+          "C:/Users/tt/.dotnet/dotnet.exe",
+          "test",
+          "tests/CP6.Platform.WP0226.PostgreSqlTests/CP6.Platform.WP0226.PostgreSqlTests.csproj",
+          "-c",
+          "Release",
+          "--logger",
+          "trx;LogFileName=wp02-26-pg.trx",
+          "--results-directory",
+          "D:\\CP6.Platform-worktrees\\wp02-26-20261014\\docs\\development\\evidence\\WP02-26\\20261015T001945Z\\final-01\\pg"
+        ],
+        "cwd": "D:\\CP6.Platform-worktrees\\wp02-26-20261014",
+        "started_at": "2026-10-15T01:16:57.564131+00:00",
+        "ended_at": "2026-10-15T01:18:13.703181+00:00",
+        "exit_code": 0,
+        "settings_supplied": true
+      },
+      "trx": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/wp02-26-pg.trx",
+      "trx_sha256": "06531f888807e5f7f23e4cdba57872879472a55f2accb8d269adc71e7fea2ae3",
+      "relevant_source_files": 169,
+      "resolved_dependencies": [
+        {
+          "path": "src/CP6.Platform.Abstractions/obj/project.assets.json",
+          "sha256": "3293615545b9a392c36b584371e9f700b68818ee25ef9a71763aa83aec244861"
+        },
+        {
+          "path": "src/CP6.Platform.AspNetCore/obj/project.assets.json",
+          "sha256": "44a323e37742216cdb6ce818f01e5a4ee64ea16d7110607903fc60b37d64bd90"
+        },
+        {
+          "path": "src/CP6.Platform.Contracts/obj/project.assets.json",
+          "sha256": "2449e36594e626033859e356cf6e38472258a3e302a5c9bfe5c18b662791e66c"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/obj/project.assets.json",
+          "sha256": "c5ae20019be0077c351c89cb60f886ac45d0c05f17de9fc50c3c5a8d83cbf851"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/obj/project.assets.json",
+          "sha256": "901fbff9dd9fb8b1019680f00ae5c2e5927300c7aa0f010d737d64c9e3246891"
+        },
+        {
+          "path": "src/CP6.Platform.Testing/obj/project.assets.json",
+          "sha256": "6ea46a1b542b2c6a98ec728d1f3b042871d47796bbebfcb9666260febc69a74c"
+        },
+        {
+          "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/obj/project.assets.json",
+          "sha256": "4142a8a1e11e73bb96dca676c2ad429ce1116db11123f766e7472b7a4a267bff"
+        }
+      ],
+      "assembly_hashes": {
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.WP0226.PostgreSqlTests.dll": "341a76a512f9e370c46fca1e1d682ca065522d213ee6ec23d2995e99b1761e12"
+      },
+      "verified_current_bytes": true,
+      "reused_not_rerun": true
+    },
+    {
+      "suite": "architecture",
+      "total": 98,
+      "passed": 98,
+      "exit_code": 0,
+      "execution": {
+        "command": [
+          "C:/Users/tt/.dotnet/dotnet.exe",
+          "test",
+          "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+          "-c",
+          "Release",
+          "--logger",
+          "trx;LogFileName=wp02-26-architecture.trx",
+          "--results-directory",
+          "D:\\CP6.Platform-worktrees\\wp02-26-20261014\\docs\\development\\evidence\\WP02-26\\20261015T001945Z\\final-01\\architecture"
+        ],
+        "cwd": "D:\\CP6.Platform-worktrees\\wp02-26-20261014",
+        "started_at": "2026-10-15T01:18:37.647095+00:00",
+        "ended_at": "2026-10-15T01:19:02.901992+00:00",
+        "exit_code": 0,
+        "settings_supplied": false
+      },
+      "trx": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/wp02-26-architecture.trx",
+      "trx_sha256": "206f10a2571370db43f052df5f399d1b957158f554579b0b7f468f3e34188fe8",
+      "relevant_source_files": 177,
+      "resolved_dependencies": [
+        {
+          "path": "src/CP6.Platform.Abstractions/obj/project.assets.json",
+          "sha256": "3293615545b9a392c36b584371e9f700b68818ee25ef9a71763aa83aec244861"
+        },
+        {
+          "path": "src/CP6.Platform.AspNetCore/obj/project.assets.json",
+          "sha256": "44a323e37742216cdb6ce818f01e5a4ee64ea16d7110607903fc60b37d64bd90"
+        },
+        {
+          "path": "src/CP6.Platform.Contracts/obj/project.assets.json",
+          "sha256": "2449e36594e626033859e356cf6e38472258a3e302a5c9bfe5c18b662791e66c"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/obj/project.assets.json",
+          "sha256": "c5ae20019be0077c351c89cb60f886ac45d0c05f17de9fc50c3c5a8d83cbf851"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/obj/project.assets.json",
+          "sha256": "901fbff9dd9fb8b1019680f00ae5c2e5927300c7aa0f010d737d64c9e3246891"
+        },
+        {
+          "path": "src/CP6.Platform.Testing/obj/project.assets.json",
+          "sha256": "6ea46a1b542b2c6a98ec728d1f3b042871d47796bbebfcb9666260febc69a74c"
+        },
+        {
+          "path": "tests/CP6.Platform.ArchitectureTests/obj/project.assets.json",
+          "sha256": "d282c94969c2276ba931a4b9af03e0f1ba031ec746d97a4181c53c569496c808"
+        }
+      ],
+      "assembly_hashes": {
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/CP6.Platform.ArchitectureTests.dll": "14390e192c8b64b0ccd86d4a2ebdb7fcb0986addf87116b41e1d971b6263a5f1"
+      },
+      "verified_current_bytes": true,
+      "reused_not_rerun": true
+    }
+  ],
+  "acceptance": {
+    "original_count": 56,
+    "original_fields_preserved": true,
+    "business_NOT_RUN": 56,
+    "local_pass": 26,
+    "verified_proof_links": 107,
+    "execution_rows": 18,
+    "local_scenarios": 114
+  },
+  "resource_collection": {
+    "files": 13,
+    "owner": "4ba89ba3d399683bd75209e61c31f1ab",
+    "system_identifier": "7696685906165408468",
+    "database_oid": 16385,
+    "evidence_hashes_verified": true,
+    "clean_shutdown": true,
+    "note": "Recorded state only; reviewer did not start, connect to, or change resources."
+  },
+  "pinned_inputs_verified": 7,
+  "index_manifest_verified": 160,
+  "scope": "Read-only candidate/evidence/source/dependency/assembly verification; no test/build/DB/Actions rerun.",
+  "audit_history": [
+    {
+      "result": "SCRIPT_ERROR",
+      "error": "KeyError: evidence",
+      "reason": "Initial inline audit assumed all execution matrix rows are TRX proof arrays; R15 is an artifact proof. No product failure."
+    },
+    {
+      "result": "PASS",
+      "correction": "Validate R15 artifact hash and remaining rows exact TRX names and hashes."
+    }
+  ]
+}

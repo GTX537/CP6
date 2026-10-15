@@ -2,7 +2,7 @@
 
 台账日期：2026-10-14。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 22 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 24 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -41,7 +41,7 @@
 | [WP02-09 CRM首个Owner真实共同事务与授权门](../../docs/development/task-plans/WP02.md#wp02-09) | CRM | 待安排 | S01-08, WP02-06, WP02-07 | CODE / M | 未领取 |
 | [WP02-10 Main Owner共同事务、原结果与授权参与](../../docs/development/task-plans/WP02.md#wp02-10) | Main | 待安排 | WP02-02, WP02-03, WP02-07 | CODE / M | 未领取 |
 | [WP02-11 Platform HTTP错误、安全重试和截止时间](../../docs/development/task-plans/WP02.md#wp02-11) | Platform | 已交付 | WP02-01 | CODE / M | D / WP02-11（沿用原S01-07对话） |
-| [WP02-12 消息producer资格、Kafka/Dapr传输与死信原体](../../docs/development/task-plans/WP02.md#wp02-12) | Platform | 可开工 | S01-09, WP02-01, WP02-08 | CODE / M | C / WP02-12 |
+| [WP02-12 消息producer资格、Kafka/Dapr传输与死信原体](../../docs/development/task-plans/WP02.md#wp02-12) | Platform | 已交付 | S01-09, WP02-01, WP02-08 | CODE / M | C / WP02-12 |
 | [WP02-13 审计写入、授权查询和保留清理](../../docs/development/task-plans/WP02.md#wp02-13) | Main | 待安排 | WP02-10 | CODE / M | 未领取 |
 | [WP02-14 文件不可变版本、扫描和Owner授权绑定](../../docs/development/task-plans/WP02.md#wp02-14) | Main | 待安排 | WP02-10 | CODE / M | 未领取 |
 | [WP02-15 隐私subject目录、导出与擦除编排](../../docs/development/task-plans/WP02.md#wp02-15) | Main | 待安排 | WP02-04, WP02-13, WP02-14 | CODE / M | 未领取 |
@@ -55,7 +55,7 @@
 | [WP02-23 INT-OPS Main原结果目录与受控重放](../../docs/development/task-plans/WP02.md#wp02-23) | Main | 待安排 | WP02-10, WP02-22 | CODE / M | 未领取 |
 | [WP02-24 INT-OPS CRM身份与商业原结果消费者接入](../../docs/development/task-plans/WP02.md#wp02-24) | CRM | 待安排 | WP02-06, WP02-23, WP03-07, WP03-24, WP03-25 | CODE / M | 未领取 |
 | [WP02-25 运行身份、健康与遥测脱敏](../../docs/development/task-plans/WP02.md#wp02-25) | Platform | 已交付 | WP02-01 | CODE / M | D / WP02-25（沿用原WP02-11对话） |
-| [WP02-26 SLO封存、故障注入与精确断言辅助](../../docs/development/task-plans/WP02.md#wp02-26) | Platform | 可开工 | S01-03, S01-04, WP02-25 | CODE / M | D / WP02-26 |
+| [WP02-26 SLO封存、故障注入与精确断言辅助](../../docs/development/task-plans/WP02.md#wp02-26) | Platform | 已交付 | S01-03, S01-04, WP02-25 | CODE / M | D / WP02-26 |
 | [WP02-27 Platform包能力矩阵与不可变信任验证](../../docs/development/task-plans/WP02.md#wp02-27) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | B / WP02-27（沿用原S01-10对话） |
 | [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 待安排 | WP02-25, WP02-27 | CODE / M | 未领取 |
 | [WP02-29 CRM宿主平台合同与观测包采用](../../docs/development/task-plans/WP02.md#wp02-29) | CRM | 待安排 | WP02-09, WP02-11, WP02-12, WP02-25, WP02-27 | CODE / M | 未领取 |

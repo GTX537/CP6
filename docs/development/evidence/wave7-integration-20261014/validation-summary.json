@@ -1,0 +1,93 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-15T03:02:23.922495+00:00",
+  "scope": "Old execution results retain exact inputs and time; overlapping tests are not summed. Fresh coordinator static/hash checks and combined-main architecture are distinguished.",
+  "tasks": {
+    "WP01-01": {
+      "display": "修复 Issue211 后准备成果合并；PLANNED / NOT_CHECKED",
+      "command": "Final Issue211 targeted scope regression 8/8 and affected static checks1000 PASS; original54 synthetic gate tests and read-only manager reused at exact inputs; original12251 static checks historical snapshot only, not proof of corrected mapping",
+      "environment": "Python3.13 private design tooling; no product build or DB",
+      "scope": "DP01–08 technical candidates, source audit and dependency obligations reviewed. Six original ITER identities corrected: required raw/authority binding, two explicit global PKs and four original grouped scopes, independent of business keys. Initial all-global correction challenged and retained as superseded. Original candidate/manifests/failures retained. Gate production_enabled/actual_adoption/actual_completion remain false.",
+      "handoff": "DP01–08技术候选及闭包已归档；协调审查发现原始Id约束缺口，Issue211经独立分支修复、定向RED/GREEN与复查后合并。两个明确全局主键与四个原组合身份分别处理；不把组合身份擅改为全局裸Id唯一。当前8项回归及1000项静态检查通过；原54测试按准确输入复用，12251静态检查仅描述原历史快照。正式采纳、生产门接线、真实业务配置与提供者采用仍未完成，主任务PLANNED/NOT_CHECKED。",
+      "result": "PASS",
+      "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+      "repository": "GTX537/CP6",
+      "remote_main_sha": "d5084957a7b58d4c99765eb48c29e88c2e158585",
+      "pr_url": "https://github.com/GTX537/CP6/pull/212",
+      "review": "WP01-01/review.md"
+    },
+    "WP02-02": {
+      "display": "完整依赖诊断准备成果合并；BLOCKED / NOT_CHECKED",
+      "command": "Reuse 11 snapshot + 6 policy + 12 graph tests; 3 restore/build roots and 31 private-host assertions. Fresh read-only runtime policy and 106 archive-byte checks",
+      "environment": "Original SDK8.0.424/runtime8.0.30 plus Python3.13; isolated Kestrel synthetic authority; no Main host or DB",
+      "scope": "138 candidate files/106 original archives checked; exact three-root build and runtime source identities verified. Graph15 assets/15 deps/17 locks/189packages remains compatibility UNKNOWN; runtime MATCHED_SPECIFIED_PATHS only. MSB3277 old failure preserved; formal package trust BLOCKED, Main and17PGT NOT_RUN.",
+      "handoff": "三个固定源码入口restore/build和31项私有宿主断言通过，29工具测试按原输入复用；106份归档、实际DLL身份和原失败已核。完整依赖问题获得限定诊断证据，未批准生产ProjectReference例外、正式信任/发包或Main/PGT采用；主任务BLOCKED/NOT_CHECKED。",
+      "result": "PASS",
+      "source_sha": "ebd448ea3683cd89c85060529585c97890ad15de",
+      "repository": "GTX537/CP6",
+      "remote_main_sha": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+      "pr_url": "https://github.com/GTX537/CP6/pull/210",
+      "review": "WP02-02/review.md"
+    },
+    "WP02-12": {
+      "display": "TransportV1 限定库任务 DONE；40 原业务 AC NOT_RUN",
+      "command": "Reuse library44 and overlapping focused27, legacy101, architecture98; actual native Kafka/Dapr/PG22 plus targeted7",
+      "environment": "Original SDK8, owned Kafka4.3.1/Dapr1.18.2/PG18 fixture; all owned resources stopped",
+      "scope": "275 inputs/131 artifacts/13TRX/116 exported native streams and310 private logs checked. Corrected distinct-offset quarantine has actual targeted evidence. 44+27 overlap and22+7 overlap are not additive. Real fixture receive observation is not business/Inbox atomicity; C02 adoption disabled.",
+      "handoff": "TransportV1精确路由、资格、原字节与持久隔离已正常合并。库44/定向27、旧101、架构98及原生22/定向7保留来源与重叠，不相加成总用例。当前自有容器/端口已停止，40原业务AC仍NOT_RUN，C02/Main/CRM/实际Owner及生产TLS/SLO不据此开放。",
+      "result": "PASS",
+      "source_sha": "b35d0646767fc7e876e92158c582573500e0a637",
+      "repository": "GTX537/CP6.Platform",
+      "remote_main_sha": "7f49ab31d8c998d096d71f3311d22da2b4f8e478",
+      "pr_url": "https://github.com/GTX537/CP6.Platform/pull/73",
+      "review": "WP02-12/review.md"
+    },
+    "WP02-26": {
+      "display": "SLO/精确断言/故障工具限定库任务 DONE；56 原业务 AC NOT_RUN",
+      "command": "Reuse final local unit108, nativePG6, architecture98 with exact source/dependency/assembly/TRX hashes",
+      "environment": "Original SDK8 plus dedicated PG18.6/55429; owner/system/OID pinned and smart-stopped",
+      "scope": "SloQualificationV1/EvidenceV1 bounded source and immutable evidence reviewed; legacy evaluator and dependencies unchanged. 56 original AC preserve NOT_RUN,26 only attach scoped local portions;107 links and13PG evidence copies checked. Native40001/42501/crash evidence separate from injected COMMIT-ACK suppression.",
+      "handoff": "SloQualificationV1与EvidenceV1限定库已正常合并。108本地、6原生PG、98架构按准确输入复用；精确算术、独立总体/完整性、限额捕获和DAG边界已审查。原生受控崩溃与应用ACK注入分列，PG已smart-stop；56原业务AC继续NOT_RUN，生产阈值/实际Owner/宿主采用未完成。",
+      "result": "PASS",
+      "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "repository": "GTX537/CP6.Platform",
+      "remote_main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "pr_url": "https://github.com/GTX537/CP6.Platform/pull/72",
+      "review": "WP02-26/review.md"
+    }
+  },
+  "common_main_smoke": {
+    "source_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+    "counts": {
+      "total": "98",
+      "executed": "98",
+      "passed": "98",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "scope": "New local architecture-only check of actual combined remote main after two reviewed candidate merges; all candidate file blobs match. Required to check the compiled dependency boundaries after the independently validated transport and SLO/testing additions meet on common main; no architecture assertion changes. No product suites, PG, formal package publishing, Actions or deployment. Original task-local tests retain their own source/binary identities; no combined business run claimed."
+  },
+  "unchanged": {
+    "business": "0/125",
+    "runtime": "247 NOT_RUN",
+    "historical": "41 REFERENCE_ONLY",
+    "original_inventory": "123/125; ITER/REL unavailable",
+    "wp05_basis": "PROPOSED"
+  },
+  "actions": {
+    "started": 0,
+    "cancelled": 0,
+    "trigger_changes": 0
+  }
+}

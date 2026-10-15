@@ -1,0 +1,221 @@
+{
+  "schema": "CP6-WAVE7-FOCUSED-FIX-REVIEW/1",
+  "task": "WP01-01",
+  "issue": "https://github.com/GTX537/CP6/issues/211",
+  "result": "PASS_FOR_CORRECTED_PREPARATION_ONLY",
+  "reviewed_at_utc": "2026-10-15T02:57:59.969154+00:00",
+  "review_scope": "Issue211 correction and its direct effects only; original whole-task review not restarted. Source/read-only metadata review; no tests, DB, build, commits or remote mutations by reviewer.",
+  "worktree": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014",
+  "reviewed_snapshot": {
+    "state": "STAGED_UNCOMMITTED",
+    "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+    "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+    "original_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+    "staged_files": 72,
+    "all_staged_blobs_equal_worktree_bytes": true,
+    "manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+    "manifest_artifacts_verified": 141,
+    "source_hashes": {
+      "eng/wp01-01/decision-closure/mapping_constraints.py": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+      "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+      "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+      "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+      "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67"
+    }
+  },
+  "blockers": [],
+  "optional_findings": [],
+  "closed_findings": [
+    {
+      "id": "WP01-01-REVIEW-01",
+      "severity": "P2",
+      "status": "CLOSED_IN_REVIEWED_SNAPSHOT",
+      "title": "Six original ITER row identities were absent or nullable without authoritative binding",
+      "resolution": "All six retain non-null original bytea Id and a required original_id_key, exact Owner/domain/schema and source scope binding, one-row-per-complete-identity UQ, and unchanged independent business keys."
+    },
+    {
+      "id": "WP01-01-FIX-REVIEW-01",
+      "severity": "P2",
+      "status": "CLOSED_IN_REVIEWED_SNAPSHOT",
+      "title": "Intermediate correction imposed unsupported bare-Id global scope on four grouped identities",
+      "original_location": {
+        "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+        "line": 174
+      },
+      "rejected_snapshot": "issue-211-scope-finding.json",
+      "resolution": "Project/Iteration alone retain explicit global bare-Id PK scope. IterationInput/ReviewRound/ExternalRequestReceipt retain Id+TenantId+IterationId; CandidateObjectRef retains Id+TenantId. Four bare-Id global scopes stay explicitly unproven. Equal raw Id under a distinct original source tuple is allowed. Source, metadata and first GREEN retained under superseded-all-global/; scope RED8/18failures and GREEN8/8 are hash-bound."
+    }
+  ],
+  "source_identity_profiles": [
+    {
+      "entity": "Project",
+      "source_entity": "Project",
+      "source_line": 1580,
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "Iteration",
+      "source_entity": "Iteration",
+      "source_line": 1602,
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "IterationInput",
+      "source_entity": "IterationInput",
+      "source_line": 1632,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "CandidateRef",
+      "source_entity": "CandidateObjectRef",
+      "source_line": 1664,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "ReviewRound",
+      "source_entity": "ReviewRound",
+      "source_line": 1692,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "ExternalRequestReceipt",
+      "source_entity": "ExternalRequestReceipt",
+      "source_line": 1738,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    }
+  ],
+  "proof_locations": [
+    {
+      "path": "eng/wp01-01/decision-closure/build_candidate.py",
+      "line": 113,
+      "proof": "Restores missing Id fields for IterationInput, CandidateRef, ExternalRequestReceipt."
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "line": 176,
+      "proof": "Six exact original source-line/scope profiles distinguish two global PKs from four grouped identities."
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "line": 184,
+      "proof": "Full domain/schema/scope/raw byte equality with nonunique digest bucket, atomic Owner lock/compare/insert and safe incompatible-tenant conflict."
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "line": 197,
+      "proof": "Trusted tenant scope and parent original Iteration.id via same-tenant FK; no surrogate UUID as original parent identity."
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "line": 204,
+      "proof": "Required raw Id/key binding plus global unique registered key independently of business keys."
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "line": 247,
+      "proof": "Every writer/import/recovery must compare raw bytes, registered exact source scope and immutable tenant/parent before commit."
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+      "line": 83,
+      "proof": "Tests distinguish explicit global identity from scoped source tuples; declared synthetic semantics only."
+    }
+  ],
+  "original_identity_source": {
+    "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+    "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+    "lines": [
+      1580,
+      1602,
+      1632,
+      1664,
+      1692,
+      1738
+    ]
+  },
+  "evidence": {
+    "current_targeted_red": "scope-red-20261015T025037398238Z.run.json:8tests/18assertionfailures",
+    "current_targeted_green": "scope-green-20261015T025159734163Z.run.json:8/8",
+    "current_static": "scope-static-20261015T025200254609Z.run.json:1000checksPASS",
+    "first_red_green": "6tests/37failures then6/6; preserved and superseded for all-global scope",
+    "fresh_reviewer_test_executions": 0,
+    "retained_snapshots": {
+      "original": 16,
+      "all_global_intermediate": 14
+    },
+    "original_gate54": "Exact source/log hashes reused; original matrix and roadmap target IDs unchanged; not rerun",
+    "original_manager": "Exact original read-input/log hashes reused; not rerun",
+    "original_static12251": "Historical original mapping only; not reused as proof of corrected mapping",
+    "checked_artifacts": 141,
+    "protected_inputs": 90,
+    "unchanged_mapping_entities": 24,
+    "diff_check": "PASS",
+    "supporting_checks": "checks-WP01-01-fixes-final.json"
+  },
+  "state_and_limits": {
+    "scope": "PREPARATION_ONLY",
+    "task_state": "PLANNED",
+    "entry_gate": "NOT_CHECKED",
+    "production_enabled": false,
+    "actual_adoption": false,
+    "actual_completion": false,
+    "runtime": "NOT_RUN",
+    "interpretation": "The candidate declares required Owner interning, byte comparison, tenant/parent binding and lock atomicity. Static tests interpret declarations; they neither implement nor prove PostgreSQL runtime enforcement. No arbitrary unbounded-byte unique btree, raw-to-UUID conversion, or hash-only identity is introduced. Four grouped bare-Id global domains remain UNPROVEN and are not imposed.",
+    "not_verified": [
+      "actual database uniqueness/locking/concurrency/rollback",
+      "real provider/business acceptance",
+      "authority authenticity",
+      "remote ancestry",
+      "production deployment",
+      "formal adoption/completion"
+    ],
+    "integration_requirement": "Coordinator must commit and perform normal remote-main verification before Issue closure or task integration completion."
+  }
+}

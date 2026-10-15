@@ -1,0 +1,567 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6",
+  "source_sha": "ebd448ea3683cd89c85060529585c97890ad15de",
+  "remote_main_sha": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+  "pr_url": "https://github.com/GTX537/CP6/pull/210",
+  "merged_at": "2026-10-15T02:36:51Z",
+  "files_match": [
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/.gitattributes",
+      "blob": "64fa7dd374cd5e55511065b4c7de545923152728"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/.gitignore",
+      "blob": "1a019397a13ee659cc733579b9816fbc3b61dc4b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/DIAGNOSIS.md",
+      "blob": "a10a69e574ef6b74645539ecc64c357518f651df"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/PLAN.md",
+      "blob": "d25f9eea46ad8483ad760a3b8de6b68df8db95d2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/README.md",
+      "blob": "54a3ea433e6270f16024ded7c729000e45cf4978"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/REVIEW.md",
+      "blob": "af91fdffbd4886a372703b12532764ffe578d378"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/SOURCE-ADOPTION-CANDIDATE.md",
+      "blob": "1ec87c58c1dc968e28f979da8c43c35ca7e5e99f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/archive-delegated.json",
+      "blob": "b61c2bb6653843aa04435a56b9783138b0d19f71"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/archive-final-run.json",
+      "blob": "bdf39708157981ceaddc6f4c4f07f58159813f8c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/archive-initial.json",
+      "blob": "ba988cb1bd0b6973bd62212aadb885f822797ec2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/final-static-checks.json",
+      "blob": "ae4ec2caf4191be5f38ee0593f539da1e7f6fe55"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/input-audit-after.json",
+      "blob": "065597430c2723f44aa1201537d790f31e5ceaa7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/input-audit.json",
+      "blob": "ea6ec352271e18710dc2ca47f4432b8d9ea92e0a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/build-identities.json",
+      "blob": "f65d7feac4a14e6bd1060b61b66bb8d835a313d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/dependency-graph.json",
+      "blob": "2ee92cfbd728bb5d21d7a7e8a019b5b16988fcbc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/diagnostic-source-binding.json",
+      "blob": "13167fe270389a5bc215994ca83c07d1126dae13"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/global.json",
+      "blob": "1071720653724d91e3597634bd75866ac2e8e649"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/input-manifest.json",
+      "blob": "07cc78af0db8793f7905c9265fcc8fa19e6462fa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-build.command.json",
+      "blob": "77d6179223c40573990dcb3f7fed63cd3beb7535"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-build.log",
+      "blob": "9b8648858407f2fc6a6eacde88126022030f2335"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-restore.command.json",
+      "blob": "7e94159fd916f3a76463a24930f0407a4a7c7b9a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-restore.log",
+      "blob": "aae7fb508cc4328b329e8c2f262f1cff7ac4c22d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-build.command.json",
+      "blob": "5d896b7968cba5c99b40586fb50432231d888515"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-build.log",
+      "blob": "af98e435838c16cd4e4a301f960d3073759fda1b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-restore.command.json",
+      "blob": "c2f129b630b350efcc40abab25dcaac6ff6159fd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-restore.log",
+      "blob": "6a5963939960d59da92e11a8a812b74b2c4e6c18"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-build.command.json",
+      "blob": "aca8fd7c0fbfaf3383bb99aed21b74c1880b4e10"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-build.log",
+      "blob": "bb914050b24722181f9fccf1671738297e985d70"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-restore.command.json",
+      "blob": "4bfb596e1ed413b4e8d5d9cbca0d67eed105953d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-restore.log",
+      "blob": "bb33b4a30d763443d01cc3463b5dc7ff7538f750"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-run.command.json",
+      "blob": "f5b8e566bc6d6606cdfe645730d94494fad9489b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-run.log",
+      "blob": "4ac40f9870ee02ed5412f7645ee6dc6f106df131"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/runtime-list.command.json",
+      "blob": "1636413f7bfe19836206bc5895573caeb000cce9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/runtime-list.log",
+      "blob": "7b04b420a7ecefbfefccb40ada6fbd35bfb7dc8a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/sdk-version.command.json",
+      "blob": "fe07c9e62d48636157c5ef58f67d66f959a0201b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/sdk-version.log",
+      "blob": "99e91bfe4140c9432efde891194b8abac2298b34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/negative-report-mutations.json",
+      "blob": "d046932ec4eb9c699ded352fa71ce6e6ac3c46b1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/pre-runtime-identities.json",
+      "blob": "04c27b032638877f942710f6571194ac21f185ec"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/runtime-policy.json",
+      "blob": "06eab875cb30547f7113f8df8ed32840dffc4cd7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/runtime/runtime.json",
+      "blob": "495caf539a48ab4b9d3ca63cd8896e0caab64c5a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/snapshot-manifest.json",
+      "blob": "c60141c0a945439309ce236f067cc9d41fd5f61d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/state.json",
+      "blob": "0e092647afc5b9647408856d9d341beca72f4381"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/1b0e3e6d489d4ce19f58c15f2e35e01c/windows-path-diagnosis.json",
+      "blob": "3f1d67c5c4b7c697166b8061365ccf9e7b42fecf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-independent-roots.log",
+      "blob": "151426dac98d4d49e4dbab2780d435b6a7fe6a85"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-longpath.log",
+      "blob": "9b089e956a081152ff35cf7901e61a95d52654fa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-msbuild-normal-cache.log",
+      "blob": "eea8ed506e719cbb78c1d84e912c66e3fbdb7628"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN.log",
+      "blob": "5bad01c722f63cbe758ecc208419b88ec4a234b6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-extra-source.log",
+      "blob": "6f8326a0670781db4030e0625a460bf961da1a4f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-independent-roots-corrected.log",
+      "blob": "c81543b8d5602beeed6b3a34fb3cb91d991454b5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-independent-roots.log",
+      "blob": "f7287030f77d2136463116ede4bf4f5b19becd84"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-longpath.log",
+      "blob": "3978dcbe240fa1a3752e0619343419bebedaf992"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-msbuild-normal-cache.log",
+      "blob": "aabb3b62659aa2c37bbf89a4485cd2e7070b3c6e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED.log",
+      "blob": "b47b8aa701f80226e9fbaf0998fb90848470360c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/2d6bb5ffd97842cb8237a50323dff840/post-failure-listener-check.json",
+      "blob": "550e4e5273e7936c73753cfc069fdf27dfe0ad92"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/3bb763f8ef104677839ca49dd8c13338/execution.json",
+      "blob": "798e90ffecb67a88bde402148faf7c64fbaa2aa8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/3bb763f8ef104677839ca49dd8c13338/policy-boundary-red.log",
+      "blob": "0f63c21ecd0bf9304cb918701bcb4ede41f4163a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/48e1c85a9c314596a38d5da6732652de/selected-asset-path-analysis.json",
+      "blob": "b4098a7d1014db85b1fca0323a88fc4090d6d28b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/4b9a455498bf44108ccb1e79a8338156/existing-output-rejected.json",
+      "blob": "bb07fb40d84dbe5fa24adc757ed99bdf8b184b83"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/4b9a455498bf44108ccb1e79a8338156/existing-output-rejected.log",
+      "blob": "5b0a7b22c2472c66e8537aff314f842db911de32"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/5fb28e164e284c8084e7aa1d14cb42d3/execution.json",
+      "blob": "e6a91aef85de647549ca4c990933c548100a8a0d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/5fb28e164e284c8084e7aa1d14cb42d3/runtime-policy-red.log",
+      "blob": "9f7a6f5a92db08f1f4b11df59d9d0a16e9c47ffb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/build-failure-1792024866664168000.json",
+      "blob": "9abd90218fc58351ad2cf3fc45f4874a10a87a6d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/build-identities.json",
+      "blob": "b00b070081cf723009ee62d7fdaf17a760f0ff4b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/global.json",
+      "blob": "1071720653724d91e3597634bd75866ac2e8e649"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/input-manifest.json",
+      "blob": "07cc78af0db8793f7905c9265fcc8fa19e6462fa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-build.command.json",
+      "blob": "0e1bff754752eb151ba0d61af1548a83295b3609"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-build.log",
+      "blob": "91f098c919859ecb3c4aa942004ddb3ec96432e5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-restore.command.json",
+      "blob": "01ed08e0c6d97c276cd4f82c3621cd5215b5f90c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-restore.log",
+      "blob": "9b63583ec758a127e9519f4b430163d62160cf4b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/runtime-list.command.json",
+      "blob": "40595774de3d8abc37df2ccee2798806b5f7f6ac"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/runtime-list.log",
+      "blob": "7b04b420a7ecefbfefccb40ada6fbd35bfb7dc8a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/sdk-version.command.json",
+      "blob": "450a2f15477fb938cb495c03a1d8fb3f72314ad6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/sdk-version.log",
+      "blob": "99e91bfe4140c9432efde891194b8abac2298b34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/snapshot-manifest.json",
+      "blob": "bc0ecc714ecae76c564d402a69f4a4bae4daf967"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/state.json",
+      "blob": "df09741597e24fc2c499a4d2deaa141a4ebfd2fb"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-green.json",
+      "blob": "e014f34320e523098b4d11e6fefdac73de9ee64b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-green.log",
+      "blob": "a7cebc8f3e02aafae6384c52ad56eebf060ee7e1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-red.json",
+      "blob": "e728e72721b9fe9d6898b904ff866559c83e57a5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-red.log",
+      "blob": "7a2f146768dc75c93a53dd6dd4f8bde0097ad8da"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/validation-provenance.md",
+      "blob": "bc353fcfd0ecf68554471d588ab0c5fde34e94ff"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/build-failure-1792026051331082200.json",
+      "blob": "63b2f20177e663ae3490ad80d15698e94a978d9a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/build-identities.json",
+      "blob": "9e21291b058a0b2c568aafbb9c554a23a1b4a28d"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/dependency-graph.json",
+      "blob": "691cfcb7049fed590af939c7b3b1097badaa86d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/global.json",
+      "blob": "1071720653724d91e3597634bd75866ac2e8e649"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/graph-v2.json",
+      "blob": "288f74ad02c03fac25c5d14a7d7b03ae24ca2d36"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/input-manifest.json",
+      "blob": "07cc78af0db8793f7905c9265fcc8fa19e6462fa"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/database-probe-build-only-restore.command.json",
+      "blob": "9beb9ca7ee4172d089d5f58298e0ed37725839d8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/database-probe-build-only-restore.log",
+      "blob": "ce2509ea7fa1633e9942bed230376c55e76492d5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/main-webapi-restore.command.json",
+      "blob": "397ec75c62053ec3daa7acb00d9f0a1c30b43939"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/main-webapi-restore.log",
+      "blob": "6e537b1a96c094ab1cd66be98dac8564dd16853e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-build.command.json",
+      "blob": "e92d8bf31ae52976969a03a835786a8f4db8cf1b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-build.log",
+      "blob": "87c395bbb5fff4af05b0869161ab652a5aea4b04"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-restore.command.json",
+      "blob": "7bfe51e58005886a0d61fd24e330afd683b96b49"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-restore.log",
+      "blob": "af31fa01f4765913411dbb665d55c996eed318f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-run.command.json",
+      "blob": "20d0bf70919766f67d0c71815f723930f77dfd06"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-run.log",
+      "blob": "0b5fab09508e5ba4f0ce647c6864f8406458be71"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/runtime-list.command.json",
+      "blob": "c0759c7201762bb50823ecca127e766dd7fa1f5e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/runtime-list.log",
+      "blob": "7b04b420a7ecefbfefccb40ada6fbd35bfb7dc8a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/sdk-version.command.json",
+      "blob": "829184818c473f19d6213a72d6e4d186322bb592"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/sdk-version.log",
+      "blob": "99e91bfe4140c9432efde891194b8abac2298b34"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/pre-runtime-identities.json",
+      "blob": "9044d3f05e3b50f5fab6a770c34dd4cf64d5ed69"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/probe-failure-1792026427561254500.json",
+      "blob": "5581ce16db18ccb80c0a7148d3c3ee1068a098f7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/runtime-policy.json",
+      "blob": "89bf3b64e2a104c7c9d6b9d1a675b84536fd06d4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/runtime/runtime.json",
+      "blob": "495a2d1d3a6f198f1d14721bfd48aca43c686972"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/snapshot-manifest.json",
+      "blob": "5fd5c2624333cf7740b3df66cb86c0e1e25a5a99"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/state.json",
+      "blob": "25c9d8f6b433e8dc14c145a14ae81d22d656b9f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/988fd5856dd549b68c1e6d3f1c4d5757/execution.json",
+      "blob": "0107856e6221405827f2c4b810de779c769650ab"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/988fd5856dd549b68c1e6d3f1c4d5757/runtime-policy-final-green.log",
+      "blob": "2173a308b8bc8a2abbb94d7f82e9ad6e24bcb666"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d58bd5be27234d26adf68da3c1410beb/execution.json",
+      "blob": "8e11825e7a24969907e443d75458a552ec344ca5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d58bd5be27234d26adf68da3c1410beb/runtime-policy-green.log",
+      "blob": "f21ef603b8d47e4050cd8eb9931249ff1597cbce"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d817efb6b8154c22b6dd4ac1f008a0be/all-tools-green.log",
+      "blob": "d8c758ddc1376263e182d2fdd0b09d498d9e51c6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d817efb6b8154c22b6dd4ac1f008a0be/execution.json",
+      "blob": "9080634b6527d7d225e1ff01114d32c75dfc982e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/actual-o849-graph-v2.command.json",
+      "blob": "19f885468aaa80840783678bb878f2c2fadf1808"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/actual-o849-graph-v2.log",
+      "blob": "e0c625cb62baebcf7a59a593a02226257484d632"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/actual-o849-hash-observation.json",
+      "blob": "d6baf7b09665db980e2cfc78092ce12787e0b75f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-green.json",
+      "blob": "90371c5d5d0d00776225e527cc5be637294f169a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-green.log",
+      "blob": "b2a7524fb6e8879876454c09615176d69b25717b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-red.json",
+      "blob": "ab01f98c994e459df9645d74c33a1f9a2eccc4d9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-red.log",
+      "blob": "ac09ac3667eba2d6fbac999f61da00d91b693169"
+    },
+    {
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/workflow-preflight.json",
+      "blob": "f6e56ef2fa6bf6b3a47cbdf9e33c3854ec2aa6e8"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/.gitattributes",
+      "blob": "e40eeae86ddbeefd90f6592aa93e1da671c34c97"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/.gitignore",
+      "blob": "e7a076925adddabc3c8baa40b9cd3d8e67ea8b0d"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/Inspect-Assemblies.ps1",
+      "blob": "28c1cc636b7521cfb8f7ec82265fc817a9d63161"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/README.md",
+      "blob": "223856dbe643825ad05fbc44f89540ba8959c389"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/capture_build.py",
+      "blob": "7ea6e63873953459db49f141c053276ded333590"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/input-manifest.json",
+      "blob": "63bdb5f96002beee2d1f70cbf87228c594058b10"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/input.schema.json",
+      "blob": "29f810d525d4ba4073e768d86a2d3184ae39f612"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/inspect_graph.py",
+      "blob": "c2b3825785335288409e62d001d69d3001aea85c"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/probe/Directory.Build.props",
+      "blob": "9d05917a078fa8e01a25c93ffbc37fbf22488366"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/probe/Directory.Build.targets",
+      "blob": "2defd561b36b77f351769b534f47b7b1ceddc0c7"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/probe/Probe.csproj",
+      "blob": "d342bdca9ffb91057731a6bc30f3318930da8bd6"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/probe/Program.cs",
+      "blob": "1f77471fe2e68fe46e91ae5f1032fb6cb7f41e98"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/run.py",
+      "blob": "8273d80a9dbfbe8c0d1c14de8673a2ef9873ff5c"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/runtime_policy.py",
+      "blob": "e4506c7483d609b90c8ce6f1639c730e34bca388"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/snapshot.py",
+      "blob": "cb9536f7c966ae9bca9a511f647779de7371fe38"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/tests/test_graph.py",
+      "blob": "bb12d2a4ddd932195d9623b51027e38176077321"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/tests/test_runtime_policy.py",
+      "blob": "3cf001082816dc654b7f17adc709f0244f1dd62e"
+    },
+    {
+      "path": "eng/wp02-02/consumption-compatibility/tests/test_snapshot.py",
+      "blob": "49aab856a13e76c90395f4ac51d1ad01f1697420"
+    }
+  ],
+  "observed_at": "2026-10-15T02:37:26.437734+00:00",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

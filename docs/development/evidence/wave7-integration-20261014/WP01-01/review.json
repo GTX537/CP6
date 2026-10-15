@@ -1,0 +1,301 @@
+{
+  "schema": "CP6-WAVE7-INDEPENDENT-REVIEW/1",
+  "task": "WP01-01",
+  "scope": "PREPARATION_ONLY",
+  "result": "CHANGES_REQUIRED",
+  "reviewed_at_utc": "2026-10-15T02:37:23.628447+00:00",
+  "reviewed_commits": {
+    "base": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+    "candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+    "core_candidate": "21cb6082c1ebaca8f2cbf2f60b7df9dd3a7ff106"
+  },
+  "worktree": "D:\\CP6-worktrees\\wp01-01-decision-20261014",
+  "pr": "https://github.com/GTX537/CP6/pull/209",
+  "review_scope": "Entire 86-file diff, source/generator/gate/tests/docs and all generated JSON structures/artifact identities; DP01-08, immutable source identities, PostgreSQL constraints, declared dependency closure, adoption/completion boundaries and prior failure evidence. Source remains unchanged.",
+  "blockers": [
+    {
+      "id": "WP01-01-REVIEW-01",
+      "severity": "P2",
+      "blocking": true,
+      "confidence": 10,
+      "title": "Preserve original ITER row identities in the physical mapping",
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "line": 64,
+      "related_locations": [
+        {
+          "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+          "line": 57
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+          "line": 98
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "line": 113
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "line": 115
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "line": 120
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+          "line": 423
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+          "line": 702
+        }
+      ],
+      "motivating_code": [
+        "add_column(e,name,typ,nullable=field.get('nullability')!='NOT NULL',source=field['source_pin'])",
+        "e['primary_key']={'columns':['storage_id'],'scope':'global internal row identity; original identity stays in separately scoped OwnerKey'}",
+        "'Project':(['project_no_key'],'TenantId + exact ProjectNo; original tenant-wide business uniqueness')"
+      ],
+      "evidence": "The new surrogate PK and business-key UQs do not preserve six original row IDs. Project.Id is nullable and absent from every PK/UQ/FK/check and its only OwnerKey binding is ProjectNo. Original ITER line1580 explicitly requires non-null PK/stable identity. Same-tenant duplicate original Id rows with different generated storage_id and ProjectNo OwnerKeys satisfy all declared candidate constraints. Three other original IDs are omitted entirely. The generic OwnerKey comparison algorithm cannot fix an identity for which no binding exists.",
+      "affected_identities": [
+        {
+          "entity": "Project",
+          "original_line": 1580,
+          "original_rule": "Project.Id: ID, nullable N; PK/stable identity",
+          "candidate_line": 57,
+          "original_id_storage": "nullable bytea id",
+          "owner_key_bindings": [
+            "project_no_key"
+          ],
+          "gap": "No original Project.Id binding or uniqueness"
+        },
+        {
+          "entity": "Iteration",
+          "original_line": 1602,
+          "original_rule": "Iteration.Id: ID, nullable N; PK",
+          "candidate_line": 745,
+          "original_id_storage": "nullable bytea id",
+          "owner_key_bindings": [
+            "iteration_no_key"
+          ],
+          "gap": "No original Iteration.Id binding or uniqueness"
+        },
+        {
+          "entity": "IterationInput",
+          "original_line": 1632,
+          "original_rule": "IterationInput.Id/TenantId/IterationId: ID tuple, nullable N; primary key and scope",
+          "candidate_line": 1876,
+          "original_id_storage": "omitted",
+          "owner_key_bindings": [
+            "input_version_key"
+          ],
+          "gap": "InputVersion is not original row Id"
+        },
+        {
+          "entity": "CandidateRef (original CandidateObjectRef)",
+          "original_line": 1664,
+          "original_rule": "CandidateObjectRef.Id/TenantId: ID pair, nullable N; primary identity",
+          "candidate_line": 3339,
+          "original_id_storage": "omitted",
+          "owner_key_bindings": [
+            "reference_tuple_key"
+          ],
+          "gap": "Owner/object/revision/Occurrence/applicability tuple does not retain original reference-row Id"
+        },
+        {
+          "entity": "ReviewRound",
+          "original_line": 1692,
+          "original_rule": "ReviewRound.Id/TenantId/IterationId: ID tuple, nullable N; identity and scope",
+          "candidate_line": 4637,
+          "original_id_storage": "nullable bytea id",
+          "owner_key_bindings": [
+            "round_no_key"
+          ],
+          "gap": "RoundNo is not original round Id"
+        },
+        {
+          "entity": "ExternalRequestReceipt",
+          "original_line": 1738,
+          "original_rule": "ExternalRequestReceipt.Id/TenantId/IterationId: ID tuple, nullable N; request identity",
+          "candidate_line": 7094,
+          "original_id_storage": "omitted",
+          "owner_key_bindings": [
+            "operation_type_key",
+            "aggregate_source_scope_key",
+            "request_key_id"
+          ],
+          "gap": "Command deduplication tuple does not retain original receipt Id"
+        }
+      ],
+      "raw_projection_distinction": "This is not a blanket objection to nullable raw projection columns. Candidate, EngineeringTask, ReviewIssue, Evaluation and AuditClosureAmendment have explicit identity-bearing OwnerKey columns; those separate bindings were inspected and are not included in this finding. The six listed entities have only other business/version/tuple keys.",
+      "impact": "The DP03 candidate is not lossless with respect to accepted stable Owner identities and primary-key rules, so it is not yet a complete preparation delivery. Production remains disabled; no deployed/database behavior is claimed.",
+      "requested_fix": "For all six identities, explicitly map the original non-null ID bytes/schema/scope to a required authoritative OwnerKey (or equivalent lossless original-identity representation), declare uniqueness in the exact original domain, retain independent business-number/version/command UQs, and prove references still resolve the same Owner identity. Do not silently narrow global scope with TenantId. Fix the generator and regenerate the candidate. Add targeted mapping checks for identity coverage, nullability/required authority binding, duplicate original identity under different business keys, and identical bytes across permitted/forbidden scopes. Reuse unchanged gate/manager results; no DB, full build or Actions is necessary for this design correction.",
+      "minimal_reproduction": {
+        "type": "READ_ONLY_STATIC_COUNTEREXAMPLE",
+        "rows": [
+          {
+            "storage_id": "S1",
+            "tenant_id": "T",
+            "id": "same-original-id",
+            "project_no_key": "K1"
+          },
+          {
+            "storage_id": "S2",
+            "tenant_id": "T",
+            "id": "same-original-id",
+            "project_no_key": "K2"
+          }
+        ],
+        "assumptions": "K1 and K2 are valid same-tenant OwnerKeys for distinct permitted ProjectNo values; all other required values can be supplied. No SQL executed.",
+        "observed": {
+          "original_id_equal": true,
+          "all_declared_unique_keys_pass": true,
+          "project_checks": [],
+          "project_fk_columns": [
+            [
+              "tenant_id",
+              "project_no_key"
+            ]
+          ],
+          "raw_id_nullable": true
+        },
+        "unique_keys": [
+          [
+            "storage_id"
+          ],
+          [
+            "tenant_id",
+            "storage_id"
+          ],
+          [
+            "tenant_id",
+            "project_no_key"
+          ]
+        ]
+      },
+      "issue": "https://github.com/GTX537/CP6/issues/211"
+    }
+  ],
+  "optional_findings": [],
+  "fresh_checks": {
+    "changed_files": 86,
+    "changed_json_files_strictly_parsed": 29,
+    "changed_bytes_read": 7961543,
+    "git_blobs_equal_worktree": true,
+    "authorized_paths_only": true,
+    "manifest_core_artifacts_verified": 80,
+    "manifest_sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+    "inherited_manifest_pins_verified": 4,
+    "protected_file_hashes_verified": 90,
+    "diff_check": "PASS",
+    "current_source_records_verified": 22,
+    "current_source_anchors_verified": 138,
+    "source_representations": "GIT_BLOB_BYTES checked against exact recorded revisions; raw files checked as raw bytes",
+    "dependency_graph": {
+      "nodes": 214,
+      "edges": 1256,
+      "cross_repository_edges": 17,
+      "exact_declared_nodes_edges_and_target_reachability": "PASS",
+      "required_chains": [
+        "WP05-18->WP02-10->WP02-07",
+        "WP05-18->WP05-14->WP05-13->WP03-17"
+      ],
+      "baseline_presence_not_treated_as_adoption": true
+    },
+    "targeted_counterexample": "Original Project.Id duplication satisfies all declared candidate keys; confirms WP01-01-REVIEW-01",
+    "worktree_clean_at_end": true
+  },
+  "dp_review": {
+    "DP01": "Four digest meanings separated; new ENG algorithm remains proposed",
+    "DP02": "Inherited IAM/OA/SOD duties retained; actual project policy/actors remain missing",
+    "DP03": "BLOCKED_BY_WP01-01-REVIEW-01; candidate PostgreSQL role/RLS/raw-number/CAS/transaction/recovery limitations otherwise explicit",
+    "DP04": "Retention/hold/destruction authorization retained; no invented engineering retention duration",
+    "DP05": "Pagination/chunk candidate does not claim a legal input maximum or actual capacity proof",
+    "DP06": "Real VER/MES safe-terminal/root-child/fence evidence remains required",
+    "DP07": "Stable IDs and publish/review workflow retained; translations not fabricated",
+    "DP08": "Current exact source audit separated from historical branch/reference and future implementations"
+  },
+  "reused_validation": [
+    {
+      "record": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.run.json",
+      "result": "PASS",
+      "tests": 54,
+      "started_at": "2026-10-15T01:29:23.391898+00:00",
+      "source_and_log_hashes_rechecked": true,
+      "rerun": false,
+      "limit": "Synthetic private gate algorithm only; no original identity-mapping completeness assertion in these tests"
+    },
+    {
+      "record": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+      "result": "PASS",
+      "started_at": "2026-10-15T00:48:55.484689+00:00",
+      "source_and_log_hashes_rechecked": true,
+      "rerun": false,
+      "limit": "Read-only roadmap validation on unchanged protected inputs"
+    },
+    {
+      "record": "docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "result": "PASS_RECORDED_WITH_REVIEW_FINDING",
+      "checks": 12251,
+      "rerun": false,
+      "limit": "Recorded static checks and exact manifest identities reused; the count does not prove semantic completeness of original identity constraints"
+    },
+    {
+      "record": "docs/development/evidence/WP01-01/preparation/validation.json",
+      "result": "REUSED_ORIGINAL_SCOPE_ONLY",
+      "counts": {
+        "static_checks": 3509,
+        "comparator_tests": 23,
+        "bundle_tests": 10
+      },
+      "rerun": false,
+      "limit": "Original wave6 evidence, not new business execution or adoption"
+    }
+  ],
+  "state_and_boundaries": {
+    "task_state": "PLANNED",
+    "entry_gate": "NOT_CHECKED",
+    "actor": null,
+    "signed_at": null,
+    "production_enabled": false,
+    "actual_adoption": false,
+    "actual_completion": false,
+    "legacy30_48": "NOT_INVENTORIED / UNRECOVERABLE / UNPROVABLE; original member IDs and missing hashes stay null",
+    "package_accounting": "123 original inventories + 2 proposed bases; not 125 recovered originals",
+    "business_counts_unchanged": {
+      "task_done": "22/375",
+      "business_done": "0/125",
+      "not_run": 247,
+      "reference_only": 41
+    },
+    "production_manager_imports_private_gate": false
+  },
+  "not_performed": [
+    "source/ledger edits",
+    "push/merge/PR changes",
+    "Actions trigger/cancellation",
+    "database or DDL execution",
+    "product/full build",
+    "real runtime/provider acceptance",
+    "authority authentication",
+    "remote ancestry verification"
+  ],
+  "cancelled_actions": [],
+  "workflow_changes": [],
+  "original_identity_source": {
+    "path": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\eb\\eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+    "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+    "lines": [
+      1580,
+      1602,
+      1632,
+      1664,
+      1692,
+      1738
+    ]
+  },
+  "review_notes": [
+    "Prior SPEC/QUALITY repair findings remain closed for their exact issues; this is a different original-identity coverage gap in the final physical candidate.",
+    "No approval, business completion or task-state promotion is inferred from review or successful local evidence."
+  ]
+}

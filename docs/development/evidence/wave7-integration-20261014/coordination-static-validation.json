@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-15T03:02:31.288830+00:00",
+  "unchanged_tasks": 371,
+  "targets_unchanged": 125,
+  "revision_acceptances_unchanged": 288,
+  "counts": {
+    "PLANNED": 350,
+    "DONE": 24,
+    "BLOCKED": 1
+  },
+  "preparation_history_preserved": true,
+  "source_receipts_bound": true,
+  "scope": "Coordinator static conservation and evidence checks only; business NOT_RUN"
+}

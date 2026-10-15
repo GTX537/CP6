@@ -1,0 +1,16 @@
+{
+  "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+  "original_candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+  "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+  "correction_source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "branch": "codex/bug-211-plm-original-identity",
+  "issue": "https://github.com/GTX537/CP6/issues/211",
+  "result": "PASS_FOR_CORRECTED_PREPARATION_ONLY",
+  "manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+  "review": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md",
+  "current_targeted_tests": "8/8",
+  "current_static_checks": 1000,
+  "original_gate_tests": "54 exact-input reuse",
+  "original_static_checks": "12251 historical snapshot only",
+  "limitations": "Design candidate only. No database, runtime, formal adoption or task completion."
+}

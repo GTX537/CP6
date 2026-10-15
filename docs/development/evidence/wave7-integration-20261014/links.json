@@ -1,0 +1,144 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-15T03:13:11.292664+00:00",
+  "scope": "Added Markdown relative file links in staged diff; historical unchanged lines and web availability not checked",
+  "checked": 27,
+  "errors": [],
+  "links": [
+    {
+      "file": "docs/development/03-progress.md",
+      "link": "07-detailed-tasks.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-12",
+      "exists": true
+    },
+    {
+      "file": "docs/development/07-detailed-tasks.md",
+      "link": "../../docs/development/task-plans/WP02.md#wp02-26",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP01-01/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP01-01/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP02-02/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP02-02/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP02-12/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP02-12/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP02-26/remote-main.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP02-26/review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "WP01-01/fix-review.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "issues-closed.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "combined-architecture-validation.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "validation-summary.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "intake.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/README.md",
+      "link": "handoff-input-verification.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md",
+      "link": "checks-WP01-01-fixes-final.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md",
+      "link": "issue-211-scope-finding.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md",
+      "link": "review-WP01-01.md",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/WP02-26/review.md",
+      "link": "review-WP02-26.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/WP02-26/review.md",
+      "link": "WP02-26-independent-provenance.json",
+      "exists": true
+    },
+    {
+      "file": "docs/development/evidence/wave7-integration-20261014/WP02-26/review.md",
+      "link": "verify-WP02-26-review.py",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/05-Completed.md",
+      "link": "../development/evidence/wave7-integration-20261014/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/06-Todo.md",
+      "link": "../development/evidence/wave7-integration-20261014/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/CHANGELOG-AI.md",
+      "link": "../development/evidence/wave7-integration-20261014/README.md",
+      "exists": true
+    },
+    {
+      "file": "docs/project-memory/PROJECT_STATE.md",
+      "link": "../development/evidence/wave7-integration-20261014/README.md",
+      "exists": true
+    }
+  ]
+}

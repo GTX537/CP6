@@ -1,0 +1,596 @@
+{
+  "task_id": "WP02-12",
+  "reviewer": "independent wave7 integration review",
+  "reviewed_at_utc": "2026-10-15T02:35:38.098053+00:00",
+  "worktree": "D:\\CP6.Platform-worktrees\\wp02-12-20261014",
+  "base": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "head": "b35d0646767fc7e876e92158c582573500e0a637",
+  "decision": "PASS_WITH_BOUNDARIES",
+  "merge_blockers": 0,
+  "findings": [],
+  "conclusion": "No confirmed material correctness/security/contract/provenance blocker was found in the bounded library and named native local fixture scope. This is not production or business acceptance. Normal coordinator integration gates remain required.",
+  "instructions_and_dispatch": [
+    {
+      "path": "D:\\CP6\\AGENTS.md",
+      "sha256": "69cf203897e0b7a1b6eeb37895b74918db1162b14544e103ddf9361c87bbc299",
+      "bytes": 13511
+    },
+    {
+      "path": "D:\\CP6\\docs\\development\\dispatch\\20261014-wave7\\WP02-12.md",
+      "sha256": "f98d30d1d006b41a87e193a3a17873f579b92b4747f6d28355879c9ed5f8caa3",
+      "bytes": 10312
+    },
+    {
+      "path": "D:\\CP6\\docs\\development\\dispatch\\20261014-wave7\\dispatch.json",
+      "sha256": "791f019dc0fb20e698b60a8e53d968512b5c278564bec4c762b691f55b388d5f",
+      "bytes": 38270
+    },
+    {
+      "path": "D:\\CP6\\docs\\development\\task-plans\\WP02.md",
+      "sha256": "c2a475589063bf7f28ebfe3860e0dd136955d7399359d5c13f0269d518de6239",
+      "bytes": 73261
+    }
+  ],
+  "observations": [
+    {
+      "area": "Producer and trusted context",
+      "result": "PASS_WITH_HOST_BOUNDARY",
+      "proof": [
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportContractsV1.cs",
+          "line": 7
+        },
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+          "line": 97
+        },
+        {
+          "file": "tests/CP6.Platform.WP0212.Fixture/FixtureTransport.cs",
+          "line": 60
+        },
+        {
+          "file": "tests/CP6.Platform.WP0212.Fixture/Program.cs",
+          "line": 19
+        },
+        {
+          "file": "tests/wp02-12-runtime/runtime.py",
+          "line": 183
+        }
+      ],
+      "detail": "Registry invokes the fixed Host authority before selecting the untrusted schema tuple. Producer/topic/raw hash/native reference/media and tenant identity gates precede capabilities. Dedicated SASL publisher ACL, app token, and independent topic/key/partition/offset/body observation provide a bounded fixture entitlement boundary. Topic/key/offset are native evidence; aggregate/version/id are explicitly body claims. Host deployment admin and private observer files remain trusted."
+    },
+    {
+      "area": "Route, version, C02 and compatibility",
+      "result": "PASS",
+      "proof": [
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRouteV1.cs",
+          "line": 5
+        },
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+          "line": 63
+        },
+        {
+          "file": "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+          "line": 49
+        },
+        {
+          "file": "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+          "line": 116
+        }
+      ],
+      "detail": "Only the generic opt-in profile and isolated pinned bundle are accepted. Exact five-tuple/hash registration and duplicate rejection, independent validators, and same-byte schema hash/parse are enforced. External schema references are rejected before schema build. Native C02 adoption is closed; native colon keys are never substituted with generic slash keys. Legacy default loaders retain their behavior."
+    },
+    {
+      "area": "Original bytes, key and safe diagnostics",
+      "result": "PASS",
+      "proof": [
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+          "line": 84
+        },
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+          "line": 115
+        },
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+          "line": 17
+        },
+        {
+          "file": "tests/wp02-12-runtime/runtime.py",
+          "line": 197
+        }
+      ],
+      "detail": "The effective byte limit is min(profile, Host, broker), checked before authority; library owns and exposes copies of bytes. The canonical key and envelope identity must match independent facts before qualification. Diagnostics are fixed safe codes. Existing strict JSON/root trace handling is reused. Runtime console observer stores broker output bytes/key in Base64 and hashes original body; its delimiter/one-partition/100-record limitations are explicit."
+    },
+    {
+      "area": "Publish confirmation and Unknown",
+      "result": "PASS",
+      "proof": [
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+          "line": 132
+        },
+        {
+          "file": "src/CP6.Platform.EntityFramework/TransportV1/TransportOutboxPublisherV1.cs",
+          "line": 14
+        },
+        {
+          "file": "tests/CP6.Platform.WP0212.Fixture/FixtureTransport.cs",
+          "line": 100
+        }
+      ],
+      "detail": "Instance/purpose-bound capability and valid contract are required. Exceptions, cancellation, timeout and unknown decisions remain Unknown. The bridge defensively owns bytes and does not create owner authority. Existing corrected OutboxV2 supplies committed send intent and original mutation recovery. Confirmed means transport accepted; native ACK-suppression case is explicitly application injection after actual Dapr success."
+    },
+    {
+      "area": "Durable quarantine and read-only recovery",
+      "result": "PASS_WITH_HOST_BOUNDARY",
+      "proof": [
+        {
+          "file": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+          "line": 148
+        },
+        {
+          "file": "tests/CP6.Platform.WP0212.Fixture/FixtureDatabase.cs",
+          "line": 74
+        },
+        {
+          "file": "tests/CP6.Platform.WP0212.Fixture/FixtureDatabase.cs",
+          "line": 84
+        },
+        {
+          "file": "tests/CP6.Platform.WP0212.Fixture/FixtureDatabase.cs",
+          "line": 100
+        }
+      ],
+      "detail": "Drop requires persist completion plus independent committed readback of exact profile/route/policy/id/hash/native reference/facts/body. Fixture uses separate PostgreSQL connections/transactions and read-only recovery. NativeReference is included in the durable key, preserving repeated invalid bytes at distinct offsets without overwriting. Wrong-key messages stay unqualified and preserve their actual key for quarantine only. Interfaces and in-memory fakes alone do not prove durability."
+    },
+    {
+      "area": "Runtime provenance and business separation",
+      "result": "PASS_WITH_LIMITS",
+      "proof": [
+        {
+          "file": "tests/CP6.Platform.WP0212.Fixture/Program.cs",
+          "line": 48
+        },
+        {
+          "file": "docs/development/evidence/WP02-12/REPORT.md",
+          "line": 19
+        },
+        {
+          "file": "docs/development/evidence/WP02-12/runtime/reuse-boundaries.json",
+          "line": 1
+        }
+      ],
+      "detail": "Final 275 source/input and 131 artifact hashes match retained files, as do 13 TRX records and 310 private native log streams. Final fixture process record binds the final DLL hash to recorded process startup. All five owned containers remain exited; assigned loopback ports have no listeners. Fixture SUCCESS commits ReceiveObservation only. Forty original business AC remain NOT_RUN; C02 and Main/CRM adoption are not inferred."
+    }
+  ],
+  "reused_validation": [
+    {
+      "name": "Library complete snapshot",
+      "passed": 44,
+      "total": 44,
+      "path": "tests/library/20261015T003737829Z/green-native-quarantine.trx",
+      "limit": "Original 44-test snapshot before final NativeReference/wrong-key corrections; reuse only unaffected assertions."
+    },
+    {
+      "name": "Targeted final correction regression",
+      "passed": 27,
+      "total": 27,
+      "path": "tests/library/20261015T004920812Z/green-native-reference-key-quarantine.trx",
+      "limit": "Final 11 source hashes match. Includes three added tests and overlaps previous 44; totals must not be added."
+    },
+    {
+      "name": "Affected legacy contracts",
+      "passed": 101,
+      "total": 101,
+      "path": "tests/library/20261015T003413218Z/legacy-transport-regression.trx",
+      "limit": "CloudEvent/DaprKafka/NativeProfile/TraceContext tests only; subsequent changes confined to TransportV1."
+    },
+    {
+      "name": "Architecture",
+      "passed": 98,
+      "total": 98,
+      "path": "tests/architecture/wp02-12-architecture.trx",
+      "limit": "One task-level architecture run, not a full release gate."
+    },
+    {
+      "name": "Native initial runtime",
+      "passed": 22,
+      "total": 22,
+      "path": "runtime/acceptance.json",
+      "limit": "Owned Kafka/Dapr/PostgreSQL fixture; original wrong-key RETRY assertion superseded. Native provider ACK-loss not proven."
+    },
+    {
+      "name": "Native targeted runtime",
+      "passed": 7,
+      "total": 7,
+      "path": "runtime/targeted-review-regression.json",
+      "limit": "Two unknown-schema delivery offsets prove committed quarantine and observed DROP. Wrong-key case proves durable row only, no independent exported DROP observation."
+    }
+  ],
+  "independent_static_evidence": {
+    "timestamp_utc": "2026-10-15T02:32:52.985668+00:00",
+    "base": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+    "head": "b35d0646767fc7e876e92158c582573500e0a637",
+    "input_hashes": {
+      "count": 275,
+      "mismatched": [],
+      "missing": []
+    },
+    "artifact_hashes": {
+      "count": 131,
+      "mismatched": [],
+      "missing": []
+    },
+    "latest_targeted_snapshot": {
+      "count": 11,
+      "mismatched": [],
+      "missing": []
+    },
+    "trx": [
+      {
+        "path": "tests/architecture/wp02-12-architecture.trx",
+        "sha256": "5164d7de1c3dbb1f794707ebd59c886ee0dc5d535879bc4c6ca8c6b25115ff60",
+        "hash_matches": true,
+        "counters": {
+          "total": "98",
+          "executed": "98",
+          "passed": "98",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T002448939Z/red.trx",
+        "sha256": "fcaa856e61b6e008f11b0da7c5344ff79f42d16aea82c7479d63144f0f2ea971",
+        "hash_matches": true,
+        "counters": {
+          "total": "1",
+          "executed": "1",
+          "passed": "0",
+          "failed": "1",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T002728914Z/red-boundary.trx",
+        "sha256": "a3df9150e3a72642e3d55994b6847dfe7815c8ca3055a88d13074d65005adffc",
+        "hash_matches": true,
+        "counters": {
+          "total": "32",
+          "executed": "32",
+          "passed": "1",
+          "failed": "31",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T002948562Z/green-boundary.trx",
+        "sha256": "c4c1242846182e30b554f4d642b9cbb3231a82211057c5a6534796d5562f3445",
+        "hash_matches": true,
+        "counters": {
+          "total": "32",
+          "executed": "32",
+          "passed": "32",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T003110743Z/red-quarantine-bridge.trx",
+        "sha256": "0a1367133cbf6f6200a9f8243dc1f83f6efc8767fb9e008464be3269759af3db",
+        "hash_matches": true,
+        "counters": {
+          "total": "37",
+          "executed": "37",
+          "passed": "32",
+          "failed": "5",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T003214855Z/green-quarantine-bridge.trx",
+        "sha256": "0fc64510b9593185978bc3eb057192055350d5742cf38ffda2e3291c260a352c",
+        "hash_matches": true,
+        "counters": {
+          "total": "37",
+          "executed": "37",
+          "passed": "37",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T003345191Z/exact-version.trx",
+        "sha256": "c175bcf7a738dc5401cf1132d1d0ffaa327ff3f98507ff5b4b8a3433c93e44f8",
+        "hash_matches": true,
+        "counters": {
+          "total": "40",
+          "executed": "40",
+          "passed": "40",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T003413218Z/legacy-transport-regression.trx",
+        "sha256": "ead28dcdf10d47952f5a6b5db860e30bf46ad68370f3046b8f1a5fa21202b2ae",
+        "hash_matches": true,
+        "counters": {
+          "total": "101",
+          "executed": "101",
+          "passed": "101",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T003704908Z/red-native-quarantine.trx",
+        "sha256": "45023554b51adc69c2af8e8f5cf4ab8591fd8aa08bb768495ebc23a0db86655e",
+        "hash_matches": true,
+        "counters": {
+          "total": "44",
+          "executed": "44",
+          "passed": "42",
+          "failed": "2",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T003737829Z/green-native-quarantine.trx",
+        "sha256": "0a2176d57a0d1d7ab1175cf6b9398fcd90094a38d54aa879f0c716019a07744c",
+        "hash_matches": true,
+        "counters": {
+          "total": "44",
+          "executed": "44",
+          "passed": "44",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T004811372Z/red-native-reference-readback.trx",
+        "sha256": "f31c2b0ca76c889f6195a3f5b605c52575f3f0730773d2621ad61546985389d6",
+        "hash_matches": true,
+        "counters": {
+          "total": "12",
+          "executed": "12",
+          "passed": "11",
+          "failed": "1",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T004841988Z/red-native-key-quarantine.trx",
+        "sha256": "092c8dfd5be0214a1f89288c9929db413be9f97b89f4a6fb271ffc6165fbaca0",
+        "hash_matches": true,
+        "counters": {
+          "total": "14",
+          "executed": "14",
+          "passed": "11",
+          "failed": "3",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      },
+      {
+        "path": "tests/library/20261015T004920812Z/green-native-reference-key-quarantine.trx",
+        "sha256": "5865e03a9cfb773d9c932841f0a214cf12d7fc5dc21875ad4eb2ee187fb7e1db",
+        "hash_matches": true,
+        "counters": {
+          "total": "27",
+          "executed": "27",
+          "passed": "27",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        },
+        "counters_match": true
+      }
+    ],
+    "command_log_count": 155,
+    "exported_raw_streams_checked": 116,
+    "exported_stream_hash_errors": [],
+    "private_log_streams_checked": 310,
+    "private_log_hash_errors": [],
+    "private_log_missing": [],
+    "native_records": 8,
+    "native_record_hash_errors": [],
+    "changed_files": 186,
+    "scope_violations": [],
+    "syntax_json_link_errors": [],
+    "original_ac_states": {
+      "NOT_RUN": 40
+    },
+    "tests_executed_in_review": 0,
+    "source_mutations": 0
+  },
+  "limits": [
+    "No new tests, builds, database connections, containers, services, remote writes, pushes, merges, Actions, or source/ledger edits were performed by this review.",
+    "No relevant Platform AGENTS.md was found at the worktree root, parent worktree directory, D:/CP6.Platform, or D:/; D:/CP6/AGENTS.md and the exact wave7 dispatch govern this review.",
+    "ITransportAuthorityV1 and ITransportQuarantineStoreV1 are trusted Host contracts. A malicious or incorrectly composed implementation can fabricate facts/readback; DTOs and callback completion cannot independently prove trust.",
+    "SASL/PLAIN and local API/app tokens establish the named local fixture boundary only. Deployment admin, controller network peers, and local owner/files are trusted. No production TLS/mTLS, hostile local administrator, or production lifecycle proof is claimed.",
+    "Receive authority reads known structured fixture bodies for business identity claims. Unit malformed-raw quarantine behavior is not a native arbitrary-poison corpus guarantee. Wrong-topic receiver handling was not a positive business route; producer ACL denial was the actual negative proof.",
+    "Independent observer is deliberately bounded to the controlled single-partition corpus with reserved delimiters; it is not a production Kafka adapter.",
+    "Unknown ACK is application suppression after a genuine successful send; broker/sidecar-unavailable cases use controlled owned service stops. Neither is provider-native ACK packet-loss proof.",
+    "Receiver SUCCESS proves only PostgreSQL ReceiveObservation commit. Real Owner Inbox/business atomicity, same-business-key dedupe, native S6 precedence, Main/CRM/C02 adoption, production retention/recovery/SLO, release trust and deployment remain NOT_RUN.",
+    "Successful historical validation is reused with original scope; SHA change was not treated as a rerun. Initial fixture DLL historical hash was C044BCE941636C027E64B45AAEDD771D26B20A24BB5104C69A71B6E2E47A0485; final targeted DLL was 075b9360818b5279e892602bb633e72df91d2a2e285999a344c8c54131629820."
+  ],
+  "read_only_resource_check": {
+    "all_five_owned_containers_exited": true,
+    "assigned_port_listeners": [],
+    "ports": [
+      19092,
+      13500,
+      15001,
+      18012,
+      18013,
+      55430
+    ],
+    "final_fixture_process_id": 27084,
+    "final_fixture_start_utc": "2026-10-15T00:53:50.9985975Z",
+    "final_fixture_dll_sha256": "075b9360818b5279e892602bb633e72df91d2a2e285999a344c8c54131629820"
+  },
+  "source_status": "clean before and after review",
+  "original_business_ac": {
+    "count": 40,
+    "NOT_RUN": 40,
+    "PASS": 0
+  }
+}
