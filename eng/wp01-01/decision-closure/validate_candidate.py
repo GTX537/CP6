@@ -156,9 +156,15 @@ def main():
     for vector in docs['digest-vectors.candidate.json']['vectors']:
         check(sha(bytes.fromhex(vector['preimage_hex']))==vector['sha256'] and vector['synthetic'] is True,'synthetic digest vector integrity')
     contractref=ref(OUT/'gate-contract.candidate.json');save('contract-ref.json',contractref)
-    actual=gate.evaluate_candidate(ROOT,contractref,gate.strict_json((OUT/'submission.actual-unadopted.json').read_bytes()),archive_root=args.archive_root)
-    save('actual-baseline-result.json',actual)
-    check(actual['candidate_valid'] is False and actual['actual_adoption'] is False and actual['actual_completion'] is False and actual['production_enabled'] is False,'actual unadopted baseline rejects')
+    actual_baselines={}
+    for target in contract['target_whitelist']:
+        submission=gate.strict_json((OUT/'submission.actual-unadopted.json').read_bytes());submission['target']=target
+        actual=gate.evaluate_candidate(ROOT,contractref,submission,archive_root=args.archive_root)
+        filename='actual-baseline-result.'+target+'.json';save(filename,actual);actual_baselines[target]=ref(OUT/filename)
+        if target=='PLM-ITER-01':save('actual-baseline-result.json',actual)
+        check(actual['candidate_valid'] is False and actual['actual_adoption'] is False and actual['actual_completion'] is False and actual['production_enabled'] is False,'actual unadopted baseline rejects '+target)
+        check(actual['errors']==['AUTHORITY_AUTHENTICITY_UNVERIFIED','REMOTE_ANCESTRY_UNVERIFIED','EXACT_OBLIGATION_SET_REQUIRED'],
+              'actual baseline reaches exact missing-obligation rejection, not internal errors '+target)
     # Independently verify all inherited and new obligation locators, for both targets.
     source_inventory=gate.read_ref(ROOT,contract['inherited_source_inventory'],as_json=True)['inputs'];source_cache={}
     for row in matrix['rows']+contract['additional_obligations']:
@@ -194,7 +200,7 @@ def main():
       'source_revision':BASE,'python':sys.version,'executable':sys.executable,'platform':platform.platform(),
       'checks':len(checks),'errors':errors,'commands':[tests,manager],'inherited_validation':inherited,
       'protected_input_hashes_before':before,'protected_input_hashes_after':protected(),'protected_inputs_unchanged':before==protected(),
-      'actual_baseline':ref(OUT/'actual-baseline-result.json'),'production_enabled':False,'actual_adoption':False,'actual_completion':False,
+      'actual_baseline':ref(OUT/'actual-baseline-result.json'),'actual_baselines':actual_baselines,'production_enabled':False,'actual_adoption':False,'actual_completion':False,
       'earlier_runs':{'tdd-red':{'exit_code':1,'reason':'29 tests asserted adapter missing before implementation'},'tests-first':{'exit_code':0,'tests':29},
        'tdd-bindings-red':{'exit_code':1,'reason':'strict JSON/file binding/source assertion negatives failed before implementation'},'tests-bindings':{'exit_code':0,'tests':39},
        'tdd-deep-red':{'exit_code':1,'record':'tdd-deep-red.run.json'},'build':{'exit_code':1,'reason':'Platform fixed revision file absent in current checkout; corrected to git blob read'},
@@ -204,6 +210,8 @@ def main():
         'static_failure_logs':[ref(p) for p in sorted(OUT.glob('spec-fix-validation-*.stdout.txt'))],
         'scope':'Only concrete PG column/constraint completeness and per-obligation original source binding; gate runtime/production remains disabled',
         'source_materialization':'Original archives explicitly read via supplied --archive-root; no original files copied or edited; absent originals reject separately from permanent legacy30/48 gaps'},
+      'targeted_quality_repair':{'red_runs':[ref(p) for p in sorted(OUT.glob('quality-assertion-red-*.run.json'))],
+        'scope':'Lossless type-tagged structural assertion comparison preserves all dictionary fields and array order; object key order ignored; actual ITER and REL must reach exact missing-obligation rejection'},
       'not_run':['product compilation/tests','real PostgreSQL/DDL/migration/roles/RLS/precision/CAS/recovery','provider/consumer runtime','load/SLO','authority authenticity','remote ancestry','Actions','deployment']}
     save('validation.json',result)
     excludes={'manifest.json','intake.json'}

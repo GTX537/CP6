@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import io
 import json
+import math
 from pathlib import Path, PurePosixPath, PureWindowsPath
 import posixpath
 import re
@@ -68,6 +69,36 @@ def exact_index(items, key='id'):
     result = {item[key]: item for item in items}
     require(len(result) == len(items), 'DUPLICATE_ID')
     return result
+
+
+def assertion_key(value):
+    """Type-tagged structural identity, without dropping fields or array order.
+
+    Object member order is insignificant; string text resembling JSON remains a
+    string. Tuples are only comparison keys, never replacements for source data.
+    """
+    if value is None:
+        return ('null',)
+    if isinstance(value,bool):
+        return ('boolean',value)
+    if isinstance(value,str):
+        return ('string',value)
+    if isinstance(value,int):
+        return ('integer',value)
+    if isinstance(value,float):
+        require(math.isfinite(value),'NONFINITE_ASSERTION_NUMBER')
+        return ('number',value.hex())
+    if isinstance(value,list):
+        return ('array',tuple(assertion_key(item) for item in value))
+    if isinstance(value,dict):
+        require(all(isinstance(key,str) for key in value),'ASSERTION_OBJECT_KEY_INVALID')
+        return ('object',tuple((key,assertion_key(value[key])) for key in sorted(value)))
+    raise Invalid('ASSERTION_JSON_TYPE_INVALID')
+
+
+def assertion_set(values):
+    require(isinstance(values,list),'ASSERTION_LIST_REQUIRED')
+    return {assertion_key(value) for value in values}
 
 
 def read_source(root, source, inventory, cache, archive_root=None):
@@ -175,9 +206,9 @@ def evaluate_candidate(root, contract_ref, submission, *, mode='actual', archive
         expected = {}; obligation_sources={};source_cache={}
         for row in matrix['rows'] + contract['additional_obligations']:
             if row['target'] == target:
-                expected.setdefault(row['id'], set()).update(row['observations'])
-                if row.get('source_assertion'):
-                    expected[row['id']].add(row['source_assertion'])
+                expected.setdefault(row['id'], set()).update(assertion_set(row['observations']))
+                if 'source_assertion' in row:
+                    expected[row['id']].add(assertion_key(row['source_assertion']))
                 refs=list(row.get('source_refs',[]))
                 if row.get('owner_authority'):
                     owner=row['owner_authority']
@@ -198,13 +229,13 @@ def evaluate_candidate(root, contract_ref, submission, *, mode='actual', archive
         read_ref(root, authority['authority_source'])
         for oid, observations in expected.items():
             record = provided[oid]
-            require(set(record['subassertions']) == observations and len(record['subassertions']) == len(observations), 'EXACT_SUBASSERTION_SET_REQUIRED')
+            require(assertion_set(record['subassertions']) == observations and len(record['subassertions']) == len(observations), 'EXACT_SUBASSERTION_SET_REQUIRED')
             evidence = read_ref(root, record['evidence'], as_json=True)
             require(evidence['synthetic'] is (mode == 'synthetic')
                     and evidence['kind'] == ('SYNTHETIC_RUNTIME' if mode == 'synthetic' else 'RUNTIME')
                     and evidence['status'] == 'PASS', 'REAL_RUNTIME_EVIDENCE_REQUIRED')
             require(evidence['target'] == target and evidence['obligation'] == oid
-                    and set(evidence['subassertions']) == observations
+                    and assertion_set(evidence['subassertions']) == observations
                     and len(evidence['subassertions']) == len(observations)
                     and evidence['source_sha256'] in {s[1] for s in obligation_sources[oid]}, 'EVIDENCE_BINDING_MISMATCH')
             bindings=[(s['path'],s['sha256']) for s in evidence['source_bindings']]

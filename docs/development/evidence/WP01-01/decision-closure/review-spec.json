@@ -14,7 +14,8 @@
       "initial_lines": [310, 1799, 2308],
       "finding": "Generic FK/index templates do not identify actual declared columns, referenced entities or uniqueness scopes. Known ProjectNo, IterationNo, RoundNo and Evaluation/ActiveSelection rules must be represented concretely without inventing narrower domains.",
       "required_fix": "Define per-entity physical columns and PK/UQ/FK targets/scopes; preserve original identity domains and exact Evaluation meaning. No DDL/runtime adoption requested.",
-      "status": "REMEDIATION_PENDING"
+      "status": "CLOSED_BY_TARGETED_REVIEW",
+      "resolution": "31 entities now define physical columns and PK/UQ/FK/index/check/CAS. Original ITER clauses establish one current Evaluation/ActiveSelection per Iteration with immutable successor history; ReviewRoundId may be null. The candidate does not impose an invalid UNIQUE ReviewRoundId restriction."
     },
     {
       "id": "SPEC-02",
@@ -23,12 +24,24 @@
       "initial_lines": [93, 104, 126],
       "finding": "Obligation evidence can name any top-level source hash, including an unrelated valid source, rather than the specific matrix source_refs and owner_authority. The actual original obligation source is not read/bound.",
       "required_fix": "Read and validate the exact per-obligation source files/hash/locations; merge source unions across repeated navigation rows; bind evidence to that obligation. Add unrelated-source substitution and original-source drift negatives.",
-      "status": "REMEDIATION_PENDING"
+      "status": "CLOSED_BY_TARGETED_REVIEW",
+      "resolution": "The gate reads exact per-obligation source_refs and owner_authority, merges repeated-row sources and binds evidence to the complete source set. Unrelated-source substitution and original-file drift negatives pass after a recorded red run with source snapshots."
     }
   ],
   "other_scope": "No additional required findings in eight decision dispositions, historical gaps, required DAG chains, three completion predicates or disabled production boundary.",
   "test_policy": "Initial successful 45-test result reused for review. Changed gate behavior requires targeted local regression; unchanged manager result reused. No Actions, database or production execution.",
-  "final_result": "PENDING_TARGETED_REVIEW",
+  "remediation_candidate": "48d2209be04ab364849dc6fb9f875f9c66d055e6",
+  "remediation_manifest_sha256": "19847f58c1a2de9afd72bec357a74bf7165d5b45d5421aed46842cb4117fad80",
+  "targeted_review_result": "PASS",
+  "targeted_review_scope": "Original two findings and direct impact only; no additional required findings. Reviewed actual original ITER clauses and test source hash consistency.",
+  "reused_validation": {
+    "private_tests": 49,
+    "test_run": "tests-final-20261015T011630441196Z.run.json",
+    "static_checks": 12248,
+    "manager_run": "manage-roadmap.run.json",
+    "reviewer_reran_tests": false
+  },
+  "final_result": "SPEC_PASS",
   "production_enabled": false,
   "actual_adoption": false,
   "actual_completion": false

@@ -1,0 +1,15 @@
+{
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false,
+  "candidate_valid": false,
+  "mode": "actual",
+  "errors": [
+    "AUTHORITY_AUTHENTICITY_UNVERIFIED",
+    "REMOTE_ANCESTRY_UNVERIFIED",
+    "unhashable type: 'dict'"
+  ],
+  "authority_authenticity": "UNVERIFIED",
+  "remote_ancestry": "UNVERIFIED",
+  "meaning": "ACTUAL_USE_REJECTED"
+}

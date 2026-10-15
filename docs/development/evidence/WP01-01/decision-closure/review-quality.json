@@ -1,0 +1,43 @@
+{
+  "schema": "WP01-01-WAVE7-QUALITY-REVIEW/1",
+  "scope": "One complete task-level independent quality review, then only targeted remediation review",
+  "baseline": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "initial_candidate": "48d2209be04ab364849dc6fb9f875f9c66d055e6",
+  "initial_manifest_sha256": "19847f58c1a2de9afd72bec357a74bf7165d5b45d5421aed46842cb4117fad80",
+  "reviewer": "Independent wp01_wave7_quality agent; read-only inspection and bounded reproduction",
+  "initial_result": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "QUALITY-01",
+      "severity": "IMPORTANT",
+      "path": "eng/wp01-01/decision-closure/gate_candidate.py",
+      "initial_lines": [179, 180],
+      "finding": "The real matrix contains 18 object-valued source_assertion entries (ITER 8, REL 10), but direct insertion into a set raises TypeError. The actual baseline records this internal exception and the validator only checks false, incorrectly accepting the early exit as the expected rejection.",
+      "first_affected_obligations": [
+        "WP05-01/1/ITER/R1/PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING-POS",
+        "WP05-01/1/REL/R1/PE-HANDOFF-NAMESPACE-POS"
+      ],
+      "required_fix": "Use stable lossless comparison for string and structured JSON assertions on all sides, preserving all fields. Add actual-shape positive/changed/missing-field negatives and assert precise intended rejection reasons for both real target baselines.",
+      "status": "REMEDIATION_PENDING"
+    }
+  ],
+  "independent_checks": {
+    "manifest_core_files": 69,
+    "manifest_bytes_and_hashes": "PASS",
+    "inherited_pins": "PASS",
+    "test_and_manager_source_log_hashes": "PASS_REUSED_NO_RERUN",
+    "declared_graph": {"nodes": 214, "edges": 1256, "cross_repository_edges": 17},
+    "required_four_chains_and_target_scopes": "PASS",
+    "main_source_audit_records_verified": 16,
+    "scope_only_two_directories": true,
+    "diff_check": "PASS",
+    "production_manager_imports_private_gate": false,
+    "complete_obligation_source_binding": "PASS"
+  },
+  "critical_findings": 0,
+  "minor_findings": 0,
+  "final_result": "PENDING_TARGETED_REVIEW",
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}

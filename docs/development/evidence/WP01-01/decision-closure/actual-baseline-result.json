@@ -7,7 +7,7 @@
   "errors": [
     "AUTHORITY_AUTHENTICITY_UNVERIFIED",
     "REMOTE_ANCESTRY_UNVERIFIED",
-    "unhashable type: 'dict'"
+    "EXACT_OBLIGATION_SET_REQUIRED"
   ],
   "authority_authenticity": "UNVERIFIED",
   "remote_ancestry": "UNVERIFIED",

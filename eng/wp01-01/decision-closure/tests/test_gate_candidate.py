@@ -294,5 +294,46 @@ class GateTests(unittest.TestCase):
         d['source_bindings'].pop()
         self.sub['obligations'][0]['evidence']=self.put('evidence.json',d);self.reject()
 
+    def use_real_structured_assertion(self,target='PLM-ITER-01'):
+        matrix=Path(__file__).resolve().parents[4]/'docs/development/evidence/WP01-01/preparation/obligation-matrix.json'
+        original=next(r['source_assertion'] for r in json.loads(matrix.read_bytes())['rows']
+                      if r['target']==target and isinstance(r['source_assertion'],dict))
+        self.matrix['rows'][0]['source_assertion']=copy.deepcopy(original)
+        self.contract['matrix']=self.put('matrix.json',self.matrix)
+        assertions=[*self.matrix['rows'][0]['observations'],copy.deepcopy(original)]
+        self.sub['obligations'][0]['subassertions']=copy.deepcopy(assertions)
+        d=json.loads((self.root/'evidence.json').read_bytes());d['subassertions']=copy.deepcopy(assertions)
+        self.sub['obligations'][0]['evidence']=self.put('evidence.json',d)
+        return original
+
+    def test_real_structured_assertions_preserve_all_fields_and_ignore_object_key_order(self):
+        for target in ['PLM-ITER-01','PLM-REL-01']:
+            with self.subTest(target=target):
+                original=self.use_real_structured_assertion(target)
+                self.sub['obligations'][0]['subassertions'][-1]=dict(reversed(list(original.items())))
+                self.assertTrue(self.evaluate()['candidate_valid'])
+
+    def test_structured_assertion_changed_content_rejected(self):
+        self.use_real_structured_assertion()
+        self.sub['obligations'][0]['subassertions'][-1]['expected_writes']='different write set'
+        result=self.evaluate()
+        self.assertIn('EXACT_SUBASSERTION_SET_REQUIRED',result['errors'])
+
+    def test_structured_assertion_deleted_field_rejected(self):
+        self.use_real_structured_assertion()
+        d=json.loads((self.root/'evidence.json').read_bytes());del d['subassertions'][-1]['verification_level']
+        self.sub['obligations'][0]['evidence']=self.put('evidence.json',d)
+        self.assertIn('EVIDENCE_BINDING_MISMATCH',self.evaluate()['errors'])
+
+    def test_string_cannot_impersonate_structured_assertion(self):
+        original=self.use_real_structured_assertion()
+        self.sub['obligations'][0]['subassertions'][-1]=json.dumps(original,sort_keys=True,ensure_ascii=False)
+        self.assertIn('EXACT_SUBASSERTION_SET_REQUIRED',self.evaluate()['errors'])
+
+    def test_structured_assertion_array_order_is_preserved(self):
+        self.use_real_structured_assertion()
+        self.sub['obligations'][0]['subassertions'][-1]['consumer_targets'].reverse()
+        self.assertIn('EXACT_SUBASSERTION_SET_REQUIRED',self.evaluate()['errors'])
+
 if __name__ == '__main__':
     unittest.main()
