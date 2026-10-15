@@ -117,6 +117,18 @@ class AcceptanceBasisTests(unittest.TestCase):
         self.runtime()
         self.assertTrue(self.evaluate()['target_runtime_valid'][TARGETS[0]])
 
+    def test_non_object_configuration_returns_structured_runtime_rejection(self):
+        for configuration in ([], ["CONFIGURED"], None, False, 1, 1.5, "CONFIGURED"):
+            with self.subTest(configuration=configuration):
+                self.runtime()
+                self.verifier.scenarios[0]['configuration'] = self.put('invalid_configuration.json', configuration)
+                result = self.evaluate()
+                self.assertTrue(result['basis_adoption_valid'], result)
+                self.assertTrue(result['inventory_coverage_valid'], result)
+                self.assertFalse(any(result['target_runtime_valid'].values()), result)
+                self.assertIn(TARGETS[0] + ': CONFIGURATION_OBJECT_REQUIRED', result['errors'])
+                json.dumps(result, allow_nan=False)
+
     def test_no_independent_verifier_rejects_self_authority(self):
         self.selection['authority'] = {'signed': True, 'approved_by': 'user'}
         self.assertFalse(self.evaluate(False)['basis_adoption_valid'])
