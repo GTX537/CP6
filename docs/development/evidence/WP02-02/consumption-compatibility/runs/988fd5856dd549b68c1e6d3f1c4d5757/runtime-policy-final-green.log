@@ -1,0 +1,9 @@
+test_changed_binary_after_expected_capture_rejected (test_runtime_policy.RuntimePolicyTests.test_changed_binary_after_expected_capture_rejected) ... ok
+test_changed_pre_runtime_build_evidence_rejected (test_runtime_policy.RuntimePolicyTests.test_changed_pre_runtime_build_evidence_rejected) ... ok
+test_required_mutations_rejected (test_runtime_policy.RuntimePolicyTests.test_required_mutations_rejected) ... ok
+test_synthetic_identity_match_still_never_grants_adoption (test_runtime_policy.RuntimePolicyTests.test_synthetic_identity_match_still_never_grants_adoption) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.633s
+
+OK

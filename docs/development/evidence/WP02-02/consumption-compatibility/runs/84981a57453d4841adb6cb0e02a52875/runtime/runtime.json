@@ -1,0 +1,879 @@
+{
+  "schemaVersion": 1,
+  "evidenceKind": "SYNTHETIC_AUTHORITY",
+  "owner": "84981a57453d4841adb6cb0e02a52875",
+  "status": "FAIL",
+  "mainConsumption": "NOT_RUN",
+  "formalPackageTrust": "BLOCKED",
+  "startedUtc": "2026-10-15T01:07:04.2465055+00:00",
+  "completedUtc": "2026-10-15T01:07:07.3069707+00:00",
+  "http": {
+    "address": "http://127.0.0.1:54091/",
+    "requests": [
+      {
+        "name": "positive",
+        "path": "/probe/positive",
+        "expectedStatus": 200,
+        "actualStatus": 200,
+        "body": "synthetic-context-ok",
+        "passed": true
+      },
+      {
+        "name": "unauthenticated",
+        "path": "/probe/unauthenticated",
+        "expectedStatus": 401,
+        "actualStatus": 401,
+        "body": "",
+        "passed": true
+      },
+      {
+        "name": "revoked",
+        "path": "/probe/revoked",
+        "expectedStatus": 403,
+        "actualStatus": 403,
+        "body": "",
+        "passed": true
+      },
+      {
+        "name": "unavailable",
+        "path": "/probe/unavailable",
+        "expectedStatus": 503,
+        "actualStatus": 503,
+        "body": "",
+        "passed": true
+      }
+    ]
+  },
+  "context": {
+    "httpVerifications": 5,
+    "authorityResolutions": 6,
+    "deniedHandlers": 0,
+    "executors": [
+      {
+        "name": "background",
+        "verifications": 2,
+        "successfulHandlers": 1,
+        "denials": 1,
+        "restored": true
+      },
+      {
+        "name": "message",
+        "verifications": 2,
+        "successfulHandlers": 1,
+        "denials": 1,
+        "restored": true
+      }
+    ]
+  },
+  "telemetry": {
+    "flushSucceeded": true,
+    "droppedCount": 0,
+    "propagationIntact": true,
+    "externalExportEnabled": false,
+    "completeness": "Incomplete",
+    "records": [
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Warning"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Trace",
+        "name": "http.client",
+        "value": 24.0049,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.response.status_class": "2xx"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Trace",
+        "name": "http.server",
+        "value": 13.6792,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.route": "/probe/target",
+          "http.response.status_class": "2xx"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Trace",
+        "name": "cp6.operation",
+        "value": 88.3347,
+        "count": 1,
+        "attributes": {
+          "cp6.outcome": "success"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Trace",
+        "name": "http.server",
+        "value": 227.261,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.route": "/probe/positive",
+          "http.response.status_class": "2xx"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Trace",
+        "name": "http.server",
+        "value": 1.7193,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.route": "/probe/unauthenticated",
+          "http.response.status_class": "4xx"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Trace",
+        "name": "http.server",
+        "value": 0.4388,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.route": "/probe/revoked",
+          "http.response.status_class": "4xx"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Log",
+        "name": "log.event",
+        "value": 0,
+        "count": 1,
+        "attributes": {
+          "log.severity": "Information"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Trace",
+        "name": "http.server",
+        "value": 0.3586,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.route": "/probe/unavailable",
+          "http.response.status_class": "5xx"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Metric",
+        "name": "cp6.messaging.published",
+        "value": 1,
+        "count": 1,
+        "attributes": {
+          "cp6.outcome": "success"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Metric",
+        "name": "cp6.http.duration",
+        "value": 13.6792,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.response.status_class": "2xx",
+          "http.route": "/probe/target"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Metric",
+        "name": "cp6.http.duration",
+        "value": 24.0049,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.response.status_class": "2xx"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Metric",
+        "name": "cp6.http.duration",
+        "value": 227.261,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.response.status_class": "2xx",
+          "http.route": "/probe/positive"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Metric",
+        "name": "cp6.http.duration",
+        "value": 1.7193,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.response.status_class": "4xx",
+          "http.route": "/probe/unauthenticated"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Metric",
+        "name": "cp6.http.duration",
+        "value": 0.4388,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.response.status_class": "4xx",
+          "http.route": "/probe/revoked"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      },
+      {
+        "contractVersion": "1.0.0",
+        "signal": "Metric",
+        "name": "cp6.http.duration",
+        "value": 0.3586,
+        "count": 1,
+        "attributes": {
+          "http.request.method": "GET",
+          "http.response.status_class": "5xx",
+          "http.route": "/probe/unavailable"
+        },
+        "resources": {
+          "service.name": "wp02-probe",
+          "deployment.environment.name": "diagnostic",
+          "cp6.region": "local"
+        }
+      }
+    ],
+    "counts": {
+      "Log": 21,
+      "Trace": 7,
+      "Metric": 7
+    }
+  },
+  "cleanup": {
+    "stopSucceeded": true,
+    "disposeSucceeded": true,
+    "listenerClosed": false,
+    "propagatorsRestored": true
+  },
+  "assemblies": [
+    {
+      "name": "CP6.Platform.Abstractions",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\CP6.Platform.Abstractions.dll",
+      "sha256": "abfeb62e1aa30017541c061cc48847ca82e8bc3c608579aafd3087d79afe0aaa",
+      "mvid": "3a929af8-25d4-4fec-b69c-ae74dba3a5a6",
+      "observedTypes": [
+        "CP6.Platform.Abstractions.Context.BackgroundContextExecutorV1\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "CP6.Platform.Abstractions.Context.TrustedContextExecutorV1"
+      ]
+    },
+    {
+      "name": "CP6.Platform.AspNetCore",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\CP6.Platform.AspNetCore.dll",
+      "sha256": "c9e1d67ad94bb4c6dc91bce78593187312c0fcb2a688e370b82326ed985a4bda",
+      "mvid": "5a340ead-fdf0-4c66-8a45-032e734f34a1",
+      "observedTypes": [
+        "CP6.Platform.AspNetCore.ObservabilityV1.LocalTelemetrySinkV1",
+        "CP6.Platform.AspNetCore.ObservabilityV1.ObservabilityRuntimeV1"
+      ]
+    },
+    {
+      "name": "CP6.Platform.Contracts",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\CP6.Platform.Contracts.dll",
+      "sha256": "60a81c1a19ad682b4335d7555358cbb4eb7273acae98f828c2462814b93c9937",
+      "mvid": "2a562dfb-afe8-4483-b47c-1e9c52c7f78f",
+      "observedTypes": [
+        "CP6.Platform.Contracts.Context.ContextResolutionInputV1"
+      ]
+    },
+    {
+      "name": "CP6.Platform.EntityFramework",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\CP6.Platform.EntityFramework.dll",
+      "sha256": "51d8f8bbfb8bf8c5b94db4a5f9db8f80290423605e667127b1f65306d956cc20",
+      "mvid": "716d965c-7803-4374-8ade-055a5681e647",
+      "observedTypes": [
+        "CP6.Platform.EntityFramework.Cp6TransactionalMessagingOptions"
+      ]
+    },
+    {
+      "name": "CP6.Platform.Messaging",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\CP6.Platform.Messaging.dll",
+      "sha256": "3237a85dcb5d893a50a94deb1811a6eb758e8928f92cf6725ed489da58b4b6ca",
+      "mvid": "470d1bb1-5d4a-417a-bd0b-2e6e60afe5d0",
+      "observedTypes": [
+        "CP6.Platform.Messaging.Context.MessageContextExecutorV1\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+      ]
+    },
+    {
+      "name": "OpenTelemetry",
+      "version": "1.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\OpenTelemetry.dll",
+      "sha256": "7e8235cebdfc4a30f97439daaa0027d883b748fb57fbc33cae96392eeda66719",
+      "mvid": "2d181f47-fe95-4d98-beae-44e21eb499ac",
+      "observedTypes": [
+        "OpenTelemetry.Logs.LogRecord",
+        "OpenTelemetry.Sdk"
+      ]
+    },
+    {
+      "name": "OpenTelemetry.Api",
+      "version": "1.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Api.dll",
+      "sha256": "853f5f441e08af932bcc6f9213ddcddd6f276795fc9e093ac530ef6c9c9e5e10",
+      "mvid": "0551c1f5-7037-4d3a-8ced-4759a5fc31c2",
+      "observedTypes": [
+        "OpenTelemetry.Metrics.MeterProvider",
+        "OpenTelemetry.Trace.TracerProvider"
+      ]
+    },
+    {
+      "name": "OpenTelemetry.Api.ProviderBuilderExtensions",
+      "version": "1.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Api.ProviderBuilderExtensions.dll",
+      "sha256": "07d14f395fb485642dc6248c109be6f89468480b11b48974b88f601ded0a52cb",
+      "mvid": "6ceeaa40-a88b-4d3f-aed0-53c3ac59dc38",
+      "observedTypes": []
+    },
+    {
+      "name": "OpenTelemetry.Instrumentation.AspNetCore",
+      "version": "1.18.0.1289",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Instrumentation.AspNetCore.dll",
+      "sha256": "84e802f4332f8681d5996a58e875d8607b028e52e0bf7f83aa624cba64f12856",
+      "mvid": "1c2584b0-76fd-4439-ab4f-ad867ac08afa",
+      "observedTypes": []
+    },
+    {
+      "name": "OpenTelemetry.Instrumentation.Http",
+      "version": "1.18.0.1290",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Instrumentation.Http.dll",
+      "sha256": "5745c8ac7d19b8c05bc728a23b63eb8fff6b80e44c17bcfa9036ebfe3956124e",
+      "mvid": "3b80af4a-353f-4b1b-8ed6-62090f21258a",
+      "observedTypes": []
+    },
+    {
+      "name": "System.Diagnostics.DiagnosticSource",
+      "version": "10.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\84981a57453d4841adb6cb0e02a52875\\probe\\bin\\Release\\net8.0\\System.Diagnostics.DiagnosticSource.dll",
+      "sha256": "5de9dc5c14e36e7798b69805b57b6d2c4136a6c2266c6db2c2351eb8eda792f6",
+      "mvid": "54d6b6a6-6acb-4134-8c85-9e2d495e61b0",
+      "observedTypes": [
+        "System.Diagnostics.ActivitySource",
+        "System.Diagnostics.Metrics.Meter"
+      ]
+    }
+  ],
+  "assertions": [
+    {
+      "name": "http.single-loopback-listener",
+      "passed": true
+    },
+    {
+      "name": "http.trusted-context",
+      "passed": true
+    },
+    {
+      "name": "http.caller-fields-ignored",
+      "passed": true
+    },
+    {
+      "name": "context.background.trusted",
+      "passed": true
+    },
+    {
+      "name": "context.background.restored",
+      "passed": true
+    },
+    {
+      "name": "context.background.denied",
+      "passed": true
+    },
+    {
+      "name": "context.message.trusted",
+      "passed": true
+    },
+    {
+      "name": "context.message.restored",
+      "passed": true
+    },
+    {
+      "name": "context.message.denied",
+      "passed": true
+    },
+    {
+      "name": "http.trace-propagation",
+      "passed": true
+    },
+    {
+      "name": "http.baggage-stripped",
+      "passed": true
+    },
+    {
+      "name": "http.downstream",
+      "passed": true
+    },
+    {
+      "name": "http.response.positive",
+      "passed": true
+    },
+    {
+      "name": "http.response.unauthenticated",
+      "passed": true
+    },
+    {
+      "name": "http.response.revoked",
+      "passed": true
+    },
+    {
+      "name": "http.response.unavailable",
+      "passed": true
+    },
+    {
+      "name": "http.denied-handlers-not-run",
+      "passed": true
+    },
+    {
+      "name": "telemetry.flush",
+      "passed": true
+    },
+    {
+      "name": "telemetry.server-traces",
+      "passed": true
+    },
+    {
+      "name": "telemetry.client-trace",
+      "passed": true
+    },
+    {
+      "name": "telemetry.metric",
+      "passed": true
+    },
+    {
+      "name": "telemetry.log",
+      "passed": true
+    },
+    {
+      "name": "telemetry.privacy",
+      "passed": true
+    },
+    {
+      "name": "telemetry.local-only",
+      "passed": true
+    },
+    {
+      "name": "cleanup.stop",
+      "passed": true
+    },
+    {
+      "name": "cleanup.dispose",
+      "passed": true
+    },
+    {
+      "name": "cleanup.listener-closed",
+      "passed": false
+    },
+    {
+      "name": "cleanup.propagators-restored",
+      "passed": true
+    },
+    {
+      "name": "assemblies.required",
+      "passed": true
+    },
+    {
+      "name": "assemblies.owner-contained",
+      "passed": true
+    },
+    {
+      "name": "assemblies.platform-types-observed",
+      "passed": true
+    }
+  ],
+  "failures": [
+    {
+      "stage": "listener-check",
+      "type": "System.OperationCanceledException",
+      "message": "The operation was canceled."
+    }
+  ]
+}

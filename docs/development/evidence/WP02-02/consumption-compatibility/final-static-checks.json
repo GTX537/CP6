@@ -1,0 +1,22 @@
+{
+  "capturedAt": "2026-10-15T01:27:31.574457+00:00",
+  "scope": [
+    "eng/wp02-02/consumption-compatibility/",
+    "docs/development/evidence/WP02-02/consumption-compatibility/"
+  ],
+  "protectedMain": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "stagedFilesBeforeThisReport": 137,
+  "archiveFilesByteVerified": 106,
+  "jsonParsed": 72,
+  "localMarkdownLinksChecked": 52,
+  "sensitivePatternScan": "NO_MATCH_IN_TASK_FILES",
+  "diffCheck": "PASS",
+  "workflowInputsUnchanged": true,
+  "branchRuns": [],
+  "testsReused": "11 snapshot latest GREEN + 6 runtime-policy from d817 all-tools GREEN + 12 graph latest GREEN; no repeat for documentation/staging",
+  "functionalInputsChangedAfterSuccessfulBuild": false,
+  "finalStagedFiles": 138,
+  "allStagedGitBytesEqualWorkingBytes": true,
+  "actualBuiltProbeSourceEqualsCandidate": true,
+  "unstagedChanges": 0
+}

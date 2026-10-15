@@ -1,0 +1,29 @@
+test_changed_binary_after_expected_capture_rejected (test_runtime_policy.RuntimePolicyTests.test_changed_binary_after_expected_capture_rejected) ... ok
+test_changed_pre_runtime_build_evidence_rejected (test_runtime_policy.RuntimePolicyTests.test_changed_pre_runtime_build_evidence_rejected) ... ok
+test_output_rejects_junction_parent (test_runtime_policy.RuntimePolicyTests.test_output_rejects_junction_parent) ... ERROR
+test_output_requires_exact_task_owner_and_preserves_existing_report (test_runtime_policy.RuntimePolicyTests.test_output_requires_exact_task_owner_and_preserves_existing_report) ... ERROR
+test_required_mutations_rejected (test_runtime_policy.RuntimePolicyTests.test_required_mutations_rejected) ... ok
+test_synthetic_identity_match_still_never_grants_adoption (test_runtime_policy.RuntimePolicyTests.test_synthetic_identity_match_still_never_grants_adoption) ... ok
+
+======================================================================
+ERROR: test_output_rejects_junction_parent (test_runtime_policy.RuntimePolicyTests.test_output_rejects_junction_parent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_runtime_policy.py", line 78, in test_output_rejects_junction_parent
+    policy.output_path(self.root, junction / 'result.json')
+    ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'runtime_policy' has no attribute 'output_path'
+
+======================================================================
+ERROR: test_output_requires_exact_task_owner_and_preserves_existing_report (test_runtime_policy.RuntimePolicyTests.test_output_requires_exact_task_owner_and_preserves_existing_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_runtime_policy.py", line 57, in test_output_requires_exact_task_owner_and_preserves_existing_report
+    policy.output_path(fake, fake / 'result.json')
+    ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'runtime_policy' has no attribute 'output_path'
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.965s
+
+FAILED (errors=2)

@@ -1,0 +1,6 @@
+{
+  "phase": "build",
+  "failure": "One or more independent build roots failed; all root outcomes and logs retained",
+  "formalPackageTrust": "BLOCKED",
+  "mainConsumption": "NOT_RUN"
+}

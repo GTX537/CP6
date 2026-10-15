@@ -1,0 +1,65 @@
+test_export_uses_committed_bytes_and_reports_omissions (test_snapshot.SnapshotTests.test_export_uses_committed_bytes_and_reports_omissions) ... FAIL
+test_manifest_rejects_changed_source_or_overlay_or_config (test_snapshot.SnapshotTests.test_manifest_rejects_changed_source_or_overlay_or_config) ... FAIL
+test_overlay_exactly_four_references_and_no_other_byte_changes (test_snapshot.SnapshotTests.test_overlay_exactly_four_references_and_no_other_byte_changes) ... FAIL
+test_owner_rejects_outside_and_noncanonical_and_reuse (test_snapshot.SnapshotTests.test_owner_rejects_outside_and_noncanonical_and_reuse) ... FAIL
+test_owner_rejects_symlink_or_junction (test_snapshot.SnapshotTests.test_owner_rejects_symlink_or_junction) ... FAIL
+test_unsafe_git_path_rejected (test_snapshot.SnapshotTests.test_unsafe_git_path_rejected) ... FAIL
+
+======================================================================
+FAIL: test_export_uses_committed_bytes_and_reports_omissions (test_snapshot.SnapshotTests.test_export_uses_committed_bytes_and_reports_omissions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 25, in setUp
+    self.assertIsNotNone(spec, "snapshot safety implementation is missing")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : snapshot safety implementation is missing
+
+======================================================================
+FAIL: test_manifest_rejects_changed_source_or_overlay_or_config (test_snapshot.SnapshotTests.test_manifest_rejects_changed_source_or_overlay_or_config)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 25, in setUp
+    self.assertIsNotNone(spec, "snapshot safety implementation is missing")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : snapshot safety implementation is missing
+
+======================================================================
+FAIL: test_overlay_exactly_four_references_and_no_other_byte_changes (test_snapshot.SnapshotTests.test_overlay_exactly_four_references_and_no_other_byte_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 25, in setUp
+    self.assertIsNotNone(spec, "snapshot safety implementation is missing")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : snapshot safety implementation is missing
+
+======================================================================
+FAIL: test_owner_rejects_outside_and_noncanonical_and_reuse (test_snapshot.SnapshotTests.test_owner_rejects_outside_and_noncanonical_and_reuse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 25, in setUp
+    self.assertIsNotNone(spec, "snapshot safety implementation is missing")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : snapshot safety implementation is missing
+
+======================================================================
+FAIL: test_owner_rejects_symlink_or_junction (test_snapshot.SnapshotTests.test_owner_rejects_symlink_or_junction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 25, in setUp
+    self.assertIsNotNone(spec, "snapshot safety implementation is missing")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : snapshot safety implementation is missing
+
+======================================================================
+FAIL: test_unsafe_git_path_rejected (test_snapshot.SnapshotTests.test_unsafe_git_path_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 25, in setUp
+    self.assertIsNotNone(spec, "snapshot safety implementation is missing")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : snapshot safety implementation is missing
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.035s
+
+FAILED (failures=6)

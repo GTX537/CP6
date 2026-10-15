@@ -1,0 +1,28 @@
+{
+  "command": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp02-02/consumption-compatibility/tests",
+    "-v"
+  ],
+  "utc": "2026-10-15T00:52:40.998576+00:00",
+  "exitCode": 0,
+  "sourceHashes": {
+    "eng\\wp02-02\\consumption-compatibility\\capture_build.py": "21854a91271070be8e354bb62625a927999e608cbe5e0c8ea81d576be8cedbe5",
+    "eng\\wp02-02\\consumption-compatibility\\Inspect-Assemblies.ps1": "b4199919d2fc0877619b3f3fe05a43996799788a4470ca421f5bf50ea2993337",
+    "eng\\wp02-02\\consumption-compatibility\\inspect_graph.py": "c693635732f9bbade210ac576a3ea6431265a169e38c4daa227b1d1df2d42ff2",
+    "eng\\wp02-02\\consumption-compatibility\\run.py": "37a363e189cc90d3a83ce96f97df8a3d16adc5ddae404f8ef464e6cf200f72c7",
+    "eng\\wp02-02\\consumption-compatibility\\runtime_policy.py": "a7d8d2e2959e4c52412dc8355143eab4201cb240ed1c88d4bc02732d1081804c",
+    "eng\\wp02-02\\consumption-compatibility\\snapshot.py": "2e956e42b76567117f58615667d80684f11d13f7787afce35dd26978e217f2d8",
+    "eng\\wp02-02\\consumption-compatibility\\probe\\Program.cs": "21b503621f48156669db60e8b80c2ee64a838b986115d33c0794687b515c2476",
+    "eng\\wp02-02\\consumption-compatibility\\tests\\test_graph.py": "11ddd0c88f5d607957b064550a18701830bdd102424ae1e8d2998f07a6984ea8",
+    "eng\\wp02-02\\consumption-compatibility\\tests\\test_runtime_policy.py": "4a160b41eba9e90148bced1e589e94af2d70c281565f4270044e9e95f3d57e9a",
+    "eng\\wp02-02\\consumption-compatibility\\tests\\test_snapshot.py": "cd6b456b9b4ba0048b80b5a2ac957e75cc649bd4a954b7b9ce5ccc9a5e2e202b"
+  }
+}

@@ -1,0 +1,3 @@
+<Project>
+  <!-- Deliberately no import of ancestor Main targets. -->
+</Project>

@@ -1,0 +1,21 @@
+test_changed_binary_after_expected_capture_rejected (test_runtime_policy.RuntimePolicyTests.test_changed_binary_after_expected_capture_rejected) ... ok
+test_changed_pre_runtime_build_evidence_rejected (test_runtime_policy.RuntimePolicyTests.test_changed_pre_runtime_build_evidence_rejected) ... ok
+test_required_mutations_rejected (test_runtime_policy.RuntimePolicyTests.test_required_mutations_rejected) ... ok
+test_synthetic_identity_match_still_never_grants_adoption (test_runtime_policy.RuntimePolicyTests.test_synthetic_identity_match_still_never_grants_adoption) ... FAIL
+
+======================================================================
+FAIL: test_synthetic_identity_match_still_never_grants_adoption (test_runtime_policy.RuntimePolicyTests.test_synthetic_identity_match_still_never_grants_adoption)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_runtime_policy.py", line 55, in test_synthetic_identity_match_still_never_grants_adoption
+    self.assertEqual('MATCHED_SPECIFIED_PATHS', r['result'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MATCHED_SPECIFIED_PATHS' != 'REJECTED'
+- MATCHED_SPECIFIED_PATHS
++ REJECTED
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.276s
+
+FAILED (failures=1)

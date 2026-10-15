@@ -1,0 +1,25 @@
+{
+  "owner": "810f99a3dcf04e1fb806c513ca3b754c",
+  "phase": "GREEN",
+  "argv": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp02-02/consumption-compatibility/tests",
+    "-p",
+    "test_graph.py",
+    "-k",
+    "owner_internal_alias_junction",
+    "-v"
+  ],
+  "exitCode": 0,
+  "logSha256": "9525cc1d80a1098c7bac0ee9462c65478d1d118627b40e6c8e43c61b07f86975",
+  "inputs": {
+    "eng/wp02-02/consumption-compatibility/inspect_graph.py": "15d98836e3a91ee374e9df5669da021c52020cc01af3969cbfef60204dfbbf97",
+    "eng/wp02-02/consumption-compatibility/tests/test_graph.py": "213d141e69c4947e13834b7fa11c21d65682ea29f9eb50fc4555017d05e489c2"
+  }
+}

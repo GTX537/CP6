@@ -1,0 +1,16 @@
+test_distinct_content_and_raw_archive_hashes_both_are_verified (test_graph.GraphTests.test_distinct_content_and_raw_archive_hashes_both_are_verified) ... ERROR
+
+======================================================================
+ERROR: test_distinct_content_and_raw_archive_hashes_both_are_verified (test_graph.GraphTests.test_distinct_content_and_raw_archive_hashes_both_are_verified)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_graph.py", line 55, in test_distinct_content_and_raw_archive_hashes_both_are_verified
+    valid = self.g.package_evidence(self.case, "Example/1.0.0", library)
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\inspect_graph.py", line 109, in package_evidence
+    raise ValueError("NuGet content hash differs between assets, metadata and cache hash file")
+ValueError: NuGet content hash differs between assets, metadata and cache hash file
+
+----------------------------------------------------------------------
+Ran 1 test in 0.329s
+
+FAILED (errors=1)

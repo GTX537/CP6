@@ -1,0 +1,6 @@
+{
+  "phase": "probe",
+  "failure": "Command failed: private-probe-run; see logs/private-probe-run.log",
+  "formalPackageTrust": "BLOCKED",
+  "mainConsumption": "NOT_RUN"
+}

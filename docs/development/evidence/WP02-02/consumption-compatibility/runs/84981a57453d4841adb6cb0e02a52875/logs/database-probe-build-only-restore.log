@@ -1,0 +1,8 @@
+  Determining projects to restore...
+  Failed to download package 'Microsoft.CodeAnalysis.Workspaces.Common.4.5.0' from 'https://api.nuget.org/v3-flatcontainer/microsoft.codeanalysis.workspaces.common/4.5.0/microsoft.codeanalysis.workspaces.common.4.5.0.nupkg'.
+  The download of 'https://api.nuget.org/v3-flatcontainer/microsoft.codeanalysis.workspaces.common/4.5.0/microsoft.codeanalysis.workspaces.common.4.5.0.nupkg' timed out because no data was received for 60000ms.
+    Exception of type 'System.TimeoutException' was thrown.
+  Failed to download package 'Grpc.Net.Common.2.80.0' from 'https://api.nuget.org/v3-flatcontainer/grpc.net.common/2.80.0/grpc.net.common.2.80.0.nupkg'.
+  The download of 'https://api.nuget.org/v3-flatcontainer/grpc.net.common/2.80.0/grpc.net.common.2.80.0.nupkg' timed out because no data was received for 60000ms.
+    Exception of type 'System.TimeoutException' was thrown.
+C:\Users\tt\.dotnet\sdk\8.0.424\NuGet.targets(174,5): error : The filename, directory name, or volume label syntax is incorrect. : '\\?\D:\CP6-worktrees\wp02-02-closure-20261014\artifacts\wp02-02\consumption-compatibility\84981a57453d4841adb6cb0e02a52875\n\scriban\7.2.4\build\\Scriban.props' [D:\CP6-worktrees\wp02-02-closure-20261014\artifacts\wp02-02\consumption-compatibility\84981a57453d4841adb6cb0e02a52875\snapshots\main\tools\CP6.DatabaseCompatibility.Probe\CP6.DatabaseCompatibility.Probe.csproj]

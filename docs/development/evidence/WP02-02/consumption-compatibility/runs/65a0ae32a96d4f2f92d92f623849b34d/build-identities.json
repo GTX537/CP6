@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 1,
+  "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+  "files": [
+    {
+      "path": "snapshots/main/CP6.Core/obj/project.assets.json",
+      "sha256": "e37247405faf1b793862f8c5b45d4b8f1c6a187bd7a816243b05020feae19e6b",
+      "size": 211698
+    },
+    {
+      "path": "snapshots/main/CP6.Core/packages.wp02-02.lock.json",
+      "sha256": "abcb5655ff9917307ac904f4d85213ec925a3918f90094f06d9990c5cda4b0b4",
+      "size": 37435
+    },
+    {
+      "path": "snapshots/main/CP6.Entity/bin/Release/net8.0/CP6.Entity.deps.json",
+      "sha256": "9181324c560e18d8466ee9e66cf05ad4e29a30bed6c5ff706489a140d473c9bf",
+      "size": 8704
+    },
+    {
+      "path": "snapshots/main/CP6.Entity/bin/Release/net8.0/CP6.Entity.dll",
+      "sha256": "12485e0c1f434a9a45bdbb990bd44238d19f0e553c302e80af243b6857453653",
+      "size": 1554944
+    },
+    {
+      "path": "snapshots/main/CP6.Entity/obj/project.assets.json",
+      "sha256": "437b6861cbff2731fdea11b5ab42e9710d98fb491444261fa13555b2902614b9",
+      "size": 29956
+    },
+    {
+      "path": "snapshots/main/CP6.Entity/obj/Release/net8.0/CP6.Entity.dll",
+      "sha256": "12485e0c1f434a9a45bdbb990bd44238d19f0e553c302e80af243b6857453653",
+      "size": 1554944
+    },
+    {
+      "path": "snapshots/main/CP6.Entity/obj/Release/net8.0/ref/CP6.Entity.dll",
+      "sha256": "634ecb9fea93cbd5cc1d7cd6d5bbf6a99c021504c20de4d4232bdd55a48e2bba",
+      "size": 724992
+    },
+    {
+      "path": "snapshots/main/CP6.Entity/obj/Release/net8.0/refint/CP6.Entity.dll",
+      "sha256": "634ecb9fea93cbd5cc1d7cd6d5bbf6a99c021504c20de4d4232bdd55a48e2bba",
+      "size": 724992
+    },
+    {
+      "path": "snapshots/main/CP6.Entity/packages.wp02-02.lock.json",
+      "sha256": "bf6ccea1eb09e82768edb2c2c1162171e006cd25632ed91f99af498dfa94d88f",
+      "size": 4045
+    },
+    {
+      "path": "snapshots/main/CP6.Persistence.PostgreSql/obj/project.assets.json",
+      "sha256": "38743ed1c14590f2bc74c16c8c819de1cc40fa294a13358370ec84e68aa00daf",
+      "size": 270951
+    },
+    {
+      "path": "snapshots/main/CP6.Persistence.PostgreSql/packages.wp02-02.lock.json",
+      "sha256": "318e6fae4805e0c55b27025a9640962a9382ff9acc20eea4660c9b4ffe56c3d0",
+      "size": 45122
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/bin/Release/net8.0/CP6.Space.Application.deps.json",
+      "sha256": "da5e52c2576eb9a819f48258450c500c3497387aa8f78607c45d4d52d7f19da4",
+      "size": 1231
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/bin/Release/net8.0/CP6.Space.Application.dll",
+      "sha256": "6e3b4241302e83cba544386220dd121b2a35da39b877a5d6199509e8654ca5b1",
+      "size": 1661952
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/bin/Release/net8.0/CP6.Space.Contracts.dll",
+      "sha256": "366ac603296d4bde621f7b4ef367f3dc74bbbeaad4558cf07e623e480a10f3f5",
+      "size": 1682944
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/bin/Release/net8.0/CP6.Space.Domain.dll",
+      "sha256": "ae16dc4090312d58da1a8fb786762b46b99a0382e17187f4f8896a8c53f518d7",
+      "size": 461312
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/obj/project.assets.json",
+      "sha256": "7fc5d34cfc5a8c003f6d30dd1062f3c7b447f5f5df88ecfb22f5300ca3cd2075",
+      "size": 4801
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/obj/Release/net8.0/CP6.Space.Application.dll",
+      "sha256": "6e3b4241302e83cba544386220dd121b2a35da39b877a5d6199509e8654ca5b1",
+      "size": 1661952
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/obj/Release/net8.0/ref/CP6.Space.Application.dll",
+      "sha256": "baead558ace0be3818dd95640a8d0d09e7eb5729b8d9ae8b9c798e3e4fb68dd3",
+      "size": 497152
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/obj/Release/net8.0/refint/CP6.Space.Application.dll",
+      "sha256": "baead558ace0be3818dd95640a8d0d09e7eb5729b8d9ae8b9c798e3e4fb68dd3",
+      "size": 497152
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Application/packages.wp02-02.lock.json",
+      "sha256": "54900c93e93f104268e2b524461988ee4c307d08af3e9abaa917ebbe7dc503e9",
+      "size": 205
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Contracts/bin/Release/net8.0/CP6.Space.Contracts.deps.json",
+      "sha256": "ac414c45515f6531259d711835401fbff6335948eb025e91745e42302599f318",
+      "size": 449
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Contracts/bin/Release/net8.0/CP6.Space.Contracts.dll",
+      "sha256": "366ac603296d4bde621f7b4ef367f3dc74bbbeaad4558cf07e623e480a10f3f5",
+      "size": 1682944
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Contracts/obj/project.assets.json",
+      "sha256": "9003b348abfc87da4a521915cb926b6fc0be9f88424bc64f666d2b6e5a25e351",
+      "size": 2786
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Contracts/obj/Release/net8.0/CP6.Space.Contracts.dll",
+      "sha256": "366ac603296d4bde621f7b4ef367f3dc74bbbeaad4558cf07e623e480a10f3f5",
+      "size": 1682944
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Contracts/obj/Release/net8.0/ref/CP6.Space.Contracts.dll",
+      "sha256": "c4d66737512da9fdf45634baf74607852aa1c62d9fe0b641758ee909c86a8079",
+      "size": 696832
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Contracts/obj/Release/net8.0/refint/CP6.Space.Contracts.dll",
+      "sha256": "c4d66737512da9fdf45634baf74607852aa1c62d9fe0b641758ee909c86a8079",
+      "size": 696832
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Contracts/packages.wp02-02.lock.json",
+      "sha256": "3cc7952787be7d43489891ec4a98f0d089ab0cedb68a61da0244c43df6a02398",
+      "size": 65
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Domain/bin/Release/net8.0/CP6.Space.Domain.deps.json",
+      "sha256": "97ff6c32994a116f45bc5d96c74f83805decddb70eaa5642bbd69277698c4c36",
+      "size": 440
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Domain/bin/Release/net8.0/CP6.Space.Domain.dll",
+      "sha256": "ae16dc4090312d58da1a8fb786762b46b99a0382e17187f4f8896a8c53f518d7",
+      "size": 461312
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Domain/obj/project.assets.json",
+      "sha256": "aa740b2f942164387b7533f610b66d6541ec0ea330248e33d646d13a82039bcc",
+      "size": 2768
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Domain/obj/Release/net8.0/CP6.Space.Domain.dll",
+      "sha256": "ae16dc4090312d58da1a8fb786762b46b99a0382e17187f4f8896a8c53f518d7",
+      "size": 461312
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Domain/obj/Release/net8.0/ref/CP6.Space.Domain.dll",
+      "sha256": "89c35ef7ae2ba71f35b7c5cfb3d056e4df7079fd18955a9d2c87f3865b6235c7",
+      "size": 134656
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Domain/obj/Release/net8.0/refint/CP6.Space.Domain.dll",
+      "sha256": "89c35ef7ae2ba71f35b7c5cfb3d056e4df7079fd18955a9d2c87f3865b6235c7",
+      "size": 134656
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Domain/packages.wp02-02.lock.json",
+      "sha256": "3cc7952787be7d43489891ec4a98f0d089ab0cedb68a61da0244c43df6a02398",
+      "size": 65
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Infrastructure/obj/project.assets.json",
+      "sha256": "bb0110b8b35223ffca1619ad27290c7160ed9eaca0ed26f8923d0a8afbd0f47d",
+      "size": 271343
+    },
+    {
+      "path": "snapshots/main/CP6.Space.Infrastructure/packages.wp02-02.lock.json",
+      "sha256": "0a35dd0ecd8ad732034fe7f14980b9df407bef644e1a5f200c8ccb0aedc6532a",
+      "size": 44788
+    },
+    {
+      "path": "snapshots/main/CP6.WebApi/obj/project.assets.json",
+      "sha256": "d7a3f5df8e823d2d4f9170ad1f28adfed0e9c3e84be8c9d70ad3468c51391a9e",
+      "size": 365074
+    },
+    {
+      "path": "snapshots/main/CP6.WebApi/packages.wp02-02.lock.json",
+      "sha256": "beb1a4cd1042d8a7bb17345f8838c63631ad1550a88b3e6d9f82c081a60dc070",
+      "size": 62915
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.deps.json",
+      "sha256": "dcea2f238c47bdfbbe8e79691f64ea7d3f76938d6e92b6731c8c0da91b5fb6c4",
+      "size": 940
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.dll",
+      "sha256": "7336e996a11ee040a10e068c3557a518326d1f943fc3ce3bf9ac9a03035af079",
+      "size": 25600
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Contracts.dll",
+      "sha256": "e334def6c1fdbd0e1b01d3fdf0a5add1b5da81913a2e4e59b1113107ea59875b",
+      "size": 111104
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/obj/project.assets.json",
+      "sha256": "9c302c20dde0421293b7ac192c64ec7af3fe7871e56b4ab049d46e2e255deb18",
+      "size": 5219
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/obj/Release/net8.0/CP6.Platform.Abstractions.dll",
+      "sha256": "7336e996a11ee040a10e068c3557a518326d1f943fc3ce3bf9ac9a03035af079",
+      "size": 25600
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/obj/Release/net8.0/ref/CP6.Platform.Abstractions.dll",
+      "sha256": "1b2d90db23d31f93e65d83aaa39f2fc966d0b3260746d528e8c32f3776ca966a",
+      "size": 13312
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/obj/Release/net8.0/refint/CP6.Platform.Abstractions.dll",
+      "sha256": "1b2d90db23d31f93e65d83aaa39f2fc966d0b3260746d528e8c32f3776ca966a",
+      "size": 13312
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Abstractions/packages.wp02-02.lock.json",
+      "sha256": "a6909940b68f6a686071f795745460b212a5f1f631c565077820ac10a6982242",
+      "size": 142
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Abstractions.dll",
+      "sha256": "7336e996a11ee040a10e068c3557a518326d1f943fc3ce3bf9ac9a03035af079",
+      "size": 25600
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.deps.json",
+      "sha256": "e2b6af3aa71042ec476689d67f504cf724f7c2fb05dfeb727b289194f38e7992",
+      "size": 38788
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.dll",
+      "sha256": "d877c97b13901fbf48bd37e603b4077df28620e3266785b77eb7c1dee492b87b",
+      "size": 229376
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Contracts.dll",
+      "sha256": "e334def6c1fdbd0e1b01d3fdf0a5add1b5da81913a2e4e59b1113107ea59875b",
+      "size": 111104
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/obj/project.assets.json",
+      "sha256": "15473d450db8a00bc59bbda38ba1ec317fab1f32633756a5c4f2a9740930518a",
+      "size": 113030
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/obj/Release/net8.0/CP6.Platform.AspNetCore.dll",
+      "sha256": "d877c97b13901fbf48bd37e603b4077df28620e3266785b77eb7c1dee492b87b",
+      "size": 229376
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/obj/Release/net8.0/ref/CP6.Platform.AspNetCore.dll",
+      "sha256": "e8d6a5e4170d40b545fa14e0b5933e28955ca7225575f0a88ede304ea2622b08",
+      "size": 79872
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/obj/Release/net8.0/refint/CP6.Platform.AspNetCore.dll",
+      "sha256": "e8d6a5e4170d40b545fa14e0b5933e28955ca7225575f0a88ede304ea2622b08",
+      "size": 79872
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.AspNetCore/packages.wp02-02.lock.json",
+      "sha256": "89edad14a7f3d14585af29710911c80cb4e7c9b8c6d52937896ff30ecd5dfb17",
+      "size": 19682
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.deps.json",
+      "sha256": "1fc137f399cdb8212ce4a406f41155fa6d4b4e77b8089a132bcb7b72f6968e54",
+      "size": 474
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.dll",
+      "sha256": "e334def6c1fdbd0e1b01d3fdf0a5add1b5da81913a2e4e59b1113107ea59875b",
+      "size": 111104
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Contracts/obj/project.assets.json",
+      "sha256": "951a00d84624839827bf700dd5ce82fe2c9a47761c628b571ea3742bb3443733",
+      "size": 4087
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Contracts/obj/Release/net8.0/CP6.Platform.Contracts.dll",
+      "sha256": "e334def6c1fdbd0e1b01d3fdf0a5add1b5da81913a2e4e59b1113107ea59875b",
+      "size": 111104
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Contracts/obj/Release/net8.0/ref/CP6.Platform.Contracts.dll",
+      "sha256": "9175c8b828162a82fe9766f073433b03fb257b745723f34dcae98d0b497d627c",
+      "size": 39936
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Contracts/obj/Release/net8.0/refint/CP6.Platform.Contracts.dll",
+      "sha256": "9175c8b828162a82fe9766f073433b03fb257b745723f34dcae98d0b497d627c",
+      "size": 39936
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Contracts/packages.wp02-02.lock.json",
+      "sha256": "beff604dc90c4f4de310b8c1c075156b758472fca928f6b2b3029c5b013749c6",
+      "size": 65
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Abstractions.dll",
+      "sha256": "7336e996a11ee040a10e068c3557a518326d1f943fc3ce3bf9ac9a03035af079",
+      "size": 25600
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Contracts.dll",
+      "sha256": "e334def6c1fdbd0e1b01d3fdf0a5add1b5da81913a2e4e59b1113107ea59875b",
+      "size": 111104
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.deps.json",
+      "sha256": "8901342d80c23c24bc286b85c268fb41d1e2249f5a2ac5d190fbf3510befc088",
+      "size": 11387
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.dll",
+      "sha256": "5038d6a92977c0c3870528c5b6fa64102ec49036468871e596325f8ef9d5f8f6",
+      "size": 337920
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/obj/project.assets.json",
+      "sha256": "b9dece65dbc96d1ddaa59970a0ddc2e35b6444813a255dd61bbe4291acfc2693",
+      "size": 37455
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/obj/Release/net8.0/CP6.Platform.EntityFramework.dll",
+      "sha256": "5038d6a92977c0c3870528c5b6fa64102ec49036468871e596325f8ef9d5f8f6",
+      "size": 337920
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/obj/Release/net8.0/ref/CP6.Platform.EntityFramework.dll",
+      "sha256": "c7cfd0ec66349444520b48da8df2534a1f607aea4a5dcb91757960980024220d",
+      "size": 94208
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/obj/Release/net8.0/refint/CP6.Platform.EntityFramework.dll",
+      "sha256": "c7cfd0ec66349444520b48da8df2534a1f607aea4a5dcb91757960980024220d",
+      "size": 94208
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.EntityFramework/packages.wp02-02.lock.json",
+      "sha256": "6b305da386d8d7b3e782ceeaa4b2e98cd3031f57f7ea88abe4358bb29178c9c7",
+      "size": 5062
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Abstractions.dll",
+      "sha256": "7336e996a11ee040a10e068c3557a518326d1f943fc3ce3bf9ac9a03035af079",
+      "size": 25600
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Contracts.dll",
+      "sha256": "e334def6c1fdbd0e1b01d3fdf0a5add1b5da81913a2e4e59b1113107ea59875b",
+      "size": 111104
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.deps.json",
+      "sha256": "cf6c6bc8991dd65c20f19ce4dc106fc27ec5f84e9b6bf6876584ab3cdc839b59",
+      "size": 23661
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.dll",
+      "sha256": "c4e28f9db2166ff9bf68fcedd87802c655a1a0f3d63ecb37e27e1a740a112def",
+      "size": 97792
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/obj/project.assets.json",
+      "sha256": "530d98dccea3b8ad921c16c69c488c875afa232c192e801181b29bbce7d63e25",
+      "size": 69084
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/obj/Release/net8.0/CP6.Platform.Messaging.dll",
+      "sha256": "c4e28f9db2166ff9bf68fcedd87802c655a1a0f3d63ecb37e27e1a740a112def",
+      "size": 97792
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/obj/Release/net8.0/ref/CP6.Platform.Messaging.dll",
+      "sha256": "3bf37144b3e6e13fc5b88913f52706e349abdef68ea4eabd4737218b6cc2225f",
+      "size": 30208
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/obj/Release/net8.0/refint/CP6.Platform.Messaging.dll",
+      "sha256": "3bf37144b3e6e13fc5b88913f52706e349abdef68ea4eabd4737218b6cc2225f",
+      "size": 30208
+    },
+    {
+      "path": "snapshots/platform/src/CP6.Platform.Messaging/packages.wp02-02.lock.json",
+      "sha256": "a4982f2577eec0ed58859ca73a747b55918fd020e2f552ad44c0fa3e1211a945",
+      "size": 11899
+    }
+  ],
+  "formalPackageTrust": "BLOCKED",
+  "mainConsumption": "NOT_RUN"
+}

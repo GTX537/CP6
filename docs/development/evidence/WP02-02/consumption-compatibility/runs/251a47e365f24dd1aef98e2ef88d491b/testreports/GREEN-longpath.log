@@ -1,0 +1,16 @@
+test_export_uses_committed_bytes_and_reports_omissions (test_snapshot.SnapshotTests.test_export_uses_committed_bytes_and_reports_omissions) ... ok
+test_extra_source_and_missing_source_are_rejected (test_snapshot.SnapshotTests.test_extra_source_and_missing_source_are_rejected) ... ok
+test_long_paths_are_verified_and_hashed_without_missing_files (test_snapshot.SnapshotTests.test_long_paths_are_verified_and_hashed_without_missing_files) ... ok
+test_main_restore_failure_does_not_hide_other_root_diagnostics (test_snapshot.SnapshotTests.test_main_restore_failure_does_not_hide_other_root_diagnostics) ... ok
+test_manifest_rejects_changed_source_or_overlay_or_config (test_snapshot.SnapshotTests.test_manifest_rejects_changed_source_or_overlay_or_config) ... ok
+test_nuget_cache_uses_owner_local_extended_paths (test_snapshot.SnapshotTests.test_nuget_cache_uses_owner_local_extended_paths) ... ok
+test_overlay_exactly_four_references_and_no_other_byte_changes (test_snapshot.SnapshotTests.test_overlay_exactly_four_references_and_no_other_byte_changes) ... ok
+test_owner_rejects_outside_and_noncanonical_and_reuse (test_snapshot.SnapshotTests.test_owner_rejects_outside_and_noncanonical_and_reuse) ... ok
+test_owner_rejects_symlink_or_junction (test_snapshot.SnapshotTests.test_owner_rejects_symlink_or_junction) ... ok
+test_probe_can_report_partial_scope_after_independent_main_failure (test_snapshot.SnapshotTests.test_probe_can_report_partial_scope_after_independent_main_failure) ... ok
+test_unsafe_git_path_rejected (test_snapshot.SnapshotTests.test_unsafe_git_path_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.721s
+
+OK

@@ -1,0 +1,49 @@
+test_export_uses_committed_bytes_and_reports_omissions (test_snapshot.SnapshotTests.test_export_uses_committed_bytes_and_reports_omissions) ... ok
+test_extra_source_and_missing_source_are_rejected (test_snapshot.SnapshotTests.test_extra_source_and_missing_source_are_rejected) ... ok
+test_long_paths_are_verified_and_hashed_without_missing_files (test_snapshot.SnapshotTests.test_long_paths_are_verified_and_hashed_without_missing_files) ... FAIL
+test_main_restore_failure_does_not_hide_other_root_diagnostics (test_snapshot.SnapshotTests.test_main_restore_failure_does_not_hide_other_root_diagnostics) ... ok
+test_manifest_rejects_changed_source_or_overlay_or_config (test_snapshot.SnapshotTests.test_manifest_rejects_changed_source_or_overlay_or_config) ... ok
+test_nuget_cache_uses_owner_local_extended_paths (test_snapshot.SnapshotTests.test_nuget_cache_uses_owner_local_extended_paths) ... FAIL
+test_overlay_exactly_four_references_and_no_other_byte_changes (test_snapshot.SnapshotTests.test_overlay_exactly_four_references_and_no_other_byte_changes) ... ok
+test_owner_rejects_outside_and_noncanonical_and_reuse (test_snapshot.SnapshotTests.test_owner_rejects_outside_and_noncanonical_and_reuse) ... ok
+test_owner_rejects_symlink_or_junction (test_snapshot.SnapshotTests.test_owner_rejects_symlink_or_junction) ... ok
+test_probe_can_report_partial_scope_after_independent_main_failure (test_snapshot.SnapshotTests.test_probe_can_report_partial_scope_after_independent_main_failure) ... ok
+test_unsafe_git_path_rejected (test_snapshot.SnapshotTests.test_unsafe_git_path_rejected) ... ok
+
+======================================================================
+FAIL: test_long_paths_are_verified_and_hashed_without_missing_files (test_snapshot.SnapshotTests.test_long_paths_are_verified_and_hashed_without_missing_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 171, in test_long_paths_are_verified_and_hashed_without_missing_files
+    self.s.verify_files(root, rows)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\snapshot.py", line 185, in verify_files
+    raise ValueError(f"Snapshot byte invariant failed: {row['path']}")
+ValueError: Snapshot byte invariant failed: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/dependency.dll
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 174, in test_long_paths_are_verified_and_hashed_without_missing_files
+    self.fail(f"Existing long path was incorrectly rejected: {error}")
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Existing long path was incorrectly rejected: Snapshot byte invariant failed: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/dependency.dll
+
+======================================================================
+FAIL: test_nuget_cache_uses_owner_local_extended_paths (test_snapshot.SnapshotTests.test_nuget_cache_uses_owner_local_extended_paths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 183, in test_nuget_cache_uses_owner_local_extended_paths
+    self.assertEqual(env["NUGET_PACKAGES"], "\\\\?\\" + str(self.case / "n"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'D:\\CP6-worktrees\\wp02-02-closure-202610[95 chars]ache' != '\\\\?\\D:\\CP6-worktrees\\wp02-02-closure[92 chars]6\\n'
+- D:\CP6-worktrees\wp02-02-closure-20261014\artifacts\wp02-02\consumption-compatibility\3e669909feec4b77972b9ad00781ee91\6\nuget-cache
+?                                                                                                                           ----------
++ \\?\D:\CP6-worktrees\wp02-02-closure-20261014\artifacts\wp02-02\consumption-compatibility\3e669909feec4b77972b9ad00781ee91\6\n
+? ++++
+
+
+----------------------------------------------------------------------
+Ran 11 tests in 2.788s
+
+FAILED (failures=2)

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "scope": "SOURCE_COMPATIBILITY_PREPARATION_ONLY",
+  "sdk": "8.0.424",
+  "main": {
+    "sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+    "tree": "fcf79cd38055adddab4a69e4910808c691d442b2",
+    "nugetConfigSha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45"
+  },
+  "platform": {
+    "sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+    "tree": "4ae98434d6e87f3fdd852a156fd057c03e336e43"
+  },
+  "buildRoots": ["CP6.WebApi/CP6.WebApi.csproj", "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj"],
+  "overlay": [
+    {"project": "CP6.Core/CP6.Core.csproj", "package": "CP6.Platform.Messaging", "version": "[0.10.2]", "sourceProject": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj"},
+    {"project": "CP6.Core/CP6.Core.csproj", "package": "CP6.Platform.EntityFramework", "version": "[0.10.2]", "sourceProject": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj"},
+    {"project": "CP6.WebApi/CP6.WebApi.csproj", "package": "CP6.Platform.AspNetCore", "version": "[0.10.2]", "sourceProject": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj"},
+    {"project": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj", "package": "CP6.Platform.EntityFramework", "version": "[0.10.2]", "sourceProject": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj"}
+  ],
+  "formalPackageTrust": "BLOCKED",
+  "mainConsumption": "NOT_RUN"
+}

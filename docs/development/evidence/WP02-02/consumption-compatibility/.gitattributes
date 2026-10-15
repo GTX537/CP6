@@ -1,0 +1,5 @@
+*.json -text whitespace=cr-at-eol
+*.log -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+*.txt -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+*.patch -text whitespace=cr-at-eol,-blank-at-eol
+runs/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

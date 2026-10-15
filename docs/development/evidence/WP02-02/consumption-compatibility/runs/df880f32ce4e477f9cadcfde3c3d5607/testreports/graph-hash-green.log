@@ -1,0 +1,17 @@
+test_delta_retains_both_dependency_records (test_graph.GraphTests.test_delta_retains_both_dependency_records) ... ok
+test_distinct_content_and_raw_archive_hashes_both_are_verified (test_graph.GraphTests.test_distinct_content_and_raw_archive_hashes_both_are_verified) ... ok
+test_failed_build_missing_graph_stays_unknown_with_partial_evidence (test_graph.GraphTests.test_failed_build_missing_graph_stays_unknown_with_partial_evidence) ... ok
+test_hash_mismatch_and_credential_source_are_rejected (test_graph.GraphTests.test_hash_mismatch_and_credential_source_are_rejected) ... ok
+test_long_package_archive_under_new_cache_is_read_with_extended_paths (test_graph.GraphTests.test_long_package_archive_under_new_cache_is_read_with_extended_paths) ... ok
+test_missing_package_archive_is_rejected (test_graph.GraphTests.test_missing_package_archive_is_rejected) ... ok
+test_owner_internal_alias_junction_is_rejected_before_resolve (test_graph.GraphTests.test_owner_internal_alias_junction_is_rejected_before_resolve) ... ok
+test_package_hashes_keep_nuget_content_distinct_from_raw_archive (test_graph.GraphTests.test_package_hashes_keep_nuget_content_distinct_from_raw_archive) ... ok
+test_platform_project_must_be_exact_fixed_snapshot_path (test_graph.GraphTests.test_platform_project_must_be_exact_fixed_snapshot_path) ... ok
+test_recorded_cache_accepts_only_consistent_owned_old_or_new_paths (test_graph.GraphTests.test_recorded_cache_accepts_only_consistent_owned_old_or_new_paths) ... ok
+test_residual_platform_package_and_outside_cache_are_rejected (test_graph.GraphTests.test_residual_platform_package_and_outside_cache_are_rejected) ... ok
+test_running_build_cannot_be_inspected (test_graph.GraphTests.test_running_build_cannot_be_inspected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.345s
+
+OK

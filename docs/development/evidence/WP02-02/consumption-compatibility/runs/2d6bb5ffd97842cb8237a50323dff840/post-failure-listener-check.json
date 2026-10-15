@@ -1,0 +1,12 @@
+{
+  "connected": false,
+  "errorType": "ConnectionRefusedError",
+  "errno": 10061,
+  "winerror": 10061,
+  "message": "[WinError 10061] No connection could be made because the target machine actively refused it",
+  "elapsedSeconds": 2.059526600060053,
+  "utc": "2026-10-15T01:08:17.291964+00:00",
+  "originalOwner": "84981a57453d4841adb6cb0e02a52875",
+  "port": 54091,
+  "originalReportUnchanged": true
+}
