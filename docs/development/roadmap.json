@@ -158677,6 +158677,16 @@
       "date": "2026-10-15",
       "change": "Main bounded formal0.10.3 adoption updates four references and sixteen restored locks; WebApi/Probe builds and151 related contracts/model tests pass. Exact formal identity recorded without Allowed/runtime claims. FullWP02-02 remains IN_PROGRESS, original17PGT/business NOT_RUN; no Actions, migration or deployment.",
       "evidence": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "COORD starts internal tenant binding/pool/lease component after realMain0.10.3 adoption; own PG fixture only, business routes remain unopened and original17PGT NOT_RUN.",
+      "evidence": "docs/development/evidence/WP02-02/tenant-connections/PLAN.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "COORD delivers internal tenant connection component; 28 related local unit/owned PostgreSQL fixture cases pass with zero failures/skips. Four-model328-table metadata inventory prepares next mapping step. No business route, original17PGT or full-task completion claimed; no Actions/migration/deployment.",
+      "evidence": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -160047,24 +160057,23 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / WP02-02 Main正式包采用",
+        "chat_label": "COORD / WP02-02 租户连接组件",
         "repository": "Main",
-        "branch": "codex/wp02-02-main-adoption-20261015",
+        "branch": "codex/wp02-02-tenant-storage-20261015",
         "worktree": "D:/CP6-worktrees/wave8-dispatch-20261015",
-        "claimed_at": "2026-10-15T09:29:28.614463+00:00",
-        "baseline_sha": "5816d04eaff210db7a3b788390e4f560a67603f7",
-        "entry_evidence": "docs/development/evidence/WP02-02/main-package-adoption/PLAN.md",
-        "phase": "MAIN_PACKAGE_ADOPTION",
-        "dispatch_scope": "ACTUAL_FEED_DEPENDENCY_ADOPTION",
+        "claimed_at": "2026-10-15T11:24:55.598023+00:00",
+        "baseline_sha": "7837009aab983f38e068f0f3dd56745c12450449",
+        "phase": "TENANT_CONNECTION_COMPONENT_VALIDATED",
+        "dispatch_scope": "UNWIRED_INTERNAL_COMPONENT",
+        "entry_evidence": "docs/development/evidence/WP02-02/tenant-connections/PLAN.md",
         "bounded_window_gate": "CONFIRMED",
         "reserved_write_resources": [
-          "Main:platform-package-pins",
           "Main:tenant-storage",
-          "Main:ef-model",
           "coordination:roadmap"
         ],
+        "actions_authorized": false,
         "formal_publication_authorized": false,
-        "actions_authorized": false
+        "delivery_report": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -160203,6 +160212,27 @@
           "execution_baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
           "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
           "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
+        },
+        {
+          "chat_label": "COORD / WP02-02 Main正式包采用",
+          "repository": "Main",
+          "branch": "codex/wp02-02-main-adoption-20261015",
+          "worktree": "D:/CP6-worktrees/wave8-dispatch-20261015",
+          "claimed_at": "2026-10-15T09:29:28.614463+00:00",
+          "baseline_sha": "5816d04eaff210db7a3b788390e4f560a67603f7",
+          "entry_evidence": "docs/development/evidence/WP02-02/main-package-adoption/PLAN.md",
+          "phase": "MAIN_PACKAGE_ADOPTION_INTEGRATED",
+          "dispatch_scope": "ACTUAL_FEED_DEPENDENCY_ADOPTION",
+          "bounded_window_gate": "CLOSED",
+          "reserved_write_resources": [
+            "Main:platform-package-pins",
+            "Main:tenant-storage",
+            "Main:ef-model",
+            "coordination:roadmap"
+          ],
+          "formal_publication_authorized": false,
+          "actions_authorized": false,
+          "delivery_pr": "https://github.com/GTX537/CP6/pull/221"
         }
       ],
       "preparation_delivery_history": [
@@ -160280,7 +160310,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "Actual Main formal0.10.3 restore/build/contracts/model checks passed; technical identity matrix/lock recorded. Trusted tenant binding, LOGIN/DataSource, EF/RLS/transaction/Owner adoption and original17PGT remain NOT_RUN; full task is IN_PROGRESS.",
+      "remaining_scope": "Internal trusted binding/catalog, bounded dedicated DataSource and transaction lease implemented and locally tested with an owned PG fixture. Real host current authorization and Owner final fence, full object/raw SQL/writer inventory, shared RLS/helper, EF mapping/cache, migrations/restore and original17PGT remain; full WP02-02 IN_PROGRESS, business NOT_RUN.",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -160296,7 +160326,40 @@
         },
         "identity_evaluation": "Source/shape/archive verified; compatibility and fresh cryptographic trust Unknown",
         "original_17_pgt": "NOT_RUN",
-        "business_acceptance": "NOT_RUN"
+        "business_acceptance": "NOT_RUN",
+        "remote_delivery": {
+          "source_sha": "1223a84cab90f5017224f93a389651def9851f47",
+          "main_sha": "7837009aab983f38e068f0f3dd56745c12450449",
+          "pull_request": "https://github.com/GTX537/CP6/pull/221",
+          "scope": "Previously verified main ancestry and exact scoped blobs; Handoff 5c6eedf577056b4b88b0a85f390f51431482e6a3"
+        }
+      },
+      "tenant_connection_component": {
+        "state": "LOCALLY_VALIDATED",
+        "scope": "Internal unwired binding/catalog/dedicated DataSource/transaction lease; no business route activation",
+        "path": "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
+        "baseline_sha": "7837009aab983f38e068f0f3dd56745c12450449",
+        "validation": {
+          "passed": 28,
+          "failed": 0,
+          "skipped": 0,
+          "evidence": "docs/development/evidence/WP02-02/tenant-connections/focused-final.trx",
+          "environment": "Local SDK 8 / owned PostgreSQL 18 synthetic A/B fixture",
+          "scope": "Original28 run reused only for unaffected behavior; cancellation redaction verified separately after review.",
+          "post_review_regression": {
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "evidence": "docs/development/evidence/WP02-02/tenant-connections/focused-cancellation-privacy.trx"
+          }
+        },
+        "model_inventory": "docs/development/evidence/WP02-02/tenant-connections/postgresql-ef-relational-inventory-7837009a.json",
+        "model_inventory_scope": "Four actual EF PostgreSQL relational models; 328 tables. Not a complete raw SQL/writer/Owner inventory.",
+        "original_17_pgt": "NOT_RUN",
+        "business_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "observed_at": "2026-10-15T11:55:07.860483+00:00",
+        "review": "Single combined SPEC/QUALITY review passed; cancellation redaction correction verified, no remaining blocker for unwired component."
       }
     },
     {
