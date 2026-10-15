@@ -1,0 +1,204 @@
+{
+  "recordType": "WP02-02.MainPackageAdoption.LocalValidation",
+  "recordedAtUtc": "2026-10-15T09:56:09.876750+00:00",
+  "mainBaseline": "5816d04eaff210db7a3b788390e4f560a67603f7",
+  "platformSource": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+  "toolchain": {
+    "dotnetExecutable": "C:/Users/tt/.dotnet/dotnet.exe",
+    "sdk": "8.0.424",
+    "runtime": "8.0.30",
+    "configuration": "Release"
+  },
+  "log": "local-validation.log",
+  "rawRunDirectory": "D:\\CP6-local-test\\WP02-02\\adopt-a1",
+  "restore": {
+    "commandTemplate": "$DOTNET restore <project> --configfile $WORKTREE/NuGet.config --force-evaluate --verbosity minimal",
+    "allExitCodes": 0,
+    "projects": [
+      "CP6.Core/CP6.Core.csproj",
+      "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+      "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj",
+      "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "CP6.Tests/CP6.Tests.csproj",
+      "CP6.WebApi/CP6.WebApi.csproj",
+      "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+      "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+      "eng/crm/erp-live-fixture/CP6.ErpLive.Fixture.csproj",
+      "eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj",
+      "eng/crm/legacy-exit-tests/CP6.Crm.LegacyExit.Tests.csproj",
+      "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+      "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+      "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj"
+    ]
+  },
+  "restoredArchives": [
+    {
+      "packageId": "CP6.Platform.Abstractions",
+      "version": "0.10.3",
+      "archiveSha256": "86f3505398c76aeeca87123eab7668514d37f239bc2577eef5fba326ebf5ae2a",
+      "matchesPublication": true,
+      "nugetMetadataSource": "https://nuget.pkg.github.com/GTX537/index.json"
+    },
+    {
+      "packageId": "CP6.Platform.AspNetCore",
+      "version": "0.10.3",
+      "archiveSha256": "6dd5bb05aae55cfcd5452fad7e66ea0f8cfcf7004dfadc9ecc3936e433638fc0",
+      "matchesPublication": true,
+      "nugetMetadataSource": "https://nuget.pkg.github.com/GTX537/index.json"
+    },
+    {
+      "packageId": "CP6.Platform.Contracts",
+      "version": "0.10.3",
+      "archiveSha256": "341d782ccdd866c9855c6e6553d454bac805cebb3d2a212abbd1c0edd12d6eb5",
+      "matchesPublication": true,
+      "nugetMetadataSource": "https://nuget.pkg.github.com/GTX537/index.json"
+    },
+    {
+      "packageId": "CP6.Platform.EntityFramework",
+      "version": "0.10.3",
+      "archiveSha256": "a6325f44749f852b2ed9bdb7db3870fdadf3258d036bd082c72aab16ec17eca7",
+      "matchesPublication": true,
+      "nugetMetadataSource": "https://nuget.pkg.github.com/GTX537/index.json"
+    },
+    {
+      "packageId": "CP6.Platform.Messaging",
+      "version": "0.10.3",
+      "archiveSha256": "8963dd3adfe3413d4bc78eee60567282334ecf128bfe883409f5b71cf55d719e",
+      "matchesPublication": true,
+      "nugetMetadataSource": "https://nuget.pkg.github.com/GTX537/index.json"
+    }
+  ],
+  "nonPlatformDrift": [
+    {
+      "lock": "eng/crm/erp-live-fixture/packages.lock.json",
+      "entry": "Npgsql",
+      "before": null,
+      "resolved": "8.0.8"
+    },
+    {
+      "lock": "eng/crm/erp-live-fixture/packages.lock.json",
+      "entry": "Npgsql.EntityFrameworkCore.PostgreSQL",
+      "before": null,
+      "resolved": "8.0.11"
+    },
+    {
+      "lock": "eng/crm/erp-live-fixture/packages.lock.json",
+      "entry": "cp6.core",
+      "projectDependencyChanges": {
+        "Npgsql": {
+          "before": null,
+          "after": "[8.0.8, 8.0.8]"
+        },
+        "Npgsql.EntityFrameworkCore.PostgreSQL": {
+          "before": null,
+          "after": "[8.0.11, 8.0.11]"
+        }
+      }
+    },
+    {
+      "lock": "eng/crm/erp-live-fixture/packages.lock.json",
+      "entry": "cp6.persistence.postgresql",
+      "projectDependencyChanges": {
+        "CP6.Core": {
+          "before": null,
+          "after": "[1.0.0, )"
+        },
+        "CP6.Space.Infrastructure": {
+          "before": null,
+          "after": "[1.0.0, )"
+        }
+      }
+    },
+    {
+      "lock": "eng/crm/erp-live-fixture/packages.lock.json",
+      "entry": "cp6.webapi",
+      "projectDependencyChanges": {
+        "CP6.Persistence.PostgreSql": {
+          "before": null,
+          "after": "[1.0.0, )"
+        }
+      }
+    },
+    {
+      "lock": "eng/crm/legacy-exit-tests/packages.lock.json",
+      "entry": "Npgsql",
+      "before": null,
+      "resolved": "8.0.8"
+    },
+    {
+      "lock": "eng/crm/legacy-exit-tests/packages.lock.json",
+      "entry": "Npgsql.EntityFrameworkCore.PostgreSQL",
+      "before": null,
+      "resolved": "8.0.11"
+    },
+    {
+      "lock": "eng/crm/legacy-exit-tests/packages.lock.json",
+      "entry": "cp6.core",
+      "projectDependencyChanges": {
+        "Npgsql": {
+          "before": null,
+          "after": "[8.0.8, 8.0.8]"
+        },
+        "Npgsql.EntityFrameworkCore.PostgreSQL": {
+          "before": null,
+          "after": "[8.0.11, 8.0.11]"
+        }
+      }
+    }
+  ],
+  "builds": [
+    {
+      "project": "CP6.WebApi/CP6.WebApi.csproj",
+      "exitCode": 0,
+      "warningCount": 5,
+      "msb3277Occurrences": 0
+    },
+    {
+      "project": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "exitCode": 0,
+      "warningCount": 4,
+      "msb3277Occurrences": 0
+    }
+  ],
+  "tests": {
+    "project": "CP6.Tests/CP6.Tests.csproj",
+    "exitCode": 0,
+    "filter": "FullyQualifiedName~CrmIdentityContractTests|FullyQualifiedName~ErpEventContractTests|(FullyQualifiedName~DatabaseModelCompatibilityTests&(FullyQualifiedName~Postgre_sql_|FullyQualifiedName~Every_postgre_sql_|FullyQualifiedName~Actual_platform_|FullyQualifiedName~Replay_input_|FullyQualifiedName~Space_datetime_|FullyQualifiedName~Core_preserves_|FullyQualifiedName~A_new_general_))",
+    "total": 151,
+    "passed": 151,
+    "failed": 0,
+    "skipped": 0,
+    "classCounts": {
+      "CP6.Tests.CrmIdentityContractTests": 38,
+      "CP6.Tests.ErpIntegration.ErpEventContractTests": 77,
+      "CP6.Tests.Persistence.DatabaseModelCompatibilityTests": 36
+    },
+    "privateSetterCasesPassed": [
+      "CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: \"Core\", expectedEntities: 4)",
+      "CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: \"ErpIntegration\", expectedEntities: 2)",
+      "CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: \"IdentityPriority\", expectedEntities: 4)"
+    ],
+    "rawTrx": "$LOCAL_RUN/test-results/contracts-model.trx"
+  },
+  "unchanged": [
+    "NuGet.config",
+    "tools/p10 Release 0.10.1 reference and three historical lock files"
+  ],
+  "notRun": [
+    "PostgreSQL database/runtime and original 17 PGT cases",
+    "actual Owner/binding adoption",
+    "LegacyOutboxFenceV2 PostgreSQL runtime behavior",
+    "production candidate/signing/publishing/deployment",
+    "full test suite"
+  ],
+  "focusedFollowup": {
+    "change": "Probe diagnostic string no longer claims fixed Platform0.10.2; behavior unchanged",
+    "command": "$DOTNET build tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj --no-restore -c Release -warnaserror:MSB3277 --verbosity minimal",
+    "exitCode": 0,
+    "warnings": 4,
+    "errors": 0,
+    "testsReused": "Existing151 passed; no behavior changed by this diagnostic-only edit."
+  }
+}

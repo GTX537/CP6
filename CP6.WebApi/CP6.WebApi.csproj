@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CP6.Platform.AspNetCore" Version="[0.10.2]" />
+    <PackageReference Include="CP6.Platform.AspNetCore" Version="[0.10.3]" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.30" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.12" />

@@ -1,5 +1,16 @@
 # 当前待办与优先级
 
+## 2026-10-15：Main 正式采用 Platform 0.10.3 依赖
+
+Main 的四处直接引用和 16 份真实恢复锁已更新，WebApi / 数据库探针构建通过，
+CRM、ERP 合同与 PostgreSQL 模型的 151 项相关测试通过、零失败、零跳过。
+正式包身份已核对并形成空能力/兼容性矩阵与 Unknown consumer lock；没有虚构运行采用。
+详见[本步骤交付](../development/evidence/WP02-02/main-package-adoption/DELIVERY.md)。
+WP02-02 从 BLOCKED 转为 IN_PROGRESS / CONFIRMED；本步骤后继续可信租户绑定和 PostgreSQL 存储，
+真实 Owner、数据库事务/隔离与原 17 PGT 仍 NOT_RUN，完整任务未记 DONE。
+仍为 24/375 DONE、0/125 业务完成；本步骤无 Actions、发包、数据库启动、迁移或部署。
+下文保留历史时点；旧“Main 仍为 0.10.2”不代表本次采用后的当前源码。
+
 ## 2026-10-15：用户采纳新验收依据并批准一次正式发布
 
 用户明确回复“同意两项”：采纳WP01-01-ACCEPTANCE-BASIS-1.2.0的579条前瞻义务，

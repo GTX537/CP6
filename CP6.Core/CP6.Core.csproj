@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CP6.Platform.Messaging" Version="[0.10.2]" />
-    <PackageReference Include="CP6.Platform.EntityFramework" Version="[0.10.2]" />
+    <PackageReference Include="CP6.Platform.Messaging" Version="[0.10.3]" />
+    <PackageReference Include="CP6.Platform.EntityFramework" Version="[0.10.3]" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.511.8" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />

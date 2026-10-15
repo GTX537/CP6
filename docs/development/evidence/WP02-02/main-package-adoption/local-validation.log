@@ -1,0 +1,384 @@
+COMMAND: $DOTNET restore CP6.Core/CP6.Core.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:32:50.084291+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 23.46 sec).
+  Failed to download package 'JsonPointer.Net.7.0.2' from 'https://api.nuget.org/v3-flatcontainer/jsonpointer.net/7.0.2/jsonpointer.net.7.0.2.nupkg'.
+  The download of 'https://api.nuget.org/v3-flatcontainer/jsonpointer.net/7.0.2/jsonpointer.net.7.0.2.nupkg' timed out because no data was received for 60000ms.
+    Exception of type 'System.TimeoutException' was thrown.
+  Failed to download package 'Microsoft.EntityFrameworkCore.Abstractions.8.0.11' from 'https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.abstractions/8.0.11/microsoft.entityframeworkcore.abstractions.8.0.11.nupkg'.
+  The HTTP request to 'GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.abstractions/8.0.11/microsoft.entityframeworkcore.abstractions.8.0.11.nupkg' has timed out after 100000ms.
+  Failed to download package 'Microsoft.Extensions.Logging.Abstractions.8.0.0' from 'https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/8.0.0/microsoft.extensions.logging.abstractions.8.0.0.nupkg'.
+  The download of 'https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/8.0.0/microsoft.extensions.logging.abstractions.8.0.0.nupkg' timed out because no data was received for 60000ms.
+    Exception of type 'System.TimeoutException' was thrown.
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 8.11 min).
+
+COMMAND: $DOTNET restore CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:40:58.403437+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 461 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 463 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 544 ms).
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 1.38 sec).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\CP6.Oidc.IntegrationTests\CP6.Oidc.IntegrationTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\CP6.Oidc.IntegrationTests\CP6.Oidc.IntegrationTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\CP6.Oidc.IntegrationTests\CP6.Oidc.IntegrationTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\CP6.Oidc.IntegrationTests\CP6.Oidc.IntegrationTests.csproj]
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 1.98 sec).
+  Failed to download package 'Microsoft.IdentityModel.Protocols.OpenIdConnect.6.35.0' from 'https://api.nuget.org/v3-flatcontainer/microsoft.identitymodel.protocols.openidconnect/6.35.0/microsoft.identitymodel.protocols.openidconnect.6.35.0.nupkg'.
+  The download of 'https://api.nuget.org/v3-flatcontainer/microsoft.identitymodel.protocols.openidconnect/6.35.0/microsoft.identitymodel.protocols.openidconnect.6.35.0.nupkg' timed out because no data was received for 60000ms.
+    Exception of type 'System.TimeoutException' was thrown.
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 2.36 min).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 2.36 min).
+  Restored $WORKTREE\CP6.WebApi\CP6.WebApi.csproj (in 2.38 min).
+  Restored $WORKTREE\CP6.Oidc.IntegrationTests\CP6.Oidc.IntegrationTests.csproj (in 2.38 min).
+
+COMMAND: $DOTNET restore CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:43:26.322178+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 278 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 278 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 313 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 984 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 1.21 sec).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 1.22 sec).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 1.22 sec).
+
+COMMAND: $DOTNET restore CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:43:30.622880+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 93 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 93 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 114 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 387 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 445 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 445 ms).
+
+COMMAND: $DOTNET restore CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:43:32.848593+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 133 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 133 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 133 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 598 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 910 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 910 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 910 ms).
+  Restored $WORKTREE\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj (in 6.85 sec).
+
+COMMAND: $DOTNET restore CP6.Tests/CP6.Tests.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:43:42.528954+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 120 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 131 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 120 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 288 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 389 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 389 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 389 ms).
+  Restored $WORKTREE\CP6.WebApi\CP6.WebApi.csproj (in 1.2 sec).
+  Restored $WORKTREE\CP6.Tests\CP6.Tests.csproj (in 1.15 min).
+
+COMMAND: $DOTNET restore CP6.WebApi/CP6.WebApi.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:44:53.467388+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 182 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 170 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 170 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\CP6.WebApi\CP6.WebApi.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\CP6.WebApi\CP6.WebApi.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\CP6.WebApi\CP6.WebApi.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\CP6.WebApi\CP6.WebApi.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 587 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 697 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 697 ms).
+  Restored $WORKTREE\CP6.WebApi\CP6.WebApi.csproj (in 721 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 697 ms).
+
+COMMAND: $DOTNET restore eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:44:56.573582+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 102 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 102 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 102 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\eng\contracts\postgresql-tests\CP6.ExactValues.PostgreSqlTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\eng\contracts\postgresql-tests\CP6.ExactValues.PostgreSqlTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\eng\contracts\postgresql-tests\CP6.ExactValues.PostgreSqlTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\eng\contracts\postgresql-tests\CP6.ExactValues.PostgreSqlTests.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 307 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 359 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 358 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 359 ms).
+  Restored $WORKTREE\eng\contracts\postgresql-tests\CP6.ExactValues.PostgreSqlTests.csproj (in 515 ms).
+
+COMMAND: $DOTNET restore eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:44:59.430683+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 135 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 135 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 135 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 505 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 655 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 659 ms).
+  Restored $WORKTREE\CP6.WebApi\CP6.WebApi.csproj (in 661 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 659 ms).
+  Restored $WORKTREE\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj (in 1.36 sec).
+
+COMMAND: $DOTNET restore eng/crm/erp-live-fixture/CP6.ErpLive.Fixture.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:03.169656+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 110 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 120 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 110 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\eng\crm\erp-live-fixture\CP6.ErpLive.Fixture.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\eng\crm\erp-live-fixture\CP6.ErpLive.Fixture.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\eng\crm\erp-live-fixture\CP6.ErpLive.Fixture.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\eng\crm\erp-live-fixture\CP6.ErpLive.Fixture.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 359 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 478 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 480 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 477 ms).
+  Restored $WORKTREE\CP6.WebApi\CP6.WebApi.csproj (in 495 ms).
+  Restored $WORKTREE\eng\crm\erp-live-fixture\CP6.ErpLive.Fixture.csproj (in 710 ms).
+
+COMMAND: $DOTNET restore eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:06.213265+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 112 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 107 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 107 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\eng\crm\identity-events-fixture\CP6.IdentityEvents.Fixture.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\eng\crm\identity-events-fixture\CP6.IdentityEvents.Fixture.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\eng\crm\identity-events-fixture\CP6.IdentityEvents.Fixture.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\eng\crm\identity-events-fixture\CP6.IdentityEvents.Fixture.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 344 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 505 ms).
+  Restored $WORKTREE\CP6.WebApi\CP6.WebApi.csproj (in 509 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 518 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 521 ms).
+  Restored $WORKTREE\eng\crm\identity-events-fixture\CP6.IdentityEvents.Fixture.csproj (in 800 ms).
+
+COMMAND: $DOTNET restore eng/crm/legacy-exit-tests/CP6.Crm.LegacyExit.Tests.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:09.685018+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\eng\crm\legacy-exit-tests\CP6.Crm.LegacyExit.Tests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\eng\crm\legacy-exit-tests\CP6.Crm.LegacyExit.Tests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\eng\crm\legacy-exit-tests\CP6.Crm.LegacyExit.Tests.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\eng\crm\legacy-exit-tests\CP6.Crm.LegacyExit.Tests.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 488 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 514 ms).
+  Restored $WORKTREE\eng\crm\legacy-exit-tests\CP6.Crm.LegacyExit.Tests.csproj (in 629 ms).
+
+COMMAND: $DOTNET restore tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:11.753668+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 159 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 141 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 141 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\tools\CP6.DatabaseCompatibility.ApplicationProbe\CP6.DatabaseCompatibility.ApplicationProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\tools\CP6.DatabaseCompatibility.ApplicationProbe\CP6.DatabaseCompatibility.ApplicationProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\tools\CP6.DatabaseCompatibility.ApplicationProbe\CP6.DatabaseCompatibility.ApplicationProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\tools\CP6.DatabaseCompatibility.ApplicationProbe\CP6.DatabaseCompatibility.ApplicationProbe.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 444 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 570 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 570 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 570 ms).
+  Restored $WORKTREE\tools\CP6.DatabaseCompatibility.ApplicationProbe\CP6.DatabaseCompatibility.ApplicationProbe.csproj (in 753 ms).
+
+COMMAND: $DOTNET restore tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:14.496339+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 107 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 107 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 111 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\tools\CP6.DatabaseCompatibility.MigrationProbe\CP6.DatabaseCompatibility.MigrationProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\tools\CP6.DatabaseCompatibility.MigrationProbe\CP6.DatabaseCompatibility.MigrationProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\tools\CP6.DatabaseCompatibility.MigrationProbe\CP6.DatabaseCompatibility.MigrationProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\tools\CP6.DatabaseCompatibility.MigrationProbe\CP6.DatabaseCompatibility.MigrationProbe.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 334 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 400 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 400 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 400 ms).
+  Restored $WORKTREE\tools\CP6.DatabaseCompatibility.MigrationProbe\CP6.DatabaseCompatibility.MigrationProbe.csproj (in 500 ms).
+
+COMMAND: $DOTNET restore tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:17.143852+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 87 ms).
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 87 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 93 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\tools\CP6.DatabaseCompatibility.Probe\CP6.DatabaseCompatibility.Probe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\tools\CP6.DatabaseCompatibility.Probe\CP6.DatabaseCompatibility.Probe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\tools\CP6.DatabaseCompatibility.Probe\CP6.DatabaseCompatibility.Probe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\tools\CP6.DatabaseCompatibility.Probe\CP6.DatabaseCompatibility.Probe.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 291 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 347 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 348 ms).
+  Restored $WORKTREE\tools\CP6.DatabaseCompatibility.Probe\CP6.DatabaseCompatibility.Probe.csproj (in 431 ms).
+
+COMMAND: $DOTNET restore tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj --configfile $WORKTREE\NuGet.config --force-evaluate --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:19.687731+00:00
+EXIT CODE: 0
+  Determining projects to restore...
+  Restored $WORKTREE\CP6.Space.Domain\CP6.Space.Domain.csproj (in 127 ms).
+  Restored $WORKTREE\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 127 ms).
+  Restored $WORKTREE\CP6.Space.Application\CP6.Space.Application.csproj (in 133 ms).
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [$WORKTREE\tools\CP6.DatabaseCompatibility.RuntimeProbe\CP6.DatabaseCompatibility.RuntimeProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [$WORKTREE\tools\CP6.DatabaseCompatibility.RuntimeProbe\CP6.DatabaseCompatibility.RuntimeProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [$WORKTREE\tools\CP6.DatabaseCompatibility.RuntimeProbe\CP6.DatabaseCompatibility.RuntimeProbe.csproj]
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [$WORKTREE\tools\CP6.DatabaseCompatibility.RuntimeProbe\CP6.DatabaseCompatibility.RuntimeProbe.csproj]
+  Restored $WORKTREE\CP6.Entity\CP6.Entity.csproj (in 379 ms).
+  Restored $WORKTREE\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 466 ms).
+  Restored $WORKTREE\CP6.Core\CP6.Core.csproj (in 466 ms).
+  Restored $WORKTREE\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 466 ms).
+  Restored $WORKTREE\tools\CP6.DatabaseCompatibility.RuntimeProbe\CP6.DatabaseCompatibility.RuntimeProbe.csproj (in 585 ms).
+
+COMMAND: $DOTNET build CP6.WebApi/CP6.WebApi.csproj --no-restore -c Release -warnaserror:MSB3277 --verbosity minimal
+STARTED UTC: 2026-10-15T09:45:33.779726+00:00
+EXIT CODE: 0
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+  CP6.Space.Domain -> $WORKTREE\CP6.Space.Domain\bin\Release\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Contracts -> $WORKTREE\CP6.Space.Contracts\bin\Release\net8.0\CP6.Space.Contracts.dll
+  CP6.Entity -> $WORKTREE\CP6.Entity\bin\Release\net8.0\CP6.Entity.dll
+  CP6.Space.Application -> $WORKTREE\CP6.Space.Application\bin\Release\net8.0\CP6.Space.Application.dll
+  CP6.Core -> $WORKTREE\CP6.Core\bin\Release\net8.0\CP6.Core.dll
+  CP6.Space.Infrastructure -> $WORKTREE\CP6.Space.Infrastructure\bin\Release\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> $WORKTREE\CP6.Persistence.PostgreSql\bin\Release\net8.0\CP6.Persistence.PostgreSql.dll
+$WORKTREE\CP6.WebApi\Controllers\Wms\WmsFeatureFlagsController.cs(36,56): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [$WORKTREE\CP6.WebApi\CP6.WebApi.csproj]
+  CP6.WebApi -> $WORKTREE\CP6.WebApi\bin\Release\net8.0\CP6.WebApi.dll
+
+Build succeeded.
+
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+$WORKTREE\CP6.WebApi\Controllers\Wms\WmsFeatureFlagsController.cs(36,56): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [$WORKTREE\CP6.WebApi\CP6.WebApi.csproj]
+    5 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:05:29.59
+
+COMMAND: $DOTNET build tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj --no-restore -c Release -warnaserror:MSB3277 --verbosity minimal
+STARTED UTC: 2026-10-15T09:51:03.869361+00:00
+EXIT CODE: 0
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+  CP6.Space.Domain -> $WORKTREE\CP6.Space.Domain\bin\Release\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Contracts -> $WORKTREE\CP6.Space.Contracts\bin\Release\net8.0\CP6.Space.Contracts.dll
+  CP6.Entity -> $WORKTREE\CP6.Entity\bin\Release\net8.0\CP6.Entity.dll
+  CP6.Space.Application -> $WORKTREE\CP6.Space.Application\bin\Release\net8.0\CP6.Space.Application.dll
+  CP6.Core -> $WORKTREE\CP6.Core\bin\Release\net8.0\CP6.Core.dll
+  CP6.Space.Infrastructure -> $WORKTREE\CP6.Space.Infrastructure\bin\Release\net8.0\CP6.Space.Infrastructure.dll
+  CP6.DatabaseCompatibility.Probe -> $WORKTREE\tools\CP6.DatabaseCompatibility.Probe\bin\Release\net8.0\CP6.DatabaseCompatibility.Probe.dll
+
+Build succeeded.
+
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+    4 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:07.85
+
+COMMAND: $DOTNET test CP6.Tests/CP6.Tests.csproj --no-restore -c Release -warnaserror:MSB3277 --filter FullyQualifiedName~CrmIdentityContractTests|FullyQualifiedName~ErpEventContractTests|(FullyQualifiedName~DatabaseModelCompatibilityTests&(FullyQualifiedName~Postgre_sql_|FullyQualifiedName~Every_postgre_sql_|FullyQualifiedName~Actual_platform_|FullyQualifiedName~Replay_input_|FullyQualifiedName~Space_datetime_|FullyQualifiedName~Core_preserves_|FullyQualifiedName~A_new_general_)) --logger trx;LogFileName=contracts-model.trx --results-directory $LOCAL_RUN\test-results --verbosity minimal
+STARTED UTC: 2026-10-15T09:51:12.281558+00:00
+EXIT CODE: 0
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+  CP6.Space.Contracts -> $WORKTREE\CP6.Space.Contracts\bin\Release\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Domain -> $WORKTREE\CP6.Space.Domain\bin\Release\net8.0\CP6.Space.Domain.dll
+  CP6.Entity -> $WORKTREE\CP6.Entity\bin\Release\net8.0\CP6.Entity.dll
+  CP6.Space.Application -> $WORKTREE\CP6.Space.Application\bin\Release\net8.0\CP6.Space.Application.dll
+  CP6.Core -> $WORKTREE\CP6.Core\bin\Release\net8.0\CP6.Core.dll
+  CP6.Space.Infrastructure -> $WORKTREE\CP6.Space.Infrastructure\bin\Release\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> $WORKTREE\CP6.Persistence.PostgreSql\bin\Release\net8.0\CP6.Persistence.PostgreSql.dll
+  CP6.WebApi -> $WORKTREE\CP6.WebApi\bin\Release\net8.0\CP6.WebApi.dll
+$WORKTREE\CP6.Tests\CacheServiceTests.cs(23,69): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+$WORKTREE\CP6.Tests\CacheServiceTests.cs(40,53): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+$WORKTREE\CP6.Tests\CacheServiceTests.cs(62,47): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+$WORKTREE\CP6.Tests\Sys\CrmOidcServiceTokenTests.cs(61,23): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+$WORKTREE\CP6.Tests\DatabaseCompatibility\PermissionsRelationalTests.cs(148,9): warning xUnit2017: Do not use Assert.False() to check if a value exists in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [$WORKTREE\CP6.Tests\CP6.Tests.csproj]
+  CP6.Tests -> $WORKTREE\CP6.Tests\bin\Release\net8.0\CP6.Tests.dll
+Test run for $WORKTREE\CP6.Tests\bin\Release\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.11.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+Results File: $LOCAL_RUN\test-results\contracts-model.trx
+
+Passed!  - Failed:     0, Passed:   151, Skipped:     0, Total:   151, Duration: 36 s - CP6.Tests.dll (net8.0)
+
+
+COORD follow-up: only remove hardcoded old package version from probe diagnostic.
+COMMAND $DOTNET build tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj --no-restore -c Release -warnaserror:MSB3277 --verbosity minimal
+EXIT 0
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+  CP6.Space.Domain -> $WORKTREE\CP6.Space.Domain\bin\Release\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Contracts -> $WORKTREE\CP6.Space.Contracts\bin\Release\net8.0\CP6.Space.Contracts.dll
+  CP6.Entity -> $WORKTREE\CP6.Entity\bin\Release\net8.0\CP6.Entity.dll
+  CP6.Space.Application -> $WORKTREE\CP6.Space.Application\bin\Release\net8.0\CP6.Space.Application.dll
+  CP6.Core -> $WORKTREE\CP6.Core\bin\Release\net8.0\CP6.Core.dll
+  CP6.Space.Infrastructure -> $WORKTREE\CP6.Space.Infrastructure\bin\Release\net8.0\CP6.Space.Infrastructure.dll
+  CP6.DatabaseCompatibility.Probe -> $WORKTREE\tools\CP6.DatabaseCompatibility.Probe\bin\Release\net8.0\CP6.DatabaseCompatibility.Probe.dll
+
+Build succeeded.
+
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+$WORKTREE\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+    4 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:18.06

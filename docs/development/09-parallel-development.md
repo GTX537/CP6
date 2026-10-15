@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 第八轮已集成，A/B局部窗口关闭。用户随后明确采纳新验收依据并批准一次准确源码的正式发布，见[当前授权与执行报告](evidence/authorized-adoption-release-20261015/README.md)；[第八轮交付](evidence/wave8-integration-20261015/README.md)及下方分配记录保留为历史。
+> 当前由 COORD 独占 WP02-02 Main 正式包采用窗口：四处引用与 16 份锁升级到正式 0.10.3，相关本地检查通过，见[本步骤交付](evidence/WP02-02/main-package-adoption/DELIVERY.md)。完整任务 IN_PROGRESS，随后进入 PostgreSQL 租户存储；原 17 PGT 仍 NOT_RUN。A/B 第八轮局部窗口已关闭，[原授权及一次发布](evidence/authorized-adoption-release-20261015/README.md)和下方分配记录保留为历史。
 
 本轮把14个工作包展开为可分配任务，覆盖125个原设计目标。任务是有界派工范围；接手对话先按准确来源和当前源码细化执行步骤，再实施。卡片中的历史源码入口不是永久不变的补丁位置，`PLANNED`不等于已开工或已验收。
 
