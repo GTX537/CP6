@@ -1,0 +1,26 @@
+test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused (test_acceptance_basis.AcceptanceBasisTests.test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused) ... 
+  test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused (test_acceptance_basis.AcceptanceBasisTests.test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused) (field='owner') ... FAIL
+  test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused (test_acceptance_basis.AcceptanceBasisTests.test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused) (field='consumer') ... FAIL
+
+======================================================================
+FAIL: test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused (test_acceptance_basis.AcceptanceBasisTests.test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused) (field='owner')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 235, in test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused
+    self.assertFalse(self.evaluate()['target_runtime_valid'][TARGETS[0]])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused (test_acceptance_basis.AcceptanceBasisTests.test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused) (field='consumer')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 235, in test_attested_runtime_for_another_scenario_or_profile_cannot_be_reused
+    self.assertFalse(self.evaluate()['target_runtime_valid'][TARGETS[0]])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 1.060s
+
+FAILED (failures=2)

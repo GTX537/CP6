@@ -1,0 +1,15 @@
+test_identity_has_one_creation_in_fixed_operator_namespace (test_acceptance_basis.AcceptanceBasisTests.test_identity_has_one_creation_in_fixed_operator_namespace) ... FAIL
+
+======================================================================
+FAIL: test_identity_has_one_creation_in_fixed_operator_namespace (test_acceptance_basis.AcceptanceBasisTests.test_identity_has_one_creation_in_fixed_operator_namespace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 351, in test_identity_has_one_creation_in_fixed_operator_namespace
+    self.assertTrue(hasattr(verifier, 'verify_identity'), 'independent append-only history check is required')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : independent append-only history check is required
+
+----------------------------------------------------------------------
+Ran 1 test in 0.023s
+
+FAILED (failures=1)

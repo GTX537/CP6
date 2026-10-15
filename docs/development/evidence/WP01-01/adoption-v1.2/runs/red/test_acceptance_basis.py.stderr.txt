@@ -1,0 +1,115 @@
+test_candidate_preserves_full_real_rows_and_gaps (test_acceptance_basis.AcceptanceBasisTests.test_candidate_preserves_full_real_rows_and_gaps) ... FAIL
+test_exact_rows_missing_extra_duplicate_structure_order_and_types (test_acceptance_basis.AcceptanceBasisTests.test_exact_rows_missing_extra_duplicate_structure_order_and_types) ... FAIL
+test_manifest_source_bytes_and_path_escape (test_acceptance_basis.AcceptanceBasisTests.test_manifest_source_bytes_and_path_escape) ... FAIL
+test_no_independent_verifier_rejects_self_authority (test_acceptance_basis.AcceptanceBasisTests.test_no_independent_verifier_rejects_self_authority) ... FAIL
+test_operable_isolated_runtime_algorithm (test_acceptance_basis.AcceptanceBasisTests.test_operable_isolated_runtime_algorithm) ... FAIL
+test_operable_trusted_basis_inventory_without_runtime (test_acceptance_basis.AcceptanceBasisTests.test_operable_trusted_basis_inventory_without_runtime) ... FAIL
+test_policy_in_git_worktree_is_rejected (test_acceptance_basis.AcceptanceBasisTests.test_policy_in_git_worktree_is_rejected) ... FAIL
+test_production_registry_rejects_expired_revoked_wrong_scope_identity (test_acceptance_basis.AcceptanceBasisTests.test_production_registry_rejects_expired_revoked_wrong_scope_identity) ... FAIL
+test_runtime_missing_edge_or_extra_obligation_rejected (test_acceptance_basis.AcceptanceBasisTests.test_runtime_missing_edge_or_extra_obligation_rejected) ... FAIL
+test_runtime_static_synthetic_not_run_missing_consumer_or_raw_log (test_acceptance_basis.AcceptanceBasisTests.test_runtime_static_synthetic_not_run_missing_consumer_or_raw_log) ... FAIL
+test_untrusted_authority_and_execution_and_unknown_remote (test_acceptance_basis.AcceptanceBasisTests.test_untrusted_authority_and_execution_and_unknown_remote) ... FAIL
+
+======================================================================
+FAIL: test_candidate_preserves_full_real_rows_and_gaps (test_acceptance_basis.AcceptanceBasisTests.test_candidate_preserves_full_real_rows_and_gaps)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_exact_rows_missing_extra_duplicate_structure_order_and_types (test_acceptance_basis.AcceptanceBasisTests.test_exact_rows_missing_extra_duplicate_structure_order_and_types)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_manifest_source_bytes_and_path_escape (test_acceptance_basis.AcceptanceBasisTests.test_manifest_source_bytes_and_path_escape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_no_independent_verifier_rejects_self_authority (test_acceptance_basis.AcceptanceBasisTests.test_no_independent_verifier_rejects_self_authority)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_operable_isolated_runtime_algorithm (test_acceptance_basis.AcceptanceBasisTests.test_operable_isolated_runtime_algorithm)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_operable_trusted_basis_inventory_without_runtime (test_acceptance_basis.AcceptanceBasisTests.test_operable_trusted_basis_inventory_without_runtime)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_policy_in_git_worktree_is_rejected (test_acceptance_basis.AcceptanceBasisTests.test_policy_in_git_worktree_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_production_registry_rejects_expired_revoked_wrong_scope_identity (test_acceptance_basis.AcceptanceBasisTests.test_production_registry_rejects_expired_revoked_wrong_scope_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_runtime_missing_edge_or_extra_obligation_rejected (test_acceptance_basis.AcceptanceBasisTests.test_runtime_missing_edge_or_extra_obligation_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_runtime_static_synthetic_not_run_missing_consumer_or_raw_log (test_acceptance_basis.AcceptanceBasisTests.test_runtime_static_synthetic_not_run_missing_consumer_or_raw_log)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+======================================================================
+FAIL: test_untrusted_authority_and_execution_and_unknown_remote (test_acceptance_basis.AcceptanceBasisTests.test_untrusted_authority_and_execution_and_unknown_remote)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 51, in setUp
+    self.assertIsNotNone(gate, 'independent acceptance_basis adapter is not implemented')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : independent acceptance_basis adapter is not implemented
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.004s
+
+FAILED (failures=11)

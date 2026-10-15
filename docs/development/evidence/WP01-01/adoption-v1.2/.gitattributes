@@ -1,0 +1,4 @@
+# This append-only evidence package hashes exact bytes, including run snapshots.
+* -text whitespace=cr-at-eol
+# Captured command output is immutable; unittest subtests print trailing spaces.
+*.txt whitespace=-blank-at-eol,cr-at-eol

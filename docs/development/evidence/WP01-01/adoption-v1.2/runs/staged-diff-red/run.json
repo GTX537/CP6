@@ -1,0 +1,15 @@
+{
+  "command": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "started_at": "2026-10-15T06:12:03.693433+00:00",
+  "ended_at": "2026-10-15T06:12:03.892606+00:00",
+  "exit_code": 2,
+  "source_gitattributes_sha256": "dc01e11bb299a9bb26bdd3a1391817d04d0484a97d959202e6ff0afb14133a02",
+  "reason": "Raw unittest failure output contains trailing spaces before subtest failure. Preserve original logs; add narrow text-output whitespace attribute."
+}

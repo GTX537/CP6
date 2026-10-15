@@ -1,0 +1,15 @@
+test_no_independent_verifier_rejects_self_authority (test_acceptance_basis.AcceptanceBasisTests.test_no_independent_verifier_rejects_self_authority) ... FAIL
+
+======================================================================
+FAIL: test_no_independent_verifier_rejects_self_authority (test_acceptance_basis.AcceptanceBasisTests.test_no_independent_verifier_rejects_self_authority)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 122, in test_no_independent_verifier_rejects_self_authority
+    self.assertTrue(self.evaluate(False)['inventory_coverage_valid'])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.385s
+
+FAILED (failures=1)

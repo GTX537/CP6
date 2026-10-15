@@ -1,0 +1,49 @@
+{
+  "started_at": "2026-10-15T05:39:50.933545+00:00",
+  "sources": {
+    "acceptance_basis.py": "481583025ee307c0fdf398670a77b10e100d72694d14e97e98c1f4981f456a42",
+    "test_acceptance_basis.py": "8eaa8f5a6d05920522bb56abea9aa30e53aef3aed769dae5ff4362bdbbd51b5b",
+    "manage_roadmap.py": "cb2fb58d560f063f3faf82ae667d04db24d2609d8d013e88c3a062654b7ca912",
+    "test_manage_roadmap.py": "104861e5691cf69ac0912564ef1142655349efd4dbe0ae2e2d3a169a7b4a9e61"
+  },
+  "runs": [
+    {
+      "command": [
+        "C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe",
+        "-B",
+        "-Xutf8",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/development/tools",
+        "-p",
+        "test_acceptance_basis.py",
+        "-v"
+      ],
+      "started_at": "2026-10-15T05:39:50.939939+00:00",
+      "ended_at": "2026-10-15T05:40:12.442092+00:00",
+      "exit_code": 1
+    },
+    {
+      "command": [
+        "C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe",
+        "-B",
+        "-Xutf8",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/development/tools",
+        "-p",
+        "test_manage_roadmap.py",
+        "-v",
+        "-k",
+        "FormalAcceptanceRouteTests"
+      ],
+      "started_at": "2026-10-15T05:40:12.442208+00:00",
+      "ended_at": "2026-10-15T05:44:31.285452+00:00",
+      "exit_code": 0
+    }
+  ]
+}

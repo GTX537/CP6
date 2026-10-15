@@ -1,0 +1,69 @@
+{
+  "schema": "WP01-01-WAVE8-TECHNICAL-CHOICES/1",
+  "recorded_by": "Codex PLM execution agent /root/wp01_wave8_impl",
+  "recorded_at": "2026-10-15T05:32:36.595030+00:00",
+  "decision_actor": "COORD, as recorded in wave8 admission and fixed Handoff assignment",
+  "development_authorization": {
+    "source": "docs/development/evidence/wave8-dispatch-20261015/admission-plm.md",
+    "assignment_repository": "GTX537/CP6.AI-Handoff",
+    "assignment_commit": "6c44c1f8ffba124b381366adefe41bf86ea924e3",
+    "assignment_path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/replies/20261015T052239Z-assigned-wave8/MESSAGE.md",
+    "scope": "LEDGER_GATE_IMPLEMENTATION_ONLY / CONFIRMED; adapter, manager, tests, append-only candidate",
+    "original_user_authorization_exact_time": null,
+    "business_basis_adoption": false
+  },
+  "decisions": [
+    {
+      "id": "DP01",
+      "choice": "Preserve original ENG schema/algorithm/value/raw bytes opaque to ITER; frozen ReviewPackageDigest; ITER-CANDIDATE-AGGREGATE/1; exact-byte snapshot SHA-256. New CD-ENG-01 remains separate candidate.",
+      "remaining": "ENG Owner successor version/domain compatibility vectors and lossless routing."
+    },
+    {
+      "id": "DP02",
+      "choice": "Trusted Owner/BizType/SubjectKind, frozen policy/round, current authority/SOD; EXACT_PINNED and RESOLVE_PUBLISHED_ON_SUBMIT supported, no invented actual mode.",
+      "remaining": "Actual tenant/project/members/roles/delegations/SOD exception/published policy/selection/rejectDisposition."
+    },
+    {
+      "id": "DP03",
+      "choice": "PostgreSQL cp6-pg-tenancy-v1; Project and Iteration IDs GLOBAL; IterationInput/CandidateObjectRef/ReviewRound/ExternalRequestReceipt SCOPED as original; preserve TenantId parent FKs, exact qty/money and UUID CAS separate from business version.",
+      "remaining": "Real roles/RLS/map/writers/driver exact roundtrip/migration/concurrency recovery."
+    },
+    {
+      "id": "DP04",
+      "choice": "Append-only corrections, retain evidence on close/reject; deny destructive cleanup without effective policy/hold/Owner fence.",
+      "remaining": "Real retention duration/start/jurisdiction/purpose/destruction policy/hold; no CRM 24-month inference."
+    },
+    {
+      "id": "DP05",
+      "choice": "50 UI/200 API/500 stream/50 display chunks are pagination budgets, never lawful set caps; OA 256KiB/1MiB/1000-ID existing wire boundaries retained.",
+      "remaining": "Actual workload and accepted SLO/capacity measurements."
+    },
+    {
+      "id": "DP06",
+      "choice": "Full root+child actual safety, original key/content/plan/intent/range/profile/watermark/no-late-execution fence; UNKNOWN/timeout/NOT_FOUND/root-only cannot release.",
+      "remaining": "VER/MES actual producer and joint runtime proof: IMPLEMENTATION_DEPENDENCY, not user approval gap."
+    },
+    {
+      "id": "DP07",
+      "choice": "Stable field IDs/values; reviewed versioned translations and CAS publish/rollback.",
+      "remaining": "Actual JA/KO translations/reviewers/authorization/release/client adoption."
+    },
+    {
+      "id": "DP08",
+      "choice": "Bounded source audit only; real services/UI/OA/database/cross-repo package evidence still required.",
+      "remaining": "Actual implementation and precise remote/package consumer adoption."
+    }
+  ],
+  "historical_mapping": {
+    "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+    "sha256": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+    "bytes": 3139248,
+    "representation": "RAW_FILE_BYTES"
+  },
+  "admission": {
+    "path": "docs/development/evidence/wave8-dispatch-20261015/admission-plm.md",
+    "sha256": "31ba143970e46abdd7f94cd708910d932b116f4c44f3a2ef31fd0e115bd94635",
+    "bytes": 16447,
+    "representation": "RAW_FILE_BYTES"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "CP6-ACCEPTANCE-ADOPTION-CANDIDATE/1",
+  "basis_identity": "WP01-01-ACCEPTANCE-BASIS-1.2.0",
+  "basis_version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0",
+  "status": "ADOPTION_PENDING",
+  "actual_adoption": false,
+  "approved_by": null,
+  "approved_at": null,
+  "effective_at": null,
+  "authorization_source": null,
+  "signature": null,
+  "manifest_binding": "manifest.json exact RAW_FILE_BYTES SHA-256, calculated separately after freezing this artifact",
+  "scope": [
+    "PLM-ITER-01",
+    "PLM-REL-01"
+  ],
+  "acceptance_text": "Adopt the exact referenced 579 known prospective obligations (ITER 401 / REL 178) as a new acceptance standard. Original 30/48 member sets and missing hashes remain null, NOT_INVENTORIED and UNRECOVERABLE; itemwise equivalence is UNPROVABLE. Adoption does not pass business tests, close targets, supply unknown configuration, authorize deployment or change Owner/tenant/precision/atomicity.",
+  "historical_gaps": [
+    {
+      "id": "GAP-ITER-LEGACY-30",
+      "target": "PLM-ITER-01",
+      "declared_legacy_count": 30,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    },
+    {
+      "id": "GAP-REL-LEGACY-48",
+      "target": "PLM-REL-01",
+      "declared_legacy_count": 48,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness (test_manage_roadmap.FormalAcceptanceRouteTests.test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness) ... FAIL
+
+======================================================================
+FAIL: test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness (test_manage_roadmap.FormalAcceptanceRouteTests.test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 613, in test_real_ledger_keeps_recovered_rows_without_claiming_original_completeness
+    self.assertEqual(roadmap.validate(actual, ROOT, check_pins=False), [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['PLM-ITER-01: known missing original inve[92 chars]led'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'PLM-ITER-01: known missing original inventory cannot be relabelled'
+
++ []
+- ['PLM-ITER-01: known missing original inventory cannot be relabelled',
+-  'PLM-REL-01: known missing original inventory cannot be relabelled']
+
+----------------------------------------------------------------------
+Ran 1 test in 7.505s
+
+FAILED (failures=1)

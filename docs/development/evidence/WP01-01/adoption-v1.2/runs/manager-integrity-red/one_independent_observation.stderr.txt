@@ -1,0 +1,15 @@
+test_cli_report_and_gate_use_one_independent_observation (test_manage_roadmap.FormalAcceptanceRouteTests.test_cli_report_and_gate_use_one_independent_observation) ... FAIL
+
+======================================================================
+FAIL: test_cli_report_and_gate_use_one_independent_observation (test_manage_roadmap.FormalAcceptanceRouteTests.test_cli_report_and_gate_use_one_independent_observation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 599, in test_cli_report_and_gate_use_one_independent_observation
+    self.assertEqual(evaluate.call_count, 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 1
+
+----------------------------------------------------------------------
+Ran 1 test in 10.766s
+
+FAILED (failures=1)

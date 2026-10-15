@@ -1,0 +1,15 @@
+test_cli_report_does_not_label_coverage_as_adoption (test_manage_roadmap.FormalAcceptanceRouteTests.test_cli_report_does_not_label_coverage_as_adoption) ... FAIL
+
+======================================================================
+FAIL: test_cli_report_does_not_label_coverage_as_adoption (test_manage_roadmap.FormalAcceptanceRouteTests.test_cli_report_does_not_label_coverage_as_adoption)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_manage_roadmap.py", line 583, in test_cli_report_does_not_label_coverage_as_adoption
+    self.assertIn('unverified', json.loads(output.read_text())['inventory_route'])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'unverified' not found in '123 original inventories + 2 adopted new bases'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.477s
+
+FAILED (failures=1)

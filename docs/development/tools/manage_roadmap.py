@@ -9,6 +9,8 @@ import re
 import subprocess
 from urllib.parse import quote
 
+import acceptance_basis
+
 
 STATES = {"PLANNED", "READY", "IN_PROGRESS", "VERIFYING", "BLOCKED", "DONE"}
 ASSESSMENTS = {"PENDING", "REUSE_CONFIRMED", "CHANGE_REQUIRED", "NEW_REQUIRED", "DECISION_REQUIRED"}
@@ -45,7 +47,7 @@ def evidence_ok(items, root: Path, *, execution=False):
     return True
 
 
-def validate(data, root: Path, *, check_pins=True):
+def validate(data, root: Path, *, check_pins=True, _basis_result=None):
     errors = []
     handbook = root / "docs/design-handbook/remediation"
     source_targets = {t["target_id"]: t for t in read_json(handbook / "10-target-coverage.json")["targets"]}
@@ -62,6 +64,10 @@ def validate(data, root: Path, *, check_pins=True):
         errors.append("acceptance coverage differs from the authoritative revision catalog")
     if errors:
         return errors
+    # A package cannot supply its own verifier. The adapter obtains independent
+    # trust only from operator configuration; absent trust leaves the old route.
+    basis = _basis_result if _basis_result is not None else acceptance_basis.evaluate(root, data.get("acceptance_basis"))
+    new_inventory = basis["basis_adoption_valid"] and basis["inventory_coverage_valid"]
     required_sources = {f"docs/design-handbook/remediation/{name}" for name in ("10-target-coverage.json", "00-disposition-register.json", "08-acceptance-catalog.json")}
     if {s["path"] for s in data["sources"]} != required_sources or len(data["sources"]) != 3:
         errors.append("source pin set is incomplete or duplicated")
@@ -91,7 +97,11 @@ def validate(data, root: Path, *, check_pins=True):
                 errors.append(f"{p['id']}: DONE requires completion evidence")
             if p["id"] == "WP01" and any(t["assessment"] in {"PENDING", "DECISION_REQUIRED"} for t in targets.values()):
                 errors.append("WP01: detailed assessment or decision remains open")
-            if p["id"] == "WP01" and any(t["original_acceptance_inventory"]["state"] != "COMPLETE" for t in targets.values()):
+            if p["id"] == "WP01" and any(
+                t["original_acceptance_inventory"]["state"] != "COMPLETE"
+                and not (t["id"] in acceptance_basis.TARGETS and new_inventory)
+                for t in targets.values()
+            ):
                 errors.append("WP01: original acceptance inventory remains open")
             if p["id"] == "WP14" and any(t["delivery_state"] != "DONE" for t in targets.values()):
                 errors.append("WP14: full-baseline closeout requires all target deliveries")
@@ -136,6 +146,8 @@ def validate(data, root: Path, *, check_pins=True):
             errors.append(f"{t['id']}: BLOCKED requires a concrete blocker")
         inventory = t["original_acceptance_inventory"]
         original_cases = inventory["cases"]
+        if t["id"] in acceptance_basis.TARGETS and inventory["state"] != "NOT_INVENTORIED":
+            errors.append(f"{t['id']}: known missing original inventory cannot be relabelled")
         if inventory["state"] not in {"NOT_INVENTORIED", "COMPLETE"}:
             errors.append(f"{t['id']}: invalid original inventory state")
         if inventory["state"] == "COMPLETE" and (not original_cases or len({x["id"] for x in original_cases}) != len(original_cases)):
@@ -146,7 +158,10 @@ def validate(data, root: Path, *, check_pins=True):
             if original_case["state"] == "PASS" and not evidence_ok(original_case.get("evidence"), root, execution=True):
                 errors.append(f"{t['id']}: original acceptance PASS lacks evidence")
         if t["delivery_state"] == "DONE":
-            if inventory["state"] != "COMPLETE" or not original_cases or any(c["state"] != "PASS" for c in original_cases):
+            if t["id"] in acceptance_basis.TARGETS and new_inventory:
+                if not basis["target_runtime_valid"][t["id"]]:
+                    errors.append(f"{t['id']}: acceptance basis runtime remains unverified")
+            elif inventory["state"] != "COMPLETE" or not original_cases or any(c["state"] != "PASS" for c in original_cases):
                 errors.append(f"{t['id']}: DONE requires all original acceptance cases")
             if any(cases[cid]["state"] != "PASS" for cid in expected_cases):
                 errors.append(f"{t['id']}: DONE with required revision cases not passed")
@@ -508,10 +523,19 @@ def main():
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument("--write", action="store_true", help="regenerate derived Markdown views after validation")
     parser.add_argument("--report", type=Path, help="write the structural check result, not business execution evidence")
+    parser.add_argument("--basis-report", type=Path, help="write independent acceptance basis predicates; never advances ledger states")
     args = parser.parse_args()
     root = args.root.resolve()
     data = read_json(root / "docs/development/roadmap.json")
-    errors = validate(data, root)
+    # One independent observation supplies both the audit report and the gate.
+    # This private Python argument is never populated from ledger/package fields.
+    basis_result = acceptance_basis.evaluate(root, data.get("acceptance_basis"))
+    if args.basis_report:
+        adopted = basis_result["basis_adoption_valid"] and basis_result["inventory_coverage_valid"]
+        basis_result["inventory_route"] = "123 original inventories + 2 adopted new bases" if adopted else "original inventories; new bases unverified"
+        args.basis_report.parent.mkdir(parents=True, exist_ok=True)
+        args.basis_report.write_text(json.dumps(basis_result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    errors = validate(data, root, _basis_result=basis_result)
     views = render(data) if not errors else {}
     if not errors and "definition_path" in data.get("dispatch_policy", {}):
         definitions = read_json(root / data["dispatch_policy"]["definition_path"])

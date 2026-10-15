@@ -1,0 +1,928 @@
+{
+  "result": "PASS",
+  "checked_at": "2026-10-15T06:13:08.582908+00:00",
+  "scope": "Staged task-only path containment, evidence exact Git/index/worktree bytes, tool LF-only normalization, manifest hashes and staged diff whitespace",
+  "git_diff_check": {
+    "command": [
+      "git",
+      "-c",
+      "core.longpaths=true",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "started_at": "2026-10-15T06:13:08.388963+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "manifest_sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+  "frozen_artifact_hashes_valid": true,
+  "raw_log_policy": "Captured .txt command output retains trailing spaces; package-scoped whitespace attribute only. Previous staged check failure retained under runs/staged-diff-red.",
+  "checked_files": [
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/.gitattributes",
+      "worktree_sha256": "ba6b9116638a19b92704f09dac867bb88ccfc571a5227ed9f156bc14035990ec",
+      "indexed_git_blob": "78262567e0d510128ded608fca1b99525909a5f6",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/ADOPTION-DIFF.md",
+      "worktree_sha256": "3e8cf0c6f4808b918c4a602a1834190f097f7429b1e5d5180b12bb80b8508c86",
+      "indexed_git_blob": "4756996d679bb95cd80797bba51750c3cdc48486",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/DELIVERY.md",
+      "worktree_sha256": "eff3986c936777251d9e9db1f46de5f477bef96a437cad2ead779a3770e3f687",
+      "indexed_git_blob": "9a925c61f0e6dde1ecb46a1cb08c33f7e7a6ee47",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/OPERATOR.md",
+      "worktree_sha256": "0cbac8b85e0d729c8770b741641789a8ed1d76333385f5d33573476900f52611",
+      "indexed_git_blob": "30c867db04d17d5d75422618e671ba8a31581197",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/PLAN-AND-TRUST.md",
+      "worktree_sha256": "19f2fec9f47b1e569f77a86a91c3214ca44568abded85ce132c14cbb1bdb3a61",
+      "indexed_git_blob": "35dda5ff06641164f4d21b689d01fabf331ef063",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/adoption.candidate.json",
+      "worktree_sha256": "4aecc2f2e8e6272b7689074064c2c72afe14ccffb4a6703bbc878e8a492fe39e",
+      "indexed_git_blob": "568888b7255c311417e7ded6b045c96daa6011b4",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/basis.json",
+      "worktree_sha256": "85ed405919d0827a0a0b2ab358e659e33734d63acc3eb4a24eea44bbfcce3436",
+      "indexed_git_blob": "3173a899165ea5df0aa134070a5d282676725eee",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/inspect_candidate.py",
+      "worktree_sha256": "0373324d655d45a46aa651b81adaa08c10fdbbc0f0d9a88454498872854ae5bb",
+      "indexed_git_blob": "c203f8678516aa13722b4aeb7386da18f4aef509",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/intake.json",
+      "worktree_sha256": "511429aed2cd33352d363532d280d57cd18d4aab295af5b9a203c95d99373e28",
+      "indexed_git_blob": "29e8a642547d86695bb7d486c317d4aac13aa0fd",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/manifest.json",
+      "worktree_sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+      "indexed_git_blob": "57048ed0d5256048dd22ec1ce7f083785c3e7e3c",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/record_validation.py",
+      "worktree_sha256": "2a869fc9963a13636f869f3e753f9542e49281428356321044ac2bb4ac61befe",
+      "indexed_git_blob": "a30275bf1dc2bbeb57f959fc23b6d6b438ab9503",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/acceptance_basis.py",
+      "worktree_sha256": "481583025ee307c0fdf398670a77b10e100d72694d14e97e98c1f4981f456a42",
+      "indexed_git_blob": "04c4e86182ab40cc2a7c08957caa3f05d7397a98",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/manage_roadmap.py",
+      "worktree_sha256": "cb2fb58d560f063f3faf82ae667d04db24d2609d8d013e88c3a062654b7ca912",
+      "indexed_git_blob": "807969bb67ef1de657efbf8e1a767cb23da3c087",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/run.json",
+      "worktree_sha256": "424a6ced229fa02de354b94d72575ee16da081240b0e48f3d9f19296c4aef83a",
+      "indexed_git_blob": "07b18b2370184693a3b7b9717944231174bed92e",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/test_acceptance_basis.py",
+      "worktree_sha256": "8eaa8f5a6d05920522bb56abea9aa30e53aef3aed769dae5ff4362bdbbd51b5b",
+      "indexed_git_blob": "e96a7b1f23bf6de2d38688d588fb2aca270e2dcf",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/test_acceptance_basis.py.stderr.txt",
+      "worktree_sha256": "909257bb344abeb611aacdb374f18f5d73118116c768f33f12dd1133e5ce21a4",
+      "indexed_git_blob": "df9c1c4372bd29dd6273ad3e189a093b1a1cfe04",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/test_acceptance_basis.py.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/test_manage_roadmap.py",
+      "worktree_sha256": "104861e5691cf69ac0912564ef1142655349efd4dbe0ae2e2d3a169a7b4a9e61",
+      "indexed_git_blob": "cb406edc9bf22b185cea63d9221c2045f602dfde",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/test_manage_roadmap.py.stderr.txt",
+      "worktree_sha256": "dfc4b2ed770eda3f3b3765373a7a4d1c43afa38d3173f95f8aeecc4a2e52c106",
+      "indexed_git_blob": "e6184059a63dadcc5b2c9312a3fb73b1ab0d6f97",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/binding-red/test_manage_roadmap.py.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/adapter-tests.stderr.txt",
+      "worktree_sha256": "3cbac472133af207faf85302ef2ab401933a0b7d12c7e743216f5d1e0dea8af3",
+      "indexed_git_blob": "c5ec684e23424f127687264cb64d017eaa92a479",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/adapter-tests.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/candidate-readonly.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/candidate-readonly.stdout.txt",
+      "worktree_sha256": "eb60a8402742c771c444fd8358a8b82f3cd98ec127e2662092a61ea877ba6b75",
+      "indexed_git_blob": "0db10fbab1846edf85f085da642473863e273ac5",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/diff-check.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/diff-check.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/ledger-basis-report.json",
+      "worktree_sha256": "83f4ef8e52fe5605b886f11c08366bf0bc3e71635fa368de60f95be773bb4ae5",
+      "indexed_git_blob": "d9121dbd28a6da364dffa859b2fab1dadd7ec01c",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/manager-readonly.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/manager-readonly.stdout.txt",
+      "worktree_sha256": "f08df19f81f2cd365f2fa15cb963382a71eb50fb1fde0fc963f8c2c05e2180ad",
+      "indexed_git_blob": "b6b4bd8fd4471057f89628b7ac386715da80a748",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/manager-tests.stderr.txt",
+      "worktree_sha256": "f75b6bc585a3c86854de4abe105c743234682c6be72c2892a809106433253e83",
+      "indexed_git_blob": "e7da2453b013c85705da065a5181608b151bcf77",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/manager-tests.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/run.json",
+      "worktree_sha256": "d17f2528c3793030a8e4e64c4464a6bc5ac0b8ca9ff44b072e48f34ff9ccb686",
+      "indexed_git_blob": "65d4891746e511e210865dfc0a8ea5d3b107d617",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/sources/acceptance_basis.py",
+      "worktree_sha256": "b8adf70b0a8f5e5c46f0bd4eb18f5f6131d8ac22902150bf2dbf6e34c2ec48d9",
+      "indexed_git_blob": "d0cbf09e08ba0b69ecff16b9321d3febc7fb3050",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/sources/manage_roadmap.py",
+      "worktree_sha256": "e7637fd5253f5e1fda98d856a94fde3639208d30d2e5d2045c8480019e737545",
+      "indexed_git_blob": "fc9c799d06a53026b97525ff07fdf458c7d567ce",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/sources/test_acceptance_basis.py",
+      "worktree_sha256": "8cc7703aab45daac658f50669e3fa51cb8a4bc82beeb63486eb0bd362aa7544e",
+      "indexed_git_blob": "1947a15f675f18eb437d1654703d75fb39e4c670",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/final/sources/test_manage_roadmap.py",
+      "worktree_sha256": "71eb0b95930e857db182f5b35535feb2e5a307b246e241d4ccdc6a7257313634",
+      "indexed_git_blob": "9fc8f65f4fdf8ccd68238a548653a517439070f9",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/graph-red/acceptance_basis.py",
+      "worktree_sha256": "416f762f78307c7db72e01bd35a01ca5934113c86bb3b1f2a2eafd2c1a87cc19",
+      "indexed_git_blob": "f2c3a44f550efa48b0045511e84c14f177c0ca82",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/graph-red/run.json",
+      "worktree_sha256": "0d71a6556863f050885d5e88433cf828d4dc052240c5d2245d72de5b0b81c21b",
+      "indexed_git_blob": "afd49d98d24d0623bd6d4af8f05e39f3dd70bf8b",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/graph-red/stderr.txt",
+      "worktree_sha256": "9b6c12c647cf6caebcd60fb9b54218cf3ee549b5c1eff92bd997c72e5bccaa57",
+      "indexed_git_blob": "96cf31cff0194a881bea4e3063eb947595c4c5ba",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/graph-red/stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/graph-red/test_acceptance_basis.py",
+      "worktree_sha256": "8cc7703aab45daac658f50669e3fa51cb8a4bc82beeb63486eb0bd362aa7544e",
+      "indexed_git_blob": "1947a15f675f18eb437d1654703d75fb39e4c670",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/acceptance_basis.py",
+      "worktree_sha256": "79a9d8856159e83662257e4bbb1475829ef96f2cc79297e94ef68bd759db3660",
+      "indexed_git_blob": "37e6ff29de8a702be046a821f4cfda2bef08b8b0",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/identity_has_one_creation.stderr.txt",
+      "worktree_sha256": "7a03e26a02285d90cc44b45075d6d2d318cd87ef9b51db8e7830c696c465254b",
+      "indexed_git_blob": "faec554f5d1145c43a4ccc19289e0d5391dda576",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/identity_has_one_creation.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/manage_roadmap.py",
+      "worktree_sha256": "8ee3ce57c78503666329a87365ebd8ebe88e78d5ff05f591bc50e4ff478ca019",
+      "indexed_git_blob": "58977bb777f5c11896e8c555997a46b06f607fff",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/real_ledger_keeps_recovered.stderr.txt",
+      "worktree_sha256": "eb726bc76c5145b31cf98e2c38d47dd36cab7e042b43cf061aee35f3464351c3",
+      "indexed_git_blob": "b912c2c07cfcfe80e4de13394d49b3634f2ebd41",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/real_ledger_keeps_recovered.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/run.json",
+      "worktree_sha256": "41eed542c3cf866044948fddc6428e0018633eb6f1ed583982b72e576461c406",
+      "indexed_git_blob": "71ac6f9093db553d1992f24d0356912472dbc19c",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/test_acceptance_basis.py",
+      "worktree_sha256": "fae4cc5b0d3e31f81c1da123a7b25006ca7617c04df0d37ae66079b17c506f84",
+      "indexed_git_blob": "e0427908d458eb1d2679388732b522238cabd391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/identity-and-recovered-red/test_manage_roadmap.py",
+      "worktree_sha256": "2123e45a54b3cae6c950bb583fef8327245b258becc3730cc90e3d7888f61a14",
+      "indexed_git_blob": "a36ddea17ecc61de0882e7fe1f824769ada3858b",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/acceptance_basis.py",
+      "worktree_sha256": "79a9d8856159e83662257e4bbb1475829ef96f2cc79297e94ef68bd759db3660",
+      "indexed_git_blob": "37e6ff29de8a702be046a821f4cfda2bef08b8b0",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/known_missing_originals.stderr.txt",
+      "worktree_sha256": "91e7b30bb268a332d35f987bc614a831af2ff31f181c4da1f88bb7a68e22a0f9",
+      "indexed_git_blob": "6b50b1010b5214f89f5581b12bc26b404bd20e68",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/known_missing_originals.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/manage_roadmap.py",
+      "worktree_sha256": "e7637fd5253f5e1fda98d856a94fde3639208d30d2e5d2045c8480019e737545",
+      "indexed_git_blob": "fc9c799d06a53026b97525ff07fdf458c7d567ce",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/one_independent_observation.stderr.txt",
+      "worktree_sha256": "c6d18c6e98f5e667d06e462db451d058811672dbfb05ee259f96364eaa1b87ec",
+      "indexed_git_blob": "39888577551ac40158bfd192c8627f6d841d6cb9",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/one_independent_observation.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/run.json",
+      "worktree_sha256": "b81e9da5ff1f700f00607f89b6b08eee009048e3da8e9e3bf554ade4e1874004",
+      "indexed_git_blob": "9bb0062cd26816d650c7c3c96e637227fbf99356",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/manager-integrity-red/test_manage_roadmap.py",
+      "worktree_sha256": "9632ec2a6f3ad6377c15e2f2ab27b89b5af896f7c49edb768a2f2c89d45543d2",
+      "indexed_git_blob": "ed2d1b130c80e87df8e19c9f30482670f521fba6",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/origin-red/acceptance_basis.py",
+      "worktree_sha256": "fae732c0266edffb65f53e9e03153a1681d9170dd0a092cd626fba0e5cee7abe",
+      "indexed_git_blob": "82615aec0211a3112b52e6d134e01d35b4c25fc3",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/origin-red/run.json",
+      "worktree_sha256": "77545760cd388255cbc4a412df63a2a537715d552fdd16b9e5137279dd07cba9",
+      "indexed_git_blob": "23520cd7c8135bf064d6a8347f215c8b8866afd6",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/origin-red/stderr.txt",
+      "worktree_sha256": "64b47112083feb0f0187dcda5060f08069e17a552bfec07fed6c5e4f8f89b5bd",
+      "indexed_git_blob": "5d68dff0b8a2a80ba13abc44b06ce3fd13306eb6",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/origin-red/stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/origin-red/test_acceptance_basis.py",
+      "worktree_sha256": "e359729568d4034ff8aa4bd722bba7f21824541d9c7a4f0a98112fc1f0d18704",
+      "indexed_git_blob": "5ae9a60562c626cef5792b095c90b9f9ae36ee26",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/owner-red/acceptance_basis.py",
+      "worktree_sha256": "b8adf70b0a8f5e5c46f0bd4eb18f5f6131d8ac22902150bf2dbf6e34c2ec48d9",
+      "indexed_git_blob": "d0cbf09e08ba0b69ecff16b9321d3febc7fb3050",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/owner-red/run.json",
+      "worktree_sha256": "34e096d55b0fedd6516cb61573bc3a4e1fb34040dfcb56adc30b6fc85244e941",
+      "indexed_git_blob": "3851a97712c696fb5b55aab63b3ec35102cc645b",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/owner-red/stderr.txt",
+      "worktree_sha256": "79d7ac5e2a1e195242fd13028cc1662beac65775b99ddf48a34cd35d9798a25c",
+      "indexed_git_blob": "10a0d15fd3d14cfbb6199da762349a4b8c5c611f",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/owner-red/stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/owner-red/test_acceptance_basis.py",
+      "worktree_sha256": "1ec14966fd2576f2c8dd755c2da55fc9a08d3c91daa8c2270d8758129569d0ea",
+      "indexed_git_blob": "194281e6c2838d2ad0204c68e9609a7ce9bff266",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/predicate-red/acceptance_basis.py",
+      "worktree_sha256": "e190f8d6d64d28986e1f44d4077b62e0f281b14937682a7990b1b70a9b1e918e",
+      "indexed_git_blob": "74128817472db87eb161b0b23882cc809bd92426",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/predicate-red/run.json",
+      "worktree_sha256": "734b700d17def6513ad19311d3ddefe79de926a6f13debf76bb6da46bcd1129d",
+      "indexed_git_blob": "21d4c22fd327e0ffaeb0165ad90ee202bb0907f6",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/predicate-red/stderr.txt",
+      "worktree_sha256": "0732499c45e58a4729b785175447a4c83d0de309cb81be090b2e2d27495a2354",
+      "indexed_git_blob": "9b6327d58f0da58b601ca5016dbe39bb3828d590",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/predicate-red/stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/predicate-red/test_acceptance_basis.py",
+      "worktree_sha256": "6657628136db3d03ce60c1242c318dd8338bbb7d0352b6c49d332df20b00caf8",
+      "indexed_git_blob": "26ca2af8483d45d31ef80f1d97345c715cccd918",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/manage_roadmap.py",
+      "worktree_sha256": "992e88abcaefd904ac9c0b555405df443f0e521170998237e3ca2f81c917545b",
+      "indexed_git_blob": "b410bacb5ee9851ec45c910017d7d4207ba26c1d",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/run.json",
+      "worktree_sha256": "d74a45069bec436ee05a17f0c8c498bfb71f421441d3e806913df8d02a9bced3",
+      "indexed_git_blob": "abb036388a8c34aa63b9ff417c1bff9828586541",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/test_acceptance_basis.py",
+      "worktree_sha256": "9f8944694eca32d2df323d9de0770e485a9bc743f31214cef26ae49873919d1e",
+      "indexed_git_blob": "905f2ad7a99e4721a27d31e3999dd3b8261ab682",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/test_acceptance_basis.py.stderr.txt",
+      "worktree_sha256": "8d5eaaf34586f5d486380517273a6ef7a3c411f7e4cb1fa768f5db609e4d740f",
+      "indexed_git_blob": "85ad863e2b72004a2d695da07a2c27a4b0c4f327",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/test_acceptance_basis.py.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/test_manage_roadmap.py",
+      "worktree_sha256": "c589cd83c1097e904901d3e83f320943d286e756d6ced9c75c0ad108e7ac347e",
+      "indexed_git_blob": "e9b0e1f986e33e7f87fc1bc8e2288b05570f2ccf",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/test_manage_roadmap.py.stderr.txt",
+      "worktree_sha256": "cabb025aa06f1fc6e834e9aac6d0775e5e424ce9ee1cd4f03d6c0d76a85488b3",
+      "indexed_git_blob": "7f5e7e5cfa46a6971fe9384411462be920e05415",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/red/test_manage_roadmap.py.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/report-red/manage_roadmap.py",
+      "worktree_sha256": "cb2fb58d560f063f3faf82ae667d04db24d2609d8d013e88c3a062654b7ca912",
+      "indexed_git_blob": "807969bb67ef1de657efbf8e1a767cb23da3c087",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/report-red/run.json",
+      "worktree_sha256": "c9af8ffc450c7a45f7ab2585b62f69aa8b877b0a45a95e64501fe0e0c136d28f",
+      "indexed_git_blob": "4e6e6d8b98367162c2bed920c4c61bd97f1f1865",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/report-red/stderr.txt",
+      "worktree_sha256": "6e970be5ab955c001325b886bfa5c75204fcc9876fdd4eec31cb4495bb60ee8b",
+      "indexed_git_blob": "b93c93761eae3f5da08a0bbc1da00614bf9f6d4e",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/report-red/stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/report-red/test_manage_roadmap.py",
+      "worktree_sha256": "71eb0b95930e857db182f5b35535feb2e5a307b246e241d4ccdc6a7257313634",
+      "indexed_git_blob": "9fc8f65f4fdf8ccd68238a548653a517439070f9",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/staged-diff-red/gitattributes.before.txt",
+      "worktree_sha256": "dc01e11bb299a9bb26bdd3a1391817d04d0484a97d959202e6ff0afb14133a02",
+      "indexed_git_blob": "befd223208722024d3217c16aaf717e9f2d0886c",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/staged-diff-red/run.json",
+      "worktree_sha256": "cf58d2c628d85cf1865637cd9f5527c836ac662d8a9e5b5f4c76363ba77b712d",
+      "indexed_git_blob": "cd246f43b02d03e98f18d6d6f82024fe9e8f4e85",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/staged-diff-red/stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/staged-diff-red/stdout.txt",
+      "worktree_sha256": "00107400f3a63bd6d242aeebb0d83ed1254bf6d3d7b0a21fb541a9ed4a9ddd79",
+      "indexed_git_blob": "4c9dd091da42b7c6b1d2a47a72e355f7fdb4dcad",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/adapter-tests.stderr.txt",
+      "worktree_sha256": "2edc71686ee7381a75fd8fd23ad98cb0ebe4eec3e7e34dfb761a7d5e920bcd72",
+      "indexed_git_blob": "b0d7c81507b38d4c90c653a637328aa45136c9bb",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/adapter-tests.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/candidate-readonly.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/candidate-readonly.stdout.txt",
+      "worktree_sha256": "eb60a8402742c771c444fd8358a8b82f3cd98ec127e2662092a61ea877ba6b75",
+      "indexed_git_blob": "0db10fbab1846edf85f085da642473863e273ac5",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/diff-check.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/diff-check.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/ledger-basis-report.json",
+      "worktree_sha256": "83f4ef8e52fe5605b886f11c08366bf0bc3e71635fa368de60f95be773bb4ae5",
+      "indexed_git_blob": "d9121dbd28a6da364dffa859b2fab1dadd7ec01c",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/manager-readonly.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/manager-readonly.stdout.txt",
+      "worktree_sha256": "f08df19f81f2cd365f2fa15cb963382a71eb50fb1fde0fc963f8c2c05e2180ad",
+      "indexed_git_blob": "b6b4bd8fd4471057f89628b7ac386715da80a748",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/manager-tests.stderr.txt",
+      "worktree_sha256": "1c2e3c8fdd80e3b5b4716e67d7e0c7ede62ce6c05d20fe7140c054a406b3e04e",
+      "indexed_git_blob": "21f4593d002d5575a055b700174910d553f887a1",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/manager-tests.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/run.json",
+      "worktree_sha256": "1b0285682160c11df9659b1c39ba19e8e9fcc4a51bdec703783341e0eeccd14d",
+      "indexed_git_blob": "830c5ba0777925305e9d196e5565c6f8d29adac0",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/sources/acceptance_basis.py",
+      "worktree_sha256": "79a9d8856159e83662257e4bbb1475829ef96f2cc79297e94ef68bd759db3660",
+      "indexed_git_blob": "37e6ff29de8a702be046a821f4cfda2bef08b8b0",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/sources/manage_roadmap.py",
+      "worktree_sha256": "8ee3ce57c78503666329a87365ebd8ebe88e78d5ff05f591bc50e4ff478ca019",
+      "indexed_git_blob": "58977bb777f5c11896e8c555997a46b06f607fff",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/sources/test_acceptance_basis.py",
+      "worktree_sha256": "1ec14966fd2576f2c8dd755c2da55fc9a08d3c91daa8c2270d8758129569d0ea",
+      "indexed_git_blob": "194281e6c2838d2ad0204c68e9609a7ce9bff266",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T055559Z/sources/test_manage_roadmap.py",
+      "worktree_sha256": "9632ec2a6f3ad6377c15e2f2ab27b89b5af896f7c49edb768a2f2c89d45543d2",
+      "indexed_git_blob": "ed2d1b130c80e87df8e19c9f30482670f521fba6",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/adapter-tests.stderr.txt",
+      "worktree_sha256": "5066a0f974753e377be023f588587ea9d8f1f434224209397b50e02edf233762",
+      "indexed_git_blob": "b8bbd09c81aeedfa1bc595391b37c324df2a81f4",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/adapter-tests.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/candidate-readonly.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/candidate-readonly.stdout.txt",
+      "worktree_sha256": "eb60a8402742c771c444fd8358a8b82f3cd98ec127e2662092a61ea877ba6b75",
+      "indexed_git_blob": "0db10fbab1846edf85f085da642473863e273ac5",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/diff-check.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/diff-check.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/ledger-basis-report.json",
+      "worktree_sha256": "83f4ef8e52fe5605b886f11c08366bf0bc3e71635fa368de60f95be773bb4ae5",
+      "indexed_git_blob": "d9121dbd28a6da364dffa859b2fab1dadd7ec01c",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/manager-readonly.stderr.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/manager-readonly.stdout.txt",
+      "worktree_sha256": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+      "indexed_git_blob": "0a11753eeb9c5ed2dee918089fdda2c0bbfdda2f",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/manager-tests.stderr.txt",
+      "worktree_sha256": "937407304cdb6dfdf59ffce027ad78373b0f75143e2e277183ef42486ccd61c7",
+      "indexed_git_blob": "b4755a58f9fbeda0c793a2b28192fc374edf1eaa",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/manager-tests.stdout.txt",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "indexed_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/run.json",
+      "worktree_sha256": "1709f4db56825016549430efdb97818aaa20e2acebb3a95b5373daec81d2944f",
+      "indexed_git_blob": "6c6848c765b3af62a8698e3f22dc11d540e2fbc1",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/sources/acceptance_basis.py",
+      "worktree_sha256": "e90856d50787adc19b7bddb1d42030c3dff98e68b0824c2440e401d1ec71da1d",
+      "indexed_git_blob": "f0476febb55d8545de93f1a24cf662276eb77fda",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/sources/manage_roadmap.py",
+      "worktree_sha256": "efe400e4d30a206c0f6f6f7b4ce6e3f797919c60194bad116bf8a246736f6ae7",
+      "indexed_git_blob": "9e390b4e81cfaf391ce7c995f6c1471d4263a710",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/sources/test_acceptance_basis.py",
+      "worktree_sha256": "fae4cc5b0d3e31f81c1da123a7b25006ca7617c04df0d37ae66079b17c506f84",
+      "indexed_git_blob": "e0427908d458eb1d2679388732b522238cabd391",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/runs/verified-20261015T060818Z/sources/test_manage_roadmap.py",
+      "worktree_sha256": "2123e45a54b3cae6c950bb583fef8327245b258becc3730cc90e3d7888f61a14",
+      "indexed_git_blob": "a36ddea17ecc61de0882e7fe1f824769ada3858b",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/self-review.md",
+      "worktree_sha256": "4a6c9548493e72532fefc9a8d91d648584e32a7addc66d6d90276d0595c0e2ca",
+      "indexed_git_blob": "a22a6e2695f25844855c134e6820bdb852f3127d",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/technical-decisions.json",
+      "worktree_sha256": "21adf92cb7fc644bfd001a35c132f73480163e4667cbddd355777cc27ef007a4",
+      "indexed_git_blob": "a57bd0b201b0385b7e4c1e90a1949cccc12c7ab9",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/validation.json",
+      "worktree_sha256": "0158cb10466ba4112995264f07c7a74df44fe8068fcb0652262dc7c113e89a40",
+      "indexed_git_blob": "beab60d17c5f6fd19b90151b280d104a099ef4fa",
+      "raw_bytes_preserved": true,
+      "normalization": "NONE"
+    },
+    {
+      "path": "docs/development/tools/acceptance_basis.py",
+      "worktree_sha256": "e90856d50787adc19b7bddb1d42030c3dff98e68b0824c2440e401d1ec71da1d",
+      "indexed_git_blob": "f0476febb55d8545de93f1a24cf662276eb77fda",
+      "raw_bytes_preserved": false,
+      "normalization": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "docs/development/tools/manage_roadmap.py",
+      "worktree_sha256": "efe400e4d30a206c0f6f6f7b4ce6e3f797919c60194bad116bf8a246736f6ae7",
+      "indexed_git_blob": "81ee267baa02a8975181d94fba82ecb439c62d63",
+      "raw_bytes_preserved": false,
+      "normalization": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "docs/development/tools/test_acceptance_basis.py",
+      "worktree_sha256": "fae4cc5b0d3e31f81c1da123a7b25006ca7617c04df0d37ae66079b17c506f84",
+      "indexed_git_blob": "e0427908d458eb1d2679388732b522238cabd391",
+      "raw_bytes_preserved": false,
+      "normalization": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "docs/development/tools/test_manage_roadmap.py",
+      "worktree_sha256": "2123e45a54b3cae6c950bb583fef8327245b258becc3730cc90e3d7888f61a14",
+      "indexed_git_blob": "b5fb4f47ca932da6929125ea8791244b4e24a802",
+      "raw_bytes_preserved": false,
+      "normalization": "CRLF_TO_LF_ONLY"
+    }
+  ],
+  "excluded_self": "index-integrity.json (written after this check to avoid circular inventory)."
+}

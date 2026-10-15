@@ -1,0 +1,133 @@
+{
+  "started_at": "2026-10-15T06:08:18.369270+00:00",
+  "cwd": "D:\\CP6-worktrees\\wp01-01-adoption-gate-20261015",
+  "recorder_sha256": "2a869fc9963a13636f869f3e753f9542e49281428356321044ac2bb4ac61befe",
+  "applicability": "FINAL_IMPLEMENTATION_CANDIDATE",
+  "source_head": "b3eb755bc43e370f697480a6ea41474c3d978488",
+  "source_snapshot_representation": "RAW_FILE_BYTES",
+  "source_hashes": {
+    "acceptance_basis.py": "e90856d50787adc19b7bddb1d42030c3dff98e68b0824c2440e401d1ec71da1d",
+    "test_acceptance_basis.py": "fae4cc5b0d3e31f81c1da123a7b25006ca7617c04df0d37ae66079b17c506f84",
+    "manage_roadmap.py": "efe400e4d30a206c0f6f6f7b4ce6e3f797919c60194bad116bf8a246736f6ae7",
+    "test_manage_roadmap.py": "2123e45a54b3cae6c950bb583fef8327245b258becc3730cc90e3d7888f61a14"
+  },
+  "unchanged_before": {
+    "docs/development/roadmap.json": "eea9c4c08b6be2a53281cb875da2a97d1b705d6fcbd33015972ab82fc2476a1e",
+    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+    "docs/development/task-deliveries/WP05-01/adoption.json": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+    "docs/development/evidence/WP01-01/preparation/obligation-matrix.json": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "docs/development/evidence/WP01-01/decision-closure/manifest.json": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839"
+  },
+  "trust_policy_configured": false,
+  "business_tests_executed": false,
+  "runs": [
+    {
+      "name": "adapter-tests",
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "-B",
+        "-Xutf8",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/development/tools",
+        "-p",
+        "test_acceptance_basis.py",
+        "-v"
+      ],
+      "started_at": "2026-10-15T06:08:18.485695+00:00",
+      "ended_at": "2026-10-15T06:08:30.582453+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "5066a0f974753e377be023f588587ea9d8f1f434224209397b50e02edf233762"
+    },
+    {
+      "name": "manager-tests",
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "-B",
+        "-Xutf8",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/development/tools",
+        "-p",
+        "test_manage_roadmap.py",
+        "-v",
+        "-k",
+        "FormalAcceptanceRouteTests"
+      ],
+      "started_at": "2026-10-15T06:08:30.620856+00:00",
+      "ended_at": "2026-10-15T06:10:01.706372+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "937407304cdb6dfdf59ffce027ad78373b0f75143e2e277183ef42486ccd61c7"
+    },
+    {
+      "name": "manager-readonly",
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "-B",
+        "-Xutf8",
+        "docs/development/tools/manage_roadmap.py",
+        "--basis-report",
+        "D:\\CP6-worktrees\\wp01-01-adoption-gate-20261015\\docs\\development\\evidence\\WP01-01\\adoption-v1.2\\runs\\verified-20261015T060818Z\\ledger-basis-report.json"
+      ],
+      "started_at": "2026-10-15T06:10:01.731701+00:00",
+      "ended_at": "2026-10-15T06:10:09.328601+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "b4eeada1f1ac2f46c683a19f1861388eeb14058285d05e82931891afbb13292c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "candidate-readonly",
+      "command": [
+        "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+        "-B",
+        "-Xutf8",
+        "D:\\CP6-worktrees\\wp01-01-adoption-gate-20261015\\docs\\development\\evidence\\WP01-01\\adoption-v1.2\\inspect_candidate.py",
+        "--root",
+        "D:\\CP6-worktrees\\wp01-01-adoption-gate-20261015",
+        "--archive-root",
+        "D:/CP6"
+      ],
+      "started_at": "2026-10-15T06:10:09.351306+00:00",
+      "ended_at": "2026-10-15T06:10:10.286480+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "eb60a8402742c771c444fd8358a8b82f3cd98ec127e2662092a61ea877ba6b75",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "diff",
+        "--check"
+      ],
+      "started_at": "2026-10-15T06:10:10.293778+00:00",
+      "ended_at": "2026-10-15T06:10:10.559100+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "manager_reuse": {
+    "source": "runs/verified-20261015T055559Z/manager-tests.stderr.txt",
+    "source_run_metadata": "runs/verified-20261015T055559Z/run.json",
+    "scope": "62 pre-existing manager tests passed within the actual 70-test execution at that snapshot; not re-executed or relabelled as final-source execution.",
+    "reason": "Last corrections are independent adapter identity-history verification and preserving existing recovered rows while inventory remains NOT_INVENTORIED. The affected nine formal-route tests, including the unmodified real ledger, are executed now; other original checks and test inputs are unchanged."
+  },
+  "unchanged_after": {
+    "docs/development/roadmap.json": "eea9c4c08b6be2a53281cb875da2a97d1b705d6fcbd33015972ab82fc2476a1e",
+    "docs/development/task-definitions.json": "91508cd5c506de5fd3e083fe2d1897f5e758b0efe09dd6da1177cb8ddc49d693",
+    "docs/development/task-deliveries/WP05-01/adoption.json": "ad776b77b536a820be9439ff51d4fa367387d0f3048ad0ba2bf5946e528dd403",
+    "docs/development/evidence/WP01-01/preparation/obligation-matrix.json": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "docs/development/evidence/WP01-01/decision-closure/manifest.json": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839"
+  },
+  "unchanged_inputs_match": true,
+  "ended_at": "2026-10-15T06:10:10.579959+00:00"
+}

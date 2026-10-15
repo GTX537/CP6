@@ -1,0 +1,50 @@
+{
+  "started_at": "2026-10-15T05:51:11.967642+00:00",
+  "sources": {
+    "manage_roadmap.py": "e7637fd5253f5e1fda98d856a94fde3639208d30d2e5d2045c8480019e737545",
+    "test_manage_roadmap.py": "9632ec2a6f3ad6377c15e2f2ab27b89b5af896f7c49edb768a2f2c89d45543d2",
+    "acceptance_basis.py": "79a9d8856159e83662257e4bbb1475829ef96f2cc79297e94ef68bd759db3660"
+  },
+  "runs": [
+    {
+      "command": [
+        "C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe",
+        "-B",
+        "-Xutf8",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/development/tools",
+        "-p",
+        "test_manage_roadmap.py",
+        "-v",
+        "-k",
+        "known_missing_originals"
+      ],
+      "exit_code": 1,
+      "started_at": "2026-10-15T05:51:11.973268+00:00",
+      "ended_at": "2026-10-15T05:51:23.543717+00:00"
+    },
+    {
+      "command": [
+        "C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe",
+        "-B",
+        "-Xutf8",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/development/tools",
+        "-p",
+        "test_manage_roadmap.py",
+        "-v",
+        "-k",
+        "one_independent_observation"
+      ],
+      "exit_code": 1,
+      "started_at": "2026-10-15T05:51:23.545199+00:00",
+      "ended_at": "2026-10-15T05:51:35.541184+00:00"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+test_planning_graph_cannot_be_privately_rewritten (test_acceptance_basis.AcceptanceBasisTests.test_planning_graph_cannot_be_privately_rewritten) ... FAIL
+
+======================================================================
+FAIL: test_planning_graph_cannot_be_privately_rewritten (test_acceptance_basis.AcceptanceBasisTests.test_planning_graph_cannot_be_privately_rewritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-adoption-gate-20261015\docs\development\tools\test_acceptance_basis.py", line 223, in test_planning_graph_cannot_be_privately_rewritten
+    self.assertFalse(self.evaluate()['inventory_coverage_valid'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 0.227s
+
+FAILED (failures=1)
