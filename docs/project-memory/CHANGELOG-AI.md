@@ -1,5 +1,12 @@
 # AI 可读变更日志
 
+## 2026-10-15：验收配置异常诊断修复（Issue #216）
+
+验收工具先检查配置为JSON对象；数组和标量现在返回结构化拒绝，不再抛出AttributeError。
+相关23项算法测试及原步骤复测通过，正常配置与拒绝边界保留；正式采纳和业务状态不变。
+见[修复证据](../development/evidence/bug-216-configuration/README.md)；Issue在远端main核对后关闭。
+未运行Actions、签名发包、数据库或部署。
+
 ## 2026-10-15：第八轮限定实现已合并
 
 WP01-01正式台账adapter经PR217交付；WP02-02的Platform0.10.3登记经[PR](https://github.com/GTX537/CP6.Platform/pull/77)交付。

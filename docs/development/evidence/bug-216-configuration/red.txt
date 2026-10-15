@@ -1,0 +1,124 @@
+EEEEEEE
+======================================================================
+ERROR: test_non_object_configuration_returns_structured_runtime_rejection (test_acceptance_basis.AcceptanceBasisTests.test_non_object_configuration_returns_structured_runtime_rejection) (configuration=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 125, in test_non_object_configuration_returns_structured_runtime_rejection
+    result = self.evaluate()
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 92, in evaluate
+    return gate.evaluate(self.root, self.selection, verifier=self.verifier if trusted else None)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 417, in evaluate
+    result['target_runtime_valid'][target] = runtime_valid(root, runtime[target], selection['manifest'], basis, graph, target, verifier)
+                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 359, in runtime_valid
+    require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'get'
+
+======================================================================
+ERROR: test_non_object_configuration_returns_structured_runtime_rejection (test_acceptance_basis.AcceptanceBasisTests.test_non_object_configuration_returns_structured_runtime_rejection) (configuration=['CONFIGURED'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 125, in test_non_object_configuration_returns_structured_runtime_rejection
+    result = self.evaluate()
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 92, in evaluate
+    return gate.evaluate(self.root, self.selection, verifier=self.verifier if trusted else None)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 417, in evaluate
+    result['target_runtime_valid'][target] = runtime_valid(root, runtime[target], selection['manifest'], basis, graph, target, verifier)
+                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 359, in runtime_valid
+    require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'get'
+
+======================================================================
+ERROR: test_non_object_configuration_returns_structured_runtime_rejection (test_acceptance_basis.AcceptanceBasisTests.test_non_object_configuration_returns_structured_runtime_rejection) (configuration=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 125, in test_non_object_configuration_returns_structured_runtime_rejection
+    result = self.evaluate()
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 92, in evaluate
+    return gate.evaluate(self.root, self.selection, verifier=self.verifier if trusted else None)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 417, in evaluate
+    result['target_runtime_valid'][target] = runtime_valid(root, runtime[target], selection['manifest'], basis, graph, target, verifier)
+                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 359, in runtime_valid
+    require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+
+======================================================================
+ERROR: test_non_object_configuration_returns_structured_runtime_rejection (test_acceptance_basis.AcceptanceBasisTests.test_non_object_configuration_returns_structured_runtime_rejection) (configuration=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 125, in test_non_object_configuration_returns_structured_runtime_rejection
+    result = self.evaluate()
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 92, in evaluate
+    return gate.evaluate(self.root, self.selection, verifier=self.verifier if trusted else None)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 417, in evaluate
+    result['target_runtime_valid'][target] = runtime_valid(root, runtime[target], selection['manifest'], basis, graph, target, verifier)
+                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 359, in runtime_valid
+    require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'bool' object has no attribute 'get'
+
+======================================================================
+ERROR: test_non_object_configuration_returns_structured_runtime_rejection (test_acceptance_basis.AcceptanceBasisTests.test_non_object_configuration_returns_structured_runtime_rejection) (configuration=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 125, in test_non_object_configuration_returns_structured_runtime_rejection
+    result = self.evaluate()
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 92, in evaluate
+    return gate.evaluate(self.root, self.selection, verifier=self.verifier if trusted else None)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 417, in evaluate
+    result['target_runtime_valid'][target] = runtime_valid(root, runtime[target], selection['manifest'], basis, graph, target, verifier)
+                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 359, in runtime_valid
+    require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'get'
+
+======================================================================
+ERROR: test_non_object_configuration_returns_structured_runtime_rejection (test_acceptance_basis.AcceptanceBasisTests.test_non_object_configuration_returns_structured_runtime_rejection) (configuration=1.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 125, in test_non_object_configuration_returns_structured_runtime_rejection
+    result = self.evaluate()
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 92, in evaluate
+    return gate.evaluate(self.root, self.selection, verifier=self.verifier if trusted else None)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 417, in evaluate
+    result['target_runtime_valid'][target] = runtime_valid(root, runtime[target], selection['manifest'], basis, graph, target, verifier)
+                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 359, in runtime_valid
+    require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'float' object has no attribute 'get'
+
+======================================================================
+ERROR: test_non_object_configuration_returns_structured_runtime_rejection (test_acceptance_basis.AcceptanceBasisTests.test_non_object_configuration_returns_structured_runtime_rejection) (configuration='CONFIGURED')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 125, in test_non_object_configuration_returns_structured_runtime_rejection
+    result = self.evaluate()
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\test_acceptance_basis.py", line 92, in evaluate
+    return gate.evaluate(self.root, self.selection, verifier=self.verifier if trusted else None)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 417, in evaluate
+    result['target_runtime_valid'][target] = runtime_valid(root, runtime[target], selection['manifest'], basis, graph, target, verifier)
+                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wave8-dispatch-20261015\docs\development\tools\acceptance_basis.py", line 359, in runtime_valid
+    require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'get'
+
+----------------------------------------------------------------------
+Ran 1 test in 1.381s
+
+FAILED (errors=7)

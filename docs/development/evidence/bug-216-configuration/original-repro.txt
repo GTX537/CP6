@@ -1,0 +1,12 @@
+{
+  "basis_adoption_valid": true,
+  "inventory_coverage_valid": true,
+  "target_runtime_valid": {
+    "PLM-ITER-01": false,
+    "PLM-REL-01": false
+  },
+  "errors": [
+    "PLM-ITER-01: CONFIGURATION_OBJECT_REQUIRED",
+    "PLM-REL-01: RUNTIME_NOT_SUBMITTED"
+  ]
+}

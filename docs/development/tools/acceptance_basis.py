@@ -356,6 +356,7 @@ def runtime_valid(root, ref, manifest, basis, graph, target, verifier):
         require(set(approved['obligation_ids']) <= {r['id'] for r in expected}, 'SCENARIO_FOREIGN_OBLIGATION')
         covered.update(approved['obligation_ids'])
         configuration = parse(read_ref(root, approved['configuration']))
+        require(isinstance(configuration, dict), 'CONFIGURATION_OBJECT_REQUIRED')
         require(configuration.get('state') == 'CONFIGURED', 'ACTUAL_CONFIGURATION_REQUIRED')
         def bound_execution(reference, scope):
             proof = execution(root, reference, verifier)
