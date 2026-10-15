@@ -1,0 +1,66 @@
+{
+  "observed_at": "2026-10-15T05:04:29.683139+00:00",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "queued_or_running": [],
+      "local_main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_head": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_branch": "main"
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "queued_or_running": [],
+      "local_main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "working_head": "97df4f650847d164923750ce0d0de925731aeac4",
+      "working_branch": "codex/p03-auth-problem-details"
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": [],
+      "local_main_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "working_head": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+      "working_branch": "codex/bug-189-s01-08-terminal-adoption"
+    }
+  },
+  "handoff_heads": {
+    "WP01-01": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+    "WP02-02": "d32e8b859de388d0d9f1477a0e6ff411b4bdfe73",
+    "WP02-12": "be1a50f192e1d1677f0d0a8ce7dcc8e28e3aaa87",
+    "WP02-26": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d"
+  },
+  "coordination_handoff": "5c686029cc9b0dc868c1cc4ba21edb0796bce3f8",
+  "prior_intake": "docs/development/evidence/wave7-integration-20261014/intake.json",
+  "prior_intake_sha256": "da0d419f0eb67e7d09a27ca0f55a9bcc0dcc074ec3e3c897d650f8429bd32e93",
+  "messages_checked": [
+    {
+      "task": "WP01-01",
+      "branch": "codex/dev-handoff-wp01-01",
+      "head": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "unchanged_from_reviewed_intake": true
+    },
+    {
+      "task": "WP02-02",
+      "branch": "codex/dev-handoff-wp02-02",
+      "head": "d32e8b859de388d0d9f1477a0e6ff411b4bdfe73",
+      "unchanged_from_reviewed_intake": true
+    },
+    {
+      "task": "WP02-12",
+      "branch": "codex/dev-handoff-wp02-12",
+      "head": "be1a50f192e1d1677f0d0a8ce7dcc8e28e3aaa87",
+      "unchanged_from_reviewed_intake": true
+    },
+    {
+      "task": "WP02-26",
+      "branch": "codex/dev-handoff-wp02-26",
+      "head": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "unchanged_from_reviewed_intake": true
+    }
+  ],
+  "new_messages": [],
+  "scope": "Fresh remote heads/queues checked; unchanged immutable worker heads reuse their previously read exact message bytes. CRM local main differs; only origin/main is authoritative and existing checkout is preserved."
+}

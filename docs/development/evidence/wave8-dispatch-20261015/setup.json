@@ -1,0 +1,60 @@
+{
+  "observed_at": "2026-10-15T05:06:28.641867+00:00",
+  "repositories": {
+    "Main": {
+      "repository": "https://github.com/GTX537/CP6.git",
+      "main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "queued_or_running": [],
+      "local_main_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_head": "b0a4f5601b008d0003598065bbf3241124442890",
+      "working_branch": "main"
+    },
+    "Platform": {
+      "repository": "https://github.com/GTX537/CP6.Platform.git",
+      "main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "queued_or_running": [],
+      "local_main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "working_head": "97df4f650847d164923750ce0d0de925731aeac4",
+      "working_branch": "codex/p03-auth-problem-details"
+    },
+    "CRM": {
+      "repository": "https://github.com/GTX537/CP6.CRM.git",
+      "main_sha": "1e4eea61c31d7547c3b3495d392eefbed99b7339",
+      "queued_or_running": [],
+      "local_main_sha": "c778a3052a4416b82facb07b1244fc98fb6ad8a1",
+      "working_head": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+      "working_branch": "codex/bug-189-s01-08-terminal-adoption"
+    }
+  },
+  "tasks": [
+    {
+      "id": "WP01-01",
+      "lane": "A",
+      "previous_task": "WP01-01",
+      "repository": "Main",
+      "owning_task_repository": "Main",
+      "repo_slug": "GTX537/CP6",
+      "branch": "codex/wp01-01-adoption-gate-20261015",
+      "worktree": "D:/CP6-worktrees/wp01-01-adoption-gate-20261015",
+      "baseline": "b0a4f5601b008d0003598065bbf3241124442890",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp01-01",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/"
+    },
+    {
+      "id": "WP02-02",
+      "lane": "B",
+      "previous_task": "WP02-02",
+      "repository": "Platform",
+      "owning_task_repository": "Main",
+      "repo_slug": "GTX537/CP6.Platform",
+      "branch": "codex/wp02-02-formal-registration-20261015",
+      "worktree": "D:/CP6.Platform-worktrees/wp02-02-formal-registration-20261015",
+      "baseline": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+      "clean": true,
+      "handoff_branch": "codex/dev-handoff-wp02-02",
+      "message_prefix": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/"
+    }
+  ],
+  "scope": "Only clean isolated worktrees created; no worker START, implementation, build or service started."
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-10-14",
+  "as_of": "2026-10-15",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -158652,6 +158652,11 @@
       "date": "2026-10-14",
       "change": "Wave7: WP02-12/26 bounded library tasks merged/DONE; WP01-01 technical preparation corrected under Issue211 and WP02-02 full dependency/source compatibility preparation merged.24/375 tasks DONE; S01 12/12; full prep tasks remain PLANNED/BLOCKED,NOT_CHECKED. Business0/125,247NOT_RUN,41REFERENCE_ONLY and missing originals unchanged. No next-wave dispatch.",
       "evidence": "docs/development/evidence/wave7-integration-20261014/README.md"
+    },
+    {
+      "date": "2026-10-15",
+      "change": "Wave8 assigns two bounded implementation windows: WP01-01 real ledger adapter plus unsigned adoption candidate; WP02-02 Platform0.10.3 formal-registration code only. Full task PLANNED/BLOCKED and NOT_CHECKED remain;24/375 DONE,0/125 business,247 NOT_RUN unchanged. C/D not assigned; WP02-28 awaits trusted producer.",
+      "evidence": "docs/development/dispatch/20261015-wave8/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158696,42 +158701,36 @@
       "card_anchor": "wp01-01",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "A / WP01-01 决定候选",
+        "chat_label": "A / WP01-01 正式台账门实施",
         "repository": "Main",
-        "branch": "codex/wp01-01-decision-candidate-20261014",
-        "worktree": "D:/CP6-worktrees/wp01-01-decision-20261014",
-        "claimed_at": "2026-10-14T09:22:28.191366+00:00",
-        "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
-        "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
-        "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION_INTEGRATED",
-        "worker_ack_at": "2026-10-15T00:18:06.1277045Z",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp01-01-adoption-gate-20261015",
+        "worktree": "D:/CP6-worktrees/wp01-01-adoption-gate-20261015",
+        "claimed_at": "2026-10-15T05:11:19.013652+00:00",
+        "baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+        "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+        "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
+        "phase": "BOUNDED_IMPLEMENTATION",
+        "dispatch_scope": "LEDGER_GATE_IMPLEMENTATION_ONLY",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_ack_at": null,
         "allowed_write_paths": [
-          "eng/wp01-01/decision-closure/",
-          "docs/development/evidence/WP01-01/decision-closure/"
+          "docs/development/evidence/WP01-01/adoption-v1.2/",
+          "docs/development/tools/acceptance_basis.py",
+          "docs/development/tools/test_acceptance_basis.py",
+          "docs/development/tools/manage_roadmap.py",
+          "docs/development/tools/test_manage_roadmap.py"
+        ],
+        "reserved_write_resources": [
+          "coordination:roadmap",
+          "Main:acceptance-basis-gate",
+          "file:Main:docs/development/tools/manage_roadmap.py",
+          "file:Main:docs/development/tools/test_manage_roadmap.py"
         ],
         "handoff_branch": "codex/dev-handoff-wp01-01",
-        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
-        "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
-        "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
-        "execution_baseline_sha": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-        "window_closed_at": "2026-10-15T03:02:23.922495+00:00",
-        "coordinator_completion": {
-          "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
-          "original_candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
-          "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
-          "correction_source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
-          "branch": "codex/bug-211-plm-original-identity",
-          "issue": "https://github.com/GTX537/CP6/issues/211",
-          "result": "PASS_FOR_CORRECTED_PREPARATION_ONLY",
-          "manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
-          "review": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md",
-          "current_targeted_tests": "8/8",
-          "current_static_checks": 1000,
-          "original_gate_tests": "54 exact-input reuse",
-          "original_static_checks": "12251 historical snapshot only",
-          "limitations": "Design candidate only. No database, runtime, formal adoption or task completion."
-        }
+        "formal_adoption_authorized": false,
+        "formal_publication_authorized": false
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158791,6 +158790,44 @@
           "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
           "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
           "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        },
+        {
+          "chat_label": "A / WP01-01 决定候选",
+          "repository": "Main",
+          "branch": "codex/wp01-01-decision-candidate-20261014",
+          "worktree": "D:/CP6-worktrees/wp01-01-decision-20261014",
+          "claimed_at": "2026-10-14T09:22:28.191366+00:00",
+          "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+          "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
+          "dispatch_scope": "PREPARATION_ONLY",
+          "phase": "PREPARATION_INTEGRATED",
+          "worker_ack_at": "2026-10-15T00:18:06.1277045Z",
+          "allowed_write_paths": [
+            "eng/wp01-01/decision-closure/",
+            "docs/development/evidence/WP01-01/decision-closure/"
+          ],
+          "handoff_branch": "codex/dev-handoff-wp01-01",
+          "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+          "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
+          "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
+          "execution_baseline_sha": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+          "window_closed_at": "2026-10-15T03:02:23.922495+00:00",
+          "coordinator_completion": {
+            "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+            "original_candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+            "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+            "correction_source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+            "branch": "codex/bug-211-plm-original-identity",
+            "issue": "https://github.com/GTX537/CP6/issues/211",
+            "result": "PASS_FOR_CORRECTED_PREPARATION_ONLY",
+            "manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+            "review": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md",
+            "current_targeted_tests": "8/8",
+            "current_static_checks": 1000,
+            "original_gate_tests": "54 exact-input reuse",
+            "original_static_checks": "12251 historical snapshot only",
+            "limitations": "Design candidate only. No database, runtime, formal adoption or task completion."
+          }
         }
       ],
       "preparation_delivery_history": [
@@ -159958,34 +159995,52 @@
       "card_anchor": "wp02-02",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "B / WP02-02 依赖诊断",
-        "repository": "Main",
-        "branch": "codex/wp02-02-closure-candidate-20261014",
-        "worktree": "D:/CP6-worktrees/wp02-02-closure-20261014",
-        "claimed_at": "2026-10-14T09:22:28.191366+00:00",
-        "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
-        "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
-        "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION_INTEGRATED",
-        "worker_ack_at": "2026-10-15T00:20:30.169860Z",
+        "chat_label": "B / WP02-02 Platform正式登记",
+        "repository": "Platform",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-02-formal-registration-20261015",
+        "worktree": "D:/CP6.Platform-worktrees/wp02-02-formal-registration-20261015",
+        "claimed_at": "2026-10-15T05:11:19.013652+00:00",
+        "baseline_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+        "coordination_baseline_sha": "b0a4f5601b008d0003598065bbf3241124442890",
+        "entry_evidence": "docs/development/evidence/wave8-dispatch-20261015/admission.json",
+        "phase": "BOUNDED_IMPLEMENTATION",
+        "dispatch_scope": "PRODUCER_REGISTRATION_ONLY",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_ack_at": null,
         "allowed_write_paths": [
-          "eng/wp02-02/consumption-compatibility/",
-          "docs/development/evidence/WP02-02/consumption-compatibility/"
+          "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+          "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+          "contracts/release/v1/formal-package-publication.v1.schema.json",
+          "contracts/release/capabilities/v1/capability-matrix.v1.schema.json",
+          ".github/workflows/p10-formal-packages.yml",
+          "eng/p10/Test-P10FormalPrerequisites.ps1",
+          "eng/p10/Pack-P10FormalPackages.ps1",
+          "eng/p10/New-P10FormalPackageSet.ps1",
+          "eng/p10/Publish-P10FormalPackageSet.ps1",
+          "eng/p10/New-P10FormalPublicationRecord.ps1",
+          "eng/p10/Test-P10FormalPackageSet.ps1",
+          "tests/CP6.Platform.ReleaseTests/FormalPackagePublicationTests.cs",
+          "tests/CP6.Platform.ReleaseTests/ReleaseSchemaParityTests.cs",
+          "tests/CP6.Platform.ReleaseTests/ReleaseSchemaAssetTests.cs",
+          "tests/CP6.Platform.ReleaseTests/P10FormalWorkflowContractTests.cs",
+          "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityValidationTests.cs",
+          "tests/CP6.Platform.ReleaseTests/CapabilitiesV1/CapabilityTrustTests.cs",
+          "docs/P10-RELEASE-GOVERNANCE.md",
+          "docs/development/evidence/WP02-02/formal-registration/",
+          "tests/CP6.Platform.ReleaseTests/ReleaseSchemaTestData.cs",
+          "tests/CP6.Platform.ReleaseTests/P10FormalRegistrationTests.cs",
+          "eng/wp02-02/formal-registration/"
+        ],
+        "reserved_write_resources": [
+          "Platform:package-trust",
+          "Platform:formal-version-registration",
+          "Platform:release-schema-and-writer"
         ],
         "handoff_branch": "codex/dev-handoff-wp02-02",
-        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
-        "reserved_local_resource": {
-          "root": "D:/CP6-worktrees/wp02-02-closure-20261014/artifacts/wp02-02/consumption-compatibility/<owner32>/",
-          "http": "127.0.0.1:0 (owned random port)",
-          "database": false,
-          "production_host_start": false,
-          "provisioned": true,
-          "completion": "Private random-loopback synthetic-authority host stopped/disposed and port refused; artifacts retained. No Main Program or DB."
-        },
-        "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
-        "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
-        "execution_baseline_sha": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
-        "window_closed_at": "2026-10-15T03:02:23.922495+00:00"
+        "formal_adoption_authorized": false,
+        "formal_publication_authorized": false
       },
       "blockers": [
         "第七轮固定 Main/Platform 源码三入口构建和私有宿主指定路径诊断已审查归档，可复现 SOURCE-ADOPTION-CANDIDATE 已具备；它不是获准生产采用例外。Main仍消费正式[0.10.2]，新能力尚无兼容且受信任的正式包；正式包路线/源码例外及后继真实Host/Owner/PostgreSQL采用须另行准入。当前未发包、未改变信任或生产引用，原17PGT仍NOT_RUN，WP02-28未开放。详见 docs/development/evidence/WP02-02/consumption-compatibility/SOURCE-ADOPTION-CANDIDATE.md。"
@@ -160045,6 +160100,36 @@
           "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
           "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
           "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        },
+        {
+          "chat_label": "B / WP02-02 依赖诊断",
+          "repository": "Main",
+          "branch": "codex/wp02-02-closure-candidate-20261014",
+          "worktree": "D:/CP6-worktrees/wp02-02-closure-20261014",
+          "claimed_at": "2026-10-14T09:22:28.191366+00:00",
+          "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+          "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
+          "dispatch_scope": "PREPARATION_ONLY",
+          "phase": "PREPARATION_INTEGRATED",
+          "worker_ack_at": "2026-10-15T00:20:30.169860Z",
+          "allowed_write_paths": [
+            "eng/wp02-02/consumption-compatibility/",
+            "docs/development/evidence/WP02-02/consumption-compatibility/"
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-02",
+          "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+          "reserved_local_resource": {
+            "root": "D:/CP6-worktrees/wp02-02-closure-20261014/artifacts/wp02-02/consumption-compatibility/<owner32>/",
+            "http": "127.0.0.1:0 (owned random port)",
+            "database": false,
+            "production_host_start": false,
+            "provisioned": true,
+            "completion": "Private random-loopback synthetic-authority host stopped/disposed and port refused; artifacts retained. No Main Program or DB."
+          },
+          "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
+          "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
+          "execution_baseline_sha": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+          "window_closed_at": "2026-10-15T03:02:23.922495+00:00"
         }
       ],
       "preparation_delivery_history": [

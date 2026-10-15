@@ -1,0 +1,189 @@
+{
+  "mode": "READ_ONLY",
+  "scope": "Complete paginated authenticated version metadata, not reservation, signed bytes or release approval. Repeat exact-authority preflight before any publication.",
+  "actor_login": "GTX537",
+  "packages": [
+    {
+      "packageId": "CP6.Platform.Abstractions",
+      "command": [
+        "gh",
+        "api",
+        "users/GTX537/packages/nuget/CP6.Platform.Abstractions/versions?per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "observedUtc": "2026-10-15T05:05:05.491877+00:00",
+      "exitCode": 0,
+      "pageCount": 1,
+      "versions": [
+        "0.10.2",
+        "0.10.1",
+        "0.10.0",
+        "0.8.0-alpha.2",
+        "0.8.0-alpha.1",
+        "0.7.0-alpha.1",
+        "0.6.0-alpha.1",
+        "0.5.0-alpha.1",
+        "0.4.0-alpha.1",
+        "0.3.0-alpha.1",
+        "0.2.0-alpha.1"
+      ],
+      "proposed0103": "NOT_LISTED_AT_OBSERVATION",
+      "raw_sha256": "7d65002b21fe44fbb51e8e50dbb162f5c75f164aa1118e6647607189236002bc",
+      "stderr": ""
+    },
+    {
+      "packageId": "CP6.Platform.AspNetCore",
+      "command": [
+        "gh",
+        "api",
+        "users/GTX537/packages/nuget/CP6.Platform.AspNetCore/versions?per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "observedUtc": "2026-10-15T05:05:05.511320+00:00",
+      "exitCode": 0,
+      "pageCount": 1,
+      "versions": [
+        "0.10.2",
+        "0.10.1",
+        "0.10.0",
+        "0.8.0-alpha.2",
+        "0.8.0-alpha.1",
+        "0.7.0-alpha.1",
+        "0.6.0-alpha.1",
+        "0.5.0-alpha.1",
+        "0.4.0-alpha.1",
+        "0.3.0-alpha.1",
+        "0.2.0-alpha.1"
+      ],
+      "proposed0103": "NOT_LISTED_AT_OBSERVATION",
+      "raw_sha256": "689868df61912bea63df8c9a9abfce474bb2ffa00aed801b7072ac5c4e8a50ef",
+      "stderr": ""
+    },
+    {
+      "packageId": "CP6.Platform.Contracts",
+      "command": [
+        "gh",
+        "api",
+        "users/GTX537/packages/nuget/CP6.Platform.Contracts/versions?per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "observedUtc": "2026-10-15T05:05:05.431272+00:00",
+      "exitCode": 0,
+      "pageCount": 1,
+      "versions": [
+        "0.10.2",
+        "0.10.1",
+        "0.10.0",
+        "0.8.0-alpha.2",
+        "0.8.0-alpha.1",
+        "0.7.0-alpha.1",
+        "0.6.0-alpha.1",
+        "0.5.0-alpha.1",
+        "0.4.0-alpha.1",
+        "0.3.0-alpha.1",
+        "0.2.0-alpha.1"
+      ],
+      "proposed0103": "NOT_LISTED_AT_OBSERVATION",
+      "raw_sha256": "571f58f9dc0b71e53dcd17a7b4abcba3c85d594a449eb6fbdab058fe8c33d2fe",
+      "stderr": ""
+    },
+    {
+      "packageId": "CP6.Platform.Deployment",
+      "command": [
+        "gh",
+        "api",
+        "users/GTX537/packages/nuget/CP6.Platform.Deployment/versions?per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "observedUtc": "2026-10-15T05:05:05.353817+00:00",
+      "exitCode": 0,
+      "pageCount": 1,
+      "versions": [
+        "0.10.2",
+        "0.10.1",
+        "0.10.0",
+        "0.9.0-alpha.1"
+      ],
+      "proposed0103": "NOT_LISTED_AT_OBSERVATION",
+      "raw_sha256": "efdec688d2d79e39d5c6365545be046ebaa38e1f2e4ae5c59055d5f98855db8b",
+      "stderr": ""
+    },
+    {
+      "packageId": "CP6.Platform.EntityFramework",
+      "command": [
+        "gh",
+        "api",
+        "users/GTX537/packages/nuget/CP6.Platform.EntityFramework/versions?per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "observedUtc": "2026-10-15T05:05:06.949681+00:00",
+      "exitCode": 0,
+      "pageCount": 1,
+      "versions": [
+        "0.10.2",
+        "0.10.1",
+        "0.10.0",
+        "0.8.0-alpha.2",
+        "0.8.0-alpha.1",
+        "0.7.0-alpha.1",
+        "0.6.0-alpha.1"
+      ],
+      "proposed0103": "NOT_LISTED_AT_OBSERVATION",
+      "raw_sha256": "ac40c6fdc0e6ccde5758e5e92a023b4f8328118e7b575342c16bbff1709a726d",
+      "stderr": ""
+    },
+    {
+      "packageId": "CP6.Platform.Messaging",
+      "command": [
+        "gh",
+        "api",
+        "users/GTX537/packages/nuget/CP6.Platform.Messaging/versions?per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "observedUtc": "2026-10-15T05:05:06.903656+00:00",
+      "exitCode": 0,
+      "pageCount": 1,
+      "versions": [
+        "0.10.2",
+        "0.10.1",
+        "0.10.0",
+        "0.8.0-alpha.2",
+        "0.8.0-alpha.1",
+        "0.7.0-alpha.1",
+        "0.6.0-alpha.1",
+        "0.5.0-alpha.1",
+        "0.4.0-alpha.1"
+      ],
+      "proposed0103": "NOT_LISTED_AT_OBSERVATION",
+      "raw_sha256": "a029d1690cbfdf53c104c4ae67f3c8a94e0ccee9e10fb7d3f09ff2f4a42ba20f",
+      "stderr": ""
+    },
+    {
+      "packageId": "CP6.Platform.Release",
+      "command": [
+        "gh",
+        "api",
+        "users/GTX537/packages/nuget/CP6.Platform.Release/versions?per_page=100",
+        "--paginate",
+        "--slurp"
+      ],
+      "observedUtc": "2026-10-15T05:05:08.090313+00:00",
+      "exitCode": 0,
+      "pageCount": 1,
+      "versions": [
+        "0.10.2",
+        "0.10.1",
+        "0.10.0"
+      ],
+      "proposed0103": "NOT_LISTED_AT_OBSERVATION",
+      "raw_sha256": "314318e80f198d9c4eef5cef21d8bac457cfb1f603618a1aabd0516dd72fd72b",
+      "stderr": ""
+    }
+  ]
+}

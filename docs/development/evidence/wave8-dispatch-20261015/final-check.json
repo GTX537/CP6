@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "observed_at": "2026-10-15T05:17:56.188568+00:00",
+  "reviewed_files": 39,
+  "reviewed_raw_aggregate": "57da6a3e36ac7c97381d0cb77fe727688bbbffe33b13ae14a9b96f4548d9aba3",
+  "scope": "Coordinator dispatch documents and ledger only; no product implementation or business execution",
+  "changes_after_review": "Only review/link receipts and this final-check metadata; reviewed39 files unchanged",
+  "business_tests_executed": false
+}
