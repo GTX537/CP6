@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-15T00:44:42.210575+00:00",
+  "finished_at": "2026-10-15T00:44:59.906470+00:00",
+  "exit_code": 1,
+  "source_hashes": {
+    "eng\\wp01-01\\decision-closure\\build_candidate.py": "1b5717cfecb4045b7131ad95b347b9012e46467024bc366dcf65101a9174f9c9",
+    "eng\\wp01-01\\decision-closure\\gate_candidate.py": "12a8d70ead4841d2794d1ba52d04c206c1284337da2c3abf505c2be864a27c28",
+    "eng\\wp01-01\\decision-closure\\tests\\test_gate_candidate.py": "d9291c96654523bc8b81231d323a984b8425ac9f48b1496f2a4bf413509e7119"
+  },
+  "scope": "SYNTHETIC_TDD_ONLY"
+}

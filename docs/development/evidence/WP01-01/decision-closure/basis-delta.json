@@ -1,0 +1,92 @@
+{
+  "schema": "WP01-01-BASIS-DELTA/1",
+  "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0-proposed",
+  "status": "PROPOSED_NOT_ADOPTED",
+  "predecessors": [
+    {
+      "repository": "Main",
+      "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+      "path": "docs/development/task-deliveries/WP05-01/basis-manifest.json",
+      "sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee",
+      "bytes": 1161,
+      "representation": "RAW_FILE_BYTES",
+      "git_blob_sha256": "979cb7f4fc779f6200e16b2919a89afc244681d122683036378e068931fcd3ee"
+    },
+    {
+      "repository": "Main",
+      "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+      "path": "docs/development/task-deliveries/WP05-01/supplements/review-r1/manifest.json",
+      "sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2",
+      "bytes": 1091,
+      "representation": "RAW_FILE_BYTES",
+      "git_blob_sha256": "c5c926728287ac9ee0b5048300deefa789ec7c019ed88168bd74e120dc53ebf2"
+    }
+  ],
+  "unchanged_matrix": {
+    "repository": "Main",
+    "revision": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+    "path": "docs/development/evidence/WP01-01/preparation/obligation-matrix.json",
+    "sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063",
+    "bytes": 1198041,
+    "representation": "RAW_FILE_BYTES",
+    "git_blob_sha256": "0f6e160d49b9fb0305c94f9a3ccbfc71ebae312a26bd1613fd38ce4043b57063"
+  },
+  "change_scope": "Only candidate technical choices and stronger file/authority/provider gate duties. No inherited business assertion removed, no reconstructed legacy member claimed.",
+  "additional_obligations": [
+    {
+      "id": "DC-01",
+      "target": "PLM-ITER-01",
+      "observations": [
+        "Four digest meanings kept distinct; proposed ENG envelope never accepted implicitly",
+        "Capacity pagination profile cannot narrow legal collection size",
+        "Physical field identity and exact value roundtrip require actual Owner evidence"
+      ],
+      "status": "PROPOSED_NOT_ADOPTED",
+      "kind": "NEW_BASIS_DELTA_NOT_ORIGINAL_AC"
+    },
+    {
+      "id": "DC-02",
+      "target": "PLM-REL-01",
+      "observations": [
+        "Physical exact quantity/profile/identity representation preserves original domain",
+        "Declared provider/consumer edges and exact package/remote adoption evidence required per authorized scope"
+      ],
+      "status": "PROPOSED_NOT_ADOPTED",
+      "kind": "NEW_BASIS_DELTA_NOT_ORIGINAL_AC"
+    }
+  ],
+  "removed_obligations": [],
+  "historical_gaps": [
+    {
+      "id": "GAP-ITER-LEGACY-30",
+      "target": "PLM-ITER-01",
+      "declared_legacy_count": 30,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    },
+    {
+      "id": "GAP-REL-LEGACY-48",
+      "target": "PLM-REL-01",
+      "declared_legacy_count": 48,
+      "legacy_case_ids": null,
+      "missing_original_sha256": null,
+      "historical_inventory_state": "NOT_INVENTORIED",
+      "recovery_state": "UNRECOVERABLE",
+      "equivalence": "UNPROVABLE",
+      "disposition": "Retain gap permanently; explicit adoption of a new prospective basis required."
+    }
+  ],
+  "adoption_requirements": [
+    "separate append-only exact version/manifest hash authority record",
+    "actual actor/time and verifiable delegated scope",
+    "COORD serial public gate integration window",
+    "business evidence remains independently required"
+  ],
+  "production_enabled": false,
+  "actual_adoption": false,
+  "actual_completion": false
+}

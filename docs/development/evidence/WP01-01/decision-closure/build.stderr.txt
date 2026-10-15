@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\build_candidate.py", line 288, in <module>
+    main()
+    ~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\build_candidate.py", line 283, in main
+    decisions();mapping();g=graph();basis_and_gate(g)
+                            ~~~~~^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\build_candidate.py", line 210, in graph
+    'known_profile_candidates':[{'tasks':['WP02-07','WP02-10'],'profile':'CallerTransactionInboxV1','source':pin('docs/WP02-07-CALLER-TRANSACTION-INBOX.md',repo='Platform'),'adoption':'UNPROVEN'},
+                                                                                                             ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CP6-worktrees\wp01-01-decision-20261014\eng\wp01-01\decision-closure\build_candidate.py", line 33, in pin
+    data = (root/path).read_bytes()
+  File "C:\Users\tt\AppData\Roaming\uv\python\cpython-3.13-windows-x86_64-none\Lib\pathlib\_abc.py", line 625, in read_bytes
+    with self.open(mode='rb') as f:
+         ~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\tt\AppData\Roaming\uv\python\cpython-3.13-windows-x86_64-none\Lib\pathlib\_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\CP6\\CP6.Platform\\docs\\WP02-07-CALLER-TRANSACTION-INBOX.md'
