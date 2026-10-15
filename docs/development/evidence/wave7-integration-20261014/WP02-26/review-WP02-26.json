@@ -1,0 +1,374 @@
+{
+  "schema_version": "1.0.0",
+  "task": "WP02-26",
+  "review_kind": "independent task-level source and evidence review",
+  "repository": "GTX537/CP6.Platform",
+  "pull_request": 72,
+  "reviewed_base": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "reviewed_head": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+  "reviewed_at_utc": "2026-10-15T02:37:57.875947+00:00",
+  "verdict": "PASS_SCOPED_LIBRARY_TASK",
+  "merge_blockers": [],
+  "findings": [],
+  "source_tree_modified": false,
+  "ledger_modified": false,
+  "actions_started_or_rerun": false,
+  "db_or_resource_actions": [],
+  "scope": {
+    "entire_diff_files": 161,
+    "source_and_test_files": 23,
+    "source_review": "All five new library files, both task test projects and their tests, PG resource/provenance/mapping/workflow helpers, documentation and evidence manifests.",
+    "artifact_review": "All changed Git blobs enumerated; all 60 JSON and 16 TRX files parsed; formal execution/source/dependency/assembly manifests, original matrix, execution matrix, historical failure summaries and native server/resource receipts reviewed.",
+    "applicable_instructions": [
+      "D:/CP6/AGENTS.md",
+      "D:/CP6/docs/development/dispatch/20261014-wave7/WP02-26.md",
+      "D:/CP6/docs/development/dispatch/20261014-wave7/dispatch.json"
+    ],
+    "platform_agents": "No additional AGENTS.md found in Platform worktree or applicable D:/ parent directories; D:/CP6 user-provided rules applied.",
+    "skill": "C:/Users/tt/.agents/skills/review/SKILL.md; installed checklist resolved at C:/Users/tt/.agents/skills/gstack/review/checklist.md; read-only assignment takes precedence over generic fix/push workflow."
+  },
+  "assessments": [
+    {
+      "area": "SLO qualification",
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "files": [
+        "src/CP6.Platform.Contracts/SloQualificationV1/SloQualifier.cs",
+        "src/CP6.Platform.Contracts/SloQualificationV1/ExactNumber.cs"
+      ],
+      "details": "Owned bounded source/query/definition/inventory bytes and exact hashes; required/duplicate/unknown field handling; separate expected inventory binding, exact membership, release/window/exclusions/weights; missing/zero/dropped/overflow/incomplete data cannot qualify. Exact ratio, weighted nearest-rank and gauge grid use BigInteger arithmetic. Append-only identity/version lineage retains prior bytes and failures. Authenticity is explicitly external."
+    },
+    {
+      "area": "Exact values",
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "files": [
+        "src/CP6.Platform.Testing/EvidenceV1/ExactValue.cs",
+        "tests/CP6.Platform.WP0226.Tests/ExactTests.cs"
+      ],
+      "details": "CLR kinds and exact binary rational values distinguished from decimal lexical values; coefficient/scale and arbitrary rational arithmetic retained; raw UTF-8/native bytes and numeric equality separate. Pinned S01 vectors consumed without new production financial contract or Main dependency."
+    },
+    {
+      "area": "Bounded capture and DAG",
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "files": [
+        "src/CP6.Platform.Testing/EvidenceV1/EvidenceCase.cs",
+        "tests/CP6.Platform.WP0226.Tests/CaptureTests.cs"
+      ],
+      "details": "Record/count/time/retained-byte/in-flight/source/tag/link/traversal bounds; independent expected operation inventory; duplicate/cross-case/dangling/cyclic/missing graph paths fail closed. Parent/link/ancestor graph retains intermediates. Sequence explicitly local observation order, never commit order. Completion validation, observer activity and completed cleanup jointly gate Complete."
+    },
+    {
+      "area": "Fault harness",
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "files": [
+        "src/CP6.Platform.Testing/EvidenceV1/DeterministicFaultCase.cs",
+        "tests/CP6.Platform.WP0226.Tests/FaultTests.cs"
+      ],
+      "details": "Case-owned clock/random, finite copied scripts and named in-memory terminal; retry placement and script/terminal counts explicit. Status/throw skip inner; success/delay call terminal. Exhaustion/cancellation/observer/cleanup/reentry failures remain visible."
+    },
+    {
+      "area": "Native PostgreSQL evidence",
+      "status": "PASS_REUSED_LOCAL_FIXTURE_ONLY",
+      "files": [
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/NativeEvidenceTests.cs",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/PgFixture.cs",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/pg_resource.py"
+      ],
+      "details": "Original operation/message keys, parameterized text-to-NUMERIC and text readback/bytea; actual unique-lock contention, native RepeatableRead SQLSTATE 40001, rollback, runtime 42501 and owned immediate-shutdown crash recovery. Injected successful-COMMIT ACK suppression is separately labeled. Full owner/contained path/config seal/system/OID/role/principal/session checks guard lifecycle. Recorded clean smart-stop retained."
+    },
+    {
+      "area": "Compatibility and business boundary",
+      "status": "PASS",
+      "details": "157 pre-existing source/schema/workflow Git blobs unchanged. Legacy evaluator/wire and recorder/fault compatibility preserved; Contracts dependencies and Testing nonpackable setting unchanged. 56 original business assertions retain all fields and NOT_RUN; 26 portions are only LOCAL_PASS. ProductionSloClaimed and IndependentlyAccepted always false."
+    }
+  ],
+  "reused_evidence": [
+    {
+      "suite": "unit",
+      "total": 108,
+      "passed": 108,
+      "exit_code": 0,
+      "execution": {
+        "command": [
+          "C:/Users/tt/.dotnet/dotnet.exe",
+          "test",
+          "tests/CP6.Platform.WP0226.Tests/CP6.Platform.WP0226.Tests.csproj",
+          "-c",
+          "Release",
+          "--logger",
+          "trx;LogFileName=wp02-26-unit.trx",
+          "--results-directory",
+          "D:\\CP6.Platform-worktrees\\wp02-26-20261014\\docs\\development\\evidence\\WP02-26\\20261015T001945Z\\final-01\\unit"
+        ],
+        "cwd": "D:\\CP6.Platform-worktrees\\wp02-26-20261014",
+        "started_at": "2026-10-15T01:15:08.540086+00:00",
+        "ended_at": "2026-10-15T01:16:02.913507+00:00",
+        "exit_code": 0,
+        "settings_supplied": false
+      },
+      "trx": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/unit/wp02-26-unit.trx",
+      "trx_sha256": "f2867b9ffd92c30fef4741b56bcf1e60b51feec112b7fb1786011888826c24b8",
+      "relevant_source_files": 170,
+      "resolved_dependencies": [
+        {
+          "path": "src/CP6.Platform.Abstractions/obj/project.assets.json",
+          "sha256": "3293615545b9a392c36b584371e9f700b68818ee25ef9a71763aa83aec244861"
+        },
+        {
+          "path": "src/CP6.Platform.AspNetCore/obj/project.assets.json",
+          "sha256": "44a323e37742216cdb6ce818f01e5a4ee64ea16d7110607903fc60b37d64bd90"
+        },
+        {
+          "path": "src/CP6.Platform.Contracts/obj/project.assets.json",
+          "sha256": "2449e36594e626033859e356cf6e38472258a3e302a5c9bfe5c18b662791e66c"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/obj/project.assets.json",
+          "sha256": "c5ae20019be0077c351c89cb60f886ac45d0c05f17de9fc50c3c5a8d83cbf851"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/obj/project.assets.json",
+          "sha256": "901fbff9dd9fb8b1019680f00ae5c2e5927300c7aa0f010d737d64c9e3246891"
+        },
+        {
+          "path": "src/CP6.Platform.Testing/obj/project.assets.json",
+          "sha256": "6ea46a1b542b2c6a98ec728d1f3b042871d47796bbebfcb9666260febc69a74c"
+        },
+        {
+          "path": "tests/CP6.Platform.WP0226.Tests/obj/project.assets.json",
+          "sha256": "1ea926b98106e917c68c4ac35b0ae0d674eb9635a99314d10aabd91975577874"
+        }
+      ],
+      "assembly_hashes": {
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.Tests/bin/Release/net8.0/CP6.Platform.WP0226.Tests.dll": "815452eeff0d92c29f8ce236a64a8d41201b74be2f5001b69f793e772b02c8d1"
+      },
+      "verified_current_bytes": true,
+      "reused_not_rerun": true
+    },
+    {
+      "suite": "pg",
+      "total": 6,
+      "passed": 6,
+      "exit_code": 0,
+      "execution": {
+        "command": [
+          "C:/Users/tt/.dotnet/dotnet.exe",
+          "test",
+          "tests/CP6.Platform.WP0226.PostgreSqlTests/CP6.Platform.WP0226.PostgreSqlTests.csproj",
+          "-c",
+          "Release",
+          "--logger",
+          "trx;LogFileName=wp02-26-pg.trx",
+          "--results-directory",
+          "D:\\CP6.Platform-worktrees\\wp02-26-20261014\\docs\\development\\evidence\\WP02-26\\20261015T001945Z\\final-01\\pg"
+        ],
+        "cwd": "D:\\CP6.Platform-worktrees\\wp02-26-20261014",
+        "started_at": "2026-10-15T01:16:57.564131+00:00",
+        "ended_at": "2026-10-15T01:18:13.703181+00:00",
+        "exit_code": 0,
+        "settings_supplied": true
+      },
+      "trx": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/pg/wp02-26-pg.trx",
+      "trx_sha256": "06531f888807e5f7f23e4cdba57872879472a55f2accb8d269adc71e7fea2ae3",
+      "relevant_source_files": 169,
+      "resolved_dependencies": [
+        {
+          "path": "src/CP6.Platform.Abstractions/obj/project.assets.json",
+          "sha256": "3293615545b9a392c36b584371e9f700b68818ee25ef9a71763aa83aec244861"
+        },
+        {
+          "path": "src/CP6.Platform.AspNetCore/obj/project.assets.json",
+          "sha256": "44a323e37742216cdb6ce818f01e5a4ee64ea16d7110607903fc60b37d64bd90"
+        },
+        {
+          "path": "src/CP6.Platform.Contracts/obj/project.assets.json",
+          "sha256": "2449e36594e626033859e356cf6e38472258a3e302a5c9bfe5c18b662791e66c"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/obj/project.assets.json",
+          "sha256": "c5ae20019be0077c351c89cb60f886ac45d0c05f17de9fc50c3c5a8d83cbf851"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/obj/project.assets.json",
+          "sha256": "901fbff9dd9fb8b1019680f00ae5c2e5927300c7aa0f010d737d64c9e3246891"
+        },
+        {
+          "path": "src/CP6.Platform.Testing/obj/project.assets.json",
+          "sha256": "6ea46a1b542b2c6a98ec728d1f3b042871d47796bbebfcb9666260febc69a74c"
+        },
+        {
+          "path": "tests/CP6.Platform.WP0226.PostgreSqlTests/obj/project.assets.json",
+          "sha256": "4142a8a1e11e73bb96dca676c2ad429ce1116db11123f766e7472b7a4a267bff"
+        }
+      ],
+      "assembly_hashes": {
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.WP0226.PostgreSqlTests/bin/Release/net8.0/CP6.Platform.WP0226.PostgreSqlTests.dll": "341a76a512f9e370c46fca1e1d682ca065522d213ee6ec23d2995e99b1761e12"
+      },
+      "verified_current_bytes": true,
+      "reused_not_rerun": true
+    },
+    {
+      "suite": "architecture",
+      "total": 98,
+      "passed": 98,
+      "exit_code": 0,
+      "execution": {
+        "command": [
+          "C:/Users/tt/.dotnet/dotnet.exe",
+          "test",
+          "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+          "-c",
+          "Release",
+          "--logger",
+          "trx;LogFileName=wp02-26-architecture.trx",
+          "--results-directory",
+          "D:\\CP6.Platform-worktrees\\wp02-26-20261014\\docs\\development\\evidence\\WP02-26\\20261015T001945Z\\final-01\\architecture"
+        ],
+        "cwd": "D:\\CP6.Platform-worktrees\\wp02-26-20261014",
+        "started_at": "2026-10-15T01:18:37.647095+00:00",
+        "ended_at": "2026-10-15T01:19:02.901992+00:00",
+        "exit_code": 0,
+        "settings_supplied": false
+      },
+      "trx": "docs/development/evidence/WP02-26/20261015T001945Z/final-01/architecture/wp02-26-architecture.trx",
+      "trx_sha256": "206f10a2571370db43f052df5f399d1b957158f554579b0b7f468f3e34188fe8",
+      "relevant_source_files": 177,
+      "resolved_dependencies": [
+        {
+          "path": "src/CP6.Platform.Abstractions/obj/project.assets.json",
+          "sha256": "3293615545b9a392c36b584371e9f700b68818ee25ef9a71763aa83aec244861"
+        },
+        {
+          "path": "src/CP6.Platform.AspNetCore/obj/project.assets.json",
+          "sha256": "44a323e37742216cdb6ce818f01e5a4ee64ea16d7110607903fc60b37d64bd90"
+        },
+        {
+          "path": "src/CP6.Platform.Contracts/obj/project.assets.json",
+          "sha256": "2449e36594e626033859e356cf6e38472258a3e302a5c9bfe5c18b662791e66c"
+        },
+        {
+          "path": "src/CP6.Platform.EntityFramework/obj/project.assets.json",
+          "sha256": "c5ae20019be0077c351c89cb60f886ac45d0c05f17de9fc50c3c5a8d83cbf851"
+        },
+        {
+          "path": "src/CP6.Platform.Messaging/obj/project.assets.json",
+          "sha256": "901fbff9dd9fb8b1019680f00ae5c2e5927300c7aa0f010d737d64c9e3246891"
+        },
+        {
+          "path": "src/CP6.Platform.Testing/obj/project.assets.json",
+          "sha256": "6ea46a1b542b2c6a98ec728d1f3b042871d47796bbebfcb9666260febc69a74c"
+        },
+        {
+          "path": "tests/CP6.Platform.ArchitectureTests/obj/project.assets.json",
+          "sha256": "d282c94969c2276ba931a4b9af03e0f1ba031ec746d97a4181c53c569496c808"
+        }
+      ],
+      "assembly_hashes": {
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Abstractions/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.AspNetCore/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Contracts/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.EntityFramework/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Messaging/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Abstractions.dll": "5329351a2af6d1d43b8f501db4c40bf0563693ca398eac0906b9d8bb611c1139",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.AspNetCore.dll": "40b7c20fd1e9dde88e5dcf94f2ce22081090fd56e9fe5af8b6483df2424db2f4",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Contracts.dll": "a45bcd699a10cc76909f738aa947e264ed9b11d2727ce1732efddf124dd0b743",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.EntityFramework.dll": "a132d34881a02516ee1dc01bfd1c03a03346e6f8de2b2b89869b66c09e397234",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Messaging.dll": "a8aa37c9ab40389cabfd5731d75333a8ebdb60ae01b029ea0ffe22f04bb960b5",
+        "src/CP6.Platform.Testing/bin/Release/net8.0/CP6.Platform.Testing.dll": "050ba6280ed9070869fbb12684af193fcaf6e8d94e1cca9bcaf14fa8ad2be282",
+        "tests/CP6.Platform.ArchitectureTests/bin/Release/net8.0/CP6.Platform.ArchitectureTests.dll": "14390e192c8b64b0ccd86d4a2ebdb7fcb0986addf87116b41e1d971b6263a5f1"
+      },
+      "verified_current_bytes": true,
+      "reused_not_rerun": true
+    }
+  ],
+  "fresh_checks": {
+    "git_diff_check": "PASS",
+    "clean_candidate_worktree": "PASS",
+    "candidate_blob_manifest_files": 161,
+    "index_audit_entries": 160,
+    "pinned_inputs": 7,
+    "native_resource_copies": 13,
+    "original_business_cases": 56,
+    "original_fields_preserved": true,
+    "verified_local_proof_links": 107,
+    "execution_matrix_rows": 18,
+    "local_unit_pg_scenarios": 114,
+    "source_dependency_assembly_identity": "PASS"
+  },
+  "verification_policy": "Successful exact-scope local results reused after source/config/dependency/assembly/TRX checks. No test/build rerun; no concrete remaining concern required isolated execution.",
+  "limitations": [
+    "No producer authentication, production SLO/threshold approval, independent acceptance, durable remote retention, real broker/business Owner or Main/CRM adoption claim.",
+    "Original 56 business acceptance cases remain NOT_RUN; native PG proves a task-owned synthetic fixture only.",
+    "Database was not started, connected, queried or changed by this review; current stopped state is represented by recorded collection evidence, not a new live check.",
+    "No push, PR mutation, merge, remote main verification, Actions invocation/cancellation, package publication or deployment was performed. Coordinator retains integration/state synchronization responsibility.",
+    "Historical pre-final runs and six offline guard checks retain their historical scope; final source/assembly identity reuse applies only to the three listed final-01 gates."
+  ],
+  "evidence_audit_history": [
+    {
+      "result": "SCRIPT_ERROR",
+      "error": "KeyError: evidence",
+      "reason": "Initial inline audit assumed all execution matrix rows are TRX proof arrays; R15 is an artifact proof. No product failure."
+    },
+    {
+      "result": "PASS",
+      "correction": "Validate R15 artifact hash and remaining rows exact TRX names and hashes."
+    }
+  ],
+  "artifacts": {
+    "provenance": "WP02-26-independent-provenance.json",
+    "reproducible_read_only_verifier": "verify-WP02-26-review.py"
+  }
+}

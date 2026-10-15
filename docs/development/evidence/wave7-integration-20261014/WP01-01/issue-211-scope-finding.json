@@ -1,0 +1,27 @@
+{
+  "observed_at_utc": "2026-10-15T02:48:53.866168+00:00",
+  "finding_id": "WP01-01-FIX-REVIEW-01",
+  "severity": "P2",
+  "blocking": true,
+  "confidence": 9,
+  "title": "Do not infer bare-Id global uniqueness from grouped identity/scope fields",
+  "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+  "line": 174,
+  "affected": [
+    "IterationInput",
+    "CandidateRef (CandidateObjectRef)",
+    "ReviewRound",
+    "ExternalRequestReceipt"
+  ],
+  "proof": "Original lines 1632/1664/1692/1738 require non-null grouped Id/TenantId[/IterationId] identity and scope; unlike Project.Id line1580 and Iteration.Id line1602 they do not explicitly define bare Id as global PK. No UUID/GUID/global uniqueness declaration was found in the original ITER source. The same grouped wording is used for Candidate line1646, EngineeringTask1676, ReviewIssue1708 and Evaluation1722 whose existing mapping remains scoped. New blanket empty scope and cross-tenant conflict asserts more than the cited source proves.",
+  "impact": "Two records with identical opaque Id bytes in different source-permitted scopes are unconditionally rejected by the all-global proposal. Without additional accepted scope evidence this is an unproven restriction of legal input, even though production gates stay false.",
+  "fix": "Keep required raw bytes and separate identity binding. Preserve proven global Project/Iteration IDs. For the other four use independently proven original identity tuple scope or explicitly mark scope unresolved and block binding/registration until an exact accepted source/profile is supplied. Do not add tenant scope to a proven global PK, and do not globally merge unproven scoped IDs.",
+  "test_limit": "Same immutable test source gives RED 6 tests/37 failures then GREEN6/6. Those tests hard-code all-six global scope and therefore do not prove original contract compatibility. Update targeted tests to discriminate explicit global from grouped/unresolved identities.",
+  "reviewed_input_hashes": {
+    "eng/wp01-01/decision-closure/build_candidate.py": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+    "eng/wp01-01/decision-closure/mapping_constraints.py": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+    "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+    "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6"
+  },
+  "status": "REPORTED_TO_COORDINATOR; pending source correction or accepted contrary evidence"
+}

@@ -1,0 +1,37 @@
+{
+  "observed_at": "2026-10-15T02:49:37.121352+00:00",
+  "main_baseline": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "platform_baseline": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "scope": "Authorized COORD integration of four wave7 deliveries; preparation is not formal adoption",
+  "decisions": [
+    {
+      "task": "WP01-01",
+      "mode": "PREPARATION_ONLY_CORRECTION",
+      "issue": "https://github.com/GTX537/CP6/issues/211",
+      "branch": "codex/bug-211-plm-original-identity",
+      "worktree": "D:/CP6-worktrees/bug-211-plm-identity-20261014",
+      "correction_base": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+      "original_candidate": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "decision": "Fix six omitted or nullable original ITER Id bindings and preserve original uniqueness scope. Two explicit global PKs remain global; four grouped source identities retain original tenant[/iteration] tuple. Initial all-global correction hypothesis rejected by source review and retained as superseded. Separate bug branch from current main with original candidate prerequisite. Targeted static RED/GREEN, regenerate affected design only, preserve original evidence, independent focused review. No DB or production adoption.",
+      "state_after": "PLANNED / NOT_CHECKED"
+    },
+    {
+      "task": "WP02-02",
+      "mode": "PREPARATION_ONLY",
+      "decision": "Accept complete pinned-source build/private-host diagnosis and source-adoption proposal. No formal trust, production source adoption, Main host/PGT or WP02-28 admission.",
+      "state_after": "BLOCKED / NOT_CHECKED"
+    },
+    {
+      "task": "WP02-12",
+      "mode": "BOUNDED_LIBRARY_INTEGRATION",
+      "decision": "Integrate reviewed TransportV1 with actual authenticated local fixture evidence. C02/Main/CRM/Owner business adoption remains NOT_RUN; no resource restarts."
+    },
+    {
+      "task": "WP02-26",
+      "mode": "BOUNDED_LIBRARY_INTEGRATION",
+      "decision": "Integrate reviewed SloQualificationV1 and EvidenceV1, reusing exact-input local evidence. Original 56 business AC NOT_RUN; no resource restarts."
+    }
+  ],
+  "validation": "One combined architecture-only check after independently verified Platform additions meet on common main; no full product rerun. Preserve original failures and actual test provenance.",
+  "restrictions": "Normal protected serial merges and remote ancestry/blob checks before DONE. No Actions run/cancel/config changes, force push, formal release, migration or deployment."
+}

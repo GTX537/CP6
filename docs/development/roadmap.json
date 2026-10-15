@@ -158647,6 +158647,11 @@
       "date": "2026-10-14",
       "change": "Wave7: WP02-12/26 READY; WP01-01 decision candidate and WP02-02 full dependency diagnostic preparation retain PLANNED/BLOCKED and NOT_CHECKED. Old merged preparations preserved. No worker START;22/375 DONE,S01 12/12,business0/125,247 NOT_RUN unchanged.",
       "evidence": "docs/development/dispatch/20261014-wave7/README.md"
+    },
+    {
+      "date": "2026-10-14",
+      "change": "Wave7: WP02-12/26 bounded library tasks merged/DONE; WP01-01 technical preparation corrected under Issue211 and WP02-02 full dependency/source compatibility preparation merged.24/375 tasks DONE; S01 12/12; full prep tasks remain PLANNED/BLOCKED,NOT_CHECKED. Business0/125,247NOT_RUN,41REFERENCE_ONLY and missing originals unchanged. No next-wave dispatch.",
+      "evidence": "docs/development/evidence/wave7-integration-20261014/README.md"
     }
   ],
   "implementation_assessment": {
@@ -158699,14 +158704,34 @@
         "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
         "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
         "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION",
-        "worker_ack_at": null,
+        "phase": "PREPARATION_INTEGRATED",
+        "worker_ack_at": "2026-10-15T00:18:06.1277045Z",
         "allowed_write_paths": [
           "eng/wp01-01/decision-closure/",
           "docs/development/evidence/WP01-01/decision-closure/"
         ],
         "handoff_branch": "codex/dev-handoff-wp01-01",
-        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56"
+        "coordination_baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+        "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
+        "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
+        "execution_baseline_sha": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "window_closed_at": "2026-10-15T03:02:23.922495+00:00",
+        "coordinator_completion": {
+          "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+          "original_candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+          "fresh_main_baseline": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+          "correction_source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+          "branch": "codex/bug-211-plm-original-identity",
+          "issue": "https://github.com/GTX537/CP6/issues/211",
+          "result": "PASS_FOR_CORRECTED_PREPARATION_ONLY",
+          "manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+          "review": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md",
+          "current_targeted_tests": "8/8",
+          "current_static_checks": 1000,
+          "original_gate_tests": "54 exact-input reuse",
+          "original_static_checks": "12251 historical snapshot only",
+          "limitations": "Design candidate only. No database, runtime, formal adoption or task completion."
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158719,29 +158744,30 @@
       "preparation_delivery": {
         "state": "MERGED",
         "delivery_evidence": {
-          "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
-          "remote_main_sha": "99e61d897e5f166c5817c0aaec196041e1941324",
-          "pr_url": "https://github.com/GTX537/CP6/pull/205",
-          "observed_at": "2026-10-14T06:57:39.243553+00:00",
+          "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+          "remote_main_sha": "d5084957a7b58d4c99765eb48c29e88c2e158585",
+          "pr_url": "https://github.com/GTX537/CP6/pull/212",
+          "observed_at": "2026-10-15T03:01:44.991758+00:00",
           "repository": "GTX537/CP6",
-          "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/remote-main.json",
-          "scope": "Normal merge and exact remote ancestry/file-blob check. Preparation only; no formal adoption or task completion."
+          "path": "docs/development/evidence/wave7-integration-20261014/WP01-01/remote-main.json",
+          "scope": "Normal protected merge plus remote ancestry/file blobs. Preparation only; no full task or formal adoption."
         },
         "validation_evidence": [
           {
-            "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+            "path": "docs/development/evidence/wave7-integration-20261014/validation-summary.json",
             "repository": "GTX537/CP6",
-            "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
-            "command": "Original preparation3509 checks, comparator23+bundle10 tests; COORD source/hash/scope/diff review only",
-            "environment": "Original Python3.13 task-private document tooling; no product build or DB",
-            "observed_at": "2026-10-14T07:55:32.880255+00:00",
-            "scope": "COORD observation time; actual execution and reused identities retained separately. 39 additions,33 core artifacts,58 pinned input occurrences/39 sources,577 navigation rows verified.3509 static and33 tests reused; original failure/correction records retained. Unsigned preparation never becomes actual adoption/completion; 123 other targets unchanged. DP01–08 and cross-provider closure pending.",
+            "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+            "command": "Final Issue211 targeted scope regression 8/8 and affected static checks1000 PASS; original54 synthetic gate tests and read-only manager reused at exact inputs; original12251 static checks historical snapshot only, not proof of corrected mapping",
+            "environment": "Python3.13 private design tooling; no product build or DB",
+            "observed_at": "2026-10-15T03:02:23.922495+00:00",
+            "scope": "COORD observation; original execution times and inputs retained separately. DP01–08 technical candidates, source audit and dependency obligations reviewed. Six original ITER identities corrected: required raw/authority binding, two explicit global PKs and four original grouped scopes, independent of business keys. Initial all-global correction challenged and retained as superseded. Original candidate/manifests/failures retained. Gate production_enabled/actual_adoption/actual_completion remain false.",
             "result": "PASS"
           }
         ],
-        "review": "docs/development/evidence/wave6-integration-20261014/WP01-01/review.md",
+        "review": "docs/development/evidence/wave7-integration-20261014/WP01-01/review.md",
         "formal_adoption": false,
-        "full_task_completed": false
+        "full_task_completed": false,
+        "correction_review": "docs/development/evidence/wave7-integration-20261014/WP01-01/fix-review.md"
       },
       "assignment_history": [
         {
@@ -158765,6 +158791,35 @@
           "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
           "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
           "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        }
+      ],
+      "preparation_delivery_history": [
+        {
+          "state": "MERGED",
+          "delivery_evidence": {
+            "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+            "remote_main_sha": "99e61d897e5f166c5817c0aaec196041e1941324",
+            "pr_url": "https://github.com/GTX537/CP6/pull/205",
+            "observed_at": "2026-10-14T06:57:39.243553+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave6-integration-20261014/WP01-01/remote-main.json",
+            "scope": "Normal merge and exact remote ancestry/file-blob check. Preparation only; no formal adoption or task completion."
+          },
+          "validation_evidence": [
+            {
+              "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+              "repository": "GTX537/CP6",
+              "source_sha": "938f53eb44438c066bdc38a60e2d987264871803",
+              "command": "Original preparation3509 checks, comparator23+bundle10 tests; COORD source/hash/scope/diff review only",
+              "environment": "Original Python3.13 task-private document tooling; no product build or DB",
+              "observed_at": "2026-10-14T07:55:32.880255+00:00",
+              "scope": "COORD observation time; actual execution and reused identities retained separately. 39 additions,33 core artifacts,58 pinned input occurrences/39 sources,577 navigation rows verified.3509 static and33 tests reused; original failure/correction records retained. Unsigned preparation never becomes actual adoption/completion; 123 other targets unchanged. DP01–08 and cross-provider closure pending.",
+              "result": "PASS"
+            }
+          ],
+          "review": "docs/development/evidence/wave6-integration-20261014/WP01-01/review.md",
+          "formal_adoption": false,
+          "full_task_completed": false
         }
       ]
     },
@@ -159911,8 +159966,8 @@
         "baseline_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
         "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
         "dispatch_scope": "PREPARATION_ONLY",
-        "phase": "PREPARATION",
-        "worker_ack_at": null,
+        "phase": "PREPARATION_INTEGRATED",
+        "worker_ack_at": "2026-10-15T00:20:30.169860Z",
         "allowed_write_paths": [
           "eng/wp02-02/consumption-compatibility/",
           "docs/development/evidence/WP02-02/consumption-compatibility/"
@@ -159924,11 +159979,16 @@
           "http": "127.0.0.1:0 (owned random port)",
           "database": false,
           "production_host_start": false,
-          "provisioned": false
-        }
+          "provisioned": true,
+          "completion": "Private random-loopback synthetic-authority host stopped/disposed and port refused; artifacts retained. No Main Program or DB."
+        },
+        "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
+        "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
+        "execution_baseline_sha": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+        "window_closed_at": "2026-10-15T03:02:23.922495+00:00"
       },
       "blockers": [
-        "Main仍引用受信任的CP6.Platform [0.10.2]，已交付ctx-binding-v1仅在Platform源码主线；本次未取得包含新能力、兼容且不可变的受信任正式包或另行审查批准的可复现源码采用方案。必须先固定可消费身份并核原17项PG验收后再准入。详见 docs/development/evidence/wave5-dispatch-20261013/admission-pg.md。WP02-27本地校验交付不自动解除此门。"
+        "第七轮固定 Main/Platform 源码三入口构建和私有宿主指定路径诊断已审查归档，可复现 SOURCE-ADOPTION-CANDIDATE 已具备；它不是获准生产采用例外。Main仍消费正式[0.10.2]，新能力尚无兼容且受信任的正式包；正式包路线/源码例外及后继真实Host/Owner/PostgreSQL采用须另行准入。当前未发包、未改变信任或生产引用，原17PGT仍NOT_RUN，WP02-28未开放。详见 docs/development/evidence/WP02-02/consumption-compatibility/SOURCE-ADOPTION-CANDIDATE.md。"
       ],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -159939,27 +159999,27 @@
       "preparation_delivery": {
         "state": "MERGED",
         "delivery_evidence": {
-          "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
-          "remote_main_sha": "b526e6b2194c232fae224cad7e72aef1c9b85c9e",
-          "pr_url": "https://github.com/GTX537/CP6/pull/206",
-          "observed_at": "2026-10-14T07:25:30.088191+00:00",
+          "source_sha": "ebd448ea3683cd89c85060529585c97890ad15de",
+          "remote_main_sha": "e82175d630211c3b8a3cb495fff13959f3dd8152",
+          "pr_url": "https://github.com/GTX537/CP6/pull/210",
+          "observed_at": "2026-10-15T02:37:26.437734+00:00",
           "repository": "GTX537/CP6",
-          "path": "docs/development/evidence/wave6-integration-20261014/WP02-02/remote-main.json",
-          "scope": "Normal merge and exact remote ancestry/file-blob check. Preparation only; no formal adoption or task completion."
+          "path": "docs/development/evidence/wave7-integration-20261014/WP02-02/remote-main.json",
+          "scope": "Normal protected merge plus remote ancestry/file blobs. Preparation only; no full task or formal adoption."
         },
         "validation_evidence": [
           {
-            "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+            "path": "docs/development/evidence/wave7-integration-20261014/validation-summary.json",
             "repository": "GTX537/CP6",
-            "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
-            "command": "Original checker44, parser8, synthetic probe10; independent87 raw/17source/45fingerprint/100dependency/14archive/32schema/52artifact checks",
-            "environment": "Original Python3.13/SDK8.0.424/runtime8.0.30 private probe; no Main host or PostgreSQL",
-            "observed_at": "2026-10-14T07:55:32.880255+00:00",
-            "scope": "COORD observation time; actual execution and reused identities retained separately. 44 final checker and8 parser results reused at exact source hashes;10 actual package DLL synthetic paths only. 87 raw original files,14 archives and32 producer-schema byte identities checked. MSB3277 DiagnosticSource8/10 retained; full dependency compatibility Unknown. Old formal.2 lacks20 context types; localWP0227 is unpublished/untrusted;17PGT unchanged NOT_RUN. No new Current verification/feed readback/release authorization.",
+            "source_sha": "ebd448ea3683cd89c85060529585c97890ad15de",
+            "command": "Reuse 11 snapshot + 6 policy + 12 graph tests; 3 restore/build roots and 31 private-host assertions. Fresh read-only runtime policy and 106 archive-byte checks",
+            "environment": "Original SDK8.0.424/runtime8.0.30 plus Python3.13; isolated Kestrel synthetic authority; no Main host or DB",
+            "observed_at": "2026-10-15T03:02:23.922495+00:00",
+            "scope": "COORD observation; original execution times and inputs retained separately. 138 candidate files/106 original archives checked; exact three-root build and runtime source identities verified. Graph15 assets/15 deps/17 locks/189packages remains compatibility UNKNOWN; runtime MATCHED_SPECIFIED_PATHS only. MSB3277 old failure preserved; formal package trust BLOCKED, Main and17PGT NOT_RUN.",
             "result": "PASS"
           }
         ],
-        "review": "docs/development/evidence/wave6-integration-20261014/WP02-02/review.md",
+        "review": "docs/development/evidence/wave7-integration-20261014/WP02-02/review.md",
         "formal_adoption": false,
         "full_task_completed": false
       },
@@ -159985,6 +160045,35 @@
           "handoff_receipt": "docs/development/evidence/wave6-integration-20261014/intake.json",
           "execution_baseline_sha": "1ab2d031e3c501662ecb89a33839fac1cba55d33",
           "window_closed_at": "2026-10-14T07:55:32.880255+00:00"
+        }
+      ],
+      "preparation_delivery_history": [
+        {
+          "state": "MERGED",
+          "delivery_evidence": {
+            "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+            "remote_main_sha": "b526e6b2194c232fae224cad7e72aef1c9b85c9e",
+            "pr_url": "https://github.com/GTX537/CP6/pull/206",
+            "observed_at": "2026-10-14T07:25:30.088191+00:00",
+            "repository": "GTX537/CP6",
+            "path": "docs/development/evidence/wave6-integration-20261014/WP02-02/remote-main.json",
+            "scope": "Normal merge and exact remote ancestry/file-blob check. Preparation only; no formal adoption or task completion."
+          },
+          "validation_evidence": [
+            {
+              "path": "docs/development/evidence/wave6-integration-20261014/validation-summary.json",
+              "repository": "GTX537/CP6",
+              "source_sha": "f395d92ab8e15a5a06d00deeb2f47a9ec583baaf",
+              "command": "Original checker44, parser8, synthetic probe10; independent87 raw/17source/45fingerprint/100dependency/14archive/32schema/52artifact checks",
+              "environment": "Original Python3.13/SDK8.0.424/runtime8.0.30 private probe; no Main host or PostgreSQL",
+              "observed_at": "2026-10-14T07:55:32.880255+00:00",
+              "scope": "COORD observation time; actual execution and reused identities retained separately. 44 final checker and8 parser results reused at exact source hashes;10 actual package DLL synthetic paths only. 87 raw original files,14 archives and32 producer-schema byte identities checked. MSB3277 DiagnosticSource8/10 retained; full dependency compatibility Unknown. Old formal.2 lacks20 context types; localWP0227 is unpublished/untrusted;17PGT unchanged NOT_RUN. No new Current verification/feed readback/release authorization.",
+              "result": "PASS"
+            }
+          ],
+          "review": "docs/development/evidence/wave6-integration-20261014/WP02-02/review.md",
+          "formal_adoption": false,
+          "full_task_completed": false
         }
       ]
     },
@@ -160493,7 +160582,7 @@
         "Platform:message-transport"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-12",
       "entry_gate": "CONFIRMED",
@@ -160505,9 +160594,9 @@
         "claimed_at": "2026-10-14T09:22:28.191366+00:00",
         "baseline_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
         "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
-        "dispatch_scope": "IMPLEMENTATION",
-        "phase": "IMPLEMENTATION",
-        "worker_ack_at": null,
+        "dispatch_scope": "Reviewed bounded library implementation merged and remote-verified; task window closed. Actual business/Host/Owner adoption NOT_RUN.",
+        "phase": "IMPLEMENTATION_INTEGRATED",
+        "worker_ack_at": "2026-10-15T00:22:53Z",
         "allowed_write_paths": [
           "src/CP6.Platform.Messaging/TransportV1/",
           "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
@@ -160542,12 +160631,36 @@
             "settings_env": "CP6_WP0212_SETTINGS"
           },
           "policy": "Worker may provision owned loopback resources after COORD registration and fresh free-port/root checks; pin listed cached digests, pull_policy never, no external paid service/network or image pull. Use task-private offline fixture build against cached SDK; old p05 Dockerfile needs uncached aspnet image and unconstrained restore, so do not run it unchanged. Preserve data/logs/failed attempts. Stop only identity-verified own containers/cluster; never global prune, shared containers, existing data deletion or blanket process kill.",
-          "provisioned": false
-        }
+          "provisioned": true,
+          "completion": "Owned Kafka/Dapr/fixture containers and PG55430 stopped; all assigned ports free at independent review. Data/native failures retained; no coordinator restart."
+        },
+        "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
+        "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
+        "execution_baseline_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "window_closed_at": "2026-10-15T03:02:23.922495+00:00"
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave7-integration-20261014/validation-summary.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "b35d0646767fc7e876e92158c582573500e0a637",
+          "command": "Reuse library44 and overlapping focused27, legacy101, architecture98; actual native Kafka/Dapr/PG22 plus targeted7",
+          "environment": "Original SDK8, owned Kafka4.3.1/Dapr1.18.2/PG18 fixture; all owned resources stopped",
+          "observed_at": "2026-10-15T03:02:23.922495+00:00",
+          "scope": "COORD observation; original execution times and inputs retained separately. 275 inputs/131 artifacts/13TRX/116 exported native streams and310 private logs checked. Corrected distinct-offset quarantine has actual targeted evidence. 44+27 overlap and22+7 overlap are not additive. Real fixture receive observation is not business/Inbox atomicity; C02 adoption disabled.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "b35d0646767fc7e876e92158c582573500e0a637",
+        "remote_main_sha": "7f49ab31d8c998d096d71f3311d22da2b4f8e478",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/73",
+        "observed_at": "2026-10-15T02:38:50.909109+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave7-integration-20261014/WP02-12/remote-main.json",
+        "scope": "Normal protected merge plus remote ancestry/file blobs. Bounded library task complete; original business acceptance NOT_RUN."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -161061,7 +161174,7 @@
         "file:Platform:src/CP6.Platform.Testing/Cp6TelemetryRecorder.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-26",
       "entry_gate": "CONFIRMED",
@@ -161073,9 +161186,9 @@
         "claimed_at": "2026-10-14T09:22:28.191366+00:00",
         "baseline_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
         "entry_evidence": "docs/development/evidence/wave7-dispatch-20261014/admission.json",
-        "dispatch_scope": "IMPLEMENTATION",
-        "phase": "IMPLEMENTATION",
-        "worker_ack_at": null,
+        "dispatch_scope": "Reviewed bounded library implementation merged and remote-verified; task window closed. Actual business/Host/Owner adoption NOT_RUN.",
+        "phase": "IMPLEMENTATION_INTEGRATED",
+        "worker_ack_at": "2026-10-15T00:19:45Z",
         "allowed_write_paths": [
           "src/CP6.Platform.Contracts/SloQualificationV1/",
           "src/CP6.Platform.Testing/EvidenceV1/",
@@ -161098,12 +161211,36 @@
           "database": "cp6_wp0226_<UTCyyyyMMdd>_<owner8>",
           "settings_env": "CP6_WP0226_SETTINGS",
           "policy": "First Provision: verify a new full owner token, canonical contained fresh root and free reserved loopback port before creating anything; cluster system id and database OID cannot be required before they exist. Initialize only that owned cluster, then record and verify system id, endpoint, database OID/name/owner, setup/runtime roles and permissions before test use. Subsequent test/crash/restart/stop must match all recorded identities, contained paths, session_user and expected sessions; refuse unknown or mismatched instances. Setup/admin credentials separate from restricted runtime DML role (NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS). Fresh SCRAM credentials remain private, never printed or committed. Requested crash is limited to exact own cluster and labeled; smart-stop normally, preserve data/logs/failures, never terminate unknown sessions, reuse old task roots or touch5432. A failed initial Provision retains its owned marker and partial evidence; recovery first proves exactly which resources were created and never assumes a missing OID is valid runtime identity.",
-          "provisioned": false
-        }
+          "provisioned": true,
+          "completion": "Owned PG55429 system7696685906165408468/dbOID16385 smart-stopped at2026-10-15T01:18:29.612449Z. Data/failures retained; no coordinator restart."
+        },
+        "coordinator_received_at": "2026-10-15T02:31:03.132032+00:00",
+        "handoff_receipt": "docs/development/evidence/wave7-integration-20261014/intake.json",
+        "execution_baseline_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+        "window_closed_at": "2026-10-15T03:02:23.922495+00:00"
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/wave7-integration-20261014/validation-summary.json",
+          "repository": "GTX537/CP6.Platform",
+          "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+          "command": "Reuse final local unit108, nativePG6, architecture98 with exact source/dependency/assembly/TRX hashes",
+          "environment": "Original SDK8 plus dedicated PG18.6/55429; owner/system/OID pinned and smart-stopped",
+          "observed_at": "2026-10-15T03:02:23.922495+00:00",
+          "scope": "COORD observation; original execution times and inputs retained separately. SloQualificationV1/EvidenceV1 bounded source and immutable evidence reviewed; legacy evaluator and dependencies unchanged. 56 original AC preserve NOT_RUN,26 only attach scoped local portions;107 links and13PG evidence copies checked. Native40001/42501/crash evidence separate from injected COMMIT-ACK suppression.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+        "remote_main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/72",
+        "observed_at": "2026-10-15T02:41:12.699144+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/wave7-integration-20261014/WP02-26/remote-main.json",
+        "scope": "Normal protected merge plus remote ancestry/file blobs. Bounded library task complete; original business acceptance NOT_RUN."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"

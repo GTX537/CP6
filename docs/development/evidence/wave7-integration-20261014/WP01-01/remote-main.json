@@ -1,0 +1,603 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6",
+  "source_sha": "731f96e260845f5f21e30ef4ab32471759ac8ff6",
+  "remote_main_sha": "d5084957a7b58d4c99765eb48c29e88c2e158585",
+  "pr_url": "https://github.com/GTX537/CP6/pull/212",
+  "merged_at": "2026-10-15T03:01:54Z",
+  "files_match": [
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/.gitattributes",
+      "blob": "8a304147948d2695933d5527290fb502c1beddf2"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/README.md",
+      "blob": "2925740b175549670bfcee8b2d8ceed5c8d25c35"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.PLM-ITER-01.json",
+      "blob": "dba54b3156f2934984e5cfcfb639740baba8bd6c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.PLM-REL-01.json",
+      "blob": "dba54b3156f2934984e5cfcfb639740baba8bd6c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/actual-baseline-result.json",
+      "blob": "dba54b3156f2934984e5cfcfb639740baba8bd6c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/basis-delta.json",
+      "blob": "d8e912f3471635192af607b2ef4bfe23bc74ef01"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-final.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-final.stdout.txt",
+      "blob": "7119c0741cd0f37e93aa35d518a1585a55b3df5c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-provider-evidence.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-provider-evidence.stdout.txt",
+      "blob": "7119c0741cd0f37e93aa35d518a1585a55b3df5c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-second.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-second.stdout.txt",
+      "blob": "7119c0741cd0f37e93aa35d518a1585a55b3df5c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-third.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build-third.stdout.txt",
+      "blob": "7119c0741cd0f37e93aa35d518a1585a55b3df5c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build.stderr.txt",
+      "blob": "c113c809782b0cf280935a08209b970135db5ac5"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/build.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/contract-ref.json",
+      "blob": "95d812009d761f21ee2867f2a9a38d03f04424c8"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/.gitattributes",
+      "blob": "2be9e5bf1a8375397358a2aa4a5ea97e48e9593b"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.json",
+      "blob": "5c0f8651a0be3e59fdcedfcbe8082f99c51b09ab"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.md",
+      "blob": "a25f0e47778479424a89afea2d93b513bdb3c8e6"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.run.json",
+      "blob": "db55fade10336b10605859c5347532b3b22a6013"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.stderr.txt",
+      "blob": "263c0f84358e9897743f4ba218f8cb040ffc5c4a"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/green-20261015T024315465471Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/mapping-regeneration.json",
+      "blob": "55245d23c5c1e7899b682438cb3d072a6188bbb6"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/metadata-diff-before-newline-fix.run.json",
+      "blob": "dfbb9c93c3f2aa993606df41bccaf6ebbad81db4"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/metadata-diff-before-newline-fix.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/metadata-diff-before-newline-fix.stdout.txt",
+      "blob": "a79c9f35a7dfde9bf299e0fae654f5cdd7db562f"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.run.json",
+      "blob": "7268dd258c894a8082cb52f00147c010143f3810"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.stderr.txt",
+      "blob": "bc37bdfe827bb96d3b596d967132f30a486cc549"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/red-20261015T024136533957Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.run.json",
+      "blob": "04100adc6ff42e7d69cfa5179674c6bdcd44d15f"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.stderr.txt",
+      "blob": "e06fdd8d37da402b8871cd8db0a668487130d658"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-green-20261015T025159734163Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-mapping-regeneration.json",
+      "blob": "055f7872a19b5d17ae92d719ddbf003c3354c8b0"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-red-20261015T025037398238Z.run.json",
+      "blob": "7cababea49c2afbaa06d7bdc92dc7c85fafd4104"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-red-20261015T025037398238Z.stderr.txt",
+      "blob": "4e969d9dfd0c644b9c5b09a7c88810cc3f6ce093"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-red-20261015T025037398238Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-static-20261015T025200254609Z.run.json",
+      "blob": "ae157c0a32070e9a1615123261d6be66f05cb930"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-static-20261015T025200254609Z.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/scope-static-20261015T025200254609Z.stdout.txt",
+      "blob": "8892e40d2306cf92bed996f2f22333c8dfad57b5"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.run.json",
+      "blob": "adba3c474c4b79ff45dfa0df8e126cc621dec720"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/static-20261015T024521743329Z.stdout.txt",
+      "blob": "8892e40d2306cf92bed996f2f22333c8dfad57b5"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global-index.json",
+      "blob": "1c3354b32b27e32eec5ac090310d23bab0bf94ad"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/.gitattributes",
+      "blob": "4f7fc3ef1406bfab189a4a14744c344f36d77d9a"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/README.md",
+      "blob": "6a35907d2cd74c62b95ff0b1f5eaeb92dfa22ca8"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.json",
+      "blob": "0f9328e471db2e931dbd85f859b4316f64c58b24"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/delivery.md",
+      "blob": "53b6d8575d8023bf17fb109d07c3ea6f814317e3"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "blob": "3629509314939651650f3d9146c3ef31f546134d"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+      "blob": "88dfb8ad3473ca1eab984b7b2c854c657a92589e"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+      "blob": "ad1466e2ec34e95a52c153826f5c595736583462"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "blob": "8024bf359a6e09b83a8f9ef684ace4c37d30b365"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "blob": "3e1c18575926533fa56aa945b8dbf3b005e110d7"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "blob": "ebc25e6c1a9dd048778850930969acc36687074d"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "blob": "0f817efea60227dad5581d5a34f0fb46b21ecf51"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/README.md",
+      "blob": "9056f02384a1cb1744640c8fcde73a0399e63328"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/build_candidate.py",
+      "blob": "ade06f1c82614608f944b536d75b35c5eabfe867"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/mapping_constraints.py",
+      "blob": "5d25e3da02b3327f7f588d15c96d0a93324105a0"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-all-global/eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+      "blob": "faf8e7c66e6f849517da5497db5a02acc14203b9"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded-index.json",
+      "blob": "bca73da2da62c59cf22a114d463c1ab242c159ed"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/README.md",
+      "blob": "c4acc788002fce0c066a4b353c994d9f585b2c10"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "blob": "426d5d8228a1827e1feab4a62cab8e2ece52355f"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+      "blob": "7f5bea68fcf103245b32c7031e3ec826159c2bba"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+      "blob": "52003e59b06c55d196cc07ff0f6df55e7a4e530d"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "blob": "023f5532e10bde8b132455240ae435317c52de82"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+      "blob": "c60d697aefc75113b173de72b37d7fad9d3ca077"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "blob": "790d96621400c9e4ece4cf25e490510f3167cbba"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "blob": "a70f547524579ab2035c2a21a1a8eaa41543139e"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/review-quality.json",
+      "blob": "4f1e6047cbc6f6c732266674a4aa6e77345ae456"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/review-spec.json",
+      "blob": "0fd3f3d8cc036ec9a3a8c6c977a37698b57549b4"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+      "blob": "e38c1a7efa2ee4fc00f0459d676058d57905db6e"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "blob": "0bbca80eba930132cf1cccfda8f03d3160b73aec"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/README.md",
+      "blob": "242c99ad02fa948fd668f3ff725549e30ce50b18"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/build_candidate.py",
+      "blob": "50f499257041f4602dfb87904f82f23271e27af7"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/mapping_constraints.py",
+      "blob": "a3590f0743953c80727a39482a57024eeecb3830"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/superseded/eng/wp01-01/decision-closure/validate_candidate.py",
+      "blob": "11743dce7cae2f92eff9f63451816c107ab2ff0e"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py",
+      "blob": "1066c86b12df9d38c31f069289307890f06301f3"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/current-source-audit.json",
+      "blob": "ed9794daf82baaee363a56765585badb82cdb4c1"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/decisions.json",
+      "blob": "6b6ea542e91fd139f5a57527647f5759a2ff16bf"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/delivery.md",
+      "blob": "11e872648abc733874d87d5e40d82e96d396b9fa"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/digest-vectors.candidate.json",
+      "blob": "a6f9df394c012275e177c9d760f0c8dd888250b2"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/final-delivery.json",
+      "blob": "f4fa0f2c5801a4855b4d2097e65cf38d63e8feff"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/final-integrity.json",
+      "blob": "4cc468eadb2daba88bb72d5ce9d4998252717757"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/gate-contract.candidate.json",
+      "blob": "313695ac371bc63453c7f5335255d03bb9962456"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/gate-design.md",
+      "blob": "1033b812c11aae513a490cd6bc8cadbd11ba8f7e"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/intake.json",
+      "blob": "e4294bd966a48bdf2548748ab1e5b4a74627160a"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.run.json",
+      "blob": "c60d697aefc75113b173de72b37d7fad9d3ca077"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manage-roadmap.stdout.txt",
+      "blob": "0a11753eeb9c5ed2dee918089fdda2c0bbfdda2f"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/manifest.json",
+      "blob": "de3e176dcf2c639afe318739f304ca30ecd007e4"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+      "blob": "e74be57ae9b22429989f74fbfaf1f9fcb3b3bc06"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/provider-consumer-closure.json",
+      "blob": "f79210f3dbf97b06d47b52f2d91fa1d74da7c733"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.run.json",
+      "blob": "b18c4103194e29750fd1cc6436f1302170df7467"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.stderr.txt",
+      "blob": "96248a51cfb2cc658dd3e4a916309b50bf076d28"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/actual-baseline-result.before-fix.json",
+      "blob": "00d50d358f70d1ca96d5e6a58d00c3ea7e404cbb"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/gate_candidate.py",
+      "blob": "e1b4a4ab9030d79e82ad3ba5267c19b913c40f77"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/quality-assertion-red-20261015T012742348054Z/test_gate_candidate.py",
+      "blob": "85d6455aead8e1504bb2d16e788947c7c288b92d"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/review-quality.json",
+      "blob": "4f1e6047cbc6f6c732266674a4aa6e77345ae456"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/review-spec.json",
+      "blob": "0fd3f3d8cc036ec9a3a8c6c977a37698b57549b4"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build-second.stdout.txt",
+      "blob": "7119c0741cd0f37e93aa35d518a1585a55b3df5c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-build.stdout.txt",
+      "blob": "7119c0741cd0f37e93aa35d518a1585a55b3df5c"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stderr.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-fix-validation-20261015T011600741552Z.stdout.txt",
+      "blob": "7b47220566f0ca741b42a30efca25cc53a195d27"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.run.json",
+      "blob": "2c3b1e0ad37c3847d166c7f63db7622f63dd105a"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stderr.txt",
+      "blob": "f3433f263e1cd466b8d05bcad089afceb05f0820"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/gate_candidate.py",
+      "blob": "a4b3a34b4201770e33abf50a477e4041a13785e1"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/spec-source-red-20261015T010937368542Z/test_gate_candidate.py",
+      "blob": "c1ffc81a9766aacc797f7d97715fbf690c2b9314"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/submission.actual-unadopted.json",
+      "blob": "877f0d322ca2a6f02dd96ae9fdfea0850008807a"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-bindings-red.stderr.txt",
+      "blob": "5fe228c2b21e8343bd883403ad081c10438367c2"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-bindings-red.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.run.json",
+      "blob": "25b105a18622dba8fadde8bbefe1d3087710c8cd"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.stderr.txt",
+      "blob": "627f9581d791b11bd96bf868a84d8860105c1da4"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-consumer-remote-red.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.run.json",
+      "blob": "fbbd14742cde65af750718de1eae449fcb64aa6b"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.stderr.txt",
+      "blob": "f2a3f686218291b3cfb0c0fc83b5223b3af765ba"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-deep-red.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-red.stderr.txt",
+      "blob": "bc7449672b7eb8aef3f0fe10bc1f87405a58a949"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tdd-red.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-bindings.stderr.txt",
+      "blob": "b6e568da09262b70064a1fe475079a90593601bc"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-bindings.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.run.json",
+      "blob": "4f6b95540d15461ccb9e12657eaa2c6d833c4508"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stderr.txt",
+      "blob": "4a601e0b38cd56644d0154f89620d3196217ddd9"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T005208564934Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.run.json",
+      "blob": "1a44cd95af1bf3a731e4bd2ac5a4570db6677978"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stderr.txt",
+      "blob": "a7f5dc3e3a3ce3831013e5330ffa1af978ca01c2"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T011630441196Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.run.json",
+      "blob": "e38c1a7efa2ee4fc00f0459d676058d57905db6e"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.stderr.txt",
+      "blob": "db6915d486fb5d1ce6c7178daa8a36675e97b720"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final-20261015T012923391938Z.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.run.json",
+      "blob": "e38c1a7efa2ee4fc00f0459d676058d57905db6e"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.stderr.txt",
+      "blob": "222790819afbf3b9771da9e9caa337b75260f5d0"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-final.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-first.stderr.txt",
+      "blob": "adf689113c958e6252b673234f394d160309e06a"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/tests-first.stdout.txt",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP01-01/decision-closure/validation.json",
+      "blob": "c66452da4039361179ef83f67478ef2eba286ad6"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/.gitattributes",
+      "blob": "5faf4abc24e32c2891e3945040e55a2f6d0bf5ad"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/README.md",
+      "blob": "9056f02384a1cb1744640c8fcde73a0399e63328"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/build_candidate.py",
+      "blob": "ade06f1c82614608f944b536d75b35c5eabfe867"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/gate_candidate.py",
+      "blob": "73f3ed6808253305048d9494484be44e4c29b764"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+      "blob": "66a7423c0e0d055af4b03fd261d99b3ecebba2f1"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/tests/test_gate_candidate.py",
+      "blob": "85d6455aead8e1504bb2d16e788947c7c288b92d"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+      "blob": "f02ad91c6db3d7349d30bf1f2f80a6c07cebca08"
+    },
+    {
+      "path": "eng/wp01-01/decision-closure/validate_candidate.py",
+      "blob": "11743dce7cae2f92eff9f63451816c107ab2ff0e"
+    }
+  ],
+  "observed_at": "2026-10-15T03:01:44.991758+00:00",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

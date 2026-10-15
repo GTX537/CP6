@@ -1,0 +1,759 @@
+{
+  "result": "PASS",
+  "repository": "GTX537/CP6.Platform",
+  "source_sha": "b35d0646767fc7e876e92158c582573500e0a637",
+  "remote_main_sha": "7f49ab31d8c998d096d71f3311d22da2b4f8e478",
+  "pr_url": "https://github.com/GTX537/CP6.Platform/pull/73",
+  "merged_at": "2026-10-15T02:38:15Z",
+  "files_match": [
+    {
+      "path": "docs/WP02-12-MESSAGE-TRANSPORT-V1.md",
+      "blob": "2f873bf6eeea26acc7991122a949fa8b820c0ea2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/.gitattributes",
+      "blob": "9e1b9718200522b8414ecc40af1ee639122dd562"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/PLAN.md",
+      "blob": "fde0545afc6db8a382802e3fb52ddca6a6c6873c"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/REPORT.md",
+      "blob": "52d1bf4db427425576a31c73633511a5261014c1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/REVIEW.md",
+      "blob": "b752d85c249e06ea1ff7a3d03f992941ad042cec"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/acceptance-map.json",
+      "blob": "b8664d91799ee79ce36c114de0679be0109827dc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/build_acceptance_map.py",
+      "blob": "7b6278fa4bffcd3b274f71f6d97b7cae696e3512"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/collect_evidence.py",
+      "blob": "3bac3b12033e099c68bb9a94ba13c3931e98e1ea"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/final-static-audit.json",
+      "blob": "3fc108b06659b739bd6fe87817cad0634a188287"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/final_audit.py",
+      "blob": "f6aa0e88d68affd523508d6daa62719b59290929"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/phase-failures.json",
+      "blob": "436cccc2272bedf2641b492808716c6dd3340f5a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/prepublication-workflows.json",
+      "blob": "ad37341ccee118e345d9552ee81c61139a1003ce"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/prepublication.py",
+      "blob": "332e36f2321e0e18385bd4f1fa1fe782ae77a1ad"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/acceptance.json",
+      "blob": "faa65be7426b24972e663c0e6247d32bc92c54cc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/acl-proof.txt",
+      "blob": "5b0f2c0cbf50af43d558ca5b924ad85a05af11f5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/commands.json",
+      "blob": "3f3259117d337377cb552898973d9d69c23c4faf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/final-acl-proof.txt",
+      "blob": "5b0f2c0cbf50af43d558ca5b924ad85a05af11f5"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/final-observed-records.json",
+      "blob": "d0a164896abba1fd0a1ad89aff22f010e53c5e3b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/fixture-key-migration.json",
+      "blob": "4b736f7516e8ae4f767b11d19b20e5c3068b3cf9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/incomplete-runs.json",
+      "blob": "78e204a9b802f0d9b4e3960d0f0cb4d8d73d4bba"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/native-identity-before-stop.json",
+      "blob": "5509570c9a7db73bd492611d10bc6db81048af3b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/private-log-identities.json",
+      "blob": "53e8d7fb41f15190885936192de5e07f913ffd7a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/public-plan.json",
+      "blob": "95d607530d23fa366bfa42917130b7638d6e7bd3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/resource-ownership.json",
+      "blob": "b71ad9ac18b80d8f770d8ef70bf686bd065e8fdd"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/reuse-boundaries.json",
+      "blob": "72119fc64ec67174c896156196ed2bf1e1b692cf"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/stop-result.json",
+      "blob": "a1d024d87dbf2c80a4b20c2d1b5f264f2c504c3a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/runtime/targeted-review-regression.json",
+      "blob": "96c342bbb9136be5d00590e0a67e549fc1b53871"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/start-transport.json",
+      "blob": "308c4dedaf134fc69db0d6713d5d0b2472b3e548"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/test-runs.json",
+      "blob": "d3a5241418ebc6b183c82abdf1ce154660de83f3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/architecture/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/architecture/run.log",
+      "blob": "30d580fe9d8e769ebf990920ffae39399df014c9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/architecture/wp02-12-architecture.trx",
+      "blob": "b7a5d4777933fe1b23bbf30c8aac4ed7e0782dc2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002438853Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002438853Z/run.log",
+      "blob": "f4c3d2a3698a358b12599aeabe4a1290c6f2b646"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002448939Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002448939Z/red.trx",
+      "blob": "d2293f4f4b69150f40af916c202f768e9415e2b8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002448939Z/run.log",
+      "blob": "0443ef6261d995a83c4e3cb8f1addb2f9047b8d2"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002728914Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002728914Z/red-boundary.trx",
+      "blob": "56a3d564be4b67514efbc556b9a86ba1c8cbf461"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002728914Z/run.log",
+      "blob": "bd059a97f73ab30bcf19a6adbd0f82ac31768c6e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002948562Z/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002948562Z/green-boundary.trx",
+      "blob": "e59bf2f08cdc73aa2cc69478def845811d9c8ef4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T002948562Z/run.log",
+      "blob": "aa2158f4b1accc411fba2f62dbfa957d5cec6b1a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003041589Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003041589Z/run.log",
+      "blob": "a5b8ea8776b786e129bdd411e8702abdd96b8b57"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003110743Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003110743Z/red-quarantine-bridge.trx",
+      "blob": "354828a57616c3b5c0fd162bdf54b4362e097b4e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003110743Z/run.log",
+      "blob": "e282a1822ea6cfbb8207105e9a178156157f2821"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003214855Z/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003214855Z/green-quarantine-bridge.trx",
+      "blob": "c20092349ba6f0ace61b8fff90e858580d979e3b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003214855Z/run.log",
+      "blob": "7fa834584ee2c442d359d0e1497d241137ad9b52"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003345191Z/exact-version.trx",
+      "blob": "ec509452df81a0d3be8f173830f6637791bbe813"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003345191Z/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003345191Z/run.log",
+      "blob": "b32b7eac5092e867516a2bda4ceeb52ac4043fd7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003413218Z/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003413218Z/legacy-transport-regression.trx",
+      "blob": "9eec0031fea2c3240deb9e103e1aeb67e7e3fedc"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003413218Z/run.log",
+      "blob": "6f07172fc1ad345df106db85cdf96b02a15a9d6b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003447093Z/diff-check.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003447093Z/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003704908Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003704908Z/red-native-quarantine.trx",
+      "blob": "8383321fc0a58b7673ef7594b537380185c7a5d3"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003704908Z/run.log",
+      "blob": "0a7799aa484259813a125b2e2dc36232f9a0ba5f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003737829Z/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003737829Z/green-native-quarantine.trx",
+      "blob": "48030e9a2e83af1b737f5510637c320e81dd3c79"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T003737829Z/run.log",
+      "blob": "8fa7c37d60d67bb35ca238fd2687e745943add6e"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004811372Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004811372Z/red-native-reference-readback.trx",
+      "blob": "8c15eed34a6c2b653211b6a69ea056dbe6abd97a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004811372Z/run.log",
+      "blob": "a2c3a5e9b0cbc9903b4624cba399ea52ec843ba9"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004841988Z/exit-code.txt",
+      "blob": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004841988Z/red-native-key-quarantine.trx",
+      "blob": "5c0fa95bc196670b3e3c39ddd6bd88afbedeb1f8"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004841988Z/run.log",
+      "blob": "305e4f8d69526a7a844bd691a8c7f30783143642"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004920812Z/exit-code.txt",
+      "blob": "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004920812Z/green-native-reference-key-quarantine.trx",
+      "blob": "06a636ee45b6f95b75bf2cf10ed3c226e600bcff"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/20261015T004920812Z/run.log",
+      "blob": "0bc5a1dcfba4bf0307aad2c7ea571f8e9960ed25"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/RUNS.md",
+      "blob": "c1af5ae5e274c35395b4007cacd7b3f5d762966a"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355656Z-03f2875425954724a1d5672e54601efe/contract-bundle.v1.json",
+      "blob": "edee7f71672f6fb23b52ffb6a1749110c9abad38"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355656Z-03f2875425954724a1d5672e54601efe/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355656Z-03f2875425954724a1d5672e54601efe/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355656Z-03f2875425954724a1d5672e54601efe/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355656Z-03f2875425954724a1d5672e54601efe/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355656Z-03f2875425954724a1d5672e54601efe/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355656Z-03f2875425954724a1d5672e54601efe/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "c4c61e8625b86759db2ec0e95e9284e4ef6fc420"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355813Z-0ea7d1dc16cd4e8a8fe609ec1121090c/contract-bundle.v1.json",
+      "blob": "6a8fec46a13208c0b40571599ac9dd62ee874d90"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355813Z-0ea7d1dc16cd4e8a8fe609ec1121090c/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355813Z-0ea7d1dc16cd4e8a8fe609ec1121090c/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355813Z-0ea7d1dc16cd4e8a8fe609ec1121090c/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355813Z-0ea7d1dc16cd4e8a8fe609ec1121090c/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355813Z-0ea7d1dc16cd4e8a8fe609ec1121090c/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003355813Z-0ea7d1dc16cd4e8a8fe609ec1121090c/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "ccc053f05fd0b8626df9770e6cbb301816185290"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356019Z-ba1d87400ace45089cf7317cf5eaa7e5/contract-bundle.v1.json",
+      "blob": "ea7819a02560f95f5e81c3baf340d2984ed7c7f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356019Z-ba1d87400ace45089cf7317cf5eaa7e5/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356019Z-ba1d87400ace45089cf7317cf5eaa7e5/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356019Z-ba1d87400ace45089cf7317cf5eaa7e5/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356019Z-ba1d87400ace45089cf7317cf5eaa7e5/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356019Z-ba1d87400ace45089cf7317cf5eaa7e5/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356019Z-ba1d87400ace45089cf7317cf5eaa7e5/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "574cfc0af90f8ec7d621ea409f9cfb0a44e941a1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356169Z-8d0ac0c5009a4c6f84a4a911a2aa27c3/contract-bundle.v1.json",
+      "blob": "ea7819a02560f95f5e81c3baf340d2984ed7c7f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356169Z-8d0ac0c5009a4c6f84a4a911a2aa27c3/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356169Z-8d0ac0c5009a4c6f84a4a911a2aa27c3/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356169Z-8d0ac0c5009a4c6f84a4a911a2aa27c3/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356169Z-8d0ac0c5009a4c6f84a4a911a2aa27c3/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356169Z-8d0ac0c5009a4c6f84a4a911a2aa27c3/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003356169Z-8d0ac0c5009a4c6f84a4a911a2aa27c3/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "574cfc0af90f8ec7d621ea409f9cfb0a44e941a1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723657Z-acf233989cb74ac3b982fb0cb303fc70/contract-bundle.v1.json",
+      "blob": "edee7f71672f6fb23b52ffb6a1749110c9abad38"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723657Z-acf233989cb74ac3b982fb0cb303fc70/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723657Z-acf233989cb74ac3b982fb0cb303fc70/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723657Z-acf233989cb74ac3b982fb0cb303fc70/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723657Z-acf233989cb74ac3b982fb0cb303fc70/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723657Z-acf233989cb74ac3b982fb0cb303fc70/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723657Z-acf233989cb74ac3b982fb0cb303fc70/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "c4c61e8625b86759db2ec0e95e9284e4ef6fc420"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723762Z-fdc9639468a341109f43d42f192be5b9/contract-bundle.v1.json",
+      "blob": "6a8fec46a13208c0b40571599ac9dd62ee874d90"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723762Z-fdc9639468a341109f43d42f192be5b9/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723762Z-fdc9639468a341109f43d42f192be5b9/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723762Z-fdc9639468a341109f43d42f192be5b9/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723762Z-fdc9639468a341109f43d42f192be5b9/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723762Z-fdc9639468a341109f43d42f192be5b9/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723762Z-fdc9639468a341109f43d42f192be5b9/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "ccc053f05fd0b8626df9770e6cbb301816185290"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723841Z-df8f3969e1754865adecad6106b7a724/contract-bundle.v1.json",
+      "blob": "ea7819a02560f95f5e81c3baf340d2984ed7c7f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723841Z-df8f3969e1754865adecad6106b7a724/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723841Z-df8f3969e1754865adecad6106b7a724/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723841Z-df8f3969e1754865adecad6106b7a724/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723841Z-df8f3969e1754865adecad6106b7a724/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723841Z-df8f3969e1754865adecad6106b7a724/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723841Z-df8f3969e1754865adecad6106b7a724/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "574cfc0af90f8ec7d621ea409f9cfb0a44e941a1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723972Z-6b12a1c35a104872911bebf4677dbf96/contract-bundle.v1.json",
+      "blob": "ea7819a02560f95f5e81c3baf340d2984ed7c7f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723972Z-6b12a1c35a104872911bebf4677dbf96/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723972Z-6b12a1c35a104872911bebf4677dbf96/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723972Z-6b12a1c35a104872911bebf4677dbf96/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723972Z-6b12a1c35a104872911bebf4677dbf96/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723972Z-6b12a1c35a104872911bebf4677dbf96/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003723972Z-6b12a1c35a104872911bebf4677dbf96/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "574cfc0af90f8ec7d621ea409f9cfb0a44e941a1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003819275Z-c2a2ee22f51447e48963bb87746ff84a/contract-bundle.v1.json",
+      "blob": "edee7f71672f6fb23b52ffb6a1749110c9abad38"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003819275Z-c2a2ee22f51447e48963bb87746ff84a/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003819275Z-c2a2ee22f51447e48963bb87746ff84a/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003819275Z-c2a2ee22f51447e48963bb87746ff84a/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003819275Z-c2a2ee22f51447e48963bb87746ff84a/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003819275Z-c2a2ee22f51447e48963bb87746ff84a/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003819275Z-c2a2ee22f51447e48963bb87746ff84a/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "c4c61e8625b86759db2ec0e95e9284e4ef6fc420"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003820489Z-7e5704a5947d4108ab1b960516c052e8/contract-bundle.v1.json",
+      "blob": "6a8fec46a13208c0b40571599ac9dd62ee874d90"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003820489Z-7e5704a5947d4108ab1b960516c052e8/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003820489Z-7e5704a5947d4108ab1b960516c052e8/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003820489Z-7e5704a5947d4108ab1b960516c052e8/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003820489Z-7e5704a5947d4108ab1b960516c052e8/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003820489Z-7e5704a5947d4108ab1b960516c052e8/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003820489Z-7e5704a5947d4108ab1b960516c052e8/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "ccc053f05fd0b8626df9770e6cbb301816185290"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821120Z-0738d38d74704313bcfd7f68eeb81d28/contract-bundle.v1.json",
+      "blob": "ea7819a02560f95f5e81c3baf340d2984ed7c7f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821120Z-0738d38d74704313bcfd7f68eeb81d28/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821120Z-0738d38d74704313bcfd7f68eeb81d28/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821120Z-0738d38d74704313bcfd7f68eeb81d28/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821120Z-0738d38d74704313bcfd7f68eeb81d28/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821120Z-0738d38d74704313bcfd7f68eeb81d28/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821120Z-0738d38d74704313bcfd7f68eeb81d28/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "574cfc0af90f8ec7d621ea409f9cfb0a44e941a1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821600Z-3dff4a5f14684f35b720ddd11b11cd2c/contract-bundle.v1.json",
+      "blob": "ea7819a02560f95f5e81c3baf340d2984ed7c7f6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821600Z-3dff4a5f14684f35b720ddd11b11cd2c/events/platform/contract-example-changed/v1/examples/missing-required.json",
+      "blob": "ff36ed86548ffb28aab33c98bb1192d17bce8cb4"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821600Z-3dff4a5f14684f35b720ddd11b11cd2c/events/platform/contract-example-changed/v1/examples/pii-negative.json",
+      "blob": "7c70fd88e85ca7e7a30a1564c4e368f7f64ae0d6"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821600Z-3dff4a5f14684f35b720ddd11b11cd2c/events/platform/contract-example-changed/v1/examples/unknown-optional.json",
+      "blob": "48ad61583ecfe558cfa35a33d6f070d4167b2eb7"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821600Z-3dff4a5f14684f35b720ddd11b11cd2c/events/platform/contract-example-changed/v1/examples/valid.json",
+      "blob": "6d4f8ca387136cdbe7565a09530b17722c813903"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821600Z-3dff4a5f14684f35b720ddd11b11cd2c/events/platform/contract-example-changed/v1/examples/wrong-type.json",
+      "blob": "e8b8e3a5422d28eaa4ff584dace5d363d3da7893"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/bundle-inputs/20261015T003821600Z-3dff4a5f14684f35b720ddd11b11cd2c/events/platform/contract-example-changed/v1/schema.json",
+      "blob": "574cfc0af90f8ec7d621ea409f9cfb0a44e941a1"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/source-hashes-review-native-reference.json",
+      "blob": "6fa6d83ce6da16a1d9a7a9be4a75e4ee44c34e08"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/tests/library/source-hashes.json",
+      "blob": "933e6adb65d0fbad90afcfdc3042a84ca68ff65b"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/validation-artifacts.json",
+      "blob": "f18c44e065d0c9926b1dbc23c0567c1913976763"
+    },
+    {
+      "path": "docs/development/evidence/WP02-12/validation-inputs.json",
+      "blob": "ed01a6b25e7d3d07a937113fccda8ee7d468921b"
+    },
+    {
+      "path": "src/CP6.Platform.EntityFramework/TransportV1/TransportOutboxPublisherV1.cs",
+      "blob": "7bf9defe72a9022f5b3efce027ab3dabfaed2f9b"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6CloudEventValidator.cs",
+      "blob": "08f06fc2c3f648c674aaef24211a8e0b94c3368f"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/Cp6ContractBundle.cs",
+      "blob": "b06f0b912c3f0af869b00e54d4173b01d0426599"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/TransportV1/TransportContractsV1.cs",
+      "blob": "001c9cb1e012c7fe586bae1c21c36e1b00f01bc1"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/TransportV1/TransportRegistryV1.cs",
+      "blob": "982c56f3202e5430ca5af436c2e3126dd650e543"
+    },
+    {
+      "path": "src/CP6.Platform.Messaging/TransportV1/TransportRouteV1.cs",
+      "blob": "d4deab0f82da1cada00e9d1d1aa919f5af4ea112"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Fixture/CP6.Platform.WP0212.Fixture.csproj",
+      "blob": "d3cccebcfb38c98f27713c4d89e2ed627c023ac7"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Fixture/Directory.Packages.props",
+      "blob": "af849691d05081de51fde82108a8f6b879e0f9c8"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Fixture/FixtureDatabase.cs",
+      "blob": "29a8f649df03a6635a894ab1196ef38c9e669bd7"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Fixture/FixtureOwner.cs",
+      "blob": "9f0c0f5c36957320c5fbb02e3180b8130d50ae29"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Fixture/FixtureTransport.cs",
+      "blob": "932021dec67035231d3d37ae0f4c9207ce3c7d83"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Fixture/Program.cs",
+      "blob": "3bbdb46849757db5686ba57a3d6a66d5a256ae0c"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Tests/CP6.Platform.WP0212.Tests.csproj",
+      "blob": "f535fe7aae53ae51201f5a1c6866ea756e734799"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Tests/OutboxBridgeTests.cs",
+      "blob": "428f5284837f1494ed988b7c3f11d5301b151518"
+    },
+    {
+      "path": "tests/CP6.Platform.WP0212.Tests/TransportTests.cs",
+      "blob": "7a4ccd09dada6635c7722d7385cf636baa036f06"
+    },
+    {
+      "path": "tests/wp02-12-runtime/Invoke-WP0212.ps1",
+      "blob": "2bcc572b66755c4101f05d792e2f0e3bb1fd287e"
+    },
+    {
+      "path": "tests/wp02-12-runtime/README.md",
+      "blob": "3ebaa388a9ea46adddf82e15647b077e8c3500ca"
+    },
+    {
+      "path": "tests/wp02-12-runtime/Start-Fixture.ps1",
+      "blob": "a453b914fe7e60778ebbc39475d1b400d2d06e04"
+    },
+    {
+      "path": "tests/wp02-12-runtime/pg_resource.py",
+      "blob": "83ea280b5bef69373b84e9d9b14e17724924afeb"
+    },
+    {
+      "path": "tests/wp02-12-runtime/runtime.py",
+      "blob": "d50898bfba2911c8e82bcd72497d166f79a04b44"
+    },
+    {
+      "path": "tests/wp02-12-runtime/stop_owned.py",
+      "blob": "4c04770f21f45432b8c286f82e79306143e21268"
+    },
+    {
+      "path": "tests/wp02-12-runtime/verify_quarantine_retries.py",
+      "blob": "3ca244256a9dda214d81dc3ff3e8a43889e0f001"
+    },
+    {
+      "path": "tests/wp02-12-runtime/verify_runtime.py",
+      "blob": "bfd10f5f68f72e53bbddd7579a4f45dae78fdc73"
+    }
+  ],
+  "observed_at": "2026-10-15T02:38:50.909109+00:00",
+  "actions_started": 0,
+  "actions_cancelled": 0,
+  "trigger_changes": 0,
+  "business_validation": "NOT_RUN"
+}

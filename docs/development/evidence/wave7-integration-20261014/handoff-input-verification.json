@@ -1,0 +1,346 @@
+{
+  "observed_at": "2026-10-15T02:33:52.302960+00:00",
+  "scope": "Fresh ls-remote pin plus git-fetched exact immutable message/attachment blobs; full exact bytes compared with original candidate evidence",
+  "messages_verified": 12,
+  "attachments": [
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/.gitattributes",
+      "bytes": 53,
+      "sha256": "1fa05162d3cc4bcf2c61f358cd6224dabb29d1eff609df769fad98863d3c627c",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/content-index.json",
+      "bytes": 2122,
+      "sha256": "4346091ba91d4e0557fd082101cf779ae17e50f9e8142818e46dbea3fed59519",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/delivery.md",
+      "bytes": 3796,
+      "sha256": "da304904da92c7b6fd051304b573ba04da2abf759f1f3058e5e3158a0b854476",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [
+        "docs/development/evidence/WP01-01/decision-closure/delivery.md"
+      ],
+      "classification": "candidate_evidence_copy",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/final-delivery.json",
+      "bytes": 3452,
+      "sha256": "6f7e8a80ec517229a26776a6836be25a7be8560237e916d478d3e456b7d53c41",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [
+        "docs/development/evidence/WP01-01/decision-closure/final-delivery.json"
+      ],
+      "classification": "candidate_evidence_copy",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/final-integrity.json",
+      "bytes": 524,
+      "sha256": "59299a4618feb337c4c2c42bc8f4cc04cd0f700143b768123b1e78e32c103a81",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [
+        "docs/development/evidence/WP01-01/decision-closure/final-integrity.json"
+      ],
+      "classification": "candidate_evidence_copy",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/manifest.json",
+      "bytes": 22088,
+      "sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [
+        "docs/development/evidence/WP01-01/decision-closure/manifest.json"
+      ],
+      "classification": "candidate_evidence_copy",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/publication-main-pr.json",
+      "bytes": 14871,
+      "sha256": "a6c8984dacb6851eefe237346c035c37e2bc19c27293e0a30e3f1f477d1a3dbd",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/publication-main-push.json",
+      "bytes": 14873,
+      "sha256": "dfc1d233b017996196314fae861ff398f0182e60084cb4c6d37b17ff41a21de9",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/publication-main.json",
+      "bytes": 738,
+      "sha256": "f82773e51f8abcb1709850349d60037b8703b1f30959e8d2daef36f09c130e4b",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/review-quality.json",
+      "bytes": 3300,
+      "sha256": "b06346191f82a33de3880359eab6ea4ef98fa40c26e46b2d0fe469994891bb89",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [
+        "docs/development/evidence/WP01-01/decision-closure/review-quality.json"
+      ],
+      "classification": "candidate_evidence_copy",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/review-spec.json",
+      "bytes": 3665,
+      "sha256": "a3db482cb897cbed9bbc05c9352827938b3dc2f07f5532ad9a316fb66e06697b",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [
+        "docs/development/evidence/WP01-01/decision-closure/review-spec.json"
+      ],
+      "classification": "candidate_evidence_copy",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP01-01",
+      "handoff_sha": "c5be961f65b8b8ab310aca5da26823dfc65d4688",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/validation.json",
+      "bytes": 36290,
+      "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90",
+      "candidate_sha": "6d09479f2f44eb604ef69993b370f2f7cacde980",
+      "byte_identical_candidate_paths": [
+        "docs/development/evidence/WP01-01/decision-closure/validation.json"
+      ],
+      "classification": "candidate_evidence_copy",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/.gitattributes",
+      "bytes": 31,
+      "sha256": "87883c9fd2e229176548d81f6e6887f848f97d0b4628cccaffd9f14c8ab2e847",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/candidate-object-transport.json",
+      "bytes": 755,
+      "sha256": "9d686136e170bbcf50f8cbf56ff163d4ae3746f290bf0e898a34af985423b2eb",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/candidate-post-publication.json",
+      "bytes": 383,
+      "sha256": "41549fd6e61932dda20f3edd81ecc9b91bfd97239b0ab5cbc367e84bf5458360",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/candidate-reference.json",
+      "bytes": 336,
+      "sha256": "2ec6a5b2fc83c5cec25e72f9bf08988d71f5e6835edc0db159f4c9b2f4e4681f",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/handoff-pre-delivery.json",
+      "bytes": 815,
+      "sha256": "d77a70dbfe1a34a47931efe10fc657fd5241987e369706706c62a9002724316d",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/receipt-hashes.json",
+      "bytes": 1278,
+      "sha256": "1855f4977e6e90d26d73a75f8d76254a61d3b240fb481fc95cf7dc1692c094d8",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-api-ref.json",
+      "bytes": 36004,
+      "sha256": "8630bf992a05cedaa02dd49cb3d43d632c1d9954bc0a4404c7c833c25b58b72f",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-pr.json",
+      "bytes": 36004,
+      "sha256": "f5cbcdaf45a65ea9f6faa22af3c8ff154f1d3b6cb13f67eb989e32fc65f86166",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-push-retry1.json",
+      "bytes": 36004,
+      "sha256": "4f7d3047f36e4487d40519d1504ffc600eb08d71c719ac3c5c8e9adddf5614c5",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    },
+    {
+      "task": "WP02-26",
+      "handoff_sha": "67f8b9001e6b4f16a4bf1d1415c410c4b8e1b30d",
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-push.json",
+      "bytes": 36004,
+      "sha256": "209951223fa9f020adadff199b76bc0ef892f376be2c8f8e752d80aed65d7505",
+      "candidate_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+      "byte_identical_candidate_paths": [],
+      "classification": "transport_only_metadata_not_product_evidence",
+      "transport_manifest_entries_verified": []
+    }
+  ],
+  "attachment_index_entries_verified": [
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/.gitattributes",
+      "sha256": "1fa05162d3cc4bcf2c61f358cd6224dabb29d1eff609df769fad98863d3c627c"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/delivery.md",
+      "sha256": "da304904da92c7b6fd051304b573ba04da2abf759f1f3058e5e3158a0b854476"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/final-delivery.json",
+      "sha256": "6f7e8a80ec517229a26776a6836be25a7be8560237e916d478d3e456b7d53c41"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/final-integrity.json",
+      "sha256": "59299a4618feb337c4c2c42bc8f4cc04cd0f700143b768123b1e78e32c103a81"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/manifest.json",
+      "sha256": "2133bfb69fdcb2c1b463696e304a054368c6ea0ebfe8bea8af5ece8e3e4c8da6"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/MESSAGE.md",
+      "sha256": "051af4a65c330ca8c36d00da9773110f91b96baa85f92273bbc971f087b45b47"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/publication-main-pr.json",
+      "sha256": "a6c8984dacb6851eefe237346c035c37e2bc19c27293e0a30e3f1f477d1a3dbd"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/publication-main-push.json",
+      "sha256": "dfc1d233b017996196314fae861ff398f0182e60084cb4c6d37b17ff41a21de9"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/publication-main.json",
+      "sha256": "f82773e51f8abcb1709850349d60037b8703b1f30959e8d2daef36f09c130e4b"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/review-quality.json",
+      "sha256": "b06346191f82a33de3880359eab6ea4ef98fa40c26e46b2d0fe469994891bb89"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/review-spec.json",
+      "sha256": "a3db482cb897cbed9bbc05c9352827938b3dc2f07f5532ad9a316fb66e06697b"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261015T013612Z-wave7-delivery/validation.json",
+      "sha256": "f7f61d7039c024d23be2a04c1f543a7a2a8b38f05bfd560325da8bd397de7f90"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/candidate-object-transport.json",
+      "sha256": "9d686136e170bbcf50f8cbf56ff163d4ae3746f290bf0e898a34af985423b2eb"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/candidate-reference.json",
+      "sha256": "2ec6a5b2fc83c5cec25e72f9bf08988d71f5e6835edc0db159f4c9b2f4e4681f"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/candidate-post-publication.json",
+      "sha256": "41549fd6e61932dda20f3edd81ecc9b91bfd97239b0ab5cbc367e84bf5458360"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-push.json",
+      "sha256": "209951223fa9f020adadff199b76bc0ef892f376be2c8f8e752d80aed65d7505"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-push-retry1.json",
+      "sha256": "4f7d3047f36e4487d40519d1504ffc600eb08d71c719ac3c5c8e9adddf5614c5"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-api-ref.json",
+      "sha256": "8630bf992a05cedaa02dd49cb3d43d632c1d9954bc0a4404c7c833c25b58b72f"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/workflows-candidate-pr.json",
+      "sha256": "f5cbcdaf45a65ea9f6faa22af3c8ff154f1d3b6cb13f67eb989e32fc65f86166"
+    },
+    {
+      "path": "handoffs/CP6-DEV-20261012/tasks/WP02-26/messages/20261015T014455Z-delivery/handoff-pre-delivery.json",
+      "sha256": "d77a70dbfe1a34a47931efe10fc657fd5241987e369706706c62a9002724316d"
+    }
+  ],
+  "new_messages_verified": 8
+}

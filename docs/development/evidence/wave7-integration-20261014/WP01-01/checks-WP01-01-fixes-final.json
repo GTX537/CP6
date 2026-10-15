@@ -1,0 +1,278 @@
+{
+  "checked_at": "2026-10-15T02:56:09.961291+00:00",
+  "source_base": "b2dc9387e35124622c18ec154cecb2d8db87d938",
+  "manifest_sha256": "7eaa62f8e2904978f7440de5a15c8e0d9bc8328ffe12199dfee99ebe098ab839",
+  "manifest_artifacts_verified": 141,
+  "records": [
+    {
+      "record": "red-20261015T024136533957Z.run.json",
+      "exit_code": 1,
+      "source_hashes": [
+        {
+          "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+          "sha256": "0233e84a1e42fd0792b9faeebf0c5f40d162da07ee1af68056621546929deb6b",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded\\eng\\wp01-01\\decision-closure\\mapping_constraints.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "sha256": "568ba1dacff713dba6f643bdd60d00ca411081939693231dc21db195785a9238",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded\\eng\\wp01-01\\decision-closure\\build_candidate.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+          "sha256": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded-all-global\\eng\\wp01-01\\decision-closure\\tests\\test_original_identity_mapping.py"
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+          "sha256": "1dd70e194960534c1480d2ce2b8ab7cc82cbe088004e6859fba5f6a6535e9440",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded\\docs\\development\\evidence\\WP01-01\\decision-closure\\postgresql-mapping.json"
+        }
+      ],
+      "log_hashes_verified": true,
+      "summary": "} : ExternalRequestReceipt has no original Id authority binding\n\n----------------------------------------------------------------------\nRan 6 tests in 0.058s\n\nFAILED (failures=37)\n"
+    },
+    {
+      "record": "green-20261015T024315465471Z.run.json",
+      "exit_code": 0,
+      "source_hashes": [
+        {
+          "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+          "sha256": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded-all-global\\eng\\wp01-01\\decision-closure\\mapping_constraints.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "sha256": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\build_candidate.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+          "sha256": "bb8eb6c81d85f74e47ab4f9b6b340993bb442ea23ca6cd5a99e78f2a5b05231f",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded-all-global\\eng\\wp01-01\\decision-closure\\tests\\test_original_identity_mapping.py"
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+          "sha256": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded-all-global\\docs\\development\\evidence\\WP01-01\\decision-closure\\postgresql-mapping.json"
+        }
+      ],
+      "log_hashes_verified": true,
+      "summary": "est_same_original_id_conflicts_despite_changed_business_number_and_tenant) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.022s\n\nOK\n"
+    },
+    {
+      "record": "scope-red-20261015T025037398238Z.run.json",
+      "exit_code": 1,
+      "source_hashes": [
+        {
+          "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+          "sha256": "900a1863e256d465d0ee0a7b77aa14bf7ae6c003a8b54265653046deaf32f432",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded-all-global\\eng\\wp01-01\\decision-closure\\mapping_constraints.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "sha256": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\build_candidate.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+          "sha256": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\tests\\test_original_identity_mapping.py"
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+          "sha256": "c18e3bc8124666920341927f3e37724f652113261f85b67e3bf623f5154b85a6",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\superseded-all-global\\docs\\development\\evidence\\WP01-01\\decision-closure\\postgresql-mapping.json"
+        }
+      ],
+      "log_hashes_verified": true,
+      "summary": "---------------------\n\n+ ['tenant_id', 'id', 'original_id_key']\n\n----------------------------------------------------------------------\nRan 8 tests in 0.043s\n\nFAILED (failures=18)\n"
+    },
+    {
+      "record": "scope-green-20261015T025159734163Z.run.json",
+      "exit_code": 0,
+      "source_hashes": [
+        {
+          "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+          "sha256": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\mapping_constraints.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "sha256": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\build_candidate.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+          "sha256": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\tests\\test_original_identity_mapping.py"
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+          "sha256": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\postgresql-mapping.json"
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py",
+          "sha256": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\verify-correction.py"
+        }
+      ],
+      "log_hashes_verified": true,
+      "summary": "gTests.test_same_original_tuple_conflicts_despite_changed_business_number) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.022s\n\nOK\n"
+    },
+    {
+      "record": "scope-static-20261015T025200254609Z.run.json",
+      "exit_code": 0,
+      "source_hashes": [
+        {
+          "path": "eng/wp01-01/decision-closure/mapping_constraints.py",
+          "sha256": "a334c995dab31006f38bf1f4448f99bd44da0078da109f1d3e556504bbe9dd6c",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\mapping_constraints.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/build_candidate.py",
+          "sha256": "5453bcce0c17d3a147517585060724dafa636715cd107e47e76596245c6ea305",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\build_candidate.py"
+        },
+        {
+          "path": "eng/wp01-01/decision-closure/tests/test_original_identity_mapping.py",
+          "sha256": "cea6d60e9c5e0be1fcf54e10a336c3aa759b4dd5c0e3e30203b353e8870d9942",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\eng\\wp01-01\\decision-closure\\tests\\test_original_identity_mapping.py"
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/postgresql-mapping.json",
+          "sha256": "c2d336b0cc3550f0d61b951359b60fca6a22237719e1a4fce88424139e7df6c6",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\postgresql-mapping.json"
+        },
+        {
+          "path": "docs/development/evidence/WP01-01/decision-closure/coord-corrections/issue-211/verify-correction.py",
+          "sha256": "402bc3e3a77b0aede88fd6baf360f318dc3dd4b4cb5e74f809f86462c60f7f67",
+          "resolved_path": "D:\\CP6-worktrees\\bug-211-plm-identity-20261014\\docs\\development\\evidence\\WP01-01\\decision-closure\\coord-corrections\\issue-211\\verify-correction.py"
+        }
+      ],
+      "log_hashes_verified": true,
+      "summary": ""
+    }
+  ],
+  "retained_indexes": [
+    {
+      "index": "superseded-index.json",
+      "count": 16,
+      "sha256": "71c56f4dae5002d661783c34bca236c78af2d951062dda63bee6f0e9850980d8"
+    },
+    {
+      "index": "superseded-all-global-index.json",
+      "count": 14,
+      "sha256": "5e1697fc90b731094e0d6e0241719a2a5320bd64aed4fef4fda6004b7d2f940e"
+    }
+  ],
+  "source_bindings": [
+    {
+      "entity": "Project",
+      "source_entity": "Project",
+      "source_line": 1580,
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "Iteration",
+      "source_entity": "Iteration",
+      "source_line": 1602,
+      "scope": "ORIGINAL_GLOBAL_IDENTITY",
+      "scope_components": [],
+      "scope_limit": "EXPLICIT_ORIGINAL_BARE_ID_PK",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "IterationInput",
+      "source_entity": "IterationInput",
+      "source_line": 1632,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "CandidateRef",
+      "source_entity": "CandidateObjectRef",
+      "source_line": 1664,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "ReviewRound",
+      "source_entity": "ReviewRound",
+      "source_line": 1692,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    },
+    {
+      "entity": "ExternalRequestReceipt",
+      "source_entity": "ExternalRequestReceipt",
+      "source_line": 1738,
+      "scope": "ORIGINAL_SOURCE_TUPLE_IDENTITY",
+      "scope_components": [
+        "TenantId",
+        "IterationId"
+      ],
+      "scope_limit": "BARE_ID_GLOBAL_UNPROVEN_DO_NOT_NARROW",
+      "id_nullable": false,
+      "original_id_key_nullable": false,
+      "business_keys_preserved": true,
+      "parent_fks_preserved": true
+    }
+  ],
+  "changed_entities": [
+    "Project",
+    "Iteration",
+    "IterationInput",
+    "CandidateRef",
+    "ReviewRound",
+    "ExternalRequestReceipt",
+    "OwnerKey"
+  ],
+  "unchanged_entities": 24,
+  "protected_input_hashes_verified": 90,
+  "old54_and_manager_exact_read_inputs_logs_reused": true,
+  "original_matrix_and_roadmap_target_ids_unchanged": true,
+  "gate_flags": {
+    "production_enabled": false,
+    "actual_adoption": false,
+    "actual_completion": false
+  },
+  "runtime": "NOT_RUN",
+  "diff_check": "PASS",
+  "new_tests_executed_by_reviewer": 0,
+  "source_edits_by_reviewer": 0,
+  "audit_note": "Initial reviewer lookup searched only superseded/ for the first RED test file; corrected to also resolve the retained superseded-all-global/ snapshot by exact hash. No test or source failure."
+}
