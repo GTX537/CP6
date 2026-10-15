@@ -1,0 +1,438 @@
+{
+  "capturedAt": "2026-10-15T01:19:16.927184+00:00",
+  "head": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "protectedMain": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "workflowCount": 13,
+  "workflows": [
+    {
+      "path": ".github/workflows/client-contract.yml",
+      "protectedMainSha256": "50f33cf81307824a7b6accd5eb3417968494cf2ae1aaecaccbe878e1554f00f8",
+      "candidateWorkingSha256": "fb633108d5d43b368d9c8a75d7d0ec81f718e119630c811334fd1bd4eb5f1454",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "dependenciesUses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/setup-node@v4",
+        "uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/crm-saas-public-contract.yml",
+      "protectedMainSha256": "5024797a8d374361d394c24abccc7f45a2e2314c1113c3deea5518e44c685efc",
+      "candidateWorkingSha256": "5174f62866dd6d84c61143074809718837086787fb886a19f085c24189d5d2c9",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "dependenciesUses": [
+        "- uses: actions/checkout@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/crm-v1-prd-head.yml",
+      "protectedMainSha256": "70e1a2fb2535bd82a43bdc6d199d18429768ab4e243c2523166a5863eeba85f9",
+      "candidateWorkingSha256": "9797044712711f8bc503b5b7a3b4da5755aaf6c8874a8104d30c20842a64fe6a",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "dependenciesUses": [
+        "- uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/crm-v1-prd.yml",
+      "protectedMainSha256": "84bf014626442317ef4f27b6580832162aba444d7d40fc03ed331fe2e6d4bdb5",
+      "candidateWorkingSha256": "25bb5f0e9b7626a88a71aba7a35322d7b7e51e5699c1e9c4766faa994b9c131e",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      candidate_sha:",
+        "        description: Exact candidate commit to validate as data with protected-main rules",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "dependenciesUses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "protectedMainSha256": "a3059601bedbd49a8596852d964704305b4eff7030e8bd5a56607e4549e0911c",
+      "candidateWorkingSha256": "941ccf864b7985b1b7d2b0c3277a01845003a0e4a44a97a55481d1f8fcad1d0e",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      expected_sha:",
+        "        description: Exact main source of this read-only verifier",
+        "        required: true",
+        "        type: string",
+        "      release_tag:",
+        "        description: Existing Platform candidate whose publication has completed",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "dependenciesUses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "protectedMainSha256": "0c3f53a82e604fd37eb33bb0a952f5a59aea720347c6a5b37721688ae85d1b95",
+      "candidateWorkingSha256": "df5ab1ce8ba02338cf6705bf41ffd4f5647be445d83cefbb23606a7e48802db9",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      expected_sha:",
+        "        description: Exact main commit used by the completed validation",
+        "        required: true",
+        "        type: string",
+        "      release_tag:",
+        "        description: New Platform candidate identity, not a Git tag or production release",
+        "        required: true",
+        "        type: string",
+        "      validation_run_id:",
+        "        description: Successful completed P10 validation run",
+        "        required: true",
+        "        type: string",
+        "      validation_attempt:",
+        "        description: Exact completed validation attempt",
+        "        required: true",
+        "        type: string",
+        "      validation_artifact_id:",
+        "        description: Immutable validation artifact ID",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "dependenciesUses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-preflight.yml",
+      "protectedMainSha256": "dfa0648be36c85f800c6d475ba44d27313d0f17a7bc7fca2df696b630111316f",
+      "candidateWorkingSha256": "8ffd7d626a3ef0566ec2caeaf1bd00e0bb5c89d3300f6403c6079cc89e4e353f",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "dependenciesUses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "protectedMainSha256": "e86a052bde1eebd0cff6d23be32b3cb7f637989880bdb74e3f41c260c11cccb6",
+      "candidateWorkingSha256": "169662caca8ab9d972976c17e2ca7d14a3986fcb354ca82933097f8d776fda02",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      expected_sha:",
+        "        description: Exact current main commit to validate",
+        "        required: true",
+        "        type: string",
+        ""
+      ],
+      "dependenciesUses": [
+        "uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4",
+        "uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4",
+        "uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3",
+        "uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4",
+        "uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/r2-candidate.yml",
+      "protectedMainSha256": "4cc534fbe26cc22c41875376fc08e6b68137ed30f2097e55d0fc050965151e7d",
+      "candidateWorkingSha256": "cfea8ab19c0bb5fe3800e6ee64d06dacd5c0bcaf0446bd3c8c0c82b6cb3923f3",
+      "lfEquivalent": true,
+      "events": [
+        "  push:",
+        "    tags:",
+        "      - \"v*.*.*\"",
+        ""
+      ],
+      "dependenciesUses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/setup-node@v4",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: docker/setup-buildx-action@v3",
+        "- uses: docker/login-action@v3",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/checkout@v4",
+        "- uses: actions/download-artifact@v4",
+        "- uses: actions/download-artifact@v4",
+        "- uses: actions/download-artifact@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/setup-node@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/r2-deploy.yml",
+      "protectedMainSha256": "6dbb5f13005bbf2f0442c67cc2f5551ef3fa280eceff4706b7596497396b74ea",
+      "candidateWorkingSha256": "37960838ab5c7d8565a69d29bd8137546946b8c2f5af696c2275971442f92b9f",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      version:",
+        "        description: Semantic release version without v prefix",
+        "        required: true",
+        "        type: string",
+        "      environment:",
+        "        description: Protected GitHub Environment",
+        "        required: true",
+        "        type: environment",
+        ""
+      ],
+      "dependenciesUses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-node@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/r2-freeze.yml",
+      "protectedMainSha256": "a9b998fff9f6cb4e67a1ddcccc794945007c7bde4eba052fdee79afc5df5e695",
+      "candidateWorkingSha256": "37ce4fb3de9d4c16e331c0864b245545efcef370d6efaeab2169e348bccb4a4e",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        "    inputs:",
+        "      version:",
+        "        description: Semantic release version without v prefix",
+        "        required: true",
+        "        default: 1.0.0",
+        "        type: string",
+        ""
+      ],
+      "dependenciesUses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-node@v4",
+        "uses: actions/create-github-app-token@v3"
+      ]
+    },
+    {
+      "path": ".github/workflows/space-ga-evidence.yml",
+      "protectedMainSha256": "5bc15531e10147c6e01637a1c63e4aa7820516c4f78543ba334c84c898301013",
+      "candidateWorkingSha256": "4f2904f963fefa8b87f3e8281a533255c5b76895001bd2b9c7d35570974452a2",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "dependenciesUses": [
+        "uses: actions/checkout@v4"
+      ]
+    },
+    {
+      "path": ".github/workflows/wms-production-sql.yml",
+      "protectedMainSha256": "ca11573d8c2622f08ad4156ae0733a40c5b8cc6d41dc3b227c7b1b509d8ecc3a",
+      "candidateWorkingSha256": "f44ac479f2378d9e05468a9a9b6f24e067da6ae6d475be796ffcd7661e15ed91",
+      "lfEquivalent": true,
+      "events": [
+        "  workflow_dispatch:",
+        ""
+      ],
+      "dependenciesUses": [
+        "- uses: actions/checkout@v4",
+        "- uses: actions/setup-dotnet@v4",
+        "- uses: actions/upload-artifact@v4",
+        "- uses: actions/upload-artifact@v4"
+      ]
+    }
+  ],
+  "azure": {
+    "sha256": "37b9b248f7aa5dfb1755570d3af70a395dd1c12bf3c41657ead80a299767d138",
+    "triggers": [
+      "trigger: none",
+      "pr: none"
+    ]
+  },
+  "candidatePathsFullListNo300Truncation": [
+    "docs/development/evidence/WP02-02/consumption-compatibility/.gitattributes",
+    "docs/development/evidence/WP02-02/consumption-compatibility/.gitignore",
+    "docs/development/evidence/WP02-02/consumption-compatibility/DIAGNOSIS.md",
+    "docs/development/evidence/WP02-02/consumption-compatibility/PLAN.md",
+    "docs/development/evidence/WP02-02/consumption-compatibility/README.md",
+    "docs/development/evidence/WP02-02/consumption-compatibility/REVIEW.md",
+    "docs/development/evidence/WP02-02/consumption-compatibility/SOURCE-ADOPTION-CANDIDATE.md",
+    "docs/development/evidence/WP02-02/consumption-compatibility/archive-delegated.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/archive-final-run.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/archive-initial.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/final-static-checks.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/input-audit-after.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/input-audit.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/build-identities.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/dependency-graph.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/diagnostic-source-binding.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/global.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/input-manifest.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-build.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-build.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-restore.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/database-probe-build-only-restore.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-build.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-build.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-restore.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/main-webapi-restore.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-build.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-build.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-restore.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-restore.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-run.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/private-probe-run.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/runtime-list.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/runtime-list.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/sdk-version.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/logs/sdk-version.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/negative-report-mutations.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/pre-runtime-identities.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/runtime-policy.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/runtime/runtime.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/snapshot-manifest.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/0615c0909a5a4ee4976ca49cd1339694/state.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/1b0e3e6d489d4ce19f58c15f2e35e01c/windows-path-diagnosis.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-independent-roots.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-longpath.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-msbuild-normal-cache.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-extra-source.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-independent-roots-corrected.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-independent-roots.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-longpath.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-msbuild-normal-cache.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/2d6bb5ffd97842cb8237a50323dff840/post-failure-listener-check.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/3bb763f8ef104677839ca49dd8c13338/execution.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/3bb763f8ef104677839ca49dd8c13338/policy-boundary-red.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/48e1c85a9c314596a38d5da6732652de/selected-asset-path-analysis.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/4b9a455498bf44108ccb1e79a8338156/existing-output-rejected.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/4b9a455498bf44108ccb1e79a8338156/existing-output-rejected.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/5fb28e164e284c8084e7aa1d14cb42d3/execution.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/5fb28e164e284c8084e7aa1d14cb42d3/runtime-policy-red.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/build-failure-1792024866664168000.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/build-identities.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/global.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/input-manifest.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-build.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-build.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-restore.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-restore.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/runtime-list.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/runtime-list.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/sdk-version.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/sdk-version.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/snapshot-manifest.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/state.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-green.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-green.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-red.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/graph-alias-red.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/810f99a3dcf04e1fb806c513ca3b754c/testreports/validation-provenance.md",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/build-failure-1792026051331082200.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/build-identities.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/dependency-graph.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/global.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/graph-v2.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/input-manifest.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/database-probe-build-only-restore.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/database-probe-build-only-restore.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/main-webapi-restore.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/main-webapi-restore.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-build.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-build.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-restore.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-restore.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-run.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/private-probe-run.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/runtime-list.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/runtime-list.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/sdk-version.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/logs/sdk-version.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/pre-runtime-identities.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/probe-failure-1792026427561254500.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/runtime-policy.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/runtime/runtime.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/snapshot-manifest.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/84981a57453d4841adb6cb0e02a52875/state.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/988fd5856dd549b68c1e6d3f1c4d5757/execution.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/988fd5856dd549b68c1e6d3f1c4d5757/runtime-policy-final-green.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/d58bd5be27234d26adf68da3c1410beb/execution.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/d58bd5be27234d26adf68da3c1410beb/runtime-policy-green.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/d817efb6b8154c22b6dd4ac1f008a0be/all-tools-green.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/d817efb6b8154c22b6dd4ac1f008a0be/execution.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/actual-o849-graph-v2.command.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/actual-o849-graph-v2.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/actual-o849-hash-observation.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-green.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-green.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-red.json",
+    "docs/development/evidence/WP02-02/consumption-compatibility/runs/df880f32ce4e477f9cadcfde3c3d5607/testreports/graph-hash-red.log",
+    "docs/development/evidence/WP02-02/consumption-compatibility/workflow-preflight.json",
+    "eng/wp02-02/consumption-compatibility/.gitattributes",
+    "eng/wp02-02/consumption-compatibility/.gitignore",
+    "eng/wp02-02/consumption-compatibility/Inspect-Assemblies.ps1",
+    "eng/wp02-02/consumption-compatibility/README.md",
+    "eng/wp02-02/consumption-compatibility/capture_build.py",
+    "eng/wp02-02/consumption-compatibility/input-manifest.json",
+    "eng/wp02-02/consumption-compatibility/input.schema.json",
+    "eng/wp02-02/consumption-compatibility/inspect_graph.py",
+    "eng/wp02-02/consumption-compatibility/probe/Directory.Build.props",
+    "eng/wp02-02/consumption-compatibility/probe/Directory.Build.targets",
+    "eng/wp02-02/consumption-compatibility/probe/Probe.csproj",
+    "eng/wp02-02/consumption-compatibility/probe/Program.cs",
+    "eng/wp02-02/consumption-compatibility/run.py",
+    "eng/wp02-02/consumption-compatibility/runtime_policy.py",
+    "eng/wp02-02/consumption-compatibility/snapshot.py",
+    "eng/wp02-02/consumption-compatibility/tests/test_graph.py",
+    "eng/wp02-02/consumption-compatibility/tests/test_runtime_policy.py",
+    "eng/wp02-02/consumption-compatibility/tests/test_snapshot.py"
+  ],
+  "candidatePathCountAtCheck": 138,
+  "platform": {
+    "operation": "READ_ONLY_NO_PUSH_OR_PR",
+    "rfc3161WorkingSha256": "88aba0aaac567f398b083442a733444d773e4ffbbd66bc9ea3687acdfe47c92d",
+    "narrowPaths": [
+      ".github/workflows/p10-rfc3161-preflight.yml",
+      "tests/CP6.Platform.ReleaseTests/P10Rfc3161PreflightWorkflowContractTests.cs"
+    ],
+    "changedPaths": [],
+    "pathFilter300Limit": "No Platform push/PR; full Main candidate path list checked, no cross-repository trigger claim"
+  },
+  "branchRuns": [],
+  "cancelledRuns": [],
+  "workflowChanges": [],
+  "actionsDispatched": false,
+  "decision": "SAFE_FOR_OWN_MAIN_REPO_TASK_BRANCH_PUSH_WITHOUT_TAGS; reread refs before push",
+  "recheckedAt": "2026-10-15T01:27:27.227562+00:00",
+  "triggerInputsUnchangedSinceCheck": true
+}

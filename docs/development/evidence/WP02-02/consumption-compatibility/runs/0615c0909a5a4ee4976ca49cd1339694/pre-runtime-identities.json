@@ -1,0 +1,187 @@
+{
+  "capturedAt": "2026-10-15T01:20:42.328791+00:00",
+  "kind": "PRE_RUNTIME_LOCAL_BUILD_OBSERVATION_NOT_APPROVAL",
+  "owner": "0615c0909a5a4ee4976ca49cd1339694",
+  "mainSource": "1129953156b7775152a74ad2f51cb95ef430ee56",
+  "platformSource": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "compatibility": "SPECIFIED_PATHS_VERIFIED",
+  "builds": {
+    "WebApi": {
+      "restoreExitCode": 0,
+      "buildExitCode": 0
+    },
+    "DatabaseCompatibility.Probe": {
+      "restoreExitCode": 0,
+      "buildExitCode": 0
+    },
+    "Probe": {
+      "restoreExitCode": 0,
+      "buildExitCode": 0
+    }
+  },
+  "evidence": [
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\logs\\main-webapi-restore.command.json",
+      "sha256": "a77a3180e1ee1757d6377d0ad26451ce4df87ae097603b2f647dbce68177e2ed"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\logs\\main-webapi-build.command.json",
+      "sha256": "b0eb113a198214355fe16a3635f435c609de25582ea0ad1e57c4016a1996297d"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\logs\\database-probe-build-only-restore.command.json",
+      "sha256": "9a9e361536fcc1ada9b3e1671c9bcab9b96507dde8ade898faa94bbac1a9f821"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\logs\\database-probe-build-only-build.command.json",
+      "sha256": "9fbbed9f086e233914b1fd7fc1dcca1a43eae1d8c5e7215f20d35a1ea5338d83"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\logs\\private-probe-restore.command.json",
+      "sha256": "cec0f401165942cb0a39142e83fe6d63fa84c0c5688bbd4f043e4de7f6160722"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\logs\\private-probe-build.command.json",
+      "sha256": "40d18864c5fa3827402ca1754fe3b8fd70bea886fe526e4e2697e5cd67b02b9e"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\snapshot-manifest.json",
+      "sha256": "c38de8f5020ef05cddcc2a491a3bc051792a385047f55e8821b7c788e5b23848"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\build-identities.json",
+      "sha256": "263c8540a9221795cd410c5013a6e9c77b4b7cf60015fe68df3b8cf585120ff0"
+    }
+  ],
+  "assemblies": [
+    {
+      "name": "CP6.Platform.Abstractions",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\CP6.Platform.Abstractions.dll",
+      "mvid": "af1ab308-4e99-4d1c-80ce-0ff8a3483ef3",
+      "sha256": "f96a7b2eaa16efdc56c6d2cec5a2cce16c08947a87719ccde2f6d0e156dd0639"
+    },
+    {
+      "name": "CP6.Platform.AspNetCore",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\CP6.Platform.AspNetCore.dll",
+      "mvid": "a07815a0-3865-43a0-8345-02d2a793655c",
+      "sha256": "1ec8d899af3602110df3b454ca709aa990e49c736e9d4f34dd263929757963ab"
+    },
+    {
+      "name": "CP6.Platform.Contracts",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\CP6.Platform.Contracts.dll",
+      "mvid": "1afd5cc9-686d-4de6-a848-46c3c584bbb9",
+      "sha256": "52bdd43d26993f5e72ef14242b0395f6ae993ef95264d21c8b253f1e3eda48f6"
+    },
+    {
+      "name": "CP6.Platform.EntityFramework",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\CP6.Platform.EntityFramework.dll",
+      "mvid": "4bf9252b-27f5-4f37-8044-a1571766f7e6",
+      "sha256": "ec4f1a5af1bde608e978bd07f5e1cca7558a07ab287d2c5f8024a0a20117a6c7"
+    },
+    {
+      "name": "CP6.Platform.Messaging",
+      "version": "0.8.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\CP6.Platform.Messaging.dll",
+      "mvid": "01f6ceef-2be0-4d56-ae2a-ed4fbd91d41f",
+      "sha256": "7d8bae8dca6e29b566dabc403b9185b792aeff8bc916f114298ebe4cf4b96505"
+    },
+    {
+      "name": "OpenTelemetry.Api",
+      "version": "1.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Api.dll",
+      "mvid": "0551c1f5-7037-4d3a-8ced-4759a5fc31c2",
+      "sha256": "853f5f441e08af932bcc6f9213ddcddd6f276795fc9e093ac530ef6c9c9e5e10"
+    },
+    {
+      "name": "OpenTelemetry.Api.ProviderBuilderExtensions",
+      "version": "1.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Api.ProviderBuilderExtensions.dll",
+      "mvid": "6ceeaa40-a88b-4d3f-aed0-53c3ac59dc38",
+      "sha256": "07d14f395fb485642dc6248c109be6f89468480b11b48974b88f601ded0a52cb"
+    },
+    {
+      "name": "OpenTelemetry",
+      "version": "1.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\OpenTelemetry.dll",
+      "mvid": "2d181f47-fe95-4d98-beae-44e21eb499ac",
+      "sha256": "7e8235cebdfc4a30f97439daaa0027d883b748fb57fbc33cae96392eeda66719"
+    },
+    {
+      "name": "OpenTelemetry.Extensions.Hosting",
+      "version": "1.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Extensions.Hosting.dll",
+      "mvid": "b9e4252e-192b-47c2-a050-47010c026689",
+      "sha256": "0bdb6032c9f85d364729504f3f83cd07ff33d54beaa27f88410f3f94a67f9547"
+    },
+    {
+      "name": "OpenTelemetry.Instrumentation.AspNetCore",
+      "version": "1.18.0.1289",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Instrumentation.AspNetCore.dll",
+      "mvid": "1c2584b0-76fd-4439-ab4f-ad867ac08afa",
+      "sha256": "84e802f4332f8681d5996a58e875d8607b028e52e0bf7f83aa624cba64f12856"
+    },
+    {
+      "name": "OpenTelemetry.Instrumentation.Http",
+      "version": "1.18.0.1290",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\OpenTelemetry.Instrumentation.Http.dll",
+      "mvid": "3b80af4a-353f-4b1b-8ed6-62090f21258a",
+      "sha256": "5745c8ac7d19b8c05bc728a23b63eb8fff6b80e44c17bcfa9036ebfe3956124e"
+    },
+    {
+      "name": "System.Diagnostics.DiagnosticSource",
+      "version": "10.0.0.0",
+      "path": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0\\System.Diagnostics.DiagnosticSource.dll",
+      "mvid": "54d6b6a6-6acb-4134-8c85-9e2d495e61b0",
+      "sha256": "5de9dc5c14e36e7798b69805b57b6d2c4136a6c2266c6db2c2351eb8eda792f6"
+    }
+  ],
+  "requiredAssertions": [
+    "http.single-loopback-listener",
+    "http.trusted-context",
+    "http.caller-fields-ignored",
+    "http.downstream",
+    "http.trace-propagation",
+    "http.baggage-stripped",
+    "http.response.positive",
+    "http.response.unauthenticated",
+    "http.response.revoked",
+    "http.response.unavailable",
+    "http.denied-handlers-not-run",
+    "context.background.trusted",
+    "context.background.restored",
+    "context.background.denied",
+    "context.message.trusted",
+    "context.message.restored",
+    "context.message.denied",
+    "telemetry.flush",
+    "telemetry.server-traces",
+    "telemetry.client-trace",
+    "telemetry.metric",
+    "telemetry.log",
+    "telemetry.privacy",
+    "telemetry.local-only",
+    "cleanup.stop",
+    "cleanup.dispose",
+    "cleanup.listener-closed",
+    "cleanup.propagators-restored",
+    "assemblies.required",
+    "assemblies.owner-contained",
+    "assemblies.platform-types-observed"
+  ],
+  "captureCommand": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "D:\\CP6-worktrees\\wp02-02-closure-20261014\\eng\\wp02-02\\consumption-compatibility\\Inspect-Assemblies.ps1",
+    "-Directory",
+    "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\bin\\Release\\net8.0"
+  ],
+  "captureToolSha256": "21854a91271070be8e354bb62625a927999e608cbe5e0c8ea81d576be8cedbe5",
+  "metadataToolSha256": "b4199919d2fc0877619b3f3fe05a43996799788a4470ca421f5bf50ea2993337",
+  "formalPackageTrust": "BLOCKED",
+  "mainConsumption": "NOT_RUN"
+}

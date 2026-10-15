@@ -1,0 +1,21 @@
+{
+  "label": "private-probe-build",
+  "argv": [
+    "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+    "build",
+    "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\probe\\Probe.csproj",
+    "-c",
+    "Release",
+    "--no-restore",
+    "-warnaserror:MSB3277",
+    "-p:RestoreLockedMode=false",
+    "-p:RestorePackagesWithLockFile=true",
+    "-p:NuGetLockFilePath=packages.wp02-02.lock.json",
+    "-p:PlatformSnapshot=D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694\\snapshots\\platform"
+  ],
+  "cwd": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\0615c0909a5a4ee4976ca49cd1339694",
+  "log": "logs/private-probe-build.log",
+  "exitCode": 0,
+  "elapsedSeconds": 7.995,
+  "logSha256": "e62e5e69eba5b5dd1ae7e523cbb325788ca15662dafab8c66e4bc353c53187f2"
+}

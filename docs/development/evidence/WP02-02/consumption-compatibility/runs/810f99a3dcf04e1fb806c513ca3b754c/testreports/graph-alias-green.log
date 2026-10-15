@@ -1,0 +1,6 @@
+test_owner_internal_alias_junction_is_rejected_before_resolve (test_graph.GraphTests.test_owner_internal_alias_junction_is_rejected_before_resolve) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.146s
+
+OK

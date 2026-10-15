@@ -1,0 +1,1193 @@
+{
+  "capturedAt": "2026-10-15T00:32:07.293554+00:00",
+  "mainBranchBaseline": "99fc0ce383d2d02c1404a8adbb3abe971b41d332",
+  "mainProductSource": "1129953156b7775152a74ad2f51cb95ef430ee56",
+  "platformSource": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+  "admissionFingerprints": [
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "AGENTS.md",
+      "sha256": "6478d5477bee4cd6e78b51ea226650170f422f1e15699d778e0c03c9d9490bd2",
+      "git_blob": "eef8f4191d9956f8697f1ccf24fe841ad41ecbff"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "NuGet.config",
+      "sha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45",
+      "git_blob": "21a9499d52988046bec0d8b253867ba0fc506778"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "Directory.Build.props",
+      "sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+      "git_blob": "6f73fc306d1c382d18a9673787202c275d5e51d0"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "sha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+      "git_blob": "a5ca89c3572b6f64a1db409a5b7faada899b5ae9"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/packages.lock.json",
+      "sha256": "af945b670a5792b9d246e0e7a72e25fa83f9f9531159707aee46dfedab990ca4",
+      "git_blob": "ad56b0ca498666e08ba5b5d5e56f7a708762d0b4"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "sha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321",
+      "git_blob": "7012e57b353864125e6f220fe29ba821fd1cb572"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/packages.lock.json",
+      "sha256": "533ad0910797142c5b547f873a3d2db5bf23791e0183ab701e4801bfb3cf5650",
+      "git_blob": "b1e239760c84ae59ce246632310ef9b43bf1285b"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "sha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198",
+      "git_blob": "10e4572f66dc9d61f79aeedccdee3610aa78556d"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "sha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608",
+      "git_blob": "098be5b195c09fab99a31fdf682e1c3cd70f37c0"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Probe.csproj",
+      "sha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "git_blob": "f2643c232cad10f702db041c0f03130ff7d097b5"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.props",
+      "sha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "git_blob": "9a371b4acc37f6c663b5a47ca23281e8fcf5b3bf"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/NuGet.Config",
+      "sha256": "98dd570e3b057ab3e996ecb975a80823aa85949f707965a2e074853dc3cd1759",
+      "git_blob": "ba3ea93735e9089d20d62ad15aa6affb20a55cd4"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/README.md",
+      "sha256": "029bf15b83079c951c2209b36d3cfc803c2642e841d911d1939fe612f556a52f",
+      "git_blob": "6e982b390b0e1b7f98e0ce964d84fd0d13172931"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/DEPENDENCY-PROPOSAL.md",
+      "sha256": "68a31bf22df71b944a2970f39c55533915e832faa3cd9b9826109eb952cec349",
+      "git_blob": "365a82c6668042e9389b84d20c90efff54c75337"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/FORMAL-VERSION-PROPOSAL.md",
+      "sha256": "f1ea5d67f65aecfb542e37a44f7b1581c202f72790a7e8c409c59cb06d15ca6e",
+      "git_blob": "37552831cdb97394aaeff7e08fe9269c81d531c9"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/build.log",
+      "sha256": "98ea061c3ca787b0823c18b62f51bcd27fe6ae2949ec3dae59ac078e3e875a63",
+      "git_blob": "9d3898679f3ab4962a4a99fedca6fa29b83db2f0"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/original-publication.json",
+      "sha256": "17fd39f5724ba118771eb95aeb18d78045ea2e576431957ab7c24b8d13719181",
+      "git_blob": "a2ccdf0360a5df47ae7d7b7b6f3fccdfb5997829"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/inputs/local-consumer-lock.json",
+      "sha256": "1fabaecefb24050d801a9fd894dcd908b8428f7bd486fe4d0a634ad97ffe0b01",
+      "git_blob": "df5db6cdd44abf5c07fd04d86457af3552e07bb8"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/task-plans/WP02.md",
+      "sha256": "db86355e7ab52e13be9e3de0223237ba0494b4c10d0dc263bad23c0c69813b05",
+      "git_blob": "bfb7d4e0e9281768b44ea98f541610a94fd8094c"
+    },
+    {
+      "repository": "Main",
+      "source_sha": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/modules/PLT-RELEASE-01.md",
+      "sha256": "402ac4d108efb12cfbd5a902751bec5a659578bdd85d999e5025e19080cd2feb",
+      "git_blob": "cf4a6828dde1f35f6c8309159d33daf9ca4bdc58"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Build.props",
+      "sha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+      "git_blob": "42131cd740450f08305e95b08b855cfb981c022a"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Packages.props",
+      "sha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65",
+      "git_blob": "768d4ae02403f682963025d762ff7ed022a9c18d"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "global.json",
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+      "git_blob": "4c4c3ae5ed709aa83aa03569d2c1f6792c553165"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "NuGet.config",
+      "sha256": "bb4ea679b4c1d64f6220321702187bc3241f2e530d4551880f8a7aa6604ff881",
+      "git_blob": "7f55add0ec73ef552270b2fb024d410239c04f71"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "sha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b",
+      "git_blob": "3b66a813bbab6ccf723ee7e12c9492389062040c"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "sha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+      "git_blob": "0a735078a1562db562d72998172bd63cf6ab8934"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+      "sha256": "155913bd995dfd0eb2c787268358eeeac3d24a98f4c285ecc64e92bc4650dfe2",
+      "git_blob": "9ce69da3bb822a9adf040e13638d6e7e705755cf"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "sha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890",
+      "git_blob": "30b7857046279e978db3e12d443d65bdecc242fb"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "sha256": "347ab97b35caf5961b83409e28be4461e5f2077996904fc953ffc372d9ba6e19",
+      "git_blob": "5431acc9ace1b6cfccd28ab78dd911d619d1dc2f"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Testing/CP6.Platform.Testing.csproj",
+      "sha256": "80a51d405364c3d503fcd9c44bb8afc8b46fcc02dab35ff8f0b07e1a5aee77a9",
+      "git_blob": "83b047c3e4095c6c58ac85008bc72a8c61f37938"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/Cp6FormalPackagePublicationValidator.cs",
+      "sha256": "f1e4ac737793e57a7eb08f52b10f1250b002b90f4b791f870e4519455bd2b2ae",
+      "git_blob": "b8639c708f4b37ce061c0e521c0324b6a2d0acb5"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/CapabilitiesV1/Cp6CapabilityValidator.cs",
+      "sha256": "fefdf49aaf0f86afe448e3a7da1f455609d5d7f57dfc0bbc6ead592484a2a15d",
+      "git_blob": "8460b68baea84370d73c2cbd4412767916c202be"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.AspNetCore/ObservabilityV1/ObservabilityRuntimeV1.cs",
+      "sha256": "cfc5ed9afa9bfc6119863502659173cee31989c04358129c3dc87208cf1725c5",
+      "git_blob": "f039e9c3c0f5215c0ec9d845153483d25366ceb4"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.AspNetCoreTests/ObservabilityV1/TelemetryAdapterTests.cs",
+      "sha256": "b3b67e97327d4edd18f041d195d8fba4ed291851e56a094041b92645e4424362",
+      "git_blob": "3a46be92d8f87c1bf6c2f966b3c4b6515b53c406"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": ".github/workflows/p10-formal-packages.yml",
+      "sha256": "a8a491f903e4b9ece4ec821a2fef064a5d78b6b62b4b88af5f71b8d6e8f9a19f",
+      "git_blob": "8683248e8347b1f42ae65cc32cd40a34aa30b871"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": ".github/workflows/p10-rfc3161-preflight.yml",
+      "sha256": "2660e87fc9a556be0cbc73f19f12a2ab58b4bda534e265ba398d257752272cf1",
+      "git_blob": "00ffe45cf6867d8a4538c067e30e3ece93b4b97d"
+    },
+    {
+      "repository": "Platform",
+      "source_sha": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "docs/WP02-27-PACKAGE-CAPABILITIES.md",
+      "sha256": "dd4c5023b8ffc05b5fda984f0bd8f5c9220b9a4d864382d77f32e0a19d46e031",
+      "git_blob": "c1272a44e443cdc103ec84eb73c58289e5d114ee"
+    }
+  ],
+  "projectPropsLockInputs": [
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Client.Api/CP6.Client.Api.csproj",
+      "gitSha256": "4c5d807d4375f7badfe63abc6fabc758e0f74b656b8825b96f318607db81ea3a",
+      "workingSha256": "4350c2b71f93264ecabc3f69e458297a3b320d2e4334e4671b02f06c305804ee",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Client.Core/CP6.Client.Core.csproj",
+      "gitSha256": "42d1896d26d51c135280875a33f89542590c13dcc751c6ccd525c81e6110cf64",
+      "workingSha256": "0186eff574916264817563974c82d6b3f1211a925f070f59202cd7f0032d61ec",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Client.Tests/CP6.Client.Tests.csproj",
+      "gitSha256": "d5e5688e597357a81dc0e9e72bb0ddc9a5482ddb41f419e495672eac0f59e2e0",
+      "workingSha256": "2b7db0a7644be2f5e681f3d71c10bb4f858bb8451036ec758bfed4d7cd259a20",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/CP6.Core.csproj",
+      "gitSha256": "b28df53cce929f5be46077d60b9a0a42fcf67d0964d48787f86fffa88fbf3a6a",
+      "workingSha256": "241aa0f2737a6aa6e2dd3b89d7af9344472c20e306ebd4897db5bcc1b830b2b8",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Core/packages.lock.json",
+      "gitSha256": "af945b670a5792b9d246e0e7a72e25fa83f9f9531159707aee46dfedab990ca4",
+      "workingSha256": "d3317b7bf34f2a1c6219541e53f3064f842a4e03414a866af7b6d4bc6a1bedfc",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Desktop/CP6.Desktop.csproj",
+      "gitSha256": "eec4dbbf0c0ca67100be478d73bd6a9062664499bdb30bc5ef7ccfd712232ce0",
+      "workingSha256": "d8eaff299aeab3d6c66af586910803c5e8174c535f51943b46288d9f09858488",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Entity/CP6.Entity.csproj",
+      "gitSha256": "bf8b9c3342cb7288a4671e9104030a970a5d12c5db64714f7f7b8214cea4084d",
+      "workingSha256": "20724537f8dfa54de7b3e4998da971e3ada31dc0300caf229012a5fa851b671a",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Entity/packages.lock.json",
+      "gitSha256": "ff90d3bb5b2ea55f88c84d3fb0a4a33afd5eae54fb2e19b4898c358b290560f3",
+      "workingSha256": "bf6ccea1eb09e82768edb2c2c1162171e006cd25632ed91f99af498dfa94d88f",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Mobile/CP6.Mobile.csproj",
+      "gitSha256": "0107c876a3a0af321b442eb1f3d9aa2d7fcf4b47777ae97fe23588f174e0ff17",
+      "workingSha256": "e6a80c2eff51ee5b1423ebd90f33488c3fee24207cb6df8b9a8c4c2921e1aed4",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+      "gitSha256": "dc2ac5f7338f8c906b8608a65dcdb4429ac30b7fc25b6bdd7bb72ff8e5134613",
+      "workingSha256": "40d4764811e5c6fa99fdcd1a6971b3e4e777baeb2cd860a0149873db8e6ed7b5",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Oidc.IntegrationTests/packages.lock.json",
+      "gitSha256": "5ce62f06bd5ecc366a310c19b82b3c5325453d4ed6ce7620831138675bb8943e",
+      "workingSha256": "1a5005d527f34d445140124fde99e34f8ac2fd21ec83b32f7d1180344a54942d",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "gitSha256": "7d66077bb2e71cb6b30f15cf72607dfc9b4e1b82977e66c31aea18cc1418d198",
+      "workingSha256": "c67d762ebcb5ec391d449a65c267076ee4cdf42d8c18cad4ed967ba1d27accc7",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Persistence.PostgreSql/packages.lock.json",
+      "gitSha256": "fa7308fb66b2316e4f6b3c8ffea97586969d90c53312db5fb2b3081c32a71501",
+      "workingSha256": "565334cc9393b7f9796a652007cbed6887ad67ba5f7c14052e2e32e8b383b7f8",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.Application/CP6.Space.Application.csproj",
+      "gitSha256": "d055b6c3ce38e8ce52840c108f885280e68e9c2e6cf1565d9fb3b9f2008acd96",
+      "workingSha256": "93df62a00da7097e7b70d0df8070e069e42e36917a35a98bc68e8509de27d6e1",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.Client/CP6.Space.Client.csproj",
+      "gitSha256": "12985a174dc55d6f519f2205bf7b35d0123d6d7dfa7fe3fe34f2f3028ba30604",
+      "workingSha256": "427d1e050e34969c21ed62ae104c9f0d53391d4c9f6f6d67e43ac6cada4d0dca",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.Contracts/CP6.Space.Contracts.csproj",
+      "gitSha256": "12985a174dc55d6f519f2205bf7b35d0123d6d7dfa7fe3fe34f2f3028ba30604",
+      "workingSha256": "427d1e050e34969c21ed62ae104c9f0d53391d4c9f6f6d67e43ac6cada4d0dca",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.Domain/CP6.Space.Domain.csproj",
+      "gitSha256": "12985a174dc55d6f519f2205bf7b35d0123d6d7dfa7fe3fe34f2f3028ba30604",
+      "workingSha256": "427d1e050e34969c21ed62ae104c9f0d53391d4c9f6f6d67e43ac6cada4d0dca",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj",
+      "gitSha256": "eb965f2e68caabbd28957842ccaffb6bcf2c3beab7da5d2be1a9018e76e1d06f",
+      "workingSha256": "1ad4fad052dfb9c947cf5105906886d165fbd267692ed61f377ec4e06bcd1872",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.Infrastructure/packages.lock.json",
+      "gitSha256": "9e2417b3b22829454ebfdb24abb6bb7707aa1e66a677c562c73d949cf7276504",
+      "workingSha256": "393af9e3e2c8c4f193a381a873aeab0262226badfffc2f4b8963f2b94a6bd328",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "gitSha256": "2bb658ebb325ea2963a72b693f64452e77fd55aa203e7ffe16f121ee2e9f0b15",
+      "workingSha256": "5167ff6bf2335ed78106439808774136d5bf5e268c26333d3c3cbb699c92351b",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.IntegrationTests/packages.lock.json",
+      "gitSha256": "632f0df04d9526036a6ff266cb6285893ba35930cf593a1fb9f3e68a4f00cab0",
+      "workingSha256": "b97672d5ce68bb364010adae9dd8c554b3d1972135a083989e662a3f616ba067",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Space.UnitTests/CP6.Space.UnitTests.csproj",
+      "gitSha256": "80e709979acd9baa9ccd071e9a580ab7840037c989831d277163ea9840f4bde8",
+      "workingSha256": "812b3e90dd65920b18803c84ebe2b69de6be23b7b3caec5f22756e793b16402d",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Tests/CP6.Tests.csproj",
+      "gitSha256": "e4c80a21edd137140c51f49f99aaac2d8600cf6474173f89d36747bcb07a5307",
+      "workingSha256": "a965279afeb64c590eb571d7042a8197c83ee2394e26fb9a2daf1449fe9944d8",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.Tests/packages.lock.json",
+      "gitSha256": "6b4049ed056300bfd91331f9cf0835e8cee6a8d616cc3338bff957f01e28498e",
+      "workingSha256": "654973d7905b5e124bb2dc2c97d5a7ed1e334c175e02699c225b9b097313c6e5",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/CP6.WebApi.csproj",
+      "gitSha256": "9df5beed4a9129e8c075f1d6848b8852d837e67b9c953a4dfa118ba2a03c4321",
+      "workingSha256": "4d6d011f12747c8d931da4ffeb0526273cf32a7a862f8eeed1d7a0dccaac7913",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "CP6.WebApi/packages.lock.json",
+      "gitSha256": "533ad0910797142c5b547f873a3d2db5bf23791e0183ab701e4801bfb3cf5650",
+      "workingSha256": "5ceea1529f4c85c1129b59bc92d4481465ecf534c9537616fcf051aafe7f7792",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "Directory.Build.props",
+      "gitSha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d",
+      "workingSha256": "dd3c34588874b90b6e2d42aa2b51b4e7deedaf22ee34b6bc182160e3d148b739",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "NuGet.config",
+      "gitSha256": "23ab29f2a03952fcf859213fe42a1e2c2a8eee933e8f92dd74c18f68f2b7be45",
+      "workingSha256": "14045923bce7cfcdd9f6400c25850c8f964c24b47122dfed45bbdd3d8c33152b",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/audits/2026-10-03-bug-150-mapping-idempotency/native/red-CP6.Space.IntegrationTests.csproj",
+      "gitSha256": "14d4f495d48a10fdc7de98fea027e197200a4862fbaefbc9874396fe9e9bb40b",
+      "workingSha256": "14d4f495d48a10fdc7de98fea027e197200a4862fbaefbc9874396fe9e9bb40b",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/design-handbook/remediation/assets/core-types/DesignTypesCheck.csproj",
+      "gitSha256": "3f32f08975e25898ed7793c09dc59a2598db7d729dd67047723221ac458c4569",
+      "workingSha256": "3f32f08975e25898ed7793c09dc59a2598db7d729dd67047723221ac458c4569",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.props",
+      "gitSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "workingSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Directory.Build.targets",
+      "gitSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "workingSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a1/probe-source/Probe.csproj",
+      "gitSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "workingSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.props",
+      "gitSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "workingSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Directory.Build.targets",
+      "gitSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "workingSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a2/probe-source/Probe.csproj",
+      "gitSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "workingSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.props",
+      "gitSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "workingSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Directory.Build.targets",
+      "gitSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "workingSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/development/evidence/WP02-02/consumption-preparation/runs/probe-20261014-a3/probe-source/Probe.csproj",
+      "gitSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "workingSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/file/CPX/Msbb.Api/Msbb.Api.csproj",
+      "gitSha256": "0c647bb0cb03fe7cd27556becb23a1738238c98cd3da6bc1fe4eca7d29c6bbd3",
+      "workingSha256": "2878a99d9682008785a3850778d093bfc0618afa69fba438b36fceae6f18f930",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/file/CPX/Msbb.Application/Msbb.Application.csproj",
+      "gitSha256": "eb1eb3b784be2a4d9b4d25c6bddcec4f971d8840189940ccae668b0869d09516",
+      "workingSha256": "f53e8a6d1a65634d7ab2072a9a5abfcb4b0ffb1f6689616a6b84afdbaf66c9cc",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/file/CPX/Msbb.Domain/Msbb.Domain.csproj",
+      "gitSha256": "7e6352f0d7cc32858a49c347328a6c8c8fdd42346310107b49612db18b42f566",
+      "workingSha256": "b255a8d2c57904f7cb902e0b1abe4f17c76df2fcefc871bb3c7af9feaaccd854",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/file/CPX/Msbb.Infrastructure/Msbb.Infrastructure.csproj",
+      "gitSha256": "2ff89c712d94f586a4655038757593846c470693fd101ba6251ba3be0b0e46d9",
+      "workingSha256": "47c928125a989c298d655640846f7ae6a22298ed164c41371a58594252254d95",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/file/CPX/MsbbSolution/MsbbSolution.csproj",
+      "gitSha256": "fd76c47eccd10a96e3f9faf00f265d77f5f9f327099f76f196d8afe562fcea72",
+      "workingSha256": "29c91fbbd2684c7cc419119c2f2e65f3fe0d9328c8277d8fb0fd83f0554fdc3f",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "docs/superpowers/qa/sso/mock-idp/mock-idp.csproj",
+      "gitSha256": "e1d5697e36359a9ca00bfe25da9f10cae2081c64dc0d438a2323483adc03de27",
+      "workingSha256": "e2a29a0ce297b59537e346b7c6486ca4e1497ebc15748f1b8406fbcd49020707",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/contracts/exact-values-tests/CP6.ExactValues.Tests.csproj",
+      "gitSha256": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e",
+      "workingSha256": "5178d2c0e8bc50523d5b24f93f6aa95f4083fb3810355ccc389d3b6a7c67bd0e",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/contracts/postgresql-tests/CP6.ExactValues.PostgreSqlTests.csproj",
+      "gitSha256": "a6616864498568d9c888b1e327cc461383f91e781e5c85517840eb3dd873885a",
+      "workingSha256": "ee08df7e1ee32770a0d7c8baf27db455d88bbba657854b989f2f913f2164b2cd",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/contracts/postgresql-tests/packages.lock.json",
+      "gitSha256": "693a1940b47c2cc21dfb0fa374cb0c8aac17a342e5e493a1cd07aad186fd493e",
+      "workingSha256": "17bb2300b71126fb34c589ea27f15d30bee42a35bf883e09b31dc82efa0ae558",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/browser-fixture/CP6.Oidc.BrowserFixture.csproj",
+      "gitSha256": "e92f932d6a2f1ad27161dfa6891efafd57126eab6bb062b878682145a803161b",
+      "workingSha256": "a03ab4478e405b0105b5dd794e92b436fa20d8dd7dfce4a9e2cd939617f114ba",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+      "gitSha256": "bb36e199dd2768ae6f02f9a5760651c0bf9de934d2251db13521c7aa5ad6bf23",
+      "workingSha256": "088efa338bf5cd2b8d62ca256498893d4f7eda8cc0d632901e11f1014d734420",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/erp-integration-tests/packages.lock.json",
+      "gitSha256": "319e3c8e46d05a673930aa6285225255aad2724eedde6160ce6a1278bd0f1ccb",
+      "workingSha256": "d707dd7a116454cd85ea144479335ced0a2b0c239f607a2d53d636be345c34c8",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/erp-live-fixture/CP6.ErpLive.Fixture.csproj",
+      "gitSha256": "909adfcfae57d6c0d6782844c6265993325149a040af47b90e3230f865b24fdb",
+      "workingSha256": "e2c06982d094ff4db646d4f6c1f286d4f746a7421d1679763def670ad5ec963f",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/erp-live-fixture/packages.lock.json",
+      "gitSha256": "0b273f3c0f795185a2aa8ef2d962eea9554059ac516e9248ced634215b68e9b6",
+      "workingSha256": "4d549c1ee76ada2da5b64750f701bd74e8366937396745f7e4c537d90975ccde",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj",
+      "gitSha256": "5b7c52fc24b1b8dc924831c2363ee175c064319b99f25ca64e19b5dd789c67e6",
+      "workingSha256": "313d924654eb25fd406be5b1a7bff08bf1e5289b5bf3db9dec441c909a6c000f",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/identity-events-fixture/packages.lock.json",
+      "gitSha256": "68064644a0b9339944daeb2e55cd6f1b838317b545f7f2ae9ba43723ae9afbc8",
+      "workingSha256": "187accebff2b3e37fb2f9cb4c15ddea296bc89f73838c2134f7b72aa9efb467b",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/legacy-exit-tests/CP6.Crm.LegacyExit.Tests.csproj",
+      "gitSha256": "7c02241250dd9d42d0b70e6ad4e3b48c16134f3569d762f20f5ebaddee77e383",
+      "workingSha256": "9a480e4dbf3f06d0a1f0aac5d5faaf2953be84413313bce2bf7b80cb6c32d185",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/legacy-exit-tests/packages.lock.json",
+      "gitSha256": "aa8df1477b1c4b7e887ebf438b31db1bd1c005db76aff4bd880f75b138f60212",
+      "workingSha256": "1c5d9d1aaa0beefe13ae689d4222a60678229d59633437be602f6ebbc0cd43cc",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj",
+      "gitSha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272",
+      "workingSha256": "e61aabe7daa8184eb15889d30f662ea1fc7135ac9860e8fa0456d92a1a6cfede",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/crm/source-fence-tests/packages.lock.json",
+      "gitSha256": "3b82e20d7b58a066d4817c815f8a04fa531efd8401c138a98832b3c6bfb8e533",
+      "workingSha256": "ab4201f44c5b8549d905afec7f6ffa1edb09e58f5121d0e963bd7e95d2bcffa3",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.props",
+      "gitSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "workingSha256": "1dd9fb63889f6c328c1386ef13753e28e5f320a571c531db864115b554b5e0cb",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Directory.Build.targets",
+      "gitSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "workingSha256": "17284cb74605517cbec8a8153505da71a685b28694b67b5ef80608cd79b1c0ea",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "eng/wp02-02/consumption/probe/Probe.csproj",
+      "gitSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "workingSha256": "435e5cf8bcecbd31e74c40f64dca976656f40ab67959bb4a9570d6d189abce30",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Crm.SourceFence/CP6.Crm.SourceFence.csproj",
+      "gitSha256": "0457a1d18984a4f5e07467a4be290f0fc8f970f365fa736753752935cad8570c",
+      "workingSha256": "af966ce4a18bfeb02f246f9ae06c29045c483770d7d21051a248e323893b5224",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Crm.SourceFence/packages.lock.json",
+      "gitSha256": "7603e1a9bc304391c22b591caf1d8edd74e58cac7df313f10a6fe5085c539b66",
+      "workingSha256": "a69b1d61d5aea108664b0b7bf2f080a98fe7bd69f229b74b0be70e09c3d15645",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+      "gitSha256": "c79d1137c3f70932066dee8c26b7dc4570aaadde94845cbb93521d4b1323703d",
+      "workingSha256": "72bdbabcabf4b5362d0944d60e284a0c360c223697eb9c0c8b8c58fb1ddeeff5",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/packages.lock.json",
+      "gitSha256": "564cdb60975168721b1414ebf7f81d2610d82de8aa23796162e0c36f216bdc26",
+      "workingSha256": "2d64365afa0098c3ab9d8cdeee4c75584d89708c85a1aab5b07d99d1ed22f83b",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+      "gitSha256": "221ddcae5f5486d54b524cd36743bc9a74cc2056312a08b67686251fc23162ac",
+      "workingSha256": "d09a897f0b9e0201d96bd96ee4a95eabb28168f70c2503dd6dfe31da50123dec",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.MigrationProbe/packages.lock.json",
+      "gitSha256": "0870ffe8de167adedac011576e7a00585d6fd0c8257f35cf897b3954853fb3a8",
+      "workingSha256": "14e1a0ba215580c03a0f03160b7c95fdb7a6c61ddc85a66777cf2ffacf66ae08",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj",
+      "gitSha256": "ba5907db6cd39d232b2f83479029af7e657a3ae785f563841078a834cd91a608",
+      "workingSha256": "7e0a20db297877fe3fdf63ac887d49989b2d0b065e84a827381123fb8274dfaf",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.Probe/packages.lock.json",
+      "gitSha256": "9e079140fd76ca99dbfcd4ffcd729dc58ef386aa1bdd98454fa262c06bbdd0a9",
+      "workingSha256": "d9aa9da708221b10d81a2a0c39350671984260a771768e92efe39dc925490b12",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+      "gitSha256": "c71d108a5146e9dbd6d0e7c15199f9096be3f786a67634551ad3b05c26fbd038",
+      "workingSha256": "dfd5b493debcf6f3450b3825f5e26de918d80dc3fbc4a5981b22b72c08e890e6",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/packages.lock.json",
+      "gitSha256": "05aa9024359784270d1df572897905df322de7f62539ead18dc0b83393a24f39",
+      "workingSha256": "6155b97413ed665582d8e906c5284c35bbcf75c01668821042855e95d95275b4",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.TextProbe/CP6.DatabaseCompatibility.TextProbe.csproj",
+      "gitSha256": "5a263fefd434ceef41e7a0ce616e5d5e2e3a097e7d899e3d6cb6c651a509ce35",
+      "workingSha256": "29f34ee117f23f72ff87aebbc27993e1422a3d9cc0a7e1237c7bb8d1d2e25147",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseCompatibility.TextProbe/packages.lock.json",
+      "gitSha256": "a90516385b04a9ddcc81f4e88ec787e5b2cc8269262c4c6a06225a5f1e3305c5",
+      "workingSha256": "2a5e1d0a3ee84da6d9fd1f74f2abbf0056b24e3e37daa79d69320c98467fabc0",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.DatabaseTransfer/CP6.DatabaseTransfer.csproj",
+      "gitSha256": "930301b119c1ebe7f091d00a1912812006dc03eb3e525431601c57d003c02bad",
+      "workingSha256": "712ebfc3977a34de74c83039dbe407d5771a1ecea8795aeb3e2f90ee88aba706",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Space.CadExperiment.AsposeAdapter/CP6.Space.CadExperiment.AsposeAdapter.csproj",
+      "gitSha256": "63b960ab6db019deeb9f73087d353c2e89c9dd71cb38a6da1b26355224b4fc9d",
+      "workingSha256": "a93d1976402fdd86a656d63197c890a68f5409425b4a3a82abe8af633373fbe7",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Space.CadExperiment.Tests/CP6.Space.CadExperiment.Tests.csproj",
+      "gitSha256": "2a9b1c114839fb01875c3bae0b16b67e32b07f8d1891eba6e9f7ef45f9e2f269",
+      "workingSha256": "2dab7d3e22f1ba5067c581f272bcb2d49e0dfda158c3e75ba1535d8ca2a48cfc",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Space.CadExperiment/CP6.Space.CadExperiment.csproj",
+      "gitSha256": "d49d80517fbd506334abc7adab42b76986aff3692d915dd2b98a941d7ec86029",
+      "workingSha256": "51296516324f4bc3295f5f09417ffb13b589a89a1d0fa11260eb7faad3074af9",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Space.CadStartAcceptance/CP6.Space.CadStartAcceptance.csproj",
+      "gitSha256": "78510b33a28348a25f231b0ad7fd0a480211c5e93194eed3b59a00583e5cd6d1",
+      "workingSha256": "ca00a12c6cde077b4b63dc74bdb7e97b28f7a38735ab50df1f09eb689e762006",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Space.CadWorker.AutoCadCandidate/CP6.Space.CadWorker.AutoCadCandidate.csproj",
+      "gitSha256": "597c09bc1da7b21df27edac9885586513443f9fa78a3e1d2715e1f096ef0e806",
+      "workingSha256": "b4986277235780c2b0f4e67a86e7bfefb753366c5f9e85dbded4c7b3fb88bbc9",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Space.OpenApiGenerator/CP6.Space.OpenApiGenerator.csproj",
+      "gitSha256": "cf8fbbc1ab3cf22aaecda511a13881636984c89f8fee4f9008fbcee1ec3d67c2",
+      "workingSha256": "3956493d2279bf2598a4d695835161bae11056e19176ee31d0c47b65ed4c8c6f",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/CP6.Space.StandardWarehouseGenerator/CP6.Space.StandardWarehouseGenerator.csproj",
+      "gitSha256": "72950ef071b34b164f07707880f137782361edfd93764a1d8aeb1befa9303fd9",
+      "workingSha256": "793cb4f93b3df90d881b171df1b5110481123c5b67f314600eb50b94afa071a9",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/p10/PreflightInputs/CP6.P10.PreflightInputs.csproj",
+      "gitSha256": "bad71c03a8de40e1d174881b6782564b88ac9bbbf83f54f517ba8255846e79d9",
+      "workingSha256": "cf5329693103add59bbb547e6d8acc3c427b2b7bb9e348d70e4484f54de81791",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/p10/PreflightInputs/packages.lock.json",
+      "gitSha256": "2ba612c23e97447384101684bc8bf804dfede7949d1eedecce86b47141d58db2",
+      "workingSha256": "43fd712b2a77806ffd7ce588b025c8466ae09d57eeabddd02eeee0033a0412b1",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/p10/ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj",
+      "gitSha256": "276e6259dd304fbe7a7de020fcf8f39902ddb2982c5fb46e9e860ad319c78a8a",
+      "workingSha256": "f5dacbda091b42dce5b93ad7f6f83c79105fc448d64c04248162f363db180efb",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/p10/ReleaseVerifier.Tests/packages.lock.json",
+      "gitSha256": "11cebfe6e365df104dd9a053a4970e0d1e995581f289033c75332189505fd008",
+      "workingSha256": "ad7f80dc7a219b790a92a4b8a357284474fce288fb0fefebc8d1e55719b1a498",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj",
+      "gitSha256": "57efc93fcb1faf75baa63a73ed0c9f100abb1987af3e528374f64d31b8e5b567",
+      "workingSha256": "a8e94ef22441a6a4f4d389b40800f3405c4d966bb7793d4dcd543b02d337a3ca",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Main",
+      "source": "1129953156b7775152a74ad2f51cb95ef430ee56",
+      "path": "tools/p10/ReleaseVerifier/packages.lock.json",
+      "gitSha256": "56f1f5d15ae6cbd833786fcd748e55c41f86768d1ed5b60d10bb93f46ab2a4f8",
+      "workingSha256": "3b60a00a49024434b91bd36debea17e6c5098d2c03d7de927dc4320ea95ec84c",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Build.props",
+      "gitSha256": "58a91dfb841b65889974f4a500d8d2fa3639253972b6d5fa96888ec19ddec0b4",
+      "workingSha256": "be5ae2820e4d7c1a554336a50b06e5eef5d0f4dea9469f31d1b8c84e52c32d83",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "Directory.Packages.props",
+      "gitSha256": "fdf8dd260f732e2d483db17feb9f02360576f8f2888d7b1698b0e4a12964ac65",
+      "workingSha256": "e27010697c96f9ae86af011e6a7fd0f7b19dca60b71d49f393aaa4d6fc5f78b5",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "NuGet.config",
+      "gitSha256": "bb4ea679b4c1d64f6220321702187bc3241f2e530d4551880f8a7aa6604ff881",
+      "workingSha256": "4f4e0db54145bc7bb5429295242e0b96b88ee984cb1581fe7ca926ad1463060e",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "eng/wp02-27/Inspector/Inspector.csproj",
+      "gitSha256": "5f49e1d6a3d8a7dc0bc36b7ac0124a01c0a588d8f79c133f7605da5f63c0fea2",
+      "workingSha256": "1d3ed7d8b0cf9172f7a7bb4f5154e02f3901e7f085fcf8c56d37700d0cab533b",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "global.json",
+      "gitSha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa",
+      "workingSha256": "12977d3e63d38bc51c22c4708ccbc351af024a310de7f25ac974468b731677b3",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Abstractions/CP6.Platform.Abstractions.csproj",
+      "gitSha256": "72694b721d9ded2d68a76ddaf75541128e369fede5a11cb206264d95b0882e82",
+      "workingSha256": "0330506d22b02a69d8e841e446632c09e3d6bd13847013601c3540fc9f163a9a",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.AspNetCore/CP6.Platform.AspNetCore.csproj",
+      "gitSha256": "a9464c3bc9c8da4048cd12e0ae56c4426cb2a9504573d7a23ccaa09b62260f4b",
+      "workingSha256": "7c2d830254c06aad4f4284f7e58c4926147f151703ddbd4eef40ffa3d94f472c",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Contracts/CP6.Platform.Contracts.csproj",
+      "gitSha256": "155913bd995dfd0eb2c787268358eeeac3d24a98f4c285ecc64e92bc4650dfe2",
+      "workingSha256": "3c71927da98b44f52abb45e29f1da302b7bbfcab28077c365ad09bdfac8dd55c",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Deployment/CP6.Platform.Deployment.csproj",
+      "gitSha256": "0659da14a882462b6dc379ced5dd749de440202aeef96d8f95005f7210c13026",
+      "workingSha256": "0e6a3c90d2fb7123fe06c86b3702b658924bbdee61f306e4c9847ae8e12335b5",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.EntityFramework/CP6.Platform.EntityFramework.csproj",
+      "gitSha256": "0974e3aa4f8c015a97b150f7057766efbfc5a5de52eef841b03abd56b157f890",
+      "workingSha256": "78da574887a1a1ad1d421cf948572c589832472d48adbb3d90090771510645c7",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Messaging/CP6.Platform.Messaging.csproj",
+      "gitSha256": "0a96e08cd30b40637509f45f5a825fffca0e101d8ab6ae938f12af950480f8ca",
+      "workingSha256": "6fde2bbeb23b1286ef4bd221d8981493d745520504221311097cd5f04ffda3b7",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Release/CP6.Platform.Release.csproj",
+      "gitSha256": "347ab97b35caf5961b83409e28be4461e5f2077996904fc953ffc372d9ba6e19",
+      "workingSha256": "da851661b9f172616304f7863c23a0536d0babfd7e4315888d5515dfd641f5ff",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "src/CP6.Platform.Testing/CP6.Platform.Testing.csproj",
+      "gitSha256": "80a51d405364c3d503fcd9c44bb8afc8b46fcc02dab35ff8f0b07e1a5aee77a9",
+      "workingSha256": "dfc8d21583474e7ebed6d2d7c83e8b5010fde2663a24f385ace9b73e90c46044",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.ArchitectureTests/CP6.Platform.ArchitectureTests.csproj",
+      "gitSha256": "8972bcb0dfe3f395b6047f03cbd4d8f14400c95c2e5fae3734b94e1dc06ffaef",
+      "workingSha256": "0802eefe7ed179059344dc7414a846b30994fd6975d4a5e5b227fa479380667d",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.AspNetCoreTests/CP6.Platform.AspNetCoreTests.csproj",
+      "gitSha256": "d2d05dccce7e78c5584c49bc3537c230708ac3591a7f04bfea6199bf04f0d1a1",
+      "workingSha256": "b1d21f3b0df51158f89c5abe54b4c13a7ad1a3753a87336e5a4967dd3180d5b1",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.DaprKafkaFixture/CP6.Platform.DaprKafkaFixture.csproj",
+      "gitSha256": "f41a3ece1c580cab3ba3c921379d44c547b8b20c24ed91c778a9f89239e6c402",
+      "workingSha256": "dee7c1d0627116dd6efa49a55585031c19e4ec6baa79c7b3bd2f99cb28e2ea39",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.DeploymentTests/CP6.Platform.DeploymentTests.csproj",
+      "gitSha256": "a68122059a32733a06c171c2a5bbc90737466f7721d74a94c0e1c03a6ce31176",
+      "workingSha256": "cdcc1b6791336556981a0668d2a1316164491680fd367d9c24f03258236e39aa",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.DeploymentTests/P09Validator/P09Validator.csproj",
+      "gitSha256": "70a5091b5edc3bc77a0914dd773277a0a2d0edd1dfed451b16ff201502bd2173",
+      "workingSha256": "10ecba52aedaa4409e9afbd7835cbb3bfc2cd3f31183bbcc753417eba0545b4c",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.P09Fixture/CP6.Platform.P09Fixture.csproj",
+      "gitSha256": "d38f3c8b8aa82d48ae3d693d79f6ca20bc27f52ca68a731df132d92179180026",
+      "workingSha256": "2d166231c1527ee9b7d346ecb6d1c00f1d9b14c0c3f1243e5cd67a040e280ec4",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.ReleaseTests/CP6.Platform.ReleaseTests.csproj",
+      "gitSha256": "5f57a300ab6d3c36de99b83263c7f5f6fab141aeaf1985a0ad4d2d3c5ac34edd",
+      "workingSha256": "a63eaade4bbb7d408e2dd16e1037ea90de3bb0531c8ea45648949cad7bceb047",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.SqlServerFixture/CP6.Platform.SqlServerFixture.csproj",
+      "gitSha256": "3c55df8a332965099a84478e633693f57e98e2e2ac2e7f58623d8dcbc7d38b3b",
+      "workingSha256": "e618cf6d831b56c1e7fe01ff9161f78d3228addebf862de2312ec03b370f887e",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.UnitTests/CP6.Platform.UnitTests.csproj",
+      "gitSha256": "5c0b801ba86d4888e03216841efbe7a8c3182eccdf6ac86e27a930d162a59a02",
+      "workingSha256": "0719dcb4fd8f4a33a25bdb96ce8b80102776e5d2e78246efefedaf1aa3cadaa8",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/CP6.Platform.WP0207.PostgreSqlTests.csproj",
+      "gitSha256": "4662f202793a8185e088c793387b04c384c37ceb791dfd631da5f781cf8d1dc6",
+      "workingSha256": "f2c4e9ea290d8553c56accc8411028fd25e79c7d698c4ec04a46946d08cd448a",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.WP0207.PostgreSqlTests/Directory.Packages.props",
+      "gitSha256": "c5d73cd73f28635ed28e6b3aa3b4268ddd72a1ddb61357a952beca62f1585a39",
+      "workingSha256": "c1a2cb4b23472621aeb48d4ff6bb2cff80a262f8d8a541f12a910c6831e68f17",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/CP6.Platform.WP0208.PostgreSqlTests.csproj",
+      "gitSha256": "4662f202793a8185e088c793387b04c384c37ceb791dfd631da5f781cf8d1dc6",
+      "workingSha256": "f2c4e9ea290d8553c56accc8411028fd25e79c7d698c4ec04a46946d08cd448a",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tests/CP6.Platform.WP0208.PostgreSqlTests/Directory.Packages.props",
+      "gitSha256": "c5d73cd73f28635ed28e6b3aa3b4268ddd72a1ddb61357a952beca62f1585a39",
+      "workingSha256": "c1a2cb4b23472621aeb48d4ff6bb2cff80a262f8d8a541f12a910c6831e68f17",
+      "lfEquivalent": true
+    },
+    {
+      "repository": "Platform",
+      "source": "b28db763f70ab6f164cb7c87d6ce49a6d97267f1",
+      "path": "tools/CP6.Platform.ReleaseTool/CP6.Platform.ReleaseTool.csproj",
+      "gitSha256": "e46a1d34c1159dc9531149f2a3a7defd20d4a0eb0dcbf9dec28c8e2aa78b9301",
+      "workingSha256": "a6db9c727f4fc578c872969dc3e51cda9513e3047664d89c4fbce7bdbf84621e",
+      "lfEquivalent": true
+    }
+  ],
+  "meaning": "Before diagnosis, fixed Git bytes compared to working production inputs. CRLF equivalence explicitly separate. No restored/build-generated inputs represented here.",
+  "startHandoff": "200fcb736356c55fc6484f3c6eb3d5514abd6f78",
+  "formalTrust": "BLOCKED",
+  "mainConsumption": "NOT_RUN"
+}

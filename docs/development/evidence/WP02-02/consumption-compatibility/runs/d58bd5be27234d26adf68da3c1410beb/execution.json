@@ -1,0 +1,21 @@
+{
+  "kind": "GREEN",
+  "argv": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp02-02/consumption-compatibility/tests",
+    "-p",
+    "test_runtime_policy.py",
+    "-v"
+  ],
+  "exitCode": 0,
+  "sourceHashes": {
+    "eng/wp02-02/consumption-compatibility/runtime_policy.py": "2c02d38994af16dbc21a612c63038c189b2df373da09940e824669b8b6aaa8a3",
+    "eng/wp02-02/consumption-compatibility/tests/test_runtime_policy.py": "04e0f0db114c495f521bfff3e958c861205fde3107a02f8bb42b6625252f2300"
+  }
+}

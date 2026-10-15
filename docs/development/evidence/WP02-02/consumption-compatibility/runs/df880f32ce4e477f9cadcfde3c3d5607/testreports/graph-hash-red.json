@@ -1,0 +1,25 @@
+{
+  "owner": "df880f32ce4e477f9cadcfde3c3d5607",
+  "phase": "RED",
+  "argv": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp02-02/consumption-compatibility/tests",
+    "-p",
+    "test_graph.py",
+    "-k",
+    "distinct_content_and_raw_archive_hashes",
+    "-v"
+  ],
+  "exitCode": 1,
+  "logSha256": "885edf1587ddd2d0dbbf68d7a013bd542894884ac049974876fc84d8b6174db2",
+  "inputs": {
+    "eng/wp02-02/consumption-compatibility/inspect_graph.py": "15d98836e3a91ee374e9df5669da021c52020cc01af3969cbfef60204dfbbf97",
+    "eng/wp02-02/consumption-compatibility/tests/test_graph.py": "cbd3b98e0764e563f692a5711c1aa6418766c868e82ea73293b5e37caf598fc7"
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "capturedAt": "2026-10-15T00:54:43.312461+00:00",
+  "files": [
+    {
+      "owner": "1b0e3e6d489d4ce19f58c15f2e35e01c",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/1b0e3e6d489d4ce19f58c15f2e35e01c/windows-path-diagnosis.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\1b0e3e6d489d4ce19f58c15f2e35e01c\\windows-path-diagnosis.json",
+      "sha256": "b6dff491aa0f846ac73a5aec0f3652a1c4e139d151db26ba307c4d36420320b6",
+      "bytes": 1284
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-independent-roots.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\GREEN-independent-roots.log",
+      "sha256": "142bb81cf7f34c7c9749a6641d7825a3001aae5512e93fbca89357fc78a9ef08",
+      "bytes": 1403
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN-longpath.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\GREEN-longpath.log",
+      "sha256": "5d9d3feb7ecb4a4b92219341b7148272de565d7353016627d9e14a514547d5fc",
+      "bytes": 1702
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/GREEN.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\GREEN.log",
+      "sha256": "ffd9f32ea38fcc692b47126ddf89e015f793064cf50737a7fee6c0814fb6decb",
+      "bytes": 1067
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-extra-source.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\RED-extra-source.log",
+      "sha256": "da4864c9dff4bdc9f305d213c7fb702f7a1b0a5fa95137b1a5560dd9bc16cdd9",
+      "bytes": 1702
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-independent-roots-corrected.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\RED-independent-roots-corrected.log",
+      "sha256": "828fe3f6bd8313ac5f2889aae2fe3b8763f97c8cb2aeca97559e7ec7abef0a59",
+      "bytes": 3774
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-independent-roots.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\RED-independent-roots.log",
+      "sha256": "4dcf6755fe7a92fbd40d409b5c1792805c2cb366424ba75cf44df2f8c61e29e0",
+      "bytes": 3155
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED-longpath.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\RED-longpath.log",
+      "sha256": "4bd51b46ea9faaebe0b1b53e2f9f001fd63783a03a3ed65604f8be8666a302c5",
+      "bytes": 4704
+    },
+    {
+      "owner": "251a47e365f24dd1aef98e2ef88d491b",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/251a47e365f24dd1aef98e2ef88d491b/testreports/RED.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\251a47e365f24dd1aef98e2ef88d491b\\testreports\\RED.log",
+      "sha256": "9acca7fb3168aeafbd5fcfcdb4d8e0bb0733ec3876e2d135e2d9712ddcc9d201",
+      "bytes": 5060
+    },
+    {
+      "owner": "3bb763f8ef104677839ca49dd8c13338",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/3bb763f8ef104677839ca49dd8c13338/execution.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\3bb763f8ef104677839ca49dd8c13338\\execution.json",
+      "sha256": "68fdfe3c011417b33ef067000e40bf2430ce54878feffa6b5ea00eaea28e0fb0",
+      "bytes": 382
+    },
+    {
+      "owner": "3bb763f8ef104677839ca49dd8c13338",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/3bb763f8ef104677839ca49dd8c13338/policy-boundary-red.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\3bb763f8ef104677839ca49dd8c13338\\policy-boundary-red.log",
+      "sha256": "d0ac7870e531e8a5ee476e51626a61302aed0c730f4548d6e31533997c15e647",
+      "bytes": 2353
+    },
+    {
+      "owner": "5fb28e164e284c8084e7aa1d14cb42d3",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/5fb28e164e284c8084e7aa1d14cb42d3/execution.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\5fb28e164e284c8084e7aa1d14cb42d3\\execution.json",
+      "sha256": "f292b6237e2ff07d2b1c782d6b5ce8ab51a5457bf500238769a0db6a7ae7c1c8",
+      "bytes": 655
+    },
+    {
+      "owner": "5fb28e164e284c8084e7aa1d14cb42d3",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/5fb28e164e284c8084e7aa1d14cb42d3/runtime-policy-red.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\5fb28e164e284c8084e7aa1d14cb42d3\\runtime-policy-red.log",
+      "sha256": "5994aaacd6892ce413d7653e65c3413b78af2d49d3bb9d9fb427167369e9978d",
+      "bytes": 1460
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/build-failure-1792024866664168000.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\build-failure-1792024866664168000.json",
+      "sha256": "cb74a0c79d83c546420f38ee9614f5399efdc8e5771688ff40514cea93361a82",
+      "bytes": 464
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/build-identities.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\build-identities.json",
+      "sha256": "412d936b59b3c9dd236dc470da587616b63457badc79650cbd6d01ce43139bbf",
+      "bytes": 17801
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/global.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\global.json",
+      "sha256": "6e5fc1043095a4055e47f491521d95a733c214d32aaecaf952584637f4a86099",
+      "bytes": 111
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/input-manifest.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\input-manifest.json",
+      "sha256": "8740d1ebd67d0b3e82ee375906023ea7c68cb71f1fe7c8e64d7b9e73651d0668",
+      "bytes": 1665
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/snapshot-manifest.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\snapshot-manifest.json",
+      "sha256": "ae65857e6c3da1541fb23ae86b19babff7b8305935d8d917f17237fe4a15c4d9",
+      "bytes": 4525257
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/state.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\state.json",
+      "sha256": "54a29429841cf94ccf10c808bdb51454b6a35aa596b55d24e5e5c94d38738084",
+      "bytes": 4391
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-build.command.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\main-webapi-build.command.json",
+      "sha256": "57444be97d1dab43a74d64b7187b4f65910a374db780495e615e53a5cd3d2d1e",
+      "bytes": 989
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-build.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\main-webapi-build.log",
+      "sha256": "6061881a4d3355cd6b27c38f0db9ee0bede6563b54205ce1a0f49890c3fce30b",
+      "bytes": 19406
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-restore.command.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\main-webapi-restore.command.json",
+      "sha256": "6422b65f96a7a8cd089b9f11fbef3cb8c87004065c09a7cc643918bd1e317d00",
+      "bytes": 1269
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/main-webapi-restore.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\main-webapi-restore.log",
+      "sha256": "1b6f9244a5c34b34ef9b72c3d9ab377e8b8be0b8d8db4b099290d54421fa8d9a",
+      "bytes": 7043
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/runtime-list.command.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\runtime-list.command.json",
+      "sha256": "b8f1ca582e5adb758a1853665266a0b35e87be19c6d041f33511c2e18edc289a",
+      "bytes": 421
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/runtime-list.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\runtime-list.log",
+      "sha256": "7b9dc6d614384652e6c31c7739e03e4f72015f1fff7c9637dc0dfd8ef10c6b59",
+      "bytes": 263
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/sdk-version.command.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\sdk-version.command.json",
+      "sha256": "2058cfeebe8f4a82e4d9c1c6150caf647290f05cf1739334f23f8d73f0c2e53b",
+      "bytes": 413
+    },
+    {
+      "owner": "65a0ae32a96d4f2f92d92f623849b34d",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/65a0ae32a96d4f2f92d92f623849b34d/logs/sdk-version.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\65a0ae32a96d4f2f92d92f623849b34d\\logs\\sdk-version.log",
+      "sha256": "d431370954fffbac8949338e91ab683ed6a5b007f7b58559f609d10572cbe339",
+      "bytes": 9
+    },
+    {
+      "owner": "988fd5856dd549b68c1e6d3f1c4d5757",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/988fd5856dd549b68c1e6d3f1c4d5757/execution.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\988fd5856dd549b68c1e6d3f1c4d5757\\execution.json",
+      "sha256": "f6257af567866e66683fddc5b4601bbc0436917ded45aaaf7ba42032d91cf163",
+      "bytes": 715
+    },
+    {
+      "owner": "988fd5856dd549b68c1e6d3f1c4d5757",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/988fd5856dd549b68c1e6d3f1c4d5757/runtime-policy-final-green.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\988fd5856dd549b68c1e6d3f1c4d5757\\runtime-policy-final-green.log",
+      "sha256": "32f981cacffd2aa969e34131a2e216507d5c3069aaadbe1cd3d91e5b812c725e",
+      "bytes": 683
+    },
+    {
+      "owner": "d58bd5be27234d26adf68da3c1410beb",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d58bd5be27234d26adf68da3c1410beb/execution.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\d58bd5be27234d26adf68da3c1410beb\\execution.json",
+      "sha256": "4fa0767ef42fb7962e9d5d4c8aa4feae2d89dd647299228b1e4d6d398971dcf7",
+      "bytes": 645
+    },
+    {
+      "owner": "d58bd5be27234d26adf68da3c1410beb",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d58bd5be27234d26adf68da3c1410beb/runtime-policy-green.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\d58bd5be27234d26adf68da3c1410beb\\runtime-policy-green.log",
+      "sha256": "334f963c01116920d882cecab01cc3a2656cba4e555918c1050a24f86c552977",
+      "bytes": 683
+    },
+    {
+      "owner": "d817efb6b8154c22b6dd4ac1f008a0be",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d817efb6b8154c22b6dd4ac1f008a0be/all-tools-green.log",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\d817efb6b8154c22b6dd4ac1f008a0be\\all-tools-green.log",
+      "sha256": "e8a835f94288ed88560199a315cf7aa2032ed639ef74e897cc746c8eec444b47",
+      "bytes": 4038
+    },
+    {
+      "owner": "d817efb6b8154c22b6dd4ac1f008a0be",
+      "path": "docs/development/evidence/WP02-02/consumption-compatibility/runs/d817efb6b8154c22b6dd4ac1f008a0be/execution.json",
+      "source": "D:\\CP6-worktrees\\wp02-02-closure-20261014\\artifacts\\wp02-02\\consumption-compatibility\\d817efb6b8154c22b6dd4ac1f008a0be\\execution.json",
+      "sha256": "9c69f6323c60840e4b2c28fc79213994ef8d2b00e7787038658fbd71fd83a077",
+      "bytes": 1723
+    }
+  ]
+}

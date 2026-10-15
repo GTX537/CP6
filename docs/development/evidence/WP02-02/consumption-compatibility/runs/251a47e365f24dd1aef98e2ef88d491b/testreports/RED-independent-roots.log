@@ -1,0 +1,33 @@
+test_export_uses_committed_bytes_and_reports_omissions (test_snapshot.SnapshotTests.test_export_uses_committed_bytes_and_reports_omissions) ... ok
+test_extra_source_and_missing_source_are_rejected (test_snapshot.SnapshotTests.test_extra_source_and_missing_source_are_rejected) ... ok
+test_main_restore_failure_does_not_hide_other_root_diagnostics (test_snapshot.SnapshotTests.test_main_restore_failure_does_not_hide_other_root_diagnostics) ... FAIL
+test_manifest_rejects_changed_source_or_overlay_or_config (test_snapshot.SnapshotTests.test_manifest_rejects_changed_source_or_overlay_or_config) ... ok
+test_overlay_exactly_four_references_and_no_other_byte_changes (test_snapshot.SnapshotTests.test_overlay_exactly_four_references_and_no_other_byte_changes) ... ok
+test_owner_rejects_outside_and_noncanonical_and_reuse (test_snapshot.SnapshotTests.test_owner_rejects_outside_and_noncanonical_and_reuse) ... ok
+test_owner_rejects_symlink_or_junction (test_snapshot.SnapshotTests.test_owner_rejects_symlink_or_junction) ... ok
+test_probe_can_report_partial_scope_after_independent_main_failure (test_snapshot.SnapshotTests.test_probe_can_report_partial_scope_after_independent_main_failure) ... ERROR
+test_unsafe_git_path_rejected (test_snapshot.SnapshotTests.test_unsafe_git_path_rejected) ... ok
+
+======================================================================
+ERROR: test_probe_can_report_partial_scope_after_independent_main_failure (test_snapshot.SnapshotTests.test_probe_can_report_partial_scope_after_independent_main_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 147, in test_probe_can_report_partial_scope_after_independent_main_failure
+    result = run.probe(self.case, SimpleNamespace(owner=self.case.name, dotnet=Path("dotnet")))
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\run.py", line 202, in probe
+    raise ValueError("Probe requires one successful fresh build and no prior runtime attempt")
+ValueError: Probe requires one successful fresh build and no prior runtime attempt
+
+======================================================================
+FAIL: test_main_restore_failure_does_not_hide_other_root_diagnostics (test_snapshot.SnapshotTests.test_main_restore_failure_does_not_hide_other_root_diagnostics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\CP6-worktrees\wp02-02-closure-20261014\eng\wp02-02\consumption-compatibility\tests\test_snapshot.py", line 133, in test_main_restore_failure_does_not_hide_other_root_diagnostics
+    self.assertIn("database-probe-build-only-build", labels)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'database-probe-build-only-build' not found in ['sdk-version', 'runtime-list', 'main-webapi-restore']
+
+----------------------------------------------------------------------
+Ran 9 tests in 2.417s
+
+FAILED (failures=1, errors=1)

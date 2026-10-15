@@ -1,0 +1,31 @@
+{
+  "kind": "ACTUAL_READ_ONLY_HASH_OBSERVATION",
+  "actualOwner": "84981a57453d4841adb6cb0e02a52875",
+  "package": "CloudNative.CloudEvents/2.9.0",
+  "rawArchiveSha512Base64": "7V8Up5GIQ6IFUdvUjJN4P4E48l8xuFhH0JlG8MtrBq4EEeCcn/Hm6FIRMgdmW+KW0Iyy7m8aMdd4Ya6wBI1yNg==",
+  "cacheArchiveSha512Base64": "7V8Up5GIQ6IFUdvUjJN4P4E48l8xuFhH0JlG8MtrBq4EEeCcn/Hm6FIRMgdmW+KW0Iyy7m8aMdd4Ya6wBI1yNg==",
+  "metadataContentHash": "Qh8/MS3YBI78Q5+AVXN/hNQZkhFW5OyDHdn4Wi05ZzlylKOsTypBiQQ1u0U8iOZ24HMe8Hc0VH2CIwnY4YTGEA==",
+  "assetsContentHash": "Qh8/MS3YBI78Q5+AVXN/hNQZkhFW5OyDHdn4Wi05ZzlylKOsTypBiQQ1u0U8iOZ24HMe8Hc0VH2CIwnY4YTGEA==",
+  "inputs": [
+    {
+      "path": "n/cloudnative.cloudevents/2.9.0/cloudnative.cloudevents.2.9.0.nupkg",
+      "sha256": "99b9cdd09d0b3663f624d9c411af27354c74763665a5edc0d9a5d4e88d3d506e"
+    },
+    {
+      "path": "n/cloudnative.cloudevents/2.9.0/.nupkg.metadata",
+      "sha256": "fd31e443fab1cbcf2811b5f6b4f487e82d5090920fbe77a3f3fdec2e4118f0b0"
+    },
+    {
+      "path": "n/cloudnative.cloudevents/2.9.0/cloudnative.cloudevents.2.9.0.nupkg.sha512",
+      "sha256": "52c9ce27df431e3db68be329df539341100a6b08008bf48b6ca151e847ca4051"
+    },
+    {
+      "path": "probe/obj/project.assets.json",
+      "sha256": "a08e6a50a20bb8639f3a463818ca6b2711353968f694d78e00f96f9d944ade30"
+    },
+    {
+      "path": "dependency-graph.json",
+      "sha256": "f612bf49283e68a156ea371504372640704df9cec045caff26e036243bc6aeb8"
+    }
+  ]
+}

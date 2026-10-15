@@ -1,0 +1,24 @@
+{
+  "owner": "df880f32ce4e477f9cadcfde3c3d5607",
+  "phase": "GREEN",
+  "scope": "all graph tests because hash fixture semantics changed",
+  "argv": [
+    "C:\\Users\\tt\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "eng/wp02-02/consumption-compatibility/tests",
+    "-p",
+    "test_graph.py",
+    "-v"
+  ],
+  "exitCode": 0,
+  "logSha256": "394212dc03cd4de73a3d491aae150341751c74069071cc1554760dd465ad6178",
+  "inputs": {
+    "eng/wp02-02/consumption-compatibility/inspect_graph.py": "30e27d1299602bcd4efea8df458f40a861fd2c7d142c69926ecb6dadfc0c641d",
+    "eng/wp02-02/consumption-compatibility/tests/test_graph.py": "cbd3b98e0764e563f692a5711c1aa6418766c868e82ea73293b5e37caf598fc7"
+  }
+}
