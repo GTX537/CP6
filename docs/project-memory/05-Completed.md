@@ -1,5 +1,14 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-15：第八轮限定实现已合并
+
+WP01-01正式台账adapter经PR217交付；WP02-02的Platform0.10.3登记经[PR](https://github.com/GTX537/CP6.Platform/pull/77)交付。
+协调以独立PR76修复Pkcs审计阻塞，并修正两条过时断言；标准定向177项通过，其他有效结果按原范围复用。
+两个局部窗口已关闭，完整任务仍PLANNED/BLOCKED与NOT_CHECKED；正式采纳、签名/发包、真实Main/PG及17PGT尚未完成。
+24/375 DONE、业务0/125、247 NOT_RUN、41 REFERENCE_ONLY及历史缺件保持。
+最终producer源码为`1277da5e0a20c6d96f0a95d0e9b4f20e0008332a`，不是已发布制品。详见[本轮协调报告](../development/evidence/wave8-integration-20261015/README.md)。
+未触发/取消Actions、改变触发器、迁库、部署或新增派工。下文保留历史时点。
+
 ## 2026-10-15：开发流程精简
 
 全项目长期规则与第八轮执行说明已调整：去除重复SPEC/QUALITY、默认全量架构/宿主验证和证据复制，旧有效结果复用。此项为流程文档调整，不增加375任务完成数，不代表业务验收通过。见[项目规则](../../AGENTS.md)。
