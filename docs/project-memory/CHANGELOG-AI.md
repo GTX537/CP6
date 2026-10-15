@@ -1,5 +1,16 @@
 # AI 可读变更日志
 
+## 2026-10-15：用户采纳新验收依据并批准一次正式发布
+
+用户明确回复“同意两项”：采纳WP01-01-ACCEPTANCE-BASIS-1.2.0的579条前瞻义务，
+并批准准确Platform源码1277da5e0a20c6d96f0a95d0e9b4f20e0008332a的一次0.10.3七包正式发布。
+[授权与执行报告](../development/evidence/authorized-adoption-release-20261015/README.md)记录准确范围。
+台账已选择原manifest；用户采纳决定已生效，独立信任配置尚未安装，业务仍NOT_RUN。
+正式运行38709310767/attempt1成功；七包原字节、Windows/Linux Current结果和归档摘要已核对。
+正式包缺失阻塞已解除；Main仍为0.10.2，consumer matrix/lock及真实PG采用留待下一窗口。
+24/375 DONE及0/125业务状态保持；没有重跑、触发器变更、Main接线、迁库或部署。
+下文“尚未授权”等陈述保留为相应历史时点，不代表本次授权后的现状。
+
 ## 2026-10-15：验收配置异常诊断修复（Issue #216）
 
 验收工具先检查配置为JSON对象；数组和标量现在返回结构化拒绝，不再抛出AttributeError。

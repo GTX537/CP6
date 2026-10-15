@@ -1,0 +1,109 @@
+{
+  "observed_at": "2026-10-15T09:04:09.425565+00:00",
+  "result": "PASS",
+  "scope": "Exact authorized run, immutable archive digests, source/workflow/trust policy, seven actual package bytes, build/sign/readback and Windows/Linux Current evidence binding, current feed version presence and unchanged visibility. Crypto verification reused from the actual authorized run, not rerun locally.",
+  "run": {
+    "id": 38709310767,
+    "run_attempt": 1,
+    "head_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+    "head_branch": "main",
+    "path": ".github/workflows/p10-formal-packages.yml",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-15T08:56:48Z",
+    "updated_at": "2026-10-15T09:01:54Z",
+    "html_url": "https://github.com/GTX537/CP6.Platform/actions/runs/38709310767"
+  },
+  "jobs": [
+    {
+      "id": 116336466164,
+      "name": "sign-publish",
+      "conclusion": "success",
+      "started_at": "2026-10-15T08:57:34Z",
+      "completed_at": "2026-10-15T09:01:17Z"
+    },
+    {
+      "id": 116338272616,
+      "name": "verify-linux",
+      "conclusion": "success",
+      "started_at": "2026-10-15T09:01:19Z",
+      "completed_at": "2026-10-15T09:01:53Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11959274479,
+      "name": "p10-s04-final-publication-1277da5e0a20c6d96f0a95d0e9b4f20e0008332a-1",
+      "digest": "sha256:e5cbbf44630419334cb9338aa9940c81adb4e432e3690a42d52199c85992d65c",
+      "size_in_bytes": 6186,
+      "created_at": "2026-10-15T09:01:51Z",
+      "expires_at": "2027-01-13T08:56:49Z"
+    },
+    {
+      "id": 11959124489,
+      "name": "p10-s04-windows-readback-1277da5e0a20c6d96f0a95d0e9b4f20e0008332a-1",
+      "digest": "sha256:9a0933c85e24a9d3a894d767d5392d2661ae61ac2243e055aa526b0a582491aa",
+      "size_in_bytes": 593442,
+      "created_at": "2026-10-15T09:01:12Z",
+      "expires_at": "2027-01-13T08:56:49Z"
+    }
+  ],
+  "publication_sha256": "fae24b7cc239d79f12f7e2b0dc627789423f3aa6275ad38fb54a5f9ebc05bc36",
+  "feed": [
+    {
+      "package": "CP6.Platform.Abstractions",
+      "version_id": 1390097436,
+      "created_at": "2026-10-15T09:00:33Z",
+      "visibility": "private",
+      "url": "https://github.com/users/GTX537/packages/nuget/CP6.Platform.Abstractions/1390097436"
+    },
+    {
+      "package": "CP6.Platform.AspNetCore",
+      "version_id": 1390097574,
+      "created_at": "2026-10-15T09:00:34Z",
+      "visibility": "private",
+      "url": "https://github.com/users/GTX537/packages/nuget/CP6.Platform.AspNetCore/1390097574"
+    },
+    {
+      "package": "CP6.Platform.Contracts",
+      "version_id": 1390097660,
+      "created_at": "2026-10-15T09:00:35Z",
+      "visibility": "private",
+      "url": "https://github.com/users/GTX537/packages/nuget/CP6.Platform.Contracts/1390097660"
+    },
+    {
+      "package": "CP6.Platform.Deployment",
+      "version_id": 1390097817,
+      "created_at": "2026-10-15T09:00:37Z",
+      "visibility": "private",
+      "url": "https://github.com/users/GTX537/packages/nuget/CP6.Platform.Deployment/1390097817"
+    },
+    {
+      "package": "CP6.Platform.EntityFramework",
+      "version_id": 1390097908,
+      "created_at": "2026-10-15T09:00:38Z",
+      "visibility": "private",
+      "url": "https://github.com/users/GTX537/packages/nuget/CP6.Platform.EntityFramework/1390097908"
+    },
+    {
+      "package": "CP6.Platform.Messaging",
+      "version_id": 1390097995,
+      "created_at": "2026-10-15T09:00:39Z",
+      "visibility": "private",
+      "url": "https://github.com/users/GTX537/packages/nuget/CP6.Platform.Messaging/1390097995"
+    },
+    {
+      "package": "CP6.Platform.Release",
+      "version_id": 1390098071,
+      "created_at": "2026-10-15T09:00:39Z",
+      "visibility": "public",
+      "url": "https://github.com/users/GTX537/packages/nuget/CP6.Platform.Release/1390098071"
+    }
+  ],
+  "new_dispatch_count": 1,
+  "rerun_count": 0,
+  "business_acceptance": "NOT_RUN",
+  "consumer_matrix": "NOT_CREATED",
+  "main_package_pins": "0.10.2_UNCHANGED"
+}

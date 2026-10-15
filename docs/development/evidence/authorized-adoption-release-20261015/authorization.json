@@ -1,0 +1,62 @@
+{
+  "record_type": "COORDINATOR_RECORD_OF_DIRECT_USER_AUTHORIZATION",
+  "recorded_at": "2026-10-15T08:56:01.352840+00:00",
+  "time_semantics": "Coordinator observation time; original user message timestamp was not supplied.",
+  "authorization_source": {
+    "channel": "Active CP6 coordination conversation",
+    "actor": "user",
+    "exact_response": "同意两项",
+    "proposal_uri": "https://github.com/GTX537/CP6.AI-Handoff/blob/d13a9a2ff2c213ce0c27132af621994aecfbaf0c/handoffs/CP6-DEV-20261012/waves/20261015-next-step.md",
+    "independent_signed_attestation": false
+  },
+  "adoption": {
+    "state": "ADOPTED_BY_USER",
+    "action": "ADOPT_PROSPECTIVE_BASIS",
+    "identity": "WP01-01-ACCEPTANCE-BASIS-1.2.0",
+    "version": "CP6-WP05-01-ACCEPTANCE-BASIS/1.2.0",
+    "manifest": {
+      "path": "docs/development/evidence/WP01-01/adoption-v1.2/manifest.json",
+      "sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
+      "bytes": 2570,
+      "representation": "RAW_FILE_BYTES"
+    },
+    "targets": [
+      "PLM-ITER-01",
+      "PLM-REL-01"
+    ],
+    "obligations": {
+      "PLM-ITER-01": 401,
+      "PLM-REL-01": 178
+    },
+    "historical_originals": "UNRECOVERABLE",
+    "historical_item_equivalence": "UNPROVABLE",
+    "machine_trust_state": "INDEPENDENT_VERIFIER_UNCONFIGURED",
+    "business_acceptance": "NOT_RUN"
+  },
+  "release": {
+    "state": "AUTHORIZED_ONCE",
+    "repository": "GTX537/CP6.Platform",
+    "ref": "main",
+    "source_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+    "workflow": ".github/workflows/p10-formal-packages.yml",
+    "inputs": {
+      "expected_commit": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+      "version": "0.10.3"
+    },
+    "environment": "p10-formal-release",
+    "authorized_runs": 1,
+    "scope": [
+      "Windows build/sign/RFC3161/seven-package publish/readback",
+      "Linux independent verification of the same archive"
+    ],
+    "excluded": [
+      "retry or rerun",
+      "recovery",
+      "standalone preflight or revalidation",
+      "Main wiring",
+      "database migration",
+      "deployment"
+    ],
+    "existing_package_visibility_preserved": true
+  }
+}
