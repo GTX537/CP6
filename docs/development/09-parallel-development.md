@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前分配：[第十轮限定实现](dispatch/20261016-wave10/README.md)。A→WP02-03 字段权限决策，B→WP02-02 PostgreSQL 初始化与恢复，D→WP02-18 工作台数据状态；C 本轮不新增任务。三窗口已登记，尚未收到实际 START；完整依赖和业务 NOT_RUN 保留。
+> 当前集成：已收到第十轮三份候选，按任务串行同步状态与合并；本窗口接收 WP02-03，见[交付报告](evidence/WP02-03/field-decisions/DELIVERY.md)。其余任务以最新台账和各自报告为准，历史分配中的“未收到 START”已被本轮真实 START/DELIVERY 替代。局部交付不等于整项 DONE 或业务验收。
+
+> 第十轮原分配：[第十轮限定实现](dispatch/20261016-wave10/README.md)。A→WP02-03 字段权限决策，B→WP02-02 PostgreSQL 初始化与恢复，D→WP02-18 工作台数据状态；C 本轮不新增任务。三窗口已登记，尚未收到实际 START；完整依赖和业务 NOT_RUN 保留。
 
 > 上轮交付：[第九轮四份局部实现已集成](evidence/wave9-integration-20261016/README.md)。PR225/227/226/228 已正常合并并核对远端，真实 START 与局部交付已登记，四窗口关闭。完整任务 A/D 仍 PLANNED，B/C IN_PROGRESS；真实独立信任、Owner/宿主业务接线及正向回退兼容仍未验收。本次没有分配下一轮。
 
