@@ -217,7 +217,7 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
         if (form.Count != 1 || !form.TryGetValue("jti", out var values) || values.Count != 1 ||
             !Guid.TryParseExact(values[0], "D", out var jti) || jti == Guid.Empty || values[0] != jti.ToString("D"))
             return OAuthError("invalid_request");
-        return await serviceTokens.RevokeAsync(authentication.Client!, values[0]!, HttpContext.RequestAborted)
+        return await serviceTokens.RevokeAsync(authentication.Client!, values[0]!, HttpContext.RequestAborted, Request.Headers.Authorization)
             ? Ok() : OAuthError("temporarily_unavailable", StatusCodes.Status503ServiceUnavailable);
     }
 

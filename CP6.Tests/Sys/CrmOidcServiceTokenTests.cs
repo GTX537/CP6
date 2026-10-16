@@ -24,6 +24,16 @@ namespace CP6.Tests.Sys;
 
 public class CrmOidcServiceTokenTests
 {
+    [Theory]
+    [InlineData("Basic YTpi\n")]
+    [InlineData("Basic YT pi")]
+    [InlineData("Basic YTr/")]
+    [InlineData("Basic YTpi====")]
+    public void Basic_rejects_noncanonical_encoding_and_invalid_utf8(string header)
+    {
+        Assert.False(CrmOidcServiceTokens.TryDecodeBasic(header, out _, out _));
+    }
+
     [Fact]
     public async Task Valid_service_credentials_mint_only_a_bounded_service_access_token()
     {

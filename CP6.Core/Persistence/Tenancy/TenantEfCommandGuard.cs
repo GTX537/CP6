@@ -15,15 +15,18 @@ internal sealed class TenantEfCommandGuard(TenantStorageTransaction owner, Npgsq
             throw new TenantStorageException(TenantStorageFailure.LeaseClosed);
         _ = owner.CurrentBinding;
     }
-    private async Task ValidateAsync(DbCommand command, CancellationToken ct)
+    internal async Task ValidateCurrentAsync(CancellationToken ct)
     {
-        Check(command);
+        if (_closed) throw new TenantStorageException(TenantStorageFailure.LeaseClosed);
+        _ = owner.CurrentBinding;
         await owner.CheckConnectionAsync(ct).ConfigureAwait(false);
         await using var identity = new NpgsqlCommand("SELECT cp6_tenancy_v1.current_tenant_id()", connection, transaction);
         if (await identity.ExecuteScalarAsync(ct).ConfigureAwait(false) is not Guid actual || actual != tenant)
             throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
-        Check(command);
+        _ = owner.CurrentBinding;
     }
+    private async Task ValidateAsync(DbCommand command, CancellationToken ct)
+    { Check(command); await ValidateCurrentAsync(ct).ConfigureAwait(false); Check(command); }
     private void Validate(DbCommand command) => ValidateAsync(command, default).GetAwaiter().GetResult();
 
     public override InterceptionResult<DbDataReader> ReaderExecuting(DbCommand c, CommandEventData e, InterceptionResult<DbDataReader> r)

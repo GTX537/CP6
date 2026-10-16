@@ -14,6 +14,8 @@ public static class DatabaseSharedContext
     {
         ArgumentNullException.ThrowIfNull(caller);
         cancellationToken.ThrowIfCancellationRequested();
+        if (Tenancy.ServiceRevocationTransaction.TryGet(caller, out var managed))
+            return managed.CreateChildAsync(caller, target, create, cancellationToken);
         // ProviderName is the caller's explicit EF configuration, never a connection-string heuristic.
         var database = new DatabaseOptions(caller.Database.ProviderName switch
         {

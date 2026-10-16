@@ -155,9 +155,11 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
     {
         if (db.Database.IsNpgsql())
         {
+            if (CP6.Core.Persistence.Tenancy.ServiceRevocationTransaction.TryGet(db, out var managed))
+                await managed.AcquireSnapshotLockAsync(db, $"cp6:c02:snapshot:{tenant:N}:{aggregate}", cancellationToken).ConfigureAwait(false);
             // FOR UPDATE cannot lock a missing row. The transaction resource also protects the
             // first version, and must be acquired even when this context already tracks the row.
-            if (!await DatabaseResourceLocks.TryAcquireTransactionAsync(db,
+            else if (!await DatabaseResourceLocks.TryAcquireTransactionAsync(db,
                     $"cp6:c02:snapshot:{tenant:N}:{aggregate}", 30_000, cancellationToken).ConfigureAwait(false))
                 throw new TimeoutException("C02_SNAPSHOT_LOCK_TIMEOUT");
         }

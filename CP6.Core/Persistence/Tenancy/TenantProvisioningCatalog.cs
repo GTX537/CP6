@@ -16,7 +16,7 @@ internal static class TenantProvisioningCatalog
 
     // Seal this profile's structural categories and user-object dependencies; OIDs pin identities.
     // Explicit columns omit VACUUM/statistics/storage-counter fields which ordinary traffic changes.
-    private const string Sql = """
+    internal const string Sql = """
         WITH ns AS (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname !~ '^pg_' AND nspname<>'information_schema'),
         cls AS (SELECT oid FROM pg_catalog.pg_class WHERE relnamespace IN (SELECT oid FROM ns)),
         roles AS (SELECT role_oid AS oid FROM cp6_tenancy_v1.login_tenant

@@ -4,9 +4,10 @@ using CP6.Core.Persistence.Tenancy;
 using Npgsql;
 
 // No arbitrary connection string, default business connection, password argument, or startup hook.
-if (!args.SequenceEqual(["provision", "--stdin"]) || !Console.IsInputRedirected)
+var revocation = args.SequenceEqual(["install-service-revocation-v1", "--stdin"]);
+if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -24,6 +25,25 @@ try
     using var document = JsonDocument.Parse(buffer.AsMemory(0,size));
     if (document.RootElement.ValueKind != JsonValueKind.Object || !Unique(document.RootElement))
         throw new TenantProvisioningException("input-rejected");
+    if (revocation)
+    {
+        var install = document.Deserialize<RevocationInput>(new JsonSerializerOptions
+        { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow }) ?? throw new TenantProvisioningException("input-rejected");
+        if (install.Request is null || string.IsNullOrWhiteSpace(install.AdminUsername) || string.IsNullOrEmpty(install.AdminPassword)
+            || !Enum.TryParse<SslMode>(install.SslMode, false, out var installSsl)
+            || installSsl is not (SslMode.VerifyFull or SslMode.Disable)) throw new TenantProvisioningException("input-rejected");
+        await using var control = new NpgsqlConnection(new NpgsqlConnectionStringBuilder
+        {
+            Host = install.Request.Server, Port = install.Request.Port, Database = install.Request.Database,
+            Username = install.AdminUsername, Password = install.AdminPassword, SslMode = installSsl,
+            Pooling = false, Enlist = false, SearchPath = "pg_catalog", Options = " ", IncludeErrorDetail = false,
+            Timeout = 10, CommandTimeout = 65, ApplicationName = "CP6.TenantStorage.ServiceRevocation"
+        }.ConnectionString);
+        var installed = await ServiceRevocationInstallation.InstallAsync(control, install.Request,
+            CP6.Persistence.PostgreSql.Tenancy.ServiceRevocationBaselineV1.GenerateSql(), timeout.Token);
+        Console.WriteLine(JsonSerializer.Serialize(installed));
+        return 0;
+    }
     var input = document.Deserialize<ProvisioningInput>(new JsonSerializerOptions
     { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow }) ?? throw new TenantProvisioningException("input-rejected");
     if (input.Request is null || string.IsNullOrWhiteSpace(input.AdminUsername) || string.IsNullOrEmpty(input.AdminPassword)
@@ -61,3 +81,4 @@ static bool Unique(JsonElement element) => element.ValueKind switch
 };
 
 internal sealed record ProvisioningInput(TenantProvisioningRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
+internal sealed record RevocationInput(ServiceRevocationInstallRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
