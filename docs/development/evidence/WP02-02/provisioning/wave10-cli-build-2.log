@@ -1,0 +1,21 @@
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+  CP6.Entity -> D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Entity\bin\Release\net8.0\CP6.Entity.dll
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantStorageProvisioner.cs(65,25): error CS0103: The name 'savedResults' does not exist in the current context [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj]
+  CP6.Space.Contracts -> D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Space.Contracts\bin\Release\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Domain -> D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Space.Domain\bin\Release\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Application -> D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Space.Application\bin\Release\net8.0\CP6.Space.Application.dll
+
+Build FAILED.
+
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantStorageProvisioner.cs(65,25): error CS0103: The name 'savedResults' does not exist in the current context [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj]
+    4 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:46.97
