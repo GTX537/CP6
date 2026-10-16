@@ -51,6 +51,33 @@
 
 已复用历史证据，仅在其真实范围内：[pool/连接组件](../tenant-connections/DELIVERY.md)、[ERP8](../erp-tenant-isolation/DELIVERY.md)、[Identity4](../identity-priority-tenant-isolation/DELIVERY.md)、[旧显式 provisioning](../provisioning/DELIVERY.md)、[Platform 0.10.3 Main 采用](../main-package-adoption/DELIVERY.md)。本轮不重跑或扩大这些组件的全套场景。
 
+复现入口（PowerShell，仓库根目录；下列是已执行命令的参数/环境，每项单独运行并使用全新 PG root，不复用旧数据目录）：
+
+```powershell
+$dotnet = 'C:\Users\tt\.dotnet\dotnet.exe'
+$env:NUGET_PACKAGES = 'D:\CP6-local-test\WP02-02\adopt-a1\n'
+$env:CP6_TENANCY_PG_BIN = 'C:\Program Files\PostgreSQL\18\bin'
+$evidence = 'D:\CP6-local-test\WP02-02'
+$runs = @(
+  @{ Name='service-revocation-4'; Filter='FullyQualifiedName~ServiceRevocationPostgresTests|FullyQualifiedName~CrmIdentityRevocationTests|FullyQualifiedName~CrmIdentityConfigurationTests|FullyQualifiedName~CrmOidcServiceTokenTests|FullyQualifiedName~TenantStorageUnitTests'; Extra=@() },
+  @{ Name='service-revocation-5'; Filter='FullyQualifiedName~ServiceRevocationPostgresTests'; Extra=@() },
+  @{ Name='service-revocation-guard-6'; Filter='FullyQualifiedName~IdentityTenantPostgresTests.Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift|FullyQualifiedName~IdentityTenantPostgresTests.Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens'; Extra=@('--no-build') }
+)
+foreach ($run in $runs) {
+  $env:CP6_TENANCY_PG_ROOT = Join-Path $evidence ('tenant-connections-' + [guid]::NewGuid().ToString('N'))
+  $extra = $run.Extra
+  & $dotnet test CP6.Tests/CP6.Tests.csproj --no-restore @extra --filter $run.Filter `
+    --logger ('trx;LogFileName=' + $run.Name + '.trx') `
+    --results-directory (Join-Path $evidence 'service-revocation-results') -v:q
+  if ($LASTEXITCODE -ne 0) { throw ('Failed: ' + $run.Name) }
+}
+& $dotnet build tools/CP6.TenantStorage/CP6.TenantStorage.csproj --no-restore -v:q
+# CLI process arguments; its JSON document is written only to redirected private stdin:
+& $dotnet tools/CP6.TenantStorage/bin/Debug/net8.0/CP6.TenantStorage.dll install-service-revocation-v1 --stdin
+```
+
+CLI 最后一行必须由受控调用器提供重定向 stdin；不能交互粘贴密码，也不能把凭据作为命令参数。实际 replay 使用 `ProcessStartInfo`（`UseShellExecute=false`、`CreateNoWindow=true`、`RedirectStandardInput/Output/Error=true`），将内存中的 JSON 写入 `StandardInput` 后关闭输入；参数就是上述 DLL 与 `install-service-revocation-v1 --stdin`。输入合同及前置条件见 [CLI README](../../../../../tools/CP6.TenantStorage/README.md#bounded-service-revocation-profile)。本次 replay 对第 4 轮已保留集群核对 `ownership.txt`/postmaster/55436 后临时启动，使用数据库中原 canonical request 与原 InstallationId，经私有 stdin 提供独立 control 凭据，最后再次核对归属后停止；因此它验证的是已提交安装的恢复，不是新安装。fresh install 由第 5 轮夹具验证。上面的命令块仅补充可复现入口，文档补充时未重跑成功测试。
+
 ## 剩余范围
 
 Full17PGT、其他上下文、普通用户/部门 identity snapshot、ordinary outbox、ERP handler/dispatcher、默认 Owner 全生命周期、跨仓宿主采用/真实业务验收、现有数据迁移、DEV/UAT/PROD 与生产候选均为 **NOT_RUN**。新 profile 不是完整 Main 数据库；不能据此启用整个 Main 的其他路由或后台服务。目录变更与配置更新需要上述控制窗口，未提供跨实例在线授权撤销协议。
