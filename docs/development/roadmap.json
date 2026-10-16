@@ -158707,6 +158707,11 @@
       "date": "2026-10-16",
       "change": "Wave9 WP01-01 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。",
       "evidence": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave9 WP02-02 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。",
+      "evidence": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -158760,9 +158765,9 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP01-01.md",
-        "phase": "BOUNDED_IMPLEMENTATION_VERIFIED_PENDING_MERGE",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "STAGE_SCOPED_ACCEPTANCE_TRUST",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "allowed_write_paths": [
@@ -158790,7 +158795,8 @@
         "handoff_delivery": {
           "commit": "ade901ec90c7a1e2a1d97e5ece9156c947a2afc1",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T114328Z-wave9-delivery/MESSAGE.md"
-        }
+        },
+        "window_closed_at": "2026-10-16T12:17:14.768909+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158985,7 +158991,7 @@
       },
       "remaining_scope": "独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。",
       "wave9_delivery": {
-        "status": "VERIFIED_PENDING_REMOTE_MERGE",
+        "status": "MERGED",
         "source_candidate_sha": "c8c33a3115cd760bdf08381c81913616351f54b1",
         "pull_request": "https://github.com/GTX537/CP6/pull/225",
         "report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
@@ -158997,7 +159003,10 @@
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "remaining_scope": "独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。"
+        "remaining_scope": "独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。",
+        "remote_main_sha": "ceb02a60ab4628e4ef41fa9136001fdb03babfc7",
+        "integrated_source_sha": "01a42c4d86df4dd7434c853dd5dd3f95123210ef",
+        "remote_verified_at": "2026-10-16T12:17:14.768909+00:00"
       }
     },
     {
@@ -160144,11 +160153,11 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-02.md",
-        "phase": "ASSIGNED_NOT_STARTED",
+        "phase": "BOUNDED_IMPLEMENTATION_VERIFIED_PENDING_MERGE",
         "dispatch_scope": "IDENTITY_PRIORITY_STORAGE_ADAPTER",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": false,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Persistence/Tenancy/",
           "CP6.Tests/Persistence/Tenancy/",
@@ -160165,7 +160174,17 @@
         "handoff_branch": "codex/dev-handoff-wp02-02",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
+        "worker_start_ref": {
+          "commit": "1647a07ae8607a343b883c736fc7e860110bdd62",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261015T155221Z-wave9-start-identity-storage/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-16T12:17:44.022343+00:00",
+        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+        "handoff_delivery": {
+          "commit": "6ee03208c099ef4c8d2eedf9b0abe38028f5f959",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T115253Z-wave9-identity-delivery/MESSAGE.md"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -160444,7 +160463,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "Tenant connections and ERP fixed shared-schema row-security/EF transaction adapter implemented and tested in owned local PG. Real host current authorization/Owner final fence, existing handlers/workers adoption, other-context classification/schema/cache, repeatable provisioning/migration/restore and original17PGT remain. Full WP02-02 IN_PROGRESS; business NOT_RUN.",
+      "remaining_scope": "真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -160526,6 +160545,21 @@
           "handoff_sha": "888d7f49d594a0f142126e8972eb515d59593238",
           "scope": "Previous normal merge, ancestry and all25 scoped blobs verified; local main synced. No new product test run in dispatch."
         }
+      },
+      "wave9_delivery": {
+        "status": "VERIFIED_PENDING_REMOTE_MERGE",
+        "source_candidate_sha": "6fc0df1b4421f857491a285e5457f3f889c64210",
+        "pull_request": "https://github.com/GTX537/CP6/pull/227",
+        "report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
+        "validation_reused": "原 PostgreSQL18.6 Identity 5/5、受影响 ERP 回归 4/4 通过，真实模型与合成 A/B 数据；其余池/ERP 证据按报告复用。集中审查 PASS，失败日志保留。",
+        "review": "Worker combined SPEC/QUALITY and corrected-scope follow-up reused; COORD checked fixed source, evidence, scope and integration diff.",
+        "handoff": {
+          "commit": "6ee03208c099ef4c8d2eedf9b0abe38028f5f959",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T115253Z-wave9-identity-delivery/MESSAGE.md"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "remaining_scope": "真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。"
       }
     },
     {

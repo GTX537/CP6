@@ -113,7 +113,7 @@ public sealed class ErpTenantPostgresTests(ErpTenantPostgresFixture postgres)
     private static string Table(string table) => "erp_integration.\"" + table + "\"";
     private static string Probe(Guid tenant) => "t_" + tenant.ToString("N") + ".component_probe";
     private static bool Audit(string table) => table is "DeliveryReplayAudit" or "InboxReplayAudit";
-    private static ErpTenantLogin[] Logins => [new(TenantStorageContext.A, "tenant_a"), new(TenantStorageContext.B, "tenant_b")];
+    private static TenantLoginV1[] Logins => [new(TenantStorageContext.A, "tenant_a"), new(TenantStorageContext.B, "tenant_b")];
     private TenantStorageCatalog Catalog(string model = ErpTenantTransaction.ModelVersion, string revision = "r1", string? queue = "erp_integration") =>
         new("main", [model], new[] { TenantStorageContext.A, TenantStorageContext.B }.Select(tenant =>
             new TenantStorageBindingV1(tenant, "main", "db", TenantStorageBindingV1.SupportedLayout, model, revision, "v1",

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-16：第九轮 WP02-02 局部实现接收
+
+Identity 四表租户隔离与 ERP 同事务适配已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md)。原 PostgreSQL18.6 Identity 5/5、受影响 ERP 回归 4/4 通过，真实模型与合成 A/B 数据；其余池/ERP 证据按报告复用。集中审查 PASS，失败日志保留。
+
+当前同步状态并按 PR #227 串行合并，远端包含性由 COORD 合并后登记。真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。 24/375 DONE、0/125业务完成、247 NOT_RUN、41历史引用不变。此次未重跑产品测试、未触发/取消 Actions、未改工作流或执行迁库/部署。
+
 ## 2026-10-16：第九轮 WP01-01 局部实现接收
 
 采纳与运行信任配置分离已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP01-01/trust-stages/DELIVERY.md)。原 adapter 27 项、manager 8 项通过，旧夹具修正后单项通过；真实只读 manager 结构检查 PASS。复用原有效结果与集中审查，不称此次重跑。
