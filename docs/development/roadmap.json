@@ -158717,6 +158717,11 @@
       "date": "2026-10-16",
       "change": "Wave9 WP02-16 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。",
       "evidence": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave9 WP02-28 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。",
+      "evidence": "docs/development/evidence/WP02-28/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161290,9 +161295,9 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-16.md",
-        "phase": "BOUNDED_IMPLEMENTATION_VERIFIED_PENDING_MERGE",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "PURE_CODEGEN_PREVIEW_ONLY",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "allowed_write_paths": [
@@ -161322,7 +161327,8 @@
         "handoff_delivery": {
           "commit": "ed160beda640640a7fda6f6f7a8e18285d909c83",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261016T115200Z-delivery/MESSAGE.md"
-        }
+        },
+        "window_closed_at": "2026-10-16T12:20:03.123557+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161333,7 +161339,7 @@
       ],
       "remaining_scope": "仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。",
       "wave9_delivery": {
-        "status": "VERIFIED_PENDING_REMOTE_MERGE",
+        "status": "MERGED",
         "source_candidate_sha": "c455c44330f57ecc1a22983044a587d49f9c998e",
         "pull_request": "https://github.com/GTX537/CP6/pull/226",
         "report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md",
@@ -161345,7 +161351,10 @@
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "remaining_scope": "仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。"
+        "remaining_scope": "仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。",
+        "remote_main_sha": "28839d413c02fafcfa98ca9b26eb342aa7a61776",
+        "integrated_source_sha": "3b44bf09f18faa1db280a6ad5279a2a3171a66d3",
+        "remote_verified_at": "2026-10-16T12:20:03.123557+00:00"
       }
     },
     {
@@ -161901,7 +161910,7 @@
         "Main:host-package-adoption"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "READY",
+      "state": "IN_PROGRESS",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-28",
       "entry_gate": "CONFIRMED",
@@ -161915,11 +161924,11 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-28.md",
-        "phase": "ASSIGNED_NOT_STARTED",
+        "phase": "BOUNDED_IMPLEMENTATION_VERIFIED_PENDING_MERGE",
         "dispatch_scope": "ACTUAL_MAIN_HOST_IDENTITY",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": false,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.WebApi/Configuration/PlatformHostIdentityConfiguration.cs",
           "CP6.WebApi/Observability/PlatformHostIdentity*.cs",
@@ -161940,7 +161949,17 @@
         "handoff_branch": "codex/dev-handoff-wp02-28",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-28/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/WP02-28/DELIVERY.md",
+        "worker_start_ref": {
+          "commit": "d84f7096fc6e0879de338bddf080719fc71a06ee",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261015T155055Z-c-start/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-16T12:22:01.974466+00:00",
+        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+        "handoff_delivery": {
+          "commit": "6730a91899ee56fcb79de33d500ecbf3810cbb22",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261016T120053Z-c-delivery/MESSAGE.md"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161948,7 +161967,23 @@
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "remaining_scope": "无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。",
+      "wave9_delivery": {
+        "status": "VERIFIED_PENDING_REMOTE_MERGE",
+        "source_candidate_sha": "c92f12e33937a47093e5d9861c4269bb17b432b6",
+        "pull_request": "https://github.com/GTX537/CP6/pull/228",
+        "report": "docs/development/evidence/WP02-28/DELIVERY.md",
+        "validation_reused": "原相关单测36/36通过，尾斜杠修正后的真实 Main/授权撤销/固定503/旧health合同验证通过；未改单测结果复用。三份程序集匹配、两份未加载，整体 Unknown。",
+        "review": "Worker combined SPEC/QUALITY and corrected-scope follow-up reused; COORD checked fixed source, evidence, scope and integration diff.",
+        "handoff": {
+          "commit": "6730a91899ee56fcb79de33d500ecbf3810cbb22",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261016T120053Z-c-delivery/MESSAGE.md"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "remaining_scope": "无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。"
+      }
     },
     {
       "id": "WP02-29",

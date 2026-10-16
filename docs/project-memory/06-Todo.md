@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-16：第九轮 WP02-28 局部实现接收
+
+Main 实际运行身份观测与缺证回退拒绝已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-28/DELIVERY.md)。原相关单测36/36通过，尾斜杠修正后的真实 Main/授权撤销/固定503/旧health合同验证通过；未改单测结果复用。三份程序集匹配、两份未加载，整体 Unknown。
+
+当前同步状态并按 PR #228 串行合并，远端包含性由 COORD 合并后登记。无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。 24/375 DONE、0/125业务完成、247 NOT_RUN、41历史引用不变。此次未重跑产品测试、未触发/取消 Actions、未改工作流或执行迁库/部署。
+
 ## 2026-10-16：第九轮 WP02-16 局部实现接收
 
 CodeGen 安全即时预览接口与页面已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-16/codegen-preview/DELIVERY.md)。原 CodeGen 25 项、合法名称修正后定向 20 项通过；未改 HTTP/旧接口证据复用。前端类型和实际 Vue/API 夹具页面检查通过，集中审查问题已关闭。
