@@ -158722,6 +158722,11 @@
       "date": "2026-10-16",
       "change": "Wave9 WP02-28 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。",
       "evidence": "docs/development/evidence/WP02-28/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave9 four bounded deliveries merged through normal PRs225/227/226/228, exact remote containment checked. All windows closed; A/D full tasks PLANNED, B/C IN_PROGRESS. No full-task DONE or business acceptance upgrade.",
+      "evidence": "docs/development/evidence/wave9-integration-20261016/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161924,9 +161929,9 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-28.md",
-        "phase": "BOUNDED_IMPLEMENTATION_VERIFIED_PENDING_MERGE",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "ACTUAL_MAIN_HOST_IDENTITY",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": false,
         "worker_start_received": true,
         "allowed_write_paths": [
@@ -161959,7 +161964,8 @@
         "handoff_delivery": {
           "commit": "6730a91899ee56fcb79de33d500ecbf3810cbb22",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261016T120053Z-c-delivery/MESSAGE.md"
-        }
+        },
+        "window_closed_at": "2026-10-16T12:24:58.205425+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161970,7 +161976,7 @@
       ],
       "remaining_scope": "无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。",
       "wave9_delivery": {
-        "status": "VERIFIED_PENDING_REMOTE_MERGE",
+        "status": "MERGED",
         "source_candidate_sha": "c92f12e33937a47093e5d9861c4269bb17b432b6",
         "pull_request": "https://github.com/GTX537/CP6/pull/228",
         "report": "docs/development/evidence/WP02-28/DELIVERY.md",
@@ -161982,7 +161988,10 @@
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "remaining_scope": "无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。"
+        "remaining_scope": "无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。",
+        "integrated_source_sha": "0353366f7486f1bb88cb7b341ca65ac8ad303eaf",
+        "remote_main_sha": "86d8478db18747cfa95ad57bb6f1c2b06bb22d19",
+        "remote_verified_at": "2026-10-16T12:24:58.205425+00:00"
       }
     },
     {
@@ -177860,10 +177869,13 @@
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
       "id": "20261015-wave9",
-      "path": "docs/development/dispatch/20261015-wave9/README.md",
+      "path": "docs/development/evidence/wave9-integration-20261016/README.md",
       "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
       "coordinator_shared_state_only": true,
-      "workers_started": false
+      "workers_started": true,
+      "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+      "workers_delivered": true,
+      "windows_closed": true
     }
   },
   "acceptance_basis": {
