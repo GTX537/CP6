@@ -32,6 +32,7 @@ public sealed class TenantStoragePostgresFixture : IAsyncLifetime
     internal readonly string PasswordB = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
     internal readonly string PasswordAdmin = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
     private readonly string _ownerPassword = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+    internal string ProvisioningAdminPassword => _ownerPassword;
     private string _root = "", _bin = "", _data = "";
     private bool _started;
 

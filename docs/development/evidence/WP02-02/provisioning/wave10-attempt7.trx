@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="77a117ed-4fd2-431c-b618-12a57adf84b1" name="tt@LAPTOP-3QQ44FJS 2026-10-16 09:24:50" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T09:24:51.0003976-04:00" queuing="2026-10-16T09:24:51.0003978-04:00" start="2026-10-16T09:24:31.1560069-04:00" finish="2026-10-16T09:24:52.5655244-04:00" />
+  <TestSettings name="default" id="efe2eb12-8a86-4cef-9155-daa66cec8006">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-16_09_24_50" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0d3b8aa5-00b1-4e91-be03-6d17992e20d3" testId="110982e5-d3c6-63c0-c892-8100463b712c" testName="CP6.Tests.Persistence.Tenancy.TenantProvisioningPostgresTests.Atomic_install_append_replay_conflict_interruptions_drift_and_real_cli" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.1757698" startTime="2026-10-16T09:24:41.9763105-04:00" endTime="2026-10-16T09:24:50.1422806-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d3b8aa5-00b1-4e91-be03-6d17992e20d3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.TenantProvisioningPostgresTests.Atomic_install_append_replay_conflict_interruptions_drift_and_real_cli" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\release\net8.0\cp6.tests.dll" id="110982e5-d3c6-63c0-c892-8100463b712c">
+      <Execution id="0d3b8aa5-00b1-4e91-be03-6d17992e20d3" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Release\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.TenantProvisioningPostgresTests" name="Atomic_install_append_replay_conflict_interruptions_drift_and_real_cli" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="110982e5-d3c6-63c0-c892-8100463b712c" executionId="0d3b8aa5-00b1-4e91-be03-6d17992e20d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.30)&#xD;
+[xUnit.net 00:00:02.22]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:03.09]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:03.10]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:19.98]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

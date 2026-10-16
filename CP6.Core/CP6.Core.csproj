@@ -49,6 +49,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="CP6.Tests" />
     <InternalsVisibleTo Include="CP6.WebApi" />
+    <InternalsVisibleTo Include="CP6.TenantStorage" />
   </ItemGroup>
 
 </Project>
