@@ -78,6 +78,28 @@ foreach ($run in $runs) {
 
 CLI 最后一行必须由受控调用器提供重定向 stdin；不能交互粘贴密码，也不能把凭据作为命令参数。实际 replay 使用 `ProcessStartInfo`（`UseShellExecute=false`、`CreateNoWindow=true`、`RedirectStandardInput/Output/Error=true`），将内存中的 JSON 写入 `StandardInput` 后关闭输入；参数就是上述 DLL 与 `install-service-revocation-v1 --stdin`。输入合同及前置条件见 [CLI README](../../../../../tools/CP6.TenantStorage/README.md#bounded-service-revocation-profile)。本次 replay 对第 4 轮已保留集群核对 `ownership.txt`/postmaster/55436 后临时启动，使用数据库中原 canonical request 与原 InstallationId，经私有 stdin 提供独立 control 凭据，最后再次核对归属后停止；因此它验证的是已提交安装的恢复，不是新安装。fresh install 由第 5 轮夹具验证。上面的命令块仅补充可复现入口，文档补充时未重跑成功测试。
 
+## 同次集中审查的定向修复
+
+审查确认三个安装边界问题，均先用自有 PG 复现后修复：原请求恢复未核对 directory 行数据；结构 seal 未覆盖独立 issuance role 的属性/成员关系；fresh preflight 漏掉自定义系统 schema 对象。其余入口/授权/事务行为沿用上述有效证据，不重跑 120/8/2 项。
+
+- 恢复现在核对支持的 profile、数据库 OID、system identifier，以及原请求全部 directory OID/名称/tenant 行；复用原 directory 验证及事务锁。
+- 本次尚未合入的新 profile 在受保护安装行记录 `issuer_oid` / `issuer_name`。初装前、安装收尾、恢复时明确检查签发身份的普通登录资格、成员关系、role settings、所有权和准确授权集合；额外系统目录授权、列授权、grant option 或其他库授权拒绝。旧 `TenantProvisioningCatalog.Sql` 内容与 `erp-identity-messaging-v1` seal 语义均不变；没有升级旧候选布局。
+- 原 provisioning 的严格空布局 SQL 原样提取至共享 helper，仅新 profile 额外保留原有 default ACL 拒绝。初装在 baseline 执行前拒绝未知 `pg_catalog` 函数/表/类型、cast/operator 等依赖。测试每次确认 profile schema 和 cluster helper 都不存在，移除全部异常输入后同一原请求能正常安装/恢复，避免被其他拒绝条件掩盖。
+
+| 新证据（同一 `D:/CP6-local-test/WP02-02/` 根） | 实际结果 |
+| --- | --- |
+| `service-revocation-results/review-red-replay.trx`、`review-red-fresh.trx` | 修复前 2 + 1 项失败：都为期望拒绝却未抛异常；真实复现目录改绑、签发提权及未知 PUBLIC 可调用 `pg_catalog.unexpected()` 被接管 |
+| `service-revocation-results/review-green-replay-1.trx` | 首版两项恢复回归通过，后续扩大同一测试内的状态/权限边界 |
+| `service-revocation-results/review-green-fresh-1.trx` | 未知函数拒绝后，夹具创建 `pg_catalog` 表被 PG 42501 拒绝；随后仅在夹具建/删对象事务内启用 `allow_system_table_mods`，安装调用前断言已恢复 `off` |
+| `service-revocation-results/review-green-fresh-2.trx` | 独立新集群初装定向通过：未知系统函数/表/类型、cast/operator、签发账号预带系统目录权限均拒绝；清除异常输入后原请求安装和恢复成功 |
+| `service-revocation-results/review-green-replay-2.trx` | 签发角色全部漂移与真实 HTTPS 签发→撤销通过；目录 OID 修改由已有 seal 提前拒绝，测试过窄的异常类型断言失败，产品未接受漂移 |
+| `service-revocation-results/review-green-directory-3.trx` | 仅重跑修正断言的目录/安装状态项，通过；tenant/name 行修改明确命中目录验证，OID 及 profile/物理字段修改失败闭合 |
+| `service-revocation-review-cli-build.log`、`service-revocation-review-cli-replay.log` | 修复后 CLI 构建；新元数据上的私有 stdin 恢复、改绑拒绝、签发角色提权拒绝、恢复原状态后同请求成功 |
+
+原始 stdout 为 `service-revocation-review-<阶段>.log`，cluster 根为对应 `service-revocation-review-<阶段>-root.txt`；失败数据/日志均保留。最后一次 CLI 使用 `green-directory-3` 的已保留自有集群，核对 ownership/postmaster/data/55436 后启停；密码只从受保护私有文件读入内存并通过私有 stdin 交给 CLI，没有进入参数/日志。CLI 辅助脚本首次等待被 postgres 继承的输出管道 EOF 而停滞，核对归属后停止该实例；改为只等待 pg_ctl 退出、不收集 start 的管道后完成上述 CLI 检查，原启动/停止日志保留在该 cluster 的 `review-cli-postgres.log` / `review-cli-postgres-2.log`。未知 SECURITY DEFINER 仅 `SELECT 1`，限定在新建的自有隔离数据库中，测试结束前删除。
+
+定向复现沿用上面的 SDK/cache/PG 环境和 test 命令格式；两组必须**分别使用新的 root**：`FullyQualifiedName~ServiceRevocationFreshInstallPostgresTests`；`FullyQualifiedName~ServiceRevocationPostgresTests.Replay_rejects|FullyQualifiedName~ServiceRevocationPostgresTests.Http_real_issuance_revoke_repeat_concurrency_and_cross_client_isolation`。CLI private stdin 合同不变，增加的发行身份检查仅属于显式初装/恢复；管理员变更继续要求安静控制窗口，不承诺对任意并发管理员 DDL/角色操作提供在线 fencing。
+
 ## 剩余范围
 
 Full17PGT、其他上下文、普通用户/部门 identity snapshot、ordinary outbox、ERP handler/dispatcher、默认 Owner 全生命周期、跨仓宿主采用/真实业务验收、现有数据迁移、DEV/UAT/PROD 与生产候选均为 **NOT_RUN**。新 profile 不是完整 Main 数据库；不能据此启用整个 Main 的其他路由或后台服务。目录变更与配置更新需要上述控制窗口，未提供跨实例在线授权撤销协议。

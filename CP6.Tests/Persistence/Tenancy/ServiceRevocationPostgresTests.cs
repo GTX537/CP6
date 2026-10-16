@@ -208,6 +208,70 @@ internal sealed class RevocationHttpHost(WebApplication app, HttpClient client, 
 public sealed class ServiceRevocationPostgresTests(ServiceRevocationPostgresFixture postgres)
 {
     [TenantStoragePostgresFact]
+    public async Task Replay_rejects_changed_directory_rows_and_installation_state()
+    {
+        await using var control = await postgres.Owner();
+        foreach (var (change, restore) in new[]
+        {
+            ("UPDATE cp6_tenancy_v1.login_tenant SET tenant_id='44444444-4444-4444-8444-444444444444' WHERE role_name='tenant_a'",
+                $"UPDATE cp6_tenancy_v1.login_tenant SET tenant_id='{ServiceRevocationPostgresFixture.A}' WHERE role_name='tenant_a'"),
+            ("UPDATE cp6_tenancy_v1.login_tenant SET role_name='unknown_login' WHERE role_name='tenant_a'",
+                "UPDATE cp6_tenancy_v1.login_tenant SET role_name='tenant_a' WHERE role_name='unknown_login'"),
+            ("UPDATE cp6_tenancy_v1.login_tenant SET role_oid=1 WHERE role_name='tenant_a'",
+                "UPDATE cp6_tenancy_v1.login_tenant SET role_oid=(SELECT oid FROM pg_catalog.pg_roles WHERE rolname='tenant_a') WHERE role_name='tenant_a'"),
+            ("UPDATE cp6_service_revocation_v1.installation SET profile='unsupported'",
+                "UPDATE cp6_service_revocation_v1.installation SET profile='service-revocation-v1'"),
+            ("UPDATE cp6_service_revocation_v1.installation SET database_oid=1",
+                "UPDATE cp6_service_revocation_v1.installation SET database_oid=(SELECT oid FROM pg_catalog.pg_database WHERE datname=current_database())"),
+            ("UPDATE cp6_service_revocation_v1.installation SET system_identifier='1'",
+                "UPDATE cp6_service_revocation_v1.installation SET system_identifier=(SELECT system_identifier::text FROM pg_catalog.pg_control_system())")
+        })
+        {
+            await TenantStoragePostgresFixture.Sql(control, change);
+            try
+            {
+                // OID replacement also changes the seal's role set; name/tenant edits require the row check.
+                if (change.StartsWith("UPDATE cp6_tenancy_v1", StringComparison.Ordinal) && !change.Contains("SET role_oid", StringComparison.Ordinal))
+                {
+                    var rejected = await Assert.ThrowsAsync<InvalidOperationException>(() => ServiceRevocationInstallation.InstallAsync(control, postgres.Installation, postgres.Baseline));
+                    Assert.Equal("Known tenant directory v1 validation rejected.", rejected.Message);
+                }
+                else await Assert.ThrowsAsync<TenantStorageException>(() => ServiceRevocationInstallation.InstallAsync(control, postgres.Installation, postgres.Baseline));
+            }
+            finally { await TenantStoragePostgresFixture.Sql(control, restore); }
+        }
+        Assert.Equal(postgres.Installation.InstallationId,
+            (await ServiceRevocationInstallation.InstallAsync(control, postgres.Installation, postgres.Baseline)).InstallationId);
+    }
+
+    [TenantStoragePostgresFact]
+    public async Task Replay_rejects_issuance_role_privilege_membership_and_identity_drift()
+    {
+        await using var control = await postgres.Owner();
+        foreach (var (change, restore) in new[]
+        {
+            ("ALTER ROLE service_issuer SUPERUSER", "ALTER ROLE service_issuer NOSUPERUSER"),
+            ("GRANT pg_read_all_data TO service_issuer", "REVOKE pg_read_all_data FROM service_issuer"),
+            ("GRANT SELECT ON pg_catalog.pg_authid TO service_issuer", "REVOKE SELECT ON pg_catalog.pg_authid FROM service_issuer"),
+            ("GRANT SELECT ON crm_identity.\"ServiceToken\" TO service_issuer WITH GRANT OPTION", "REVOKE GRANT OPTION FOR SELECT ON crm_identity.\"ServiceToken\" FROM service_issuer"),
+            ("ALTER ROLE service_issuer SET search_path=public", "ALTER ROLE service_issuer RESET search_path"),
+            ("ALTER ROLE service_issuer NOLOGIN", "ALTER ROLE service_issuer LOGIN"),
+            ("UPDATE cp6_service_revocation_v1.installation SET issuer_oid=1",
+                "UPDATE cp6_service_revocation_v1.installation SET issuer_oid=(SELECT oid FROM pg_catalog.pg_roles WHERE rolname='service_issuer')"),
+            ("UPDATE cp6_service_revocation_v1.installation SET issuer_name='unknown_issuer'",
+                "UPDATE cp6_service_revocation_v1.installation SET issuer_name='service_issuer'"),
+            ("ALTER ROLE service_issuer RENAME TO changed_issuer", "ALTER ROLE changed_issuer RENAME TO service_issuer")
+        })
+        {
+            await TenantStoragePostgresFixture.Sql(control, change);
+            try { await Assert.ThrowsAsync<TenantStorageException>(() => ServiceRevocationInstallation.InstallAsync(control, postgres.Installation, postgres.Baseline)); }
+            finally { await TenantStoragePostgresFixture.Sql(control, restore); }
+        }
+        Assert.Equal(postgres.Installation.InstallationId,
+            (await ServiceRevocationInstallation.InstallAsync(control, postgres.Installation, postgres.Baseline)).InstallationId);
+    }
+
+    [TenantStoragePostgresFact]
     public async Task Production_verifier_reauthenticates_and_authority_rejects_forgery_and_previous_host_source()
     {
         await using var host = await postgres.Start();

@@ -59,27 +59,26 @@ internal static class ServiceRevocationInstallation
                 """) is not true) throw TenantStorageBindingV1.Rejected();
             var actualSeal = await TenantProvisioningCatalog.HashAsync(connection, tx, ct).ConfigureAwait(false);
             await using var previous = new NpgsqlCommand("""
-                SELECT canonical=@canonical AND baseline_sha256=@hash AND fingerprint=@seal
-                FROM cp6_service_revocation_v1.installation WHERE singleton AND installation_id=@id
+                SELECT issuer_oid FROM cp6_service_revocation_v1.installation
+                WHERE singleton AND installation_id=@id AND canonical=@canonical AND baseline_sha256=@hash AND fingerprint=@seal
+                  AND profile=@profile AND database_oid=@oid AND system_identifier=@system AND issuer_name=@issuer
                 """, connection, tx);
             previous.Parameters.AddWithValue("canonical", canonical); previous.Parameters.AddWithValue("hash", hash);
             previous.Parameters.AddWithValue("id", request.InstallationId);
             previous.Parameters.AddWithValue("seal", actualSeal);
-            if (await previous.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true) throw TenantStorageBindingV1.Rejected();
+            previous.Parameters.AddWithValue("profile", result.Profile);
+            previous.Parameters.AddWithValue("oid", NpgsqlTypes.NpgsqlDbType.Oid, request.DatabaseOid);
+            previous.Parameters.AddWithValue("system", request.SystemIdentifier); previous.Parameters.AddWithValue("issuer", request.IssuerLogin);
+            if (await previous.ExecuteScalarAsync(ct).ConfigureAwait(false) is not uint issuerOid) throw TenantStorageBindingV1.Rejected();
+            // The catalog seal deliberately excludes row data and the separate issuance identity.
+            await TenantLoginDirectoryV1.ValidateAsync(connection, tx, request.Tenants, ct).ConfigureAwait(false);
+            await ServiceRevocationIssuerV1.ValidateAsync(connection, tx, request.IssuerLogin, issuerOid, installed: true, ct).ConfigureAwait(false);
             await tx.CommitAsync(ct).ConfigureAwait(false); return result;
         }
         // New profile only. No quiet takeover of a partial/full Core baseline or old recovery seal.
-        if (await Scalar("""
-            SELECT NOT EXISTS(SELECT FROM pg_catalog.pg_namespace WHERE nspname !~ '^pg_' AND nspname NOT IN ('public','information_schema'))
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_class WHERE relnamespace='public'::regnamespace)
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_proc WHERE pronamespace='public'::regnamespace)
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_type WHERE typnamespace='public'::regnamespace)
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_collation WHERE collnamespace='public'::regnamespace)
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_roles WHERE rolname='cp6_tenant_lookup_v1')
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_event_trigger)
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_extension WHERE extname<>'plpgsql')
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_default_acl)
-            """) is not true) throw TenantStorageBindingV1.Rejected();
+        if (await Scalar(TenantEmptyLayoutV1.Sql + " AND NOT EXISTS(SELECT FROM pg_catalog.pg_default_acl)") is not true)
+            throw TenantStorageBindingV1.Rejected();
+        var issuanceOid = await ServiceRevocationIssuerV1.ValidateAsync(connection, tx, request.IssuerLogin, null, installed: false, ct).ConfigureAwait(false);
         foreach (var login in request.Tenants.Select(t => t.Login).Append(request.IssuerLogin))
         {
             await using var role = new NpgsqlCommand("""
@@ -110,7 +109,7 @@ internal static class ServiceRevocationInstallation
             CREATE TABLE cp6_service_revocation_v1.installation(
               singleton boolean PRIMARY KEY CHECK(singleton),installation_id uuid NOT NULL,profile text NOT NULL,
               database_oid oid NOT NULL,system_identifier text NOT NULL,baseline_sha256 text NOT NULL,
-              canonical text NOT NULL,fingerprint text NOT NULL);
+              canonical text NOT NULL,fingerprint text NOT NULL,issuer_oid oid NOT NULL,issuer_name name NOT NULL);
             REVOKE ALL ON cp6_service_revocation_v1.installation FROM PUBLIC;
             CREATE FUNCTION cp6_service_revocation_v1.system_identifier() RETURNS text
             LANGUAGE sql SECURITY DEFINER SET search_path=pg_catalog
@@ -161,14 +160,16 @@ internal static class ServiceRevocationInstallation
             rights.Parameters.AddWithValue("login", login);
             if (await rights.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true) throw TenantStorageBindingV1.Rejected();
         }
-        // Existing helper checks the directory; the new seal includes this profile's roles and exact object graph.
+        await ServiceRevocationIssuerV1.ValidateAsync(connection, tx, request.IssuerLogin, issuanceOid, installed: true, ct).ConfigureAwait(false);
+        // Keep the old catalog-seal contract; issuance identity and directory data have explicit checks.
         await using (var save = new NpgsqlCommand("""
-            INSERT INTO cp6_service_revocation_v1.installation VALUES(true,@id,@profile,@oid,@system,@hash,@canonical,@seal)
+            INSERT INTO cp6_service_revocation_v1.installation VALUES(true,@id,@profile,@oid,@system,@hash,@canonical,@seal,@issuerOid,@issuer)
             """, connection, tx))
         {
             save.Parameters.AddWithValue("id", request.InstallationId); save.Parameters.AddWithValue("profile", result.Profile);
             save.Parameters.AddWithValue("oid", NpgsqlTypes.NpgsqlDbType.Oid, request.DatabaseOid); save.Parameters.AddWithValue("system", request.SystemIdentifier);
             save.Parameters.AddWithValue("hash", hash); save.Parameters.AddWithValue("canonical", canonical);
+            save.Parameters.AddWithValue("issuerOid", NpgsqlTypes.NpgsqlDbType.Oid, issuanceOid); save.Parameters.AddWithValue("issuer", request.IssuerLogin);
             save.Parameters.AddWithValue("seal", await TenantProvisioningCatalog.HashAsync(connection, tx, ct).ConfigureAwait(false));
             await save.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
         }
