@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="467797c9-5129-4511-a6a8-c521b95b812a" name="tt@LAPTOP-3QQ44FJS 2026-10-16 07:48:52" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T07:48:52.4060556-04:00" queuing="2026-10-16T07:48:52.4060559-04:00" start="2026-10-16T07:48:51.3108659-04:00" finish="2026-10-16T07:48:52.4943239-04:00" />
+  <TestSettings name="default" id="6d367080-e400-41d2-854f-2f76326e3065">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-16_07_48_52" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1cd33522-1a4b-469f-bd49-44b9191153d3" testId="6cfd3faf-5ad9-3b9a-1ba8-232be6e64eee" testName="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;C:\\demo&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001435" startTime="2026-10-16T07:48:52.3635538-04:00" endTime="2026-10-16T07:48:52.3635824-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1cd33522-1a4b-469f-bd49-44b9191153d3" />
+    <UnitTestResult executionId="3b5741d0-d24d-491f-8edc-370ec711f8fe" testId="5e1d43b8-a3d0-74f3-5a9f-a3b13e5e75d8" testName="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;api/{{template}}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001262" startTime="2026-10-16T07:48:52.3636414-04:00" endTime="2026-10-16T07:48:52.3636749-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b5741d0-d24d-491f-8edc-370ec711f8fe" />
+    <UnitTestResult executionId="adb3688f-e4f1-42bd-872e-459155af7244" testId="d129a530-4b59-0231-a22d-8f0ecd116fc1" testName="CP6.Tests.CodeGenPreviewTests.Rejects_duplicates_base_members_null_and_bounded_input_overflow" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0016565" startTime="2026-10-16T07:48:52.3634286-04:00" endTime="2026-10-16T07:48:52.3634617-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="adb3688f-e4f1-42bd-872e-459155af7244" />
+    <UnitTestResult executionId="d5500b11-0ed1-4d65-a1b7-3b46803996aa" testId="9acd9417-bcda-d548-835f-9f161d56b447" testName="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;../Demo&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000099" startTime="2026-10-16T07:48:52.3629668-04:00" endTime="2026-10-16T07:48:52.3629959-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5500b11-0ed1-4d65-a1b7-3b46803996aa" />
+    <UnitTestResult executionId="312415ed-26af-48c1-99ce-eb0612a4f2d6" testId="00a9c96c-8df4-e2a8-1d05-a6f575f00b18" testName="CP6.Tests.CodeGenPreviewTests.Escapes_free_text_in_each_language_without_evaluating_templates" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0011388" startTime="2026-10-16T07:48:52.4392673-04:00" endTime="2026-10-16T07:48:52.4393039-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="312415ed-26af-48c1-99ce-eb0612a4f2d6" />
+    <UnitTestResult executionId="25592d38-4240-42c4-b7e5-c67e10fb4140" testId="1967756f-53e2-bc91-6c49-589ea3afc108" testName="CP6.Tests.CodeGenPreviewTests.Rejects_non_whitelisted_types(type: &quot;System.IO.FileInfo&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001134" startTime="2026-10-16T07:48:52.4136815-04:00" endTime="2026-10-16T07:48:52.4137776-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25592d38-4240-42c4-b7e5-c67e10fb4140" />
+    <UnitTestResult executionId="cd72854b-c069-46d4-8f4f-92be9d1b3c0c" testId="14a96594-4041-134c-f387-aa39dac34bdc" testName="CP6.Tests.CodeGenPreviewTests.Stable_preview_binds_rendered_input_and_preserves_metadata_and_legacy_dictionary" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0241284" startTime="2026-10-16T07:48:52.4139094-04:00" endTime="2026-10-16T07:48:52.4380498-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd72854b-c069-46d4-8f4f-92be9d1b3c0c" />
+    <UnitTestResult executionId="cc77e582-f81d-47d9-98b5-51453aad4cb2" testId="e3916c5d-21a0-7bc8-5c6e-613f91f2f941" testName="CP6.Tests.CodeGenPreviewTests.Frontend_import_names_are_legal_entity_and_module_names(name: &quot;VolTable&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0525181" startTime="2026-10-16T07:48:52.3837085-04:00" endTime="2026-10-16T07:48:52.4121219-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc77e582-f81d-47d9-98b5-51453aad4cb2" />
+    <UnitTestResult executionId="71e3884b-82e9-4941-b1c0-2199f85e31fe" testId="916712a6-65a9-e90b-0e62-e1915ff1500a" testName="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;BaseEntity&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000117" startTime="2026-10-16T07:48:52.3627927-04:00" endTime="2026-10-16T07:48:52.3628251-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71e3884b-82e9-4941-b1c0-2199f85e31fe" />
+    <UnitTestResult executionId="971f38ea-d72d-4ae4-94a2-61fb342ffc18" testId="7d5bfe4e-a6b4-dfe0-aeb7-e2946f2d708d" testName="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;api/%2e%2e/demo&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000099" startTime="2026-10-16T07:48:52.3835901-04:00" endTime="2026-10-16T07:48:52.3836154-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="971f38ea-d72d-4ae4-94a2-61fb342ffc18" />
+    <UnitTestResult executionId="a5fa26bf-3d91-43a8-9f2f-fd3efd3f066e" testId="a486f1c1-6e17-fd13-2c9a-403febc79369" testName="CP6.Tests.CodeGenPreviewTests.Accepts_unicode_contextual_names_and_supported_scalar_variants" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0018267" startTime="2026-10-16T07:48:52.4393832-04:00" endTime="2026-10-16T07:48:52.4411812-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5fa26bf-3d91-43a8-9f2f-fd3efd3f066e" />
+    <UnitTestResult executionId="558a2a40-541c-42e0-b126-df81d519302f" testId="8f7553d8-a44f-e416-9330-156e9103416a" testName="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;class&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000097" startTime="2026-10-16T07:48:52.3628686-04:00" endTime="2026-10-16T07:48:52.3628937-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="558a2a40-541c-42e0-b126-df81d519302f" />
+    <UnitTestResult executionId="9e76f23d-5252-4b23-95c3-4f1edc0e9c11" testId="213ad658-bac4-b2b0-36ab-22905f5d5263" testName="CP6.Tests.CodeGenPreviewTests.Rejects_non_whitelisted_types(type: &quot;string; public int Injected&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002420" startTime="2026-10-16T07:48:52.4134611-04:00" endTime="2026-10-16T07:48:52.4136277-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9e76f23d-5252-4b23-95c3-4f1edc0e9c11" />
+    <UnitTestResult executionId="d3db78ff-2d5f-4824-a6a1-2d4da3f9d7a5" testId="5ce9c35e-207c-e5c0-0f6f-adb42d5f0f13" testName="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;{{7*7}}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000234" startTime="2026-10-16T07:48:52.3626900-04:00" endTime="2026-10-16T07:48:52.3627286-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3db78ff-2d5f-4824-a6a1-2d4da3f9d7a5" />
+    <UnitTestResult executionId="3b6458a7-aac7-4cb9-8429-fb7575d1868e" testId="dc4674fd-7c07-a0c4-3f5e-17e28df3b710" testName="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;api/../demo&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000171" startTime="2026-10-16T07:48:52.3832804-04:00" endTime="2026-10-16T07:48:52.3833314-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b6458a7-aac7-4cb9-8429-fb7575d1868e" />
+    <UnitTestResult executionId="86a8cb01-ddf5-42e1-ada7-6f597e79d2c9" testId="0c54c63a-ecac-471a-1c93-db48f8283cd9" testName="CP6.Tests.CodeGenPreviewTests.Rejects_non_whitelisted_types(type: &quot;{{7*7}}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000254" startTime="2026-10-16T07:48:52.4138354-04:00" endTime="2026-10-16T07:48:52.4138572-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86a8cb01-ddf5-42e1-ada7-6f597e79d2c9" />
+    <UnitTestResult executionId="e7b55185-1472-497d-a5c8-4e55b9994900" testId="345c7a6d-3291-9518-7bf5-387bc6e35940" testName="CP6.Tests.CodeGenPreviewTests.Frontend_import_names_are_legal_entity_and_module_names(name: &quot;ColumnConfig&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0012359" startTime="2026-10-16T07:48:52.4122477-04:00" endTime="2026-10-16T07:48:52.4133679-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7b55185-1472-497d-a5c8-4e55b9994900" />
+    <UnitTestResult executionId="1946b721-f915-4c43-839a-7d4d8dff9d35" testId="6808c9fc-27d4-5db4-ee9f-1c7ab61bec81" testName="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;Demo;class Injected{}&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0047213" startTime="2026-10-16T07:48:52.3478734-04:00" endTime="2026-10-16T07:48:52.3567995-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1946b721-f915-4c43-839a-7d4d8dff9d35" />
+    <UnitTestResult executionId="0623fcf7-c255-4f42-8450-113768a468d6" testId="804fcd51-2327-e138-8b0f-cb8ae3bb8535" testName="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;../demo&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000099" startTime="2026-10-16T07:48:52.3835013-04:00" endTime="2026-10-16T07:48:52.3835309-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0623fcf7-c255-4f42-8450-113768a468d6" />
+    <UnitTestResult executionId="e24d996a-f452-40d5-9f35-e04bb9cc0544" testId="cd3ee713-ea5a-0ea8-66eb-4accc3d635da" testName="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;CON&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003978" startTime="2026-10-16T07:48:52.3622327-04:00" endTime="2026-10-16T07:48:52.3623482-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e24d996a-f452-40d5-9f35-e04bb9cc0544" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;api/../demo&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="dc4674fd-7c07-a0c4-3f5e-17e28df3b710">
+      <Execution id="3b6458a7-aac7-4cb9-8429-fb7575d1868e" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_path_and_route_template_injection" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Accepts_unicode_contextual_names_and_supported_scalar_variants" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a486f1c1-6e17-fd13-2c9a-403febc79369">
+      <Execution id="a5fa26bf-3d91-43a8-9f2f-fd3efd3f066e" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Accepts_unicode_contextual_names_and_supported_scalar_variants" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;CON&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cd3ee713-ea5a-0ea8-66eb-4accc3d635da">
+      <Execution id="e24d996a-f452-40d5-9f35-e04bb9cc0544" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_unsafe_entity_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;api/{{template}}&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5e1d43b8-a3d0-74f3-5a9f-a3b13e5e75d8">
+      <Execution id="3b5741d0-d24d-491f-8edc-370ec711f8fe" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_path_and_route_template_injection" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_non_whitelisted_types(type: &quot;System.IO.FileInfo&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1967756f-53e2-bc91-6c49-589ea3afc108">
+      <Execution id="25592d38-4240-42c4-b7e5-c67e10fb4140" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_non_whitelisted_types" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;class&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8f7553d8-a44f-e416-9330-156e9103416a">
+      <Execution id="558a2a40-541c-42e0-b126-df81d519302f" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_unsafe_entity_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;{{7*7}}&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5ce9c35e-207c-e5c0-0f6f-adb42d5f0f13">
+      <Execution id="d3db78ff-2d5f-4824-a6a1-2d4da3f9d7a5" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_unsafe_entity_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Escapes_free_text_in_each_language_without_evaluating_templates" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="00a9c96c-8df4-e2a8-1d05-a6f575f00b18">
+      <Execution id="312415ed-26af-48c1-99ce-eb0612a4f2d6" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Escapes_free_text_in_each_language_without_evaluating_templates" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Frontend_import_names_are_legal_entity_and_module_names(name: &quot;ColumnConfig&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="345c7a6d-3291-9518-7bf5-387bc6e35940">
+      <Execution id="e7b55185-1472-497d-a5c8-4e55b9994900" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Frontend_import_names_are_legal_entity_and_module_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;C:\\demo&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="6cfd3faf-5ad9-3b9a-1ba8-232be6e64eee">
+      <Execution id="1cd33522-1a4b-469f-bd49-44b9191153d3" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_path_and_route_template_injection" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Stable_preview_binds_rendered_input_and_preserves_metadata_and_legacy_dictionary" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="14a96594-4041-134c-f387-aa39dac34bdc">
+      <Execution id="cd72854b-c069-46d4-8f4f-92be9d1b3c0c" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Stable_preview_binds_rendered_input_and_preserves_metadata_and_legacy_dictionary" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Frontend_import_names_are_legal_entity_and_module_names(name: &quot;VolTable&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e3916c5d-21a0-7bc8-5c6e-613f91f2f941">
+      <Execution id="cc77e582-f81d-47d9-98b5-51453aad4cb2" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Frontend_import_names_are_legal_entity_and_module_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;BaseEntity&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="916712a6-65a9-e90b-0e62-e1915ff1500a">
+      <Execution id="71e3884b-82e9-4941-b1c0-2199f85e31fe" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_unsafe_entity_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_duplicates_base_members_null_and_bounded_input_overflow" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d129a530-4b59-0231-a22d-8f0ecd116fc1">
+      <Execution id="adb3688f-e4f1-42bd-872e-459155af7244" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_duplicates_base_members_null_and_bounded_input_overflow" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;../demo&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="804fcd51-2327-e138-8b0f-cb8ae3bb8535">
+      <Execution id="0623fcf7-c255-4f42-8450-113768a468d6" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_path_and_route_template_injection" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;Demo;class Injected{}&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="6808c9fc-27d4-5db4-ee9f-1c7ab61bec81">
+      <Execution id="1946b721-f915-4c43-839a-7d4d8dff9d35" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_unsafe_entity_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_unsafe_entity_names(name: &quot;../Demo&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9acd9417-bcda-d548-835f-9f161d56b447">
+      <Execution id="d5500b11-0ed1-4d65-a1b7-3b46803996aa" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_unsafe_entity_names" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_path_and_route_template_injection(route: &quot;api/%2e%2e/demo&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7d5bfe4e-a6b4-dfe0-aeb7-e2946f2d708d">
+      <Execution id="971f38ea-d72d-4ae4-94a2-61fb342ffc18" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_path_and_route_template_injection" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_non_whitelisted_types(type: &quot;{{7*7}}&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0c54c63a-ecac-471a-1c93-db48f8283cd9">
+      <Execution id="86a8cb01-ddf5-42e1-ada7-6f597e79d2c9" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_non_whitelisted_types" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.CodeGenPreviewTests.Rejects_non_whitelisted_types(type: &quot;string; public int Injected&quot;)" storage="d:\cp6-worktrees\wp02-16-codegen-preview-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="213ad658-bac4-b2b0-36ab-22905f5d5263">
+      <Execution id="9e76f23d-5252-4b23-95c3-4f1edc0e9c11" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-16-codegen-preview-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.CodeGenPreviewTests" name="Rejects_non_whitelisted_types" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6cfd3faf-5ad9-3b9a-1ba8-232be6e64eee" executionId="1cd33522-1a4b-469f-bd49-44b9191153d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5e1d43b8-a3d0-74f3-5a9f-a3b13e5e75d8" executionId="3b5741d0-d24d-491f-8edc-370ec711f8fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d129a530-4b59-0231-a22d-8f0ecd116fc1" executionId="adb3688f-e4f1-42bd-872e-459155af7244" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9acd9417-bcda-d548-835f-9f161d56b447" executionId="d5500b11-0ed1-4d65-a1b7-3b46803996aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00a9c96c-8df4-e2a8-1d05-a6f575f00b18" executionId="312415ed-26af-48c1-99ce-eb0612a4f2d6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1967756f-53e2-bc91-6c49-589ea3afc108" executionId="25592d38-4240-42c4-b7e5-c67e10fb4140" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14a96594-4041-134c-f387-aa39dac34bdc" executionId="cd72854b-c069-46d4-8f4f-92be9d1b3c0c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3916c5d-21a0-7bc8-5c6e-613f91f2f941" executionId="cc77e582-f81d-47d9-98b5-51453aad4cb2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="916712a6-65a9-e90b-0e62-e1915ff1500a" executionId="71e3884b-82e9-4941-b1c0-2199f85e31fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7d5bfe4e-a6b4-dfe0-aeb7-e2946f2d708d" executionId="971f38ea-d72d-4ae4-94a2-61fb342ffc18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a486f1c1-6e17-fd13-2c9a-403febc79369" executionId="a5fa26bf-3d91-43a8-9f2f-fd3efd3f066e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8f7553d8-a44f-e416-9330-156e9103416a" executionId="558a2a40-541c-42e0-b126-df81d519302f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="213ad658-bac4-b2b0-36ab-22905f5d5263" executionId="9e76f23d-5252-4b23-95c3-4f1edc0e9c11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ce9c35e-207c-e5c0-0f6f-adb42d5f0f13" executionId="d3db78ff-2d5f-4824-a6a1-2d4da3f9d7a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dc4674fd-7c07-a0c4-3f5e-17e28df3b710" executionId="3b6458a7-aac7-4cb9-8429-fb7575d1868e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c54c63a-ecac-471a-1c93-db48f8283cd9" executionId="86a8cb01-ddf5-42e1-ada7-6f597e79d2c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="345c7a6d-3291-9518-7bf5-387bc6e35940" executionId="e7b55185-1472-497d-a5c8-4e55b9994900" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6808c9fc-27d4-5db4-ee9f-1c7ab61bec81" executionId="1946b721-f915-4c43-839a-7d4d8dff9d35" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="804fcd51-2327-e138-8b0f-cb8ae3bb8535" executionId="0623fcf7-c255-4f42-8450-113768a468d6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd3ee713-ea5a-0ea8-66eb-4accc3d635da" executionId="e24d996a-f452-40d5-9f35-e04bb9cc0544" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="20" executed="20" passed="20" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.30)&#xD;
+[xUnit.net 00:00:00.34]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.68]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.70]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:00.81]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,5 +1,6 @@
 """Algorithm-only synthetic fixtures. No fixture is an actual business adoption."""
 import copy
+from contextlib import contextmanager
 import hashlib
 import json
 import os
@@ -131,8 +132,11 @@ class AcceptanceBasisTests(unittest.TestCase):
 
     def test_no_independent_verifier_rejects_self_authority(self):
         self.selection['authority'] = {'signed': True, 'approved_by': 'user'}
-        self.assertFalse(self.evaluate(False)['basis_adoption_valid'])
-        self.assertTrue(self.evaluate(False)['inventory_coverage_valid'])
+        with mock.patch.dict(os.environ, {'CP6_ACCEPTANCE_TRUST_POLICY': ''}):
+            result = self.evaluate(False)
+        self.assertFalse(result['basis_adoption_valid'])
+        self.assertTrue(result['inventory_coverage_valid'])
+        self.assertEqual(result['errors'], ['INDEPENDENT_VERIFIER_UNCONFIGURED'])
 
     def test_malformed_objects_fail_closed(self):
         self.basis['source_documents'] = [None]
@@ -294,7 +298,7 @@ class AcceptanceBasisTests(unittest.TestCase):
         signed = subprocess.run(['ssh-keygen', '-Y', 'sign', '-f', str(key), '-n', 'cp6-acceptance-authority-v1', str(body)], capture_output=True, timeout=30)
         self.assertEqual(signed.returncode, 0, signed.stderr)
         signature = Path(str(body)+'.sig').read_bytes()
-        policy = {'authority': {'repository': 'fixture/independent-authority', 'path': 'registry.json', 'principal': 'fixture-authority', 'allowed_signers': str(signers)}}
+        policy = {'authority': {'repository': 'fixture/independent-authority', 'path': 'registry.json', 'principal': 'fixture-authority', 'allowed_signers': str(signers), 'identity_root': 'identities'}}
         verifier = gate.TrustedRegistryVerifier(policy)
         with mock.patch.object(verifier, 'api', side_effect=[{'sha': 'a'*40}, payload, signature]):
             self.assertEqual(verifier.registry('authority')['schema'], 'CP6-ACCEPTANCE-AUTHORITY-REGISTRY/1')
@@ -302,7 +306,8 @@ class AcceptanceBasisTests(unittest.TestCase):
         with mock.patch.object(verifier, 'api', side_effect=[{'sha': 'a'*40}, payload+b' ', signature]):
             with self.assertRaises(ValueError): verifier.registry('authority')
 
-    def test_configured_production_adapter_complete_synthetic_path(self):
+    @contextmanager
+    def configured_registry(self):
         """Real policy loader/signatures/algorithms; transport and business are fixtures."""
         _, report = self.runtime()
         now = dt.datetime.now(dt.timezone.utc)
@@ -343,7 +348,10 @@ class AcceptanceBasisTests(unittest.TestCase):
             payloads['repos/fixture/authority/contents/' + identity_path] = identity_raw
             policy_path = external/'policy.json'; policy_path.write_bytes(encoded(policy))
 
+            requests = []
+
             def api(_self, endpoint, *, raw=False):
+                requests.append(endpoint)
                 if endpoint.endswith('/commits/main'): return {'sha': 'f'*40}
                 if '/commits?path=' in endpoint: return [{'sha': 'b'*40}]
                 if endpoint.endswith('/commits/' + 'b'*40): return {'parents': [{'sha': 'c'*40}], 'files': [{'filename': identity_path, 'status': 'added'}]}
@@ -353,10 +361,87 @@ class AcceptanceBasisTests(unittest.TestCase):
                 return payloads[endpoint.split('?')[0]]
 
             with mock.patch.dict(os.environ, {'CP6_ACCEPTANCE_TRUST_POLICY': str(policy_path)}), mock.patch.object(gate.TrustedRegistryVerifier, 'api', api):
-                result = gate.evaluate(self.root, self.selection)
+                yield policy, policy_path, payloads, requests
+
+    def test_configured_production_adapter_complete_synthetic_path(self):
+        with self.configured_registry():
+            result = gate.evaluate(self.root, self.selection)
             self.assertTrue(result['basis_adoption_valid'], result)
             self.assertTrue(result['inventory_coverage_valid'], result)
             self.assertTrue(result['target_runtime_valid'][TARGETS[0]], result)
+
+    def test_authority_only_adoption_does_not_load_execution_configuration(self):
+        with self.configured_registry() as (policy, path, _, requests):
+            self.selection['runtime'] = {}
+            del policy['execution']
+            for execution in ('absent', None, {}, {'repository': 42}):
+                with self.subTest(execution=execution):
+                    if execution != 'absent':
+                        policy['execution'] = execution
+                    path.write_bytes(encoded(policy))
+                    result = gate.evaluate(self.root, self.selection)
+                    self.assertTrue(result['basis_adoption_valid'], result)
+                    self.assertTrue(result['inventory_coverage_valid'], result)
+                    self.assertFalse(any(result['target_runtime_valid'].values()), result)
+                    self.assertEqual(result['errors'], [t + ': RUNTIME_NOT_SUBMITTED' for t in TARGETS])
+            self.assertFalse(any('fixture/execution' in request for request in requests))
+
+    def test_execution_configuration_failures_do_not_revoke_adoption(self):
+        with self.configured_registry() as (policy, path, _, requests):
+            valid = copy.deepcopy(policy['execution'])
+            cases = [('absent', 'EXECUTION_TRUST_UNCONFIGURED'),
+                     (None, 'EXECUTION_TRUST_INVALID'),
+                     ({}, 'EXECUTION_TRUST_INVALID'),
+                     (dict(valid, repository=42), 'EXECUTION_TRUST_INVALID'),
+                     (dict(valid, path='../registry.json'), 'EXECUTION_TRUST_INVALID'),
+                     (dict(valid, principal=''), 'EXECUTION_TRUST_INVALID'),
+                     (dict(valid, allowed_signers=str(ROOT / 'keys')), 'EXECUTION_TRUST_INVALID')]
+            del policy['execution']
+            for config, error in cases:
+                with self.subTest(config=config):
+                    if config != 'absent':
+                        policy['execution'] = config
+                    path.write_bytes(encoded(policy))
+                    result = gate.evaluate(self.root, self.selection)
+                    self.assertTrue(result['basis_adoption_valid'], result)
+                    self.assertTrue(result['inventory_coverage_valid'], result)
+                    self.assertFalse(any(result['target_runtime_valid'].values()), result)
+                    self.assertTrue(any(e.startswith(TARGETS[0] + ': ' + error) for e in result['errors']), result)
+            self.assertFalse(any('fixture/execution' in request for request in requests))
+
+    def test_role_signature_failure_is_confined_to_its_stage(self):
+        with self.configured_registry() as (_, _, payloads, _):
+            for role in ('execution', 'authority'):
+                with self.subTest(role=role):
+                    key = 'repos/fixture/' + role + '/contents/registry.json'
+                    original = payloads[key]
+                    payloads[key] += b' '
+                    result = gate.evaluate(self.root, self.selection)
+                    payloads[key] = original
+                    self.assertEqual(result['basis_adoption_valid'], role == 'execution', result)
+                    self.assertTrue(result['inventory_coverage_valid'], result)
+                    self.assertFalse(any(result['target_runtime_valid'].values()), result)
+                    self.assertTrue(any('INDEPENDENT_COMMAND_FAILED' in e for e in result['errors']), result)
+
+    def test_execution_cannot_replace_missing_or_invalid_authority(self):
+        with self.configured_registry() as (policy, path, _, requests):
+            valid = copy.deepcopy(policy['authority'])
+            del policy['authority']
+            for config, error in [('absent', 'AUTHORITY_TRUST_UNCONFIGURED'),
+                                  (None, 'AUTHORITY_TRUST_INVALID'),
+                                  ({}, 'AUTHORITY_TRUST_INVALID'),
+                                  (dict(valid, repository=42), 'AUTHORITY_TRUST_INVALID'),
+                                  (dict(valid, identity_root='../identities'), 'AUTHORITY_TRUST_INVALID')]:
+                with self.subTest(config=config):
+                    if config != 'absent':
+                        policy['authority'] = config
+                    path.write_bytes(encoded(policy))
+                    result = gate.evaluate(self.root, self.selection)
+                    self.assertFalse(result['basis_adoption_valid'], result)
+                    self.assertTrue(result['inventory_coverage_valid'], result)
+                    self.assertFalse(any(result['target_runtime_valid'].values()), result)
+                    self.assertTrue(any(e.startswith(error) for e in result['errors']), result)
+            self.assertFalse(any('fixture/execution' in request for request in requests))
 
     def test_identity_has_one_creation_in_fixed_operator_namespace(self):
         verifier = gate.TrustedRegistryVerifier({'authority': {'repository': 'fixture/authority', 'identity_root': 'identities'}})

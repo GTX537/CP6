@@ -1,0 +1,9 @@
+C:\Users\tt\.dotnet\sdk\8.0.424\Sdks\Microsoft.NET.Sdk\targets\Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1004: Assets file 'D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\obj\project.assets.json' not found. Run a NuGet package restore to generate this file. [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj]
+
+Build FAILED.
+
+C:\Users\tt\.dotnet\sdk\8.0.424\Sdks\Microsoft.NET.Sdk\targets\Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1004: Assets file 'D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\obj\project.assets.json' not found. Run a NuGet package restore to generate this file. [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.36

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-10-15",
+  "as_of": "2026-10-16",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -158702,6 +158702,21 @@
       "date": "2026-10-15",
       "change": "Wave9 assigns A stage-scoped acceptance trust, B Identity+ERP shared tenancy, C actual Main runtime identity, D pure CodeGen preview. Four disjoint worktrees; no worker START yet. C READY after delivered dependencies; A/D full tasks remain PLANNED/NOT_CHECKED. PR223 ERP delivery recorded; no DONE/business upgrades or new release/Actions authorization.",
       "evidence": "docs/development/dispatch/20261015-wave9/README.md"
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave9 WP01-01 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。",
+      "evidence": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave9 WP02-02 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。",
+      "evidence": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave9 WP02-16 bounded candidate verified for serial merge; shared state synchronized without full task or business completion. 仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。",
+      "evidence": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -158755,11 +158770,11 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP01-01.md",
-        "phase": "ASSIGNED_NOT_STARTED",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "STAGE_SCOPED_ACCEPTANCE_TRUST",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "docs/development/tools/acceptance_basis.py",
           "docs/development/tools/test_acceptance_basis.py",
@@ -158775,7 +158790,18 @@
         "handoff_branch": "codex/dev-handoff-wp01-01",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
+        "worker_start_ref": {
+          "commit": "e6a10d2207418258c869d03f1d84b0144983e4c3",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T113733Z-wave9-start/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-16T12:15:59.049568+00:00",
+        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+        "handoff_delivery": {
+          "commit": "ade901ec90c7a1e2a1d97e5ece9156c947a2afc1",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T114328Z-wave9-delivery/MESSAGE.md"
+        },
+        "window_closed_at": "2026-10-16T12:17:14.768909+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -158967,6 +158993,25 @@
         "manifest_sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
         "machine_trust_state": "INDEPENDENT_VERIFIER_UNCONFIGURED",
         "remaining_scope": "User adoption is now decided; independently governed trust policy/attestation is not provisioned, so automatic inventory closure and full WP01 completion remain unverified. Do not request the same adoption decision again. Business runtime belongs to consumer tasks."
+      },
+      "remaining_scope": "独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。",
+      "wave9_delivery": {
+        "status": "MERGED",
+        "source_candidate_sha": "c8c33a3115cd760bdf08381c81913616351f54b1",
+        "pull_request": "https://github.com/GTX537/CP6/pull/225",
+        "report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
+        "validation_reused": "原 adapter 27 项、manager 8 项通过，旧夹具修正后单项通过；真实只读 manager 结构检查 PASS。复用原有效结果与集中审查，不称此次重跑。",
+        "review": "Worker combined SPEC/QUALITY and corrected-scope follow-up reused; COORD checked fixed source, evidence, scope and integration diff.",
+        "handoff": {
+          "commit": "ade901ec90c7a1e2a1d97e5ece9156c947a2afc1",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T114328Z-wave9-delivery/MESSAGE.md"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "remaining_scope": "独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。",
+        "remote_main_sha": "ceb02a60ab4628e4ef41fa9136001fdb03babfc7",
+        "integrated_source_sha": "01a42c4d86df4dd7434c853dd5dd3f95123210ef",
+        "remote_verified_at": "2026-10-16T12:17:14.768909+00:00"
       }
     },
     {
@@ -160113,11 +160158,11 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-02.md",
-        "phase": "ASSIGNED_NOT_STARTED",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "IDENTITY_PRIORITY_STORAGE_ADAPTER",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": false,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Persistence/Tenancy/",
           "CP6.Tests/Persistence/Tenancy/",
@@ -160134,7 +160179,18 @@
         "handoff_branch": "codex/dev-handoff-wp02-02",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
+        "worker_start_ref": {
+          "commit": "1647a07ae8607a343b883c736fc7e860110bdd62",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261015T155221Z-wave9-start-identity-storage/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-16T12:17:44.022343+00:00",
+        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+        "handoff_delivery": {
+          "commit": "6ee03208c099ef4c8d2eedf9b0abe38028f5f959",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T115253Z-wave9-identity-delivery/MESSAGE.md"
+        },
+        "window_closed_at": "2026-10-16T12:18:41.765803+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -160413,7 +160469,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "Tenant connections and ERP fixed shared-schema row-security/EF transaction adapter implemented and tested in owned local PG. Real host current authorization/Owner final fence, existing handlers/workers adoption, other-context classification/schema/cache, repeatable provisioning/migration/restore and original17PGT remain. Full WP02-02 IN_PROGRESS; business NOT_RUN.",
+      "remaining_scope": "真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -160495,6 +160551,24 @@
           "handoff_sha": "888d7f49d594a0f142126e8972eb515d59593238",
           "scope": "Previous normal merge, ancestry and all25 scoped blobs verified; local main synced. No new product test run in dispatch."
         }
+      },
+      "wave9_delivery": {
+        "status": "MERGED",
+        "source_candidate_sha": "6fc0df1b4421f857491a285e5457f3f889c64210",
+        "pull_request": "https://github.com/GTX537/CP6/pull/227",
+        "report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
+        "validation_reused": "原 PostgreSQL18.6 Identity 5/5、受影响 ERP 回归 4/4 通过，真实模型与合成 A/B 数据；其余池/ERP 证据按报告复用。集中审查 PASS，失败日志保留。",
+        "review": "Worker combined SPEC/QUALITY and corrected-scope follow-up reused; COORD checked fixed source, evidence, scope and integration diff.",
+        "handoff": {
+          "commit": "6ee03208c099ef4c8d2eedf9b0abe38028f5f959",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T115253Z-wave9-identity-delivery/MESSAGE.md"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "remaining_scope": "真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。",
+        "remote_main_sha": "7e33b610cef87266140dfe1f1b2f52e1847d18de",
+        "integrated_source_sha": "6578314b66f0949d46dad2bfbccb658df974c3bc",
+        "remote_verified_at": "2026-10-16T12:18:41.765803+00:00"
       }
     },
     {
@@ -161216,11 +161290,11 @@
         "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
         "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-16.md",
-        "phase": "ASSIGNED_NOT_STARTED",
+        "phase": "BOUNDED_IMPLEMENTATION_VERIFIED_PENDING_MERGE",
         "dispatch_scope": "PURE_CODEGEN_PREVIEW_ONLY",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Services/Pub/CodeGenService.cs",
           "CP6.Core/Services/Pub/CodeGenPreview*.cs",
@@ -161238,7 +161312,17 @@
         "handoff_branch": "codex/dev-handoff-wp02-16",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md",
+        "worker_start_ref": {
+          "commit": "c3da88a0cf1d273e29c0137e6528673294ed753b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261015T155054Z-start/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-16T12:19:07.591973+00:00",
+        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+        "handoff_delivery": {
+          "commit": "ed160beda640640a7fda6f6f7a8e18285d909c83",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261016T115200Z-delivery/MESSAGE.md"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161246,7 +161330,23 @@
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "remaining_scope": "仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。",
+      "wave9_delivery": {
+        "status": "VERIFIED_PENDING_REMOTE_MERGE",
+        "source_candidate_sha": "c455c44330f57ecc1a22983044a587d49f9c998e",
+        "pull_request": "https://github.com/GTX537/CP6/pull/226",
+        "report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md",
+        "validation_reused": "原 CodeGen 25 项、合法名称修正后定向 20 项通过；未改 HTTP/旧接口证据复用。前端类型和实际 Vue/API 夹具页面检查通过，集中审查问题已关闭。",
+        "review": "Worker combined SPEC/QUALITY and corrected-scope follow-up reused; COORD checked fixed source, evidence, scope and integration diff.",
+        "handoff": {
+          "commit": "ed160beda640640a7fda6f6f7a8e18285d909c83",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261016T115200Z-delivery/MESSAGE.md"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "remaining_scope": "仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。"
+      }
     },
     {
       "id": "WP02-17",
