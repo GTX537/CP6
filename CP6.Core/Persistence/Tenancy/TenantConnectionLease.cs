@@ -101,6 +101,7 @@ internal sealed class TenantStorageTransaction
     private readonly SemaphoreSlim _operation = new(1, 1);
     private int _closed;
     private bool _committed;
+    private Func<CancellationToken, Task>? _commitFence;
     internal TenantStorageTransaction(TenantConnectionLease lease, NpgsqlConnection connection, NpgsqlTransaction transaction)
         => (_lease, _connection, _transaction) = (lease, connection, transaction);
 
@@ -114,6 +115,13 @@ internal sealed class TenantStorageTransaction
         }
     }
     internal Task CheckConnectionAsync(CancellationToken ct) => _lease.CheckConnectionAsync(ct);
+
+    internal void SetCommitFence(Func<CancellationToken, Task> fence)
+    {
+        _ = CurrentBinding;
+        if (_commitFence is not null) throw new TenantStorageException(TenantStorageFailure.OperationInProgress);
+        _commitFence = fence;
+    }
 
     public async Task<T> ExecuteAsync<T>(Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task<T>> action,
         CancellationToken cancellationToken = default)
@@ -138,6 +146,7 @@ internal sealed class TenantStorageTransaction
         try
         {
             await _lease.CheckConnectionAsync(cancellationToken).ConfigureAwait(false);
+            if (_commitFence is not null) await _commitFence(cancellationToken).ConfigureAwait(false);
             await _transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             _committed = true;
             _lease.CheckCurrent();

@@ -38,6 +38,7 @@ public static class CrmIdentityConfiguration
     {
         database ??= DatabaseOptions.FromConfiguration(configuration);
         var options = BindOptions(configuration);
+        ServiceRevocationTenancy.ServiceRevocationConfiguration.Register(services, configuration, oidc, options, database);
         if (!options.Enabled) return services;
         if (!oidc.Enabled) throw new InvalidOperationException("C02_REQUIRES_ENABLED_CRM_ISSUER");
         var connection = configuration.GetConnectionString("DefaultConnection")!;

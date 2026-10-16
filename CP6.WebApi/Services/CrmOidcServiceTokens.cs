@@ -21,17 +21,20 @@ public sealed class CrmOidcServiceTokens
     private readonly ICrmOidcServiceDirectory _directory;
     private readonly TimeProvider _timeProvider;
     private readonly ICrmServiceTokenRecordStore? _records;
+    private readonly ServiceRevocationTenancy.ServiceRevocationTenantHost? _tenantRevocations;
     internal bool RevocationEnabled => _records is not null;
 
     public CrmOidcServiceTokens(CrmOidcOptions options, CrmOidcCrypto crypto,
         ICrmOidcServiceDirectory directory, TimeProvider? timeProvider = null,
-        ICrmServiceTokenRecordStore? records = null)
+        ICrmServiceTokenRecordStore? records = null,
+        ServiceRevocationTenancy.ServiceRevocationTenantHost? tenantRevocations = null)
     {
         _options = options;
         _crypto = crypto;
         _directory = directory;
         _timeProvider = timeProvider ?? TimeProvider.System;
         _records = records;
+        _tenantRevocations = tenantRevocations;
     }
 
     internal CrmOidcServiceAuthentication Authenticate(StringValues authorization)
@@ -97,15 +100,20 @@ public sealed class CrmOidcServiceTokens
             && IsDatabaseUnavailable(inner);
     }
 
-    internal async Task<bool> RevokeAsync(CrmOidcServiceClient client, string jti, CancellationToken cancellationToken)
+    internal async Task<bool> RevokeAsync(CrmOidcServiceClient client, string jti, CancellationToken cancellationToken,
+        StringValues authorization = default)
     {
         if (_records is null) return false;
         try
         {
-            await _records.RevokeAsync(_options.Issuer, client.ClientId, client.TenantId, jti, cancellationToken);
+            if (_tenantRevocations is not null)
+                await _tenantRevocations.RevokeAsync(authorization, client, jti, cancellationToken);
+            else await _records.RevokeAsync(_options.Issuer, client.ClientId, client.TenantId, jti, cancellationToken);
             return true;
         }
         catch (Exception ex) when (IsDatabaseUnavailable(ex)) { return false; }
+        catch (CP6.Core.Persistence.Tenancy.TenantStorageException) { return false; }
+        catch (CP6.Platform.Abstractions.Context.ContextResolutionExceptionV1) { return false; }
     }
 
     internal static bool TryDecodeBasic(StringValues authorization, out string id, out string secret)
@@ -118,14 +126,16 @@ public sealed class CrmOidcServiceTokens
             return false;
         try
         {
-            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(value[6..]));
+            var bytes = Convert.FromBase64String(value[6..]);
+            if (Convert.ToBase64String(bytes) != value[6..]) return false;
+            var decoded = new UTF8Encoding(false, true).GetString(bytes);
             var separator = decoded.IndexOf(':');
             if (separator < 1) return false;
             id = Uri.UnescapeDataString(decoded[..separator].Replace('+', ' '));
             secret = Uri.UnescapeDataString(decoded[(separator + 1)..].Replace('+', ' '));
             return true;
         }
-        catch (FormatException)
+        catch (Exception error) when (error is FormatException or DecoderFallbackException)
         {
             return false;
         }

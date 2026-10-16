@@ -29,6 +29,15 @@ public sealed class CrmServiceTokenRecordStore(CP6Context db, CrmIdentityRuntime
         if (!runtime.Options.Tenants.ContainsKey(tenantId)) return;
         if (issuer != runtime.Options.Issuer) throw new InvalidOperationException("C02_SERVICE_ISSUER_MISMATCH");
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        await RevokeInTransactionAsync(db, runtime, issuer, clientId, tenantId, jti, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    internal static async Task RevokeInTransactionAsync(CP6Context db, CrmIdentityRuntime runtime,
+        string issuer, string clientId, Guid tenantId, string jti, CancellationToken cancellationToken)
+    {
+        if (db.Database.CurrentTransaction is null || !runtime.Options.Tenants.ContainsKey(tenantId)
+            || issuer != runtime.Options.Issuer) throw new InvalidOperationException("C02_SERVICE_TRANSACTION_REQUIRED");
         var records = db.Database.IsNpgsql()
             ? db.CrmServiceTokenRecords.FromSqlInterpolated($"""
                 SELECT * FROM crm_identity."ServiceToken"
@@ -44,6 +53,5 @@ public sealed class CrmServiceTokenRecordStore(CP6Context db, CrmIdentityRuntime
                 "service:" + clientId, record.ExpiresAtUtc, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
         }
-        await transaction.CommitAsync(cancellationToken);
     }
 }
