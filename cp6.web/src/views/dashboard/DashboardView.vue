@@ -9,8 +9,9 @@
           <template v-if="headAlertParts.length"> · <b>{{ headAlertParts.join('、') }}</b></template>
         </p>
       </div>
-      <div v-if="canGo('/order')" class="head-actions">
-        <button class="btn btn-primary" @click="go('/order')">
+      <div class="head-actions">
+        <el-button :icon="Refresh" :loading="summaryState.status === 'loading'" :aria-label="t('刷新')" @click="loadData" />
+        <button v-if="canGo('/order')" class="btn btn-primary" @click="go('/order')">
           <el-icon class="i"><DocumentAdd /></el-icon>{{ t('dashboard.qOrder') }}
         </button>
       </div>
@@ -27,6 +28,7 @@
         <CpStatCard
           :label="t('dashboard.' + card.key)"
           :value="card.value"
+          :sub="stateLabel(summaryState.status)"
           :tone="kpiTone(card)"
           :clickable="canGo(card.to)"
         >
@@ -42,7 +44,8 @@
         <!-- 出货状态 -->
         <div class="card reveal-item" style="--delay: 140ms">
           <div class="card-head"><h2><el-icon class="i"><Van /></el-icon>{{ t('dashboard.shipStatus') }}</h2></div>
-          <div class="ship">
+          <p v-if="summaryState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(summaryState.status) }}</p>
+          <div v-else class="ship">
             <div class="block">
               <div class="v num">{{ shipSummary.shipped }}</div>
               <div class="l">{{ t('dashboard.ship9') }}</div>
@@ -70,7 +73,8 @@
         <div class="card reveal-item" style="--delay: 200ms">
           <div class="card-head"><h2><el-icon class="i"><List /></el-icon>{{ t('dashboard.recentOrders') }}</h2></div>
 
-          <el-table v-if="recentOrders.length && !isMobile" :data="recentOrders" stripe size="small">
+          <p v-if="summaryState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(summaryState.status) }}</p>
+          <el-table v-else-if="recentOrders.length && !isMobile" :data="recentOrders" stripe size="small">
             <el-table-column prop="webOrderNo" :label="t('dashboard.orderNo')" min-width="130" />
             <el-table-column prop="customerCd" :label="t('dashboard.customer')" min-width="90" />
             <el-table-column prop="quantity" :label="t('dashboard.qty')" width="80" align="right">
@@ -122,7 +126,8 @@
         <!-- 制造进度 -->
         <div class="card reveal-item" style="--delay: 200ms">
           <div class="card-head"><h2><el-icon class="i"><SetUp /></el-icon>{{ t('dashboard.workOrderStatus') }}</h2></div>
-          <DonutChart :segments="donutSegments" :center-label="t('dashboard.workOrderStatus')">
+          <p v-if="summaryState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(summaryState.status) }}</p>
+          <DonutChart v-else :segments="donutSegments" :center-label="t('dashboard.workOrderStatus')">
             <template #empty><span class="lg-empty">{{ t('dashboard.noData') }}</span></template>
           </DonutChart>
         </div>
@@ -162,13 +167,14 @@
             :active-text="t('dashboard.unshipped.onlyOverdue')"
             @change="loadUnshipped"
           />
-          <el-button :icon="Refresh" size="small" @click="loadUnshipped" :loading="unshippedLoading" />
+          <el-button :icon="Refresh" size="small" @click="loadUnshipped" :loading="unshippedLoading" :aria-label="t('刷新')" />
         </div>
       </div>
 
       <div class="card-body">
+        <p v-if="unshippedState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(unshippedState.status) }}</p>
         <el-table
-          v-if="unshippedRows.length && !isMobile"
+          v-else-if="unshippedRows.length && !isMobile"
           :data="unshippedRows"
           stripe
           size="small"
@@ -271,7 +277,7 @@
         <h2>
           {{ t('dashboard.stockDwell.title') }}
           <el-tag
-            v-if="(stockDwellSummary?.over90Qty || 0) > 0"
+            v-if="stockDwellSummary && stockDwellSummary.over90Qty > 0"
             size="small"
             type="danger"
             style="margin-left: 8px"
@@ -280,13 +286,14 @@
           </el-tag>
         </h2>
         <div class="card-head-controls">
-          <el-button :icon="Refresh" size="small" @click="loadStockDwell" :loading="stockDwellLoading" />
+          <el-button :icon="Refresh" size="small" @click="loadStockDwell" :loading="stockDwellLoading" :aria-label="t('刷新')" />
           <a href="javascript:void(0)" @click="go('/wms/stock-dwell')">{{ t('dashboard.stockDwell.open') }}</a>
         </div>
       </div>
 
       <div class="card-body">
-        <div v-if="stockDwellRows.length" class="stock-dwell-widget">
+        <p v-if="stockDwellState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(stockDwellState.status) }}</p>
+        <div v-else-if="stockDwellRows.length" class="stock-dwell-widget">
           <div v-for="row in stockDwellRows" :key="row.groupKey" class="stock-dwell-widget-row">
             <span class="stock-dwell-widget-name">{{ row.groupLabel }}</span>
             <span class="stock-dwell-widget-qty">{{ fmtQty(row.bucketOver90Qty) }}</span>
@@ -305,7 +312,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { Refresh, DocumentAdd, Van, List, Grid, Warning, SetUp, Bell } from '@element-plus/icons-vue'
@@ -318,30 +325,14 @@ import { useBreakpoint } from '@/composables/useBreakpoint'
 import CpStatCard from '@/components/templates/CpStatCard.vue'
 import DonutChart from './components/DonutChart.vue'
 import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/erp/order'
-import type { StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
+import type { StockDwellRow } from '@/types/wms/stockDwell'
+import { usePlatformStore } from '@/stores/platform'
+import { createDashboardLoader, parseDashboard, parseUnshipped, parseStockDwell, type LoadStatus } from './dashboardLoadState'
 
 const { t, locale } = useI18n()
 const router = useRouter()
 const { isMobile } = useBreakpoint()
 
-interface Summary {
-  todayOrders: number
-  monthOrders: number
-  activeWorkOrders: number
-  monthCompleted: number
-  pendingOutbound: number
-  stockWarnings: number
-  pendingApprovals: number
-  totalProducts: number
-}
-interface RecentOrder {
-  webOrderNo: string
-  customerCd?: string
-  quantity?: number
-  orderDate?: string
-  shipStatus: number
-}
-interface StatusCount { status: number; count: number }
 interface Notice {
   eventType?: string
   level?: string
@@ -352,19 +343,28 @@ interface Notice {
   createDate?: string
 }
 
-const summary = ref<Summary>({
-  todayOrders: 0, monthOrders: 0, activeWorkOrders: 0, monthCompleted: 0,
-  pendingOutbound: 0, stockWarnings: 0, pendingApprovals: 0, totalProducts: 0
-})
-const recentOrders = ref<RecentOrder[]>([])
-const workOrderStatus = ref<StatusCount[]>([])
+const summaryLoader = createDashboardLoader(parseDashboard)
+const unshippedLoader = createDashboardLoader(parseUnshipped)
+const stockDwellLoader = createDashboardLoader(parseStockDwell)
+const summaryState = summaryLoader.state
+const unshippedState = unshippedLoader.state
+const stockDwellState = stockDwellLoader.state
+const summary = computed(() => summaryState.value.data?.summary)
+const recentOrders = computed(() => summaryState.value.data?.recentOrders ?? [])
+const workOrderStatus = computed(() => summaryState.value.data?.workOrderStatus ?? [])
+function stateLabel(status: LoadStatus) {
+  if (status === 'loading') return `${t('加载')}…`
+  if (status === 'forbidden') return `403 · ${t('sec.event.8')}`
+  if (status === 'unavailable') return t('请求失败')
+  return ''
+}
 const latestNotice = ref<Notice | null>(null)
 const feed = ref<Notice[]>([])
 const dashboardReady = ref(false)
 
 interface StatCard {
   key: string
-  value: number
+  value: number | string
   icon: string
   color: string
   to?: string
@@ -372,14 +372,14 @@ interface StatCard {
 }
 
 const statCards = computed<StatCard[]>(() => [
-  { key: 'todayOrders',      value: summary.value.todayOrders,      icon: 'ShoppingCart', color: '#409eff', to: '/order-list' },
-  { key: 'monthOrders',      value: summary.value.monthOrders,      icon: 'ShoppingBag',  color: '#67c23a', to: '/order-list' },
-  { key: 'activeWorkOrders', value: summary.value.activeWorkOrders, icon: 'SetUp',        color: '#e6a23c', to: '/mes/work-order-list' },
-  { key: 'monthCompleted',   value: summary.value.monthCompleted,   icon: 'CircleCheck',  color: '#67c23a', to: '/mes/work-order-list' },
-  { key: 'pendingOutbound',  value: summary.value.pendingOutbound,  icon: 'Van',          color: '#409eff', alert: true, to: '/wms/outbound-order-list' },
-  { key: 'stockWarnings',    value: summary.value.stockWarnings,    icon: 'Warning',      color: '#e6a23c', alert: true, to: '/wms/stock' },
-  { key: 'pendingApprovals', value: summary.value.pendingApprovals, icon: 'Stamp',        color: '#e6a23c', alert: true, to: '/product-list' },
-  { key: 'totalProducts',    value: summary.value.totalProducts,    icon: 'Goods',        color: '#909399', to: '/product-list' }
+  { key: 'todayOrders',      value: summary.value?.todayOrders ?? '—',      icon: 'ShoppingCart', color: '#409eff', to: '/order-list' },
+  { key: 'monthOrders',      value: summary.value?.monthOrders ?? '—',      icon: 'ShoppingBag',  color: '#67c23a', to: '/order-list' },
+  { key: 'activeWorkOrders', value: summary.value?.activeWorkOrders ?? '—', icon: 'SetUp',        color: '#e6a23c', to: '/mes/work-order-list' },
+  { key: 'monthCompleted',   value: summary.value?.monthCompleted ?? '—',   icon: 'CircleCheck',  color: '#67c23a', to: '/mes/work-order-list' },
+  { key: 'pendingOutbound',  value: summary.value?.pendingOutbound ?? '—',  icon: 'Van',          color: '#409eff', alert: true, to: '/wms/outbound-order-list' },
+  { key: 'stockWarnings',    value: summary.value?.stockWarnings ?? '—',    icon: 'Warning',      color: '#e6a23c', alert: true, to: '/wms/stock' },
+  { key: 'pendingApprovals', value: summary.value?.pendingApprovals ?? '—', icon: 'Stamp',        color: '#e6a23c', alert: true, to: '/product-list' },
+  { key: 'totalProducts',    value: summary.value?.totalProducts ?? '—',    icon: 'Goods',        color: '#909399', to: '/product-list' }
 ])
 
 // 仅当目标路由已注册时，卡片才可点击跳转
@@ -392,7 +392,7 @@ function onCardClick(to?: string) {
 
 // KPI 卡视觉基调：alert 系一律 danger；其余按原有 color 语义映射到 token 基调
 function kpiTone(card: StatCard): 'brand' | 'info' | 'warn' | 'danger' {
-  if (card.alert && card.value > 0) return 'danger'
+  if (card.alert && typeof card.value === 'number' && card.value > 0) return 'danger'
   if (card.color === '#e6a23c') return 'warn'
   if (card.color === '#409eff') return 'info'
   return 'brand'
@@ -427,8 +427,8 @@ const pageDateLabel = computed(() => {
 })
 const headAlertParts = computed(() => {
   const parts: string[] = []
-  if (summary.value.stockWarnings > 0) parts.push(`${summary.value.stockWarnings} ${t('dashboard.stockWarnings')}`)
-  if (summary.value.pendingApprovals > 0) parts.push(`${summary.value.pendingApprovals} ${t('dashboard.pendingApprovals')}`)
+  if (summary.value && summary.value.stockWarnings > 0) parts.push(`${summary.value.stockWarnings} ${t('dashboard.stockWarnings')}`)
+  if (summary.value && summary.value.pendingApprovals > 0) parts.push(`${summary.value.pendingApprovals} ${t('dashboard.pendingApprovals')}`)
   return parts
 })
 
@@ -478,7 +478,7 @@ function alertBarStyle(level?: string) {
   return { background: 'linear-gradient(115deg, var(--cp-brand-deep), var(--cp-brand-2))' }
 }
 
-function fmtQty(q?: number) {
+function fmtQty(q?: number | null) {
   if (q === null || q === undefined) return '-'
   return formatQty(q)
 }
@@ -500,9 +500,9 @@ function todayString() {
 }
 
 // ───── Phase 8 受注済未出荷 widget ─────
-const unshippedRows = ref<UnshippedOrderItemDto[]>([])
-const unshippedTotal = ref(0)
-const unshippedLoading = ref(false)
+const unshippedRows = computed(() => unshippedState.value.data?.rows ?? [])
+const unshippedTotal = computed(() => unshippedState.value.data?.total ?? 0)
+const unshippedLoading = computed(() => unshippedState.value.status === 'loading')
 const onlyOverdue = ref(false)
 const unshippedQuery = reactive<UnshippedOrderQuery>({
   page: 1,
@@ -511,25 +511,12 @@ const unshippedQuery = reactive<UnshippedOrderQuery>({
   sortOrder: 'asc',
 })
 
-async function loadUnshipped() {
-  unshippedLoading.value = true
-  try {
-    const res = await orderApi.searchUnshipped({
-      ...unshippedQuery,
-      onlyOverdue: onlyOverdue.value || undefined,
-    })
-    if (res.code === 0 && res.data) {
-      // codex 后端用 PagedResultDto<T>（Items / Total / PageIndex / PageSize），
-      // 与 PagedResult<T>（rows / total）字段名不同。兼容两种形状。
-      const d: any = res.data
-      unshippedRows.value = d.items ?? d.rows ?? []
-      unshippedTotal.value = d.total ?? 0
-    }
-  } catch {
-    /* 静默：axios 拦截器已经弹了 toast；这里不要再弹避免双重提示 */
-  } finally {
-    unshippedLoading.value = false
-  }
+function loadUnshipped() {
+  checkIdentity()
+  return unshippedLoader.load(() => orderApi.searchUnshipped({
+    ...unshippedQuery,
+    onlyOverdue: onlyOverdue.value || undefined,
+  }), checkIdentity)
 }
 
 function goOrderDetail(row: UnshippedOrderItemDto) {
@@ -537,36 +524,27 @@ function goOrderDetail(row: UnshippedOrderItemDto) {
 }
 
 // ───── T13 stock dwell widget ─────
-const stockDwellSummary = ref<StockDwellSummary | null>(null)
-const stockDwellLoading = ref(false)
+const stockDwellSummary = computed(() => stockDwellState.value.data)
+const stockDwellLoading = computed(() => stockDwellState.value.status === 'loading')
 const stockDwellRows = computed<StockDwellRow[]>(() =>
   (stockDwellSummary.value?.rows ?? [])
-    .filter(row => Number(row.bucketOver90Qty || 0) > 0)
+    .filter(row => row.bucketOver90Qty > 0)
     .slice(0, 6),
 )
 const maxStockDwellOver90 = computed(() =>
-  Math.max(...stockDwellRows.value.map(row => Number(row.bucketOver90Qty || 0)), 1),
+  Math.max(...stockDwellRows.value.map(row => row.bucketOver90Qty), 1),
 )
 
 function stockDwellPercent(qty: number) {
-  return Math.round((Number(qty || 0) / maxStockDwellOver90.value) * 100)
+  return Math.round((qty / maxStockDwellOver90.value) * 100)
 }
 
-async function loadStockDwell() {
-  stockDwellLoading.value = true
-  try {
-    const res = await stockDwellApi.summary({
-      groupBy: 'product',
-      asOfDate: todayString(),
-    })
-    if (res.code === 0 && res.data) {
-      stockDwellSummary.value = res.data
-    }
-  } catch {
-    /* axios interceptor already shows the error toast. */
-  } finally {
-    stockDwellLoading.value = false
-  }
+function loadStockDwell() {
+  checkIdentity()
+  return stockDwellLoader.load(() => stockDwellApi.summary({
+    groupBy: 'product',
+    asOfDate: todayString(),
+  }), checkIdentity)
 }
 
 function orderLifecycleColor(s: string): 'success' | 'warning' | 'danger' | 'info' | '' {
@@ -578,61 +556,100 @@ function orderLifecycleColor(s: string): 'success' | 'warning' | 'danger' | 'inf
   }
 }
 
-function revealDashboard() {
-  if (dashboardReady.value) return
-  requestAnimationFrame(() => { dashboardReady.value = true })
+const platformStore = usePlatformStore()
+let disposed = false
+let realtimeInvalidated = false
+let noticeTimer: number | undefined
+let connection: ReturnType<typeof getConnection> | undefined
+
+// Existing client signals only; this is not a server permission/tenant version.
+function identitySnapshot() {
+  return JSON.stringify([
+    localStorage.getItem('cp6_authed'), localStorage.getItem('userName'),
+    localStorage.getItem('menus'), localStorage.getItem('cp6_isPlatformAdmin'),
+    platformStore.isPlatformAdmin, platformStore.impersonating,
+  ])
+}
+let identity = identitySnapshot()
+function checkIdentity() {
+  if (disposed) return false
+  const next = identitySnapshot()
+  if (next === identity) return true
+  identity = next
+  summaryLoader.invalidate()
+  unshippedLoader.invalidate()
+  stockDwellLoader.invalidate()
+  latestNotice.value = null
+  feed.value = []
+  window.clearTimeout(noticeTimer)
+  // The shared connection may still belong to the previous session until navigation/reload.
+  realtimeInvalidated = true
+  return false
+}
+watch(identitySnapshot, checkIdentity, { flush: 'sync' })
+
+function loadData() {
+  checkIdentity()
+  // SignalR refreshes summary only: widget reads must not create an OperLog refresh loop.
+  return summaryLoader.load(() => dashboardApi.getSummary(), checkIdentity)
+}
+function onBusinessNotification(n: Notice) {
+  if (!checkIdentity() || realtimeInvalidated) return
+  latestNotice.value = n
+  feed.value = [n, ...feed.value].slice(0, 12)
+  window.clearTimeout(noticeTimer)
+  noticeTimer = window.setTimeout(() => {
+    if (!disposed) latestNotice.value = null
+  }, 6000)
+  void loadData()
+}
+function onOperLog() {
+  if (checkIdentity() && !realtimeInvalidated) void loadData()
 }
 
-async function loadData() {
-  try {
-    const res = await dashboardApi.getSummary() as any
-    summary.value = res.summary
-    recentOrders.value = res.recentOrders || []
-    workOrderStatus.value = res.workOrderStatus || []
-    // Phase 8 widget は loadData() に組み込まない:
-    // dashboard 主体は NewOperLog SignalR push で頻繁にリフレッシュされる。
-    // unshipped widget は別系統（onMounted で一度 + 手動 refresh ボタンのみ）に切り離して、
-    // 1 リクエスト → OperLog → SignalR → loadData の正回归ループを回避する。
-  } finally {
-    revealDashboard()
-  }
-}
-
-onMounted(async () => {
-  await loadData()
-  // Phase 8 widget の初回ロードは独立にトリガー（loadData の SignalR ループに巻き込まれない）
-  loadUnshipped()
-  loadStockDwell()
-
-  try {
-    await startConnection()
-    const conn = getConnection()
-
-    // 业务通知（RabbitMQ → SignalR fanout）
-    conn.on('BusinessNotification', (n: Notice) => {
-      latestNotice.value = n
-      feed.value = [n, ...feed.value].slice(0, 12)
-      window.setTimeout(() => {
-        if (latestNotice.value === n) latestNotice.value = null
-      }, 6000)
-      loadData()
-    })
-
-    // 操作日志推送 → 触发 KPI 刷新（受注/製造等写操作会改变统计）
-    conn.on('NewOperLog', () => { loadData() })
-  } catch {
-    // SignalR 失败不阻塞仪表盘外壳
-  }
+onMounted(() => {
+  dashboardReady.value = true
+  window.addEventListener('storage', checkIdentity)
+  window.addEventListener('focus', checkIdentity)
+  window.addEventListener('cp6-menu-updated', checkIdentity)
+  void loadData()
+  void loadUnshipped()
+  void loadStockDwell()
+  // Start independently even if the first summary request fails or never settles.
+  void (async () => {
+    try {
+      await startConnection()
+      if (disposed) return
+      connection = getConnection()
+      connection.on('BusinessNotification', onBusinessNotification)
+      connection.on('NewOperLog', onOperLog)
+    } catch {
+      // SignalR failure does not block the dashboard shell or HTTP groups.
+    }
+  })()
 })
 
 onUnmounted(() => {
-  const conn = getConnection()
-  conn.off('BusinessNotification')
-  conn.off('NewOperLog')
+  disposed = true
+  summaryLoader.dispose()
+  unshippedLoader.dispose()
+  stockDwellLoader.dispose()
+  window.clearTimeout(noticeTimer)
+  window.removeEventListener('storage', checkIdentity)
+  window.removeEventListener('focus', checkIdentity)
+  window.removeEventListener('cp6-menu-updated', checkIdentity)
+  connection?.off('BusinessNotification', onBusinessNotification)
+  connection?.off('NewOperLog', onOperLog)
 })
 </script>
 
 <style scoped>
+.load-state {
+  padding: 20px;
+  color: var(--cp-muted);
+  text-align: center;
+}
+
 .cp-dash {
   position: relative;
   display: flex;
