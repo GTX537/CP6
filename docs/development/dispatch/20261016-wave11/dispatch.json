@@ -1,0 +1,67 @@
+{
+  "version": "CP6-WAVE11-DISPATCH/1",
+  "issued_at": "2026-10-16T15:06:07.316034+00:00",
+  "main_baseline_sha": "397e56abad335b28396d8dc30df6f6a9be4a49df",
+  "platform_readonly_main_sha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+  "adopted_platform_version": "0.10.3",
+  "tasks": [
+    {
+      "id": "WP02-02",
+      "chat": "B",
+      "title": "服务令牌自撤销的可信租户与同事务实际接线",
+      "mode": "SERVICE_REVOCATION_TENANT_ADOPTION",
+      "state": "IN_PROGRESS",
+      "gate": "CONFIRMED",
+      "branch": "codex/wp02-02-service-revocation-20261016",
+      "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
+      "handoff": "codex/dev-handoff-wp02-02",
+      "write_paths": [
+        "CP6.Core/Persistence/Tenancy/",
+        "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+        "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+        "CP6.Core/Persistence/DatabaseSharedContext.cs",
+        "CP6.Persistence.PostgreSql/Tenancy/",
+        "CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+        "CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+        "CP6.WebApi/Services/ServiceRevocationTenancy/",
+        "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+        "CP6.WebApi/Configuration/ServiceRevocationTenancy/",
+        "CP6.Tests/Persistence/Tenancy/",
+        "CP6.Tests/CrmIdentityRevocationTests.cs",
+        "CP6.Tests/CrmIdentityConfigurationTests.cs",
+        "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
+        "tools/CP6.TenantStorage/",
+        "docs/development/evidence/WP02-02/service-revocation/"
+      ],
+      "resources": [
+        "Main:tenant-storage",
+        "Main:ef-model",
+        "Main:tenant-storage-provisioning",
+        "Main:service-revocation-source-authority",
+        "Main:service-revocation-owner-transaction",
+        "file:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+        "file:Main:CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+        "file:Main:CP6.Core/Persistence/DatabaseSharedContext.cs",
+        "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+        "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+        "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs"
+      ],
+      "ports": [
+        55436
+      ],
+      "report": "docs/development/evidence/WP02-02/service-revocation/DELIVERY.md",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    }
+  ],
+  "unassigned_chats": [
+    "A",
+    "C",
+    "D"
+  ],
+  "worker_start_received": false,
+  "actions_authorized": false,
+  "formal_publication_authorized": false,
+  "existing_database_migration_authorized": false,
+  "deployment_authorized": false
+}

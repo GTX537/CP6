@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前分配：[第十一轮服务令牌自撤销接线](dispatch/20261016-wave11/README.md)。仅B / WP02-02限定窗口CONFIRMED，真实source/binding、有限写集隔离及同事务入口由一个Owner连续实施；尚未收到START。A/C/D无新窗口；第十轮三个窗口继续CLOSED，完整任务和业务验收状态不提升。
+
 > 当前交付：[第十轮三份局部实现已集成](evidence/wave10-integration-20261016/README.md)。PR231/233/232正常合并并核对远端，真实START与交付已登记，A/B/D窗口CLOSED。完整A/D仍PLANNED，B仍IN_PROGRESS；真实业务接线和验收未提升。本次未派下一轮。
 
 > 历史集成：已收到第十轮三份候选，按任务串行同步状态与合并；本窗口接收 WP02-18，见[交付报告](evidence/WP02-18/dashboard-states/DELIVERY.md)。其余任务以最新台账和各自报告为准，历史分配中的“未收到 START”已被本轮真实 START/DELIVERY 替代。局部交付不等于整项 DONE 或业务验收。
