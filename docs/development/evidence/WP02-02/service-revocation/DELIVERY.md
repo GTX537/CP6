@@ -105,3 +105,9 @@ CLI 最后一行必须由受控调用器提供重定向 stdin；不能交互粘�
 Full17PGT、其他上下文、普通用户/部门 identity snapshot、ordinary outbox、ERP handler/dispatcher、默认 Owner 全生命周期、跨仓宿主采用/真实业务验收、现有数据迁移、DEV/UAT/PROD 与生产候选均为 **NOT_RUN**。新 profile 不是完整 Main 数据库；不能据此启用整个 Main 的其他路由或后台服务。目录变更与配置更新需要上述控制窗口，未提供跨实例在线授权撤销协议。
 
 本任务未触发/重跑 Actions、未取消他人运行、未改 workflow/分支保护/依赖、未发布制品或部署。COORD 负责最终审查、台账/四状态同步、正常 PR/main 集成和远端核对。
+
+## COORD 集中审查与接收
+
+一次集中SPEC/QUALITY审查发现3项P2：恢复缺目录行核验、发行角色未完整纳入身份校验、fresh安装缺系统schema未知对象拒绝。修复已在f315425b完成；同一审查者wave11_review仅复查8文件修改及其影响，核读定向红/绿TRX与CLI原日志，确认3项均关闭、旧空布局SQL原样提取且旧seal SQL未变；最终Ready to merge: yes，无剩余阻断项，仅适用于本轮有界交付。
+
+固定候选 `f315425b3981463e737db60c12134964f1861682` 已核对允许路径、原始构建/TRX/CLI证据和完整任务边界。COORD仅同步台账与四份状态，不因提交或合并重复产品验证；远端结果在实际合并后登记。
