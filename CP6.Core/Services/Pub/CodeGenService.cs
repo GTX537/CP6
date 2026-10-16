@@ -9,26 +9,28 @@ namespace CP6.Core.Services.Pub;
 /// 产物开箱装配 PUB 四粒度（Controller 含常量特性 / Service 继承 BaseCrudService / Entity 实现 IDataScoped）。
 /// 二次生成保护：保留 <c>// &lt;custom&gt; ... // &lt;/custom&gt;</c> 区块内的手写代码。
 /// </summary>
-public class CodeGenService
+public partial class CodeGenService
 {
     /// <summary>渲染全部产物：文件名 → 内容。</summary>
     public Dictionary<string, string> Generate(GenTable t, List<GenColumn> cols)
     {
+        Validate(t, cols);
         var model = new
         {
             t.EntityName,
             t.Module,
-            t.TableName,
-            t.ResourceKey,
-            SeqBizKey = t.SeqBizKey,
-            CodeField = t.CodeField,
-            t.RoutePath,
+            TableName = CSharp(t.TableName),
+            ResourceKey = CSharp(t.ResourceKey),
+            SeqBizKey = string.IsNullOrEmpty(t.SeqBizKey) ? null : CSharp(t.SeqBizKey),
+            CodeField = string.IsNullOrEmpty(t.CodeField) ? null : CSharp(t.CodeField),
+            RoutePath = CSharp(t.RoutePath),
             EntityLower = Camel(t.EntityName),
             Columns = cols.OrderBy(c => c.Sort).Select(c => new
             {
                 c.Name,
                 c.ClrType,
-                c.Label,
+                XmlLabel = XmlDoc(c.Label),
+                TsLabel = TypeScript(c.Label),
                 c.Required,
                 c.InList,
                 c.InForm,
@@ -65,6 +67,7 @@ public class CodeGenService
     // ───── 嵌入式模板 ─────
 
     private const string EntityTpl = """
+        using System;
         using System.ComponentModel.DataAnnotations;
         using System.ComponentModel.DataAnnotations.Schema;
         using CP6.Entity;
@@ -77,7 +80,7 @@ public class CodeGenService
             /// <summary>归属部门（数据权限）</summary>
             public Guid? DeptId { get; set; }
         {{~ for c in Columns ~}}
-            /// <summary>{{ c.Label }}</summary>
+            /// <summary>{{ c.XmlLabel }}</summary>
             public {{ c.ClrType }} {{ c.Name }} { get; set; }{{ if c.IsString }} = "";{{ end }}
         {{~ end ~}}
         }
@@ -111,6 +114,7 @@ public class CodeGenService
         """;
 
     private const string ControllerTpl = """
+        using System.Threading.Tasks;
         using CP6.Core.Auth;
         using CP6.Core.Pub;
         using CP6.Core.Services.{{ Module }};
@@ -152,7 +156,7 @@ public class CodeGenService
         export const {{ EntityLower }}Columns: ColumnConfig[] = [
         {{~ for c in Columns ~}}
         {{~ if c.InList ~}}
-          { prop: '{{ c.JsonName }}', label: '{{ c.Label }}'{{ if c.Required }}, required: true{{ end }} },
+          { prop: '{{ c.JsonName }}', label: '{{ c.TsLabel }}'{{ if c.Required }}, required: true{{ end }} },
         {{~ end ~}}
         {{~ end ~}}
         ]

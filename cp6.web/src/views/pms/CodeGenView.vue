@@ -1,6 +1,7 @@
 <template>
   <div style="padding: 20px">
     <h2>{{ t('代码生成器') }}</h2>
+    <el-alert :title="t('预览仅生成建议文件文本，不保存元数据、不应用代码、不占用业务号码。')" type="info" :closable="false" show-icon style="margin-bottom: 16px" />
 
     <el-card style="margin-bottom: 16px">
       <template #header>{{ t('表元数据') }}</template>
@@ -52,15 +53,24 @@
     </el-card>
 
     <div style="margin-bottom: 16px">
-      <el-button type="primary" @click="preview">{{ t('预览生成') }}</el-button>
+      <el-button v-permission="'pub-codegen:view'" type="primary" :loading="previewing" @click="preview">{{ t('预览生成') }}</el-button>
       <el-button v-permission="'pub-codegen:save'" @click="save">{{ t('保存元数据') }}</el-button>
     </div>
 
-    <el-card v-if="Object.keys(files).length">
-      <template #header>{{ t('生成产物预览') }}</template>
+    <el-alert v-if="previewError" :title="previewError" type="error" :closable="false" show-icon style="margin-bottom: 16px" />
+    <el-card v-if="previewResult">
+      <template #header>
+        <span>{{ t('生成产物预览') }}</span>
+        <strong class="preview-unapplied">{{ t('未应用') }}</strong>
+      </template>
+      <dl class="preview-details">
+        <dt>{{ t('模板') }}</dt><dd>{{ previewResult.templateRef }} · {{ previewResult.templateVersion }}</dd>
+        <dt>{{ t('输入摘要') }}</dt><dd>{{ previewResult.inputDigest }}</dd>
+      </dl>
+      <p>{{ t('以下为建议文件名和只读文本，未写入任何文件。修改输入后需重新预览。') }}</p>
       <el-tabs>
-        <el-tab-pane v-for="(content, name) in files" :key="name" :label="name">
-          <pre class="codegen-pre">{{ content }}</pre>
+        <el-tab-pane v-for="output in previewResult.outputs" :key="output.fileName" :label="output.fileName">
+          <pre class="codegen-pre">{{ output.content }}</pre>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -68,27 +78,53 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { codeGenApi } from '@/api/pub/codegen'
+import { codeGenApi, type CodeGenColumnInput, type CodeGenPreview, type CodeGenTableInput } from '@/api/pub/codegen'
 
 const { t } = useI18n()
 const clrTypes = ['string', 'int', 'int?', 'decimal?', 'DateTime?', 'bool', 'Guid?']
 
-const table = reactive<any>({
+const table = reactive<CodeGenTableInput>({
   entityName: '', module: 'Erp', tableName: '', resourceKey: '',
   seqBizKey: '', codeField: '', routePath: ''
 })
-const columns = ref<any[]>([])
-const files = ref<Record<string, string>>({})
+const columns = ref<CodeGenColumnInput[]>([])
+const previewResult = ref<CodeGenPreview | null>(null)
+const previewing = ref(false)
+const previewError = ref('')
+let inputRevision = 0
+let disposed = false
+
+watch([table, columns], () => {
+  inputRevision++
+  previewResult.value = null
+  previewError.value = ''
+}, { deep: true, flush: 'sync' })
+onBeforeUnmount(() => { disposed = true })
 
 function addColumn() {
   columns.value.push({ name: '', clrType: 'string', label: '', required: false, inList: true, inForm: true, sort: columns.value.length + 1 })
 }
 
 async function preview() {
-  files.value = await codeGenApi.previewInline(table, columns.value)
+  if (previewing.value) return
+  const revision = inputRevision
+  previewing.value = true
+  previewResult.value = null
+  previewError.value = ''
+  try {
+    const result = await codeGenApi.previewV1({ ...table }, columns.value.map(column => ({ ...column })))
+    if (!disposed && revision === inputRevision) previewResult.value = result
+  } catch (error: unknown) {
+    if (!disposed && revision === inputRevision) {
+      const message = (error as { response?: { data?: { message?: unknown } } }).response?.data?.message
+      previewError.value = typeof message === 'string' ? message : t('预览失败，请检查输入后重试')
+    }
+  } finally {
+    previewing.value = false
+  }
 }
 
 async function save() {
@@ -98,6 +134,9 @@ async function save() {
 </script>
 
 <style scoped>
+.preview-unapplied { display: inline-block; margin-left: 12px; padding: 4px 10px; border-radius: 4px; background: #fff3cd; color: #664d03; font-size: 14px; }
+.preview-details { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; }
+.preview-details dd { margin: 0; overflow-wrap: anywhere; }
 .codegen-pre {
   background: #1e1e1e;
   color: #d4d4d4;

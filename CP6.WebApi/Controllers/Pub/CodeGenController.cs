@@ -56,19 +56,40 @@ public class CodeGenController : ControllerBase
 
     /// <summary>预览生成产物（持久化元数据）</summary>
     [HttpGet("{id}/preview")]
+    [RequirePermission("pub-codegen", "view")]
+    [CodeGenPreviewRequest]
     public async Task<IActionResult> Preview(Guid id)
     {
         var t = await _db.Pub_GenTables.FindAsync(id);
         if (t == null) return NotFound();
         var cols = await _db.Pub_GenColumns.Where(c => c.GenTableId == id).OrderBy(c => c.Sort).ToListAsync();
-        return Ok(new { code = 0, data = _gen.Generate(t, cols) });
+        return PreviewResponse(() => _gen.Generate(t, cols));
     }
 
     /// <summary>即时预览（不持久化，body 直接给元数据）</summary>
     [HttpPost("preview")]
     [RequirePermission("pub-codegen", "view")]
-    public IActionResult PreviewInline([FromBody] GenSaveReq req) =>
-        Ok(new { code = 0, data = _gen.Generate(req.Table, req.Columns) });
+    [CodeGenPreviewRequest]
+    [RequestSizeLimit(CodeGenService.PreviewMaxRequestBytes)]
+    public IActionResult PreviewInline([FromBody] GenSaveReq? req) =>
+        PreviewResponse(() => _gen.Generate(req?.Table!, req?.Columns!));
+
+    /// <summary>有版本的只读即时预览；不保存元数据或应用生成物。</summary>
+    [HttpPost("preview/v1")]
+    [RequirePermission("pub-codegen", "view")]
+    [CodeGenPreviewRequest]
+    [RequestSizeLimit(CodeGenService.PreviewMaxRequestBytes)]
+    public IActionResult PreviewInlineV1([FromBody] GenSaveReq? req) =>
+        PreviewResponse(() => _gen.GeneratePreview(req?.Table!, req?.Columns!));
+
+    private IActionResult PreviewResponse(Func<object> generate)
+    {
+        try { return Ok(new { code = 0, data = generate() }); }
+        catch (CodeGenPreviewValidationException ex)
+        {
+            return BadRequest(new { code = 400, message = ex.Message });
+        }
+    }
 
     public record GenSaveReq(GenTable Table, List<GenColumn> Columns);
 }

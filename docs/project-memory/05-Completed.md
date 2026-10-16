@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-16：第九轮 WP02-16 局部实现接收
+
+CodeGen 安全即时预览接口与页面已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-16/codegen-preview/DELIVERY.md)。原 CodeGen 25 项、合法名称修正后定向 20 项通过；未改 HTTP/旧接口证据复用。前端类型和实际 Vue/API 夹具页面检查通过，集中审查问题已关闭。
+
+当前同步状态并按 PR #226 串行合并，远端包含性由 COORD 合并后登记。仅 NU04 局部预览；真实租户/Owner、保存 CAS/unknown 恢复、采番事务与文件应用未验收。完整 WP02-16 保持 PLANNED/NOT_CHECKED，WP02-10 前置不变。 24/375 DONE、0/125业务完成、247 NOT_RUN、41历史引用不变。此次未重跑产品测试、未触发/取消 Actions、未改工作流或执行迁库/部署。
+
 ## 2026-10-16：第九轮 WP02-02 局部实现接收
 
 Identity 四表租户隔离与 ERP 同事务适配已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md)。原 PostgreSQL18.6 Identity 5/5、受影响 ERP 回归 4/4 通过，真实模型与合成 A/B 数据；其余池/ERP 证据按报告复用。集中审查 PASS，失败日志保留。
