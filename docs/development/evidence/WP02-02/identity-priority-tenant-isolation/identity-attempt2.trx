@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e2f0f12b-32cc-4f51-af4e-f436cb9d5e17" name="tt@LAPTOP-3QQ44FJS 2026-10-16 07:47:23" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T07:47:23.8270794-04:00" queuing="2026-10-16T07:47:23.8270799-04:00" start="2026-10-16T07:47:08.1499937-04:00" finish="2026-10-16T07:47:25.4865996-04:00" />
+  <TestSettings name="default" id="0ee36f07-43db-4254-bfb3-acb2fe17b2b1">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-16_07_47_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="aeeccb7d-41a9-4d80-a403-6235332ab16f" testId="722c69b0-8b52-b634-3d5b-0c6cb8b6d588" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4602266" startTime="2026-10-16T07:47:22.7671790-04:00" endTime="2026-10-16T07:47:23.2276051-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aeeccb7d-41a9-4d80-a403-6235332ab16f" />
+    <UnitTestResult executionId="5825ea62-1689-4871-bf65-f4bc3c40259e" testId="d2a76cc1-d08a-e705-7839-239a6a1e545f" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0682932" startTime="2026-10-16T07:47:22.6988317-04:00" endTime="2026-10-16T07:47:22.7670132-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5825ea62-1689-4871-bf65-f4bc3c40259e" />
+    <UnitTestResult executionId="61f80d51-813a-49e9-849b-8e4b73e815ff" testId="017ef2a3-6157-4766-3fb1-7ebd0b059571" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3941275" startTime="2026-10-16T07:47:23.2277953-04:00" endTime="2026-10-16T07:47:23.6221226-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="61f80d51-813a-49e9-849b-8e4b73e815ff" />
+    <UnitTestResult executionId="c416cd4d-584c-4aed-9d0b-51039635760e" testId="bf4bdd9f-7604-5211-e30e-4db8098f7569" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2119382" startTime="2026-10-16T07:47:22.4915432-04:00" endTime="2026-10-16T07:47:22.6982462-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c416cd4d-584c-4aed-9d0b-51039635760e" />
+    <UnitTestResult executionId="79e2e1b8-757b-4085-b60f-2475607b72af" testId="42c562b1-7433-e3c9-13e6-2e8820d061ae" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1958785" startTime="2026-10-16T07:47:22.2988992-04:00" endTime="2026-10-16T07:47:22.4853175-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79e2e1b8-757b-4085-b60f-2475607b72af" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="722c69b0-8b52-b634-3d5b-0c6cb8b6d588">
+      <Execution id="aeeccb7d-41a9-4d80-a403-6235332ab16f" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="017ef2a3-6157-4766-3fb1-7ebd0b059571">
+      <Execution id="61f80d51-813a-49e9-849b-8e4b73e815ff" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d2a76cc1-d08a-e705-7839-239a6a1e545f">
+      <Execution id="5825ea62-1689-4871-bf65-f4bc3c40259e" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bf4bdd9f-7604-5211-e30e-4db8098f7569">
+      <Execution id="c416cd4d-584c-4aed-9d0b-51039635760e" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="42c562b1-7433-e3c9-13e6-2e8820d061ae">
+      <Execution id="79e2e1b8-757b-4085-b60f-2475607b72af" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="722c69b0-8b52-b634-3d5b-0c6cb8b6d588" executionId="aeeccb7d-41a9-4d80-a403-6235332ab16f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2a76cc1-d08a-e705-7839-239a6a1e545f" executionId="5825ea62-1689-4871-bf65-f4bc3c40259e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="017ef2a3-6157-4766-3fb1-7ebd0b059571" executionId="61f80d51-813a-49e9-849b-8e4b73e815ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf4bdd9f-7604-5211-e30e-4db8098f7569" executionId="c416cd4d-584c-4aed-9d0b-51039635760e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42c562b1-7433-e3c9-13e6-2e8820d061ae" executionId="79e2e1b8-757b-4085-b60f-2475607b72af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.30)&#xD;
+[xUnit.net 00:00:00.43]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.85]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.87]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:16.81]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

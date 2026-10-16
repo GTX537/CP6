@@ -212,18 +212,30 @@ class TrustedRegistryVerifier:
         policy_path = outside_git(Path(value))
         require(not policy_path.is_relative_to(root.resolve()), 'TRUST_POLICY_INSIDE_PACKAGE')
         policy = parse(policy_path.read_bytes())
+        require(isinstance(policy, dict), 'TRUST_POLICY_OBJECT_REQUIRED')
         require(policy['schema'] == 'CP6-ACCEPTANCE-TRUST/1', 'TRUST_POLICY_SCHEMA_INVALID')
-        for role in ('authority', 'execution'):
-            item = policy[role]
-            require(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', item['repository']), 'TRUST_REPOSITORY_INVALID')
-            safe_path(item['path'])
-            require(isinstance(item['principal'], str) and item['principal'].strip(), 'TRUST_PRINCIPAL_REQUIRED')
-            item['allowed_signers'] = str(outside_git(Path(item['allowed_signers'])))
-        safe_path(policy['authority']['identity_root'])
         require(isinstance(policy['repositories'], dict) and policy['repositories'], 'PRODUCT_REPOSITORIES_REQUIRED')
         for repo in policy['repositories'].values():
             require(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repo), 'PRODUCT_REPOSITORY_INVALID')
         return cls(policy)
+
+    def role_policy(self, role):
+        """Validate only the requested role; unused execution trust is not adoption."""
+        require(role in ('authority', 'execution'), 'TRUST_ROLE_INVALID')
+        require(role in self.policy, role.upper() + '_TRUST_UNCONFIGURED')
+        try:
+            require(isinstance(self.policy[role], dict), 'TRUST_ROLE_OBJECT_REQUIRED')
+            item = dict(self.policy[role])
+            require(isinstance(item['repository'], str)
+                    and re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', item['repository']), 'TRUST_REPOSITORY_INVALID')
+            safe_path(item['path'])
+            require(isinstance(item['principal'], str) and item['principal'].strip(), 'TRUST_PRINCIPAL_REQUIRED')
+            item['allowed_signers'] = str(outside_git(Path(item['allowed_signers'])))
+            if role == 'authority':
+                safe_path(item['identity_root'])
+            return item
+        except (ValueError, KeyError, TypeError, OSError) as exc:
+            raise ValueError(role.upper() + '_TRUST_INVALID: ' + str(exc)) from exc
 
     def api(self, endpoint, *, raw=False):
         args = ['gh', 'api', '--hostname', 'github.com', endpoint]
@@ -235,7 +247,7 @@ class TrustedRegistryVerifier:
 
     def registry(self, role):
         if role not in self.registries:
-            cfg = self.policy[role]
+            cfg = self.role_policy(role)
             repo = cfg['repository']
             head = self.api(f'repos/{repo}/commits/main')['sha']
             require(re.fullmatch('[0-9a-f]{40}', head), 'REGISTRY_MAIN_UNVERIFIED')

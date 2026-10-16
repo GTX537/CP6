@@ -1,0 +1,20 @@
+Test run for D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.11.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.30)
+[xUnit.net 00:00:00.19]   Discovering: CP6.Tests
+[xUnit.net 00:00:00.51]   Discovered:  CP6.Tests
+[xUnit.net 00:00:00.53]   Starting:    CP6.Tests
+  Passed CP6.Tests.Persistence.Tenancy.ErpTenantPostgresTests.Unknown_and_recreated_login_cannot_inherit_a_stale_mapping_and_install_never_overwrites [74 ms]
+  Passed CP6.Tests.Persistence.Tenancy.ErpTenantPostgresTests.Ef_business_text_operations_preserve_compatibility_with_pg_catalog_only_search_path [284 ms]
+  Passed CP6.Tests.Persistence.Tenancy.ErpTenantPostgresTests.Ef_rechecks_nested_scope_binding_rotation_and_database_mapping_before_each_command [303 ms]
+  Passed CP6.Tests.Persistence.Tenancy.ErpTenantPostgresTests.Directory_mapping_is_pinned_until_transaction_end_and_waiting_helpers_read_the_new_binding [320 ms]
+[xUnit.net 00:00:10.01]   Finished:    CP6.Tests
+
+Test Run Successful.
+Total tests: 4
+     Passed: 4
+ Total time: 10.3872 Seconds
+Results File: D:\CP6-local-test\WP02-02\identity-erp-regression.trx

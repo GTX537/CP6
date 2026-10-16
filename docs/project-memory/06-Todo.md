@@ -1,5 +1,17 @@
 # 当前待办与优先级
 
+## 2026-10-16：第九轮 WP02-02 局部实现接收
+
+Identity 四表租户隔离与 ERP 同事务适配已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md)。原 PostgreSQL18.6 Identity 5/5、受影响 ERP 回归 4/4 通过，真实模型与合成 A/B 数据；其余池/ERP 证据按报告复用。集中审查 PASS，失败日志保留。
+
+当前同步状态并按 PR #227 串行合并，远端包含性由 COORD 合并后登记。真实 IdentitySnapshotWriter/dispatcher/宿主当前授权/Owner、其他上下文与完整生命周期及原17PGT未验收；完整 WP02-02 保持 IN_PROGRESS/CONFIRMED。 24/375 DONE、0/125业务完成、247 NOT_RUN、41历史引用不变。此次未重跑产品测试、未触发/取消 Actions、未改工作流或执行迁库/部署。
+
+## 2026-10-16：第九轮 WP01-01 局部实现接收
+
+采纳与运行信任配置分离已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP01-01/trust-stages/DELIVERY.md)。原 adapter 27 项、manager 8 项通过，旧夹具修正后单项通过；真实只读 manager 结构检查 PASS。复用原有效结果与集中审查，不称此次重跑。
+
+当前同步状态并按 PR #225 串行合并，远端包含性由 COORD 合并后登记。独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。 24/375 DONE、0/125业务完成、247 NOT_RUN、41历史引用不变。此次未重跑产品测试、未触发/取消 Actions、未改工作流或执行迁库/部署。
+
 ## 2026-10-15：按第九轮窗口并行实施
 
 按[第九轮执行包](../development/dispatch/20261015-wave9/README.md)分别继续 A/WP01-01 信任阶段分离、B/WP02-02 Identity 四表隔离与 ERP 同事务、C/WP02-28 实际宿主身份及回退证据判断、D/WP02-16 无持久副作用预览。独立信任配置、真实 Owner/宿主、完整迁移恢复、业务采番和真实回退等未覆盖范围仍需对应后续任务；本轮局部窗口不抹去原前置。COORD 收交付后串行整合状态与 main，执行者不改共享台账。
