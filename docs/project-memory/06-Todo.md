@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-16：第十轮 WP02-18 局部实现接收
+
+Dashboard真实零、无权、失败与旧响应隔离已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-18/dashboard-states/DELIVERY.md)。复用固定候选16项定向前端测试、vue-tsc及Chrome桌面/390px手机API夹具检查；已读取最终日志，集中SPEC/QUALITY无阻断项。夹具早期失败保留，未称真实业务E2E。
+
+当前同步状态并按 PR #232 串行合并，远端包含性由 COORD 合并后登记。只交付现有客户端状态与响应竞态；legacy后端KPI/全局缓存、scoped查询、租户/撤权、菜单CAS及20条原业务AC未验收。完整WP02-18保持PLANNED/NOT_CHECKED，WP02-03前置保留。 24/375 DONE、0/125业务完成、247 NOT_RUN、41历史引用不变。此次未重跑产品测试、未触发/取消 Actions、未改工作流或执行迁库/部署。
+
 ## 2026-10-16：第十轮 WP02-02 局部实现接收
 
 PostgreSQL消息存储初始化、追加与原结果恢复已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-02/provisioning/DELIVERY.md)。复用固定候选CLI Release build7及真实PG18.6 attempt7（单个组合场景、零失败/跳过），已读取原始构建/测试日志与TRX；一次集中审查及修改部分复查PASS。原失败保留，旧RLS/池/RowVersion证据按原范围复用。
