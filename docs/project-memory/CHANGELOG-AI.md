@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-16：第十一轮服务令牌自撤销局部交付已集成
+
+[237号PR](https://github.com/GTX537/CP6/pull/237)已正常合并，远端main `222f948dbf8003d99f5b8bd51bde97236e62de2e`已核对任务提交祖先关系及全部范围内文件。实现、一次集中审查及三项安装问题的定向修复证据见[单份报告](../development/evidence/WP02-02/service-revocation/DELIVERY.md)。固定Handoff已发布；本局部窗口CLOSED，完整WP02-02仍IN_PROGRESS/CONFIRMED。
+
+本次沿用候选有效验证，不为合并重复构建或测试。新profile仅覆盖fresh-only有限入口，真实租户活跃查询、其他Owner/contexts、跨仓消费者、在线授权更新、既有库迁移及原17PGT/业务验收仍未完成。24/375完整任务DONE、0/125业务、247 NOT_RUN、41历史引用不变。A/C/D无新窗口；未触发/取消Actions、未改工作流、未发包或部署。
+
 ## 2026-10-16：第十一轮服务令牌自撤销候选已核验
 
 真实Basic来源、可信租户普通登录及ServiceToken/Snapshot/generation/优先Outbox同事务接线已完成候选核对，详见[单份交付报告](../development/evidence/WP02-02/service-revocation/DELIVERY.md)。复用原120项相关回归、安装收紧后的8项PG/HTTPS及2项共享guard定向结果，原始TRX均无失败或跳过；审查修复另验证未知布局拒绝后正常安装/恢复、发行身份漂移拒绝与真实HTTPS签发撤销、目录及安装状态漂移拒绝，并通过修复后CLI构建和私有stdin恢复/拒绝/同结果检查。原始开发失败、审查红测和夹具/断言纠正记录均保留，未重跑整套或把复用改称新执行。
