@@ -569,10 +569,12 @@ class FormalAcceptanceRouteTests(unittest.TestCase):
 
     def test_unadopted_candidate_leaves_all_original_states_unchanged(self):
         before = copy.deepcopy(self.data)
+        # routed_validate installs this isolated selection before calling validate;
+        # the real baseline may already select an adopted manifest.
+        before['acceptance_basis'] = {'manifest': {'path': 'synthetic only'}}
         result = self.new_result()
         result.update(basis_adoption_valid=False, inventory_coverage_valid=False)
         self.assertEqual(self.routed_validate(result), [])
-        self.data.pop('acceptance_basis')
         self.assertEqual(self.data, before)
 
     def test_cli_report_does_not_label_coverage_as_adoption(self):
