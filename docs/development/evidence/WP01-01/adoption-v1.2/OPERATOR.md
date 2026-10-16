@@ -1,6 +1,6 @@
 # Operating the formal local acceptance adapter
 
-This package is `ADOPTION_PENDING`, with `actual_adoption=false`. No real policy, signing key, authority registry, authorization, execution attestation or business configuration is installed. The candidate manifest is the object a future authorized decision must bind. A version string without `-proposed` does not activate it. Old `adoption.json` and the 30/48 missing original inventories remain immutable history.
+The user adopted v1.2 on 2026-10-15; see the [authorization record](../../authorized-adoption-release-20261015/authorization.json). That decision binds manifest SHA-256 `ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883` and does not need to be requested again. The frozen package retains its historical `ADOPTION_PENDING` / `actual_adoption=false` bytes. Independent machine trust, signed registries and business runtime evidence remain separate requirements; this implementation installs none of them. Old `adoption.json` and the 30/48 missing original inventories remain immutable history.
 
 The trusted operator controls the reviewed Python process, environment, Git/gh/OpenSSH binaries and protected external policy/key files. Repository authors control all candidate inputs. The adapter does not defend against an administrator replacing the verifier, its environment or trusted keys. Provisioning policy and exercising business approval are separate from this implementation task. See [PLAN-AND-TRUST.md](PLAN-AND-TRUST.md) for the threat model.
 
@@ -20,7 +20,7 @@ The trusted operator controls the reviewed Python process, environment, Git/gh/O
 }
 ```
 
-The lengths above illustrate the protocol; always compute actual bytes. There is no active selection in the real ledger. `--basis-report <path>` writes the predicates used by the CLI without changing task or target states. Selecting a candidate cannot create trust. The only new targets permitted are `PLM-ITER-01` and `PLM-REL-01`; other 123 targets retain their original checks. The original inventory metric counts actual original inventories only.
+The lengths above illustrate the protocol; always compute actual bytes. The real ledger selects the adopted manifest. `--basis-report <path>` writes the predicates used by the CLI without changing task or target states. Selecting a candidate cannot create trust. The only new targets permitted are `PLM-ITER-01` and `PLM-REL-01`; other 123 targets retain their original checks. The original inventory metric counts actual original inventories only.
 
 Set `CP6_ACCEPTANCE_TRUST_POLICY` only in the trusted operator process to an absolute, access-controlled JSON file outside every Git worktree. Policy, signers and environment must not be writable by untrusted package authors. An illustrative schema, deliberately without usable identities or locations, is:
 
@@ -43,6 +43,10 @@ Set `CP6_ACCEPTANCE_TRUST_POLICY` only in the trusted operator process to an abs
   "repositories": {"Main":"<actual owner/repository>","Platform":"<actual owner/repository>","CRM":"<actual owner/repository>"}
 }
 ```
+
+For adoption alone, omit `execution`; the policy schema, product repository mapping and independent `authority` configuration remain required. Each role is validated when its registry is needed. With no submitted runtime, execution configuration is not inspected or fetched, even if present but incomplete. A successful authority check leaves `basis_adoption_valid:true`, while both runtime predicates remain false with `RUNTIME_NOT_SUBMITTED`. This does not certify the unused execution configuration.
+
+Once runtime evidence needs execution attestation, an absent `execution` section produces a target-scoped `EXECUTION_TRUST_UNCONFIGURED`; a null, incomplete or malformed section produces `EXECUTION_TRUST_INVALID` with the underlying reason. Invalid signatures, missing signers files and transport failures also reject the corresponding runtime. None of these failures revoke a separately verified adoption or become runtime PASS. Missing authority produces `AUTHORITY_TRUST_UNCONFIGURED`, malformed authority produces `AUTHORITY_TRUST_INVALID`, and signature/scope/identity/revocation/expiry/remote-byte failures continue to reject adoption and runtime. Execution trust, package claims and NuGet public keys cannot substitute for authority. With no policy environment value, the result remains `INDEPENDENT_VERIFIER_UNCONFIGURED`; an unreadable or invalid policy produces its actual error instead. Syntax/schema and product mapping errors are common policy failures, not an optional execution section.
 
 Registry administrators publish raw UTF-8 JSON plus detached OpenSSH signature at the same path with `.sig` appended. Namespaces are `cp6-acceptance-authority-v1` and `cp6-acceptance-execution-v1`. The adapter calls `ssh-keygen -Y verify` with the externally configured principal and allowed-signers file. It never creates production keys or executes downloaded code. The tests create temporary synthetic keys and remove them at test teardown.
 
