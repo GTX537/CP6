@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-16：第十轮 WP02-02 局部实现接收
+
+PostgreSQL消息存储初始化、追加与原结果恢复已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-02/provisioning/DELIVERY.md)。复用固定候选CLI Release build7及真实PG18.6 attempt7（单个组合场景、零失败/跳过），已读取原始构建/测试日志与TRX；一次集中审查及修改部分复查PASS。原失败保留，旧RLS/池/RowVersion证据按原范围复用。
+
+当前同步状态并按 PR #233 串行合并，远端包含性由 COORD 合并后登记。工具只支持明确选择的空隔离库与erp-identity-messaging-v1，使用静默初始化窗口；真实可信上下文、业务写集、Owner/WebApi接线及原17PGT仍未验收。完整WP02-02保持IN_PROGRESS/CONFIRMED。 24/375 DONE、0/125业务完成、247 NOT_RUN、41历史引用不变。此次未重跑产品测试、未触发/取消 Actions、未改工作流或执行迁库/部署。
+
 ## 2026-10-16：第十轮 WP02-03 局部实现接收
 
 字段权限真实存行MIN与逐用途决策已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-03/field-decisions/DELIVERY.md)。复用固定候选报告记录的14项定向测试、必要编译及一次集中SPEC/QUALITY审查；组件没有接入真实授权链，未称本次重跑。
