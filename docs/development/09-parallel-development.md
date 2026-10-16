@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前执行：第十一轮B / WP02-02由当前COORD对话内唯一实现代理接续，实际资料读取已开始；执行身份登记发布后进入代码实施。旧B对话请读最新台账，不重复领取或并写工作树。范围仍以[原执行包](dispatch/20261016-wave11/README.md)为准，完整任务与业务验收未提升。
+
 > 当前分配：[第十一轮服务令牌自撤销接线](dispatch/20261016-wave11/README.md)。仅B / WP02-02限定窗口CONFIRMED，真实source/binding、有限写集隔离及同事务入口由一个Owner连续实施；尚未收到START。A/C/D无新窗口；第十轮三个窗口继续CLOSED，完整任务和业务验收状态不提升。
 
 > 当前交付：[第十轮三份局部实现已集成](evidence/wave10-integration-20261016/README.md)。PR231/233/232正常合并并核对远端，真实START与交付已登记，A/B/D窗口CLOSED。完整A/D仍PLANNED，B仍IN_PROGRESS；真实业务接线和验收未提升。本次未派下一轮。
