@@ -4,8 +4,6 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
-internal sealed record ErpTenantLogin(Guid TenantId, string Login);
-
 /// <summary>
 /// Explicit, first-install-only overlay for a new isolated ERP layout after its PostgreSQL baseline.
 /// The control caller owns the transaction and must roll back any failure. No startup registration,
@@ -13,10 +11,10 @@ internal sealed record ErpTenantLogin(Guid TenantId, string Login);
 /// </summary>
 internal static class ErpTenantRowSecurityV1
 {
-    internal const string HelperOwner = "cp6_tenant_lookup_v1";
-    internal const string DirectorySchema = "cp6_tenancy_v1";
+    internal const string HelperOwner = TenantLoginDirectoryV1.HelperOwner;
+    internal const string DirectorySchema = TenantLoginDirectoryV1.DirectorySchema;
     // Database-local two-int advisory namespace: ASCII CP6T, directory version 1.
-    internal const int DirectoryLockNamespace = 1129330260;
+    internal const int DirectoryLockNamespace = TenantLoginDirectoryV1.DirectoryLockNamespace;
     internal static readonly IReadOnlyList<string> Tables = Array.AsReadOnly(new[]
     {
         "Aggregate", "CommandInbox", "Cp6_DeadLetterRecord", "Cp6_OutboxMessage",
@@ -24,7 +22,7 @@ internal static class ErpTenantRowSecurityV1
     });
 
     internal static async Task InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction,
-        IReadOnlyCollection<ErpTenantLogin> logins, CancellationToken ct = default)
+        IReadOnlyCollection<TenantLoginV1> logins, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(connection); ArgumentNullException.ThrowIfNull(transaction);
         ArgumentNullException.ThrowIfNull(logins);
@@ -120,69 +118,11 @@ internal static class ErpTenantRowSecurityV1
             REVOKE CREATE, TEMPORARY ON DATABASE {{Quote(connection.Database)}} FROM PUBLIC;
             REVOKE ALL ON SCHEMA public FROM PUBLIC;
             ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
-            CREATE ROLE cp6_tenant_lookup_v1 NOLOGIN NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE NOREPLICATION NOINHERIT;
-            CREATE SCHEMA cp6_tenancy_v1;
-            REVOKE ALL ON SCHEMA cp6_tenancy_v1 FROM PUBLIC;
-            CREATE TABLE cp6_tenancy_v1.login_tenant (
-                role_oid oid PRIMARY KEY,
-                role_name name NOT NULL UNIQUE,
-                tenant_id uuid NOT NULL UNIQUE CHECK (tenant_id <> '00000000-0000-0000-0000-000000000000'::uuid)
-            );
-            REVOKE ALL ON cp6_tenancy_v1.login_tenant FROM PUBLIC;
-            GRANT USAGE ON SCHEMA cp6_tenancy_v1 TO cp6_tenant_lookup_v1;
-            GRANT SELECT ON cp6_tenancy_v1.login_tenant TO cp6_tenant_lookup_v1;
-            CREATE FUNCTION cp6_tenancy_v1.lock_login_tenant_v1() RETURNS trigger
-            LANGUAGE plpgsql SET search_path = pg_catalog, cp6_tenancy_v1, pg_temp
-            AS $cp6_directory$
-            BEGIN
-                IF TG_OP = 'TRUNCATE' THEN
-                    RAISE EXCEPTION 'Tenant directory truncate is not supported' USING ERRCODE = '42501';
-                END IF;
-                PERFORM pg_catalog.pg_advisory_xact_lock({{DirectoryLockNamespace}}, 1);
-                RETURN NULL;
-            END $cp6_directory$;
-            REVOKE ALL ON FUNCTION cp6_tenancy_v1.lock_login_tenant_v1() FROM PUBLIC;
-            CREATE TRIGGER login_tenant_write_v1 BEFORE INSERT OR UPDATE OR DELETE
-                ON cp6_tenancy_v1.login_tenant FOR EACH STATEMENT EXECUTE FUNCTION cp6_tenancy_v1.lock_login_tenant_v1();
-            CREATE TRIGGER login_tenant_no_truncate_v1 BEFORE TRUNCATE
-                ON cp6_tenancy_v1.login_tenant FOR EACH STATEMENT EXECUTE FUNCTION cp6_tenancy_v1.lock_login_tenant_v1();
-            CREATE FUNCTION cp6_tenancy_v1.current_tenant_id() RETURNS uuid
-            LANGUAGE plpgsql VOLATILE SECURITY DEFINER
-            SET search_path = pg_catalog, cp6_tenancy_v1, pg_temp
-            AS $cp6_tenant$
-            DECLARE result uuid;
-            BEGIN
-                -- Pin this directory until the runtime transaction ends. VOLATILE obtains a fresh
-                -- snapshot for the SELECT after waiting for a prior control writer's exclusive lock.
-                PERFORM pg_catalog.pg_advisory_xact_lock_shared({{DirectoryLockNamespace}}, 1);
-                SELECT m.tenant_id INTO result
-                FROM cp6_tenancy_v1.login_tenant AS m
-                JOIN pg_catalog.pg_roles AS r ON r.oid = m.role_oid AND r.rolname = m.role_name
-                WHERE r.rolname = session_user AND r.rolcanlogin
-                  AND NOT (r.rolsuper OR r.rolbypassrls OR r.rolcreatedb OR r.rolcreaterole OR r.rolreplication)
-                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_auth_members a WHERE a.member = r.oid);
-                IF result IS NULL THEN
-                    RAISE EXCEPTION 'Tenant login binding rejected' USING ERRCODE = '42501';
-                END IF;
-                RETURN result;
-            END $cp6_tenant$;
-            ALTER FUNCTION cp6_tenancy_v1.current_tenant_id() OWNER TO cp6_tenant_lookup_v1;
-            REVOKE ALL ON FUNCTION cp6_tenancy_v1.current_tenant_id() FROM PUBLIC;
             REVOKE ALL ON FUNCTION public.cp6_cp936_length_v1(text), public.cp6_text_range_v1(text,text),
                 cp6_storage_erp.set_rowversion_v1() FROM PUBLIC;
             """);
 
-        foreach (var binding in bindings)
-        {
-            await using var insert = new NpgsqlCommand("""
-                INSERT INTO cp6_tenancy_v1.login_tenant(role_oid, role_name, tenant_id)
-                SELECT oid, rolname, @tenant FROM pg_catalog.pg_roles WHERE rolname = @role
-                """, connection, transaction);
-            insert.Parameters.AddWithValue("tenant", binding.TenantId);
-            insert.Parameters.AddWithValue("role", binding.Login);
-            if (await insert.ExecuteNonQueryAsync(ct).ConfigureAwait(false) != 1)
-                throw new InvalidOperationException("ERP tenant login disappeared during installation; roll back.");
-        }
+        await TenantLoginDirectoryV1.InstallAsync(connection, transaction, bindings, ct);
 
         var roles = string.Join(", ", bindings.Select(x => Quote(x.Login)));
         foreach (var table in Tables)

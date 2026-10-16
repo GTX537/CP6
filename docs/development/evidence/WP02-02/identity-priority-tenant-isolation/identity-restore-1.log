@@ -1,0 +1,15 @@
+  Determining projects to restore...
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Space.Domain\CP6.Space.Domain.csproj (in 77 ms).
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Space.Application\CP6.Space.Application.csproj (in 81 ms).
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 77 ms).
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-7hqp-7c5m-4vq6 [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj]
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.WebApi\CP6.WebApi.csproj : warning NU1902: Package 'MessagePack' 2.5.302 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-qhrr-8q5h-9q3h [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj]
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-c399-9853-6jmj [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj]
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-r955-8q5j-3h83 [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj]
+D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj : warning NU1903: Package 'System.Security.Cryptography.Xml' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-vrv5-2jg9-4mmr [D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj]
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Entity\CP6.Entity.csproj (in 11.36 sec).
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 11.52 sec).
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 11.52 sec).
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\CP6.Core.csproj (in 11.52 sec).
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\CP6.Tests.csproj (in 11.53 sec).
+  Restored D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.WebApi\CP6.WebApi.csproj (in 11.53 sec).

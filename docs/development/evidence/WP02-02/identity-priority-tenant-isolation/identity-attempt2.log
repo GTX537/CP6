@@ -1,0 +1,21 @@
+Test run for D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.11.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.30)
+[xUnit.net 00:00:00.43]   Discovering: CP6.Tests
+[xUnit.net 00:00:00.85]   Discovered:  CP6.Tests
+[xUnit.net 00:00:00.87]   Starting:    CP6.Tests
+  Passed CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant [195 ms]
+  Passed CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention [211 ms]
+  Passed CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command [68 ms]
+  Passed CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens [460 ms]
+  Passed CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift [394 ms]
+[xUnit.net 00:00:16.81]   Finished:    CP6.Tests
+
+Test Run Successful.
+Total tests: 5
+     Passed: 5
+ Total time: 17.3122 Seconds
+Results File: D:\CP6-local-test\WP02-02\identity-attempt2.trx

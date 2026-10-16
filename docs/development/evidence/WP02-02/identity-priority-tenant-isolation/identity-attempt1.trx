@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="03973b6f-2363-44f3-ad65-e6c4e5aa68eb" name="tt@LAPTOP-3QQ44FJS 2026-10-16 07:44:42" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T07:44:42.8007291-04:00" queuing="2026-10-16T07:44:42.8007294-04:00" start="2026-10-16T07:44:26.3101441-04:00" finish="2026-10-16T07:44:42.8076303-04:00" />
+  <TestSettings name="default" id="40eddf16-272c-49f0-a52b-5818c83bf687">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-16_07_44_42" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f956c89b-ac40-4dfc-b281-0d15a23464ad" testId="d2a76cc1-d08a-e705-7839-239a6a1e545f" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010000" startTime="2026-10-16T07:44:42.7244609-04:00" endTime="2026-10-16T07:44:42.7244752-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f956c89b-ac40-4dfc-b281-0d15a23464ad">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Known tenant directory v1 validation rejected.</Message>
+          <StackTrace>   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs:line 37&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 75&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 77&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 86</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="33cc97b2-8f0b-46d0-a7a3-94d3da7cad24" testId="017ef2a3-6157-4766-3fb1-7ebd0b059571" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010000" startTime="2026-10-16T07:44:42.7254785-04:00" endTime="2026-10-16T07:44:42.7254929-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33cc97b2-8f0b-46d0-a7a3-94d3da7cad24">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Known tenant directory v1 validation rejected.</Message>
+          <StackTrace>   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs:line 37&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 75&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 77&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 86</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="85ea6885-687f-4376-8e6e-6bf4e9d0d4aa" testId="722c69b0-8b52-b634-3d5b-0c6cb8b6d588" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010000" startTime="2026-10-16T07:44:42.7249866-04:00" endTime="2026-10-16T07:44:42.7250015-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85ea6885-687f-4376-8e6e-6bf4e9d0d4aa">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Known tenant directory v1 validation rejected.</Message>
+          <StackTrace>   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs:line 37&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 75&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 77&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 86</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4912dae6-2427-4c42-9c53-3e01f4925b5e" testId="42c562b1-7433-e3c9-13e6-2e8820d061ae" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010000" startTime="2026-10-16T07:44:42.7132479-04:00" endTime="2026-10-16T07:44:42.7145598-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4912dae6-2427-4c42-9c53-3e01f4925b5e">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Known tenant directory v1 validation rejected.</Message>
+          <StackTrace>   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs:line 37&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 75&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 77&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 86</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="998f9905-9cfd-4cd1-b849-aa6cf44cad6d" testId="bf4bdd9f-7604-5211-e30e-4db8098f7569" testName="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010000" startTime="2026-10-16T07:44:42.7234417-04:00" endTime="2026-10-16T07:44:42.7235102-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="998f9905-9cfd-4cd1-b849-aa6cf44cad6d">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Known tenant directory v1 validation rejected.</Message>
+          <StackTrace>   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs:line 144&#xD;
+   at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct) in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs:line 37&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 75&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 77&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 84&#xD;
+   at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync() in D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs:line 86</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="722c69b0-8b52-b634-3d5b-0c6cb8b6d588">
+      <Execution id="85ea6885-687f-4376-8e6e-6bf4e9d0d4aa" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="017ef2a3-6157-4766-3fb1-7ebd0b059571">
+      <Execution id="33cc97b2-8f0b-46d0-a7a3-94d3da7cad24" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d2a76cc1-d08a-e705-7839-239a6a1e545f">
+      <Execution id="f956c89b-ac40-4dfc-b281-0d15a23464ad" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bf4bdd9f-7604-5211-e30e-4db8098f7569">
+      <Execution id="998f9905-9cfd-4cd1-b849-aa6cf44cad6d" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant" storage="d:\cp6-worktrees\wp02-02-identity-storage-20261015\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="42c562b1-7433-e3c9-13e6-2e8820d061ae">
+      <Execution id="4912dae6-2427-4c42-9c53-3e01f4925b5e" />
+      <TestMethod codeBase="D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests" name="Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d2a76cc1-d08a-e705-7839-239a6a1e545f" executionId="f956c89b-ac40-4dfc-b281-0d15a23464ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="017ef2a3-6157-4766-3fb1-7ebd0b059571" executionId="33cc97b2-8f0b-46d0-a7a3-94d3da7cad24" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="722c69b0-8b52-b634-3d5b-0c6cb8b6d588" executionId="85ea6885-687f-4376-8e6e-6bf4e9d0d4aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42c562b1-7433-e3c9-13e6-2e8820d061ae" executionId="4912dae6-2427-4c42-9c53-3e01f4925b5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf4bdd9f-7604-5211-e30e-4db8098f7569" executionId="998f9905-9cfd-4cd1-b849-aa6cf44cad6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.30)&#xD;
+[xUnit.net 00:00:02.55]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:03.55]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:03.57]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:14.94]       System.InvalidOperationException : Known tenant directory v1 validation rejected.&#xD;
+[xUnit.net 00:00:14.94]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs(37,0): at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(75,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(77,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.94]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(86,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]       System.InvalidOperationException : Known tenant directory v1 validation rejected.&#xD;
+[xUnit.net 00:00:14.95]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs(37,0): at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(75,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(77,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(86,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]       System.InvalidOperationException : Known tenant directory v1 validation rejected.&#xD;
+[xUnit.net 00:00:14.95]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs(37,0): at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(75,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(77,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(86,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]       System.InvalidOperationException : Known tenant directory v1 validation rejected.&#xD;
+[xUnit.net 00:00:14.95]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs(37,0): at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(75,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(77,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(86,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]       System.InvalidOperationException : Known tenant directory v1 validation rejected.&#xD;
+[xUnit.net 00:00:14.95]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\TenantLoginDirectoryV1.cs(144,0): at CP6.Core.Persistence.Tenancy.TenantLoginDirectoryV1.ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 bindings, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Core\Persistence\Tenancy\IdentityTenantRowSecurityV1.cs(37,0): at CP6.Core.Persistence.Tenancy.IdentityTenantRowSecurityV1.InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyCollection`1 logins, Boolean appendToKnownDirectory, CancellationToken ct)&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(75,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(77,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(84,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]         D:\CP6-worktrees\wp02-02-identity-storage-20261015\CP6.Tests\Persistence\Tenancy\IdentityTenantPostgresTests.cs(86,0): at CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresFixture.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.95]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-16T07:44:42.7252762-04:00">
+        <Text>[xUnit.net 00:00:14.94]     CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Global_inbox_outbox_keys_remain_global_and_safe_while_checkpoint_includes_tenant [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-16T07:44:42.7254765-04:00">
+        <Text>[xUnit.net 00:00:14.95]     CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.All_four_tables_isolate_select_insert_old_and_new_update_rows_and_deny_retention [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-16T07:44:42.7256467-04:00">
+        <Text>[xUnit.net 00:00:14.95]     CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_only_profile_is_explicit_and_ended_scope_cannot_issue_a_late_command [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-16T07:44:42.7258123-04:00">
+        <Text>[xUnit.net 00:00:14.95]     CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Real_contexts_share_one_connection_transaction_and_commit_or_rollback_together_with_real_tokens [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-16T07:44:42.7259724-04:00">
+        <Text>[xUnit.net 00:00:14.95]     CP6.Tests.Persistence.Tenancy.IdentityTenantPostgresTests.Identity_guard_rejects_nested_scope_catalog_rotation_profile_and_mapping_drift [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
