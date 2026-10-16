@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-16：第十轮三份局部实现已集成
+
+[集成交付](../development/evidence/wave10-integration-20261016/README.md)：PR231/233/232按A→B→D正常合并并核对远端，三局部窗口关闭。字段权限确定性计算、PostgreSQL组合消息存储初始化/恢复、工作台数据状态已入主线。复用各固定候选相关验证与一次集中审查；仅补台账/链接/差异及远端核对，没有重复产品测试或构建。
+
+WP02-03/WP02-18完整任务仍PLANNED/NOT_CHECKED，WP02-02仍IN_PROGRESS/CONFIRMED；真实授权与Owner写集、后端租户/撤权、原17PGT和业务验收未提升。24/375 DONE、0/125业务、247 NOT_RUN及41历史引用保持。未触发/取消Actions、未改工作流，未发包、迁库或部署；没有自动分配下一轮。
+
 ## 2026-10-16：第十轮 WP02-18 局部实现接收
 
 Dashboard真实零、无权、失败与旧响应隔离已完成候选核对，原验证与集中审查见[单份交付报告](../development/evidence/WP02-18/dashboard-states/DELIVERY.md)。复用固定候选16项定向前端测试、vue-tsc及Chrome桌面/390px手机API夹具检查；已读取最终日志，集中SPEC/QUALITY无阻断项。夹具早期失败保留，未称真实业务E2E。
