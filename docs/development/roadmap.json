@@ -158727,6 +158727,11 @@
       "date": "2026-10-16",
       "change": "Wave9 four bounded deliveries merged through normal PRs225/227/226/228, exact remote containment checked. All windows closed; A/D full tasks PLANNED, B/C IN_PROGRESS. No full-task DONE or business acceptance upgrade.",
       "evidence": "docs/development/evidence/wave9-integration-20261016/README.md"
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave10 assigns A field decisions, B bounded PostgreSQL initialization, D dashboard states. C waits for actual consumer artifacts. Original dependencies and full task states preserved; no new DONE or business result.",
+      "evidence": "docs/development/dispatch/20261016-wave10/README.md"
     }
   ],
   "implementation_assessment": {
@@ -160159,29 +160164,32 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "B / WP02-02 第九轮 Identity 四表租户隔离与 ERP 同事务接入",
+        "chat_label": "B / WP02-02 第十轮 PostgreSQL 消息存储初始化与中断恢复",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-02-identity-storage-20261015",
+        "branch": "codex/wp02-02-provisioning-20261016",
         "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
-        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
-        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-02.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "IDENTITY_PRIORITY_STORAGE_ADAPTER",
-        "bounded_window_gate": "CLOSED",
-        "full_task_gate_unchanged": false,
-        "worker_start_received": true,
+        "claimed_at": "2026-10-16T12:41:15.321774+00:00",
+        "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+        "coordination_baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+        "entry_evidence": "docs/development/dispatch/20261016-wave10/WP02-02.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "MESSAGING_PROFILE_PROVISIONING",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": false,
         "allowed_write_paths": [
           "CP6.Core/Persistence/Tenancy/",
           "CP6.Tests/Persistence/Tenancy/",
-          "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
-          "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/"
+          "tools/CP6.TenantStorage/",
+          "CP6.Core/CP6.Core.csproj",
+          "docs/development/evidence/WP02-02/provisioning/"
         ],
         "reserved_write_resources": [
           "Main:tenant-storage",
-          "Main:ef-model"
+          "Main:ef-model",
+          "Main:tenant-storage-provisioning",
+          "file:Main:CP6.Core/CP6.Core.csproj:TenantStorage-friend-assembly-only"
         ],
         "reserved_postgresql_ports": [
           55436
@@ -160189,18 +160197,7 @@
         "handoff_branch": "codex/dev-handoff-wp02-02",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
-        "worker_start_ref": {
-          "commit": "1647a07ae8607a343b883c736fc7e860110bdd62",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261015T155221Z-wave9-start-identity-storage/MESSAGE.md"
-        },
-        "coordinator_received_at": "2026-10-16T12:17:44.022343+00:00",
-        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
-        "handoff_delivery": {
-          "commit": "6ee03208c099ef4c8d2eedf9b0abe38028f5f959",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T115253Z-wave9-identity-delivery/MESSAGE.md"
-        },
-        "window_closed_at": "2026-10-16T12:18:41.765803+00:00"
+        "delivery_report": "docs/development/evidence/WP02-02/provisioning/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -160402,6 +160399,50 @@
           "delivery_report": "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md",
           "window_closed_at": "2026-10-15T15:10:23.577941+00:00",
           "delivery_pr": "https://github.com/GTX537/CP6/pull/223"
+        },
+        {
+          "chat_label": "B / WP02-02 第九轮 Identity 四表租户隔离与 ERP 同事务接入",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-02-identity-storage-20261015",
+          "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
+          "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+          "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-02.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "IDENTITY_PRIORITY_STORAGE_ADAPTER",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": false,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Persistence/Tenancy/",
+            "CP6.Tests/Persistence/Tenancy/",
+            "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+            "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/"
+          ],
+          "reserved_write_resources": [
+            "Main:tenant-storage",
+            "Main:ef-model"
+          ],
+          "reserved_postgresql_ports": [
+            55436
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-02",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
+          "worker_start_ref": {
+            "commit": "1647a07ae8607a343b883c736fc7e860110bdd62",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261015T155221Z-wave9-start-identity-storage/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-16T12:17:44.022343+00:00",
+          "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+          "handoff_delivery": {
+            "commit": "6ee03208c099ef4c8d2eedf9b0abe38028f5f959",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T115253Z-wave9-identity-delivery/MESSAGE.md"
+          },
+          "window_closed_at": "2026-10-16T12:18:41.765803+00:00"
         }
       ],
       "preparation_delivery_history": [
@@ -160606,7 +160647,36 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "A / WP02-03 第十轮 完整登记域下的字段权限确定性决策",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-03-field-decisions-20261016",
+        "worktree": "D:/CP6-worktrees/wp01-01-trust-stages-20261015",
+        "claimed_at": "2026-10-16T12:41:15.321774+00:00",
+        "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+        "coordination_baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+        "entry_evidence": "docs/development/dispatch/20261016-wave10/WP02-03.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "PURE_FIELD_PERMISSION_DECISION",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": false,
+        "allowed_write_paths": [
+          "CP6.Core/Services/Sys/FieldPermissionDecisionV1.cs",
+          "CP6.Core/Services/Sys/FieldPermissionEvaluatorV1.cs",
+          "CP6.Tests/FieldPermissionDecisionV1Tests.cs",
+          "docs/development/evidence/WP02-03/field-decisions/"
+        ],
+        "reserved_write_resources": [
+          "Main:field-permission-pure-decision"
+        ],
+        "reserved_postgresql_ports": [],
+        "handoff_branch": "codex/dev-handoff-wp02-03",
+        "actions_authorized": false,
+        "formal_publication_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -161416,7 +161486,37 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-18",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "D / WP02-18 第十轮 工作台真实零值、无权与不可用状态",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-18-dashboard-states-20261016",
+        "worktree": "D:/CP6-worktrees/wp02-16-codegen-preview-20261015",
+        "claimed_at": "2026-10-16T12:41:15.321774+00:00",
+        "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+        "coordination_baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+        "entry_evidence": "docs/development/dispatch/20261016-wave10/WP02-18.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "DASHBOARD_CLIENT_LOAD_STATES",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": false,
+        "allowed_write_paths": [
+          "cp6.web/src/views/dashboard/DashboardView.vue",
+          "cp6.web/src/views/dashboard/dashboardLoadState.ts",
+          "cp6.web/src/views/dashboard/dashboardLoadState.spec.ts",
+          "cp6.web/src/views/dashboard/DashboardView.spec.ts",
+          "docs/development/evidence/WP02-18/dashboard-states/"
+        ],
+        "reserved_write_resources": [
+          "Main:dashboard-client-load-states"
+        ],
+        "reserved_postgresql_ports": [],
+        "handoff_branch": "codex/dev-handoff-wp02-18",
+        "actions_authorized": false,
+        "formal_publication_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-18/dashboard-states/DELIVERY.md"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
@@ -177868,15 +177968,35 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261015-wave9",
-      "path": "docs/development/evidence/wave9-integration-20261016/README.md",
-      "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+      "id": "20261016-wave10",
+      "path": "docs/development/dispatch/20261016-wave10/README.md",
+      "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
       "coordinator_shared_state_only": true,
-      "workers_started": true,
-      "phase": "BOUNDED_DELIVERIES_INTEGRATED",
-      "workers_delivered": true,
-      "windows_closed": true
-    }
+      "workers_started": false,
+      "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+      "workers_delivered": false,
+      "windows_closed": false,
+      "assigned_chats": [
+        "A",
+        "B",
+        "D"
+      ],
+      "unassigned_chats": [
+        "C"
+      ]
+    },
+    "wave_history": [
+      {
+        "id": "20261015-wave9",
+        "path": "docs/development/evidence/wave9-integration-20261016/README.md",
+        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+        "coordinator_shared_state_only": true,
+        "workers_started": true,
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "workers_delivered": true,
+        "windows_closed": true
+      }
+    ]
   },
   "acceptance_basis": {
     "manifest": {
