@@ -111,3 +111,9 @@ Full17PGT、其他上下文、普通用户/部门 identity snapshot、ordinary o
 一次集中SPEC/QUALITY审查发现3项P2：恢复缺目录行核验、发行角色未完整纳入身份校验、fresh安装缺系统schema未知对象拒绝。修复已在f315425b完成；同一审查者wave11_review仅复查8文件修改及其影响，核读定向红/绿TRX与CLI原日志，确认3项均关闭、旧空布局SQL原样提取且旧seal SQL未变；最终Ready to merge: yes，无剩余阻断项，仅适用于本轮有界交付。
 
 固定候选 `f315425b3981463e737db60c12134964f1861682` 已核对允许路径、原始构建/TRX/CLI证据和完整任务边界。COORD仅同步台账与四份状态，不因提交或合并重复产品验证；远端结果在实际合并后登记。
+
+## 远端集成回执
+
+[https://github.com/GTX537/CP6/pull/237](https://github.com/GTX537/CP6/pull/237)正常合并；含共享状态的任务提交 `c1a1b3fd1b3f5b4ff49b0b689068e85431a248c9`，当次核对远端main `222f948dbf8003d99f5b8bd51bde97236e62de2e`。COORD确认任务提交为main祖先，并比较全部任务范围文件的Git blob一致。后续收口仅同步文档，原验证按既有范围复用。
+
+[固定任务Handoff](https://github.com/GTX537/CP6.AI-Handoff/blob/56952c72cf509e898bf5e3bf199b2f9f41be96de/handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T164525Z-wave11-service-revocation-delivery/MESSAGE.md)已发布并回读确认；消息仅为通信证据。限定窗口关闭，完整WP02-02和业务验收未关闭；没有Actions、正式发布、既有业务库迁移或部署。
