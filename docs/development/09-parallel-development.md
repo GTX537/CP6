@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前集成：已收到第九轮四份候选，按任务串行同步状态与合并；本窗口接收 WP02-28，见[交付报告](evidence/WP02-28/DELIVERY.md)。其余任务以最新台账和各自报告为准，历史分配中的“未收到 START”已被本轮真实 START/DELIVERY 替代。局部交付不等于整项 DONE 或业务验收。
+
 > 当前集成：已收到第九轮四份候选，按任务串行同步状态与合并；本窗口接收 WP02-16，见[交付报告](evidence/WP02-16/codegen-preview/DELIVERY.md)。其余任务以最新台账和各自报告为准，历史分配中的“未收到 START”已被本轮真实 START/DELIVERY 替代。局部交付不等于整项 DONE 或业务验收。
 
 > 当前集成：已收到第九轮四份候选，按任务串行同步状态与合并；本窗口接收 WP02-02，见[交付报告](evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md)。其余任务以最新台账和各自报告为准，历史分配中的“未收到 START”已被本轮真实 START/DELIVERY 替代。局部交付不等于整项 DONE 或业务验收。

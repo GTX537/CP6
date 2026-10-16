@@ -938,6 +938,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddAuthorization();
+CP6.WebApi.Configuration.PlatformHostIdentityConfiguration.AddPlatformHostIdentity(
+    builder.Services, builder.Configuration);
 
 // 6. 注册 CORS（T6 收紧：Cookie 化后凭证随浏览器自动带，反射任意源 + AllowCredentials 是 CSRF/凭证泄露面）。
 //    改为显式 origin allowlist（Cors:AllowedOrigins，默认前端 dev http://localhost:5173）。
@@ -3035,6 +3037,7 @@ if (databaseInitializationOnly)
     return;
 }
 
+CP6.WebApi.Health.PlatformHostIdentityEndpoint.MapPlatformHostIdentity(app);
 app.UseCors("AllowAll");
 
 // T15 / Gap 2.3 — HTTP リクエスト指標を収集（http_request_duration_seconds 等）。

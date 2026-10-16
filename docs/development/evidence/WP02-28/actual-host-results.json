@@ -1,0 +1,579 @@
+{
+  "owner": "75fe75731e3e4568af4cf2781fc07621",
+  "sourceBaseline": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+  "hostDllSha256": "453d985981d64269e610e844cc6426276bd4ee518444f74bfd281e4ffab71ee2",
+  "expectedFromFormalArchives": [
+    {
+      "PackageId": "CP6.Platform.Abstractions",
+      "PackageVersion": "0.10.3",
+      "SourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+      "AssemblySha256": "3f1faedbfbc9310385599ebfd9cfba178454a632a6fdbce24dd2fb8f765430f6"
+    },
+    {
+      "PackageId": "CP6.Platform.AspNetCore",
+      "PackageVersion": "0.10.3",
+      "SourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+      "AssemblySha256": "a62ece70951c6336b043d21cafceb44c2adad29097384020c021582d155cf511"
+    },
+    {
+      "PackageId": "CP6.Platform.Contracts",
+      "PackageVersion": "0.10.3",
+      "SourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+      "AssemblySha256": "d7f23fcaae9415c361d4a59011b0c31c6546ba3784f00fb5b25da634383946bd"
+    },
+    {
+      "PackageId": "CP6.Platform.EntityFramework",
+      "PackageVersion": "0.10.3",
+      "SourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+      "AssemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba"
+    },
+    {
+      "PackageId": "CP6.Platform.Messaging",
+      "PackageVersion": "0.10.3",
+      "SourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+      "AssemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4"
+    }
+  ],
+  "scope": "actual Main process; minimal owned authorization tables only, no migrated application/schema compatibility claim",
+  "checks": [
+    {
+      "name": "matching-owned-listener",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "anonymous-denied",
+      "passed": true,
+      "evidence": {
+        "http": 401
+      }
+    },
+    {
+      "name": "anonymous-trailing-slash-denied",
+      "passed": true,
+      "evidence": {
+        "http": 401
+      }
+    },
+    {
+      "name": "invalid-signature-denied",
+      "passed": true,
+      "evidence": {
+        "http": 401
+      }
+    },
+    {
+      "name": "invalid-signature-trailing-slash-denied",
+      "passed": true,
+      "evidence": {
+        "http": 401
+      }
+    },
+    {
+      "name": "tenant-admin-denied",
+      "passed": true,
+      "evidence": {
+        "http": 403
+      }
+    },
+    {
+      "name": "tenant-admin-trailing-slash-denied",
+      "passed": true,
+      "evidence": {
+        "http": 403
+      }
+    },
+    {
+      "name": "forged-admin-header-denied",
+      "passed": true,
+      "evidence": {
+        "http": 403
+      }
+    },
+    {
+      "name": "forged-admin-header-trailing-slash-denied",
+      "passed": true,
+      "evidence": {
+        "http": 403
+      }
+    },
+    {
+      "name": "impersonated-admin-denied",
+      "passed": true,
+      "evidence": {
+        "http": 403
+      }
+    },
+    {
+      "name": "impersonated-admin-trailing-slash-denied",
+      "passed": true,
+      "evidence": {
+        "http": 403
+      }
+    },
+    {
+      "name": "matching-status",
+      "passed": true,
+      "evidence": {
+        "http": 200
+      }
+    },
+    {
+      "name": "matching-actual-pid",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "matching-loaded-identity",
+      "passed": true,
+      "evidence": {
+        "processId": 4080,
+        "processStartedAtUtc": "2026-10-16T11:57:58.0641389+00:00",
+        "capturedAtUtc": "2026-10-16T11:58:04.1344866+00:00",
+        "identityStatus": "Unknown",
+        "modules": [
+          {
+            "packageId": "CP6.Platform.Abstractions",
+            "status": "Unknown",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "3f1faedbfbc9310385599ebfd9cfba178454a632a6fdbce24dd2fb8f765430f6"
+            },
+            "observed": null,
+            "reasonCodes": [
+              "ASSEMBLY_NOT_LOADED"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.AspNetCore",
+            "status": "Matched",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "a62ece70951c6336b043d21cafceb44c2adad29097384020c021582d155cf511"
+            },
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "a62ece70951c6336b043d21cafceb44c2adad29097384020c021582d155cf511",
+              "loadedMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+              "backingMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": []
+          },
+          {
+            "packageId": "CP6.Platform.Contracts",
+            "status": "Unknown",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "d7f23fcaae9415c361d4a59011b0c31c6546ba3784f00fb5b25da634383946bd"
+            },
+            "observed": null,
+            "reasonCodes": [
+              "ASSEMBLY_NOT_LOADED"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.EntityFramework",
+            "status": "Matched",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba"
+            },
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba",
+              "loadedMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+              "backingMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": []
+          },
+          {
+            "packageId": "CP6.Platform.Messaging",
+            "status": "Matched",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4"
+            },
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4",
+              "loadedMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+              "backingMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": []
+          }
+        ],
+        "reasonCodes": [],
+        "rollback": {
+          "allowed": false,
+          "status": "Unknown",
+          "reasonCode": "COMPATIBILITY_EVIDENCE_MISSING"
+        },
+        "runtimeQualification": "Unknown",
+        "businessAcceptance": "Unknown",
+        "trustState": "Unknown"
+      }
+    },
+    {
+      "name": "matching-rollback-refused",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "matching-no-sensitive-output",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "matching-no-business-trust-claim",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "trailing-slash-authorized-no-store",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "legacy-release-contract",
+      "passed": true,
+      "evidence": {
+        "version": "fixture-declared",
+        "gitSha": "fixture-declared",
+        "apiImageDigest": "unknown",
+        "webImageDigest": "unknown",
+        "latestMigration": null
+      }
+    },
+    {
+      "name": "revoked-same-token-denied",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "disabled-same-token-denied",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "unavailable-authority-fails-closed",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mismatch-owned-listener",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mismatch-status",
+      "passed": true,
+      "evidence": {
+        "http": 200
+      }
+    },
+    {
+      "name": "mismatch-actual-pid",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mismatch-identity",
+      "passed": true,
+      "evidence": {
+        "processId": 20824,
+        "processStartedAtUtc": "2026-10-16T11:58:08.689655+00:00",
+        "capturedAtUtc": "2026-10-16T11:58:14.6384012+00:00",
+        "identityStatus": "Mismatch",
+        "modules": [
+          {
+            "packageId": "CP6.Platform.Abstractions",
+            "status": "Unknown",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "3f1faedbfbc9310385599ebfd9cfba178454a632a6fdbce24dd2fb8f765430f6"
+            },
+            "observed": null,
+            "reasonCodes": [
+              "ASSEMBLY_NOT_LOADED"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.AspNetCore",
+            "status": "Mismatch",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "a62ece70951c6336b043d21cafceb44c2adad29097384020c021582d155cf511",
+              "loadedMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+              "backingMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": [
+              "ASSEMBLY_SHA256_MISMATCH"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.Contracts",
+            "status": "Unknown",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "d7f23fcaae9415c361d4a59011b0c31c6546ba3784f00fb5b25da634383946bd"
+            },
+            "observed": null,
+            "reasonCodes": [
+              "ASSEMBLY_NOT_LOADED"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.EntityFramework",
+            "status": "Matched",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba"
+            },
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba",
+              "loadedMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+              "backingMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": []
+          },
+          {
+            "packageId": "CP6.Platform.Messaging",
+            "status": "Matched",
+            "expected": {
+              "packageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4"
+            },
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4",
+              "loadedMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+              "backingMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": []
+          }
+        ],
+        "reasonCodes": [],
+        "rollback": {
+          "allowed": false,
+          "status": "Mismatch",
+          "reasonCode": "IDENTITY_MISMATCH"
+        },
+        "runtimeQualification": "Unknown",
+        "businessAcceptance": "Unknown",
+        "trustState": "Unknown"
+      }
+    },
+    {
+      "name": "mismatch-rollback-refused",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mismatch-no-sensitive-output",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mismatch-no-business-trust-claim",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "unknown-owned-listener",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "unknown-status",
+      "passed": true,
+      "evidence": {
+        "http": 200
+      }
+    },
+    {
+      "name": "unknown-actual-pid",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "unknown-identity",
+      "passed": true,
+      "evidence": {
+        "processId": 26528,
+        "processStartedAtUtc": "2026-10-16T11:58:18.7286664+00:00",
+        "capturedAtUtc": "2026-10-16T11:58:24.7780833+00:00",
+        "identityStatus": "Unknown",
+        "modules": [
+          {
+            "packageId": "CP6.Platform.Abstractions",
+            "status": "Unknown",
+            "expected": null,
+            "observed": null,
+            "reasonCodes": [
+              "EXPECTED_IDENTITY_INVALID",
+              "ASSEMBLY_NOT_LOADED"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.AspNetCore",
+            "status": "Unknown",
+            "expected": null,
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "a62ece70951c6336b043d21cafceb44c2adad29097384020c021582d155cf511",
+              "loadedMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+              "backingMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": [
+              "EXPECTED_IDENTITY_INVALID"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.Contracts",
+            "status": "Unknown",
+            "expected": null,
+            "observed": null,
+            "reasonCodes": [
+              "EXPECTED_IDENTITY_INVALID",
+              "ASSEMBLY_NOT_LOADED"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.EntityFramework",
+            "status": "Unknown",
+            "expected": null,
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba",
+              "loadedMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+              "backingMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": [
+              "EXPECTED_IDENTITY_INVALID"
+            ]
+          },
+          {
+            "packageId": "CP6.Platform.Messaging",
+            "status": "Unknown",
+            "expected": null,
+            "observed": {
+              "assemblyVersion": "0.8.0.0",
+              "informationalVersion": "0.8.0-alpha.2",
+              "declaredPackageVersion": "0.10.3",
+              "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+              "assemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4",
+              "loadedMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+              "backingMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+              "defaultLoadContext": true
+            },
+            "reasonCodes": [
+              "EXPECTED_IDENTITY_INVALID"
+            ]
+          }
+        ],
+        "reasonCodes": [],
+        "rollback": {
+          "allowed": false,
+          "status": "Unknown",
+          "reasonCode": "COMPATIBILITY_EVIDENCE_MISSING"
+        },
+        "runtimeQualification": "Unknown",
+        "businessAcceptance": "Unknown",
+        "trustState": "Unknown"
+      }
+    },
+    {
+      "name": "unknown-rollback-refused",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "unknown-no-sensitive-output",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "unknown-no-business-trust-claim",
+      "passed": true,
+      "evidence": null
+    }
+  ],
+  "processes": [
+    {
+      "scenario": "matching",
+      "pid": 4080,
+      "started": "2026-10-16T11:57:58.0641389Z",
+      "port": 53268,
+      "stopped": true
+    },
+    {
+      "scenario": "mismatch",
+      "pid": 20824,
+      "started": "2026-10-16T11:58:08.6896550Z",
+      "port": 53300,
+      "stopped": true
+    },
+    {
+      "scenario": "unknown",
+      "pid": 26528,
+      "started": "2026-10-16T11:58:18.7286664Z",
+      "port": 50428,
+      "stopped": true
+    }
+  ],
+  "completed": true,
+  "databaseIdentity": {
+    "SystemIdentifier": "7696923210433097924",
+    "Database": "cp6_wp0228_20261015_75fe7573",
+    "Oid": "16385",
+    "Owner": "75fe75731e3e4568af4cf2781fc07621",
+    "Port": 55438
+  }
+}
