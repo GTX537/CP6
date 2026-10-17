@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-16：第十二轮真实服务签发局部交付已集成
+
+[241号PR](https://github.com/GTX537/CP6/pull/241)正常合并，远端main `1f52f3bf27cc13a4ad51df3d2b6bcfd0f6810fe1`已核对任务祖先关系及全部范围文件。实际 client_credentials HTTP 签发在普通租户 PostgreSQL 登录的同一物理事务中读取真实 Sys_Tenants 资格、写入 ServiceToken 并完成提交前核验；FOR SHARE 将停用更新与签发序列化。新鲜隔离库显式选择 service-token-v1，最小权限 helper 仅返回自身资格，签发令牌可在同库真实自撤销；注册时签名快照覆盖首次 DI 解析，旧配置与旧 profile 保持原支持范围。
+
+实现、一次集中审查和原始验证见[单份报告](../development/evidence/WP02-02/service-issuance/DELIVERY.md)，固定任务Handoff已发布。限定窗口CLOSED，完整WP02-02仍IN_PROGRESS/CONFIRMED。完整 WP02-02 仍 IN_PROGRESS/CONFIRMED；Full17PGT、全 Main、普通用户/部门登录与 snapshot、真实租户创建/维护、bootstrap/dispatcher、ERP/ordinary outbox、其他Owner/上下文及跨仓宿主、在线授权/配置/密钥/凭据更新、真实业务验收、既有库迁移、环境切换及 DEV/UAT/PROD 均 NOT_RUN。本轮仅完成 fresh-only 五表服务端点采用，不构成全 Main 启用或生产发布。
+
+复用候选有效验证，不因合并重跑产品测试。24/375 DONE、业务0/125、247 NOT_RUN与41历史引用不变，A/C/D无新窗口；无Actions触发/取消、工作流变化、发包、既有库迁移或部署。
+
 ## 2026-10-16：第十二轮服务签发候选已核验
 
 实际 client_credentials HTTP 签发在普通租户 PostgreSQL 登录的同一物理事务中读取真实 Sys_Tenants 资格、写入 ServiceToken 并完成提交前核验；FOR SHARE 将停用更新与签发序列化。新鲜隔离库显式选择 service-token-v1，最小权限 helper 仅返回自身资格，签发令牌可在同库真实自撤销；注册时签名快照覆盖首次 DI 解析，旧配置与旧 profile 保持原支持范围。

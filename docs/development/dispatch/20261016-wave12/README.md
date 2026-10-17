@@ -1,5 +1,7 @@
 # 第十二轮：真实服务令牌签发与租户有效性
 
+> 收口更新：本轮已正常合并、核对远端并发布固定任务Handoff，窗口CLOSED，见[单份报告](../../evidence/WP02-02/service-issuance/DELIVERY.md)。下文是原准入/开工时点，实时状态以roadmap为准。
+
 COORD 已核对 Main `6e401945bc05647c94dbe948819cd4a14cd80fe6` 与 Handoff 收口 `e5b2dad2ccae76e67fe0469f36fb85bb8dbc6dd3`。A/B/C/D资料分支无新交付；第十一轮 PR237/238 已完成，不重做自撤销实现与已有效验证。
 
 本轮优先 B / WP02-02：[执行计划](WP02-02.md)、[资源登记](dispatch.json)。服务自撤销已有真实租户事务，但 client_credentials 签发仍由默认连接读目录/保存记录；上一轮集成夹具仅租户活跃查询是替身。本轮补齐真实租户有效性、可信签发来源和同事务记录，使实际签发→自撤销能在明确的新 PostgreSQL profile 运行。权限、工作台与跨仓正向回退仍受各自前置约束，A/C/D不新增窗口。

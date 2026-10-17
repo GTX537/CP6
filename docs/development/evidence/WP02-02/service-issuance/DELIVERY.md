@@ -85,3 +85,9 @@ Full17PGT、全Main、普通用户/部门登录与snapshot、真实租户创建/
 完成一次完整SPEC/QUALITY集中审查，发现PUBLIC系统目录有效权限漏检及全串schema替换误改合法数据库/login两项P2。均已修复：新profile按PG原生初始权限拒绝额外PUBLIC授权，规范化seal支持权限还原后同请求恢复；固定schema插值保留合法外部标识符。原审查者仅复查127abecb..1722b061四文件修正及相关原始证据，最终Ready to merge: Yes，无剩余阻断项。COORD核对允许路径、完整diff检查、失败/成功证据及旧profile兼容；旧seal、实体/EF模型/历史迁移和依赖配置未变。
 
 固定候选 `1722b061cc2afae44429e6d3db2e684b31963f1f` 已核对允许范围、原始验证及剩余边界。共享状态单独同步，不因提交/合并重复产品验证；实际远端结果在合并后登记。
+
+## 远端集成回执
+
+[https://github.com/GTX537/CP6/pull/241](https://github.com/GTX537/CP6/pull/241)正常合并；任务提交 `c90ff7e975857d6fbcf3f9fc30aade1948bc4c0b`，当次核对远端main `1f52f3bf27cc13a4ad51df3d2b6bcfd0f6810fe1`。任务祖先关系和范围内Git blob一致；收口仅文档，候选验证按原范围复用。
+
+[固定任务Handoff](https://github.com/GTX537/CP6.AI-Handoff/blob/3bc28edad949d7a7f16e648a450466c8ccdfe171/handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261017T035155Z-wave12-service-issuance-delivery/MESSAGE.md)已发布并回读确认。窗口CLOSED，完整WP02-02和业务验收未关闭。无Actions、发包、既有库迁移或部署。
