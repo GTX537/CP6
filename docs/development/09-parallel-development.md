@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 最新协调：[全项目盘点与 P0 优先安排](planning/20261017-project-inventory.md)。wave13 四份真实 START 已接收；A 优先处理 P0 #245，B/C/D 普通窗口暂停指令待执行者回执。以下“尚无 START”等为历史快照，完整任务与业务验收状态仍以台账为准。
+
 > 当前分配：[第十三轮四个新对话执行包](dispatch/20261017-wave13/README.md)。A当前授权读取、B服务租户资格control、C实际publish启动身份、D菜单刷新恢复；四个限定窗口CONFIRMED，尚无真实START。第十二轮CLOSED，完整任务与业务验收未提升，COORD统一共享状态与串行合并。
 
 > 当前收口：[第十二轮真实服务签发交付](evidence/WP02-02/service-issuance/DELIVERY.md)已正常合并并核对远端，B限定窗口CLOSED；完整WP02-02及业务验收未完成，A/C/D无新窗口。
