@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-10-17：仪表盘租户P0已完成真实DEV并关闭，转入P1库存传输
+
+[#257](https://github.com/GTX537/CP6/issues/257)已Closed：[PR260](https://github.com/GTX537/CP6/pull/260)合入D审查通过的22928c9a，远端main47b69063核对候选文件一致；[单份DELIVERY](../quality/evidence/issue-257/DELIVERY.md)记录真实PG DEV验收。实际发布API/Web身份和文件哈希匹配，3个页面登录账号的空租户、精确订单及交替暖缓存通过；停用主体403、匿名401。原6项PG/HTTP结果复用，未重复测试。
+
+4条自有测试订单移除、3账号/3租户停用及refresh吊销，API/Web停止，原PG服务保留。既有认证五表/业务六表指纹、688表和四历史不变。无Actions、工作流修改、迁移或生产部署；不提升其他WMS块、全业务/生产验收。
+
+当前无开放P0，P0暂停解除；依BUG管理P1下一项规则，[第十六轮](../development/dispatch/20261017-wave16/README.md)登记原A修复#132精确库位范围有界传输、原D准备/集中审查，尚无真实START。旧整站fallback补丁已撤回不得照搬。B/C候选和三个P2保留，尚无新的产品修正窗口；#243菜单候选不变。完整任务24/375 DONE、业务0/125不提升。
+
 ## 2026-10-17：BUG257固定候选已收，D集中审查待接续
 
 A候选 `22928c9ae9ad93172c61e3df5e0353cdaace4af6` 已推送，Handoff `9de55c7441830061fc73541c20c562575f4086a5` 已远端回读；[单份DELIVERY](https://github.com/GTX537/CP6/blob/22928c9ae9ad93172c61e3df5e0353cdaace4af6/docs/quality/evidence/issue-257/DELIVERY.md)范围严格为登记六文件。COORD读取原始green-subject.trx核对真实PG/HTTP **6通过、0失败、0跳过**，包括四条HTTP隔离/缓存边界与两个原生关系测试；只复用原结果，未重跑产品测试。原失败及夹具修正保留，不将RED中空用户GUID冒充合法主体正向证据。A独立PG/API/Web端口已释放，既有PG服务运行，未操作DEV数据。

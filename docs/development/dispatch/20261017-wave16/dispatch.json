@@ -1,0 +1,81 @@
+{
+  "version": "CP6-WAVE16-DISPATCH/1",
+  "issued_at": "2026-10-17T16:03:57.328321+00:00",
+  "main_baseline_sha": "47b690631350f845c16a60f6fc79214cf0ef0b7d",
+  "scope": "immutable admission snapshot; actual status only roadmap.json",
+  "windows": [
+    {
+      "id": "BUG-132",
+      "chat": "A",
+      "mode": "IMPLEMENTATION",
+      "title": "Space库存精确范围有界传输",
+      "issue": "https://github.com/GTX537/CP6/issues/132",
+      "branch": "codex/bug-132-inventory-transport-20261017",
+      "worktree": "D:/CP6-worktrees/bug-132-inventory-transport-20261017",
+      "write_paths": [
+        "CP6.WebApi/Controllers/Space/SpaceWmsRuntimeController.cs",
+        "CP6.Space.Contracts/SpaceWmsRuntimeContracts.cs",
+        "cp6.web/src/api/space/runtime.ts",
+        "cp6.web/src/types/space/runtime.ts",
+        "cp6.web/src/api/space/__tests__/runtime.spec.ts",
+        "cp6.web/src/space-viewer/overlay/StockOverlay.ts",
+        "cp6.web/src/space-viewer/overlay/StockOverlay.spec.ts",
+        "CP6.Tests/Space/SpaceWmsInventoryQueryTests.cs",
+        "CP6.Tests/Space/SpaceDesignV1OpenApiTests.cs",
+        "CP6.Space.UnitTests/SpaceWmsRuntimeContractTests.cs",
+        "CP6.Space.IntegrationTests/SpaceWmsRuntimeServiceTests.cs",
+        "docs/space/contracts/design-v1.openapi.json",
+        "docs/quality/evidence/issue-132/DELIVERY.md"
+      ],
+      "reserved_write_resources": [
+        "Main:Space-runtime-inventory-transport",
+        "file:Main:CP6.Space.Contracts/SpaceWmsRuntimeContracts.cs",
+        "generated:Main:docs/space/contracts/design-v1.openapi.json"
+      ],
+      "ports": {
+        "api": 18232,
+        "web": 15232
+      },
+      "handoff_branch": "codex/dev-handoff-bug132-implementation-20261017",
+      "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave16-a-bug132-20261017",
+      "packet": "A-BUG-132.md",
+      "delivery_report": "docs/quality/evidence/issue-132/DELIVERY.md",
+      "gate": "CONFIRMED",
+      "owner": "original A; sole implementation and additive inventory API contract editor",
+      "registered_at": "2026-10-17T16:03:57.328321+00:00",
+      "baseline_sha": "47b690631350f845c16a60f6fc79214cf0ef0b7d",
+      "worker_start_received": false,
+      "worker_delivery_received": false,
+      "actions_authorized": false,
+      "deployment_authorized": false,
+      "existing_database_operations_authorized": false,
+      "prerequisite": "Create from latest confirmed main after admission merges; new window, actual START once. No old rejected patch replay."
+    },
+    {
+      "id": "REVIEW-BUG-132",
+      "chat": "D",
+      "mode": "READ_ONLY_PREPARATION_THEN_COMBINED_REVIEW",
+      "title": "Space有界传输准备与集中审查",
+      "target_window": "BUG-132",
+      "write_paths": [],
+      "reserved_write_resources": [],
+      "ports": {},
+      "handoff_branch": "codex/dev-handoff-bug132-review-20261017",
+      "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave16-d-bug132-review-20261017",
+      "packet": "D-REVIEW-BUG-132.md",
+      "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md",
+      "gate": "PREPARATION_CONFIRMED_REVIEW_AFTER_A_DELIVERY",
+      "owner": "original D; no product edits",
+      "review_completed": false,
+      "ready_to_merge": null,
+      "registered_at": "2026-10-17T16:03:57.328321+00:00",
+      "baseline_sha": "47b690631350f845c16a60f6fc79214cf0ef0b7d",
+      "worker_start_received": false,
+      "worker_delivery_received": false,
+      "actions_authorized": false,
+      "deployment_authorized": false,
+      "existing_database_operations_authorized": false,
+      "prerequisite": "Create from latest confirmed main after admission merges; new window, actual START once. No old rejected patch replay."
+    }
+  ]
+}
